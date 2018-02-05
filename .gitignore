@@ -1,0 +1,9 @@
+.idea/
+
+apidocs/
+data/
+/vendor/
+/composer.lock
+/custom/
+!/dev/data/
+/nb_metadata
