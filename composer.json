@@ -47,7 +47,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "https://packagist.zinitsolutions.com"
+            "url": "https://packagist.zinitsolutions.com/packages.json"
         }
     ]
 }
