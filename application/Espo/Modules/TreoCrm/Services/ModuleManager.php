@@ -3,11 +3,12 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCrm\Services;
 
+use Espo\Core\Utils\Json;
 use Espo\Core\Services\Base;
-use Espo\Modules\TreoCrm\Core\Utils\Metadata;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
+use Espo\Modules\TreoCrm\Core\Utils\Metadata;
 
 /**
  * ModuleManager service
@@ -20,6 +21,11 @@ class ModuleManager extends Base
      * @var string
      */
     protected $moduleJsonPath = 'custom/Espo/Custom/Resources/module.json';
+
+    /**
+     * @var string
+     */
+    protected $vendorTreoDir = 'vendor/treo-crm/';
 
     /**
      * Construct
@@ -51,16 +57,13 @@ class ModuleManager extends Base
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if ($this->isModuleAllowed($module)) {
-                // get config
-                $config = $this->getMetadata()->getModuleConfigData($module);
-
                 $result['list'][] = [
                     "id"          => $module,
                     "name"        => $this->translate('moduleNames', $module),
                     "description" => $this->translate('moduleDescriptions', $module),
-                    "version"     => (!empty($config['version'])) ? $config['version'] : '1.0.0',
-                    "required"    => $this->prepareRequireds($config['required']),
-                    "isActive"    => empty($config['disabled'])
+                    "version"     => $this->getModuleVersion($module),
+                    "required"    => $this->prepareRequireds($this->getModuleConfigData("{$module}.required")),
+                    "isActive"    => $this->getMetadata()->isModuleActive($module)
                 ];
             }
         }
@@ -80,7 +83,7 @@ class ModuleManager extends Base
     public function updateActivation(string $moduleId): bool
     {
         // get config data
-        $config = $this->getMetadata()->getModuleConfigData($moduleId);
+        $config = $this->getModuleConfigData($moduleId);
 
         // is system module ?
         if (!empty($config['isSystem'])) {
@@ -119,7 +122,7 @@ class ModuleManager extends Base
         $result = true;
 
         // get config
-        $config = $this->getMetadata()->getModuleConfigData($module);
+        $config = $this->getModuleConfigData($module);
 
         // hide system
         if ($config['isSystem']) {
@@ -179,7 +182,7 @@ class ModuleManager extends Base
         if (empty($moduleConfig['disabled'])) {
             foreach ($moduleList as $module) {
                 // get config
-                $config = $this->getMetadata()->getModuleConfigData($module);
+                $config = $this->getModuleConfigData($module);
                 if (isset($config['required']) && in_array($moduleId, $config['required'])) {
                     // prepare result
                     $result = true;
@@ -195,6 +198,63 @@ class ModuleManager extends Base
                     $result = true;
 
                     break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get module version
+     *
+     * @param string $module
+     *
+     * @return string
+     */
+    protected function getModuleVersion(string $module): string
+    {
+        // prepare result
+        $result = '1.0.0';
+
+        if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
+            $result = $package['version'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get composer package
+     *
+     * @param string $module
+     *
+     * @return array
+     */
+    protected function getComposerPackage(string $module): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare composerLock
+        $composerLock = 'composer.lock';
+
+        if (file_exists($this->vendorTreoDir) && is_dir($this->vendorTreoDir) && file_exists($composerLock)) {
+            foreach (scandir($this->vendorTreoDir) as $dir) {
+                // prepare path
+                $path = "{$this->vendorTreoDir}$dir/application/Espo/Modules/$module";
+
+                if (file_exists($path)) {
+                    // get data
+                    $data = Json::decode(file_get_contents($composerLock), true);
+
+                    if (!empty($packages = $data['packages'])) {
+                        foreach ($packages as $package) {
+                            if ($package['name'] == "treo-crm/{$dir}") {
+                                $result = $package;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -243,5 +303,17 @@ class ModuleManager extends Base
     protected function translate(string $tab, string $key): string
     {
         return $this->getLanguage()->translate($key, $tab, 'ModuleManager');
+    }
+
+    /**
+     * Get module config data
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function getModuleConfigData(string $key)
+    {
+        return $this->getMetadata()->getModuleConfigData($key);
     }
 }

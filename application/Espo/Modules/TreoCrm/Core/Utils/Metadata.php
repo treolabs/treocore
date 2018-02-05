@@ -128,6 +128,18 @@ class Metadata extends EspoMetadata
     }
 
     /**
+     * Is module active?
+     *
+     * @param string $module
+     *
+     * @return bool
+     */
+    public function isModuleActive(string $module): bool
+    {
+        return empty($this->getModuleConfig()->get("{$module}.disabled"));
+    }
+
+    /**
      * Init metadata
      *
      * @param  boolean $reload
