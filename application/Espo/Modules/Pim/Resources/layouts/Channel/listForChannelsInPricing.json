@@ -1,0 +1,11 @@
+[
+    {
+        "name": "name",
+        "link": true,
+        "customLabel": "Channel"
+    },
+    {
+        "name": "isActive",
+        "customLabel": "Channel Is Active"
+    }
+]

@@ -1,0 +1,37 @@
+{
+  "fields": {
+    "action": "Veiksmas",
+    "actionDate": "Data",
+    "data": "Duomenys",
+    "campaign": "Kampanija",
+    "parent": "Adresatas",
+    "queueItem": "Eilės elementas",
+    "stringData": "Eilutės duomenys",
+    "isTest": "Testuojama"
+  },
+  "links": {
+    "queueItem": "Eilės elementas",
+    "parent": "Pagrindinis",
+    "object": "Ojektas",
+    "campaign": "Kampanija"
+  },
+  "options": {
+    "action": {
+      "Sent": "Išsiųsta",
+      "Opened": "Atverta",
+      "Opted Out": "Pasirinkta",
+      "Clicked": "Paspausta",
+      "Lead Created": "Sukurtas potencialus klientas"
+    }
+  },
+  "labels": {
+    "All": "Visi"
+  },
+  "presetFilters": {
+    "sent": "Išsiųsta",
+    "opened": "Atverta",
+    "optedOut": "Pasirinkta",
+    "clicked": "Paspausta",
+    "leadCreated": "Sukurtas potencialus klientas"
+  }
+}

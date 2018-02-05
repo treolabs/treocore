@@ -1,0 +1,32 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy",
+        "onlyActive"
+    ],
+    "hiddenBoolFilterList": [
+        "onlyActive"
+    ],
+    "disabledMassActions": [
+        "merge"
+    ],
+    "views": {
+        "list": "pim:views/list",
+        "detail": "pim:views/detail"
+    },
+    "recordViews": {
+        "list": "pim:views/record/list",
+        "search": "pim:views/record/search"
+    },
+    "modalViews": {
+        "select": "pim:views/modals/select-records"
+    },
+    "relationshipPanels": {
+        "products": {
+            "view": "pim:views/brand/record/panels/products",
+            "selectBoolFilterList": ["notLinkedWithBrand"],
+            "selectAction": "selectRelatedEntity",
+            "createAction": "createRelatedConfigured"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "defaultValueFields": {
+        "arrayMultiLang": {
+            "view": "views/fields/array"
+        },
+        "enumMultiLang": {
+            "view": "views/fields/enum"
+        },
+        "multiEnumMultiLang": {
+            "view": "views/fields/multi-enum"
+        },
+        "textMultiLang": {
+            "view": "views/fields/text",
+            "default": ""
+        },
+        "varcharMultiLang": {
+            "view": "views/fields/varchar",
+            "default": ""
+        }
+    }
+}

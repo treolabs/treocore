@@ -1,0 +1,8 @@
+[
+    {"name":"name","link":true},
+    {"name":"account","width": 22},
+    {"name":"stage", "width": 15},
+    {"name":"assignedUser", "width": 12},
+    {"name":"createdAt", "width": 12},
+    {"name":"amount", "align": "right", "width": 10}
+]

@@ -1,0 +1,48 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy",
+        "onlyActive",
+        "notEntity",
+        "notChildCategory",
+        "notLinkedWithChannel",
+        "notLinkedWithProduct"
+    ],
+    "hiddenBoolFilterList": [
+        "onlyActive",
+        "notEntity",
+        "notChildCategory",
+        "notLinkedWithChannel",
+        "notLinkedWithProduct"
+    ],
+    "disabledMassActions": [
+        "merge"
+    ],
+    "views": {
+        "list": "pim:views/category/list",
+        "detail": "pim:views/category/detail"
+    },
+    "recordViews": {
+        "list": "pim:views/category/record/list",
+        "detail": "pim:views/category/record/detail",
+        "search": "pim:views/record/search"
+    },
+    "modalViews": {
+        "select": "pim:views/modals/select-records"
+    },
+    "relationshipPanels": {
+        "categoryImages": {
+            "label": "Image",
+            "view": "pim:views/category/record/panels/category-image"
+        },
+        "products": {
+            "view": "pim:views/category/record/panels/products",
+            "layout": "listForProductsInCategory",
+            "recordListView": "pim:views/record/list-with-model-edit-check",
+            "rowActionsView": "views/record/row-actions/relationship-unlink-only",
+            "createAction": "createRelatedConfigured",
+            "selectAction": "selectRelatedEntity",
+            "selectBoolFilterList": ["onlyActive"]
+        }
+    }
+}

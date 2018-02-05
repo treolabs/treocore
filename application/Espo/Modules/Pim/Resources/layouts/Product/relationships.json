@@ -1,0 +1,32 @@
+[
+    {
+        "name": "attributes"
+    },
+    {
+        "name": "channelProducts"
+    },
+    {
+        "name": "channelProductAttributeValues"
+    },
+    {
+        "name": "categories"
+    },
+    {
+        "name": "productPrices"
+    },
+    {
+        "name": "associationMainProducts"
+    },
+    {
+        "name": "productImages"
+    },
+    {
+        "name": "supplierProducts"
+    },
+    {
+        "name": "productTypePackages"
+    },
+    {
+        "name": "productTypeBundles"
+    }
+]

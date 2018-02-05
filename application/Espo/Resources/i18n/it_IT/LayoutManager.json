@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "width": "Larghezza (%)",
+    "link": "Link",
+    "notSortable": "Non Ordinabile",
+    "align": "Allinea",
+    "panelName": "Nome del pannello",
+    "style": "Stile",
+    "sticked": "Fissato"
+  },
+  "options": {
+    "align": {
+      "left": "Sinistra",
+      "right": "Destra"
+    },
+    "style": {
+      "default": "Default",
+      "success": "Successo",
+      "danger": "Pericolo",
+      "info": "Info",
+      "warning": "Avvertimento",
+      "primary": "Primario"
+    }
+  }
+}

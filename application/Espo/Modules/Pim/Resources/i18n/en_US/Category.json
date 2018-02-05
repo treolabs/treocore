@@ -1,0 +1,26 @@
+{
+    "fields": {
+        "name": "Name",
+        "description": "Description",
+        "isActive": "Active",
+        "categoryParent": "Parent category",
+        "categories": "Categories",
+        "products": "Products",
+        "categoryRoot": "Category tree",
+        "rootCategories": "Categories",
+        "channels": "Channels",
+        "categoryImages": "Category Images"
+    },
+    "links": {
+        "categoryParent": "Parent category",
+        "categories": "Categories",
+        "products": "Products",
+        "channels": "Channels",
+        "categoryRoot": "Category tree",
+        "rootCategories": "Categories",
+        "categoryImages": "Category Images"
+    },
+    "labels": {
+        "Create Category": "Create Category"
+    }
+}

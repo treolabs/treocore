@@ -1,0 +1,56 @@
+{
+    "fields": {
+        "name": "Record Naam",
+        "number": "Number",
+        "status": "Status",
+        "account": "Account",
+        "contact": "Contact",
+        "contacts": "Contacten",
+        "priority": "Prioriteit",
+        "type": "Type",
+        "description": "Beschrijving",
+        "inboundEmail": "Inbound Email"
+    },
+    "links": {
+        "inboundEmail": "Inbound Email",
+        "account": "Account",
+        "contact": "Contact (Primary)",
+        "Contacts": "Contacten",
+        "meetings": "Meetings",
+        "calls": "Calls",
+        "tasks": "Tasks",
+        "emails": "E-mails"
+    },
+    "options": {
+        "status": {
+            "New": "Nieuw",
+            "Assigned": "Toegewezen",
+            "Pending": "In afwachting",
+            "Closed": "Gesloten",
+            "Rejected": "Afgewezen",
+            "Duplicate": "Dupliceer"
+        },
+        "priority" : {
+            "Low": "Laag",
+            "Normal": "Normaal",
+            "High": "Hoog",
+            "Urgent": "Urgent"
+        },
+        "type": {
+            "Question": "Vraag",
+            "Incident": "Incident",
+            "Problem": "Probleem"
+        }
+    },
+    "labels": {
+        "Create Case": "Create Case",
+        "Close": "Sluit",
+        "Reject": "Reject",
+        "Closed": "Gesloten",
+        "Rejected": "Afgewezen"
+    },
+    "presetFilters": {
+        "open": "Open",
+        "closed": "Gesloten"
+    }
+}

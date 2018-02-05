@@ -1,0 +1,30 @@
+[
+    {
+        "label": "Overview",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "isActive"
+                },
+                {
+                    "name": "categoryRoot"
+                }
+            ],
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "categoryParent"
+                }
+            ],
+            [
+                {
+                    "name": "description",
+                    "fullWidth": true
+                }
+            ]
+        ]
+    }
+]

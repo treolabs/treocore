@@ -1,0 +1,16 @@
+{
+    "entity": true,
+    "layouts": true,
+    "tab": true,
+    "acl": true,
+    "aclPortal": true,
+    "aclPortalLevelList": ["all", "account", "contact", "own", "no"],
+    "customizable": true,
+    "importable": true,
+    "calendar": true,
+    "activity": true,
+    "notifications": true,
+    "activityStatusList": ["Planned"],
+    "historyStatusList": ["Held", "Not Held"],
+    "statusField": "status"
+}

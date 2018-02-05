@@ -1,0 +1,236 @@
+{
+    "fields": {
+        "name": {
+            "type": "varchar",
+            "required": true,
+            "trim": true
+        },
+        "status": {
+            "type": "enum",
+            "options": ["Planned", "Held", "Not Held"],
+            "default": "Planned",
+            "view": "views/fields/enum-styled",
+            "style": {
+                "Held": "success"
+            },
+            "audited": true
+        },
+        "dateStart": {
+            "type": "datetime",
+            "required": true,
+            "default": "javascript: return this.dateTime.getNow(15);",
+            "audited": true
+        },
+        "dateEnd": {
+            "type": "datetime",
+            "required": true,
+            "after": "dateStart"
+        },
+        "duration": {
+            "type": "duration",
+            "start": "dateStart",
+            "end": "dateEnd",
+            "options": [900, 1800, 3600, 7200, 10800, 86400],
+            "default": 3600,
+            "notStorable": true,
+            "select": "TIMESTAMPDIFF(SECOND, meeting.date_start, meeting.date_end)",
+            "orderBy": "duration {direction}"
+        },
+        "reminders": {
+            "type": "jsonArray",
+            "notStorable": true,
+            "view": "crm:views/meeting/fields/reminders",
+            "layoutListDisabled": true
+        },
+        "description": {
+            "type": "text"
+        },
+        "parent": {
+            "type": "linkParent",
+            "entityList": ["Account", "Lead", "Contact", "Opportunity", "Case"]
+        },
+        "account": {
+            "type": "link",
+            "readOnly": true
+        },
+        "acceptanceStatus": {
+            "type": "enum",
+            "notStorable": true,
+            "options": ["None", "Accepted", "Tentative", "Declined"],
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "where": {
+                "=": {
+                    "leftJoins": ["users", "contacts", "leads"],
+                    "sql": "contactsMiddle.status = {value} OR leadsMiddle.status = {value} OR usersMiddle.status = {value}",
+                    "distinct": true
+                },
+                "<>": "meeting.id NOT IN (SELECT meeting_id FROM contact_meeting WHERE deleted = 0 AND status = {value}) AND meeting.id NOT IN (SELECT meeting_id FROM meeting_user WHERE deleted = 0 AND status = {value}) AND meeting.id NOT IN (SELECT meeting_id FROM lead_meeting WHERE deleted = 0 AND status = {value})",
+                "IN": {
+                    "leftJoins": ["users", "leads", "contacts"],
+                    "sql": "contactsMiddle.status IN {value} OR leadsMiddle.status IN {value} OR usersMiddle.status IN {value}",
+                    "distinct": true
+                },
+                "NOT IN": "meeting.id NOT IN (SELECT meeting_id FROM contact_meeting WHERE deleted = 0 AND status IN {value}) AND meeting.id NOT IN (SELECT meeting_id FROM meeting_user WHERE deleted = 0 AND status IN {value}) AND meeting.id NOT IN (SELECT meeting_id FROM lead_meeting WHERE deleted = 0 AND status IN {value})",
+                "IS NULL": {
+                    "leftJoins": ["users", "contacts", "leads"],
+                    "sql": "contactsMiddle.status IS NULL AND leadsMiddle.status IS NULL AND usersMiddle.status IS NULL",
+                    "distinct": true
+                },
+                "IS NOT NULL": "meeting.id NOT IN (SELECT meeting_id FROM contact_meeting WHERE deleted = 0 AND status IS NULL) OR meeting.id NOT IN (SELECT meeting_id FROM meeting_user WHERE deleted = 0 AND status IS NULL) OR meeting.id NOT IN (SELECT meeting_id FROM lead_meeting WHERE deleted = 0 AND status IS NULL)"
+            },
+            "view": "crm:views/meeting/fields/acceptance-status"
+        },
+        "users": {
+            "type": "linkMultiple",
+            "view": "crm:views/meeting/fields/users",
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "columns": {
+                "status": "acceptanceStatus"
+            }
+        },
+        "contacts": {
+            "type": "linkMultiple",
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "view": "crm:views/meeting/fields/contacts",
+            "columns": {
+                "status": "acceptanceStatus"
+            }
+        },
+        "leads": {
+            "type": "linkMultiple",
+            "view": "crm:views/meeting/fields/attendees",
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "columns": {
+                "status": "acceptanceStatus"
+            }
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "modifiedAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "modifiedBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "ownerUser": {
+            "type": "link",
+            "required": true,
+            "view": "views/fields/owner-user"
+        },
+        "assignedUser": {
+            "type": "link",
+            "required": true,
+            "view": "views/fields/assigned-user"
+        },
+        "teams": {
+            "type": "linkMultiple",
+            "view": "views/fields/teams"
+        }
+    },
+    "links": {
+        "account": {
+            "type": "belongsTo",
+            "entity": "Account"
+        },
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "modifiedBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "ownerUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "assignedUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "teams": {
+            "type": "hasMany",
+            "entity": "Team",
+            "relationName": "entityTeam",
+            "layoutRelationshipsDisabled": true
+        },
+        "users": {
+            "type": "hasMany",
+            "entity": "User",
+            "foreign": "meetings",
+            "additionalColumns": {
+                "status": {
+                    "type": "varchar",
+                    "len": "36",
+                    "default": "None"
+                }
+            }
+        },
+        "contacts": {
+            "type": "hasMany",
+            "entity": "Contact",
+            "foreign": "meetings",
+            "additionalColumns": {
+                "status": {
+                    "type": "varchar",
+                    "len": "36",
+                    "default": "None"
+                }
+            }
+        },
+        "leads": {
+            "type": "hasMany",
+            "entity": "Lead",
+            "foreign": "meetings",
+            "additionalColumns": {
+                "status": {
+                    "type": "varchar",
+                    "len": "36",
+                    "default": "None"
+                }
+            }
+        },
+        "parent": {
+            "type": "belongsToParent",
+            "foreign": "meetings"
+        }
+    },
+    "collection": {
+        "sortBy": "dateStart",
+        "asc": false
+    },
+    "indexes": {
+        "dateStartStatus": {
+            "columns": ["dateStart", "status"]
+        },
+        "dateStart": {
+            "columns": ["dateStart", "deleted"]
+        },
+        "status": {
+            "columns": ["status", "deleted"]
+        },
+        "ownerUser": {
+            "columns": ["ownerUserId", "deleted"]
+        },
+        "assignedUser": {
+            "columns": ["assignedUserId", "deleted"]
+        },
+        "assignedUserStatus": {
+            "columns": ["assignedUserId", "status"]
+        }
+    }
+}

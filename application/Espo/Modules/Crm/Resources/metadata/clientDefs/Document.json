@@ -1,0 +1,29 @@
+{
+    "controller": "controllers/record",
+    "views": {
+        "list": "crm:views/document/list"
+    },
+    "modalViews": {
+        "select": "crm:views/document/modals/select-records"
+    },
+    "filterList": [
+        "active",
+        "draft"
+    ],
+    "boolFilterList": ["onlyMy"],
+    "selectDefaultFilters": {
+        "filter": "active"
+    },
+    "menu": {
+        "list": {
+            "dropdown": [
+                {
+                    "label": "Manage Folders",
+                    "link": "#DocumentFolder",
+                    "acl": "edit",
+                    "aclScope": "DocumentFolder"
+                }
+            ]
+        }
+    }
+}

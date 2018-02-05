@@ -1,0 +1,26 @@
+[
+    {
+        "name": "name",
+        "notSortable": true
+    },
+    {
+        "name": "version",
+        "notSortable": true
+    },
+    {
+        "name": "description",
+        "notSortable": true
+    },
+    {
+        "name": "required",
+        "notSortable": true,
+        "view": "treo-crm:views/module-manager/fields/required"
+    },
+    {
+        "name": "isActive",
+        "notSortable": true,
+        "type": "bool",
+        "width": 15,
+        "disabled": false
+    }
+]

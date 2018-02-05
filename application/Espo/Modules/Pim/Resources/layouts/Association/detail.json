@@ -1,0 +1,25 @@
+[
+    {
+        "label": "Overview",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "isActive"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "name"
+                }
+            ],
+            [
+                {
+                    "name": "description",
+                    "fullWidth": true
+                }
+            ]
+        ]
+    }
+]

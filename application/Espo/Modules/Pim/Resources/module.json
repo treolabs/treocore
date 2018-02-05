@@ -1,0 +1,6 @@
+{
+    "isSystem": true,
+    "required": ["ColoredFields", "Multilang"],
+    "disabled": false,
+    "order": 200
+}

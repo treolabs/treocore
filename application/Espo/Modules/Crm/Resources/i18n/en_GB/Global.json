@@ -1,0 +1,7 @@
+{
+  "fields": {
+    "billingAddressState": "County",
+    "addressState": "County",
+    "shippingAddressState": "County (Shipping)"
+  }
+}

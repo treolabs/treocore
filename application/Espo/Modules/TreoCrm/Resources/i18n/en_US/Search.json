@@ -1,0 +1,5 @@
+{
+  "messages": {
+    "filterApplyingCondition": "Filters for the same fields will be applied by <strong>OR</strong> condition"
+  }
+}

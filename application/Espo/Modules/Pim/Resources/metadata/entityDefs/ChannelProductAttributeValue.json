@@ -1,0 +1,46 @@
+{
+    "fields": {
+        "attribute": {
+            "type": "link"
+        },
+        "value": {
+            "type": "textMultiLang",
+            "required": false,
+            "rows": 4,
+            "lengthOfCut": 400,
+            "seeMoreDisabled": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "channel": {
+            "type": "link"
+        },
+        "product": {
+            "type": "link"
+        }
+    },
+    "links": {
+        "attribute": {
+            "type": "belongsTo",
+            "foreign": "channelProductAttributeValues",
+            "entity": "Attribute",
+            "audited": false,
+            "isCustom": false
+        },
+        "channel": {
+            "type": "belongsTo",
+            "foreign": "channelProductAttributeValues",
+            "entity": "Channel",
+            "audited": false,
+            "isCustom": false
+        },
+        "product": {
+            "type": "belongsTo",
+            "foreign": "channelProductAttributeValues",
+            "entity": "Product",
+            "audited": false,
+            "isCustom": false
+        }
+    }
+}

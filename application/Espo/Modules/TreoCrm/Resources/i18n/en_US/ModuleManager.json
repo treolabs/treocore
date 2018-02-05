@@ -1,0 +1,20 @@
+{
+    "moduleNames": {
+        "TreoCrm": "TreoCRM"
+    },
+    "moduleDescriptions": {
+        "TreoCrm": "-"
+    },
+    "fields": {
+        "version": "Version",
+        "required": "Required",
+        "isActive": "Is active"
+    },
+    "exceptions": {
+        "hasRequireds": "Module has not satisfied requireds",
+        "isSystem": "You can not modify system module."
+    },
+    "messages": {
+        "successAndReload": "Changes saved. Page will be reloaded after {value} seconds"
+    }
+}

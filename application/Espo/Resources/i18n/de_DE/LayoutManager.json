@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "width": "Breite (%)",
+    "link": "Link",
+    "notSortable": "Nicht sortierbar",
+    "align": "Ausrichten",
+    "panelName": "Panel Name",
+    "style": "Style",
+    "sticked": "Gepinnt"
+  },
+  "options": {
+    "align": {
+      "left": "Links",
+      "right": "Rechts"
+    },
+    "style": {
+      "default": "Standard",
+      "success": "Erfolgreich",
+      "danger": "Gefahr",
+      "info": "Info",
+      "warning": "Warnung",
+      "primary": "Primär"
+    }
+  }
+}

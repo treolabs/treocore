@@ -1,0 +1,20 @@
+{
+    "fields": {
+        "name": "Record Naam",
+        "status": "Status",
+        "isHtml": "Is Html",
+        "body": "Inhoud",
+        "subject": "Onderwerp",
+        "attachments": "Bijlagen",
+        "insertField": "Insert Field"
+    },
+    "links": {
+    },
+    "labels": {
+        "Create EmailTemplate": "E-mail Template Aanmaken",
+        "Info": "Info"
+    },
+    "messages": {
+        "infoText": "Available variables:\n\n{optOutUrl} &#8211; URL for an unsubsbribe link};\n\n{optOutLink} &#8211; an unsubscribe link."
+    }
+}

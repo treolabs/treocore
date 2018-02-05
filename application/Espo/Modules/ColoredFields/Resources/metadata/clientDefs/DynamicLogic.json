@@ -1,0 +1,16 @@
+{
+    "fieldTypes": {
+        "color": {
+            "view": "views/admin/dynamic-logic/conditions/field-types/base",
+            "typeList": ["equals", "notEquals", "isEmpty", "isNotEmpty"]
+        },
+        "coloredEnum": {
+            "view": "views/admin/dynamic-logic/conditions/field-types/enum",
+            "typeList": ["equals", "notEquals", "isEmpty", "isNotEmpty", "in", "notIn"]
+        },
+        "coloredMultiEnum": {
+            "view": "views/admin/dynamic-logic/conditions/field-types/multi-enum",
+            "typeList": ["isEmpty", "isNotEmpty", "has", "notHas"]
+        }
+    }
+}

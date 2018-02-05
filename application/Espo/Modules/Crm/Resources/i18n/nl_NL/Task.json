@@ -1,0 +1,44 @@
+{
+    "fields": {
+        "name": "Record Naam",
+        "parent": "Behorende bij",
+        "status": "Status",
+        "dateStart": "Start Datum",
+        "dateEnd": "Date Due",
+        "dateStartDate": "Date Start (all day)",
+        "dateEndDate": "Date End (all day)",
+        "priority": "Prioriteit",
+        "description": "Beschrijving",
+        "isOverdue": "Te Laat",
+        "account": "Account",
+        "dateCompleted": "Date Completed",
+        "attachments": "Bijlagen"
+    },
+    "links": {
+        "attachments": "Bijlagen"
+    },
+    "options": {
+        "status": {
+            "Not Started": "Niet Gestart",
+            "Started": "Gestart",
+            "Completed": "Voltooid",
+            "Canceled": "Geannuleerd"
+        },
+        "priority" : {
+            "Low": "Laag",
+            "Normal": "Normaal",
+            "High": "Hoog",
+            "Urgent": "Urgent"
+        }
+    },
+    "labels": {
+        "Create Task": "Taak Aanmaken",
+        "Complete": "Complete"
+    },
+    "presetFilters": {
+        "actual": "Werkelijke",
+        "completed": "Voltooid",
+        "todays": "Huidig",
+        "overdue": "Laat"
+    }
+}

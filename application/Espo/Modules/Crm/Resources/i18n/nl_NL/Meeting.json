@@ -1,0 +1,48 @@
+{
+    "fields": {
+        "name": "Record Naam",
+        "parent": "Behorende bij",
+        "status": "Status",
+        "dateStart": "Start Datum",
+        "dateEnd": "Eind Datum",
+        "duration": "Duur",
+        "description": "Beschrijving",
+        "users": "Gebruikers",
+        "contacts": "Contacten",
+        "leads": "Leads",
+        "reminders": "Herineringen",
+        "account": "Account"
+    },
+    "links": {
+    },
+    "options": {
+        "status": {
+            "Planned": "Gepland",
+            "Held": "Vasthouden",
+            "Not Held": "Niet Vasthouden"
+        },
+        "acceptanceStatus": {
+            "None": "None",
+            "Accepted": "Geaccepteerd",
+            "Declined": "Geweigerd",
+            "Tentative": "Tentative"
+        }
+    },
+    "massActions": {
+        "setHeld": "Set Held",
+        "setNotHeld": "Set Not Held"
+    },
+    "labels": {
+        "Create Meeting": "Plan Vergadering",
+        "Set Held": "Set Held",
+        "Set Not Held": "Set Not Held",
+        "Send Invitations": "Uitnodiging versturen",
+        "on time": "op tijd",
+        "before": "voordat"
+    },
+    "presetFilters": {
+        "planned": "Gepland",
+        "held": "Vasthouden",
+        "todays": "Huidig"
+    }
+}

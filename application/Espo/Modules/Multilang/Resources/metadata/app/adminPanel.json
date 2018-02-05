@@ -1,0 +1,13 @@
+{
+  "Multilang": {
+    "label":"Multilang",
+    "itemList": [
+      {
+        "url": "#Settings/inputLanguage",
+        "label": "Settings",
+        "description": "Multilang Settings"
+      }
+    ],
+    "order": 5
+  }
+}

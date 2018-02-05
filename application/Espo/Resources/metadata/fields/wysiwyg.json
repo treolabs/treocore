@@ -1,0 +1,33 @@
+{
+   "params":[
+      {
+         "name": "required",
+         "type": "bool",
+         "default": false
+      },
+      {
+         "name": "default",
+         "type": "text"
+      },
+      {
+         "name": "maxLength",
+         "type": "int"
+      },
+      {
+         "name": "height",
+         "type": "int"
+      },
+      {
+         "name": "minHeight",
+         "type": "int"
+      },
+      {
+         "name":"readOnly",
+         "type":"bool"
+      }
+   ],
+   "filter": true,
+   "fieldDefs":{
+      "type":"text"
+   }
+}

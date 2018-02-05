@@ -1,0 +1,17 @@
+{
+  "links": {
+    "users": "Vartotojai"
+  },
+  "labels": {
+    "Access": "Prieiga",
+    "Create PortalRole": "Sukurti portalo rolę",
+    "Scope Level": "Taikymo lygis",
+    "Field Level": "Laukelio lygis"
+  },
+  "fields": {
+    "exportPermission": "Eksportuoti leidimą"
+  },
+  "tooltips": {
+    "exportPermission": "Nustato kurie portalo vartotojai turi galimybę eksportuoti įrašus."
+  }
+}

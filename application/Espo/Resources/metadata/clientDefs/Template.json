@@ -1,0 +1,25 @@
+{
+    "controller": "controllers/record",
+    "recordViews": {
+        "detail": "views/template/record/detail",
+        "edit": "views/template/record/edit"
+    },
+    "formDependency": {
+        "printFooter": {
+            "map": {
+                "true" : [
+                    {
+                        "action": "show",
+                        "fields": ["footer", "footerPosition"]
+                    }
+                ]
+            },
+            "default": [
+                {
+                    "action": "hide",
+                    "fields": ["footer", "footerPosition"]
+                }
+            ]
+        }
+    }
+}

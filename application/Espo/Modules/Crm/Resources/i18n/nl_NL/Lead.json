@@ -1,0 +1,63 @@
+{
+    "labels": {
+        "Converted To": "Geconverteerd naar",
+        "Create Lead": "Lead Aanmaken",
+        "Convert": "Converteren",
+        "convert": "converteren"
+    },
+    "fields": {
+        "name": "Record Naam",
+        "emailAddress": "E-mail",
+        "title": "Titel",
+        "website": "Website",
+        "phoneNumber": "Telefoon",
+        "accountName": "Naam Klant",
+        "doNotCall": "Niet Bellen",
+        "address": "Adres",
+        "status": "Status",
+        "source": "Bron",
+        "opportunityAmount": "Bedrag Kansen",
+        "opportunityAmountConverted": "Bedrag Kans (geconverteerd)",
+        "description": "Beschrijving",
+        "createdAccount": "Account",
+        "createdContact": "Contact",
+        "createdOpportunity": "Kans",
+        "campaign": "Campaign",
+        "targetLists": "Doellijsten",
+        "targetList": "Target List"
+    },
+    "links": {
+        "targetLists": "Doellijsten",
+        "campaignLogRecords": "Campaign Log",
+        "campaign": "Campaign",
+        "createdAccount": "Account",
+        "createdContact": "Contact",
+        "createdOpportunity": "Kans"
+    },
+    "options": {
+        "status": {
+            "New": "Nieuw",
+            "Assigned": "Toegewezen",
+            "In Process": "In Behandeling",
+            "Converted": "Geconverteerd",
+            "Recycled": "Opnieuw verwerkt",
+            "Dead": "Dood"
+        },
+        "source": {
+            "": "None",
+            "Call": "Tel. Gesprek",
+            "Email": "E-mail",
+            "Existing Customer": "Bestaande Klant",
+            "Partner": "Partner",
+            "Public Relations": "Public Relations",
+            "Web Site": "Webpagina",
+            "Campaign": "Campaign",
+            "Other": "Overig"
+        }
+    },
+    "presetFilters": {
+        "active": "Actief",
+        "converted": "Geconverteerd",
+        "actual": "Werkelijke"
+    }
+}

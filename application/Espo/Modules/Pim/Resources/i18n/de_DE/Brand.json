@@ -1,0 +1,14 @@
+{
+    "fields": {
+        "products": "Artikel",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "code": "Code"
+    },
+    "links": {
+        "products": "Artikel"
+    },
+    "labels": {
+        "Create Brand": "Marke anlegen"
+    }
+}

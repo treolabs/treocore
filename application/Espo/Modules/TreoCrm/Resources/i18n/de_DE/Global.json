@@ -1,0 +1,14 @@
+{
+    "fields": {
+        "ownerUser": "Besitzer"
+    },
+    "links": {
+        "ownerUser": "Besitzer"
+    },
+    "themes": {
+        "TreoDarkTheme": "Treo Dark Theme"
+    },
+    "messages": {
+        "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen."
+    }
+}

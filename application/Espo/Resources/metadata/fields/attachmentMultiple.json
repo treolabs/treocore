@@ -1,0 +1,38 @@
+{
+   "params":[
+      {
+         "name": "required",
+         "type": "bool",
+         "default": false
+      },
+      {
+         "name": "sourceList",
+         "type": "multiEnum",
+         "view": "views/admin/field-manager/fields/source-list"
+      },
+      {
+         "name": "maxFileSize",
+         "type": "float",
+         "tooltip": true,
+         "min": 0
+      }
+   ],
+   "actualFields":[
+      "ids"
+   ],
+   "notActualFields":[
+      "names"
+   ],
+   "linkDefs": {
+      "type": "hasChildren",
+      "entity": "Attachment",
+      "foreign": "parent",
+      "layoutRelationshipsDisabled": true,
+      "relationName": "attachments"
+   },
+   "filter": false,
+   "fieldDefs": {
+      "layoutListDisabled": true
+   },
+   "hookClassName": "\\Espo\\Core\\Utils\\FieldManager\\Hooks\\AttachmentMultipleType"
+}

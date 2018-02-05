@@ -1,0 +1,41 @@
+{
+  "actualFields": [],
+  "fields": {},
+  "params":[
+    {
+      "name":"required",
+      "type":"bool",
+      "default":false
+    },
+    {
+      "name":"translation",
+      "type":"varchar",
+      "hidden": true
+    },
+    {
+      "name": "noEmptyString",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "name":"audited",
+      "type":"bool"
+    },
+    {
+      "name":"readOnly",
+      "type":"bool"
+    },
+    {
+      "name":"options",
+      "type":"array",
+      "view": "multilang:views/admin/field-manager/fields/optionsMultiLang"
+    }
+  ],
+  "filter": false,
+  "notCreatable": false,
+  "fieldDefs":{
+    "type":"jsonArray"
+  },
+  "translatedOptions": true,
+  "view": "multilang:views/fields/array-multilang"
+}

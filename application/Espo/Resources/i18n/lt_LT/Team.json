@@ -1,0 +1,20 @@
+{
+  "fields": {
+    "name": "Vardas",
+    "roles": "Rolės",
+    "positionList": "Pozicijų sąrašas"
+  },
+  "links": {
+    "users": "Vartotojai",
+    "notes": "Pastabos",
+    "roles": "Rolės",
+    "inboundEmails": "Grupės el. pašto paskyros"
+  },
+  "tooltips": {
+    "roles": "Prieigos rolės. Šios komandos vartotojai gauna prieigos kontrolės lygį iš pasirinktų rolių.",
+    "positionList": "Galimos pozicijos šioje komandoje. Pavyzdžiui pardavėjas, vadybininkas.\n"
+  },
+  "labels": {
+    "Create Team": "Sukurti komandą"
+  }
+}

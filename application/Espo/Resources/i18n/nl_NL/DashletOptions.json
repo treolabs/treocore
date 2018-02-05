@@ -1,0 +1,18 @@
+{
+    "fields": {
+        "title": "Titel",
+        "dateFrom": "Datum Vanaf",
+        "dateTo": "Datum Tot",
+        "autorefreshInterval": "Automatisch bijwerken interval",
+        "displayRecords": "Velden weergeven",
+        "isDoubleHeight": "Hoogte 2x",
+        "mode": "Mode"
+    },
+    "options": {
+    	"mode": {
+    		"agendaWeek": "Week (agenda)",
+    		"basicWeek": "Week",
+    		"month": "Month"
+    	}
+    }
+}

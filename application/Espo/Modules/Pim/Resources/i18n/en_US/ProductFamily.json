@@ -1,0 +1,23 @@
+{
+    "fields": {
+        "products": "Products",
+        "description": "Description",
+        "isActive": "Active",
+        "productFamilyAttributes": "Attributes",
+        "isSystem": "Is system",
+        "productFamilyTemplate": "Product Family Template",
+        "productFamilies": "Product Families"
+    },
+    "links": {
+        "products": "Products",
+        "productFamilyAttributes": "Attributes",
+        "productFamilyTemplate": "Product Family Template",
+        "productFamilies": "Product Families"
+    },
+    "labels": {
+        "Create ProductFamily": "Create Product family"
+    },
+    "messages": {
+        "Can't remove system Product Family": "Can't remove system Product Family"
+    }
+}

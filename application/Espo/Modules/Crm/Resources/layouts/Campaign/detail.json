@@ -1,0 +1,12 @@
+[
+    {
+        "label":"Overview",
+        "rows":[
+            [{"name":"name"}, {"name":"status"}],
+            [{"name":"type"}, {"name":"startDate"}],
+            [{"name":"budget"}, {"name":"endDate"}],
+            [{"name":"targetLists"}, {"name":"excludingTargetLists"}],
+            [{"name":"description", "fullWidth": true}]
+        ]
+    }
+]

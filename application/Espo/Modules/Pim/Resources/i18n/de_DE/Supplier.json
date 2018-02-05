@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "supplierProducts": "Artikel Lieferant",
+        "description": "Beschreibung",
+        "isActive": "Aktiv"
+    },
+    "links": {
+        "supplierProducts": "Artikel Lieferant"
+    },
+    "labels": {
+        "Create Supplier": "Lieferanten anlegen"
+    }
+}

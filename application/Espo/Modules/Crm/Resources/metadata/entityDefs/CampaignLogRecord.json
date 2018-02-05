@@ -1,0 +1,92 @@
+{
+    "fields": {
+        "action": {
+            "type": "enum",
+            "required": true,
+            "maxLength": 50,
+            "options": ["Sent", "Opened", "Opted Out", "Bounced", "Clicked", "Lead Created"]
+        },
+        "actionDate": {
+            "type": "datetime",
+            "required": true
+        },
+        "data": {
+            "type": "jsonObject",
+            "view": "crm:views/campaign-log-record/fields/data"
+        },
+        "stringData": {
+            "type": "varchar",
+            "maxLength": 100
+        },
+        "stringAdditionalData": {
+            "type": "varchar",
+            "maxLength": 100
+        },
+        "application": {
+            "type": "varchar",
+            "required": true,
+            "maxLength": 36,
+            "default": "Espo"
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true
+        },
+        "campaign": {
+            "type": "link"
+        },
+        "parent": {
+            "type": "linkParent"
+        },
+        "object": {
+            "type": "linkParent"
+        },
+        "queueItem": {
+            "type": "link"
+        },
+        "isTest": {
+            "type": "bool",
+            "default": false
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "campaign": {
+            "type": "belongsTo",
+            "entity": "Campaign",
+            "foreign": "campaignLogRecords"
+        },
+        "queueItem": {
+            "type": "belongsTo",
+            "entity": "EmailQueueItem",
+            "noJoin": true
+        },
+        "parent": {
+            "type": "belongsToParent",
+            "entityList": ["Account", "Contact", "Lead", "Opportunity", "User"]
+        },
+        "object": {
+            "type": "belongsToParent",
+            "entityList": ["Email", "CampaignTrackingUrl"]
+        }
+    },
+    "collection": {
+        "sortBy": "actionDate",
+        "asc": false
+    },
+    "indexes": {
+        "actionDate": {
+            "columns": ["actionDate", "deleted"]
+        },
+        "action": {
+            "columns": ["action", "deleted"]
+        }
+    }
+}

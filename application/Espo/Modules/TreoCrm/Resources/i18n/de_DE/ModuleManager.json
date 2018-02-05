@@ -1,0 +1,17 @@
+{
+    "moduleNames": {
+        "TreoCrm": "TreoCRM"
+    },
+    "moduleDescriptions": {
+        "TreoCrm": "-"
+    },
+    "fields": {
+        "version": "Version",
+        "required": "Erforderlich",
+        "isActive": "Ist aktiv"
+    },
+    "exceptions": {
+        "hasRequireds": "Das Modul hat die Anforderungen nicht erfüllt",
+        "isSystem": "Sie können das System-Modul nicht ändern."
+    }
+}

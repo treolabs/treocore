@@ -1,0 +1,127 @@
+{
+    "mandatory": {
+        "scopeLevel": {
+            "Note": {
+                "read": "own",
+                "edit": "own",
+                "delete": "own",
+                "create": "yes"
+            },
+            "Portal": {
+                "read": "all",
+                "edit": "no",
+                "delete": "no",
+                "create": "no"
+            },
+            "Attachment": {
+                "read": "own",
+                "edit": "own",
+                "delete": "own",
+                "create": "yes"
+            },
+            "EmailAccount": {
+                "read": "own",
+                "edit": "own",
+                "delete": "own",
+                "create": "yes"
+            },
+            "EmailFilter": {
+                "read": "own",
+                "edit": "own",
+                "delete": "own",
+                "create": "yes"
+            },
+            "EmailFolder": {
+                "read": "own",
+                "edit": "own",
+                "delete": "own",
+                "create": "yes"
+            },
+            "Preferences": {
+                "read": "own",
+                "edit": "own",
+                "delete": "no",
+                "create": "no"
+            },
+            "Notification": {
+                "read": "own",
+                "edit": "no",
+                "delete": "own",
+                "create": "no"
+            },
+            "ActionHistoryRecord": {
+                "read": "no",
+                "edit": "no",
+                "delete": "no",
+                "create": "no"
+            },
+            "Role": false,
+            "PortalRole": false
+        },
+        "fieldLevel": {
+        },
+        "scopeFieldLevel": {
+            "Attachment": {
+                "parent": false
+            },
+            "User": {
+                "gender": false
+            },
+            "EmailFolder": {
+                "assignedUser": false
+            },
+            "Email": {
+                "inboundEmails": false,
+                "emailAccounts": false
+            }
+        }
+    },
+    "default": {
+        "scopeLevel": {
+        },
+        "fieldLevel": {
+        }
+    },
+    "valuePermissionList": [
+        "assignmentPermission",
+        "userPermission",
+        "portalPermission",
+        "groupEmailAccountPermission",
+        "exportPermission"
+    ],
+    "valuePermissionHighestLevels": {
+        "assignmentPermission": "all",
+        "userPermission": "all",
+        "portalPermission": "yes",
+        "groupEmailAccountPermission": "all",
+        "exportPermission": "yes"
+    },
+    "permissionsDefaults": {
+        "assignmentPermission": "all",
+        "userPermission": "all",
+        "portalPermission": "no",
+        "groupEmailAccountPermission": "no",
+        "exportPermission": "yes"
+    },
+    "permissionsStrictDefaults": {
+        "assignmentPermission": "no",
+        "userPermission": "no",
+        "portalPermission": "no",
+        "groupEmailAccountPermission": "no",
+        "exportPermission": "no"
+    },
+    "scopeLevelTypesDefaults": {
+        "boolean": true,
+        "record": {
+            "read": "all",
+            "stream": "all",
+            "edit": "all",
+            "delete": "no",
+            "create": "yes"
+        }
+    },
+    "scopeLevelTypesStrictDefaults": {
+        "boolean": false,
+        "record": false
+    }
+}

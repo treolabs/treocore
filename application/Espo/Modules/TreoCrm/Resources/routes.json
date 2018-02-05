@@ -1,0 +1,58 @@
+[
+    {
+        "route": "/Admin/action/uploadUpgradePackage",
+        "method": "post",
+        "params": {
+            "controller": "TreoAdmin",
+            "action": "uploadUpgradePackage"
+        }
+    },
+    {
+        "route": "/ModuleManager/list",
+        "method": "get",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "list"
+        }
+    },
+    {
+        "route": "/ModuleManager/:moduleId/updateActivation",
+        "method": "put",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "updateActivation"
+        }
+    },
+    {
+        "route": "/ProgressManager/isShowPopup",
+        "method": "get",
+        "params": {
+            "controller": "ProgressManager",
+            "action": "isShowPopup"
+        }
+    },
+    {
+        "route": "/ProgressManager/popupData",
+        "method": "get",
+        "params": {
+            "controller": "ProgressManager",
+            "action": "popupData"
+        }
+    },
+    {
+        "route": "/ProgressManager/:id/cancel",
+        "method": "put",
+        "params": {
+            "controller": "ProgressManager",
+            "action": "cancel"
+        }
+    },
+    {
+        "route": "/ProgressManager/:id/close",
+        "method": "put",
+        "params": {
+            "controller": "ProgressManager",
+            "action": "close"
+        }
+    }
+]

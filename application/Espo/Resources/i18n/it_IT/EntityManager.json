@@ -1,0 +1,69 @@
+{
+  "labels": {
+    "Fields": "Campi",
+    "Relationships": "Relazioni",
+    "Schedule": "Programma",
+    "Log": "Log",
+    "Formula": "Formula"
+  },
+  "fields": {
+    "name": "Nome",
+    "type": "Tipo",
+    "labelSingular": "Etichetta Singola",
+    "labelPlural": "Etichetta Multipla",
+    "stream": "Flusso attività",
+    "label": "Etichetta",
+    "linkType": "Link Type",
+    "entityForeign": "Entità esterna",
+    "linkForeign": "Collegamento Esterno",
+    "link": "Link",
+    "labelForeign": "Label Esterna",
+    "sortBy": "Impostazione predefinita ( campo)",
+    "sortDirection": "Impostazione predefinita ( indirizzo)",
+    "relationName": "Tab Secono Nome",
+    "linkMultipleField": "Collegamento Multiplo ai Campi",
+    "linkMultipleFieldForeign": "Collegamento Esterno Link Multiplo ai Campi",
+    "disabled": "Disabilitato",
+    "textFilterFields": "Filtro testuale Campi",
+    "audited": "Controllato",
+    "auditedForeign": "Controllato esternamente",
+    "statusField": "Campo di stato",
+    "beforeSaveCustomScript": "Prima di salvare lo script personalizzato"
+  },
+  "options": {
+    "type": {
+      "": "Nessun",
+      "Base": "Base",
+      "Person": "Persone",
+      "CategoryTree": "Albero delle Categorie",
+      "Event": "Evento",
+      "BasePlus": "Base Plus",
+      "Company": "Compagnia"
+    },
+    "linkType": {
+      "manyToMany": "Molti-a-Molti",
+      "oneToMany": "Uno-a-Molti",
+      "manyToOne": "Molti-a-Uno",
+      "parentToChildren": "Padre-a-Figlio",
+      "childrenToParent": "Figlio-a-Padre"
+    },
+    "sortDirection": {
+      "asc": "Ascendente",
+      "desc": "Discendente"
+    }
+  },
+  "messages": {
+    "entityCreated": "L'Entità è stata creata",
+    "linkAlreadyExists": "Nome del link errato.",
+    "linkConflict": "Nome conflitto : link o campo con lo stesso nome già esistente"
+  },
+  "tooltips": {
+    "statusField": "Gli aggiornamenti a questo campo verranno registrati nel flusso attività.",
+    "textFilterFields": "Campi utilizzati dalla ricerca testuale.",
+    "stream": "Se l'entità ha un flusso attività.",
+    "disabled": "Spunta, se non hai bisogno di questa entità nel tuo sistema.",
+    "linkAudited": "La creazione di record correlati ed il collegamento con il record esistente verranno registrati nelle attività.",
+    "linkMultipleField": "Collegare un campo multiplo è una via pratica per modificare le relazioni. Non utilizzarlo se prevedi un elevato numero di record correlati.",
+    "entityType": "Base Plus - dispone di pannelli Attività, Storia e Compiti.\n\nEvento - disponibile nei pannelli Calendario ed Attività."
+  }
+}

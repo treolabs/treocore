@@ -1,0 +1,59 @@
+{
+  "fields": {
+    "name": "Название",
+    "number": "Номер",
+    "status": "Статус",
+    "account": "Контрагент",
+    "contact": "Контакт",
+    "contacts": "Контакты",
+    "priority": "Приоритет",
+    "type": "Тип",
+    "description": "Описание",
+    "inboundEmail": "Входящая эл. почта",
+    "lead": "Лид"
+  },
+  "links": {
+    "inboundEmail": "Входящая эл. почта",
+    "account": "Контрагент",
+    "contact": "Контакт (основной)",
+    "Contacts": "Контакты",
+    "meetings": "Встречи",
+    "calls": "Звонки",
+    "tasks": "Задачи",
+    "emails": "Эл. письма",
+    "articles": "Статьи базы знаний",
+    "lead": "Лид"
+  },
+  "options": {
+    "status": {
+      "New": "Новое",
+      "Assigned": "Назначено",
+      "Pending": "В ожидании",
+      "Closed": "Закрыто",
+      "Rejected": "Отклонено",
+      "Duplicate": "Дубликат"
+    },
+    "priority": {
+      "Low": "Низкий",
+      "Normal": "Обычный",
+      "High": "Высокий",
+      "Urgent": "Срочно"
+    },
+    "type": {
+      "Question": "Вопрос",
+      "Incident": "Происшествие",
+      "Problem": "Проблема"
+    }
+  },
+  "labels": {
+    "Create Case": "Создать обращение",
+    "Close": "Закрыть",
+    "Reject": "Отклонить",
+    "Closed": "Закрыто",
+    "Rejected": "Отклонено"
+  },
+  "presetFilters": {
+    "open": "Открытые",
+    "closed": "Закрытые"
+  }
+}

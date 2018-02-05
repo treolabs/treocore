@@ -1,0 +1,18 @@
+[
+    {
+        "rows": [
+            [
+                {"name": "name"},
+                {"name": "exportPermission"}
+            ],
+            [
+                {"name": "assignmentPermission"},
+                {"name": "userPermission"}
+            ],
+            [
+                {"name": "portalPermission"},
+                {"name": "groupEmailAccountPermission"}
+            ]
+        ]
+    }
+]

@@ -1,0 +1,13 @@
+[
+    {
+        "label": "",
+        "rows":[
+            [{"name":"name", "fullWidth": true}],
+            [{"name":"status"}, {"name":"publishDate"}],
+            [{"name":"categories"}, {"name":"expirationDate"}],
+            [{"name":"portals"}, {"name":"language"}],
+            [{"name":"body", "fullWidth": true}],
+            [{"name":"attachments", "fullWidth": true}]
+        ]
+    }
+]

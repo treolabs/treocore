@@ -1,0 +1,14 @@
+{
+    "fields": {
+        "isActive": "Aktiv",
+        "teams": "Gruppen",
+        "value": "Wert"
+    },
+    "labels": {
+        "Create Tax": "MwSt. anlegen"
+    },
+    "links": {
+        "products": "Produkte",
+        "teams": "Gruppen"
+    }
+}

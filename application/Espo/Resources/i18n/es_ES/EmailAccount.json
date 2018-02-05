@@ -1,0 +1,51 @@
+{
+  "fields": {
+    "name": "Nombre de la cuenta",
+    "status": "Estado",
+    "host": "Servidor",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "port": "Puerto",
+    "monitoredFolders": "Carpetas sincronizadas",
+    "ssl": "¿Usa SSL?",
+    "fetchSince": "Traer correos desde",
+    "emailAddress": "Correo electrónico",
+    "sentFolder": "Carpeta de enviados",
+    "storeSentEmails": "Almacenar correos enviados",
+    "keepFetchedEmailsUnread": "Mantener los correos que se han obtenido sin leer",
+    "emailFolder": "Poner en la carpeta",
+    "useSmtp": "Usar SMTP",
+    "smtpHost": "Servidor SMTP",
+    "smtpPort": "Puerto SMTP",
+    "smtpAuth": "Autentificación SMTP",
+    "smtpSecurity": "Seguridad SMTP",
+    "smtpUsername": "Usuario SMTP",
+    "smtpPassword": "Contraseña SMTP"
+  },
+  "links": {
+    "filters": "Filtros",
+    "emails": "Correos"
+  },
+  "options": {
+    "status": {
+      "Active": "Activo",
+      "Inactive": "Inactivo"
+    }
+  },
+  "labels": {
+    "Create EmailAccount": "Crear cuenta pesonal",
+    "IMAP": "IMAP",
+    "Main": "Principal",
+    "Test Connection": "Probar conexión",
+    "Send Test Email": "Enviar correo electrónico de prueba",
+    "SMTP": "SMTP"
+  },
+  "messages": {
+    "couldNotConnectToImap": "No se pudo conectar con el servidor IMAP",
+    "connectionIsOk": "Conexión correcta"
+  },
+  "tooltips": {
+    "monitoredFolders": "Las carpetas deben estar separadas por comas.\n\nPuede agregar una carpeta 'Enviados' para sincronizar los correos electrónicos enviados desde un cliente externo.",
+    "storeSentEmails": "Los correos electrónicos enviados se almacenarán en el servidor IMAP. El campo Dirección de correo electrónico debe coincidir con la dirección desde donde se enviarán los correos electrónicos."
+  }
+}

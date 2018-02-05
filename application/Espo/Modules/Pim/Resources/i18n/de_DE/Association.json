@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "associationProducts": "Artikel-Verknüpfung",
+        "description": "Beschreibung",
+        "isActive": "Aktiv"
+    },
+    "links": {
+        "associationProducts": "Artikel-Verknüpfung"
+    },
+    "labels": {
+        "Create Association": "Verknüpfung erstellen"
+    }
+}

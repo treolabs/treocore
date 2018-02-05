@@ -1,0 +1,56 @@
+build_settings:
+  verbose: true
+  clone_depth: 1
+  ignore:
+    - "api"
+    - "application/Espo/Acl"
+    - "application/Espo/AclPortal"
+    - "application/Espo/Controllers"
+    - "application/Espo/Core"
+    - "application/Espo/Entities"
+    - "application/Espo/EntryPoints"
+    - "application/Espo/Hooks"
+    - "application/Espo/Jobs"
+    - "application/Espo/Modules/Crm"
+    - "application/Espo/Notificators"
+    - "application/Espo/ORM"
+    - "application/Espo/Repositories"
+    - "application/Espo/Resources"
+    - "application/Espo/SelectManagers"
+    - "application/Espo/Services"
+    - "client/cfg"
+    - "client/css"
+    - "client/fonts"
+    - "client/img"
+    - "client/lib"
+    - "client/modules/crm"
+    - "client/res"
+    - "client/sounds"
+    - "client/src"
+    - "client/espo.min.js"
+    - "data"
+    - "documentation"
+    - "html"
+    - "install"
+    - "portal"
+    - "vendor"
+    - "bootstrap.php"
+    - "clear_cache.php"
+    - "cron.php"
+    - "extension.php"
+    - "index.php"
+    - "rebuild.php"
+    - "upgrade.php"
+setup:
+test:
+  php_code_sniffer:
+    standard: "PSR2"
+  php_cpd:
+    allow_failures: false
+  php_docblock_checker:
+        allowed_warnings: 0
+        skip_classes: false
+  php_loc:
+    allow_failures: false
+complete:
+  \Intaro\PHPCI\Plugin\Redmine:

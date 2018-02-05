@@ -1,0 +1,199 @@
+{
+    "fields": {
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "modifiedAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "modifiedBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "ownerUser": {
+            "type": "link",
+            "required": true,
+            "view": "views/fields/owner-user"
+        },
+        "assignedUser": {
+            "type": "link",
+            "required": true,
+            "view": "views/fields/assigned-user"
+        },
+        "teams": {
+            "type": "linkMultiple",
+            "view": "views/fields/teams"
+        },
+        "category": {
+            "type": "link"
+        },
+        "state": {
+            "type": "coloredEnum",
+            "required": true,
+            "options": [
+                "uploaded",
+                "processed"
+            ],
+            "optionColors": {
+                "uploaded": "FFE900",
+                "processed": "00FF37"
+            },
+            "default": "uploaded",
+            "isSorted": false
+        },
+        "width": {
+            "type": "int",
+            "required": false,
+            "disableFormatting": false,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "height": {
+            "type": "int",
+            "required": false,
+            "disableFormatting": false,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "alt": {
+            "type": "varchar",
+            "required": false,
+            "trim": true,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "size": {
+            "notNull": false,
+            "type": "float",
+            "required": false,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "isMain": {
+            "notNull": true,
+            "type": "bool",
+            "default": false,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "image": {
+            "type": "image",
+            "required": true,
+            "previewSize": "small",
+            "audited": false,
+            "tooltip": false,
+            "isCustom": false,
+            "view": "pim:views/category-image/fields/image"
+        },
+        "imagesMultiple": {
+            "layoutListDisabled": true,
+            "type": "attachmentMultiple",
+            "required": true,
+            "sourceList": [],
+            "tooltip": false,
+            "isCustom": true
+        },
+        "type": {
+            "type": "enum",
+            "required": true,
+            "options": [
+                "File",
+                "Files",
+                "Link"
+            ],
+            "default": "File",
+            "isSorted": false,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        },
+        "imageLink": {
+            "type": "url",
+            "required": true,
+            "audited": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "modifiedBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "ownerUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "assignedUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "teams": {
+            "type": "hasMany",
+            "entity": "Team",
+            "relationName": "EntityTeam",
+            "layoutRelationshipsDisabled": true
+        },
+        "category": {
+            "type": "belongsTo",
+            "foreign": "categoryImages",
+            "entity": "Category",
+            "audited": false,
+            "isCustom": false
+        },
+        "imagesMultiple": {
+            "type": "hasChildren",
+            "entity": "Attachment",
+            "foreign": "parent",
+            "layoutRelationshipsDisabled": true,
+            "relationName": "attachments"
+        },
+        "image": {
+            "type": "belongsTo",
+            "entity": "Attachment",
+            "skipOrmDefs": true
+        }
+    },
+    "collection": {
+        "sortBy": "isMain",
+        "asc": false,
+        "textFilterFields": [
+            "name"
+        ]
+    },
+    "indexes": {
+        "ownerUser": {
+            "columns": ["ownerUserId", "deleted"]
+        },
+        "assignedUser": {
+            "columns": [
+                "assignedUserId",
+                "deleted"
+            ]
+        }
+    }
+}

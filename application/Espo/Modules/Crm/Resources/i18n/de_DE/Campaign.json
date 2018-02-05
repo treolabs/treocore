@@ -1,0 +1,75 @@
+{
+  "fields": {
+    "name": "Name",
+    "description": "Beschreibung",
+    "status": "Status",
+    "type": "Typ",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "targetLists": "Kontaktlisten",
+    "excludingTargetLists": "Kontaktlisten ausschließen",
+    "sentCount": "Gesendet",
+    "openedCount": "Geöffnet",
+    "clickedCount": "Geklickt",
+    "optedOutCount": "Opt-Out gesetzt",
+    "bouncedCount": "Nicht zustellbar",
+    "hardBouncedCount": "Zurückgewiesen",
+    "softBouncedCount": "Temporär nicht zustellbar",
+    "leadCreatedCount": "Erstellte Interessenten",
+    "revenue": "Umsatz",
+    "revenueConverted": "Umsatz (umgerechnet)",
+    "budget": "Budget",
+    "budgetConverted": "Budget (umgerechnet)"
+  },
+  "links": {
+    "targetLists": "Kontaktlisten",
+    "excludingTargetLists": "Kontaktlisten ausschließen",
+    "accounts": "Firmen",
+    "contacts": "Kontakte",
+    "leads": "Interessenten",
+    "opportunities": "Verkaufschancen",
+    "campaignLogRecords": "Protokoll",
+    "massEmails": "Massen E-Mails",
+    "trackingUrls": "Tracking URLs"
+  },
+  "options": {
+    "type": {
+      "Email": "E-Mail",
+      "Web": "Web",
+      "Television": "Fernsehen",
+      "Radio": "Radio",
+      "Newsletter": "Newsletter",
+      "Mail": "Mail"
+    },
+    "status": {
+      "Planning": "Planung",
+      "Active": "Aktiv",
+      "Inactive": "Inaktiv",
+      "Complete": "Abgeschlossen"
+    }
+  },
+  "labels": {
+    "Create Campaign": "Neue Kampagne",
+    "Target Lists": "Kontaktlisten",
+    "Statistics": "Statistik",
+    "hard": "hart",
+    "soft": "weich",
+    "Unsubscribe": "Abmelden",
+    "Mass Emails": "Massen E-Mails",
+    "Email Templates": "E-Mail Vorlagen",
+    "Unsubscribe again": "Abmelden",
+    "Subscribe again": "Anmelden",
+    "Create Target List": "Interessentenliste erstellen"
+  },
+  "presetFilters": {
+    "active": "Aktiv"
+  },
+  "messages": {
+    "unsubscribed": "Sie wurden erfolgreich aus unserem Verteiler entfernt",
+    "subscribedAgain": "Sie sind wieder angemeldet."
+  },
+  "tooltips": {
+    "targetLists": "Zielkontakte die Nachrichten empfangen sollen",
+    "excludingTargetLists": "Zielkontakte die keine Nachrichten empfangen sollen"
+  }
+}

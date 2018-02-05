@@ -1,0 +1,47 @@
+{
+    "fields": {
+        "attributeGroup": "Attribute group",
+        "productAttributes": "Product attributes",
+        "typeValue": "Values",
+        "isSystem": "Is system",
+        "type": "Attribute Type",
+        "code": "Code",
+        "name": "Attribute Name",
+        "products": "Products",
+        "productAttributeValues": "Product Attribute Values",
+        "productFamilyAttributes": "Product family attributes",
+        "channelProductAttributeValues": "Channel Product Attribute Values"
+    },
+    "options": {
+        "type": {
+            "array": "Array",
+            "bool": "Boolean",
+            "date": "Date",
+            "datetime": "DateTime",
+            "enum": "Enum",
+            "float": "Float",
+            "int": "Int",
+            "multiEnum": "Multi-Enum",
+            "text": "Text",
+            "url": "Url",
+            "varchar": "Varchar",
+            "varcharMultiLang": "Varchar Multi Lang",
+            "textMultiLang": "Text Multi Lang",
+            "enumMultiLang": "Enum Multi Lang",
+            "multiEnumMultiLang": "Multi-Enum Multi Lang",
+            "arrayMultiLang": "Array Multi Lang"
+        },
+        "typeValue": {}
+    },
+    "links": {
+        "attributeGroup": "Attribute group",
+        "productAttributes": "Product attributes",
+        "products": "Products",
+        "productAttributeValues": "Product Attribute Values",
+        "productFamilyAttributes": "Product family attributes",
+        "channelProductAttributeValues": "Channel Product Attribute Values"
+    },
+    "labels": {
+        "Create Attribute": "Create Attribute"
+    }
+}

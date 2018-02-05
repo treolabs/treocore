@@ -1,0 +1,54 @@
+{
+  "fields": {
+    "name": "名称",
+    "emailAddress": "电子邮件",
+    "title": "标题",
+    "accountRole": "标题",
+    "account": "客户",
+    "accounts": "客户",
+    "phoneNumber": "电话",
+    "accountType": "客户类型",
+    "doNotCall": "不要电联",
+    "address": "地址",
+    "opportunityRole": "商机角色",
+    "description": "描述",
+    "campaign": "营销活动",
+    "targetLists": "目标列表",
+    "targetList": "目标列表",
+    "portalUser": "门户网站用户",
+    "originalLead": "原始潜在顾客",
+    "acceptanceStatus": "验收状态",
+    "accountIsInactive": "账户未激活",
+    "acceptanceStatusMeetings": "Acceptance Status (Meetings)",
+    "acceptanceStatusCalls": "Acceptance Status (Calls)"
+  },
+  "links": {
+    "opportunities": "商机",
+    "cases": "案例",
+    "targetLists": "目标列表",
+    "campaignLogRecords": "营销活动日志",
+    "campaign": "营销活动",
+    "account": "帐户（主要）",
+    "accounts": "客户",
+    "casesPrimary": "案例（主要）",
+    "portalUser": "门户用户",
+    "originalLead": "原始潜在顾客",
+    "documents": "文件"
+  },
+  "labels": {
+    "Create Contact": "创建联系人"
+  },
+  "options": {
+    "opportunityRole": {
+      "": "—无—",
+      "Decision Maker": "决策者",
+      "Evaluator": "评估者",
+      "Influencer": "影响者"
+    }
+  },
+  "presetFilters": {
+    "portalUsers": "门户用户",
+    "notPortalUsers": "不是门户用户",
+    "accountActive": "激活"
+  }
+}

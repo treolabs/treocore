@@ -1,0 +1,30 @@
+{
+  "actualFields": [],
+  "fields": {},
+  "filter": true,
+  "fieldDefs": {
+    "type": "jsonArray"
+  },
+  "translatedOptions": true,
+  "params": [
+    {
+      "name": "required",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "name": "audited",
+      "type": "bool"
+    },
+    {
+      "name": "readOnly",
+      "type": "bool"
+    },
+    {
+      "name": "options",
+      "type": "array",
+      "view": "multilang:views/admin/field-manager/fields/optionsMultiLang"
+    }
+  ],
+  "view": "multilang:views/fields/multi-enum-multilang"
+}

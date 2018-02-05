@@ -1,0 +1,9 @@
+{
+	"entity": true,
+	"layouts": true,
+	"tab": true,
+	"acl": true,
+    "aclActionList": ["read"],
+	"customizable": true,
+    "object": true
+}

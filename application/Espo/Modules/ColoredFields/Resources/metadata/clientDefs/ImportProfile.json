@@ -1,0 +1,14 @@
+{
+    "defaultValueFields": {
+        "color": {
+            "view": "views/fields/varchar",
+            "default": ""
+        },
+        "coloredEnum": {
+            "view": "views/fields/enum"
+        },
+        "coloredMultiEnum": {
+            "view": "views/fields/multi-enum"
+        }
+    }
+}

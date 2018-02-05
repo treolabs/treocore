@@ -1,0 +1,12 @@
+{
+    "entity": true,
+    "layouts": true,
+    "tab": true,
+    "acl": true,
+    "module": "Crm",
+    "customizable": true,
+    "stream": false,
+    "importable": false,
+    "object": true,
+    "statusField": "status"
+}

@@ -1,0 +1,63 @@
+{
+  "labels": {
+    "Converted To": "Przekształcony w ",
+    "Create Lead": "Utwórz potencjalny kontakt",
+    "Convert": "Przekształć",
+    "convert": "przekształć"
+  },
+  "fields": {
+    "name": "Nazwa",
+    "emailAddress": "E-mail",
+    "title": "Tytuł",
+    "website": "Strona Internetowa",
+    "phoneNumber": "Telefon",
+    "accountName": "Nazwa Konta",
+    "doNotCall": "Nie Dzwoń",
+    "address": "Adres",
+    "status": "Status",
+    "source": "Źródło",
+    "opportunityAmount": "Wartość szansy sprzedaży",
+    "opportunityAmountConverted": "Wartość szansy sprzedaży (konwertowana)",
+    "description": "Opis ",
+    "createdAccount": "Klient",
+    "createdContact": "Kontakty",
+    "createdOpportunity": "Szansa sprzedaży",
+    "campaign": "Kampania",
+    "targetLists": "Listy docelowe",
+    "targetList": "Lista docelowa"
+  },
+  "links": {
+    "targetLists": "Listy docelowe",
+    "campaignLogRecords": "Log kampanii",
+    "campaign": "Kampania",
+    "createdAccount": "Klient",
+    "createdContact": "Kontakt",
+    "createdOpportunity": "Szansa sprzedaży"
+  },
+  "options": {
+    "status": {
+      "New": "Nowy",
+      "Assigned": "Przypisany",
+      "In Process": "W trakcie",
+      "Converted": "Przekształcony",
+      "Recycled": "Usunięty",
+      "Dead": "Martwy"
+    },
+    "source": {
+      "": "Brak",
+      "Call": "Rozmowa",
+      "Email": "E-mail",
+      "Existing Customer": "Istniejący klient",
+      "Partner": "Partner",
+      "Public Relations": "Relacje",
+      "Web Site": "Stwona Internetowa",
+      "Campaign": "Kampania",
+      "Other": "Inny"
+    }
+  },
+  "presetFilters": {
+    "active": "Aktywny",
+    "actual": "Bieżący",
+    "converted": "Przekształcony"
+  }
+}

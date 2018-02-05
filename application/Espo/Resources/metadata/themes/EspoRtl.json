@@ -1,0 +1,9 @@
+{
+    "stylesheet": "client/css/espo/espo-rtl.css",
+    "stylesheetIframe": "client/css/espo/espo-rtl-iframe.css",
+    "dashboardCellHeight": 155,
+    "dashboardCellMargin": 19,
+    "navbarHeight": 44,
+    "modalFooterAtTheTop": true,
+    "modalFullHeight": true
+}

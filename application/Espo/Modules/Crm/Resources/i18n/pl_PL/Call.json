@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "name": "Nazwa",
+    "parent": "Rodzic",
+    "status": "Status",
+    "dateStart": "Data rozpoczęcia",
+    "dateEnd": "Data zakończenia",
+    "direction": "Kierunek",
+    "duration": "Czas",
+    "description": "Opis ",
+    "users": "Użytkownik",
+    "contacts": "Kontakty",
+    "leads": "Potencjalne Kontakty",
+    "reminders": "Przypomnienia",
+    "account": "Klient"
+  },
+  "options": {
+    "status": {
+      "Planned": "Planowane",
+      "Held": "Odbyło się",
+      "Not Held": "Nie odbyło się"
+    },
+    "direction": {
+      "Outbound": "Wychodzący",
+      "Inbound": "Przychodzący"
+    },
+    "acceptanceStatus": {
+      "None": "Brak",
+      "Accepted": "Zaakceptowany",
+      "Declined": "Odrzucony",
+      "Tentative": "Niepewny"
+    }
+  },
+  "massActions": {
+    "setHeld": "Odbyło się",
+    "setNotHeld": "Nie odbyło się"
+  },
+  "labels": {
+    "Create Call": "Utwórz Telefon",
+    "Set Held": "Odbyło się",
+    "Set Not Held": "Nie odbyło się",
+    "Send Invitations": "Wyślij Powiadomienie"
+  },
+  "presetFilters": {
+    "planned": "Planowane",
+    "held": "Odbyło się",
+    "todays": "Dzisiaj"
+  }
+}

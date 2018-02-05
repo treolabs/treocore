@@ -1,0 +1,66 @@
+{
+  "labels": {
+    "Converted To": "Umgewandelt zu",
+    "Create Lead": "Interessent erstellen",
+    "Convert": "Umwandeln",
+    "convert": "umwandeln"
+  },
+  "fields": {
+    "name": "Name",
+    "emailAddress": "E-Mail",
+    "title": "Funktion",
+    "website": "Webseite",
+    "phoneNumber": "Telefon",
+    "accountName": "Firmenname",
+    "doNotCall": "Anrufe unerwünscht",
+    "address": "Adresse",
+    "status": "Status",
+    "source": "Quelle",
+    "opportunityAmount": "Verkaufschance Volumen",
+    "opportunityAmountConverted": "Verkaufschance Volumen (umgerechnet)",
+    "description": "Beschreibung",
+    "createdAccount": "Firma",
+    "createdContact": "Kontakt",
+    "createdOpportunity": "Verkaufschance",
+    "campaign": "Kampagne",
+    "targetLists": "Kontaktlisten",
+    "targetList": "Kontaktliste",
+    "industry": "Industrie"
+  },
+  "links": {
+    "targetLists": "Kontaktlisten",
+    "campaignLogRecords": "Kampagnen Log",
+    "campaign": "Kampagne",
+    "createdAccount": "Firma",
+    "createdContact": "Kontakt",
+    "createdOpportunity": "Verkaufschance",
+    "cases": "Fälle",
+    "documents": "Dokumente"
+  },
+  "options": {
+    "status": {
+      "New": "Neu",
+      "Assigned": "Zugewiesen",
+      "In Process": "In Arbeit",
+      "Converted": "Umgewandelt",
+      "Recycled": "Wiedereröffnet",
+      "Dead": "'Gestorben'"
+    },
+    "source": {
+      "": "Kein(e)",
+      "Call": "Anruf",
+      "Email": "E-Mail",
+      "Existing Customer": "Bestandskunde",
+      "Partner": "Partner",
+      "Public Relations": "Public Relations",
+      "Web Site": "Webseite",
+      "Campaign": "Kampagne",
+      "Other": "Andere"
+    }
+  },
+  "presetFilters": {
+    "active": "Aktiv",
+    "actual": "Aktuell",
+    "converted": "Umgewandelt"
+  }
+}

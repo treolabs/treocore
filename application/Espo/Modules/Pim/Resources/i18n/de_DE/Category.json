@@ -1,0 +1,30 @@
+{
+    "fields": {
+        "name": "Name",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "categories": "Kategorien",
+        "products": "Artikel",
+        "categoryRoot": "Kategoriebaum",
+        "rootCategories": "Kategorien",
+        "channels": "Kanäle",
+        "categoryImages": "Kategoriebilder",
+        "categoryParent": "Hauptkategorie",
+        "markupType": "Typ",
+        "markupValue": "Wert",
+        "teams": "Gruppen"
+    },
+    "links": {
+        "categories": "Kategorien",
+        "products": "Artikel",
+        "channels": "Kanäle",
+        "categoryRoot": "Kategoriebaum",
+        "rootCategories": "Kategorien",
+        "categoryImages": "Kategoriebilder",
+        "categoryParent": "Hauptkategorie",
+        "teams": "Gruppen"
+    },
+    "labels": {
+        "Create Category": "Kategorie anlegen"
+    }
+}

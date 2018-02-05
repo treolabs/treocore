@@ -1,0 +1,32 @@
+{
+  "fields": {
+    "post": "Paskelbti",
+    "attachments": "Prisegtukai",
+    "targetType": "Adresatas",
+    "teams": "Komandos",
+    "users": "Vartotojai",
+    "portals": "Portalai",
+    "type": "Tipas",
+    "isInternal": "Yra vidinis (vidiniams vartotojams)",
+    "createdByGender": "Sukurta pagal lytį",
+    "data": "Duomenys",
+    "number": "Numeris"
+  },
+  "filters": {
+    "all": "Visi",
+    "posts": "Pranešimai",
+    "updates": "Atnaujinimai"
+  },
+  "messages": {
+    "writeMessage": "Žinutę rašykite čia"
+  },
+  "options": {
+    "targetType": {
+      "self": "sau",
+      "users": "konkrečiam vartotojui (ams)",
+      "teams": "konkrečiai komandai (oms)",
+      "all": "visiems vidiniams vartotojams",
+      "portals": "konkretiems vartotojams"
+    }
+  }
+}

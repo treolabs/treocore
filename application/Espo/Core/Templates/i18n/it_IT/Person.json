@@ -1,0 +1,13 @@
+{
+  "fields": {
+    "address": "Indirizzo"
+  },
+  "links": {
+    "meetings": "Riunioni",
+    "calls": "Chiamate",
+    "tasks": "Compiti"
+  },
+  "labels": {
+    "Create {entityType}": "Crea {entityTypeTranslated}"
+  }
+}

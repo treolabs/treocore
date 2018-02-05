@@ -1,0 +1,19 @@
+{
+  "labels": {
+    "inputLanguage": "Spracheingabe"
+  },
+  "descriptions": {
+    "inputLanguage": "Spracheingabe für übersetzbare Felder."
+  },
+  "fieldTypes": {
+    "textMultiLang": "Textfeld Mehrsprachigkeit",
+    "varcharMultiLang": "Zusätzliches Feld für andere Sprache",
+    "enumMultiLang": "Auswahlfeld Mehrsprachigkeit",
+    "multiEnumMultiLang": "Mehrfachauswahlfeld Mehrsprachigkeit",
+    "arrayMultiLang": "Listenfeld Mehrsprachigkeit"
+  },
+  "fields": {
+    "optionsEnUs": "Option Englisch",
+    "optionsDeDe": "Option Deutsch"
+  }
+}

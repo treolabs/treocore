@@ -1,0 +1,9 @@
+{
+  "labels": {
+    "inputLanguage": "Input Language"
+  },
+  "fields": {
+    "inputLanguageList": "Input Language List",
+    "isMultilangActive": "Is Active"
+  }
+}

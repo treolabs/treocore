@@ -1,0 +1,14 @@
+[
+	{
+		"label":"",
+		"rows":[
+			[{"name":"name", "fullWidth": true}],
+			[{"name":"status"}, {"name":"priority"}],
+			[{"name":"dateStart", "fullWidth": true}],
+			[{"name":"dateEnd", "fullWidth": true}],
+			[{"name":"parent", "fullWidth": true}],
+			[{"name":"description", "fullWidth": true}],
+			[{"name":"attachments", "fullWidth": true}]
+		]
+	}
+]

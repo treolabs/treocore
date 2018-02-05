@@ -1,0 +1,15 @@
+{
+    "fields": {
+        "name": "Group Name",
+        "description": "Description",
+        "isActive": "Active",
+        "attributes": "Attributes",
+        "sortOrder": "Sort order"
+    },
+    "links": {
+        "attributes": "Attributes"
+    },
+    "labels": {
+        "Create AttributeGroup": "Create Attribute group"
+    }
+}

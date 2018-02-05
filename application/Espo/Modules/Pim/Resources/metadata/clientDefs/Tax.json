@@ -1,0 +1,23 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy",
+        "onlyActive"
+    ],
+    "hiddenBoolFilterList": [
+        "onlyActive"
+    ],
+    "disabledMassActions": [
+        "merge"
+    ],
+    "views": {
+        "list": "pim:views/list"
+    },
+    "recordViews": {
+        "list": "pim:views/record/list",
+        "search": "pim:views/record/search"
+    },
+    "modalViews": {
+        "select": "pim:views/modals/select-records"
+    }
+}

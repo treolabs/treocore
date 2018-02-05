@@ -1,0 +1,78 @@
+{
+    "fields": {
+        "categories": "Kategorien",
+        "productAttributes": "Artikelattribute",
+        "productImages": "Bilder",
+        "product": "Hauptartikel",
+        "products": "Artikel",
+        "attributes": "Attribute",
+        "productAttributeValues": "Attribut-Werte",
+        "productFamily": "Artikelfamilie",
+        "brand": "Marke",
+        "associationRelatedProduct": "Verknüpfung von ähnlichen Artikeln",
+        "associationMainProducts": "Hauptartikel-Verknüpfung",
+        "supplierProducts": "Lieferant",
+        "productStatus": "Artikelstatus",
+        "sku": "SKU",
+        "isActive": "Aktiv",
+        "type": "Typ",
+        "productTypeBundles": "Artikeltyp-Bundle",
+        "productBundles": "Artikel-Bundle",
+        "productTypePackages": "Artikeltyp-Set",
+        "productPackages": "Artikel-Set",
+        "productTypeConfigurables": "Konfigurierbarer Artikeltyp",
+        "channelProductAttributeValues": "Attributwerte vom Kanalartikel",
+        "amount": "Menge",
+        "channelProducts": "Kanalartikel",
+        "price": "EK-Preis",
+        "finalPrice": "Endgültiger Preis",
+        "currency": "Währung",
+        "tax": "MwSt.",
+        "packaging": "Verpackung",
+        "ean": "EAN",
+        "mpn": "MPN",
+        "uvp": "UVP"
+    },
+    "links": {
+        "categories": "Kategorien",
+        "productAttributes": "Artikelattribute",
+        "productImages": "Bilder",
+        "product": "Hauptartikel",
+        "products": "Artikel",
+        "attributes": "Attribute",
+        "productAttributeValues": "Attribut-Werte",
+        "productFamily": "Artikelfamilie",
+        "brand": "Marke",
+        "associationRelatedProduct": "Verknüpfung von ähnlichen Artikeln",
+        "associationMainProducts": "Hauptartikel-Verknüpfung",
+        "supplierProducts": "Lieferant",
+        "productTypeBundles": "Artikeltyp-Bundle",
+        "productBundles": "Artikel-Bundle",
+        "productTypePackages": "Artikeltyp-Set",
+        "productPackages": "Artikel-Set",
+        "productTypeConfigurables": "Konfigurierbarer Artikeltyp",
+        "channelProductAttributeValues": "Attributwerte vom Kanalartikel",
+        "channelProducts": "Kanalartikel",
+        "tax": "MwSt.",
+        "packaging": "Verpackung"
+    },
+    "labels": {
+        "Create Product": "Artikel anlegen",
+        "Product Attributes": "Artikelattribute",
+        "There is no valid attributes for channel": "Es gibt keine gültigen Attribute für Kanal",
+        "Add Attribute Filter": "Attribut-Filter einfügen"
+    },
+    "options": {
+        "productStatus": {
+            "new": "Neu",
+            "inStock": "Auf Lager",
+            "used": "Gebraucht",
+            "refurbished": "Generalüberholt"
+        },
+        "type": {
+            "simpleProduct": "Einfacher Artikel",
+            "bundleProduct": "Bundle-Artikel",
+            "packageProduct": "Artikel-Set"
+        }
+    }
+}

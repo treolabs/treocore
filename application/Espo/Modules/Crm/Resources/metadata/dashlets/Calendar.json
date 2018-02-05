@@ -1,0 +1,55 @@
+{
+    "view":"crm:views/dashlets/calendar",
+    "aclScope": "Calendar",
+    "options": {
+        "view": "crm:views/dashlets/options/calendar",
+        "fields": {
+            "title": {
+                "type": "varchar",
+                "required": true
+            },
+            "autorefreshInterval": {
+                "type": "enumFloat",
+                "options": [0, 0.5, 1, 2, 5, 10]
+            },
+            "enabledScopeList": {
+                "type": "multiEnum",
+                "translation": "Global.scopeNamesPlural",
+                "required": true
+            },
+            "mode": {
+                "type": "enum",
+                "options": ["basicWeek", "agendaWeek", "timeline", "month", "basicDay", "agendaDay"]
+            },
+            "users": {
+                "type": "linkMultiple",
+                "entity": "User",
+                "view": "views/fields/assigned-users",
+                "sortable": true
+            }
+        },
+        "defaults": {
+            "autorefreshInterval": 0.5,
+            "mode": "basicWeek",
+            "enabledScopeList": ["Meeting", "Call", "Task"]
+        },
+        "layout": [
+            {
+                "rows": [
+                    [
+                        {"name": "title"},
+                        {"name": "autorefreshInterval"}
+                    ],
+                    [
+                        {"name": "mode"},
+                        {"name": "enabledScopeList"}
+                    ],
+                    [
+                        {"name": "users"},
+                        false
+                    ]
+                ]
+            }
+        ]
+    }
+}

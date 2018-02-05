@@ -1,0 +1,20 @@
+{
+  "fields": {
+    "name": "Nombre",
+    "roles": "Roles",
+    "positionList": "Lista de puestos"
+  },
+  "links": {
+    "users": "Usuarios",
+    "notes": "Notas",
+    "roles": "Roles",
+    "inboundEmails": "Cuentas de correo grupales"
+  },
+  "tooltips": {
+    "roles": "Todos los usuarios de este equipo tendrán acceso a la configuración desde los roles seleccionados",
+    "positionList": "Puestos disponibles en este equipo. Por ejemplo Vendedor, Gerente."
+  },
+  "labels": {
+    "Create Team": "Crear equipo"
+  }
+}

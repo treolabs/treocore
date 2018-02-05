@@ -1,0 +1,10 @@
+{
+  "fields": {
+    "skipNotifications": "Praleisti pranešimus"
+  },
+  "labels": {
+    "Create EmailFolder": "Sukurti aplanką",
+    "Manage Folders": "Tvarkyti aplankus",
+    "Emails": "El. laiškai"
+  }
+}

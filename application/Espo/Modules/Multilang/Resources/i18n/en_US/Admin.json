@@ -1,0 +1,19 @@
+{
+  "labels": {
+    "inputLanguage": "Input Language"
+  },
+  "descriptions": {
+    "inputLanguage": "Input languages for translatable fields."
+  },
+  "fieldTypes": {
+    "textMultiLang": "Text MultiLang",
+    "varcharMultiLang": "Varchar MultiLang",
+    "enumMultiLang": "Enum MultiLang",
+    "multiEnumMultiLang": "Multi-Enum MultiLang",
+    "arrayMultiLang": "Array MultiLang"
+  },
+  "fields": {
+    "optionsEnUs": "Option English",
+    "optionsDeDe": "Option Deutsch"
+  }
+}

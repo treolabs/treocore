@@ -1,0 +1,70 @@
+{
+  "labels": {
+    "Converted To": "Convertito in",
+    "Create Lead": "Crea Guida",
+    "Convert": "Convertire",
+    "convert": "convertire"
+  },
+  "fields": {
+    "name": "Nome",
+    "emailAddress": "Email",
+    "title": "Titolo",
+    "website": "Sito Web",
+    "phoneNumber": "Telefono",
+    "accountName": "Nome utente",
+    "doNotCall": "Non chiamare",
+    "address": "Indirizzi",
+    "status": "Stato",
+    "source": "Provenienza",
+    "opportunityAmount": "Opportunity Amount",
+    "opportunityAmountConverted": "Opportunity Amount (converted)",
+    "description": "Descrizione",
+    "createdAccount": "Account",
+    "createdContact": "Contatti",
+    "createdOpportunity": "Opportunità",
+    "campaign": "Campagnia",
+    "targetLists": "Liste di destinazione",
+    "targetList": "Lista di destinazione",
+    "industry": "Settore",
+    "acceptanceStatus": "Stato accettazione",
+    "opportunityAmountCurrency": "Valuta dell'importo della proposta",
+    "acceptanceStatusMeetings": "Stato accettazione (riunioni)",
+    "acceptanceStatusCalls": "Stato accettazione (chiamate)"
+  },
+  "links": {
+    "targetLists": "Liste di destinazione",
+    "campaignLogRecords": "Log Campagna",
+    "campaign": "Campagna",
+    "createdAccount": "Account",
+    "createdContact": "Contatti",
+    "createdOpportunity": "Opportunità",
+    "cases": "Casi",
+    "documents": "Documenti"
+  },
+  "options": {
+    "status": {
+      "New": "Nuovo",
+      "Assigned": "Assegnato",
+      "In Process": "In corso",
+      "Converted": "Convertito",
+      "Recycled": "Recuperato",
+      "Dead": "Fuori uso"
+    },
+    "source": {
+      "": "Nessun",
+      "Call": "Chiamata",
+      "Email": "Email",
+      "Existing Customer": "Cliente esistente",
+      "Partner": "Partner",
+      "Public Relations": "Pubbliche Relazioni",
+      "Web Site": "Sito Web",
+      "Campaign": "Campagna",
+      "Other": "Altro"
+    }
+  },
+  "presetFilters": {
+    "active": "Attivo",
+    "actual": "Attuale",
+    "converted": "Convertito"
+  }
+}

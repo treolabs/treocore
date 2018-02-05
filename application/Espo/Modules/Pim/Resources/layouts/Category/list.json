@@ -1,0 +1,15 @@
+[
+    {
+        "name": "name",
+        "link": true
+    },
+    {
+        "name": "categoryRoot"
+    },
+    {
+        "name": "categoryParent"
+    },
+    {
+        "name": "isActive"
+    }
+]
