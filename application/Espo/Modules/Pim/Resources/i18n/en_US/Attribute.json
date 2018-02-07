@@ -30,8 +30,7 @@
             "enumMultiLang": "Enum Multi Lang",
             "multiEnumMultiLang": "Multi-Enum Multi Lang",
             "arrayMultiLang": "Array Multi Lang"
-        },
-        "typeValue": {}
+        }
     },
     "links": {
         "attributeGroup": "Attribute group",

@@ -37,5 +37,6 @@
     "type":"jsonArray"
   },
   "translatedOptions": true,
+  "hookClassName": "\\Espo\\Modules\\Multilang\\FieldManager\\Hooks\\ArrayMultilang",
   "view": "multilang:views/fields/array-multilang"
 }

@@ -1,14 +1,16 @@
 {
     "fields": {
         "name": {
-            "type": "varcharMultiLang",
+            "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "isMultilang": true
         },
         "unit": {
-            "type": "varcharMultiLang",
+            "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "isMultilang": true
         },
         "createdAt": {
             "type": "datetime",

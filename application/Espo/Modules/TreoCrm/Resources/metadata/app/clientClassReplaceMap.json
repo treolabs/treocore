@@ -20,6 +20,9 @@
     "views/record/edit-side": [
         "treo-crm"
     ],
+    "views/record/list": [
+        "treo-crm"
+    ],
     "views/record/search": [
         "treo-crm"
     ],

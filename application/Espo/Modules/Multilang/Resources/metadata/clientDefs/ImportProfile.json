@@ -1,13 +1,18 @@
 {
     "defaultValueFields": {
         "arrayMultiLang": {
-            "view": "views/fields/array"
+            "view": "views/fields/array",
+            "withoutRandomView": true
         },
         "enumMultiLang": {
-            "view": "views/fields/enum"
+            "view": "views/fields/enum",
+            "isRequiredOptions": true,
+            "withoutRandomView": true
         },
         "multiEnumMultiLang": {
-            "view": "views/fields/multi-enum"
+            "view": "views/fields/multi-enum",
+            "isRequiredOptions": true,
+            "withoutRandomView": true
         },
         "textMultiLang": {
             "view": "views/fields/text",

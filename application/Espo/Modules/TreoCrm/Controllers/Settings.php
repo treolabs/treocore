@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Controllers;
 
@@ -13,40 +13,26 @@ use Slim\Http\Request;
  */
 class Settings extends ParentSettings
 {
-
-    /**
-     * Update action
-     *
-     * @param array $params
-     * @param array $data
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function actionUpdate($params, $data, $request)
-    {
-        // triggered event
-        $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
-        $this->getContainer()->get('eventManager')->triggered('SettingsController', 'beforeUpdate', $eventData);
-
-        return parent::actionUpdate($params, $data, $request);
-    }
-
     /**
      * Patch action
      *
-     * @param array $params
-     * @param array $data
+     * @param array   $params
+     * @param array   $data
      * @param Request $request
      *
      * @return array
+     * @throws \Espo\Core\Exceptions\BadRequest
+     * @throws \Espo\Core\Exceptions\Error
+     * @throws \Espo\Core\Exceptions\Forbidden
      */
     public function actionPatch($params, $data, $request)
     {
+        $result = parent::actionPatch($params, $data, $request);
         // triggered event
         $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
-        $this->getContainer()->get('eventManager')->triggered('SettingsController', 'beforeUpdate', $eventData);
+        $this->getContainer()->get('eventManager')->triggered('SettingsController', 'afterUpdate', $eventData);
 
-        return parent::actionPatch($params, $data, $request);
+
+        return $result;
     }
 }

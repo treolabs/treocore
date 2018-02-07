@@ -8,6 +8,7 @@ use Espo\Modules\TreoCrm\Core\Utils\Metadata;
 use Espo\Core\Utils\FieldManager as EspoFieldManager;
 use Espo\Core\Utils\Metadata\Helper as MetadataHelper;
 use Espo\Core\Utils\Language;
+use Espo\Core\Utils\FieldManager\Hooks\Base as BaseHook;
 
 /**
  * FieldManager util
@@ -168,5 +169,33 @@ class FieldManager extends EspoFieldManager
     protected function getDefaultLanguage()
     {
         return $this->getContainer()->get('defaultLanguage');
+    }
+
+    /**
+     * Get hook for fields
+     *
+     * @param $type
+     *
+     * @return BaseHook|null
+     */
+    protected function getHook($type)
+    {
+        $hook = null;
+
+        $className = $this->getMetadata()->get(['fields', $type, 'hookClassName']);
+
+        if (!empty($className) && class_exists($className)) {
+            // create hook
+            $hook = new $className();
+
+            // inject dependencies
+            foreach ($hook->getDependencyList() as $name) {
+                $hook->inject($name, $this->getContainer()->get($name));
+            }
+        } else {
+            $GLOBALS['log']->error("Field Manager hook class '{$className}' does not exist.");
+        }
+
+        return $hook;
     }
 }

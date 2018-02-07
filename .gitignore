@@ -5,5 +5,6 @@ data/
 /vendor/
 /composer.lock
 /custom/
-!/dev/data/
 /nb_metadata
+!/apidocs/
+/apidocs/index.html

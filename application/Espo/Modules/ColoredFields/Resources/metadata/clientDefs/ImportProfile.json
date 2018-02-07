@@ -5,10 +5,14 @@
             "default": ""
         },
         "coloredEnum": {
-            "view": "views/fields/enum"
+            "view": "views/fields/enum",
+            "isRequiredOptions": true,
+            "withoutRandomView": true
         },
         "coloredMultiEnum": {
-            "view": "views/fields/multi-enum"
+            "view": "views/fields/multi-enum",
+            "isRequiredOptions": true,
+            "withoutRandomView": true
         }
     }
 }

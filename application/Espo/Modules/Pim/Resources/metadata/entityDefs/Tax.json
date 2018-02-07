@@ -1,9 +1,10 @@
 {
     "fields": {
         "name": {
-            "type": "varcharMultiLang",
+            "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "isMultilang": true
         },
         "value": {
             "type": "float",

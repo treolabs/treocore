@@ -26,5 +26,6 @@
       "view": "multilang:views/admin/field-manager/fields/optionsMultiLang"
     }
   ],
+  "hookClassName": "\\Espo\\Modules\\Multilang\\FieldManager\\Hooks\\EnumMultilang",
   "view": "multilang:views/fields/enum-multilang"
 }

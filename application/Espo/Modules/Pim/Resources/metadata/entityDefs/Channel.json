@@ -1,19 +1,21 @@
 {
     "fields": {
         "name": {
-            "type": "varcharMultiLang",
+            "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "isMultilang": true
         },
         "description": {
-            "type": "textMultiLang",
+            "type": "text",
             "required": false,
             "rows": 4,
             "lengthOfCut": 400,
             "seeMoreDisabled": false,
             "readOnly": false,
             "tooltip": false,
-            "isCustom": false
+            "isCustom": false,
+            "isMultilang": true
         },
         "isActive": {
             "notNull": true,
@@ -98,7 +100,8 @@
             "readOnly": false,
             "tooltip": false,
             "isCustom": false,
-            "view": "pim:views/fields/currencies"
+            "view": "pim:views/fields/currencies",
+            "useFieldViewInImport": true
         },
         "channelProductAttributeValues": {
             "type": "linkMultiple",

@@ -7,14 +7,15 @@
             "type": "link"
         },
         "value": {
-            "type": "textMultiLang",
+            "type": "text",
             "required": false,
             "rows": 4,
             "lengthOfCut": 400,
             "seeMoreDisabled": false,
             "readOnly": false,
             "tooltip": false,
-            "isCustom": false
+            "isCustom": false,
+            "isMultilang": true
         }
     },
     "links": {

@@ -12,6 +12,7 @@ Espo.define('pim:views/fields/currencies', 'views/fields/multi-enum',
                 let baseCurrency = this.getConfig().get('baseCurrency');
                 if (!this.selected.includes(baseCurrency)) {
                     this.selected.unshift(baseCurrency);
+                    this.model.set({[this.name]: this.selected}, {silent: true});
                     this.reRender();
                 }
 

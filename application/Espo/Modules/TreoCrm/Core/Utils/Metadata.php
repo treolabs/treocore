@@ -1,11 +1,12 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Core\Utils;
 
 use Espo\Core\Utils\Metadata as EspoMetadata;
 use Espo\Modules\TreoCrm\Metadata\AbstractMetadata;
 use Espo\Modules\TreoCrm\Traits\ContainerTrait;
+use Espo\Core\Utils\Json;
 
 /**
  * Metadata class
@@ -152,7 +153,23 @@ class Metadata extends EspoMetadata
         parent::init($reload);
 
         // modify metadata by modules
-        $this->modulesModification();
+        $this->data = $this->modulesModification($this->data);
+    }
+
+    /**
+     * Get all metadata for frontend
+     *
+     * @param bool $reload
+     *
+     * @return array
+     */
+    public function getAllForFrontend($reload = false): array
+    {
+        $data = parent::getAllForFrontend();
+
+        $data = Json::decode(JSON::encode($data), true);
+
+        return $this->modulesModification($data);
     }
 
     /**
@@ -168,18 +185,35 @@ class Metadata extends EspoMetadata
     /**
      * Modify metadata by modules
      *
-     * @return void
+     * @param array $data
+     *
+     * @return array
      */
-    protected function modulesModification()
+    protected function modulesModification(array $data): array
     {
         foreach ($this->getModuleList() as $module) {
             $className = sprintf($this->moduleMetadataClass, $module);
             if (class_exists($className)) {
                 $metadata = (new $className())->setContainer($this->getContainer());
                 if ($metadata instanceof AbstractMetadata) {
-                    $this->data = $metadata->modify($this->data);
+                    $data = $metadata->modify($data);
                 }
             }
         }
+
+        return $data;
+    }
+
+
+    /**
+     * Clear metadata variables when reload meta
+     *
+     * @return void
+     */
+    protected function clearVars()
+    {
+        parent::clearVars();
+
+        $this->moduleList = null;
     }
 }

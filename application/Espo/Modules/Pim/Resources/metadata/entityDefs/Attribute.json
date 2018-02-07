@@ -1,9 +1,10 @@
 {
     "fields": {
         "name": {
-            "type": "varcharMultiLang",
+            "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "isMultilang": true
         },
         "createdAt": {
             "type": "datetime",
@@ -80,13 +81,14 @@
             "view": "pim:views/attribute/fields/type"
         },
         "typeValue": {
-            "type": "arrayMultiLang",
+            "type": "array",
             "required": false,
             "noEmptyString": false,
             "audited": false,
             "readOnly": false,
             "tooltip": false,
             "isCustom": false,
+            "isMultilang": true,
             "view": "pim:views/attribute/fields/type-value"
         },
         "isSystem": {
