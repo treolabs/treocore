@@ -38,9 +38,6 @@
             "TreoComposer": "composer/"
         }
     },
-    "require-dev": {
-        "phpunit/phpunit": "3.7.*"
-    },
     "scripts": {
         "post-install-cmd": "TreoComposer\\Install::postEvent",
         "post-update-cmd": "TreoComposer\\Update::postEvent"

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Metadata;
 
@@ -14,6 +14,11 @@ class Metadata extends AbstractMetadata
      * @var array
      */
     protected $crmEntities = ['Account', 'Contact', 'Lead', 'Opportunity', 'Case'];
+
+    /**
+     * @var array
+     */
+    protected $allowedTheme = ['TreoDarkTheme'];
 
     /**
      * Modify
@@ -32,6 +37,9 @@ class Metadata extends AbstractMetadata
 
         // delete tasks from CRM entity
         $data = $this->deleteTasks($data);
+
+        // set allowed themes
+        $data = $this->setAllowedTheme($data);
 
         return $data;
     }
@@ -157,6 +165,25 @@ class Metadata extends AbstractMetadata
                     }
                     $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
                 }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set allowed theme
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function setAllowedTheme(array $data): array
+    {
+        foreach ($data['themes'] as $themeName => $themeData) {
+            // check is theme allowed
+            if (!in_array($themeName, $this->allowedTheme)) {
+                unset($data['themes'][$themeName]);
             }
         }
 
