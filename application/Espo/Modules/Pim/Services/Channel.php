@@ -53,6 +53,7 @@ class Channel extends AbstractService
                     }
                 }
             }
+
             $result = array_values($productAttributes);
         }
 

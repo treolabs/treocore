@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Espo\Modules\Pim\Traits;
 
@@ -16,8 +17,10 @@ trait ProductAttributesTrait
      * @param string $productId
      * @return array
      */
-    protected function getProductAttributes($productId)
+    protected function getProductAttributes(string $productId): array
     {
+        $result = [];
+
         // prepare where
         $where = '';
         $where .= $this->getAclWhereSql('Attribute', 'at');
@@ -71,7 +74,19 @@ trait ProductAttributesTrait
         $sth = $pdo->prepare($sql);
         $sth->execute();
 
-        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        // get multilang config
+        $isMultilangActive = $this->getConfig()->get('isMultilangActive');
+        $multilangConfig = $this->getConfig()->get('modules')['multilangFields'];
+
+        foreach ($sth->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+            // change attribute type if disable multilang
+            if (!$isMultilangActive && !empty($multilangConfig[$row['type']])) {
+                $row['type'] = $multilangConfig[$row['type']]['fieldType'];
+            }
+
+            $result[] = $row;
+        }
+        return $result;
     }
 
     /**
@@ -81,7 +96,7 @@ trait ProductAttributesTrait
      *
      * @return array
      */
-    public function getMultiLangName($fieldName)
+    public function getMultiLangName(string $fieldName): array
     {
         // all fields
         $valueMultiLang = [];
@@ -98,18 +113,19 @@ trait ProductAttributesTrait
         $fields['db_field'] = $fieldName;
         $fields['alias']    = $fieldAlias;
         $valueMultiLang[]   = $fields;
+        if ($this->getConfig()->get('isMultilangActive')) {
+            $languages = $this->getConfig()->get('inputLanguageList');
+            foreach ($languages as $language) {
+                $language = strtolower($language);
+                $fields['db_field'] = $fieldName . '_' . $language;
 
-        $languages = $this->getConfig()->get('inputLanguageList');
-        foreach ($languages as $language) {
-            $language           = strtolower($language);
-            $fields['db_field'] = $fieldName.'_'.$language;
-
-            $alias            = preg_split('/_/', $language);
-            $alias            = array_map('ucfirst', $alias);
-            $alias            = implode($alias);
-            $fields['alias']  = $fieldAlias.$alias;
-            $valueMultiLang[] = $fields;
-            unset($fields);
+                $alias = preg_split('/_/', $language);
+                $alias = array_map('ucfirst', $alias);
+                $alias = implode($alias);
+                $fields['alias'] = $fieldAlias . $alias;
+                $valueMultiLang[] = $fields;
+                unset($fields);
+            }
         }
 
         return $valueMultiLang;
