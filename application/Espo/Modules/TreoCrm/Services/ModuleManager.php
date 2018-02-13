@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCrm\Services;
 
+use Espo\Core\DataManager;
 use Espo\Core\Utils\Json;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
@@ -40,6 +41,7 @@ class ModuleManager extends Base
         $this->addDependency('metadata');
         $this->addDependency('language');
         $this->addDependency('fileManager');
+        $this->addDependency('dataManager');
     }
 
     /**
@@ -79,6 +81,7 @@ class ModuleManager extends Base
      * @param string $moduleId
      *
      * @return bool
+     * @throws Exceptions\Error
      */
     public function updateActivation(string $moduleId): bool
     {
@@ -106,7 +109,17 @@ class ModuleManager extends Base
         // drop cache
         $this->getMetadata()->dropCache();
 
-        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+        $result = $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+
+        // reload metadata
+        $this->getMetadata()->init(true);
+
+        // rebuild DB
+        if ($result && !$data[$moduleId]['disabled']) {
+            $this->getDataManager()->rebuild();
+        }
+
+        return $result;
     }
 
     /**
@@ -315,5 +328,15 @@ class ModuleManager extends Base
     protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
+    }
+
+    /**
+     * Get DataManager
+     *
+     * @return DataManager
+     */
+    protected function getDataManager(): DataManager
+    {
+        return $this->getInjection('dataManager');
     }
 }

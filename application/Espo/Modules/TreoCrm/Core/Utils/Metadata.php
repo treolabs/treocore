@@ -7,6 +7,7 @@ use Espo\Core\Utils\Metadata as EspoMetadata;
 use Espo\Modules\TreoCrm\Metadata\AbstractMetadata;
 use Espo\Modules\TreoCrm\Traits\ContainerTrait;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Module;
 
 /**
  * Metadata class
@@ -31,9 +32,9 @@ class Metadata extends EspoMetadata
     protected $fileManager;
 
     /**
-     * @var object
+     * @var Module
      */
-    protected $moduleConfig;
+    protected $moduleConfig = null;
 
     /**
      * @var object
@@ -204,7 +205,6 @@ class Metadata extends EspoMetadata
         return $data;
     }
 
-
     /**
      * Clear metadata variables when reload meta
      *
@@ -215,5 +215,21 @@ class Metadata extends EspoMetadata
         parent::clearVars();
 
         $this->moduleList = null;
+        $this->moduleConfig = null;
+    }
+
+
+    /**
+     * Get module config
+     *
+     * @return Module
+     */
+    protected function getModuleConfig(): Module
+    {
+        if (!isset($this->moduleConfig)) {
+            $this->moduleConfig = new Module($this->getFileManager(), $this->useCache);
+        }
+
+        return $this->moduleConfig;
     }
 }

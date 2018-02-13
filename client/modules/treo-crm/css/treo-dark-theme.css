@@ -11495,7 +11495,7 @@ ul.dropdown-menu > li.checkbox {
     }
 
     .stick-sub.button-container {
-        margin: 44px 0 0 0
+        margin: 44px 0 0 -15px;
     }
 
     body .stick-sub.button-container {
