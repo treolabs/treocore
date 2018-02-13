@@ -1,7 +1,0 @@
-{
-    "fieldTypes": {
-        "color": "Farbe",
-        "coloredEnum": "Farbiges Auswahlfeld",
-        "coloredMultiEnum": "Farbiges Mehrfachauswahlfeld"
-    }
-}

@@ -29,7 +29,8 @@
         "league/csv": "8.2.2",
         "symfony/expression-language": "3.4.3",
         "treo-crm/coloredfields": "^1.0.0",
-        "treo-crm/multilang": "^1.0.0"
+        "treo-crm/multilang": "^1.0.0",
+        "treo-crm/navmenu": "^1.0.0"
     },
     "autoload": {
         "psr-0": {

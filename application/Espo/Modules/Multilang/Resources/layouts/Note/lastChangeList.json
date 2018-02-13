@@ -1,8 +1,0 @@
-[
-  {
-    "name": "locale",
-    "type": "varchar",
-    "notSortable": true,
-    "customLabel": "Locale"
-  }
-]
