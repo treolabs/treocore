@@ -1,6 +1,8 @@
 Espo.define('treo-crm:views/progress-manager/badge', 'view',
     Dep => Dep.extend({
 
+        interval: null,
+
         isPanelShowed: false,
 
         template: 'treo-crm:progress-manager/badge',
@@ -19,10 +21,16 @@ Espo.define('treo-crm:views/progress-manager/badge', 'view',
             this.listenToOnce(this, 'after:render', () => {
                 this.initProgressShowInterval();
             });
+
+            this.listenToOnce(this, 'remove', () => {
+                if (this.interval) {
+                    window.clearInterval(this.interval);
+                }
+            });
         },
 
         initProgressShowInterval() {
-            window.setInterval(() => {
+            this.interval = window.setInterval(() => {
                 if (!this.isPanelShowed) {
                     this.ajaxGetRequest('ProgressManager/isShowPopup', {})
                         .then(response => {
