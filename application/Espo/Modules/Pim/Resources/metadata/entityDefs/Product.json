@@ -103,7 +103,8 @@
         "sku": {
             "type": "varchar",
             "required": true,
-            "trim": true
+            "trim": true,
+            "layoutMassUpdateDisabled": true
         },
         "isActive": {
             "notNull": true,
@@ -128,10 +129,14 @@
             "default": 0
         },
         "productTypeBundles": {
-            "type": "linkMultiple"
+            "type": "linkMultiple",
+            "layoutMassUpdateDisabled": true,
+            "layoutFiltersDisabled": true,
+            "layoutDetailDisabled": true
         },
         "productTypePackages": {
             "type": "link",
+            "layoutFiltersDisabled": true,
             "layoutMassUpdateDisabled": true,
             "layoutListDisabled": true,
             "layoutDetailDisabled": true,
@@ -163,9 +168,21 @@
             "type": "currency",
             "view": "pim:views/product/fields/price"
         },
+        "priceConverted": {
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "layoutFiltersDisabled": true
+        },
         "finalPrice": {
             "type": "currency",
             "view": "pim:views/product/fields/price"
+        },
+        "finalPriceConverted": {
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "layoutFiltersDisabled": true
         },
         "image": {
             "layoutFiltersDisabled": true,
@@ -202,7 +219,10 @@
             "importDisabled": true
         },
         "currency": {
-            "type": "available-currency"
+            "type": "available-currency",
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "layoutFiltersDisabled": true
         },
         "tax": {
             "type": "link",
@@ -269,7 +289,8 @@
         "productAttributeValues": {
             "type": "hasMany",
             "foreign": "product",
-            "entity": "ProductAttributeValue"
+            "entity": "ProductAttributeValue",
+            "layoutRelationshipsDisabled": true
         },
         "productFamily": {
             "type": "belongsTo",
@@ -304,7 +325,8 @@
         "associationRelatedProduct": {
             "type": "hasMany",
             "foreign": "relatedProduct",
-            "entity": "AssociationProduct"
+            "entity": "AssociationProduct",
+            "layoutRelationshipsDisabled": true
         },
         "channelProducts": {
             "type": "hasMany",
