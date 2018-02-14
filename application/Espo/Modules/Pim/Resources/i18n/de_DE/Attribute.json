@@ -42,5 +42,8 @@
     },
     "labels": {
         "Create Attribute": "Attribut anlegen"
+    },
+    "filterLabels": {
+        "All": "Alle"
     }
 }
