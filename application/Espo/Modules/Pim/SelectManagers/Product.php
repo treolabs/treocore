@@ -20,77 +20,69 @@ class Product extends AbstractSelectManager
      */
     protected function where($where, &$result)
     {
-        // separate attribute from where and prepare it
-        $attributeWhere = [];
-        foreach ($where as $k => $row) {
-            if (!empty($row['isAttribute'])) {
-                $attributeWhere[] = $row;
-                unset($where[$k]);
-            }
-        }
-
         // prepare where for fields
-        parent::where($where, $result);
-
-        // add product attribute filter
-        if (!empty($attributeWhere)) {
-            $data = [];
-            foreach ($this->getProductIds($this->prepareAttributeWhere($attributeWhere)) as $id) {
-                $data[] = [
-                    'id=' => $id
-                ];
-            }
-
-            // push any for empty result
-            if (empty($data)) {
-                $data[] = [
-                    'id=' => 'no_such_id'
-                ];
-            }
-
-            // prepare where clause
-            $result['whereClause'][] = [
-                'OR' => $data
-            ];
-        }
+        parent::where($this->prepareProductAttributeWhere($where), $result);
     }
 
     /**
-     * Prepare attribute where
+     * Prepare product attribute where
      *
-     * @param array $rows
+     * @param array $data
      *
      * @return array
      */
-    protected function prepareAttributeWhere(array $rows): array
+    protected function prepareProductAttributeWhere(array $data): array
     {
-        foreach ($rows as $k => $row) {
-            foreach ($row['value'] as $value) {
-                $rows[$k]['value'] = $this->prepareAttributeWhere($row['value']);
-            }
-
-            if (isset($row['attribute']) && empty($row['isAttribute'])) {
-                $rows[$k] = [
+        foreach ($data as $k => $row) {
+            if (empty($row['isAttribute']) && is_array($row['value'])) {
+                $data[$k]['value'] = $this->prepareProductAttributeWhere($row['value']);
+            } elseif (!empty($row['isAttribute'])) {
+                // prepare attribute where
+                $where = [
                     'type'  => 'and',
                     'value' => [
                         [
-                            'isAttribute' => true,
-                            'type'        => 'equals',
-                            'attribute'   => 'attributeId',
-                            'value'       => $row['attribute']
+                            'type'      => 'equals',
+                            'attribute' => 'attributeId',
+                            'value'     => $row['attribute']
                         ],
                         [
-                            'isAttribute' => true,
-                            'type'        => $row['type'],
-                            'attribute'   => 'value',
-                            'value'       => $row['value']
+                            'type'      => $row['type'],
+                            'attribute' => 'value',
+                            'value'     => $row['value']
                         ]
                     ]
                 ];
+
+                // get product ids
+                $ids = $this->getProductIds([$where]);
+
+                // prepare product where
+                if (!empty($ids)) {
+                    $productWhere = [
+                        'type'  => 'or',
+                        'value' => []
+                    ];
+
+                    foreach ($ids as $id) {
+                        $productWhere['value'][] = [
+                            'type'      => 'equals',
+                            'attribute' => 'id',
+                            'value'     => $id
+                        ];
+                    }
+                }
+
+                // prepare where clause
+                if (empty($productWhere)) {
+                    unset($data[$k]);
+                } else {
+                    $data[$k] = $productWhere;
+                }
             }
         }
 
-        return $rows;
+        return $data;
     }
 
     /**
@@ -113,9 +105,9 @@ class Product extends AbstractSelectManager
             'where' => $where
         ]);
 
-        if (!empty($data['collection'])) {
+        if ($data['total'] > 0) {
             foreach ($data['collection'] as $entity) {
-                if (!in_array($entity->get('productId'), $result)) {
+                if (!empty($entity->get('product')) && !in_array($entity->get('productId'), $result)) {
                     $result[] = $entity->get('productId');
                 }
             }
