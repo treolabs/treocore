@@ -14,48 +14,6 @@ class ProductFamily extends AbstractController
 {
 
     /**
-     * Error to remove system entities
-     *
-     * @param array $params
-     * @param array $data
-     * @param Request $request
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    public function actionDelete($params, $data, $request)
-    {
-        // Get entity
-        $entity = $this->getEntityManager()->getEntity($this->name, $data['id']);
-
-        if (isset($entity) && $entity->get('isSystem')) {
-            throw new Exceptions\Error("Can't remove system Product Family");
-        } else {
-            return parent::actionDelete($params, $data, $request);
-        }
-    }
-
-    /**
-     * Error to remove system entities
-     *
-     * @param array $params
-     * @param array $data
-     * @param Request $request
-     * @throws Exceptions\Error
-     */
-    public function actionMassDelete($params, $data, $request)
-    {
-        if ($this->isMassDeleteAction($request)) {
-            if (!isset($data['ids']) || $this->getRecordService()->hasSystemProductFamily($data['ids'])) {
-                throw new Exceptions\Error("Can't remove system Product Family");
-            } else {
-                return parent::actionMassDelete($params, $data, $request);
-            }
-        }
-
-        throw new Exceptions\Error();
-    }
-
-    /**
      * Get duplicate attributes
      *
      * @param array $params
