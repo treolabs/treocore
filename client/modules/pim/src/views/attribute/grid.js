@@ -13,7 +13,10 @@ Espo.define('pim:views/attribute/grid', 'views/base',
             this.gridLayout = this.options.gridLayout;
 
             this.events = _.extend({
-                'click .inline-remove-link': (e) => this.actionRemoveAttribute($(e.currentTarget).data('name'))
+                'click .inline-remove-link': (e) => this.actionRemoveAttribute($(e.currentTarget).data('name')),
+                'click .inline-edit-link': (e) => {
+                    this.initInlineEditAttribute($(e.currentTarget).data('name'));
+                }
             }, this.events || {});
         },
 
@@ -53,7 +56,18 @@ Espo.define('pim:views/attribute/grid', 'views/base',
                             params: {
                                 required: fieldDefs.required
                             }
-                        }, view => view.render());
+                        }, (view) => {
+                            view.listenToOnce(view, 'after:render', this.initInlineEdit, view);
+                            view.listenTo(view, 'edit', function () {
+                                let fields = this.getParentView().nestedViews;
+                                for (let field in fields) {
+                                    if (fields[field] && fields[field].mode === 'edit' && fields[field] !== view) {
+                                        this.getParentView().inlineCancelEdit(fields[field]);
+                                    }
+                                }
+                            }, view);
+                            view.render();
+                        });
                     }, this);
                 }, this);
             }, this)
@@ -84,6 +98,134 @@ Espo.define('pim:views/attribute/grid', 'views/base',
                     }.bind(this),
                 });
             }, this);
+        },
+
+        initInlineEditAttribute(id) {
+            if (!id) {
+                return;
+            }
+            let view = this.getView(id);
+            view.trigger('edit');
+            view.setMode('edit');
+            this.initialAttributes = this.model.getClonedAttributes();
+            this.hideInlineLinks(view);
+            let cell = view.getCellElement();
+            let saveLink = cell.find('.inline-save-link');
+            let cancelLink = cell.find('.inline-cancel-link');
+            view.once('after:render', function () {
+                saveLink.click(function() {
+                    this.inlineEditSave(view);
+                }.bind(this));
+                cancelLink.click(function () {
+                    this.inlineCancelEdit(view);
+                }.bind(this));
+            }, this);
+            view.reRender();
+        },
+
+        initInlineEdit: function () {
+            let cell = this.getCellElement();
+            let editLink = cell.find('.inline-edit-link.edit-attribute');
+            let lastChangesLink = cell.find('.inline-edit-link.last-changes');
+            let removeLink = cell.find('.inline-remove-link');
+
+            if (cell.size() === 0) {
+                return;
+            }
+
+            cell.on('mouseenter', function (e) {
+                e.stopPropagation();
+                if (this.disabled || this.readOnly) {
+                    return;
+                }
+                if (this.mode === 'detail') {
+                    removeLink.removeClass('hidden');
+                    lastChangesLink.removeClass('hidden');
+                    editLink.removeClass('hidden');
+                }
+            }.bind(this)).on('mouseleave', function (e) {
+                e.stopPropagation();
+                if (this.mode === 'detail') {
+                    removeLink.addClass('hidden');
+                    lastChangesLink.addClass('hidden');
+                    editLink.addClass('hidden');
+                }
+            }.bind(this));
+        },
+
+        inlineEditSave: function (view) {
+            let data = view.fetch();
+            let prev = this.initialAttributes;
+
+            view.model.set(data, {silent: true});
+            let dataToSave = [];
+            let inputLanguageList = (this.getConfig().get('inputLanguageList') || [])
+                .map(lang => lang.split('_').reduce((prev, curr) => prev + Espo.utils.upperCaseFirst(curr.toLowerCase()), ''));
+            let item = {
+                attributeId: view.name,
+                value: data[view.name],
+            };
+            inputLanguageList.forEach(lang => item[`value${lang}`] = data[`${view.name}${lang}`] || null);
+            dataToSave.push(item);
+
+            data = this.model.attributes;
+
+            let attrs = false;
+            for (let attr in data) {
+                if (_.isEqual(prev[attr], data[attr])) {
+                    continue;
+                }
+                (attrs || (attrs = {}))[attr] = data[attr];
+            }
+
+            if (!attrs) {
+                this.inlineCancelEdit(view);
+                return;
+            }
+
+            if (view.validate()) {
+                view.notify('Not valid', 'error');
+                view.model.set(prev, {silent: true});
+                return;
+            }
+
+            this.notify('Saving...');
+            this.ajaxPutRequest(`Markets/Product/${this.getParentView().model.id}/attributes`, dataToSave)
+                .then(response => {
+                    this.getParentView().updateGrid();
+                    this.getParentView().model.trigger('after:attributesSave');
+                    this.notify('Saved', 'success');
+                });
+            this.inlineCancelEdit(view, true);
+        },
+
+        inlineCancelEdit(view, dontReset) {
+            view.setMode('detail');
+            view.once('after:render', function () {
+                this.showInlineLinks(view);
+            }, this);
+            if (!dontReset) {
+                view.model.set(this.initialAttributes);
+            }
+            view.reRender();
+        },
+
+        hideInlineLinks(view) {
+            let cell = view.getCellElement();
+            cell.find('.inline-edit-link.edit-attribute').addClass('hidden');
+            cell.find('.inline-edit-link.last-changes').addClass('hidden');
+            cell.find('.inline-remove-link').addClass('hidden');
+            cell.find('.inline-save-link').removeClass('hidden');
+            cell.find('.inline-cancel-link').removeClass('hidden');
+        },
+
+        showInlineLinks(view) {
+            let cell = view.getCellElement();
+            cell.find('.inline-edit-link.edit-attribute').removeClass('hidden');
+            cell.find('.inline-edit-link.last-changes').removeClass('hidden');
+            cell.find('.inline-remove-link').removeClass('hidden');
+            cell.find('.inline-save-link').addClass('hidden');
+            cell.find('.inline-cancel-link').addClass('hidden');
         },
 
         getDetailViewMode() {
