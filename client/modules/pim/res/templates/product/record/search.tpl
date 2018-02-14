@@ -77,7 +77,8 @@
 </div>
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
-<div class="row advanced-filters hidden">
+<div class="row advanced-filters hidden" style=" display: flex; flex-wrap: wrap;">
+    <div class="filter-applying-condition text-center hidden col-xs-12">{{{translate "filterApplyingCondition" scope="Search" category="messages"}}}</div>
     {{#each filterDataList}}
         <div class="filter filter-{{name}} col-sm-4 col-md-3" data-name="{{name}}">
             {{{var key ../this}}}

@@ -142,11 +142,6 @@ Espo.define('treo-crm:views/record/search', 'class-replace!treo-crm:views/record
                 if (rendered && !noRender) {
                     view.render();
                 }
-                this.listenTo(view, 'after:render', function () {
-                    this.$el.find('.advanced-filters .filter').css({
-                        'min-height': '110px'
-                    });
-                }, this);
             }.bind(this));
         },
 

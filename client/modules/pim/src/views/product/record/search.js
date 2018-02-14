@@ -30,6 +30,30 @@ Espo.define('pim:views/product/record/search', 'pim:views/record/search',
 
         },
 
+        createFilters: function (callback) {
+            var i = 0;
+            var count = Object.keys(this.advanced || {}).length;
+
+            if (count == 0) {
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            }
+
+            for (var field in this.advanced) {
+                if (!this.advanced[field]['isAttribute']) {
+                    this.createFilter(field, this.advanced[field], function () {
+                        i++;
+                        if (i == count) {
+                            if (typeof callback === 'function') {
+                                callback();
+                            }
+                        }
+                    });
+                }
+            }
+        },
+
         createAttributeFilters: function (callback) {
             var i = 0;
             var count = Object.keys(this.advanced || {}).length;
@@ -41,14 +65,16 @@ Espo.define('pim:views/product/record/search', 'pim:views/record/search',
             }
 
             for (var field in this.advanced) {
-                this.createAttributeFilter(field, this.advanced[field], function () {
-                    i++;
-                    if (i == count) {
-                        if (typeof callback === 'function') {
-                            callback();
+                if (this.advanced[field]['isAttribute']) {
+                    this.createAttributeFilter(field, this.advanced[field], function () {
+                        i++;
+                        if (i == count) {
+                            if (typeof callback === 'function') {
+                                callback();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         },
 
@@ -88,7 +114,10 @@ Espo.define('pim:views/product/record/search', 'pim:views/record/search',
                 this.clearView('filter-' + name);
                 container.remove();
                 delete this.advanced[name];
-
+                if (!Object.keys(this.advanced).length) {
+                    this.$el.find('div.filter-applying-condition').addClass('hidden');
+                    this.reRender();
+                }
 
                 this.presetName = this.primary;
 
@@ -150,9 +179,7 @@ Espo.define('pim:views/product/record/search', 'pim:views/record/search',
             var label = "";
             var type = "";
 
-            var rendered = false;
-            if (this.isRendered()) {
-                rendered = true;
+            if (this.isRendered() && !this.$advancedFiltersPanel.find(`.filter.filter-${name}`).length) {
                 var div = document.createElement('div');
                 div.className = "filter filter-" + name + " col-sm-4 col-md-3";
                 div.setAttribute("data-name", name);
@@ -193,14 +220,13 @@ Espo.define('pim:views/product/record/search', 'pim:views/record/search',
                 params: params,
                 el: this.options.el + ' .filter[data-name="' + name + '"]'
             }, function (view) {
+                this.$el.find('div.filter-applying-condition').removeClass('hidden');
                 if (typeof callback === 'function') {
                     view.once('after:render', function () {
                         callback(view);
                     });
                 }
-                if (rendered && !noRender) {
-                    view.render();
-                }
+                view.render();
             }.bind(this));
         }
     })
