@@ -52,7 +52,7 @@
             </div>
             <div class="btn-group dropdown">
                 <button type="button" class="btn btn-default dropdown-toggle add-attribute-filter-button" data-toggle="dropdown" tabindex="-1">
-                    {{translate 'Add Attribute Field'}} <span class="caret"></span>
+                    {{translate 'Add Attribute Filter'}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu pull-right family-list">
                     {{#each familiesAttributes}}

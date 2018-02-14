@@ -4,5 +4,8 @@
     },
     "scopeNamesPlural": {
         "Country": "Länder"
+    },
+    "labels": {
+        "Add Field": "Filter hinzufügen"
     }
 }

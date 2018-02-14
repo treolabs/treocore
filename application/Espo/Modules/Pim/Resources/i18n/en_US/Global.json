@@ -18,5 +18,8 @@
         "ProductPrice": "Product Prices",
         "PriceUnit": "Price Units",
         "Tax": "Taxes"
+    },
+    "labels": {
+        "Add Field": "Add Filter"
     }
 }
