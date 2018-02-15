@@ -11,9 +11,50 @@ namespace TreoComposer;
 abstract class AbstractEvent
 {
     /**
-     * Constants
+     * @var array
      */
     const SKIP = ['.', '..'];
+
+    /**
+     * @var string
+     */
+    const VENDOR = 'vendor';
+
+    /**
+     * @var string
+     */
+    const TREODIR = 'treo-crm';
+
+    /**
+     * Get treo modules
+     *
+     * @return array
+     */
+    public static function getTreoModules(): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare treo crm vendor dir path
+        $path = "".self::VENDOR."/".self::TREODIR."/";
+
+        if (file_exists($path) && is_dir($path)) {
+            foreach (scandir($path) as $row) {
+                if (!in_array($row, self::SKIP)) {
+                    $modulePath = "{$path}/{$row}/application/Espo/Modules/";
+                    if (file_exists($modulePath) && is_dir($modulePath)) {
+                        foreach (scandir($modulePath) as $moduleId) {
+                            if (!in_array($moduleId, self::SKIP)) {
+                                $result[$moduleId] = $row;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * Recursively copy files from one directory to another
@@ -120,31 +161,20 @@ abstract class AbstractEvent
     /**
      * Update backend
      *
-     * @param string $path
-     *
      * @return bool
      */
-    protected static function updateBackend(string $path): bool
+    protected static function updateBackend(): bool
     {
-        foreach (scandir($path) as $row) {
-            if (!in_array($row, self::SKIP)) {
-                $modulePath = "{$path}/{$row}/application/Espo/Modules/";
-                if (file_exists($modulePath) && is_dir($modulePath)) {
-                    foreach (scandir($modulePath) as $module) {
-                        if (!in_array($module, self::SKIP)) {
-                            // prepare params
-                            $source = "{$modulePath}{$module}/";
-                            $dest   = "application/Espo/Modules/{$module}/";
+        foreach (self::getTreoModules() as $moduleId => $moduleKey) {
+            // prepare params
+            $source = self::VENDOR."/".self::TREODIR."/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
+            $dest   = "application/Espo/Modules/{$moduleId}/";
 
-                            // delete dir
-                            self::deleteDir($dest);
+            // delete dir
+            self::deleteDir($dest);
 
-                            // copy dir
-                            self::copyDir($source, $dest);
-                        }
-                    }
-                }
-            }
+            // copy dir
+            self::copyDir($source, $dest);
         }
 
         return true;
@@ -153,28 +183,26 @@ abstract class AbstractEvent
     /**
      * Update frontend
      *
-     * @param string $path
-     *
      * @return bool
      */
-    protected static function updateFrontend(string $path): bool
+    protected static function updateFrontend(): bool
     {
-        foreach (scandir($path) as $row) {
-            if (!in_array($row, self::SKIP)) {
-                $modulePath = "{$path}/{$row}/client/modules/";
-                if (file_exists($modulePath) && is_dir($modulePath)) {
-                    foreach (scandir($modulePath) as $module) {
-                        if (!in_array($module, self::SKIP)) {
-                            // prepare params
-                            $source = "{$modulePath}{$module}/";
-                            $dest   = "client/modules/{$module}/";
+        foreach (self::getTreoModules() as $moduleId => $moduleKey) {
+            // module path
+            $modulePath = self::VENDOR."/".self::TREODIR."/{$moduleKey}/client/modules/";
 
-                            // delete dir
-                            self::deleteDir($dest);
+            if (file_exists($modulePath) && is_dir($modulePath)) {
+                foreach (scandir($modulePath) as $module) {
+                    if (!in_array($module, self::SKIP)) {
+                        // prepare params
+                        $source = "{$modulePath}{$module}/";
+                        $dest   = "client/modules/{$module}/";
 
-                            // copy dir
-                            self::copyDir($source, $dest);
-                        }
+                        // delete dir
+                        self::deleteDir($dest);
+
+                        // copy dir
+                        self::copyDir($source, $dest);
                     }
                 }
             }
