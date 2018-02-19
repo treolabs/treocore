@@ -22,21 +22,21 @@ class Update extends AbstractEvent
      */
     public static function postEvent(Event $event)
     {
-        // get vendor dir
-        $vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+        // prepare treo dir name
+        $treoDir = self::TREODIR;
 
         // prepare treo crm vendor dir path
-        $path = "{$vendorDir}/treo-crm/";
+        $path = "vendor/{$treoDir}/";
 
         if (file_exists($path) && is_dir($path)) {
             // update backend files
-            self::updateBackend($path);
+            self::updateBackend();
 
             // update frontend files
-            self::updateFrontend($path);
+            self::updateFrontend();
 
             // show message
-            self::echoSuccess('TreoCRM modules successfully updated!');
+            self::echoSuccess('TreoCRM modules successfully installed/updated!');
         }
     }
 }

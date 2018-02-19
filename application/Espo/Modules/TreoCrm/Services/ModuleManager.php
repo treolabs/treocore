@@ -10,6 +10,7 @@ use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Espo\Modules\TreoCrm\Core\Utils\Metadata;
+use TreoComposer\AbstractEvent as TreoComposer;
 
 /**
  * ModuleManager service
@@ -24,9 +25,14 @@ class ModuleManager extends Base
     protected $moduleJsonPath = 'custom/Espo/Custom/Resources/module.json';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $vendorTreoDir = 'vendor/treo-crm/';
+    protected $treoModules = null;
+
+    /**
+     * @var array
+     */
+    protected $moduleRequireds = [];
 
     /**
      * Construct
@@ -61,16 +67,19 @@ class ModuleManager extends Base
             if ($this->isModuleAllowed($module)) {
                 $result['list'][] = [
                     "id"          => $module,
-                    "name"        => $this->translate('moduleNames', $module),
-                    "description" => $this->translate('moduleDescriptions', $module),
+                    "name"        => $this->translateModule('moduleNames', $module),
+                    "description" => $this->translateModule('moduleDescriptions', $module),
                     "version"     => $this->getModuleVersion($module),
-                    "required"    => $this->prepareRequireds($this->getModuleConfigData("{$module}.required")),
+                    "required"    => $this->prepareRequireds($this->getModuleRequireds($module)),
                     "isActive"    => $this->getMetadata()->isModuleActive($module)
                 ];
             }
         }
 
         $result['total'] = count($result['list']);
+
+        // sorting
+        usort($result['list'], [$this, 'moduleListSort']);
 
         return $result;
     }
@@ -98,25 +107,75 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->getLanguage()->translate('hasRequireds', 'exceptions', 'ModuleManager'));
         }
 
-
-        // get file data
-        $fileData = $this->getFileManager()->getContents($this->moduleJsonPath);
-
-        //prepare json data
-        $data                        = (empty($fileData)) ? [] : json_decode($fileData, true);
-        $data[$moduleId]['disabled'] = empty($config['disabled']);
-
         // drop cache
         $this->getMetadata()->dropCache();
 
-        $result = $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
-
-        // reload metadata
-        $this->getMetadata()->init(true);
+        // write to file
+        $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
 
         // rebuild DB
-        if ($result && !$data[$moduleId]['disabled']) {
+        if ($result && !empty($config['disabled'])) {
             $this->getDataManager()->rebuild();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Update module file
+     *
+     * @param string $moduleId
+     * @param bool $isDisabled
+     *
+     * @return bool
+     */
+    protected function updateModuleFile(string $moduleId, bool $isDisabled): bool
+    {
+        // prepare data
+        $data = [];
+
+        foreach ($this->getMetadata()->getAllModules() as $module) {
+            // get config data
+            $config = $this->getModuleConfigData($module);
+
+            if (empty($config['isSystem'])) {
+                $data[$module] = [
+                    'order'    => $this->createModuleLoadOrder($module),
+                    'disabled' => !in_array($module, $this->getMetadata()->getModuleList())
+                ];
+
+                if ($module == $moduleId) {
+                    $data[$module]['disabled'] = $isDisabled;
+                }
+            }
+        }
+
+        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+    }
+
+    /**
+     * Create module load order
+     *
+     * @param string $moduleId
+     *
+     * @return int
+     */
+    protected function createModuleLoadOrder(string $moduleId): int
+    {
+        // prepare result
+        $result = 5100;
+
+        if (!empty($requireds = $this->getModuleRequireds($moduleId))) {
+            $max = 0;
+
+            foreach ($requireds as $require) {
+                $requireMax = $this->createModuleLoadOrder($require);
+                if ($requireMax > $max) {
+                    $max = $requireMax;
+                }
+            }
+
+            $result = $max + 100;
         }
 
         return $result;
@@ -146,7 +205,11 @@ class ModuleManager extends Base
         foreach ($this->getMetadata()->getAllModules() as $moduleName) {
             // get config
             $rowConfig = $this->getMetadata()->getModuleConfigData($moduleName);
-            if (!empty($rowConfig['required']) && in_array($module, $rowConfig['required']) && $rowConfig['isSystem']) {
+
+            // get requireds
+            $requireds = $this->getModuleRequireds($module);
+
+            if (!empty($requireds) && in_array($module, $requireds) && $rowConfig['isSystem']) {
                 $result = false;
 
                 break;
@@ -154,6 +217,44 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Get module requireds
+     *
+     * @param string $moduleId
+     *
+     * @return array
+     */
+    protected function getModuleRequireds(string $moduleId): array
+    {
+        if (!isset($this->moduleRequireds[$moduleId])) {
+            // prepare result
+            $this->moduleRequireds[$moduleId] = [];
+
+            // get trep modules
+            $treoModule = $this->getTreoModules();
+
+            if (array_key_exists($moduleId, $treoModule)) {
+                // get composer json
+                $path = TreoComposer::VENDOR."/".TreoComposer::TREODIR."/".$treoModule[$moduleId]."/composer.json";
+
+                if (file_exists($path)) {
+                    $composerRequire = Json::decode(file_get_contents($path), true)['require'];
+                    if (!empty($composerRequire) && is_array($composerRequire)) {
+                        foreach ($composerRequire as $key => $version) {
+                            if (preg_match_all("/^(".TreoComposer::TREODIR."\/)(.*)$/", $key, $matches)) {
+                                if (!empty($matches[2][0])) {
+                                    $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->moduleRequireds[$moduleId];
     }
 
     /**
@@ -188,24 +289,33 @@ class ModuleManager extends Base
     protected function hasRequireds(string $moduleId, array $moduleConfig): bool
     {
         // prepare result
-        $result     = false;
+        $result = false;
+
+        // get module list
         $moduleList = $this->getMetadata()->getModuleList();
+
+        // get module requireds
+        $moduleRequireds = $this->getModuleRequireds($moduleId);
 
         // is module requireds by another modules
         if (empty($moduleConfig['disabled'])) {
             foreach ($moduleList as $module) {
                 // get config
                 $config = $this->getModuleConfigData($module);
-                if (isset($config['required']) && in_array($moduleId, $config['required'])) {
+
+                // get module requireds
+                $requireds = $this->getModuleRequireds($module);
+
+                if (isset($requireds) && in_array($moduleId, $requireds)) {
                     // prepare result
                     $result = true;
 
                     break;
                 }
             }
-        } elseif (!empty($moduleConfig['required'])) {
+        } elseif (!empty($moduleRequireds)) {
             // is module has own requireds
-            foreach ($moduleConfig['required'] as $module) {
+            foreach ($moduleRequireds as $module) {
                 if (!in_array($module, $moduleList)) {
                     // prepare result
                     $result = true;
@@ -252,21 +362,20 @@ class ModuleManager extends Base
         // prepare composerLock
         $composerLock = 'composer.lock';
 
-        if (file_exists($this->vendorTreoDir) && is_dir($this->vendorTreoDir) && file_exists($composerLock)) {
-            foreach (scandir($this->vendorTreoDir) as $dir) {
-                // prepare path
-                $path = "{$this->vendorTreoDir}$dir/application/Espo/Modules/$module";
+        // prepare dir
+        $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
 
-                if (file_exists($path)) {
-                    // get data
-                    $data = Json::decode(file_get_contents($composerLock), true);
+        if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
+            // prepare module key
+            $key = $this->getTreoModules()[$module];
 
-                    if (!empty($packages = $data['packages'])) {
-                        foreach ($packages as $package) {
-                            if ($package['name'] == "treo-crm/{$dir}") {
-                                $result = $package;
-                            }
-                        }
+            // get data
+            $data = Json::decode(file_get_contents($composerLock), true);
+
+            if (!empty($packages = $data['packages'])) {
+                foreach ($packages as $package) {
+                    if ($package['name'] == TreoComposer::TREODIR."/{$key}") {
+                        $result = $package;
                     }
                 }
             }
@@ -313,9 +422,26 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function translate(string $tab, string $key): string
+    protected function translateModule(string $tab, string $key): string
     {
-        return $this->getLanguage()->translate($key, $tab, 'ModuleManager');
+        // default translate
+        $translate = $key;
+
+        // get language
+        $lang = $this->getLanguage()->getLanguage();
+
+        // prepare path
+        $path = "application/Espo/Modules/{$key}/Resources/i18n/{$lang}/ModuleManager.json";
+
+        if (file_exists($path)) {
+            $data = Json::decode(file_get_contents($path), true);
+
+            if (!empty($data[$tab][$key])) {
+                $translate = $data[$tab][$key];
+            }
+        }
+
+        return $translate;
     }
 
     /**
@@ -338,5 +464,40 @@ class ModuleManager extends Base
     protected function getDataManager(): DataManager
     {
         return $this->getInjection('dataManager');
+    }
+
+    /**
+     * Get treo modules
+     *
+     * @return array
+     */
+    protected function getTreoModules(): array
+    {
+        if (is_null($this->treoModules)) {
+            $this->treoModules = TreoComposer::getTreoModules();
+        }
+
+        return $this->treoModules;
+    }
+
+    /**
+     * Module list sort
+     *
+     * @param array $a
+     * @param array $b
+     *
+     * @return int
+     */
+    private static function moduleListSort(array $a, array $b): int
+    {
+        // prepare params
+        $a = $a['name'];
+        $b = $b['name'];
+
+        if ($a == $b) {
+            return 0;
+        }
+
+        return ($a < $b) ? -1 : 1;
     }
 }
