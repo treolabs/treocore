@@ -42,7 +42,7 @@
         "detail": "pim:views/product/detail"
     },
     "recordViews": {
-        "list": "pim:views/record/list",
+        "list": "pim:views/product/record/list",
         "detail": "pim:views/product/record/detail",
         "search": "pim:views/product/record/search"
     },
