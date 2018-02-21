@@ -341,7 +341,7 @@ class ModuleManager extends Base
         $result = '1.0.0';
 
         if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
-            $result = $package['version'];
+            $result = str_replace('v', '', $package['version']);
         }
 
         return $result;
