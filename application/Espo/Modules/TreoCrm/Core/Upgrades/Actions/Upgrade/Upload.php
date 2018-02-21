@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Espo\Modules\TreoCrm\Core\Upgrades\Actions\Upgrade;
 
 use Espo\Core\Upgrades\Actions\Upgrade\Upload as EspoUpload;
+use Espo\Core\Utils\System;
 
 /**
  * Class of Upload
@@ -16,9 +17,8 @@ class Upload extends EspoUpload
     /**
      * Check if version of upgrade/extension is acceptable to current version of EspoCRM
      *
-     * @param  string  $version
-     *
      * @return boolean
+     * @throws \Espo\Core\Exceptions\Error
      */
     protected function isAcceptable()
     {
