@@ -1,6 +1,16 @@
 # TreoCRM Developer Guide #
 Это руководство предназначено для разработчиков.
 
+## Events ##
+
+| Listener | Method |
+| ------ | ------ |
+| Product | getDuplicatingLinkList |
+| SettingsController | afterUpdate |
+| EntityManager | beforeUpdate |
+| EntityManager | afterUpdate |
+| ProgressManager | beforeUpdate |
+
 ## Инструменты ##
 * [CronManager](cron_manager/readme.md)
 * [EventManager](event_manager/readme.md)
