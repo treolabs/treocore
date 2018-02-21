@@ -341,10 +341,22 @@ class ModuleManager extends Base
         $result = '1.0.0';
 
         if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
-            $result = str_replace('v', '', $package['version']);
+            $result = $package['version'];
         }
 
-        return $result;
+        return $this->prepareModuleVersion($result);
+    }
+
+    /**
+     * Prepare module version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    protected function prepareModuleVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
     }
 
     /**
