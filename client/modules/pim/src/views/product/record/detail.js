@@ -4,7 +4,7 @@ Espo.define('pim:views/product/record/detail', 'pim:views/record/detail',
         setup() {
             Dep.prototype.setup.call(this);
 
-            let dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']);
+            let dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']) || {};
             Object.keys(dropDownItems).forEach((item) => {
                 let check = true;
                 if (dropDownItems[item].conditions) {
