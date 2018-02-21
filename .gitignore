@@ -3,6 +3,7 @@
 apidocs/
 data/
 /vendor/
+/composer_dev.json
 /composer.lock
 /custom/
 /nb_metadata
