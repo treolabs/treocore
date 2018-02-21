@@ -1,3 +1,4 @@
+    * BUG #59669 : Fehlermeldung in Espo nach Anmeldung und bei Anlage neuer Felder (Roman Ratsun)
     * FEA #59211 : Задокументувати події лісенерів (Roman Ratsun)
 
 1.6.0  2018-02-21 14:29:13 Europe/Kiev
