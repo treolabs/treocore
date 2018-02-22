@@ -4,7 +4,7 @@ Espo.define('pim:views/product/record/list', 'pim:views/record/list',
         setup() {
             Dep.prototype.setup.call(this);
 
-            let massActionsList = this.getMetadata().get(['clientDefs', this.scope, 'additionalMassActions']);
+            let massActionsList = this.getMetadata().get(['clientDefs', this.scope, 'additionalMassActions']) || {};
             Object.keys(massActionsList).forEach((item) => {
                 this.massActionList.push(massActionsList[item].name);
                 let method = 'massAction' + Espo.Utils.upperCaseFirst(massActionsList[item].name);
