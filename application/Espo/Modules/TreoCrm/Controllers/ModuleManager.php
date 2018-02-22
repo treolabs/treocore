@@ -120,6 +120,68 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Get composer user")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/ModuleManager/composerUser")
+     * @ApiReturn(sample="{
+     *     'username': 'test',
+     *     'password': 'qwerty'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionGetComposerUser($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getModuleManagerService()->getComposerUser();
+    }
+
+    /**
+     * @ApiDescription(description="Set composer user")
+     * @ApiMethod(type="PUT")
+     * @ApiRoute(name="/ModuleManager/composerUser")
+     * @ApiBody(sample="{
+     *     'username': 'test',
+     *     'password': 'qwerty'
+     * }")
+     * @ApiReturn(sample="true")
+     *
+     * @return bool
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionSetComposerUser($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPut()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($data['username']) && !empty($data['password'])) {
+            return $this->getModuleManagerService()->setComposerUser($data['username'], $data['password']);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
      * Get module manager service
      *
      * @return ModuleManagerService

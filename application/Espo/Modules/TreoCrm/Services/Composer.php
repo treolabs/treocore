@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Espo\Modules\TreoCrm\Services;
 
 use Espo\Core\Services\Base;
+use Espo\Core\Utils\Json;
 use Composer\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -15,18 +16,24 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class Composer extends Base
 {
+    /**
+     * @var string
+     */
+    protected $extractDir = CORE_PATH."/vendor/composer/composer-extract";
 
     /**
-     * Run require command
-     *
-     * @param string $repo
-     * @param string $version
-     *
-     * @return array
+     * Construct
      */
-    public function runRequire(string $repo, string $version): array
+    public function __construct(...$args)
     {
-        return $this->run("require {$repo}:{$version}");
+        parent::__construct(...$args);
+
+        /**
+         * Extract composer
+         */
+        if (!file_exists($this->extractDir."/vendor/autoload.php") == true) {
+            (new \Phar(CORE_PATH."/composer.phar"))->extractTo($extractDir);
+        }
     }
 
     /**
@@ -36,31 +43,63 @@ class Composer extends Base
      *
      * @return array
      */
-    protected function run(string $command): array
+    public function run(string $command): array
     {
-        // prepare params
-        $workingDir   = APPLICATION_PATH;
-        $extractDir   = "{$workingDir}/vendor/composer/composer-extract";
-        $composerPhar = "{$workingDir}/composer.phar";
+        putenv("COMPOSER_HOME=".$this->extractDir);
+        require_once $this->extractDir."/vendor/autoload.php";
 
-        // extract composer
-        if (!file_exists("{$extractDir}/vendor/autoload.php") == true) {
-            if (!file_exists($composerPhar)) {
-                return false;
-            }
-            $composerPhar = new \Phar($composerPhar);
-            $composerPhar->extractTo($extractDir);
-        }
-
-        putenv("COMPOSER_HOME={$extractDir}");
-        require_once "{$extractDir}/vendor/autoload.php";
-
-        $input       = new StringInput("{$command} --working-dir={$workingDir}");
-        $output      = new BufferedOutput();
         $application = new Application();
         $application->setAutoExit(false);
-        $status      = $application->run($input, $output);
+
+        $input  = new StringInput("{$command} --working-dir=".CORE_PATH);
+        $output = new BufferedOutput();
+
+        $status = $application->run($input, $output);
 
         return ['status' => ($status === 0), 'output' => $output->fetch()];
+    }
+
+    /**
+     * Get auth data
+     *
+     * @return array
+     */
+    public function getAuthData(): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare path
+        $path = $this->extractDir.'/auth.json';
+        if (file_exists($path)) {
+            $result = Json::decode(file_get_contents($path), true);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set composer user data
+     *
+     * @param array $authData
+     *
+     * @return bool
+     */
+    public function setAuthData(array $authData): bool
+    {
+        // prepare path
+        $path = $this->extractDir.'/auth.json';
+
+        // delete old
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // create file
+        $fp = fopen($path, "w");
+        fwrite($fp, Json::encode($authData));
+        fclose($fp);
+
+        return true;
     }
 }
