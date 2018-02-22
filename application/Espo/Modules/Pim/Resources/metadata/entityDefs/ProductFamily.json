@@ -79,6 +79,8 @@
         "isSystem": {
             "notNull": true,
             "type": "bool",
+            "layoutDetailDisabled": true,
+            "layoutFiltersDisabled": true,
             "default": false,
             "audited": false,
             "readOnly": true,
