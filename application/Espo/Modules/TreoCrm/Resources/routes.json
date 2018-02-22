@@ -24,6 +24,14 @@
         }
     },
     {
+        "route": "/ModuleManager/updateModule",
+        "method": "put",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "updateModule"
+        }
+    },
+    {
         "route": "/ProgressManager/isShowPopup",
         "method": "get",
         "params": {

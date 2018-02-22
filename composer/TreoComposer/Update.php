@@ -34,9 +34,6 @@ class Update extends AbstractEvent
 
             // update frontend files
             self::updateFrontend();
-
-            // show message
-            self::echoSuccess('TreoCRM modules successfully installed/updated!');
         }
     }
 }

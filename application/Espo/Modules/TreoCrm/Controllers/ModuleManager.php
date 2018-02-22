@@ -7,6 +7,7 @@ use Espo\Modules\TreoCrm\Services\ModuleManager as ModuleManagerService;
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
+use Espo\Core\Utils\Json;
 
 /**
  * ModuleManager controller
@@ -75,6 +76,44 @@ class ModuleManager extends Base
 
         if (!empty($moduleId = $params['moduleId'])) {
             return $this->getModuleManagerService()->updateActivation($moduleId);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
+     * @ApiDescription(description="Update module version")
+     * @ApiMethod(type="PUT")
+     * @ApiRoute(name="/ModuleManager/updateModule")
+     * @ApiBody(sample="{
+     *     'id': 'Erp',
+     *     'version': '1.1.0'
+     * }")
+     * @ApiReturn(sample="{
+     *     'status': 'true',
+     *     'output': 'some text from composer'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionUpdateModule($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPut()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($data['id']) && !empty($data['version'])) {
+            return $this->getModuleManagerService()->updateModule($data['id'], $data['version']);
         }
 
         throw new Exceptions\NotFound();

@@ -48,6 +48,7 @@ class ModuleManager extends Base
         $this->addDependency('language');
         $this->addDependency('fileManager');
         $this->addDependency('dataManager');
+        $this->addDependency('serviceFactory');
     }
 
     /**
@@ -116,6 +117,32 @@ class ModuleManager extends Base
         // rebuild DB
         if ($result && !empty($config['disabled'])) {
             $this->getDataManager()->rebuild();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Update module
+     *
+     * @param string $id
+     * @param string $version
+     *
+     * @return array
+     */
+    public function updateModule(string $id, string $version): array
+    {
+        // prepare result
+        $result = [
+            "status" => false,
+            "output" => ""
+        ];
+
+        // get trep modules
+        $treoModule = $this->getTreoModules();
+
+        if (array_key_exists($id, $treoModule)) {
+            return $this->getComposerService()->runRequire(TreoComposer::TREODIR."/".$treoModule[$id], $version);
         }
 
         return $result;
@@ -344,7 +371,19 @@ class ModuleManager extends Base
             $result = $package['version'];
         }
 
-        return $result;
+        return $this->prepareModuleVersion($result);
+    }
+
+    /**
+     * Prepare module version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    protected function prepareModuleVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
     }
 
     /**
@@ -412,6 +451,16 @@ class ModuleManager extends Base
     protected function getFileManager(): FileManager
     {
         return $this->getInjection('fileManager');
+    }
+
+    /**
+     * Get Composer service
+     *
+     * @return Composer
+     */
+    protected function getComposerService(): Composer
+    {
+        return $this->getInjection('serviceFactory')->create('Composer');
     }
 
     /**
