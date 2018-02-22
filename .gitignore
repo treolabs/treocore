@@ -1,7 +1,8 @@
 .idea/
 
 apidocs/
-data/
+/data/*
+!/data/.htaccess
 /vendor/
 /composer_dev.json
 /custom/
