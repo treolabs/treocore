@@ -57,7 +57,7 @@ class ModuleManager extends Base
     }
 
     /**
-     * Get composer user
+     * Get composer user data
      *
      * @return array
      */
@@ -74,6 +74,28 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Set composer user data
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function setComposerUser(string $username, string $password): bool
+    {
+        // get auth data
+        $authData = $this->getComposerService()->getAuthData();
+
+        // prepare auth data
+        $authData['http-basic'][$this->gitServer] = [
+            'username' => $username,
+            'password' => $password
+        ];
+
+        return $this->getComposerService()->setAuthData($authData);
     }
 
     /**

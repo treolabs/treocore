@@ -77,4 +77,29 @@ class Composer extends Base
 
         return $result;
     }
+
+    /**
+     * Set composer user data
+     *
+     * @param array $authData
+     *
+     * @return bool
+     */
+    public function setAuthData(array $authData): bool
+    {
+        // prepare path
+        $path = $this->extractDir.'/auth.json';
+
+        // delete old
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // create file
+        $fp = fopen($path, "w");
+        fwrite($fp, Json::encode($authData));
+        fclose($fp);
+
+        return true;
+    }
 }
