@@ -30,7 +30,7 @@
 require_once('../../bootstrap.php');
 
 // define gloabal variables
-define('APPLICATION_PATH', dirname(dirname(__DIR__)));
+define('CORE_PATH', dirname(dirname(__DIR__)));
 
 $app = new \Espo\Modules\TreoCrm\Core\Application();
 $app->run();

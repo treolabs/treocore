@@ -32,6 +32,14 @@
         }
     },
     {
+        "route": "/ModuleManager/composerUser",
+        "method": "get",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "getComposerUser"
+        }
+    },
+    {
         "route": "/ProgressManager/isShowPopup",
         "method": "get",
         "params": {

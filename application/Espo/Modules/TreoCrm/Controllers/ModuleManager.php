@@ -120,6 +120,33 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Get composer user")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/ModuleManager/composerUser")
+     * @ApiReturn(sample="{
+     *     'username': 'test',
+     *     'password': 'qwerty'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionGetComposerUser($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getModuleManagerService()->getComposerUser();
+    }
+
+    /**
      * Get module manager service
      *
      * @return ModuleManagerService

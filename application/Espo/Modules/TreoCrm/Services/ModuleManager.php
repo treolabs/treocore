@@ -35,6 +35,11 @@ class ModuleManager extends Base
     protected $moduleRequireds = [];
 
     /**
+     * @var string
+     */
+    protected $gitServer = 'gitlab.zinit1.com';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -49,6 +54,26 @@ class ModuleManager extends Base
         $this->addDependency('fileManager');
         $this->addDependency('dataManager');
         $this->addDependency('serviceFactory');
+    }
+
+    /**
+     * Get composer user
+     *
+     * @return array
+     */
+    public function getComposerUser(): array
+    {
+        // prepare result
+        $result = [];
+
+        // get auth data
+        $authData = $this->getComposerService()->getAuthData();
+
+        if (!empty($authData['http-basic'][$this->gitServer]) && is_array($authData['http-basic'][$this->gitServer])) {
+            $result = $authData['http-basic'][$this->gitServer];
+        }
+
+        return $result;
     }
 
     /**
@@ -142,7 +167,10 @@ class ModuleManager extends Base
         $treoModule = $this->getTreoModules();
 
         if (array_key_exists($id, $treoModule)) {
-            return $this->getComposerService()->runRequire(TreoComposer::TREODIR."/".$treoModule[$id], $version);
+            // prepare repo
+            $repo = TreoComposer::TREODIR."/".$treoModule[$id];
+
+            return $this->getComposerService()->run("require {$repo}:{$version}");
         }
 
         return $result;
