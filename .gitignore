@@ -1,6 +1,6 @@
 .idea/
 
-apidocs/
+/apidocs/
 /data/*
 !/data/.htaccess
 /vendor/
