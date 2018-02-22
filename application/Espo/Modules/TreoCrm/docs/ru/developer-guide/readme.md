@@ -18,3 +18,4 @@
 * [Module config](module_config/readme.md)
 * [Layout modifier](layout_modifier/readme.md)
 * [ProgressManager](progress_manager/readme.md)
+* [Front End View Replacement](front_end_view_replacement/readme.md)

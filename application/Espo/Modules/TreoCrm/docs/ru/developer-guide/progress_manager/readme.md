@@ -166,3 +166,98 @@ class CancelStatusAction extends Base implements StatusActionInterface
     }
 }
 ```
+
+### Front-end часть ###
+Данный инструмент предоставляет возможность добавлять действия, которые появляются во время и после завершения выполения каких либо операций в Progress Manager.
+#### 1. Создание конфигурации ####
+##### Response #####
+В теле ответа приходит массив действий:
+```
+"actions": [
+    {
+        "type": "{ACTION}", 
+        "data": {
+            //some_data
+        }
+    }
+]
+```
+Создаём конфигурационный файл `ProgressManager.json`, в котором добавляем необходимые действия. 
+Путь к файлу: `/application/Espo/Modules/{MODULE_NAME}/Resources/metadata/clientDefs/ProgressManager.json`
+Структура файла:
+```
+{
+    "progressActionViews": {
+        "{ACTION}": "{VIEW_PATH}"
+    }
+}
+```
+Где:
+* {ACTION} - имя действия
+* {VIEW_PATH} - путь к view, где реализовано действие
+#### 2. Создаём view ####
+Создаём view по пути {VIEW_PATH}.
+Общая структура view:
+```
+Espo.define('{VIEW_PATH}', 'view', function (Dep) {
+    return Dep.extend({
+        //code
+    });
+});
+```
+#### Пример ####
+##### Response #####
+С сервера приходит массив действий:
+```
+"actions": [
+    {
+        "type": "showMessage", 
+        "data": {
+            "message": "Something wrong" 
+        }
+    }
+] 
+```
+##### 1. Создаём конфигурацию #####
+Создаём файл конфигурации, где указываем необходимое действие.
+`/application/Espo/Modules/TreoCrm/Resources/metadata/clientDefs/ProgressManager.json`
+```
+{
+    "progressActionViews": {
+        "showMessage": "treo-crm:views/progress-manager/actions/show-message"
+    }
+}
+```
+##### 2. Создаём views: #####
+По заданому пути создаём новый view, где реализуем необходимое действие.
+`/client/modules/treo-crm/src/views/progress-manager/actions/show-message.js`
+Содержание:
+```
+Espo.define('treo-crm:views/progress-manager/actions/show-message', 'view',
+    Dep => Dep.extend({
+        template: 'treo-crm:progress-manager/actions/show-message',
+        actionData: {},
+        events: {
+            'click [data-action="showMessageModal"]': function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.actionShowMessageModal();
+            },
+        },
+        setup() {
+            Dep.prototype.setup.call(this);
+            this.actionData = this.options.actionData || this.actionData;
+        },
+        data() {
+            return {
+                showButton: !!this.actionData.message
+            };
+        },
+        actionShowMessageModal() {
+            this.createView('modal', 'treo-crm:views/progress-manager/modals/show-message', {
+                message: this.actionData.message
+            }, view => view.render());
+        }
+    })
+);
+```
