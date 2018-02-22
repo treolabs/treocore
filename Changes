@@ -1,3 +1,5 @@
+    * FEA #59681 : Розробити механізми оновлення модулів // Back (Roman Ratsun)
+
 1.6.1  2018-02-21 15:27:42 Europe/Kiev
     * BUG #59669 : Fehlermeldung in Espo nach Anmeldung und bei Anlage neuer Felder (Roman Ratsun)
     * FEA #59211 : Задокументувати події лісенерів (Roman Ratsun)
