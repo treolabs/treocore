@@ -22,6 +22,21 @@ class Composer extends Base
     protected $extractDir = CORE_PATH."/vendor/composer/composer-extract";
 
     /**
+     * Construct
+     */
+    public function __construct(...$args)
+    {
+        parent::__construct(...$args);
+
+        /**
+         * Extract composer
+         */
+        if (!file_exists($this->extractDir."/vendor/autoload.php") == true) {
+            (new \Phar(CORE_PATH."/composer.phar"))->extractTo($extractDir);
+        }
+    }
+
+    /**
      * Run composer command
      *
      * @param string $command
@@ -30,18 +45,6 @@ class Composer extends Base
      */
     public function run(string $command): array
     {
-        // extract composer
-        if (!file_exists($this->extractDir."/vendor/autoload.php") == true) {
-            // prepare composer.phar path
-            $path = CORE_PATH."/composer.phar";
-
-            if (!file_exists($path)) {
-                return false;
-            }
-            $composerPhar = new \Phar($path);
-            $composerPhar->extractTo($extractDir);
-        }
-
         putenv("COMPOSER_HOME=".$this->extractDir);
         require_once $this->extractDir."/vendor/autoload.php";
 
