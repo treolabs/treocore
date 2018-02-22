@@ -454,6 +454,16 @@ class ModuleManager extends Base
     }
 
     /**
+     * Get Composer service
+     *
+     * @return Composer
+     */
+    protected function getComposerService(): Composer
+    {
+        return $this->getInjection('serviceFactory')->create('Composer');
+    }
+
+    /**
      * Translate field
      *
      * @param string $tab
@@ -517,16 +527,6 @@ class ModuleManager extends Base
         }
 
         return $this->treoModules;
-    }
-
-    /**
-     * Get Composer service
-     *
-     * @return Composer
-     */
-    protected function getComposerService(): Composer
-    {
-        return $this->getInjection('serviceFactory')->create('Composer');
     }
 
     /**
