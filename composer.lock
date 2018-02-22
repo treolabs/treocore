@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e638e3eed1651177880272bde6960cf",
+    "content-hash": "6419c502db2db4384b6603fda20eb118",
     "packages": [
         {
             "name": "composer/semver",
@@ -1599,28 +1599,6 @@
             ],
             "description": "ColoredFields module for TreoPIM",
             "time": "2018-02-06T14:00:39+00:00"
-        },
-        {
-            "name": "treo-crm/erp",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://gitlab.zinit1.com/treoCRM/modules/erp.git",
-                "reference": "09e569a01682d25d9438e2bb6290389f8b296b75"
-            },
-            "require": {
-                "php": "^7.1",
-                "treo-crm/multilang": "^1.0.0"
-            },
-            "type": "library",
-            "authors": [
-                {
-                    "name": "Roman Ratsun",
-                    "email": "r.ratsun@zinitsolutions.com"
-                }
-            ],
-            "description": "ERP module for TreoPIM",
-            "time": "2018-02-06T14:06:48+00:00"
         },
         {
             "name": "treo-crm/multilang",
