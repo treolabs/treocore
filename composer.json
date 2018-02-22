@@ -48,5 +48,13 @@
             "type": "composer",
             "url": "https://packagist.zinitsolutions.com"
         }
-    ]
+    ],
+    "config": {
+        "http-basic": {
+            "gitlab.zinit1.com": {
+                "username": "treopim-upgrades",
+                "password": "Q2bmz06$"
+            }
+        }
+    }
 }
