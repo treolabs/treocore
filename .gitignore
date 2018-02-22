@@ -5,7 +5,8 @@ apidocs/
 !/data/.htaccess
 /vendor/
 /composer_dev.json
-/custom/
+/custom/*
+!/custom/.htaccess
 /nb_metadata
 !/apidocs/
 /apidocs/index.html
