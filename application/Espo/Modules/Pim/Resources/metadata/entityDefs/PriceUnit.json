@@ -45,7 +45,10 @@
             "view": "views/fields/teams"
         },
         "productTypePackages": {
-            "type": "linkMultiple"
+            "type": "linkMultiple",
+            "layoutDetailDisabled": true,
+            "layoutFiltersDisabled": true,
+            "layoutMassUpdateDisabled": true
         }
     },
     "links": {
@@ -74,7 +77,8 @@
         "productTypePackages": {
             "type": "hasMany",
             "foreign": "priceUnit",
-            "entity": "productTypePackage"
+            "entity": "productTypePackage",
+            "layoutRelationshipsDisabled": true
         }
     },
     "collection": {
