@@ -40,6 +40,11 @@ class ModuleManager extends Base
     protected $gitServer = 'gitlab.zinit1.com';
 
     /**
+     * @var string
+     */
+    protected $packages = 'https://packagist.zinitsolutions.com/packages.json';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -194,6 +199,22 @@ class ModuleManager extends Base
 
             return $this->getComposerService()->run("require {$repo}:{$version}");
         }
+
+        return $result;
+    }
+
+    /**
+     * Get available modules for install
+     *
+     * @return array
+     */
+    public function getAvailableModulesList(): array
+    {
+        // prepare result
+        $result = [
+            'total' => 0,
+            'list'  => []
+        ];
 
         return $result;
     }
