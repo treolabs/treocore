@@ -48,6 +48,14 @@
         }
     },
     {
+        "route": "/ModuleManager/availableModulesList",
+        "method": "get",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "getAvailableModulesList"
+        }
+    },
+    {
         "route": "/ProgressManager/isShowPopup",
         "method": "get",
         "params": {
