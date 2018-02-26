@@ -1,3 +1,4 @@
+1.6.2  2018-02-26 9:15:07 Europe/Kiev
     * FEA #59792 : Передавати тип в ітем Progress manager (Roman Ratsun)
     * FEA #59371 : убрать возможность вывода технических сущностей на фронте в Packagings (Yurii Kondratskyi)
     * FEA #59372 : убрать возможность вывода технических сущностей на фронте в Price Units  (Yurii Kondratskyi)
