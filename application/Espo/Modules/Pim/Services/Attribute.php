@@ -43,7 +43,10 @@ class Attribute extends AbstractService
                     // push items to families
                     if (count($families) > 0) {
                         foreach ($families as $family) {
-                            if (!$family->get('productFamily')->get('deleted')) {
+                            // prepare productFamily
+                            $productFamily = $family->get('productFamily');
+
+                            if (!empty($productFamily) && !$productFamily->get('deleted')) {
                                 $result[$family->get('productFamilyId')]['id']     = $family->get('productFamilyId');
                                 $result[$family->get('productFamilyId')]['name']   = $family->get('productFamilyName');
                                 $result[$family->get('productFamilyId')]['rows'][] = [
