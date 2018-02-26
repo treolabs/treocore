@@ -35,6 +35,11 @@ class ModuleManager extends Base
     protected $moduleRequireds = [];
 
     /**
+     * @var string
+     */
+    protected $gitServer = 'gitlab.zinit1.com';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -48,6 +53,49 @@ class ModuleManager extends Base
         $this->addDependency('language');
         $this->addDependency('fileManager');
         $this->addDependency('dataManager');
+        $this->addDependency('serviceFactory');
+    }
+
+    /**
+     * Get composer user data
+     *
+     * @return array
+     */
+    public function getComposerUser(): array
+    {
+        // prepare result
+        $result = [];
+
+        // get auth data
+        $authData = $this->getComposerService()->getAuthData();
+
+        if (!empty($authData['http-basic'][$this->gitServer]) && is_array($authData['http-basic'][$this->gitServer])) {
+            $result = $authData['http-basic'][$this->gitServer];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set composer user data
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function setComposerUser(string $username, string $password): bool
+    {
+        // get auth data
+        $authData = $this->getComposerService()->getAuthData();
+
+        // prepare auth data
+        $authData['http-basic'][$this->gitServer] = [
+            'username' => $username,
+            'password' => $password
+        ];
+
+        return $this->getComposerService()->setAuthData($authData);
     }
 
     /**
@@ -116,6 +164,35 @@ class ModuleManager extends Base
         // rebuild DB
         if ($result && !empty($config['disabled'])) {
             $this->getDataManager()->rebuild();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Update module
+     *
+     * @param string $id
+     * @param string $version
+     *
+     * @return array
+     */
+    public function updateModule(string $id, string $version): array
+    {
+        // prepare result
+        $result = [
+            "status" => false,
+            "output" => ""
+        ];
+
+        // get trep modules
+        $treoModule = $this->getTreoModules();
+
+        if (array_key_exists($id, $treoModule)) {
+            // prepare repo
+            $repo = TreoComposer::TREODIR."/".$treoModule[$id];
+
+            return $this->getComposerService()->run("require {$repo}:{$version}");
         }
 
         return $result;
@@ -344,7 +421,19 @@ class ModuleManager extends Base
             $result = $package['version'];
         }
 
-        return $result;
+        return $this->prepareModuleVersion($result);
+    }
+
+    /**
+     * Prepare module version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    protected function prepareModuleVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
     }
 
     /**
@@ -412,6 +501,16 @@ class ModuleManager extends Base
     protected function getFileManager(): FileManager
     {
         return $this->getInjection('fileManager');
+    }
+
+    /**
+     * Get Composer service
+     *
+     * @return Composer
+     */
+    protected function getComposerService(): Composer
+    {
+        return $this->getInjection('serviceFactory')->create('Composer');
     }
 
     /**

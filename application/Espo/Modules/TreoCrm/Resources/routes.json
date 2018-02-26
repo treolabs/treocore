@@ -24,6 +24,30 @@
         }
     },
     {
+        "route": "/ModuleManager/updateModule",
+        "method": "put",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "updateModule"
+        }
+    },
+    {
+        "route": "/ModuleManager/composerUser",
+        "method": "get",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "getComposerUser"
+        }
+    },
+    {
+        "route": "/ModuleManager/composerUser",
+        "method": "put",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "setComposerUser"
+        }
+    },
+    {
         "route": "/ProgressManager/isShowPopup",
         "method": "get",
         "params": {
