@@ -1,3 +1,5 @@
+    * BUG #59698 : Artikel / Attribute löschen geht nicht // Не удаляются товары и атрибуты (Roman Ratsun)
+
 1.6.2  2018-02-26 9:15:50 Europe/Kiev
 1.6.2  2018-02-26 9:15:07 Europe/Kiev
     * FEA #59792 : Передавати тип в ітем Progress manager (Roman Ratsun)
