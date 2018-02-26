@@ -139,7 +139,7 @@ class ProgressManager extends AbstractProgressManager
                         ->create($config['type'][$record['type']]['service']);
                     if ($service instanceof ProgressJobInterface && $service->executeProgressJob($record)) {
                         // update record
-                        $this->updateRecord($record['id'], $service);
+                        $this->updateRecord($record['id'], $record['type'], $service);
                         // notify user
                         $this->notifyUser($service, $record);
                     }
@@ -232,11 +232,12 @@ class ProgressManager extends AbstractProgressManager
      * Update record
      *
      * @param string $id
+     * @param string $type
      * @param ProgressJobInterface $service
      *
      * @return bool
      */
-    protected function updateRecord(string $id, ProgressJobInterface $service): bool
+    protected function updateRecord(string $id, string $type, ProgressJobInterface $service): bool
     {
         // prepare result
         $result = false;
@@ -250,6 +251,7 @@ class ProgressManager extends AbstractProgressManager
             $data      = Json::encode($service->getData());
             $eventData = [
                 'id'       => $id,
+                'type'     => $type,
                 'status'   => $status,
                 'progress' => $progress,
                 'data'     => $data,
