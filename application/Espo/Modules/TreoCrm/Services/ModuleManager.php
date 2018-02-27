@@ -237,7 +237,7 @@ class ModuleManager extends Base
                     foreach ($versions as $version => $data) {
                         $preparedVersion = (int) str_replace(['.', 'v'], ['', ''], $version);
                         if ($preparedVersion > (int) $max) {
-                            $max = $version;
+                            $max = str_replace('v', '', $version);
                         }
                     }
 
