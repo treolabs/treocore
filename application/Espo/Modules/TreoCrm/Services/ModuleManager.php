@@ -242,7 +242,6 @@ class ModuleManager extends Base
                     }
 
                     if (!empty($treoId = $versions[$max]['extra']['treoId'])) {
-
                         // prepare name
                         $name = $treoId;
                         if (!empty($versions[$max]['extra']['name'][$currentLang])) {
