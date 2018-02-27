@@ -102,5 +102,16 @@
             "controller": "ProgressManager",
             "action": "close"
         }
+    },
+    {
+        "route":"/Installer/setDataBaseSettings",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": "setDataBaseSettings"
+        },
+        "conditions":{
+            "auth":false
+        }
     }
 ]

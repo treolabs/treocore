@@ -24,7 +24,7 @@ class Config extends EspoConfig
     /**
      * @var string
      */
-    protected $defaultConfigPath = 'application/Espo/Core/defaults/config.php';
+    protected $defaultConfigPath = 'application/Espo/Modules/TreoCrm/Configs/defaultConfig.php';
 
     /**
      * @var string
