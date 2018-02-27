@@ -8,6 +8,10 @@
     "themes": {
         "TreoDarkTheme": "Treo Dark Theme"
     },
+    "scopeNames": {
+        "Activities": "Aktivitäten",
+        "Stream": "Stream"
+    },
     "messages": {
         "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen."
     }
