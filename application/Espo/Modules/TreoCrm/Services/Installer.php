@@ -74,18 +74,78 @@ class Installer extends Base
             throw new Exceptions\Forbidden();
         }
 
-        // prepare params
-        $dbParams['host']     = (string)$data['host'];
-        $dbParams['port']     = isset($data['port']) ? (string)$data['port'] : '';
-        $dbParams['dbname']   = (string)$data['dbname'];
-        $dbParams['user']     = (string)$data['user'];
-        $dbParams['password'] = isset($data['password']) ? (string)$data['password'] : '';
+        $dbSettings = $this->prepareDbParams($data);
+
+        $this->isConncetToDb($dbSettings);
+
+        array_merge($dbParams, $dbSettings);
 
         $this->getConfig()->set('database', $dbParams);
+
 
         return $this->getConfig()->save();
     }
 
+    /**
+     * @param $dbSettings
+     *
+     * @return array
+     */
+    public function checkDbConnect(array $dbSettings): array
+    {
+        $result = [
+            'status' => false,
+            'message' => ''
+        ];
+
+        try {
+            $result['status'] = $this->isConncetToDb($this->prepareDbParams($dbSettings));
+        } catch (\PDOException $e) {
+            $result['status'] = false;
+            $result['message'] = $e->getMessage();
+        }
+
+         return $result;
+    }
+
+    /**
+     * Prepare DB params
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function prepareDbParams(array $data): array
+    {
+        // prepare params
+        return [
+            'host'     => (string)$data['host'],
+            'port'     => isset($data['port']) ? (string)$data['port'] : '',
+            'dbname'   => (string)$data['dbname'],
+            'user'     => (string)$data['user'],
+            'password' => isset($data['password']) ? (string)$data['password'] : ''
+        ];
+    }
+
+
+    /**
+     * Check connect to db
+     *
+     * @param $dbSettings
+     *
+     * @return bool
+     */
+    protected function isConncetToDb($dbSettings)
+    {
+        $port = !empty($dbSettings['port']) ? ';port=' . $dbSettings['port'] . ';' : '';
+
+        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';' . 'dbname=' . $dbSettings['dbname'] . $port;
+
+        // todo handle error  check port
+        new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+
+        return true;
+    }
 
 
     /**

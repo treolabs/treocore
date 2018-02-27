@@ -113,5 +113,16 @@
         "conditions":{
             "auth":false
         }
+    },
+    {
+        "route":"/Installer/checkDbConnect",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": "checkDbConnect"
+        },
+        "conditions":{
+            "auth":false
+        }
     }
 ]
