@@ -1,6 +1,6 @@
 RewriteEngine On
 
 # Prevent direct access to certain files
-<FilesMatch ^(composer\.json$|\.gitlab-ci\.yml$|phpci\.yml)$>
-    Deny from all
+<FilesMatch ^(composer\.json$|phpci\.yml)$>
+Deny from all
 </FilesMatch> 

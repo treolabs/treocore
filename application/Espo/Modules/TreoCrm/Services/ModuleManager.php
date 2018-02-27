@@ -22,6 +22,16 @@ class ModuleManager extends Base
     /**
      * @var string
      */
+    public static $packagistPath = 'https://packagist.zinitsolutions.com';
+
+    /**
+     * @var string
+     */
+    public static $gitServer = 'gitlab.zinit1.com';
+
+    /**
+     * @var string
+     */
     protected $moduleJsonPath = 'custom/Espo/Custom/Resources/module.json';
 
     /**
@@ -35,9 +45,14 @@ class ModuleManager extends Base
     protected $moduleRequireds = [];
 
     /**
+     * @var array
+     */
+    protected $packagistData = null;
+
+    /**
      * @var string
      */
-    protected $gitServer = 'gitlab.zinit1.com';
+    protected $packages = 'https://packagist.zinitsolutions.com/packages.json';
 
     /**
      * Construct
@@ -69,8 +84,8 @@ class ModuleManager extends Base
         // get auth data
         $authData = $this->getComposerService()->getAuthData();
 
-        if (!empty($authData['http-basic'][$this->gitServer]) && is_array($authData['http-basic'][$this->gitServer])) {
-            $result = $authData['http-basic'][$this->gitServer];
+        if (!empty($authData['http-basic'][self::$gitServer]) && is_array($authData['http-basic'][self::$gitServer])) {
+            $result = $authData['http-basic'][self::$gitServer];
         }
 
         return $result;
@@ -90,7 +105,7 @@ class ModuleManager extends Base
         $authData = $this->getComposerService()->getAuthData();
 
         // prepare auth data
-        $authData['http-basic'][$this->gitServer] = [
+        $authData['http-basic'][self::$gitServer] = [
             'username' => $username,
             'password' => $password
         ];
@@ -196,6 +211,102 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Get available modules for install
+     *
+     * @return array
+     */
+    public function getAvailableModulesList(): array
+    {
+        // prepare result
+        $result = [
+            'total' => 0,
+            'list'  => []
+        ];
+
+        if (!empty($packages = $this->getPackagistData()['packages']) && is_array($packages)) {
+            // get current language
+            $currentLang = $this->getLanguage()->getLanguage();
+
+            foreach ($packages as $repository => $versions) {
+                if (is_array($versions)) {
+                    // get max version
+                    $max = null;
+                    foreach ($versions as $version => $data) {
+                        $preparedVersion = (int) str_replace('.', '', $version);
+                        if ($preparedVersion > (int) $max) {
+                            $max = $version;
+                        }
+                    }
+
+                    if (!empty($treoId = $versions[$max]['extra']['treoId'])) {
+                        // prepare name
+                        $name = $treoId;
+                        if (!empty($versions[$max]['extra']['name'][$currentLang])) {
+                            $name = $versions[$max]['extra']['name'][$currentLang];
+                        } elseif ($versions[$max]['extra']['name']['default']) {
+                            $name = $versions[$max]['extra']['name']['default'];
+                        }
+
+                        // prepare description
+                        $description = '-';
+                        if (!empty($versions[$max]['extra']['description'][$currentLang])) {
+                            $description = $versions[$max]['extra']['description'][$currentLang];
+                        } elseif ($versions[$max]['extra']['description']['default']) {
+                            $description = $versions[$max]['extra']['description']['default'];
+                        }
+
+                        $result['list'][] = [
+                            'id'          => $treoId,
+                            'repository'  => $repository,
+                            'version'     => $max,
+                            'name'        => $name,
+                            'description' => $description
+                        ];
+                    }
+                }
+            }
+
+            // prepare total
+            $result['total'] = count($result['list']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get packagist data
+     *
+     * @return array
+     */
+    protected function getPackagistData(): array
+    {
+        if (is_null($this->packagistData)) {
+            // prepare result
+            $this->packagistData = [];
+
+            if (!empty($packagesJson = file_get_contents(self::$packagistPath.'/packages.json'))) {
+                // parse json
+                $packagesJsonData = Json::decode($packagesJson, true);
+
+                if (!empty($includes = $packagesJsonData['includes']) && is_array($includes)) {
+                    foreach ($includes as $path => $row) {
+                        if (!empty($includeJson = file_get_contents(self::$packagistPath.'/'.$path))) {
+                            // parse json
+                            $includeJsonData = Json::decode($includeJson, true);
+
+                            if (!empty($includeJsonData) && is_array($includeJsonData)) {
+                                $this->packagistData = array_merge_recursive($this->packagistData, $includeJsonData);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->packagistData;
     }
 
     /**
