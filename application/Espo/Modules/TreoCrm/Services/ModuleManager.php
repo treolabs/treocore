@@ -50,6 +50,11 @@ class ModuleManager extends Base
     protected $packagistData = null;
 
     /**
+     * @var string
+     */
+    protected $packages = 'https://packagist.zinitsolutions.com/packages.json';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
