@@ -1,6 +1,6 @@
 {
     "isSystem": true,
-    "required": ["ColoredFields", "Multilang"],
+    "extends": ["Completeness", "Revisions"],
     "disabled": false,
-    "order": 5110
+    "order": 5120
 }
