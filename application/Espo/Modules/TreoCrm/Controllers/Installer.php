@@ -14,8 +14,29 @@ use Espo\Core\Exceptions;
  */
 class Installer extends Base
 {
-    public function actionSetDataBaseSettings($params, $data, Request $request)
+
+    /**
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return bool
+     * @throws Exceptions\BadRequest
+     */
+    public function actionSetDbSettings($params, $data, Request $request): bool
     {
-        $x = 1;
+        // check method
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        $post = get_object_vars($data);
+
+        // check if input params exists
+        if (!isset($post['host']) || !isset($post['dbname']) || !isset($post['user'])) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getService('Installer')->setDbSettings($post);
     }
 }

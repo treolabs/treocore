@@ -3,7 +3,8 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCrm\Core\Utils;
 
-use \Espo\Core\Utils\Auth as EspoAuth;
+use Espo\Core\Utils\Auth as EspoAuth;
+use Espo\Core\Exceptions\Error;
 
 /**
  * Class Auth
@@ -16,11 +17,11 @@ class Auth extends EspoAuth
     /**
      * Disable auth
      *
-     * @throws \Espo\Core\Exceptions\Error
+     * @throws Error
      */
     public function useNoAuth()
     {
-        if (!empty($this->getConfig()->get('database')['name'])) {
+        if (!empty($this->getConfig()->get('database')['dbname'])) {
             parent::useNoAuth();
         }
     }

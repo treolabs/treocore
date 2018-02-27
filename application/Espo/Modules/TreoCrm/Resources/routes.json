@@ -104,11 +104,11 @@
         }
     },
     {
-        "route":"/Installer/setDataBaseSettings",
+        "route":"/Installer/setDbSettings",
         "method":"post",
         "params":{
             "controller":"Installer",
-            "action": "setDataBaseSettings"
+            "action": "setDbSettings"
         },
         "conditions":{
             "auth":false
