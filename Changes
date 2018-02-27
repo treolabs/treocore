@@ -1,3 +1,7 @@
+1.6.5  2018-02-27 11:19:40 Europe/Kiev
+    * BUG #59676 : Aktivitäten = 2x (Roman Ratsun)
+    * BUG #59893 : Не учитываются при расчете заполненности показатели атрибутов в продуктах (Roman Ratsun)
+
 1.6.4  2018-02-26 16:07:31 Europe/Kiev
     * BUG #59714 : Fehlermeldung bei Anlage neuer Felder (Roman Ratsun)
 

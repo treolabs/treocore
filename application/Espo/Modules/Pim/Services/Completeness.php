@@ -83,31 +83,33 @@ class Completeness extends ParentCompleteness
                     /**
                      * For multilang fields
                      */
-                    // get requireds
-                    $multilangRequireds = $this->getRequireds($entityName, true);
+                    if ($this->getConfig()->get('isMultilangActive')) {
+                        // get requireds
+                        $multilangRequireds = $this->getRequireds($entityName, true);
 
-                    // get required attributes
-                    $multilangRequiredAttributes = $this->getRequiredAttributes($attributes, true);
+                        // get required attributes
+                        $multilangRequiredAttributes = $this->getRequiredAttributes($attributes, true);
 
-                    // get total
-                    $total = count($multilangRequireds) + count($multilangRequiredAttributes);
+                        // get total
+                        $total = count($multilangRequireds) + count($multilangRequiredAttributes);
 
-                    // prepare coefficient
-                    $multilangCoefficient = 100 / $total;
+                        // prepare coefficient
+                        $multilangCoefficient = 100 / $total;
 
-                    foreach ($this->getLanguages() as $language) {
-                        $multilangComplete = 0;
-                        foreach ($multilangRequireds as $field) {
-                            if (!empty($entity->get(Util::toCamelCase($field.'_'.strtolower($language))))) {
-                                $multilangComplete += $multilangCoefficient;
+                        foreach ($this->getLanguages() as $language) {
+                            $multilangComplete = 0;
+                            foreach ($multilangRequireds as $field) {
+                                if (!empty($entity->get(Util::toCamelCase($field.'_'.strtolower($language))))) {
+                                    $multilangComplete += $multilangCoefficient;
+                                }
                             }
-                        }
-                        foreach ($multilangRequiredAttributes as $attribute) {
-                            if (!empty($attribute[Util::toCamelCase('value_'.strtolower($language))])) {
-                                $multilangComplete += $multilangCoefficient;
+                            foreach ($multilangRequiredAttributes as $attribute) {
+                                if (!empty($attribute[Util::toCamelCase('value_'.strtolower($language))])) {
+                                    $multilangComplete += $multilangCoefficient;
+                                }
                             }
+                            $entity->set(Util::toCamelCase('complete_'.strtolower($language)), $multilangComplete);
                         }
-                        $entity->set(Util::toCamelCase('complete_'.strtolower($language)), $multilangComplete);
                     }
                 }
 
@@ -141,9 +143,12 @@ class Completeness extends ParentCompleteness
         // prepare result
         $result = [];
 
+        // prepare multilang types
+        $multilangTypes = array_keys($this->getConfig()->get('modules.multilangFields'));
+
         foreach ($attributes as $attribute) {
             if ($isMultilang) {
-                if (!empty($attribute['isRequired']) && in_array($attribute['type'], $this->getMultilangTypes())) {
+                if (!empty($attribute['isRequired']) && in_array($attribute['type'], $multilangTypes)) {
                     $result[] = $attribute;
                 }
             } else {

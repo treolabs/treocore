@@ -212,10 +212,7 @@ class ModuleManager extends Base
         $data = [];
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
-            // get config data
-            $config = $this->getModuleConfigData($module);
-
-            if (empty($config['isSystem'])) {
+            if (!in_array($module, ['Crm', 'TreoCrm'])) {
                 $data[$module] = [
                     'order'    => $this->createModuleLoadOrder($module),
                     'disabled' => !in_array($module, $this->getMetadata()->getModuleList())
@@ -242,17 +239,32 @@ class ModuleManager extends Base
         // prepare result
         $result = 5100;
 
+        /**
+         * For requireds
+         */
         if (!empty($requireds = $this->getModuleRequireds($moduleId))) {
-            $max = 0;
-
             foreach ($requireds as $require) {
                 $requireMax = $this->createModuleLoadOrder($require);
-                if ($requireMax > $max) {
-                    $max = $requireMax;
+                if ($requireMax > $result) {
+                    $result = $requireMax;
                 }
             }
 
-            $result = $max + 100;
+            $result = $result + 10;
+        }
+
+        /**
+         * For extends
+         */
+        if (!empty($extends = $this->getModuleConfigData($moduleId)['extends'])) {
+            foreach ($extends as $extend) {
+                $extendMax = $this->createModuleLoadOrder($extend);
+                if ($extendMax > $result) {
+                    $result = $extendMax;
+                }
+            }
+
+            $result = $result + 10;
         }
 
         return $result;
