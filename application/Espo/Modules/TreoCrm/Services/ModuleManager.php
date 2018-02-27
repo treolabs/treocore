@@ -235,7 +235,7 @@ class ModuleManager extends Base
                     // get max version
                     $max = null;
                     foreach ($versions as $version => $data) {
-                        $preparedVersion = (int) str_replace('.', '', $version);
+                        $preparedVersion = (int) str_replace(['.', 'v'], ['', ''], $version);
                         if ($preparedVersion > (int) $max) {
                             $max = $version;
                         }
