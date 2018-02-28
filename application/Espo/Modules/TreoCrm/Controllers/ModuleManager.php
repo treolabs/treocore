@@ -157,6 +157,43 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Delete module")
+     * @ApiMethod(type="DELETE")
+     * @ApiRoute(name="/ModuleManager/deleteModule")
+     * @ApiBody(sample="{
+     *     'id': 'Erp'
+     * }")
+     * @ApiReturn(sample="{
+     *     'status': 'true',
+     *     'output': 'some text from composer'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionDeleteModule($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isDelete()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($data['id'])) {
+            return $this->getModuleManagerService()->deleteModule($data['id']);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
      * @ApiDescription(description="Get composer user")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/ModuleManager/composerUser")

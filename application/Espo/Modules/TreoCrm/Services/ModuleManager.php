@@ -304,6 +304,37 @@ class ModuleManager extends Base
     }
 
     /**
+     * Delete module
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function deleteModule(string $id): array
+    {
+        // prepare result
+        $result = [
+            "status" => null,
+            "output" => ""
+        ];
+
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
+
+        if (!empty($package = $packages['max'])) {
+            // prepare params
+            $repo = $package['name'];
+
+            // update modules file
+            $this->updateModuleFile($id, true);
+
+            // run composer
+            $result = $this->getComposerService()->run("remove {$repo}");
+        }
+
+        return $result;
+    }
+
+    /**
      * Update module file
      *
      * @param string $moduleId
