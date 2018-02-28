@@ -56,7 +56,7 @@ class Composer extends Base
 
         $status = $application->run($input, $output);
 
-        return ['status' => ($status === 0), 'output' => $output->fetch()];
+        return ['status' => $status, 'output' => $output->fetch()];
     }
 
     /**
