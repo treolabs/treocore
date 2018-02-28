@@ -108,21 +108,30 @@ class ModuleManager extends Base
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if ($this->isModuleAllowed($module)) {
+                // get current module package
+                $package = $this->getComposerModuleService()->getModulePackage($module);
+
                 // get module packages
                 $packages = $this->getComposerModuleService()->getModulePackages($module);
 
                 // prepare params
-                $version          = $this
-                    ->prepareModuleVersion($this->getComposerModuleService()->getModuleVersion($module));
+                $version = '-';
+                if (isset($package['version'])) {
+                    $version = $this->prepareModuleVersion($package['version']);
+                }
                 $availableVersion = $version;
                 if (isset($packages['max'])) {
                     $availableVersion = $this->prepareModuleVersion($packages['max']['version']);
                 }
+                $name = $this->translateModule($module, 'name');
+                if (empty($name)) {
+                    $name = $module;
+                }
 
                 $result['list'][] = [
                     "id"               => $module,
-                    "name"             => $this->translateModule('moduleNames', $module),
-                    "description"      => $this->translateModule('moduleDescriptions', $module),
+                    "name"             => $name,
+                    "description"      => $this->translateModule($module, 'description'),
                     "version"          => $version,
                     "availableVersion" => $availableVersion,
                     "required"         => $this->prepareRequireds($this->getModuleRequireds($module)),
@@ -480,31 +489,29 @@ class ModuleManager extends Base
     /**
      * Translate field
      *
-     * @param string $tab
+     * @param string $module
      * @param string $key
      *
      * @return string
      */
-    protected function translateModule(string $tab, string $key): string
+    protected function translateModule(string $module, string $key): string
     {
-        // default translate
-        $translate = $key;
+        // prepare result
+        $result = '';
 
         // get language
         $lang = $this->getLanguage()->getLanguage();
 
-        // prepare path
-        $path = "application/Espo/Modules/{$key}/Resources/i18n/{$lang}/ModuleManager.json";
+        // get module packages
+        $package = $this->getComposerModuleService()->getModulePackage($module);
 
-        if (file_exists($path)) {
-            $data = Json::decode(file_get_contents($path), true);
-
-            if (!empty($data[$tab][$key])) {
-                $translate = $data[$tab][$key];
-            }
+        if (!empty($translate = $package['extra'][$key][$lang])) {
+            $result = $translate;
+        } elseif (!empty($translate = $package['extra'][$key]['default'])) {
+            $result = $translate;
         }
 
-        return $translate;
+        return $result;
     }
 
     /**

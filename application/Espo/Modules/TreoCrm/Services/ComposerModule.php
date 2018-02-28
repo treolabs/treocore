@@ -30,6 +30,11 @@ class ComposerModule extends Base
     protected $modulePackage = [];
 
     /**
+     * @var array
+     */
+    protected $composerLockData = null;
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -38,29 +43,38 @@ class ComposerModule extends Base
 
         // load module packages
         $this->loadModulesPackages();
+
+        // load composer lock
+        $this->loadComposerLock();
     }
 
     /**
-     * Get module version
+     * Get current module package
      *
      * @param string $module
      *
-     * @return string
+     * @return array
      */
-    public function getModuleVersion(string $module): string
+    public function getModulePackage(string $module): array
     {
         // prepare result
-        $result = '-';
+        $result = [];
 
-        if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
-            $result = $package['version'];
+        if (!empty($packages = $this->composerLockData['packages'])) {
+            foreach ($packages as $package) {
+                if (!empty($package['extra']['treoId']) && $module == $package['extra']['treoId']) {
+                    $result = $package;
+
+                    break;
+                }
+            }
         }
 
         return $result;
     }
 
     /**
-     * Get module package
+     * Get module(s) packages
      *
      * @param string $moduleId
      *
@@ -141,16 +155,12 @@ class ComposerModule extends Base
     }
 
     /**
-     * Get composer package
-     *
-     * @param string $module
-     *
-     * @return array
+     * Load composer lock data
      */
-    protected function getComposerPackage(string $module): array
+    protected function loadComposerLock(): void
     {
-        // prepare result
-        $result = [];
+        // prepare data
+        $this->composerLockData = [];
 
         // prepare composerLock
         $composerLock = 'composer.lock';
@@ -159,21 +169,8 @@ class ComposerModule extends Base
         $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
 
         if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
-            // prepare module key
-            $key = TreoComposer::getTreoModules()[$module];
-
-            // get data
-            $data = Json::decode(file_get_contents($composerLock), true);
-
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
-                    if ($package['name'] == TreoComposer::TREODIR."/{$key}") {
-                        $result = $package;
-                    }
-                }
-            }
+            // prepare data
+            $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
         }
-
-        return $result;
     }
 }
