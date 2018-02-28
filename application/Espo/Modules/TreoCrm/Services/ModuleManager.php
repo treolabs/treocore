@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Espo\Modules\TreoCrm\Services;
 
 use Espo\Core\DataManager;
-use Espo\Core\Utils\Json;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -366,6 +365,9 @@ class ModuleManager extends Base
     {
         // prepare data
         $data = [];
+
+        // reload modules
+        $this->getMetadata()->init(true);
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if (!in_array($module, ['Crm', 'TreoCrm'])) {
