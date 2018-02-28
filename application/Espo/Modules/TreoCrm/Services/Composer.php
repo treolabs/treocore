@@ -146,37 +146,74 @@ class Composer extends Base
     }
 
     /**
-     * Update treo modules
+     * Update treo module
+     *
+     * @param string $moduleId
      */
-    public static function updateTreoModules(): void
+    public static function updateTreoModule(string $moduleId): void
     {
-        // prepare treo dir name
-        $treoDir = self::TREODIR;
+        // update frontend files
+        self::updateFrontend($moduleId);
 
-        // prepare treo crm vendor dir path
-        $path = "vendor/{$treoDir}/";
-
-        if (file_exists($path) && is_dir($path)) {
-            // update backend files
-            self::updateBackend();
-
-            // update frontend files
-            self::updateFrontend();
-        }
+        // update backend files
+        self::updateBackend($moduleId);
     }
 
     /**
      * Delete treo module
      *
-     * @param tstring $moduleId
+     * @param string $moduleId
      */
     public static function deleteTreoModule(string $moduleId): void
     {
-        // delete dir from backend
-        self::deleteDir("application/Espo/Modules/{$moduleId}/");
-
         // delete dir from frontend
         self::deleteDir('client/modules/'.Util::fromCamelCase($moduleId, '-').'/');
+
+        // delete dir from backend
+        self::deleteDir("application/Espo/Modules/{$moduleId}/");
+    }
+
+    /**
+     * Update backend
+     *
+     * @param string $moduleId
+     */
+    protected static function updateBackend(string $moduleId): void
+    {
+        if (array_key_exists($moduleId, self::getTreoModules())) {
+            // prepare params
+            $moduleKey = self::getTreoModules()[$moduleId];
+            $source    = "vendor/".self::TREODIR."/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
+            $dest      = "application/Espo/Modules/{$moduleId}/";
+
+            // delete dir
+            self::deleteDir($dest);
+
+            // copy dir
+            self::copyDir($source, $dest);
+        }
+    }
+
+    /**
+     * Update frontend
+     *
+     * @param string $moduleId
+     */
+    protected static function updateFrontend(string $moduleId): void
+    {
+        if (array_key_exists($moduleId, self::getTreoModules())) {
+            // prepare params
+            $moduleKey = self::getTreoModules()[$moduleId];
+            $module    = Util::fromCamelCase($moduleId, '-');
+            $source    = "vendor/".self::TREODIR."/{$moduleKey}/client/modules/{$module}/";
+            $dest      = "client/modules/{$module}/";
+
+            // delete dir
+            self::deleteDir($dest);
+
+            // copy dir
+            self::copyDir($source, $dest);
+        }
     }
 
     /**
@@ -277,59 +314,6 @@ class Composer extends Base
         }
         closedir($dir_handle);
         rmdir($dirname);
-
-        return true;
-    }
-
-    /**
-     * Update backend
-     *
-     * @return bool
-     */
-    protected static function updateBackend(): bool
-    {
-        foreach (self::getTreoModules() as $moduleId => $moduleKey) {
-            // prepare params
-            $source = "vendor/".self::TREODIR."/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
-            $dest   = "application/Espo/Modules/{$moduleId}/";
-
-            // delete dir
-            self::deleteDir($dest);
-
-            // copy dir
-            self::copyDir($source, $dest);
-        }
-
-        return true;
-    }
-
-    /**
-     * Update frontend
-     *
-     * @return bool
-     */
-    protected static function updateFrontend(): bool
-    {
-        foreach (self::getTreoModules() as $moduleId => $moduleKey) {
-            // module path
-            $modulePath = "vendor/".self::TREODIR."/{$moduleKey}/client/modules/";
-
-            if (file_exists($modulePath) && is_dir($modulePath)) {
-                foreach (scandir($modulePath) as $module) {
-                    if (!in_array($module, self::SKIP)) {
-                        // prepare params
-                        $source = "{$modulePath}{$module}/";
-                        $dest   = "client/modules/{$module}/";
-
-                        // delete dir
-                        self::deleteDir($dest);
-
-                        // copy dir
-                        self::copyDir($source, $dest);
-                    }
-                }
-            }
-        }
 
         return true;
     }

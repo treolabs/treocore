@@ -269,7 +269,7 @@ class ModuleManager extends Base
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
 
             // update treo dirs
-            TreoComposer::updateTreoModules();
+            TreoComposer::updateTreoModule($id);
         }
 
         return $result;
@@ -302,7 +302,7 @@ class ModuleManager extends Base
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
 
             // update treo dirs
-            TreoComposer::updateTreoModules();
+            TreoComposer::updateTreoModule($id);
         }
 
         return $result;
