@@ -104,55 +104,11 @@
         }
     },
     {
-        "route":"/Installer/setDbSettings",
+        "route":"/Installer/:action",
         "method":"post",
         "params":{
             "controller":"Installer",
-            "action": "setDbSettings"
-        },
-        "conditions":{
-            "auth":false
-        }
-    },
-    {
-        "route":"/Installer/checkDbConnect",
-        "method":"post",
-        "params":{
-            "controller":"Installer",
-            "action": "checkDbConnect"
-        },
-        "conditions":{
-            "auth":false
-        }
-    },
-    {
-        "route":"/Installer/setLanguage",
-        "method":"post",
-        "params":{
-            "controller":"Installer",
-            "action": "setLanguage"
-        },
-        "conditions":{
-            "auth":false
-        }
-    },
-    {
-        "route":"/Installer/createAdmin",
-        "method":"post",
-        "params":{
-            "controller":"Installer",
-            "action": "createAdmin"
-        },
-        "conditions":{
-            "auth":false
-        }
-    },
-    {
-        "route":"/Installer/setSystemSettings",
-        "method":"post",
-        "params":{
-            "controller":"Installer",
-            "action": "setSystemSettings"
+            "action": ":action"
         },
         "conditions":{
             "auth":false

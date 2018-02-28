@@ -43,7 +43,7 @@ class Installer extends Base
         $installer = $this->getService('Installer');
 
         // check if is install
-        if ($installer->isInstall()) {
+        if ($installer->isInstalled()) {
             throw new Exceptions\Forbidden();
         }
 
@@ -89,7 +89,7 @@ class Installer extends Base
         $installer = $this->getService('Installer');
 
         // check if is install
-        if ($installer->isInstall()) {
+        if ($installer->isInstalled()) {
             throw new Exceptions\Forbidden();
         }
 
@@ -128,7 +128,7 @@ class Installer extends Base
         $installer = $this->getService('Installer');
 
         // check if is install
-        if ($installer->isInstall()) {
+        if ($installer->isInstalled()) {
             throw new Exceptions\Forbidden();
         }
 
@@ -169,7 +169,7 @@ class Installer extends Base
         $installer = $this->getService('Installer');
 
         // check if is install
-        if ($installer->isInstall()) {
+        if ($installer->isInstalled()) {
             throw new Exceptions\Forbidden();
         }
 

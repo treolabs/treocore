@@ -48,7 +48,7 @@ class Installer extends Base
         $result = false;
 
         // check if is install
-        if ($this->isInstall()) {
+        if ($this->isInstalled()) {
             throw new Exceptions\Forbidden();
         }
 
@@ -214,7 +214,7 @@ class Installer extends Base
      *
      * @return bool
      */
-    public function isInstall(): bool
+    public function isInstalled(): bool
     {
         $config = $this->getConfig();
 
