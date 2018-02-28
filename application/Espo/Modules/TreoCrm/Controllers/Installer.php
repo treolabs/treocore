@@ -16,9 +16,17 @@ use Espo\Modules\TreoCrm\Services\Installer as InstallerService;
 class Installer extends Base
 {
     /**
-     * @param         $params
-     * @param         $data
-     * @param Request $request
+     * @ApiDescription(description="Set language")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Installer/setLanguage")
+     * @ApiBody(sample="{
+     *     'language': 'en_US',
+     * }")
+     *
+     * @ApiReturn(sample="{
+     *      'status': bool,
+     *      'message': string
+     * }")
      *
      * @return array
      * @throws Exceptions\BadRequest
@@ -50,9 +58,21 @@ class Installer extends Base
     }
 
     /**
-     * @param         $params
-     * @param         $data
-     * @param Request $request
+     * @ApiDescription(description="Set db settings")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Installer/setDbSettings")
+     * @ApiBody(sample="{
+     *     'host':     'string',
+     *     'dbname':   'string',
+     *     'user':     'string',
+     *     'password': 'string',
+     *     'port':     'string'
+     * }")
+     *
+     * @ApiReturn(sample="{
+     *      'status': bool,
+     *      'message': string
+     * }")
      *
      * @return array
      * @throws Exceptions\BadRequest
@@ -83,6 +103,20 @@ class Installer extends Base
         return $installer->setDbSettings($post);
     }
 
+    /**
+     * @ApiDescription(description="Create administrator")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Installer/createAdmin")
+     * @ApiBody(sample="{
+     *     'username':        'string',
+     *     'password':        'string',
+     *     'confirmPassword': 'string',
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
     public function actionCreateAdmin($params, $data, Request $request): array
     {
         // check method
@@ -109,9 +143,16 @@ class Installer extends Base
     }
 
     /**
-     * @param         $params
-     * @param         $data
-     * @param Request $request
+     * @ApiDescription(description="Check data base connect")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Installer/checkDbConnect")
+     * @ApiBody(sample="{
+     *     'host':     'string',
+     *     'dbname':   'string',
+     *     'user':     'string',
+     *     'password': 'string',
+     *     'port':     'string'
+     * }")
      *
      * @return array
      * @throws Exceptions\BadRequest

@@ -16,28 +16,10 @@ use Espo\Core\Utils\PasswordHash;
  */
 class Installer extends Base
 {
-
-    /**
-     * @var array
-     */
-    protected $recommendation = [
-        'php'   => [
-            'max_execution_time'  => 180,
-            'max_input_time'      => 180,
-            'memory_limit'        => '256M',
-            'post_max_size'       => '20M',
-            'upload_max_filesize' => '20M'
-        ],
-        'mysql' => [
-            'version' => 5.1
-        ]
-    ];
-
     /**
      * @var PasswordHash
      */
     protected $passwordHash = null;
-
 
     /**
      * Construct
@@ -58,7 +40,7 @@ class Installer extends Base
      *  Generate default config if not exists
      *
      * @throws Exceptions\Forbidden
-    $name     *
+     *
      * @return bool
      */
     public function generateConfig(): bool
@@ -193,6 +175,10 @@ class Installer extends Base
                     'isAdmin'  => '1'
                 ]);
                 $result['status'] = $this->getEntityManager()->saveEntity($user) && $result['status'];
+
+                // set installed
+                $this->getConfig()->set('installed', true);
+                $this->getConfig()->save();
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();
@@ -320,16 +306,6 @@ class Installer extends Base
     protected function getFileManager(): FileManager
     {
         return $this->getInjection('fileManager');
-    }
-
-    /**
-     * Get recommendation
-     *
-     * @return array
-     */
-    protected function getRecommendation(): array
-    {
-        return $this->recommendation;
     }
 
     /**
