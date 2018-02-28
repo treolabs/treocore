@@ -135,5 +135,27 @@
         "conditions":{
             "auth":false
         }
+    },
+    {
+        "route":"/Installer/createAdmin",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": "createAdmin"
+        },
+        "conditions":{
+            "auth":false
+        }
+    },
+    {
+        "route":"/Installer/setSystemSettings",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": "setSystemSettings"
+        },
+        "conditions":{
+            "auth":false
+        }
     }
 ]

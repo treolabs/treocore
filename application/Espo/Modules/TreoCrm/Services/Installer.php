@@ -7,6 +7,7 @@ use Espo\Core\Services\Base;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\TreoCrm\Core\Utils\Config;
 use Espo\Core\Exceptions;
+use Espo\Core\Utils\PasswordHash;
 
 /**
  * Class Installer
@@ -15,6 +16,28 @@ use Espo\Core\Exceptions;
  */
 class Installer extends Base
 {
+
+    /**
+     * @var array
+     */
+    protected $recommendation = [
+        'php'   => [
+            'max_execution_time'  => 180,
+            'max_input_time'      => 180,
+            'memory_limit'        => '256M',
+            'post_max_size'       => '20M',
+            'upload_max_filesize' => '20M'
+        ],
+        'mysql' => [
+            'version' => 5.1
+        ]
+    ];
+
+    /**
+     * @var PasswordHash
+     */
+    protected $passwordHash = null;
+
 
     /**
      * Construct
@@ -27,13 +50,15 @@ class Installer extends Base
          * Add dependencies
          */
         $this->addDependency('fileManager');
+        $this->addDependency('dataManager');
+        $this->addDependency('crypt');
     }
 
     /**
      *  Generate default config if not exists
      *
      * @throws Exceptions\Forbidden
-     *
+    $name     *
      * @return bool
      */
     public function generateConfig(): bool
@@ -64,6 +89,9 @@ class Installer extends Base
             $defaultConfig['defaultPermissions']['group'] = $group;
         }
 
+        $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
+        $defaultConfig['cryptKey'] = $this->getInjection('crypt')->generateKey();
+
         // create config if not exists
         if (!file_exists($pathToConfig)) {
             $result = $this->getFileManager()->putPhpContents($pathToConfig, $defaultConfig, true);
@@ -85,7 +113,7 @@ class Installer extends Base
 
         if (!in_array($lang, $this->getConfig()->get('languageList'))) {
             $result['message'] = 'Input language is not correct';
-            $result['status']  = false;
+            $result['status'] = false;
         } else {
             $this->getConfig()->set('language', $lang);
             $result['status'] = $this->getConfig()->save();
@@ -110,18 +138,65 @@ class Installer extends Base
 
         $dbParams = $config->get('database');
 
+        // prepare input params
         $dbSettings = $this->prepareDbParams($data);
 
         try {
+
+            if (!empty($dbParams['dbname']) && !empty($dbParams['user'])) {
+                throw new Exceptions\Forbidden('ParamsIsset');
+            }
+
+            // check connect to db
             $this->isConnectToDb($dbSettings);
 
+            // update config
+            $config->set('database', array_merge($dbParams, $dbSettings));
 
-            $this->getConfig()->set('database', array_merge($dbParams, $dbSettings));
-
-            $result['status'] = $this->getConfig()->save();
+            $result['status'] = $config->save();
         } catch (\Exception $e) {
             $result['message'] = $e->getMessage();
             $result['status'] = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create admin
+     *
+     * array $params
+     *
+     * @param $params
+     *
+     * @return array
+     */
+    public function createAdmin(array $params): array
+    {
+        $result = ['status' => false, 'message' => ''];
+
+        // check password
+        if ($params['password'] !== $params['confirmPassword']) {
+            $result['message'] = 'differentPass';
+        } else {
+            try {
+                // rebuild database
+                $result['status'] = $this->getInjection('dataManager')->rebuild();
+
+                // create user
+                $user = $this->getEntityManager()->getEntity('User');
+                $user->set([
+                    'id'       => '1',
+                    'userName' => $params['userName'],
+                    'password' => $this->getPasswordHash()->hash($params['password']),
+                    'lastName' => 'Admin',
+                    'isAdmin'  => '1'
+                ]);
+                $result['status'] = $this->getEntityManager()->saveEntity($user) && $result['status'];
+            } catch (\Exception $e) {
+                $result['status'] = false;
+                $result['message'] = $e->getMessage();
+            }
         }
 
         return $result;
@@ -213,11 +288,28 @@ class Installer extends Base
     {
         $port = !empty($dbSettings['port']) ? 'port=' . $dbSettings['port'] : '';
 
-        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';' . $port . ';dbname=' . $dbSettings['dbname'];
+        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['dbname'] . ';' . $port;
+
+        $this->createDataBaseIfNotExists($dbSettings, $port);
 
         new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
 
         return true;
+    }
+
+    /**
+     * Create database if not exists
+     *
+     * @param array  $dbSettings
+     * @param string $port
+     */
+    protected function createDataBaseIfNotExists(array $dbSettings, string $port)
+    {
+        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . $port;
+
+        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `" . $dbSettings['dbname'] . "`");
     }
 
     /**
@@ -228,5 +320,30 @@ class Installer extends Base
     protected function getFileManager(): FileManager
     {
         return $this->getInjection('fileManager');
+    }
+
+    /**
+     * Get recommendation
+     *
+     * @return array
+     */
+    protected function getRecommendation(): array
+    {
+        return $this->recommendation;
+    }
+
+    /**
+     * Get passwordHash
+     *
+     * @return PasswordHash
+     */
+    protected function getPasswordHash(): PasswordHash
+    {
+        if (!isset($this->passwordHash)) {
+            $config = $this->getConfig();
+            $this->passwordHash = new PasswordHash($config);
+        }
+
+        return $this->passwordHash;
     }
 }
