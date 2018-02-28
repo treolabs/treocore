@@ -261,6 +261,10 @@ class ModuleManager extends Base
             $repo    = $package['name'];
             $version = $package['version'];
 
+            // update modules file
+            $this->updateModuleFile($id, true);
+
+            // run composer
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
         }
 
