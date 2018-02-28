@@ -21,7 +21,7 @@ class Auth extends EspoAuth
      */
     public function useNoAuth()
     {
-        if (!empty($this->getConfig()->get('database')['dbname'])) {
+        if ($this->getContainer()->get('serviceFactory')->create('Installer')->isInstall()) {
             parent::useNoAuth();
         }
     }

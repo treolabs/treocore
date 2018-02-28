@@ -57,33 +57,32 @@ class Installer extends Base
      *
      * @param array $data
      *
-     * @return bool
-     * @throws Exceptions\Forbidden
+     * @return array
      */
-    public function setDbSettings(array $data): bool
+    public function setDbSettings(array $data): array
     {
+        $result = ['status' => false, 'message' => ''];
+
         /** @var Config $config */
         $config = $this->getConfig();
 
         $dbParams = $config->get('database');
 
-        $issetDbParams = !empty($dbParams['dbname']) || !empty($dbParams['user']);
-
-        // check if is install
-        if ($this->isInstall() || $issetDbParams) {
-            throw new Exceptions\Forbidden();
-        }
-
         $dbSettings = $this->prepareDbParams($data);
 
-        $this->isConncetToDb($dbSettings);
-
-        array_merge($dbParams, $dbSettings);
-
-        $this->getConfig()->set('database', $dbParams);
+        try {
+            $this->isConnectToDb($dbSettings);
 
 
-        return $this->getConfig()->save();
+            $this->getConfig()->set('database',  array_merge($dbParams, $dbSettings));
+
+            $result['status'] = $this->getConfig()->save();
+        } catch (\Exception $e) {
+            $result['message'] = $e->getMessage();
+            $result['status'] = false;
+        }
+
+        return $result;
     }
 
     /**
@@ -93,19 +92,28 @@ class Installer extends Base
      */
     public function checkDbConnect(array $dbSettings): array
     {
-        $result = [
-            'status' => false,
-            'message' => ''
-        ];
+        $result = ['status' => false, 'message' => ''];
 
         try {
-            $result['status'] = $this->isConncetToDb($this->prepareDbParams($dbSettings));
+            $result['status'] = $this->isConnectToDb($this->prepareDbParams($dbSettings));
         } catch (\PDOException $e) {
             $result['status'] = false;
             $result['message'] = $e->getMessage();
         }
 
-         return $result;
+        return $result;
+    }
+
+    /**
+     * Check if is install
+     *
+     * @return bool
+     */
+    public function isInstall(): bool
+    {
+        $config = $this->getConfig();
+
+        return file_exists($config->getConfigPath()) && $config->get('isInstalled');
     }
 
     /**
@@ -135,28 +143,15 @@ class Installer extends Base
      *
      * @return bool
      */
-    protected function isConncetToDb($dbSettings)
+    protected function isConnectToDb($dbSettings)
     {
-        $port = !empty($dbSettings['port']) ? ';port=' . $dbSettings['port'] . ';' : '';
+        $port = !empty($dbSettings['port']) ? 'port=' . $dbSettings['port'] : '';
 
-        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';' . 'dbname=' . $dbSettings['dbname'] . $port;
+        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';' . $port . ';dbname=' . $dbSettings['dbname'];
 
         // todo handle error  check port
-        new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
 
         return true;
-    }
-
-
-    /**
-     * Check if is install
-     *
-     * @return bool
-     */
-    protected function isInstall(): bool
-    {
-        $config = $this->getConfig();
-
-        return file_exists($config->getConfigPath()) && $config->get('isInstalled');
     }
 }

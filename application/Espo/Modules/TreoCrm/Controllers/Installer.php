@@ -6,6 +6,7 @@ namespace Espo\Modules\TreoCrm\Controllers;
 use Espo\Core\Controllers\Base;
 use Slim\Http\Request;
 use Espo\Core\Exceptions;
+use Espo\Modules\TreoCrm\Services\Installer as InstallerService;
 
 /**
  * Class Installer
@@ -20,10 +21,11 @@ class Installer extends Base
      * @param         $data
      * @param Request $request
      *
-     * @return bool
+     * @return array
      * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
      */
-    public function actionSetDbSettings($params, $data, Request $request): bool
+    public function actionSetDbSettings($params, $data, Request $request): array
     {
         // check method
         if (!$request->isPost()) {
@@ -37,7 +39,15 @@ class Installer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getService('Installer')->setDbSettings($post);
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstall()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->setDbSettings($post);
     }
 
     /**
@@ -47,6 +57,7 @@ class Installer extends Base
      *
      * @return array
      * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
      */
     public function actionCheckDbConnect($params, $data, Request $request): array
     {
@@ -62,7 +73,15 @@ class Installer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getService('Installer')->checkDbConnect($post);
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstall()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->checkDbConnect($post);
     }
 
     /**
