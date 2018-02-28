@@ -34,6 +34,7 @@ class Installer extends Base
         $this->addDependency('fileManager');
         $this->addDependency('dataManager');
         $this->addDependency('crypt');
+        $this->addDependency('language');
     }
 
     /**
@@ -80,6 +81,16 @@ class Installer extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Get translations for installer
+     *
+     * @return array
+     */
+    public function getTranslations(): array
+    {
+        return $this->getInjection('language')->get('Installer');
     }
 
     /**

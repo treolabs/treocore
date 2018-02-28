@@ -15,6 +15,43 @@ use Espo\Modules\TreoCrm\Services\Installer as InstallerService;
  */
 class Installer extends Base
 {
+
+
+    /**
+     * @ApiDescription(description="Get translations")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/Installer/getTranslations")
+     * @ApiReturn(sample="{
+     *      'labels': {
+     *          'key': 'string',
+     *          ...
+     *     },
+     *     ...
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetTranslations($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstalled()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->getTranslations();
+    }
+
+
     /**
      * @ApiDescription(description="Set language")
      * @ApiMethod(type="POST")
@@ -182,6 +219,65 @@ class Installer extends Base
 
         return $installer->checkDbConnect($post);
     }
+
+
+    // todo
+    /**
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetLicenseWithLanguages($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstalled()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->getLanguages();
+    }
+
+    // todo
+    /**
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetDefaultDbSettings($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstalled()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->getLanguages();
+    }
+
+
 
     /**
      * Check if valid db params
