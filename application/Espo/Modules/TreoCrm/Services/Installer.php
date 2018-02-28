@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCrm\Services;
 
 use Espo\Core\Services\Base;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\TreoCrm\Core\Utils\Config;
 use Espo\Core\Exceptions;
 
@@ -32,9 +33,12 @@ class Installer extends Base
      *  Generate default config if not exists
      *
      * @throws Exceptions\Forbidden
+     *
+     * @return bool
      */
-    public function generateConfig()
+    public function generateConfig(): bool
     {
+        $result = false;
 
         // check if is install
         if ($this->isInstall()) {
@@ -46,10 +50,48 @@ class Installer extends Base
 
         $pathToConfig = $config->getConfigPath();
 
+        // get default config
+        $defaultConfig = $config->getDefaults();
+
+        // get permissions
+        $owner = $this->getFileManager()->getPermissionUtils()->getDefaultOwner(true);
+        $group = $this->getFileManager()->getPermissionUtils()->getDefaultGroup(true);
+
+        if (!empty($owner)) {
+            $defaultConfig['defaultPermissions']['user'] = $owner;
+        }
+        if (!empty($group)) {
+            $defaultConfig['defaultPermissions']['group'] = $group;
+        }
+
         // create config if not exists
         if (!file_exists($pathToConfig)) {
-            $this->getInjection('fileManager')->putPhpContents($pathToConfig, $config->getDefaults(), true);
+            $result = $this->getFileManager()->putPhpContents($pathToConfig, $defaultConfig, true);
         }
+
+        return $result;
+    }
+
+    /**
+     * Set language
+     *
+     * @param $lang
+     *
+     * @return array
+     */
+    public function setLanguage(string $lang): array
+    {
+        $result = ['status' => false, 'message' => ''];
+
+        if (!in_array($lang, $this->getConfig()->get('languageList'))) {
+            $result['message'] = 'Input language is not correct';
+            $result['status']  = false;
+        } else {
+            $this->getConfig()->set('language', $lang);
+            $result['status'] = $this->getConfig()->save();
+        }
+
+        return $result;
     }
 
     /**
@@ -74,7 +116,7 @@ class Installer extends Base
             $this->isConnectToDb($dbSettings);
 
 
-            $this->getConfig()->set('database',  array_merge($dbParams, $dbSettings));
+            $this->getConfig()->set('database', array_merge($dbParams, $dbSettings));
 
             $result['status'] = $this->getConfig()->save();
         } catch (\Exception $e) {
@@ -86,6 +128,8 @@ class Installer extends Base
     }
 
     /**
+     * Check connect to DB
+     *
      * @param $dbSettings
      *
      * @return array
@@ -114,6 +158,28 @@ class Installer extends Base
         $config = $this->getConfig();
 
         return file_exists($config->getConfigPath()) && $config->get('isInstalled');
+    }
+
+    /**
+     * Check permissions
+     *
+     * @return bool
+     * @throws Exceptions\InternalServerError
+     */
+    public function checkPermissions(): bool
+    {
+        $this->getFileManager()->getPermissionUtils()->setMapPermission();
+
+        $error = $this->getFileManager()->getPermissionUtils()->getLastError();
+
+        if (!empty($error)) {
+
+            $message = is_array($error) ? implode($error, ' ;') : string($error);
+
+            throw new Exceptions\InternalServerError($message);
+        }
+
+        return true;
     }
 
     /**
@@ -149,9 +215,18 @@ class Installer extends Base
 
         $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';' . $port . ';dbname=' . $dbSettings['dbname'];
 
-        // todo handle error  check port
-        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+        new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
 
         return true;
+    }
+
+    /**
+     * Get file manager
+     *
+     * @return FileManager
+     */
+    protected function getFileManager(): FileManager
+    {
+        return $this->getInjection('fileManager');
     }
 }

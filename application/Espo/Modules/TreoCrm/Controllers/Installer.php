@@ -15,6 +15,39 @@ use Espo\Modules\TreoCrm\Services\Installer as InstallerService;
  */
 class Installer extends Base
 {
+    /**
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionSetLanguage($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstall()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        $post = get_object_vars($data);
+
+        // check if input params exists
+        if (!isset($post['language'])) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $installer->setLanguage($post['language']);
+    }
 
     /**
      * @param         $params
@@ -32,19 +65,19 @@ class Installer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        $post = get_object_vars($data);
-
-        // check if input params exists
-        if (!$this->isValidDbParams($post)) {
-            throw new Exceptions\BadRequest();
-        }
-
         /** @var InstallerService $installer */
         $installer = $this->getService('Installer');
 
         // check if is install
         if ($installer->isInstall()) {
             throw new Exceptions\Forbidden();
+        }
+
+        $post = get_object_vars($data);
+
+        // check if input params exists
+        if (!$this->isValidDbParams($post)) {
+            throw new Exceptions\BadRequest();
         }
 
         return $installer->setDbSettings($post);
@@ -66,19 +99,19 @@ class Installer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        $post = get_object_vars($data);
-
-        // check if input params exists
-        if (!$this->isValidDbParams($post)) {
-            throw new Exceptions\BadRequest();
-        }
-
         /** @var InstallerService $installer */
         $installer = $this->getService('Installer');
 
         // check if is install
         if ($installer->isInstall()) {
             throw new Exceptions\Forbidden();
+        }
+
+        $post = get_object_vars($data);
+
+        // check if input params exists
+        if (!$this->isValidDbParams($post)) {
+            throw new Exceptions\BadRequest();
         }
 
         return $installer->checkDbConnect($post);

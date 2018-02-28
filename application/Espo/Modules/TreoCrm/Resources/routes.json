@@ -124,5 +124,16 @@
         "conditions":{
             "auth":false
         }
+    },
+    {
+        "route":"/Installer/setLanguage",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": "setLanguage"
+        },
+        "conditions":{
+            "auth":false
+        }
     }
 ]
