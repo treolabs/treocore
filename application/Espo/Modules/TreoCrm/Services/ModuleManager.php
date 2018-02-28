@@ -328,7 +328,11 @@ class ModuleManager extends Base
             $this->updateModuleFile($id, true);
 
             // run composer
-            $result = $this->getComposerService()->run("remove {$repo}");
+//            $result = $this->getComposerService()->run("remove {$repo}");
+
+            echo '<pre>';
+            print_r(123);
+            die();
         }
 
         return $result;
