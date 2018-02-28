@@ -269,7 +269,7 @@ class ModuleManager extends Base
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
 
             // update treo dirs
-            TreoComposer::updateTreoModule($id);
+            TreoComposer::updateTreoModules();
         }
 
         return $result;
@@ -302,7 +302,7 @@ class ModuleManager extends Base
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
 
             // update treo dirs
-            TreoComposer::updateTreoModule($id);
+            TreoComposer::updateTreoModules();
         }
 
         return $result;
@@ -332,12 +332,18 @@ class ModuleManager extends Base
             // update modules file
             $this->updateModuleFile($id, true);
 
+            // prepare modules diff
+            $beforeDelete = TreoComposer::getTreoModules();
+
             // run composer
             $result = $this->getComposerService()->run("remove {$repo}");
 
             if (empty($result['status'])) {
+                // prepare modules diff
+                $afterDelete = TreoComposer::getTreoModules();
+
                 // delete treo dirs
-                TreoComposer::deleteTreoModule($id);
+                TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
             }
         }
 

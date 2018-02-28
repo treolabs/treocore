@@ -146,31 +146,33 @@ class Composer extends Base
     }
 
     /**
-     * Update treo module
-     *
-     * @param string $moduleId
+     * Update treo modules
      */
-    public static function updateTreoModule(string $moduleId): void
+    public static function updateTreoModules(): void
     {
-        // update frontend files
-        self::updateFrontend($moduleId);
+        foreach (self::getTreoModules() as $moduleId => $key) {
+            // update frontend files
+            self::updateFrontend($moduleId);
 
-        // update backend files
-        self::updateBackend($moduleId);
+            // update backend files
+            self::updateBackend($moduleId);
+        }
     }
 
     /**
      * Delete treo module
      *
-     * @param string $moduleId
+     * @param array $modules
      */
-    public static function deleteTreoModule(string $moduleId): void
+    public static function deleteTreoModule(array $modules): void
     {
-        // delete dir from frontend
-        self::deleteDir('client/modules/'.Util::fromCamelCase($moduleId, '-').'/');
+        foreach ($modules as $moduleId => $key) {
+            // delete dir from frontend
+            self::deleteDir('client/modules/'.Util::fromCamelCase($moduleId, '-').'/');
 
-        // delete dir from backend
-        self::deleteDir("application/Espo/Modules/{$moduleId}/");
+            // delete dir from backend
+            self::deleteDir("application/Espo/Modules/{$moduleId}/");
+        }
     }
 
     /**
