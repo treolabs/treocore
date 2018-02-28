@@ -477,21 +477,15 @@ class ModuleManager extends Base
             // prepare result
             $this->moduleRequireds[$moduleId] = [];
 
-            // get trep modules
-            $treoModule = TreoComposer::getTreoModules();
+            if (!empty($package = $this->getComposerModuleService()->getModulePackage($moduleId))) {
+                if (!empty($composerRequire = $package['require']) && is_array($composerRequire)) {
+                    // get treo modules
+                    $treoModule = TreoComposer::getTreoModules();
 
-            if (array_key_exists($moduleId, $treoModule)) {
-                // get composer json
-                $path = "vendor/".TreoComposer::TREODIR."/".$treoModule[$moduleId]."/composer.json";
-
-                if (file_exists($path)) {
-                    $composerRequire = Json::decode(file_get_contents($path), true)['require'];
-                    if (!empty($composerRequire) && is_array($composerRequire)) {
-                        foreach ($composerRequire as $key => $version) {
-                            if (preg_match_all("/^(".TreoComposer::TREODIR."\/)(.*)$/", $key, $matches)) {
-                                if (!empty($matches[2][0])) {
-                                    $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
-                                }
+                    foreach ($composerRequire as $key => $version) {
+                        if (preg_match_all("/^(".TreoComposer::TREODIR."\/)(.*)$/", $key, $matches)) {
+                            if (!empty($matches[2][0])) {
+                                $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
                             }
                         }
                     }
