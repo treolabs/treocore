@@ -22,11 +22,6 @@ class ModuleManager extends Base
     /**
      * @var string
      */
-    public static $packagistPath = 'https://packagist.zinitsolutions.com';
-
-    /**
-     * @var string
-     */
     public static $gitServer = 'gitlab.zinit1.com';
 
     /**
@@ -37,22 +32,7 @@ class ModuleManager extends Base
     /**
      * @var array
      */
-    protected $treoModules = null;
-
-    /**
-     * @var array
-     */
     protected $moduleRequireds = [];
-
-    /**
-     * @var array
-     */
-    protected $packagistData = null;
-
-    /**
-     * @var string
-     */
-    protected $packages = 'https://packagist.zinitsolutions.com/packages.json';
 
     /**
      * Construct
@@ -128,14 +108,38 @@ class ModuleManager extends Base
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if ($this->isModuleAllowed($module)) {
-                $result['list'][] = [
-                    "id"          => $module,
-                    "name"        => $this->translateModule('moduleNames', $module),
-                    "description" => $this->translateModule('moduleDescriptions', $module),
-                    "version"     => $this->getModuleVersion($module),
-                    "required"    => $this->prepareRequireds($this->getModuleRequireds($module)),
-                    "isActive"    => $this->getMetadata()->isModuleActive($module)
+                // prepare item
+                $item = [
+                    "id"               => $module,
+                    "name"             => $module,
+                    "description"      => '',
+                    "version"          => '-',
+                    "availableVersion" => '-',
+                    "required"         => [],
+                    "isActive"         => $this->getMetadata()->isModuleActive($module),
+                    "isComposer"       => false
                 ];
+
+                // get current module package
+                $package = $this->getComposerModuleService()->getModulePackage($module);
+
+                if (!empty($package)) {
+                    // get module packages
+                    $packages = $this->getComposerModuleService()->getModulePackages($module);
+
+                    // prepare item
+                    $item['name']        = $this->translateModule($module, 'name');
+                    $item['description'] = $this->translateModule($module, 'description');
+                    $item['version']     = $this->prepareModuleVersion($package['version']);
+                    $item['isComposer']  = true;
+
+                    if (isset($packages['max'])) {
+                        $item['availableVersion'] = $this->prepareModuleVersion($packages['max']['version']);
+                    }
+                }
+
+                // push
+                $result['list'][] = $item;
             }
         }
 
@@ -143,6 +147,58 @@ class ModuleManager extends Base
 
         // sorting
         usort($result['list'], [$this, 'moduleListSort']);
+
+        return $result;
+    }
+
+    /**
+     * Get available modules for install
+     *
+     * @return array
+     */
+    public function getAvailableModulesList(): array
+    {
+        // prepare result
+        $result = [
+            'total' => 0,
+            'list'  => []
+        ];
+
+        if (!empty($modules = $this->getComposerModuleService()->getModulePackages())) {
+            // get current language
+            $currentLang = $this->getLanguage()->getLanguage();
+
+            foreach ($modules as $moduleId => $packages) {
+                // prepare max
+                $max = $packages['max'];
+
+                // prepare name
+                $name = $moduleId;
+                if (!empty($max['extra']['name'][$currentLang])) {
+                    $name = $max['extra']['name'][$currentLang];
+                } elseif ($max['extra']['name']['default']) {
+                    $name = $max['extra']['name']['default'];
+                }
+
+                // prepare description
+                $description = '-';
+                if (!empty($max['extra']['description'][$currentLang])) {
+                    $description = $max['extra']['description'][$currentLang];
+                } elseif ($max['extra']['description']['default']) {
+                    $description = $max['extra']['description']['default'];
+                }
+
+                $result['list'][] = [
+                    'id'          => $moduleId,
+                    'version'     => $max['version'],
+                    'name'        => $name,
+                    'description' => $description
+                ];
+            }
+
+            // prepare total
+            $result['total'] = count($result['list']);
+        }
 
         return $result;
     }
@@ -200,8 +256,8 @@ class ModuleManager extends Base
             "output" => ""
         ];
 
-        // get trep modules
-        $treoModule = $this->getTreoModules();
+        // get treo modules
+        $treoModule = TreoComposer::getTreoModules();
 
         if (array_key_exists($id, $treoModule)) {
             // prepare repo
@@ -211,102 +267,6 @@ class ModuleManager extends Base
         }
 
         return $result;
-    }
-
-    /**
-     * Get available modules for install
-     *
-     * @return array
-     */
-    public function getAvailableModulesList(): array
-    {
-        // prepare result
-        $result = [
-            'total' => 0,
-            'list'  => []
-        ];
-
-        if (!empty($packages = $this->getPackagistData()['packages']) && is_array($packages)) {
-            // get current language
-            $currentLang = $this->getLanguage()->getLanguage();
-
-            foreach ($packages as $repository => $versions) {
-                if (is_array($versions)) {
-                    // get max version
-                    $max = null;
-                    foreach ($versions as $version => $data) {
-                        $preparedVersion = (int) str_replace(['.', 'v'], ['', ''], $version);
-                        if ($preparedVersion > (int) $max) {
-                            $max = str_replace('v', '', $version);
-                        }
-                    }
-
-                    if (!empty($treoId = $versions[$max]['extra']['treoId'])) {
-                        // prepare name
-                        $name = $treoId;
-                        if (!empty($versions[$max]['extra']['name'][$currentLang])) {
-                            $name = $versions[$max]['extra']['name'][$currentLang];
-                        } elseif ($versions[$max]['extra']['name']['default']) {
-                            $name = $versions[$max]['extra']['name']['default'];
-                        }
-
-                        // prepare description
-                        $description = '-';
-                        if (!empty($versions[$max]['extra']['description'][$currentLang])) {
-                            $description = $versions[$max]['extra']['description'][$currentLang];
-                        } elseif ($versions[$max]['extra']['description']['default']) {
-                            $description = $versions[$max]['extra']['description']['default'];
-                        }
-
-                        $result['list'][] = [
-                            'id'          => $treoId,
-                            'repository'  => $repository,
-                            'version'     => $max,
-                            'name'        => $name,
-                            'description' => $description
-                        ];
-                    }
-                }
-            }
-
-            // prepare total
-            $result['total'] = count($result['list']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get packagist data
-     *
-     * @return array
-     */
-    protected function getPackagistData(): array
-    {
-        if (is_null($this->packagistData)) {
-            // prepare result
-            $this->packagistData = [];
-
-            if (!empty($packagesJson = file_get_contents(self::$packagistPath.'/packages.json'))) {
-                // parse json
-                $packagesJsonData = Json::decode($packagesJson, true);
-
-                if (!empty($includes = $packagesJsonData['includes']) && is_array($includes)) {
-                    foreach ($includes as $path => $row) {
-                        if (!empty($includeJson = file_get_contents(self::$packagistPath.'/'.$path))) {
-                            // parse json
-                            $includeJsonData = Json::decode($includeJson, true);
-
-                            if (!empty($includeJsonData) && is_array($includeJsonData)) {
-                                $this->packagistData = array_merge_recursive($this->packagistData, $includeJsonData);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $this->packagistData;
     }
 
     /**
@@ -433,7 +393,7 @@ class ModuleManager extends Base
             $this->moduleRequireds[$moduleId] = [];
 
             // get trep modules
-            $treoModule = $this->getTreoModules();
+            $treoModule = TreoComposer::getTreoModules();
 
             if (array_key_exists($moduleId, $treoModule)) {
                 // get composer json
@@ -529,22 +489,31 @@ class ModuleManager extends Base
     }
 
     /**
-     * Get module version
+     * Translate field
      *
      * @param string $module
+     * @param string $key
      *
      * @return string
      */
-    protected function getModuleVersion(string $module): string
+    protected function translateModule(string $module, string $key): string
     {
         // prepare result
-        $result = '1.0.0';
+        $result = '';
 
-        if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
-            $result = $package['version'];
+        // get language
+        $lang = $this->getLanguage()->getLanguage();
+
+        // get module packages
+        $package = $this->getComposerModuleService()->getModulePackage($module);
+
+        if (!empty($translate = $package['extra'][$key][$lang])) {
+            $result = $translate;
+        } elseif (!empty($translate = $package['extra'][$key]['default'])) {
+            $result = $translate;
         }
 
-        return $this->prepareModuleVersion($result);
+        return $result;
     }
 
     /**
@@ -560,40 +529,35 @@ class ModuleManager extends Base
     }
 
     /**
-     * Get composer package
+     * Get module config data
      *
-     * @param string $module
+     * @param string $key
      *
-     * @return array
+     * @return mixed
      */
-    protected function getComposerPackage(string $module): array
+    protected function getModuleConfigData(string $key)
     {
-        // prepare result
-        $result = [];
+        return $this->getMetadata()->getModuleConfigData($key);
+    }
 
-        // prepare composerLock
-        $composerLock = 'composer.lock';
+    /**
+     * Get DataManager
+     *
+     * @return DataManager
+     */
+    protected function getDataManager(): DataManager
+    {
+        return $this->getInjection('dataManager');
+    }
 
-        // prepare dir
-        $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
-
-        if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
-            // prepare module key
-            $key = $this->getTreoModules()[$module];
-
-            // get data
-            $data = Json::decode(file_get_contents($composerLock), true);
-
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
-                    if ($package['name'] == TreoComposer::TREODIR."/{$key}") {
-                        $result = $package;
-                    }
-                }
-            }
-        }
-
-        return $result;
+    /**
+     * Get ComposerModule service
+     *
+     * @return ComposerModule
+     */
+    protected function getComposerModuleService(): ComposerModule
+    {
+        return $this->getInjection('serviceFactory')->create('ComposerModule');
     }
 
     /**
@@ -634,72 +598,6 @@ class ModuleManager extends Base
     protected function getComposerService(): Composer
     {
         return $this->getInjection('serviceFactory')->create('Composer');
-    }
-
-    /**
-     * Translate field
-     *
-     * @param string $tab
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function translateModule(string $tab, string $key): string
-    {
-        // default translate
-        $translate = $key;
-
-        // get language
-        $lang = $this->getLanguage()->getLanguage();
-
-        // prepare path
-        $path = "application/Espo/Modules/{$key}/Resources/i18n/{$lang}/ModuleManager.json";
-
-        if (file_exists($path)) {
-            $data = Json::decode(file_get_contents($path), true);
-
-            if (!empty($data[$tab][$key])) {
-                $translate = $data[$tab][$key];
-            }
-        }
-
-        return $translate;
-    }
-
-    /**
-     * Get module config data
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    protected function getModuleConfigData(string $key)
-    {
-        return $this->getMetadata()->getModuleConfigData($key);
-    }
-
-    /**
-     * Get DataManager
-     *
-     * @return DataManager
-     */
-    protected function getDataManager(): DataManager
-    {
-        return $this->getInjection('dataManager');
-    }
-
-    /**
-     * Get treo modules
-     *
-     * @return array
-     */
-    protected function getTreoModules(): array
-    {
-        if (is_null($this->treoModules)) {
-            $this->treoModules = TreoComposer::getTreoModules();
-        }
-
-        return $this->treoModules;
     }
 
     /**
