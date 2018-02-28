@@ -250,27 +250,28 @@ class ModuleManager extends Base
      */
     public function installModule(string $id): array
     {
-        // prepare result
-        $result = [
-            "status" => null,
-            "output" => ""
-        ];
-
+        // prepare params
+        $package  = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
-        if (!empty($package  = $packages['max'])) {
-            // prepare params
-            $repo    = $package['name'];
-            $version = $package['version'];
 
-            // update modules file
-            $this->updateModuleFile($id, true);
-
-            // run composer
-            $result = $this->getComposerService()->run("require {$repo}:{$version}");
-
-            // update treo dirs
-            TreoComposer::updateTreoModules();
+        // validation
+        if (empty($packages) || empty($packages['max'])) {
+            throw new Exceptions\Error('No such module');
         }
+        if (!empty($package)) {
+            throw new Exceptions\Error('Such module is already installed');
+        }
+
+        // update modules file
+        $this->updateModuleFile($id, true);
+
+        // run composer
+        $result = $this
+            ->getComposerService()
+            ->run("require ".$packages['max']['name'].":".$packages['max']['version']);
+
+        // update treo dirs
+        TreoComposer::updateTreoModules();
 
         return $result;
     }
@@ -285,25 +286,32 @@ class ModuleManager extends Base
      */
     public function updateModule(string $id, string $version): array
     {
-        // prepare result
-        $result = [
-            "status" => null,
-            "output" => ""
-        ];
-
+        // prepare params
+        $package  = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
-        if (!empty($package  = $packages[$version])) {
-            // prepare params
-            $repo = $package[$version];
 
-            // update modules file
-            $this->updateModuleFile($id, true);
-
-            $result = $this->getComposerService()->run("require {$repo}:{$version}");
-
-            // update treo dirs
-            TreoComposer::updateTreoModules();
+        // validation
+        if (empty($packages)) {
+            throw new Exceptions\Error('No such module');
         }
+        if (empty($package)) {
+            throw new Exceptions\Error('Module was not installed');
+        }
+        if ($this->prepareModuleVersion($packages['max']['version']) == $version) {
+            throw new Exceptions\Error('Such module version already installed');
+        }
+        if (empty($packages[$version])) {
+            throw new Exceptions\Error('No such module version');
+        }
+
+        // update modules file
+        $this->updateModuleFile($id, true);
+
+        // run composer
+        $result = $this->getComposerService()->run("require ".$packages[$version][$version].":{$version}");
+
+        // update treo dirs
+        TreoComposer::updateTreoModules();
 
         return $result;
     }
@@ -317,34 +325,30 @@ class ModuleManager extends Base
      */
     public function deleteModule(string $id): array
     {
-        // prepare result
-        $result = [
-            "status" => null,
-            "output" => ""
-        ];
-
+        // prepare params
+        $package  = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
 
-        if (!empty($package = $packages['max'])) {
-            // prepare params
-            $repo = $package['name'];
+        // validation
+        if (empty($package) || empty($packages['max'])) {
+            throw new Exceptions\Error('No such module');
+        }
 
-            // update modules file
-            $this->updateModuleFile($id, true);
+        // update modules file
+        $this->updateModuleFile($id, true);
 
+        // prepare modules diff
+        $beforeDelete = TreoComposer::getTreoModules();
+
+        // run composer
+        $result = $this->getComposerService()->run('remove '.$packages['max']['name']);
+
+        if (empty($result['status'])) {
             // prepare modules diff
-            $beforeDelete = TreoComposer::getTreoModules();
+            $afterDelete = TreoComposer::getTreoModules();
 
-            // run composer
-            $result = $this->getComposerService()->run("remove {$repo}");
-
-            if (empty($result['status'])) {
-                // prepare modules diff
-                $afterDelete = TreoComposer::getTreoModules();
-
-                // delete treo dirs
-                TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
-            }
+            // delete treo dirs
+            TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
         }
 
         return $result;
