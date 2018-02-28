@@ -241,6 +241,33 @@ class ModuleManager extends Base
     }
 
     /**
+     * Install module
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function installModule(string $id): array
+    {
+        // prepare result
+        $result = [
+            "status" => false,
+            "output" => ""
+        ];
+
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        if (!empty($package  = $packages['max'])) {
+            // prepare params
+            $repo    = $package['name'];
+            $version = $package['version'];
+
+            $result = $this->getComposerService()->run("require {$repo}:{$version}");
+        }
+
+        return $result;
+    }
+
+    /**
      * Update module
      *
      * @param string $id

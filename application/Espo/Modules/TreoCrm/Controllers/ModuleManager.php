@@ -82,6 +82,43 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Install module")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/ModuleManager/installModule")
+     * @ApiBody(sample="{
+     *     'id': 'Erp'
+     * }")
+     * @ApiReturn(sample="{
+     *     'status': 'true',
+     *     'output': 'some text from composer'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionInstallModule($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($data['id'])) {
+            return $this->getModuleManagerService()->installModule($data['id']);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
      * @ApiDescription(description="Update module version")
      * @ApiMethod(type="PUT")
      * @ApiRoute(name="/ModuleManager/updateModule")

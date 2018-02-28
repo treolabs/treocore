@@ -24,6 +24,14 @@
         }
     },
     {
+        "route": "/ModuleManager/installModule",
+        "method": "post",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "installModule"
+        }
+    },
+    {
         "route": "/ModuleManager/updateModule",
         "method": "put",
         "params": {
