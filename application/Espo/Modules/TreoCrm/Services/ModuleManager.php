@@ -131,6 +131,7 @@ class ModuleManager extends Base
                     $item['name']        = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
                     $item['version']     = $this->prepareModuleVersion($package['version']);
+                    $item['required']    = $this->getModuleRequireds($module);
                     $item['isComposer']  = true;
 
                     if (isset($packages['max'])) {
@@ -241,6 +242,37 @@ class ModuleManager extends Base
     }
 
     /**
+     * Install module
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function installModule(string $id): array
+    {
+        // prepare result
+        $result = [
+            "status" => null,
+            "output" => ""
+        ];
+
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        if (!empty($package  = $packages['max'])) {
+            // prepare params
+            $repo    = $package['name'];
+            $version = $package['version'];
+
+            // update modules file
+            $this->updateModuleFile($id, true);
+
+            // run composer
+            $result = $this->getComposerService()->run("require {$repo}:{$version}");
+        }
+
+        return $result;
+    }
+
+    /**
      * Update module
      *
      * @param string $id
@@ -252,16 +284,18 @@ class ModuleManager extends Base
     {
         // prepare result
         $result = [
-            "status" => false,
+            "status" => null,
             "output" => ""
         ];
 
-        // get treo modules
-        $treoModule = TreoComposer::getTreoModules();
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
 
-        if (array_key_exists($id, $treoModule)) {
-            // prepare repo
-            $repo = TreoComposer::TREODIR."/".$treoModule[$id];
+        if (!empty($package = $packages[$version])) {
+            // prepare params
+            $repo = $package[$version];
+
+            // update modules file
+            $this->updateModuleFile($id, true);
 
             return $this->getComposerService()->run("require {$repo}:{$version}");
         }
