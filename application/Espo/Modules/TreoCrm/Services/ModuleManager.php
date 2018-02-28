@@ -10,7 +10,7 @@ use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Espo\Modules\TreoCrm\Core\Utils\Metadata;
-use TreoComposer\AbstractEvent as TreoComposer;
+use Espo\Modules\TreoCrm\Services\Composer as TreoComposer;
 
 /**
  * ModuleManager service
@@ -267,6 +267,9 @@ class ModuleManager extends Base
 
             // run composer
             $result = $this->getComposerService()->run("require {$repo}:{$version}");
+
+            // update treo dirs
+            TreoComposer::updateTreoModules();
         }
 
         return $result;
@@ -289,15 +292,17 @@ class ModuleManager extends Base
         ];
 
         $packages = $this->getComposerModuleService()->getModulePackages($id);
-
-        if (!empty($package = $packages[$version])) {
+        if (!empty($package  = $packages[$version])) {
             // prepare params
             $repo = $package[$version];
 
             // update modules file
             $this->updateModuleFile($id, true);
 
-            return $this->getComposerService()->run("require {$repo}:{$version}");
+            $result = $this->getComposerService()->run("require {$repo}:{$version}");
+
+            // update treo dirs
+            TreoComposer::updateTreoModules();
         }
 
         return $result;
@@ -328,11 +333,12 @@ class ModuleManager extends Base
             $this->updateModuleFile($id, true);
 
             // run composer
-//            $result = $this->getComposerService()->run("remove {$repo}");
+            $result = $this->getComposerService()->run("remove {$repo}");
 
-            echo '<pre>';
-            print_r(123);
-            die();
+            if (empty($result['status'])) {
+                // delete treo dirs
+                TreoComposer::deleteTreoModule($id);
+            }
         }
 
         return $result;
@@ -466,7 +472,7 @@ class ModuleManager extends Base
 
             if (array_key_exists($moduleId, $treoModule)) {
                 // get composer json
-                $path = TreoComposer::VENDOR."/".TreoComposer::TREODIR."/".$treoModule[$moduleId]."/composer.json";
+                $path = "vendor/".TreoComposer::TREODIR."/".$treoModule[$moduleId]."/composer.json";
 
                 if (file_exists($path)) {
                     $composerRequire = Json::decode(file_get_contents($path), true)['require'];
