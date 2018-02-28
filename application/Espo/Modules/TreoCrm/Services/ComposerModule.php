@@ -5,6 +5,7 @@ namespace Espo\Modules\TreoCrm\Services;
 
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
+use TreoComposer\AbstractEvent as TreoComposer;
 
 /**
  * ComposerModule service
@@ -37,6 +38,25 @@ class ComposerModule extends Base
 
         // load module packages
         $this->loadModulesPackages();
+    }
+
+    /**
+     * Get module version
+     *
+     * @param string $module
+     *
+     * @return string
+     */
+    public function getModuleVersion(string $module): string
+    {
+        // prepare result
+        $result = '-';
+
+        if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
+            $result = $package['version'];
+        }
+
+        return $result;
     }
 
     /**
@@ -118,5 +138,42 @@ class ComposerModule extends Base
                 }
             }
         }
+    }
+
+    /**
+     * Get composer package
+     *
+     * @param string $module
+     *
+     * @return array
+     */
+    protected function getComposerPackage(string $module): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare composerLock
+        $composerLock = 'composer.lock';
+
+        // prepare dir
+        $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
+
+        if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
+            // prepare module key
+            $key = TreoComposer::getTreoModules()[$module];
+
+            // get data
+            $data = Json::decode(file_get_contents($composerLock), true);
+
+            if (!empty($packages = $data['packages'])) {
+                foreach ($packages as $package) {
+                    if ($package['name'] == TreoComposer::TREODIR."/{$key}") {
+                        $result = $package;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 }

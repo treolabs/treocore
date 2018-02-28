@@ -32,11 +32,6 @@ class ModuleManager extends Base
     /**
      * @var array
      */
-    protected $treoModules = null;
-
-    /**
-     * @var array
-     */
     protected $moduleRequireds = [];
 
     /**
@@ -117,7 +112,8 @@ class ModuleManager extends Base
                 $packages = $this->getComposerModuleService()->getModulePackages($module);
 
                 // prepare params
-                $version          = $this->getModuleVersion($module);
+                $version          = $this
+                    ->prepareModuleVersion($this->getComposerModuleService()->getModuleVersion($module));
                 $availableVersion = $version;
                 if (isset($packages['max'])) {
                     $availableVersion = $this->prepareModuleVersion($packages['max']['version']);
@@ -127,7 +123,7 @@ class ModuleManager extends Base
                     "id"               => $module,
                     "name"             => $this->translateModule('moduleNames', $module),
                     "description"      => $this->translateModule('moduleDescriptions', $module),
-                    "version"          => $this->getModuleVersion($module),
+                    "version"          => $version,
                     "availableVersion" => $availableVersion,
                     "required"         => $this->prepareRequireds($this->getModuleRequireds($module)),
                     "isActive"         => $this->getMetadata()->isModuleActive($module),
@@ -249,8 +245,8 @@ class ModuleManager extends Base
             "output" => ""
         ];
 
-        // get trep modules
-        $treoModule = $this->getTreoModules();
+        // get treo modules
+        $treoModule = TreoComposer::getTreoModules();
 
         if (array_key_exists($id, $treoModule)) {
             // prepare repo
@@ -386,7 +382,7 @@ class ModuleManager extends Base
             $this->moduleRequireds[$moduleId] = [];
 
             // get trep modules
-            $treoModule = $this->getTreoModules();
+            $treoModule = TreoComposer::getTreoModules();
 
             if (array_key_exists($moduleId, $treoModule)) {
                 // get composer json
@@ -482,74 +478,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * Get module version
-     *
-     * @param string $module
-     *
-     * @return string
-     */
-    protected function getModuleVersion(string $module): string
-    {
-        // prepare result
-        $result = '1.0.0';
-
-        if (!empty($package = $this->getComposerPackage($module)) && !empty($package['version'])) {
-            $result = $package['version'];
-        }
-
-        return $this->prepareModuleVersion($result);
-    }
-
-    /**
-     * Prepare module version
-     *
-     * @param string $version
-     *
-     * @return string
-     */
-    protected function prepareModuleVersion(string $version): string
-    {
-        return str_replace('v', '', $version);
-    }
-
-    /**
-     * Get composer package
-     *
-     * @param string $module
-     *
-     * @return array
-     */
-    protected function getComposerPackage(string $module): array
-    {
-        // prepare result
-        $result = [];
-
-        // prepare composerLock
-        $composerLock = 'composer.lock';
-
-        // prepare dir
-        $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
-
-        if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
-            // prepare module key
-            $key = $this->getTreoModules()[$module];
-
-            // get data
-            $data = Json::decode(file_get_contents($composerLock), true);
-
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
-                    if ($package['name'] == TreoComposer::TREODIR."/{$key}") {
-                        $result = $package;
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Translate field
      *
      * @param string $tab
@@ -580,6 +508,18 @@ class ModuleManager extends Base
     }
 
     /**
+     * Prepare module version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    protected function prepareModuleVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
+    }
+
+    /**
      * Get module config data
      *
      * @param string $key
@@ -599,20 +539,6 @@ class ModuleManager extends Base
     protected function getDataManager(): DataManager
     {
         return $this->getInjection('dataManager');
-    }
-
-    /**
-     * Get treo modules
-     *
-     * @return array
-     */
-    protected function getTreoModules(): array
-    {
-        if (is_null($this->treoModules)) {
-            $this->treoModules = TreoComposer::getTreoModules();
-        }
-
-        return $this->treoModules;
     }
 
     /**
