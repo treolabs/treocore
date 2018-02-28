@@ -108,36 +108,38 @@ class ModuleManager extends Base
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if ($this->isModuleAllowed($module)) {
+                // prepare item
+                $item = [
+                    "id"               => $module,
+                    "name"             => $module,
+                    "description"      => '',
+                    "version"          => '-',
+                    "availableVersion" => '-',
+                    "required"         => [],
+                    "isActive"         => $this->getMetadata()->isModuleActive($module),
+                    "isComposer"       => false
+                ];
+
                 // get current module package
                 $package = $this->getComposerModuleService()->getModulePackage($module);
 
-                // get module packages
-                $packages = $this->getComposerModuleService()->getModulePackages($module);
+                if (!empty($package)) {
+                    // get module packages
+                    $packages = $this->getComposerModuleService()->getModulePackages($module);
 
-                // prepare params
-                $version = '-';
-                if (isset($package['version'])) {
-                    $version = $this->prepareModuleVersion($package['version']);
-                }
-                $availableVersion = $version;
-                if (isset($packages['max'])) {
-                    $availableVersion = $this->prepareModuleVersion($packages['max']['version']);
-                }
-                $name = $this->translateModule($module, 'name');
-                if (empty($name)) {
-                    $name = $module;
+                    // prepare item
+                    $item['name']        = $this->translateModule($module, 'name');
+                    $item['description'] = $this->translateModule($module, 'description');
+                    $item['version']     = $this->prepareModuleVersion($package['version']);
+                    $item['isComposer']  = true;
+
+                    if (isset($packages['max'])) {
+                        $item['availableVersion'] = $this->prepareModuleVersion($packages['max']['version']);
+                    }
                 }
 
-                $result['list'][] = [
-                    "id"               => $module,
-                    "name"             => $name,
-                    "description"      => $this->translateModule($module, 'description'),
-                    "version"          => $version,
-                    "availableVersion" => $availableVersion,
-                    "required"         => $this->prepareRequireds($this->getModuleRequireds($module)),
-                    "isActive"         => $this->getMetadata()->isModuleActive($module),
-                    "isComposer"       => !empty($packages['max'])
-                ];
+                // push
+                $result['list'][] = $item;
             }
         }
 

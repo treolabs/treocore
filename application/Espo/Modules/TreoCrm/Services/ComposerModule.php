@@ -25,6 +25,11 @@ class ComposerModule extends Base
     protected $packagistData = null;
 
     /**
+     * @var bool
+     */
+    protected $isModulePackagesLoaded = false;
+
+    /**
      * @var array
      */
     protected $modulePackage = [];
@@ -40,9 +45,6 @@ class ComposerModule extends Base
     public function __construct(...$args)
     {
         parent::__construct(...$args);
-
-        // load module packages
-        $this->loadModulesPackages();
 
         // load composer lock
         $this->loadComposerLock();
@@ -82,6 +84,9 @@ class ComposerModule extends Base
      */
     public function getModulePackages(string $moduleId = null): array
     {
+        // load module packages
+        $this->loadModulesPackages();
+
         // prepare result
         $result = $this->modulePackage;
 
@@ -130,23 +135,26 @@ class ComposerModule extends Base
      */
     protected function loadModulesPackages(): void
     {
-        foreach ($this->getPackagistData() as $repository => $versions) {
-            if (is_array($versions)) {
-                $max = null;
-                foreach ($versions as $version => $data) {
-                    if (!empty($treoId = $data['extra']['treoId'])) {
-                        if (preg_match_all('/^(v(\d.\d.\d))|(\d.\d.\d)$/', $version, $matches)) {
-                            // prepare version
-                            $version = (!empty($matches[3][0])) ? $matches[3][0] : $matches[2][0];
+        if (!$this->isModulePackagesLoaded) {
+            $this->isModulePackagesLoaded = true;
+            foreach ($this->getPackagistData() as $repository => $versions) {
+                if (is_array($versions)) {
+                    $max = null;
+                    foreach ($versions as $version => $data) {
+                        if (!empty($treoId = $data['extra']['treoId'])) {
+                            if (preg_match_all('/^(v(\d.\d.\d))|(\d.\d.\d)$/', $version, $matches)) {
+                                // prepare version
+                                $version = (!empty($matches[3][0])) ? $matches[3][0] : $matches[2][0];
 
-                            // set max
-                            if ((int) $max < (int) str_replace('.', '', $version)) {
-                                $max                                 = $version;
-                                $this->modulePackage[$treoId]['max'] = $data;
+                                // set max
+                                if ((int) $max < (int) str_replace('.', '', $version)) {
+                                    $max                                 = $version;
+                                    $this->modulePackage[$treoId]['max'] = $data;
+                                }
+
+                                // push
+                                $this->modulePackage[$treoId][$version] = $data;
                             }
-
-                            // push
-                            $this->modulePackage[$treoId][$version] = $data;
                         }
                     }
                 }
