@@ -12,6 +12,11 @@
     },
     "exceptions": {
         "hasRequireds": "Das Modul hat die Anforderungen nicht erfüllt",
-        "isSystem": "Sie können das System-Modul nicht ändern."
+        "isSystem": "Sie können das System-Modul nicht ändern.",
+        "No such module": "Es gibt kein solches Modul",
+        "Such module is already installed": "Dieses Modul ist schon installiert",
+        "Module was not installed": "Das Modul wurde nicht installiert",
+        "Such module version already installed": "Diese Modul-Version ist schon installiert",
+        "No such module version": "Es gibt keine solche Modul-Version"
     }
 }

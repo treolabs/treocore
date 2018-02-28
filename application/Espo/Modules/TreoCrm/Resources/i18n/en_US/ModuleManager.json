@@ -12,7 +12,12 @@
     },
     "exceptions": {
         "hasRequireds": "Module has not satisfied requireds",
-        "isSystem": "You can not modify system module."
+        "isSystem": "You can not modify system module.",
+        "No such module": "No such module",
+        "Such module is already installed": "Such module is already installed",
+        "Module was not installed": "Module was not installed",
+        "Such module version already installed": "Such module version already installed",
+        "No such module version": "No such module version"
     },
     "messages": {
         "successAndReload": "Changes saved. Page will be reloaded after {value} seconds"

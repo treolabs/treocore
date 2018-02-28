@@ -256,10 +256,10 @@ class ModuleManager extends Base
 
         // validation
         if (empty($packages) || empty($packages['max'])) {
-            throw new Exceptions\Error('No such module');
+            throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (!empty($package)) {
-            throw new Exceptions\Error('Such module is already installed');
+            throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
 
         // update modules file
@@ -292,16 +292,16 @@ class ModuleManager extends Base
 
         // validation
         if (empty($packages)) {
-            throw new Exceptions\Error('No such module');
+            throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (empty($package)) {
-            throw new Exceptions\Error('Module was not installed');
+            throw new Exceptions\Error($this->translateError('Module was not installed'));
         }
         if ($this->prepareModuleVersion($packages['max']['version']) == $version) {
-            throw new Exceptions\Error('Such module version already installed');
+            throw new Exceptions\Error($this->translateError('Such module version already installed'));
         }
         if (empty($packages[$version])) {
-            throw new Exceptions\Error('No such module version');
+            throw new Exceptions\Error($this->translateError('No such module version'));
         }
 
         // update modules file
@@ -331,7 +331,7 @@ class ModuleManager extends Base
 
         // validation
         if (empty($package) || empty($packages['max'])) {
-            throw new Exceptions\Error('No such module');
+            throw new Exceptions\Error($this->translateError('No such module'));
         }
 
         // update modules file
@@ -593,6 +593,18 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Translate error
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function translateError(string $key): string
+    {
+        return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
     }
 
     /**
