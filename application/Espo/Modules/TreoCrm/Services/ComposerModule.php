@@ -5,7 +5,7 @@ namespace Espo\Modules\TreoCrm\Services;
 
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
-use TreoComposer\AbstractEvent as TreoComposer;
+use Espo\Modules\TreoCrm\Services\Composer as TreoComposer;
 
 /**
  * ComposerModule service
@@ -174,7 +174,7 @@ class ComposerModule extends Base
         $composerLock = 'composer.lock';
 
         // prepare dir
-        $vendorTreoDir = TreoComposer::VENDOR.'/'.TreoComposer::TREODIR.'/';
+        $vendorTreoDir = 'vendor/'.TreoComposer::TREODIR.'/';
 
         if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
             // prepare data

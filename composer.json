@@ -35,13 +35,8 @@
     "autoload": {
         "psr-0": {
             "": "application/",
-            "Espo\\Custom": "custom/",
-            "TreoComposer": "composer/"
+            "Espo\\Custom": "custom/"
         }
-    },
-    "scripts": {
-        "post-install-cmd": "TreoComposer\\Install::postEvent",
-        "post-update-cmd": "TreoComposer\\Update::postEvent"
     },
     "repositories": [
         {

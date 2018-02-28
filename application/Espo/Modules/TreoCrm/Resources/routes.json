@@ -40,6 +40,14 @@
         }
     },
     {
+        "route": "/ModuleManager/deleteModule",
+        "method": "delete",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "deleteModule"
+        }
+    },
+    {
         "route": "/ModuleManager/composerUser",
         "method": "get",
         "params": {
