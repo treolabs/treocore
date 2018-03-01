@@ -51,7 +51,7 @@ class Installer extends Base
 
         // check if is install
         if ($this->isInstalled()) {
-            throw new Exceptions\Forbidden();
+            throw new Exceptions\Forbidden($this->translateError('alreadyInstalled'));
         }
 
         /** @var Config $config */
@@ -146,7 +146,7 @@ class Installer extends Base
         $result = ['status' => false, 'message' => ''];
 
         if (!in_array($lang, $this->getConfig()->get('languageList'))) {
-            $result['message'] = 'Input language is not correct';
+            $result['message'] = $this->translateError('languageNotCorrect');
             $result['status'] = false;
         } else {
             $this->getConfig()->set('language', $lang);
@@ -175,22 +175,22 @@ class Installer extends Base
         // prepare input params
         $dbSettings = $this->prepareDbParams($data);
 
-        try {
+        // check if params already exists
+        if (!empty($dbParams['dbname']) && !empty($dbParams['user'])) {
+            $result['message'] = $this->translateError('dbSettingsAlreadyExists');
+        } else {
+            try {
+                // check connect to db
+                $this->isConnectToDb($dbSettings);
 
-            if (!empty($dbParams['dbname']) && !empty($dbParams['user'])) {
-                throw new Exceptions\Forbidden('ParamsIsset');
+                // update config
+                $config->set('database', array_merge($dbParams, $dbSettings));
+
+                $result['status'] = $config->save();
+            } catch (\Exception $e) {
+                $result['message'] = $e->getMessage();
+                $result['status'] = false;
             }
-
-            // check connect to db
-            $this->isConnectToDb($dbSettings);
-
-            // update config
-            $config->set('database', array_merge($dbParams, $dbSettings));
-
-            $result['status'] = $config->save();
-        } catch (\Exception $e) {
-            $result['message'] = $e->getMessage();
-            $result['status'] = false;
         }
 
         return $result;
@@ -211,7 +211,7 @@ class Installer extends Base
 
         // check password
         if ($params['password'] !== $params['confirmPassword']) {
-            $result['message'] = 'differentPass';
+            $result['message'] = $this->translateError('differentPass');
         } else {
             try {
                 // rebuild database
@@ -229,7 +229,7 @@ class Installer extends Base
                 $result['status'] = $this->getEntityManager()->saveEntity($user) && $result['status'];
 
                 // set installed
-                $this->getConfig()->set('installed', true);
+                $this->getConfig()->set('isInstalled', true);
                 $this->getConfig()->save();
             } catch (\Exception $e) {
                 $result['status'] = false;
@@ -324,9 +324,9 @@ class Installer extends Base
      */
     protected function isConnectToDb($dbSettings)
     {
-        $port = !empty($dbSettings['port']) ? 'port=' . $dbSettings['port'] : '';
+        $port = !empty($dbSettings['port']) ? '; port=' . $dbSettings['port'] : '';
 
-        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['dbname'] . ';' . $port;
+        $dsn = 'mysql' . ':host=' . $dbSettings['host'] . $port . ';dbname=' . $dbSettings['dbname'] . ';';
 
         $this->createDataBaseIfNotExists($dbSettings, $port);
 
@@ -374,5 +374,17 @@ class Installer extends Base
         }
 
         return $this->passwordHash;
+    }
+
+    /**
+     * Translate error
+     *
+     * @param string $error
+     *
+     * @return mixed
+     */
+    protected function translateError(string $error): string
+    {
+        return $this->getInjection('language')->translate($error, 'errors', 'Installer');
     }
 }

@@ -1,4 +1,10 @@
 {
   "labels": {
+  },
+  "errors": {
+    "alreadyInstalled": "TreoCrm already installed",
+    "dbSettingsAlreadyExists": "Database settings already exists",
+    "languageNotCorrect": "Input language is not correct",
+    "differentPass": "Different passwords"
   }
 }
