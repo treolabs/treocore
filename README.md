@@ -6,6 +6,10 @@ TreoPIM is a single page application (SPA) with an API-centric architecture and 
 * PHP 7.1 or above (with json, openssl, pdo_mysql, zip, gd, mbstring, imap, curl, xml extensions);
 * MySQL 5.5.3 or above.
 
+### Documentation
+
+Documentation for administrators, users and developers is available [here](application/Espo/Modules/TreoCrm/docs/).
+
 ### Installation
 
 1. Install [composer](https://getcomposer.org/doc/00-intro.md).
@@ -17,12 +21,13 @@ TreoPIM is a single page application (SPA) with an API-centric architecture and 
    ```
    php composer.phar create-project symfony/website-skeleton my-project
    ```
-
-Never update composer dependencies if you are going to contribute code back.
-
-To compose a proper config.php and populate database you can run install by opening `http(s)://{YOUR_CRM_URL}/install` location in a browser. Then open `data/config.php` file and add `isDeveloperMode => true`.
+3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 
 ### License
 
-TreoPIM is published under the GNU GPLv3 [license](https://raw.githubusercontent.com/espocrm/espocrm/master/LICENSE.txt).
+TreoPIM is published under the GNU GPLv3 [license](LICENSE.txt).
+
+### About Us
+
+TreoPIM is a developed and supported by [Zinit Solutions GmbH](https://zinitsolutions.de/).
 
