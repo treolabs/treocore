@@ -345,7 +345,9 @@ class Installer extends Base
         $dsn = 'mysql' . ':host=' . $dbSettings['host'] . $port;
 
         $pdo = new \PDO(
-            $dsn, $dbSettings['user'], $dbSettings['password'],
+            $dsn,
+            $dbSettings['user'],
+            $dbSettings['password'],
             [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]
         );
 
