@@ -47,6 +47,9 @@
             "Espo\\Custom": "custom/"
         }
     },
+    "scripts": {
+        "post-create-project-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules"
+    },
     "repositories": [
         {
             "type": "composer",
