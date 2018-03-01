@@ -32,7 +32,7 @@ include "bootstrap.php";
 $app = new \Espo\Modules\TreoCrm\Core\Application();
 
 if (!$app->isInstalled()) {
-    header("Location: install/");
+    $app->runInstaller();
     exit;
 }
 
