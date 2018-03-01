@@ -14,13 +14,13 @@ Documentation for administrators, users and developers is available [here](appli
 
 1. Install [composer](https://getcomposer.org/doc/00-intro.md).
 2. If composer is installed globally run 
-```
-composer create-project symfony/website-skeleton my-project
-```
+   ```
+   composer create-project symfony/website-skeleton my-project
+   ```
    or if locally run
-```
-php composer.phar create-project symfony/website-skeleton my-project
-```
+   ```
+   php composer.phar create-project symfony/website-skeleton my-project
+   ```
 3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 
 ### License
