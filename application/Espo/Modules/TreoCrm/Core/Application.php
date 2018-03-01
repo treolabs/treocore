@@ -76,6 +76,11 @@ class Application extends EspoApplication
         );
     }
 
+    /**
+     * Create auth
+     *
+     * @return \Espo\Core\Utils\Auth|Auth
+     */
     protected function createAuth()
     {
         return new Auth($this->container);

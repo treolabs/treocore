@@ -95,6 +95,41 @@ class Installer extends Base
     }
 
     /**
+     * @ApiDescription(description="Get default db settings")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/Installer/getDefaultDbSettings")
+     * @ApiReturn(sample="{
+     *      'driver':   'string'
+     *      'host':     'string'
+     *      'port':     'string'
+     *      'charset':  'string'
+     *      'dbname':   'string'
+     *      'password': 'string'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetDefaultDbSettings($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        /** @var InstallerService $installer */
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstalled()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->getDefaultDbSettings();
+    }
+
+    /**
      * @ApiDescription(description="Set db settings")
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/Installer/setDbSettings")
@@ -221,15 +256,20 @@ class Installer extends Base
     }
 
     /**
-     * @param         $params
-     * @param         $data
-     * @param Request $request
+     * @ApiDescription(description="Get license and languages")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/Installer/getLicenseAndLanguages")
+     * @ApiReturn(sample="{
+     *      'languageList': 'array'
+     *      'language':     'string'
+     *      'license':      'string'
+     * }")
      *
      * @return array
      * @throws Exceptions\BadRequest
      * @throws Exceptions\Forbidden
      */
-    public function actionGetLicenseWithLanguages($params, $data, Request $request): array
+    public function actionGetLicenseAndLanguages($params, $data, Request $request): array
     {
         // check method
         if (!$request->isGet()) {
@@ -244,37 +284,8 @@ class Installer extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $installer->getLicenseWithLanguages();
+        return $installer->getLicenseAndLanguages();
     }
-
-    /**
-     * @param         $params
-     * @param         $data
-     * @param Request $request
-     *
-     * @return array
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\Forbidden
-     */
-    public function actionGetDefaultDbSettings($params, $data, Request $request): array
-    {
-        // check method
-        if (!$request->isGet()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        /** @var InstallerService $installer */
-        $installer = $this->getService('Installer');
-
-        // check if is install
-        if ($installer->isInstalled()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        return $installer->getDefaultDbSettings();
-    }
-
-
 
     /**
      * Check if valid db params

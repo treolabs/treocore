@@ -108,7 +108,7 @@ class Installer extends Base
      *
      * @return array
      */
-    public function getLicenseWithLanguages(): array
+    public function getLicenseAndLanguages(): array
     {
         // get languages data
         $result = [
