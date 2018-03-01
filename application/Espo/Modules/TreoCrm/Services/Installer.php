@@ -125,6 +125,16 @@ class Installer extends Base
     }
 
     /**
+     * Get default dataBase settings
+     *
+     * @return array
+     */
+    public function getDefaultDbSettings(): array
+    {
+        return $this->getConfig()->getDefaults()['database'];
+    }
+
+    /**
      * Set language
      *
      * @param $lang

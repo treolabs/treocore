@@ -247,7 +247,6 @@ class Installer extends Base
         return $installer->getLicenseWithLanguages();
     }
 
-    // todo
     /**
      * @param         $params
      * @param         $data
@@ -272,7 +271,7 @@ class Installer extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $installer->getLanguages();
+        return $installer->getDefaultDbSettings();
     }
 
 
