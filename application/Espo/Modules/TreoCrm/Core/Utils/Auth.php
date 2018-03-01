@@ -13,7 +13,6 @@ use Espo\Core\Exceptions\Error;
  */
 class Auth extends EspoAuth
 {
-
     /**
      * Disable auth
      *
@@ -21,6 +20,7 @@ class Auth extends EspoAuth
      */
     public function useNoAuth()
     {
+        // disable connect to DB if system not installed
         if ($this->getContainer()->get('serviceFactory')->create('Installer')->isInstalled()) {
             parent::useNoAuth();
         }

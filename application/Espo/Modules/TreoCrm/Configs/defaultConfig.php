@@ -166,4 +166,3 @@ return [
     'inlineAttachmentUploadMaxSize' => 20,
     'isInstalled' => false
 ];
-

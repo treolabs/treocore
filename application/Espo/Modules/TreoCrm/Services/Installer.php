@@ -113,8 +113,8 @@ class Installer extends Base
         // get languages data
         $result = [
             'languageList' => $this->getConfig()->get('languageList'),
-            'language' => $this->getConfig()->get('language'),
-            'license' => ''
+            'language'     => $this->getConfig()->get('language'),
+            'license'      => ''
         ];
 
         // get license
@@ -286,7 +286,6 @@ class Installer extends Base
         $error = $this->getFileManager()->getPermissionUtils()->getLastError();
 
         if (!empty($error)) {
-
             $message = is_array($error) ? implode($error, ' ;') : string($error);
 
             throw new Exceptions\InternalServerError($message);
@@ -345,8 +344,10 @@ class Installer extends Base
     {
         $dsn = 'mysql' . ':host=' . $dbSettings['host'] . $port;
 
-        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'],
-            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+        $pdo = new \PDO(
+            $dsn, $dbSettings['user'], $dbSettings['password'],
+            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]
+        );
 
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `" . $dbSettings['dbname'] . "`");
     }
