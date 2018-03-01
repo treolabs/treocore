@@ -67,7 +67,6 @@ class Application extends EspoApplication
             null,
             'html/treo-installation.html',
             [
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
                 'year'    => date('Y'),
                 'version' => $version,
                 'status'  => $result['status'],

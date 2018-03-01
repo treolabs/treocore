@@ -318,11 +318,11 @@ class Installer extends Base
     /**
      * Check connect to db
      *
-     * @param $dbSettings
+     * @param array $dbSettings
      *
      * @return bool
      */
-    protected function isConnectToDb($dbSettings)
+    protected function isConnectToDb(array $dbSettings)
     {
         $port = !empty($dbSettings['port']) ? '; port=' . $dbSettings['port'] : '';
 

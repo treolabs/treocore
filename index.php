@@ -31,14 +31,14 @@ include "bootstrap.php";
 
 $app = new \Espo\Modules\TreoCrm\Core\Application();
 
+if (!$app->isInstalled()) {
+    $app->runInstaller();
+    exit;
+}
+
 if (!empty($_GET['entryPoint'])) {
     $app->runEntryPoint($_GET['entryPoint']);
     exit;
 }
 
-if (!$app->isInstalled()) {
-    $app->runInstaller();
-} else {
-    $app->runClient();
-}
-
+$app->runClient();

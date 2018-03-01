@@ -13,7 +13,7 @@ return [
         'user' => '',
         'password' => '',
     ],
-    'useCache' => false, // todo set true
+    'useCache' => true,
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'TreoPim',
