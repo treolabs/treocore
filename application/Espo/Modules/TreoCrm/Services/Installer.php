@@ -16,6 +16,7 @@ use Espo\Core\Utils\PasswordHash;
  */
 class Installer extends Base
 {
+
     /**
      * @var PasswordHash
      */
@@ -90,7 +91,37 @@ class Installer extends Base
      */
     public function getTranslations(): array
     {
-        return $this->getInjection('language')->get('Installer');
+        $language = $this->getInjection('language');
+
+        $result = $language->get('Installer');
+
+        // add languages
+        $languages = $language->get('Global.options.language');
+
+        $result['labels']['languages'] = $languages;
+
+        return $result;
+    }
+
+    /**
+     * Get license and languages
+     *
+     * @return array
+     */
+    public function getLicenseWithLanguages(): array
+    {
+        // get languages data
+        $result = [
+            'languageList' => $this->getConfig()->get('languageList'),
+            'language' => $this->getConfig()->get('language'),
+            'license' => ''
+        ];
+
+        // get license
+        $license = $this->getFileManager()->getContents('LICENSE.txt');
+        $result['license'] = $license ? $license : '';
+
+        return $result;
     }
 
     /**
@@ -304,7 +335,8 @@ class Installer extends Base
     {
         $dsn = 'mysql' . ':host=' . $dbSettings['host'] . $port;
 
-        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
+        $pdo = new \PDO($dsn, $dbSettings['user'], $dbSettings['password'],
+            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING]);
 
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `" . $dbSettings['dbname'] . "`");
     }

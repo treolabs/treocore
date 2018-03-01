@@ -220,8 +220,6 @@ class Installer extends Base
         return $installer->checkDbConnect($post);
     }
 
-
-    // todo
     /**
      * @param         $params
      * @param         $data
@@ -246,7 +244,7 @@ class Installer extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $installer->getLanguages();
+        return $installer->getLicenseWithLanguages();
     }
 
     // todo
