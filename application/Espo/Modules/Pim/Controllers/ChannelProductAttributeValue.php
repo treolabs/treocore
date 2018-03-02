@@ -37,6 +37,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\Pim\Controllers;
 
+use Espo\Core\Utils\Json;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 
@@ -60,6 +61,9 @@ class ChannelProductAttributeValue extends AbstractTechnicalController
      */
     public function actionUpdate($params, $data, Request $request): bool
     {
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
         // check Request
         if (!$this->isValidUpdateAction($params, $data, $request)) {
             throw new Exceptions\BadRequest();
