@@ -91,6 +91,9 @@ class ChannelProductAttributeValue extends AbstractTechnicalController
      */
     public function actionCreate($params, $data, Request $request)
     {
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
         // check Request
         if (!$this->isValidCreateAction($data, $request)) {
             throw new BadRequest();
