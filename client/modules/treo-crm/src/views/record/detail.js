@@ -62,32 +62,24 @@ Espo.define('treo-crm:views/record/detail', 'class-replace!treo-crm:views/record
 
                 if (scrollTop < edge) {
                     if (scrollTop > stickTop) {
-                        if (!$container.hasClass('stick-sub')) {
-                            $container.addClass('stick-sub');
-                            $block.show();
+                        $container.addClass('stick-sub');
+                        $block.show();
 
-                            var $p = $('.popover');
-                            $p.each(function (i, el) {
-                                $el = $(el);
-                                $el.css('top', ($el.position().top - blockHeight) + 'px');
-                            });
-                        }
+                        var $p = $('.popover');
+                        $p.each(function (i, el) {
+                            var $el = $(el);
+                            $el.css('top', ($el.position().top - blockHeight) + 'px');
+                        });
                     } else {
-                        if ($container.hasClass('stick-sub')) {
-                            $container.removeClass('stick-sub');
-                            $block.hide();
+                        $container.removeClass('stick-sub');
+                        $block.hide();
 
-                            var $p = $('.popover');
-                            $p.each(function (i, el) {
-                                $el = $(el);
-                                $el.css('top', ($el.position().top + blockHeight) + 'px');
-                            });
-                        }
+                        var $p = $('.popover');
+                        $p.each(function (i, el) {
+                            var $el = $(el);
+                            $el.css('top', ($el.position().top + blockHeight) + 'px');
+                        });
                     }
-                    $container.show();
-                } else {
-                    $container.hide();
-                    $block.show();
                 }
             }.bind(this));
         }
