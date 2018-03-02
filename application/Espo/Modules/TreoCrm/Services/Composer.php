@@ -43,7 +43,7 @@ class Composer extends Base
          * Extract composer
          */
         if (!file_exists($this->extractDir."/vendor/autoload.php") == true) {
-            (new \Phar(CORE_PATH."/composer.phar"))->extractTo($extractDir);
+            (new \Phar(CORE_PATH."/composer.phar"))->extractTo($this->extractDir);
         }
     }
 
