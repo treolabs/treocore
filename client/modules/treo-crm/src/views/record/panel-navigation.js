@@ -29,8 +29,9 @@ Espo.define('treo-crm:views/record/panel-navigation', 'view',
                 return;
             }
             let offset = this.getParentView().$el.find(`.panel[data-name="${name}"]`).offset();
-            let navbarHeight = $('#navbar .navbar-right').height() || 0;
-            $(window).scrollTop(offset.top - navbarHeight);
+            let navbarHeight = $('#navbar .navbar-right').innerHeight() || 0;
+            let navigationHeight = $('.record-buttons').innerHeight() || 0;
+            $(window).scrollTop(offset.top - navbarHeight - navigationHeight);
         }
 
     })
