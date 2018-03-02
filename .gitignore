@@ -1,6 +1,5 @@
 .idea/
 
-/Changes
 /apidocs/
 /data/*
 !/data/.htaccess
