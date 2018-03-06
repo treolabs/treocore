@@ -1,9 +1,15 @@
 {
     "scopeNames": {
-        "Country": "Land"
+        "AttributeGroup": "Attribute Group",
+        "Country": "Land",
+        "Tax": "Tax",
+        "Settings": "Administration"
     },
     "scopeNamesPlural": {
-        "Country": "Länder"
+        "AttributeGroup": "Attribut-Gruppen",
+        "Country": "Länder",
+        "Tax": "Steuern",
+        "Settings": "Administration"
     },
     "labels": {
         "Add Field": "Filter hinzufügen"

@@ -10,7 +10,7 @@
         "productFamily": "Product Family",
         "brand": "Brand",
         "associationRelatedProduct": "Association Related Product",
-        "associationMainProducts": "Association Products",
+        "associationMainProducts": "Cross-Selling",
         "supplierProducts": "Supplier Products",
         "productStatus": "Product Status",
         "sku": "SKU",
@@ -44,7 +44,7 @@
         "productFamily": "Product Family",
         "brand": "Brand",
         "associationRelatedProduct": "Association Related Product",
-        "associationMainProducts": "Association Products",
+        "associationMainProducts": "Cross-Selling",
         "supplierProducts": "Supplier Products",
         "productTypeBundles": "Product Type Bundles",
         "productBundles": "Product Bundles",
@@ -60,7 +60,13 @@
         "Create Product": "Create Product",
         "Product Attributes": "Product Attributes",
         "There is no valid attributes for channel": "There is no valid attributes for channel",
-        "Add Attribute Filter": "Add Attribute Filter"
+        "Add Attribute Filter": "Add Attribute Filter",
+        "Item in Products": "Item in Products",
+        "Channels": "Channel Products",
+        "Product Channel Attributes": "Product Channel Attributes",
+        "Association Products": "Cross-Selling",
+        "Image": "Images",
+        "Suppliers": "Suppliers"
     },
     "options": {
         "productStatus": {
