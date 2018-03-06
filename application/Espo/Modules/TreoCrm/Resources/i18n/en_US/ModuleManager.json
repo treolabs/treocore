@@ -6,6 +6,7 @@
         "TreoCrm": "-"
     },
     "fields": {
+        "status": "Status",
         "version": "Version",
         "required": "Required",
         "isActive": "Is active"
@@ -19,7 +20,24 @@
         "Such module version already installed": "Such module version already installed",
         "No such module version": "No such module version"
     },
-    "messages": {
-        "successAndReload": "Changes saved. Page will be reloaded after {value} seconds"
+    "labels": {
+        "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
+        "available": "available",
+        "Modules (installed)": "Modules (installed)",
+        "Modules (available)": "Modules (available)",
+        "installModule": "Install",
+        "updateModule": "Update",
+        "removeModule": "Remove",
+        "settings": "Settings",
+        "settingsText": "You should register to install or update TreoPIM modules...",
+        "username": "Username",
+        "password": "Password",
+        "anotherActionInProgress": "An another action is in progress. Wait until it get finished",
+        "installing": "Installing...",
+        "installed": "Installed. This page will be reloaded after {value} seconds",
+        "updating": "Updating...",
+        "updated": "Updated. This page will be reloaded after {value} seconds",
+        "removing": "Removing...",
+        "removed": "Removed. This page will be reloaded after {value} seconds"
     }
 }

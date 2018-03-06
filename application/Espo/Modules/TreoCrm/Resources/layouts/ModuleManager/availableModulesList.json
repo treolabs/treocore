@@ -14,17 +14,5 @@
         "notSortable": true,
         "view": "treo-crm:views/module-manager/fields/version",
         "width": 10
-    },
-    {
-        "name": "required",
-        "notSortable": true,
-        "view": "treo-crm:views/module-manager/fields/required"
-    },
-    {
-        "name": "isActive",
-        "notSortable": true,
-        "type": "bool",
-        "width": 10,
-        "disabled": false
     }
 ]
