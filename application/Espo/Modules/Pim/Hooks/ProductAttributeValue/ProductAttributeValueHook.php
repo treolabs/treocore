@@ -69,8 +69,13 @@ class ProductAttributeValueHook extends AbstractHook
      */
     protected function updateProductComplete(Entity $entity): void
     {
+        $product = $entity->get('product');
+
+        // set as fetched for correct stream
+        $product->setAsFetched();
+
         // get product with complete updates
-        $product = $this->createService('Completeness')->updateCompleteness($entity->get('product'), false);
+        $product = $this->createService('Completeness')->updateCompleteness($product, false);
 
         // save product
         $this->getEntityManager()->saveEntity($product);
