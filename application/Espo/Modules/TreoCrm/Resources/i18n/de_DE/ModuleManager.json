@@ -6,6 +6,7 @@
         "TreoCrm": "-"
     },
     "fields": {
+        "status": "Status",
         "version": "Version",
         "required": "Erforderlich",
         "isActive": "Ist aktiv"
@@ -18,5 +19,25 @@
         "Module was not installed": "Das Modul wurde nicht installiert",
         "Such module version already installed": "Diese Modul-Version ist schon installiert",
         "No such module version": "Es gibt keine solche Modul-Version"
+    },
+    "labels": {
+        "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen",
+        "available": "Verfügbar",
+        "Modules (installed)": "Module (installiert)",
+        "Modules (available)": "Module (verfügbar)",
+        "installModule": "Installieren",
+        "updateModule": "Aktualisieren",
+        "removeModule": "Löschen",
+        "settings": "Einstellungen",
+        "settingsText": "Sie müssen registriert sein, um TreoPIM Module installieren oder aktualisieren zu können...",
+        "username": "Benutzer",
+        "password": "Passwort",
+        "anotherActionInProgress": "Ein anderes Workflow ist gerade in Arbeit. Warten Sie bitte ab, bis dieses abgeschlossen ist ",
+        "installing": "Wird installiert...",
+        "installed": "Wurde installiert. Die Seite wird in {value} Sekunden neu geladen",
+        "updating": "Wird aktualisiert...",
+        "updated": "Wurde aktualisiert. Die Seite wird in {value} Sekunden neu geladen",
+        "removing": "Wird gelöscht...",
+        "removed": "Wurde gelöscht. Die Seite wird in {value} Sekunden neu geladen"
     }
 }

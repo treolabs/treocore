@@ -1,6 +1,8 @@
 {
     "fields": {
-        "ownerUser": "Owner"
+        "ownerUser": "Owner",
+        "username": "Username",
+        "password": "Password"
     },
     "links": {
         "ownerUser": "Owner"
@@ -9,6 +11,6 @@
         "TreoDarkTheme": "Treo Dark Theme"
     },
     "messages": {
-        "successAndReload": "Changes saved. Page will be reloaded after {value} seconds"
+        "successAndReload": "Changes saved. This page will be reloaded after {value} seconds"
     }
 }

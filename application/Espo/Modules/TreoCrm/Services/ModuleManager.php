@@ -330,7 +330,7 @@ class ModuleManager extends Base
         if (empty($package)) {
             throw new Exceptions\Error($this->translateError('Module was not installed'));
         }
-        if ($this->prepareModuleVersion($packages['max']['version']) == $version) {
+        if ($this->prepareModuleVersion($package['version']) == $version) {
             throw new Exceptions\Error($this->translateError('Such module version already installed'));
         }
         if (empty($packages[$version])) {
@@ -341,7 +341,7 @@ class ModuleManager extends Base
         $this->updateModuleFile($id, true);
 
         // run composer
-        $result = $this->getComposerService()->run("require ".$packages[$version][$version].":{$version}");
+        $result = $this->getComposerService()->run("require ".$packages[$version]['name'].":{$version}");
 
         // update treo dirs
         TreoComposer::updateTreoModules();
