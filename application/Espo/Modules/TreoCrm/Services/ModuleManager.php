@@ -33,7 +33,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Services;
 
@@ -161,14 +161,14 @@ class ModuleManager extends Base
                     $packages = $this->getComposerModuleService()->getModulePackages($module);
 
                     // prepare item
-                    $item['name']        = $this->translateModule($module, 'name');
+                    $item['name'] = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
-                    $item['version']     = $this->prepareModuleVersion($package['version']);
-                    $item['required']    = $this->getModuleRequireds($module);
-                    $item['isComposer']  = true;
+                    $item['version'] = $this->prepareModuleVersion($package['version']);
+                    $item['required'] = $this->getModuleRequireds($module);
+                    $item['isComposer'] = true;
 
-                    if (isset($packages['max'])) {
-                        $item['availableVersion'] = $this->prepareModuleVersion($packages['max']['version']);
+                    if (isset($packages)) {
+                        $item['availableVersion'] = $this->prepareModuleVersion($packages['version']);
                     }
                 }
 
@@ -202,10 +202,7 @@ class ModuleManager extends Base
             // get current language
             $currentLang = $this->getLanguage()->getLanguage();
 
-            foreach ($modules as $moduleId => $packages) {
-                // prepare max
-                $max = $packages['max'];
-
+            foreach ($modules as $moduleId => $max) {
                 // prepare name
                 $name = $moduleId;
                 if (!empty($max['extra']['name'][$currentLang])) {
@@ -284,11 +281,11 @@ class ModuleManager extends Base
     public function installModule(string $id): array
     {
         // prepare params
-        $package  = $this->getComposerModuleService()->getModulePackage($id);
+        $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
 
         // validation
-        if (empty($packages) || empty($packages['max'])) {
+        if (empty($packages) || empty($packages)) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (!empty($package)) {
@@ -301,7 +298,7 @@ class ModuleManager extends Base
         // run composer
         $result = $this
             ->getComposerService()
-            ->run("require ".$packages['max']['name'].":".$packages['max']['version']);
+            ->run("require " . $packages['name'] . ":" . $packages['version']);
 
         // update treo dirs
         TreoComposer::updateTreoModules();
@@ -320,7 +317,7 @@ class ModuleManager extends Base
     public function updateModule(string $id, string $version): array
     {
         // prepare params
-        $package  = $this->getComposerModuleService()->getModulePackage($id);
+        $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
 
         // validation
@@ -341,7 +338,7 @@ class ModuleManager extends Base
         $this->updateModuleFile($id, true);
 
         // run composer
-        $result = $this->getComposerService()->run("require ".$packages[$version]['name'].":{$version}");
+        $result = $this->getComposerService()->run("require " . $packages[$version]['name'] . ":{$version}");
 
         // update treo dirs
         TreoComposer::updateTreoModules();
@@ -359,11 +356,11 @@ class ModuleManager extends Base
     public function deleteModule(string $id): array
     {
         // prepare params
-        $package  = $this->getComposerModuleService()->getModulePackage($id);
+        $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
 
         // validation
-        if (empty($package) || empty($packages['max'])) {
+        if (empty($package) || empty($packages)) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
 
@@ -374,7 +371,7 @@ class ModuleManager extends Base
         $beforeDelete = TreoComposer::getTreoModules();
 
         // run composer
-        $result = $this->getComposerService()->run('remove '.$packages['max']['name']);
+        $result = $this->getComposerService()->run('remove ' . $packages['name']);
 
         if (empty($result['status'])) {
             // prepare modules diff
@@ -391,7 +388,7 @@ class ModuleManager extends Base
      * Update module file
      *
      * @param string $moduleId
-     * @param bool $isDisabled
+     * @param bool   $isDisabled
      *
      * @return bool
      */
@@ -519,7 +516,7 @@ class ModuleManager extends Base
                     $treoModule = TreoComposer::getTreoModules();
 
                     foreach ($composerRequire as $key => $version) {
-                        if (preg_match_all("/^(".TreoComposer::TREODIR."\/)(.*)$/", $key, $matches)) {
+                        if (preg_match_all("/^(" . TreoComposer::TREODIR . "\/)(.*)$/", $key, $matches)) {
                             if (!empty($matches[2][0])) {
                                 $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
                             }
@@ -557,7 +554,7 @@ class ModuleManager extends Base
      * Is module has requireds
      *
      * @param string $moduleId
-     * @param array $moduleConfig
+     * @param array  $moduleConfig
      *
      * @return bool
      */

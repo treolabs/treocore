@@ -33,7 +33,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Configs;
 
@@ -52,9 +52,16 @@ return [
             'method'     => 'executeProgressJobs',
             'name'       => 'Execute progress manager jobs',
             'data'       => []
+        ],
+        [
+            'scheduling' => '0 */2 * * *',
+            'service'    => 'ComposerModule',
+            'method'     => 'cachingPackages',
+            'name'       => 'Caching module packages',
+            'data'       => []
         ]
     ],
     'scheduledJobsServices' => [
-    // array of services
+        // array of services
     ]
 ];

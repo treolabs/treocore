@@ -33,7 +33,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCrm\Services;
 
@@ -74,6 +74,11 @@ class ComposerModule extends Base
     protected $composerLockData = null;
 
     /**
+     * @var string
+     */
+    protected $cacheFile = 'data/cache/modules-packages.json';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -82,6 +87,17 @@ class ComposerModule extends Base
 
         // load composer lock
         $this->loadComposerLock();
+    }
+
+    /**
+     * Caching packages
+     *
+     * @param array $data
+     */
+    public function cachingPackages(array $data = []): void
+    {
+        // load module packages
+        $this->loadModulesPackages(true);
     }
 
     /**
@@ -142,13 +158,13 @@ class ComposerModule extends Base
             // prepare result
             $this->packagistData = [];
 
-            if (!empty($packagesJson = file_get_contents(self::$packagistPath.'/packages.json'))) {
+            if (!empty($packagesJson = file_get_contents(self::$packagistPath . '/packages.json'))) {
                 // parse json
                 $packagesJsonData = Json::decode($packagesJson, true);
 
                 if (!empty($includes = $packagesJsonData['includes']) && is_array($includes)) {
                     foreach ($includes as $path => $row) {
-                        if (!empty($includeJson = file_get_contents(self::$packagistPath.'/'.$path))) {
+                        if (!empty($includeJson = file_get_contents(self::$packagistPath . '/' . $path))) {
                             // parse json
                             $includeJsonData = Json::decode($includeJson, true);
 
@@ -166,34 +182,73 @@ class ComposerModule extends Base
 
     /**
      * Load module packages
+     *
+     * @param bool $droppingCache
      */
-    protected function loadModulesPackages(): void
+    protected function loadModulesPackages(bool $droppingCache = false): void
     {
         if (!$this->isModulePackagesLoaded) {
             $this->isModulePackagesLoaded = true;
-            foreach ($this->getPackagistData() as $repository => $versions) {
-                if (is_array($versions)) {
-                    $max = null;
-                    foreach ($versions as $version => $data) {
-                        if (!empty($treoId = $data['extra']['treoId'])) {
-                            if (preg_match_all('/^(v(\d.\d.\d))|(\d.\d.\d)$/', $version, $matches)) {
-                                // prepare version
-                                $version = (!empty($matches[3][0])) ? $matches[3][0] : $matches[2][0];
 
-                                // set max
-                                if ((int) $max < (int) str_replace('.', '', $version)) {
-                                    $max                                 = $version;
-                                    $this->modulePackage[$treoId]['max'] = $data;
+            if ($droppingCache || empty($this->getCachedPackagistData())) {
+                foreach ($this->getPackagistData() as $repository => $versions) {
+                    if (is_array($versions)) {
+                        $max = null;
+                        foreach ($versions as $version => $data) {
+                            if (!empty($treoId = $data['extra']['treoId'])) {
+                                if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
+                                    // prepare version
+                                    $version = str_replace('v', '', $matches[0][0]);
+                                    $data['version'] = str_replace('v', '', $data['version']);
+
+                                    // set max
+                                    if ((int)str_replace('.', '', $max) < (int)str_replace('.', '', $version)) {
+                                        $max = $version;
+                                        $this->modulePackage[$treoId] = $data;
+                                    }
                                 }
-
-                                // push
-                                $this->modulePackage[$treoId][$version] = $data;
                             }
                         }
                     }
                 }
+
+                // caching
+                $this->cachingPackagistData($this->modulePackage);
             }
+
+            // load from cache
+            $this->modulePackage = $this->getCachedPackagistData();
         }
+    }
+
+    /**
+     * Get cached packagist data
+     *
+     * @return array
+     */
+    protected function getCachedPackagistData(): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($this->cacheFile)) {
+            $result = Json::decode(file_get_contents($this->cacheFile), true);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Caching packagist data
+     *
+     * @param array $data
+     */
+    protected function cachingPackagistData(array $data): void
+    {
+        $fp = fopen($this->cacheFile, 'w');
+        fwrite($fp, Json::encode($data));
+        fclose($fp);
     }
 
     /**
@@ -208,7 +263,7 @@ class ComposerModule extends Base
         $composerLock = 'composer.lock';
 
         // prepare dir
-        $vendorTreoDir = 'vendor/'.TreoComposer::TREODIR.'/';
+        $vendorTreoDir = 'vendor/' . TreoComposer::TREODIR . '/';
 
         if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
             // prepare data
