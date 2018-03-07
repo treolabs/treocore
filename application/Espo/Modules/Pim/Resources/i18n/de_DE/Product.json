@@ -11,7 +11,7 @@
         "brand": "Marke",
         "associationRelatedProduct": "Verknüpfung von ähnlichen Artikeln",
         "associationMainProducts": "Hauptartikel-Verknüpfung",
-        "supplierProducts": "Lieferant",
+        "supplierProducts": "Lieferanten",
         "productStatus": "Artikelstatus",
         "sku": "SKU",
         "isActive": "Aktiv",
@@ -45,7 +45,7 @@
         "brand": "Marke",
         "associationRelatedProduct": "Verknüpfung von ähnlichen Artikeln",
         "associationMainProducts": "Hauptartikel-Verknüpfung",
-        "supplierProducts": "Lieferant",
+        "supplierProducts": "Lieferanten",
         "productTypeBundles": "Artikeltyp-Bundle",
         "productBundles": "Artikel-Bundle",
         "productTypePackages": "Artikeltyp-Set",
@@ -60,7 +60,13 @@
         "Create Product": "Artikel anlegen",
         "Product Attributes": "Artikelattribute",
         "There is no valid attributes for channel": "Es gibt keine gültigen Attribute für Kanal",
-        "Add Attribute Filter": "Attribut-Filter einfügen"
+        "Add Attribute Filter": "Attribut-Filter einfügen",
+        "Item in Products": "Artikel im Set/Bundle",
+        "Channels": "Kanalartikel",
+        "Product Channel Attributes": "Attributwerte vom Kanalartikel",
+        "Association Products": "Hauptartikel-Verknüpfung",
+        "Image": "Bilder",
+        "Suppliers": "Lieferanten"
     },
     "options": {
         "productStatus": {

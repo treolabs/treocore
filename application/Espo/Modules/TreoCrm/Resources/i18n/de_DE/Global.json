@@ -1,6 +1,8 @@
 {
     "fields": {
-        "ownerUser": "Besitzer"
+        "ownerUser": "Besitzer",
+        "username": "Benutzername",
+        "password": "Passwort"
     },
     "links": {
         "ownerUser": "Besitzer"
