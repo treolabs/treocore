@@ -195,18 +195,18 @@ class ComposerModule extends Base
                     if (is_array($versions)) {
                         $max = null;
                         foreach ($versions as $version => $data) {
-                            if (!empty($treoId = $data['extra']['treoId'])
-                                && (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
-                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches))) {
+                            if (!empty($treoId = $data['extra']['treoId'])) {
+                                if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
+                                    // prepare version
+                                    $version = str_replace('v', '', $matches[0][0]);
+                                    $data['version'] = str_replace('v', '', $data['version']);
 
-                                // prepare version
-                                $version = str_replace('v', '', $matches[0][0]);
-                                $data['version'] = str_replace('v', '', $data['version']);
-
-                                // set max
-                                if ((int)str_replace('.', '', $max) < (int)str_replace('.', '', $version)) {
-                                    $max = $version;
-                                    $this->modulePackage[$treoId] = $data;
+                                    // set max
+                                    if ((int)str_replace('.', '', $max) < (int)str_replace('.', '', $version)) {
+                                        $max = $version;
+                                        $this->modulePackage[$treoId] = $data;
+                                    }
                                 }
                             }
                         }
