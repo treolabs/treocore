@@ -1,3 +1,4 @@
+    * FEA #60475 : Кешування available modules (Roman Ratsun)
     * BUG #58982 : При клонировании продукта в стрим записываются одинаковые данные  (Yuriy  Haiduchyk)
     * FEA #59637 : Внести переводы менюшки и некоторых сущностей (Valeriy Shamota, Roman Ratsun)
     * FEA #59640 : Розробка механізму інсталяції/оновленню модулів // Front (Yurii Kondratskyi)
