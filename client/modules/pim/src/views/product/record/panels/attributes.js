@@ -34,6 +34,8 @@
 Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/relationship',
     Dep => Dep.extend({
 
+        allowedAttributeIds: [],
+
         setup() {
             Dep.prototype.__proto__.setup.call(this);
 
@@ -110,8 +112,7 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
             let gridView = this.getView('grid');
             if (gridView) {
                 result = {};
-                let allowedViews = Object.keys(gridView.attributes);
-                allowedViews.forEach(function (item) {
+                this.allowedAttributeIds.forEach(function (item) {
                     result[item] = gridView.nestedViews[item];
                 }, this);
             }
@@ -148,6 +149,7 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
                     let inputLanguageList = that.getConfig().get('inputLanguageList');
 
                     response.forEach(attribute => {
+                        this.allowedAttributeIds.push(attribute.attributeId);
                         data[attribute.attributeId] = attribute.value;
                         translates[attribute.attributeId] = attribute.name;
 
