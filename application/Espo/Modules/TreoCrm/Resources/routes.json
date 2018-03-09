@@ -24,11 +24,27 @@
         }
     },
     {
+        "route": "/ModuleManager/installModule",
+        "method": "post",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "installModule"
+        }
+    },
+    {
         "route": "/ModuleManager/updateModule",
         "method": "put",
         "params": {
             "controller": "ModuleManager",
             "action": "updateModule"
+        }
+    },
+    {
+        "route": "/ModuleManager/deleteModule",
+        "method": "delete",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "deleteModule"
         }
     },
     {
@@ -45,6 +61,14 @@
         "params": {
             "controller": "ModuleManager",
             "action": "setComposerUser"
+        }
+    },
+    {
+        "route": "/ModuleManager/availableModulesList",
+        "method": "get",
+        "params": {
+            "controller": "ModuleManager",
+            "action": "getAvailableModulesList"
         }
     },
     {
@@ -77,6 +101,28 @@
         "params": {
             "controller": "ProgressManager",
             "action": "close"
+        }
+    },
+    {
+        "route":"/Installer/:action",
+        "method":"post",
+        "params":{
+            "controller":"Installer",
+            "action": ":action"
+        },
+        "conditions":{
+            "auth":false
+        }
+    },
+    {
+        "route":"/Installer/:action",
+        "method":"get",
+        "params":{
+            "controller":"Installer",
+            "action": ":action"
+        },
+        "conditions":{
+            "auth":false
         }
     }
 ]
