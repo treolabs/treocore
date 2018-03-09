@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9dc4aa9889694bbc792c7d0cc0c643e0",
+    "content-hash": "b7ca2694fd4450e0d18e8000553944ff",
     "packages": [
         {
             "name": "composer/semver",
@@ -1581,11 +1581,11 @@
         },
         {
             "name": "treo-crm/coloredfields",
-            "version": "1.0.4",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.zinit1.com/treoCRM/modules/coloredfields.git",
-                "reference": "0fc3ebdb77448902e33b31f15950f44562dbd29a"
+                "url": "https://gitlab.zinit1.com/treoCRM/free-plugins/coloredfields.git",
+                "reference": "44b112a1a2ba2e4fae33cd20d95b8647a56977c4"
             },
             "require": {
                 "php": "^7.1"
@@ -1609,15 +1609,15 @@
                 }
             ],
             "description": "ColoredFields module for TreoPIM",
-            "time": "2018-02-27T13:58:03+00:00"
+            "time": "2018-03-09T08:47:52+00:00"
         },
         {
             "name": "treo-crm/multilang",
-            "version": "1.1.5",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.zinit1.com/treoCRM/modules/multilang.git",
-                "reference": "62c78fa7aed36b87601a13f684ff24a08d19da70"
+                "url": "https://gitlab.zinit1.com/treoCRM/free-plugins/multilang.git",
+                "reference": "b42018e35ef144470104d2f235b978c502b715cf"
             },
             "require": {
                 "php": "^7.1"
@@ -1641,7 +1641,7 @@
                 }
             ],
             "description": "Multilang module for TreoPIM",
-            "time": "2018-02-27T14:36:42+00:00"
+            "time": "2018-03-09T08:19:13+00:00"
         },
         {
             "name": "yzalis/identicon",
