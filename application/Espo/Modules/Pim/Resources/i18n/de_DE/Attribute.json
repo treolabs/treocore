@@ -1,0 +1,49 @@
+{
+    "fields": {
+        "attributeGroup": "Attributgruppe",
+        "productAttributes": "Artikelattribute",
+        "typeValue": "Wert",
+        "isSystem": "Ist System",
+        "type": "Attributtyp",
+        "code": "Code",
+        "name": "Attributname",
+        "products": "Artikel",
+        "productAttributeValues": "Artikel-Attributwerte",
+        "productFamilyAttributes": "Attribute der Artikelfamilie",
+        "channelProductAttributeValues": "Attributwerte vom Kanalartikel"
+    },
+    "options": {
+        "type": {
+            "array": "Textfeld für produktspezifischen Wert",
+            "bool": "Checkbox",
+            "date": "Datum",
+            "datetime": "Datum, Zeit",
+            "enum": "Auswahlfeld",
+            "float": "Feld für Dezimalwerte",
+            "int": "Feld für Ganzzahlen",
+            "multiEnum": "Mehrfachauswahlfeld",
+            "text": "Textfeld",
+            "url": "Link",
+            "varchar": "Textfeld mit der Zeichenbeschränkung",
+            "varcharMultiLang": "Textfeld mit der Zeichenbeschränkung (mehrsprachig)",
+            "textMultiLang": "Textfeld (mehrsprachig)",
+            "enumMultiLang": "Auswahlfeld (mehrsprachig)",
+            "multiEnumMultiLang": "Mehrfachauswahlfeld (mehrsprachig)",
+            "arrayMultiLang": "Textfeld für produktspezifischen Wert (mehrsprachig)"
+        }
+    },
+    "links": {
+        "attributeGroup": "Attributgruppe",
+        "productAttributes": "Artikelattribute",
+        "products": "Artikel",
+        "productAttributeValues": "Werte der Artikelattribute",
+        "productFamilyAttributes": "Attribute der Artikelfamilie",
+        "channelProductAttributeValues": "Kanal von Attributen der Artikelfamilie"
+    },
+    "labels": {
+        "Create Attribute": "Attribut anlegen"
+    },
+    "filterLabels": {
+        "All": "Alle"
+    }
+}

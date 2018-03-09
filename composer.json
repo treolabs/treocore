@@ -1,0 +1,58 @@
+{
+    "name": "treo-crm/treopimsystem",
+    "description": "TreoPIM System",
+    "authors": [
+        {
+            "name": "Roman Ratsun",
+            "email": "r.ratsun@zinitsolutions.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo_mysql": "*",
+        "ext-zip": "*",
+        "ext-gd": "*",
+        "ext-mbstring": "*",
+        "ext-imap": "*",
+        "ext-curl": "*",
+        "ext-xml": "*",
+        "doctrine/dbal": "2.4.5",
+        "slim/slim": "2.6.2",
+        "mtdowling/cron-expression": "1.0.4",
+        "zendframework/zend-validator": "2.10.1",
+        "zendframework/zend-mail": "2.5.2",
+        "zendframework/zend-ldap": "2.8.0",
+        "monolog/monolog": "1.23.0",
+        "yzalis/identicon": "1.2.0",
+        "zordius/lightncandy": "0.95",
+        "composer/semver": "1.4.2",
+        "zendframework/zend-servicemanager": "2.6.0",
+        "tecnickcom/tcpdf": "6.2.13 ",
+        "php-mime-mail-parser/php-mime-mail-parser": "2.9.3",
+        "zbateson/mail-mime-parser": "0.4.6",
+        "phpoffice/phpexcel": "1.8.1",
+        "guzzlehttp/guzzle": "6.3.0",
+        "spatie/array-to-xml": "2.7.0",
+        "league/csv": "8.2.2",
+        "symfony/expression-language": "3.4.3",
+        "treo-crm/coloredfields": "^1.1.0",
+        "treo-crm/multilang": "^1.2.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "application/",
+            "Espo\\Custom": "custom/"
+        }
+    },
+    "scripts": {
+        "post-create-project-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.zinitsolutions.com"
+        }
+    ]
+}

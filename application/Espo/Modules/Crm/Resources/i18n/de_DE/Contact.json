@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "name": "Name",
+    "emailAddress": "E-Mail",
+    "title": "Funktion",
+    "accountRole": "Funktion",
+    "account": "Firma",
+    "accounts": "Firmen",
+    "phoneNumber": "Telefon",
+    "accountType": "Firmentyp",
+    "doNotCall": "Anrufe unerwünscht",
+    "address": "Adresse",
+    "opportunityRole": "Verkaufschance Rolle",
+    "description": "Beschreibung",
+    "campaign": "Kampagne",
+    "targetLists": "Kontaktlisten",
+    "targetList": "Kontaktliste",
+    "portalUser": "Portal Benutzer",
+    "originalLead": "Ursprünglicher Interessent"
+  },
+  "links": {
+    "opportunities": "Verkaufschancen",
+    "cases": "Fälle",
+    "targetLists": "Kontaktlisten",
+    "campaignLogRecords": "Kampagnen Log",
+    "campaign": "Kampagne",
+    "account": "Firma (Primär)",
+    "accounts": "Firmen",
+    "casesPrimary": "Fälle (Primär)",
+    "portalUser": "Portal Benutzer",
+    "originalLead": "Ursprünglicher Interessent",
+    "documents": "Dokumente"
+  },
+  "labels": {
+    "Create Contact": "Kontakt erstellen"
+  },
+  "options": {
+    "opportunityRole": {
+      "": "--Kein(e)--",
+      "Decision Maker": "Entscheider",
+      "Evaluator": "Vorentscheider",
+      "Influencer": "Einflussreiche Person"
+    }
+  },
+  "presetFilters": {
+    "portalUsers": "Portal Benutzer",
+    "notPortalUsers": "Keine Portal Benutzer"
+  }
+}

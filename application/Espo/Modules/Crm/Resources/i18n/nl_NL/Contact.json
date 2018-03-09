@@ -1,0 +1,40 @@
+{
+    "fields": {
+        "name": "Record Naam",
+        "emailAddress": "E-mail",
+        "title": "Titel",
+        "account": "Account",
+        "accounts": "Klanten",
+        "phoneNumber": "Telefoon",
+        "accountType": "Klant Type",
+        "doNotCall": "Niet Bellen",
+        "address": "Adres",
+        "opportunityRole": "Functie Kansen",
+        "accountRole": "Titel",
+        "description": "Beschrijving",
+        "campaign": "Campaign",
+        "targetLists": "Doellijsten",
+        "targetList": "Target List"
+    },
+    "links": {
+        "opportunities": "Kansen",
+        "cases": "Casus",
+        "targetLists": "Doellijsten",
+        "campaignLogRecords": "Campaign Log",
+        "campaign": "Campaign",
+        "account": "Account (Primary)",
+        "accounts": "Klanten",
+        "casesPrimary": "Cases (Primary)"
+    },
+    "labels": {
+        "Create Contact": "Contact Aanmaken"
+    },
+    "options": {
+        "opportunityRole": {
+            "": "--Geen--",
+            "Decision Maker": "Beslisser",
+            "Evaluator": "Evaluator",
+            "Influencer": "Beinvloeder"
+        }
+    }
+}

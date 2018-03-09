@@ -1,0 +1,198 @@
+/*
+ * This file is part of EspoCRM and/or TreoPIM.
+ *
+ * EspoCRM - Open Source CRM application.
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Website: http://www.espocrm.com
+ *
+ * TreoPIM ist Open Source Product Information Managegement (PIM) application,
+ * based on EspoCRM.
+ * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Website: http://www.treopim.com
+ *
+ * TreoPIM as well es EspoCRM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EspoCRM. If not, see http://www.gnu.org/licenses/.
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU General Public License version 3.
+ *
+ * In accordance with Section 7(b) of the GNU General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
+ * and "TreoPIM" word.
+ */
+
+Espo.define('views/preferences/record/edit', 'views/record/edit', function (Dep) {
+
+    return Dep.extend({
+
+        sideView: null,
+
+        buttonList: [
+            {
+                name: 'save',
+                label: 'Save',
+                style: 'primary',
+            },
+            {
+                name: 'cancel',
+                label: 'Cancel',
+            },
+            {
+                name: 'reset',
+                label: 'Reset',
+                style: 'danger'
+            }
+        ],
+
+        dependencyDefs: {
+            'smtpAuth': {
+                map: {
+                    true: [
+                        {
+                            action: 'show',
+                            fields: ['smtpUsername', 'smtpPassword']
+                        }
+                    ]
+                },
+                default: [
+                    {
+                        action: 'hide',
+                        fields: ['smtpUsername', 'smtpPassword']
+                    }
+                ]
+            },
+            'useCustomTabList': {
+                map: {
+                    true: [
+                        {
+                            action: 'show',
+                            fields: ['tabList']
+                        }
+                    ]
+                },
+                default: [
+                    {
+                        action: 'hide',
+                        fields: ['tabList']
+                    }
+                ]
+            }
+        },
+
+        setup: function () {
+            Dep.prototype.setup.call(this);
+
+            if (this.model.id == this.getUser().id) {
+                this.on('after:save', function () {
+                    var data = this.model.toJSON();
+                    delete data['smtpPassword'];
+                    this.getPreferences().set(data);
+                    this.getPreferences().trigger('update');
+                }, this);
+            }
+
+            if (!this.getUser().isAdmin() || this.model.get('isPortalUser')) {
+                this.hideField('dashboardLayout');
+            }
+
+            this.controlFollowCreatedEntityListVisibility();
+            this.listenTo(this.model, 'change:followCreatedEntities', this.controlFollowCreatedEntityListVisibility);
+
+            var hideNotificationPanel = true;
+            if (!this.getConfig().get('assignmentEmailNotifications') || this.model.get('isPortalUser')) {
+                this.hideField('receiveAssignmentEmailNotifications');
+            } else {
+                hideNotificationPanel = false;
+            }
+
+            if (!this.getConfig().get('mentionEmailNotifications') || this.model.get('isPortalUser')) {
+                this.hideField('receiveMentionEmailNotifications');
+            } else {
+                hideNotificationPanel = false;
+            }
+
+            if (!this.getConfig().get('streamEmailNotifications') && !this.model.get('isPortalUser')) {
+                this.hideField('receiveStreamEmailNotifications');
+            } else if (!this.getConfig().get('portalStreamEmailNotifications') && this.model.get('isPortalUser')) {
+                this.hideField('receiveStreamEmailNotifications');
+            } else {
+                hideNotificationPanel = false;
+            }
+
+            if (hideNotificationPanel) {
+                this.hidePanel('notifications');
+            }
+
+            if (this.getConfig().get('userThemesDisabled')) {
+                this.hideField('theme');
+            }
+
+            this.listenTo(this.model, 'after:save', function () {
+                if (
+                    this.model.get('language') !== this.attributes.language
+                    ||
+                    this.model.get('theme') !== this.attributes.theme
+
+                ) {
+                    window.location.reload();
+                }
+            }, this);
+
+            this.listenTo(this.model, 'change:smtpSecurity', function (model, smtpSecurity, o) {
+                if (!o.ui) return;
+                if (smtpSecurity == 'SSL') {
+                    this.model.set('smtpPort', '465');
+                } else if (smtpSecurity == 'TLS') {
+                    this.model.set('smtpPort', '587');
+                } else {
+                    this.model.set('smtpPort', '25');
+                }
+            }, this);
+        },
+
+        controlFollowCreatedEntityListVisibility: function () {
+            if (!this.model.get('followCreatedEntities')) {
+                this.showField('followCreatedEntityTypeList');
+            } else {
+                this.hideField('followCreatedEntityTypeList');
+            }
+        },
+
+        actionReset: function () {
+            this.confirm(this.translate('resetPreferencesConfirmation', 'messages'), function () {
+                $.ajax({
+                    url: 'Preferences/' + this.model.id,
+                    type: 'DELETE',
+                }).done(function (data) {
+                    Espo.Ui.success(this.translate('resetPreferencesDone', 'messages'));
+                    this.model.set(data);
+                    this.getPreferences().set(this.model.toJSON());
+                    this.getPreferences().trigger('update');
+                }.bind(this));
+            }, this);
+        },
+
+        afterRender: function () {
+            Dep.prototype.afterRender.call(this);
+        },
+
+        exit: function (after) {
+            if (after == 'cancel') {
+                this.getRouter().navigate('#User/view/' + this.model.id, {trigger: true});
+            }
+        },
+
+    });
+
+});

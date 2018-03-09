@@ -1,0 +1,89 @@
+{
+    "controller": "controllers/record",
+    "menu": {
+        "list": {
+            "buttons": [
+                {
+                    "label": "Target Lists",
+                    "link": "#TargetList",
+                    "acl": "read",
+                    "style": "default",
+                    "aclScope": "TargetList"
+                }
+            ],
+            "dropdown": [
+                {
+                    "label": "Mass Emails",
+                    "link": "#MassEmail",
+                    "acl": "read",
+                    "aclScope": "MassEmail"
+                },
+                {
+                    "label": "Email Templates",
+                    "link": "#EmailTemplate",
+                    "acl": "read",
+                    "aclScope": "EmailTemplate"
+                }
+            ]
+        }
+    },
+    "recordViews": {
+      "detail": "crm:views/campaign/record/detail"
+    },
+    "views": {
+      "detail": "crm:views/campaign/detail"
+    },
+    "sidePanels":{
+      "detail":[
+         {
+            "name":"statistics",
+            "label":"Statistics",
+            "view":"crm:views/campaign/record/panels/campaign-stats",
+            "hidden": false
+         }
+      ]
+    },
+    "relationshipPanels": {
+      "campaignLogRecords": {
+        "view": "crm:views/campaign/record/panels/campaign-log-records",
+        "layout": "listForCampaign",
+        "rowActionsView": "views/record/row-actions/remove-only",
+        "select": false,
+        "create": false
+      }
+    },
+    "filterList": [
+      "active"
+   ],
+   "formDependency": {
+      "type": {
+         "map": {
+            "Email": [
+               {
+                  "action": "show",
+                  "fields": ["targetLists", "excludingTargetLists"]
+               }
+            ],
+            "Newsletter": [
+               {
+                  "action": "show",
+                  "fields": ["targetLists", "excludingTargetLists"]
+               }
+            ],
+            "Mail": [
+               {
+                  "action": "show",
+                  "fields": ["targetLists", "excludingTargetLists"]
+               }
+            ]
+         },
+         "default": [
+            {
+               "action": "hide",
+               "fields": ["targetLists", "excludingTargetLists"]
+            }
+         ]
+      }
+   },
+   "boolFilterList": ["onlyMy"]
+}

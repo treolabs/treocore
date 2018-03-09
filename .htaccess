@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Prevent direct access to certain files
+<FilesMatch ^(composer\.json$|phpci\.yml)$>
+Deny from all
+</FilesMatch> 

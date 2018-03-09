@@ -1,0 +1,32 @@
+[
+    {
+        "label": "Overview",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "isActive"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "name"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "productFamilyTemplate",
+                    "fullWidth": true
+                }
+            ],
+            [
+                {
+                    "name": "description",
+                    "fullWidth": true
+                }
+            ]
+        ]
+    }
+]

@@ -1,0 +1,9 @@
+{
+    "fields": {
+        "value": "Value",
+        "unit": "Unit"
+    },
+    "labels": {
+        "Create Unit": "Create Unit"
+    }
+}

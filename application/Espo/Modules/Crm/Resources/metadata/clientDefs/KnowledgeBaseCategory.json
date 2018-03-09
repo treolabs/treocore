@@ -1,0 +1,40 @@
+{
+    "controller": "controllers/record-tree",
+    "collection": "collections/tree",
+    "menu": {
+        "listTree": {
+            "buttons": [
+                {
+                    "label": "List View",
+                    "link": "#KnowledgeBaseCategory\/list",
+                    "acl": "read",
+                    "style": "default"
+                },
+                {
+                    "label": "Articles",
+                    "link": "#KnowledgeBaseArticle",
+                    "acl": "read",
+                    "style": "default",
+                    "aclScope": "KnowledgeBaseArticle"
+                }
+            ]
+        },
+        "list": {
+            "buttons": [
+                {
+                    "label": "Tree View",
+                    "link": "#KnowledgeBaseCategory",
+                    "acl": "read",
+                    "style": "default"
+                },
+                {
+                    "label": "Articles",
+                    "link": "#KnowledgeBaseArticle",
+                    "acl": "read",
+                    "style": "default",
+                    "aclScope": "KnowledgeBaseArticle"
+                }
+            ]
+        }
+    }
+}

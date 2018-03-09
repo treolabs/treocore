@@ -1,0 +1,25 @@
+{
+    "scopeNames": {
+        "AttributeGroup": "Attribute Group",
+        "Country": "Country",
+        "Pricing": "Pricing",
+        "Packaging": "Packaging",
+        "ProductFamily": "Product Family",
+        "ProductPrice": "Product Price",
+        "PriceUnit": "Price Unit",
+        "Tax": "Tax"
+    },
+    "scopeNamesPlural": {
+        "AttributeGroup": "Attribute Groups",
+        "Country": "Countries",
+        "Pricing": "Pricings",
+        "Packaging": "Packagings",
+        "ProductFamily": "Product Families",
+        "ProductPrice": "Product Prices",
+        "PriceUnit": "Price Units",
+        "Tax": "Taxes"
+    },
+    "labels": {
+        "Add Field": "Add Filter"
+    }
+}

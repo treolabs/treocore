@@ -1,0 +1,17 @@
+{
+    "fields": {
+        "account": {
+            "type": "link",
+            "readOnly": true
+        },
+        "parent": {
+            "entityList": ["Account", "Lead", "Contact", "Opportunity", "Case"]
+        }
+    },
+    "links": {
+        "account": {
+            "type": "belongsTo",
+            "entity": "Account"
+        }
+    }
+}

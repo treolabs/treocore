@@ -1,0 +1,12 @@
+[
+    {
+        "label":"Overview",
+        "rows":[
+            [{"name":"name"}, false],
+            [{"name":"stage"},{"name":"amount"}],
+            [{"name":"probability"}, false],
+            [{"name":"closeDate"},false],
+            [{"name":"description", "fullWidth": true}]
+        ]
+    }
+]

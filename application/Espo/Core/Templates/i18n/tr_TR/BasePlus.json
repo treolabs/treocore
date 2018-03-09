@@ -1,0 +1,10 @@
+{
+  "links": {
+    "meetings": "Toplantılar",
+    "calls": "(Seslenme)",
+    "tasks": "Görevler"
+  },
+  "labels": {
+    "Create {entityType}": "{entityTypeTranslated} oluştur"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "modes": {
+    "month": "Mėnuo",
+    "week": "Savaitė",
+    "agendaWeek": "Savaitė",
+    "day": "Diena",
+    "agendaDay": "Diena",
+    "timeline": "Chronologija"
+  },
+  "labels": {
+    "Today": "Šiandien",
+    "Create": "Sukurti",
+    "Shared": "Pasidalinta",
+    "Add User": "Pridėti vartotoją",
+    "current": "esamas",
+    "time": "laikas",
+    "User List": "Vartotojų sąrašas",
+    "Manage Users": "Tvarkyti vartotojus",
+    "View Calendar": "Peržiūrėti kalendorių"
+  }
+}

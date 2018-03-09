@@ -1,0 +1,28 @@
+[
+    {
+        "label": "Overview",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "product"
+                },
+                {
+                    "name": "attribute"
+                }
+            ],
+            [
+                {
+                    "name": "value"
+                },
+                false
+            ]
+        ]
+    }
+]

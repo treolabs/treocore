@@ -1,0 +1,50 @@
+{
+  "fields": {
+    "name": "Name",
+    "parent": "Bezieht sich auf",
+    "status": "Status",
+    "dateStart": "Startdatum",
+    "dateEnd": "Enddatum",
+    "duration": "Dauer",
+    "description": "Beschreibung",
+    "users": "Benutzer",
+    "contacts": "Kontakte",
+    "leads": "Interessenten",
+    "reminders": "Erinnerungen",
+    "account": "Firma",
+    "acceptanceStatus": "Akzeptanzstatus"
+  },
+  "options": {
+    "status": {
+      "Planned": "Geplant",
+      "Held": "Abgehalten",
+      "Not Held": "Nicht durchgeführt"
+    },
+    "acceptanceStatus": {
+      "None": "Kein(e)",
+      "Accepted": "Akzeptiert",
+      "Declined": "Abgelehnt",
+      "Tentative": "Mit Vorbehalt"
+    }
+  },
+  "massActions": {
+    "setHeld": "Auf abgehalten setzen",
+    "setNotHeld": "Auf nicht abgehalten setzen"
+  },
+  "labels": {
+    "Create Meeting": "Meeting erstellen",
+    "Set Held": "Auf abgehalten setzen",
+    "Set Not Held": "Auf nicht abgehalten setzen",
+    "Send Invitations": "Einladungen versenden",
+    "on time": "Genaue Uhrzeit",
+    "before": "vorher"
+  },
+  "presetFilters": {
+    "planned": "Geplant",
+    "held": "Abgehalten",
+    "todays": "Heutige"
+  },
+  "messages": {
+    "nothingHasBeenSent": "Es wurde nicht gesendet"
+  }
+}

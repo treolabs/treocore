@@ -1,0 +1,23 @@
+{
+    "fields": {
+        "products": "Artikel",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "productFamilyAttributes": "Attribute der Artikelfamilie",
+        "isSystem": "Ist System",
+        "productFamilyTemplate": "Artikelfamilie Template",
+        "productFamilies": "Artikelfamilien"
+    },
+    "links": {
+        "products": "Artikel",
+        "productFamilyAttributes": "Attribute der Artikelfamilie",
+        "productFamilyTemplate": "Artikelfamilie Template",
+        "productFamilies": "Artikelfamilien"
+    },
+    "labels": {
+        "Create ProductFamily": "Artikelfamilie erstellen"
+    },
+    "messages": {
+        "Can't remove system Product Family": "Die System-Artikelfamilie kann nicht entfernt werden"
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "view":"crm:views/dashlets/activities",
+    "options": {
+        "view": "crm:views/dashlets/options/activities",
+        "fields": {
+            "title": {
+                "type": "varchar",
+                "required": true
+            },
+            "autorefreshInterval": {
+                "type": "enumFloat",
+                "options": [0, 0.5, 1, 2, 5, 10]
+            },
+            "enabledScopeList": {
+                "type": "multiEnum",
+                "translation": "Global.scopeNamesPlural",
+                "required": true
+            },
+            "displayRecords": {
+                "type": "enumInt",
+                "options": [3,4,5,10,15,20,30,50]
+            }
+        },
+        "defaults": {
+            "displayRecords": 5,
+            "autorefreshInterval": 0.5,
+            "enabledScopeList": ["Meeting", "Call"]
+        },
+        "layout": [
+            {
+                "rows": [
+                    [
+                        {"name": "title"},
+                        {"name": "autorefreshInterval"}
+                    ],
+                    [
+                        {"name": "displayRecords"},
+                        {"name": "enabledScopeList"}
+                    ]
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,68 @@
+{
+  "labels": {
+    "Converted To": "Конвертирован в",
+    "Create Lead": "Создать кандидата",
+    "Convert": "Конвертировать",
+    "convert": "конвертация"
+  },
+  "fields": {
+    "name": "Имя",
+    "emailAddress": "Адрес эл. почты",
+    "title": "Должность",
+    "website": "Сайт",
+    "phoneNumber": "Телефон",
+    "accountName": "Контрагент",
+    "doNotCall": "Не звонить",
+    "address": "Адрес",
+    "status": "Статус",
+    "source": "Источник",
+    "opportunityAmount": "Сумма сделки",
+    "opportunityAmountConverted": "Сумма сделки (сконвертированная)",
+    "description": "Описание",
+    "createdAccount": "Контрагент",
+    "createdContact": "Контакт",
+    "createdOpportunity": "Cделка",
+    "campaign": "Кампания",
+    "targetLists": "Списки целей",
+    "targetList": "Список целей",
+    "industry": "Вид деятельности",
+    "acceptanceStatus": "Acceptance Status",
+    "opportunityAmountCurrency": "Opportunity Amount Currency"
+  },
+  "links": {
+    "targetLists": "Списки целей",
+    "campaignLogRecords": "Журнал кампании",
+    "campaign": "Кампания",
+    "createdAccount": "Контрагент",
+    "createdContact": "Контакт",
+    "createdOpportunity": "Cделка",
+    "cases": "Сделки",
+    "documents": "Документы"
+  },
+  "options": {
+    "status": {
+      "New": "Новый",
+      "Assigned": "Назначен",
+      "In Process": "В процессе",
+      "Converted": "Конвертирован",
+      "Recycled": "Удален",
+      "Dead": "Мертв"
+    },
+    "source": {
+      "": "Нет",
+      "Call": "Звонок",
+      "Email": "Эл. письмо",
+      "Existing Customer": "Существующий клиент",
+      "Partner": "Партнер",
+      "Public Relations": "Связи с общественностью",
+      "Web Site": "Сайт",
+      "Campaign": "Кампания",
+      "Other": "Другое"
+    }
+  },
+  "presetFilters": {
+    "active": "Активный",
+    "actual": "Актуальный",
+    "converted": "Конвертированны"
+  }
+}

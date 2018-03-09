@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "associationProducts": "Association products",
+        "description": "Description",
+        "isActive": "Active"
+    },
+    "links": {
+        "associationProducts": "Association products"
+    },
+    "labels": {
+        "Create Association": "Create Association"
+    }
+}

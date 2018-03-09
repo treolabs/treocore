@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "product": "Product",
+        "supplier": "Supplier"
+    },
+    "links": {
+        "product": "Product",
+        "supplier": "Supplier"
+    },
+    "labels": {
+        "Create SupplierProduct": "Create Supplier Product"
+    }
+}

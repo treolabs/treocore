@@ -1,0 +1,34 @@
+{
+  "fields": {
+    "post": "Entrada",
+    "attachments": "Adjuntos",
+    "targetType": "Objetivo",
+    "teams": "Equipos",
+    "users": "Usuarios",
+    "portals": "Portales",
+    "type": "Tipo",
+    "isGlobal": "Es Global",
+    "isInternal": "Es interno (para usuarios internos)",
+    "related": "Relacionada",
+    "createdByGender": "Creado(a) por Género",
+    "data": "Datos",
+    "number": "Número"
+  },
+  "filters": {
+    "all": "Todos",
+    "posts": "Entradas",
+    "updates": "Actualizaciones"
+  },
+  "messages": {
+    "writeMessage": "Escriba su mensaje aquí"
+  },
+  "options": {
+    "targetType": {
+      "self": "a mi mismo",
+      "users": "a usuario(s) en particular",
+      "teams": "a equipo(s) en particular",
+      "all": "a todos los usuarios internos",
+      "portals": "a los usuarios del portal"
+    }
+  }
+}

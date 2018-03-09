@@ -1,0 +1,15 @@
+{
+    "fields": {
+        "channel": "Kanal",
+        "product": "Artikel",
+        "channelProductAttributeValues": "Attributwerte vom Kanalartikel"
+    },
+    "links": {
+        "channel": "Kanal",
+        "product": "Artikel",
+        "channelProductAttributeValues": "Attributwerte vom Kanalartikel"
+    },
+    "labels": {
+        "Create ChannelProduct": "Kanalartikel anlegen"
+    }
+}

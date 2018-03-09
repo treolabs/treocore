@@ -1,0 +1,15 @@
+{
+  "fields": {
+    "name": "Vardas",
+    "version": "Versija",
+    "description": "Aprašymas",
+    "isInstalled": "Įdiegta"
+  },
+  "labels": {
+    "Uninstall": "Išdiegta",
+    "Install": "Įdiegti"
+  },
+  "messages": {
+    "uninstalled": "Plėtinys {name} yra išdiegtas"
+  }
+}

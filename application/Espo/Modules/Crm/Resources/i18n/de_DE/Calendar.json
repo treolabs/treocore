@@ -1,0 +1,20 @@
+{
+  "modes": {
+    "month": "Monat",
+    "week": "Woche",
+    "agendaWeek": "Woche",
+    "day": "Tag",
+    "agendaDay": "Tag",
+    "timeline": "Zeitachse"
+  },
+  "labels": {
+    "Today": "Heute",
+    "Create": "Erstellen",
+    "Shared": "Gemeinsam",
+    "Add User": "Benutzer hinzufügen",
+    "current": "aktuell",
+    "time": "Zeit",
+    "User List": "Benutzerliste",
+    "Manage Users": "Benutzer verwalten"
+  }
+}

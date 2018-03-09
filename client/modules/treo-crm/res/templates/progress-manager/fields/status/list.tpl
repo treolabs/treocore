@@ -1,0 +1,1 @@
+<span class="label" style="background:{{color}};">{{value}}</span>

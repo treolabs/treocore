@@ -1,0 +1,13 @@
+{
+    "fields": {
+        "supplierProducts": "Supplier Products",
+        "description": "Description",
+        "isActive": "Active"
+    },
+    "links": {
+        "supplierProducts": "Supplier Products"
+    },
+    "labels": {
+        "Create Supplier": "Create Supplier"
+    }
+}

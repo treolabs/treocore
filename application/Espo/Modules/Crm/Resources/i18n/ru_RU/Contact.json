@@ -1,0 +1,50 @@
+{
+  "fields": {
+    "name": "Имя",
+    "emailAddress": "Адрес эл. почты",
+    "title": "Должность",
+    "accountRole": "Должность",
+    "account": "Контрагент",
+    "accounts": "Контрагенты",
+    "phoneNumber": "Телефон",
+    "accountType": "Тип контрагента",
+    "doNotCall": "Не звонить",
+    "address": "Адрес",
+    "opportunityRole": "Роль в сделке",
+    "description": "Описание",
+    "campaign": "Кампания",
+    "targetLists": "Списки целей",
+    "targetList": "Список целей",
+    "portalUser": "Пользователь портала",
+    "originalLead": "Original Lead",
+    "acceptanceStatus": "Acceptance Status"
+  },
+  "links": {
+    "opportunities": "Cделки",
+    "cases": "Обращения",
+    "targetLists": "Списки целей",
+    "campaignLogRecords": "Журнал кампании",
+    "campaign": "Кампания",
+    "account": "Контрагент (основной)",
+    "accounts": "Контрагенты",
+    "casesPrimary": "Обращения (основной)",
+    "portalUser": "Пользователь портала",
+    "originalLead": "Original Lead",
+    "documents": "Documents"
+  },
+  "labels": {
+    "Create Contact": "Создать контакт"
+  },
+  "options": {
+    "opportunityRole": {
+      "": "Нет",
+      "Decision Maker": "Принимающий решение",
+      "Evaluator": "Оценщик",
+      "Influencer": "Консультант"
+    }
+  },
+  "presetFilters": {
+    "portalUsers": "Пользователи порталов",
+    "notPortalUsers": "Не пользователи порталов"
+  }
+}

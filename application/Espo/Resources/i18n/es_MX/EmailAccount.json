@@ -1,0 +1,51 @@
+{
+  "fields": {
+    "name": "Nombre",
+    "status": "Estado",
+    "host": "Servidor",
+    "username": "Nombre de Usuario",
+    "password": "Contraseña",
+    "port": "Puerto",
+    "monitoredFolders": "Carpetas Supervisadas",
+    "ssl": "SSL",
+    "fetchSince": "Traer Desde",
+    "emailAddress": "Dirección de Correo",
+    "sentFolder": "Carpeta de Enviados",
+    "storeSentEmails": "Almacenar Correos Enviados",
+    "keepFetchedEmailsUnread": "Mantener los correos obtenidos sin leer",
+    "emailFolder": "Poner en la Carpeta",
+    "useSmtp": "Use SMTP",
+    "smtpHost": "Servidor SMTP",
+    "smtpPort": "Puerto SMTP",
+    "smtpAuth": "Cuenta SMTP",
+    "smtpSecurity": "Seguridad SMTP",
+    "smtpUsername": "Usuario SMTP",
+    "smtpPassword": "Contraseña SMTP"
+  },
+  "links": {
+    "filters": "Filtros",
+    "emails": "Correos"
+  },
+  "options": {
+    "status": {
+      "Active": "Activo",
+      "Inactive": "Inactivo"
+    }
+  },
+  "labels": {
+    "Create EmailAccount": "Crear Cuenta de Correo",
+    "IMAP": "IMAP",
+    "Main": "Principal",
+    "Test Connection": "Probar conexión",
+    "Send Test Email": "Enviar Correo de Prueba",
+    "SMTP": "SMTP"
+  },
+  "messages": {
+    "couldNotConnectToImap": "No se pudo conectar con el servidor IMAP",
+    "connectionIsOk": "Conexión correcta"
+  },
+  "tooltips": {
+    "monitoredFolders": "Si usa varias carpetas, debe separarlas con coma",
+    "storeSentEmails": "Los correos enviados serán guardados en el servidor IMAP.  El campo de  dirección del correo deberá coincidir con las direcciones de los correos que serán enviados."
+  }
+}

@@ -1,0 +1,17 @@
+[
+    {
+        "label": "",
+        "rows":[
+            [{"name":"file"}, false],
+            [{"name":"name"}, {"name":"folder"}]
+        ]
+    },
+    {
+        "label": "Details",
+        "rows": [
+            [{"name":"type"}, {"name":"publishDate"}],
+            [{"name":"status"}, {"name":"expirationDate"}],
+            [{"name":"description", "fullWidth": true}]
+        ]
+    }
+]

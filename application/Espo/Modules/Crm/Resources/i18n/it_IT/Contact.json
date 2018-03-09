@@ -1,0 +1,54 @@
+{
+  "fields": {
+    "name": "Nome",
+    "emailAddress": "Email",
+    "title": "Titolo",
+    "accountRole": "Titolo",
+    "account": "Account",
+    "accounts": "Account",
+    "phoneNumber": "Telefono",
+    "accountType": "Tipo di Account",
+    "doNotCall": "Non chiamare",
+    "address": "Indirizzi",
+    "opportunityRole": "Opportunity Role",
+    "description": "Descrizione",
+    "campaign": "Campaign",
+    "targetLists": "Liste di destinazione",
+    "targetList": "Lista di destinazione",
+    "portalUser": "Portal User",
+    "originalLead": "Original Lead",
+    "acceptanceStatus": "Stato accettazione",
+    "accountIsInactive": "Account inattivo",
+    "acceptanceStatusMeetings": "Stato accettazione (riunioni)",
+    "acceptanceStatusCalls": "Stato accettazione (chiamate)"
+  },
+  "links": {
+    "opportunities": "Opportunita'",
+    "cases": "Casi",
+    "targetLists": "Liste di destinazione",
+    "campaignLogRecords": "Log Campagna",
+    "campaign": "Campagna",
+    "account": "Account (Primario)",
+    "accounts": "Account",
+    "casesPrimary": "Casi (Primario)",
+    "portalUser": "Portale Utente",
+    "originalLead": "Original Lead",
+    "documents": "Documenti"
+  },
+  "labels": {
+    "Create Contact": "Crea Contatto"
+  },
+  "options": {
+    "opportunityRole": {
+      "": "--Nessun--",
+      "Decision Maker": "Responsabile",
+      "Evaluator": "Valutatore",
+      "Influencer": "Influencer"
+    }
+  },
+  "presetFilters": {
+    "portalUsers": "Portale Utenti",
+    "notPortalUsers": "Nessun Portale Utenti",
+    "accountActive": "Attivo"
+  }
+}

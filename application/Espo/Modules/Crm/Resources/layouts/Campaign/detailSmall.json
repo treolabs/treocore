@@ -1,0 +1,10 @@
+[
+    {
+        "label": "",
+        "rows": [
+            [{"name":"name", "fullWidth": true}],
+            [{"name":"type"}, {"name":"status"}],
+            [{"name":"endDate", "fullWidth": true}]
+        ]
+    }
+]

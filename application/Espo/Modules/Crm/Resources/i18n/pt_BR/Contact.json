@@ -1,0 +1,34 @@
+{
+    "fields": {
+        "name": "Nome",
+        "emailAddress": "E-mail",
+        "title": "Cargo",
+        "account": "Conta",
+		"accounts": "Contas",
+        "phoneNumber": "Telefone",
+		"accountType": "Tipo de Conta",
+        "doNotCall": "Não Ligar",
+        "address": "Endereço",
+        "opportunityRole": "Regra de Oportunidade",
+		"accountRole": "Regra",
+        "description": "Descrição",
+        "campaign": "Campanha"
+    },
+    "links": {
+        "opportunities": "Oportunidades",
+        "cases": "Atendimento",
+        "targetLists": "Lista de Alvos",
+        "campaignLogRecords": "Log das Campanhas"
+    },
+    "labels": {
+        "Create Contact": "Criar Contato"
+    },
+	"options": {
+		"opportunityRole": {
+			"": "--Nenhum--",
+			"Decision Maker": "Tomador de Decisão",
+			"Evaluator": "Avaliador",
+			"Influencer": "Influenciador"
+		}
+	}
+}

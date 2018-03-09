@@ -1,0 +1,15 @@
+{
+  "fields": {
+    "billingAddress": "Платежный адрес",
+    "shippingAddress": "Адрес доставки",
+    "website": "Website"
+  },
+  "links": {
+    "meetings": "Meetings",
+    "calls": "Calls",
+    "tasks": "Tasks"
+  },
+  "labels": {
+    "Create {entityType}": "Создать {entityTypeTranslated}"
+  }
+}

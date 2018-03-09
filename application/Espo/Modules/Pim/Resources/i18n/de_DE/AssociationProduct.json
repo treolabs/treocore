@@ -1,0 +1,15 @@
+{
+    "fields": {
+        "association": "Verknüpfung",
+        "mainProduct": "Hauptartikel",
+        "relatedProduct": "Verknüpfter Artikel"
+    },
+    "links": {
+        "association": "Verknüpfung",
+        "mainProduct": "Hauptartikel",
+        "relatedProduct": "Verknüpfter Artikel"
+    },
+    "labels": {
+        "Create AssociationProduct": "Artikel-Verknüpfung erstellen"
+    }
+}

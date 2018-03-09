@@ -1,0 +1,46 @@
+{
+  "fields": {
+    "name": "Name",
+    "account": "Firma",
+    "stage": "Verkaufsphase",
+    "amount": "Betrag",
+    "probability": "Wahrscheinlichkeit (%)",
+    "leadSource": "Quelle",
+    "doNotCall": "Anrufe unerwünscht",
+    "closeDate": "Abschlussdatum",
+    "contacts": "Kontakte",
+    "description": "Beschreibung",
+    "amountConverted": "Betrag (umgerechnet)",
+    "amountWeightedConverted": "Betrag gewichtet",
+    "campaign": "Kampagne",
+    "originalLead": "Ursprünglicher Interessent"
+  },
+  "links": {
+    "contacts": "Kontakte",
+    "documents": "Dokumente",
+    "campaign": "Kampagne",
+    "originalLead": "Ursprünglicher Interessent"
+  },
+  "options": {
+    "stage": {
+      "Prospecting": "Identifikation",
+      "Qualification": "Qualifikation",
+      "Needs Analysis": "Bedarfserhebung",
+      "Value Proposition": "Richtangebot",
+      "Id. Decision Makers": "Identifikation der Entscheider",
+      "Perception Analysis": "Analyse der Wahrnehmung",
+      "Proposal/Price Quote": "Angebot/Kostenvoranschlag",
+      "Negotiation/Review": "Verhandlung/Überarbeitung",
+      "Closed Won": "Gewonnen",
+      "Closed Lost": "Verloren"
+    }
+  },
+  "labels": {
+    "Create Opportunity": "Verkaufschance erstellen"
+  },
+  "presetFilters": {
+    "open": "Offen",
+    "won": "Gewonnen",
+    "lost": "Verloren"
+  }
+}

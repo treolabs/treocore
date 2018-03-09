@@ -1,0 +1,100 @@
+{
+  "fields": {
+    "name": "Nome",
+    "userName": "Nome Utente",
+    "title": "Titolo",
+    "isAdmin": "Is Admin",
+    "defaultTeam": "Default Team",
+    "emailAddress": "Email",
+    "phoneNumber": "Telefono",
+    "roles": "Ruoli",
+    "portals": "Portali",
+    "portalRoles": "Ruoli Portale",
+    "teamRole": "Posizione",
+    "password": "Password",
+    "currentPassword": "Password attuale",
+    "passwordConfirm": "Conferma password",
+    "newPassword": "Nuova password",
+    "newPasswordConfirm": "Conferma la nuova password",
+    "avatar": "Avatar",
+    "isActive": "È Attivo",
+    "isPortalUser": "È il portale per l'utente",
+    "contact": "Contatti",
+    "accounts": "Accounts",
+    "account": "Account (Primario)",
+    "sendAccessInfo": "Invia email all'utente con i dati di accesso",
+    "portal": "Portale",
+    "gender": "Genere",
+    "position": "Posizione nel team",
+    "ipAddress": "Indirizzo IP",
+    "passwordPreview": "Mostra password"
+  },
+  "links": {
+    "teams": "Team",
+    "roles": "Ruoli",
+    "notes": "Note",
+    "portals": "Portali",
+    "portalRoles": "Ruoli Portale",
+    "contact": "Contatti",
+    "accounts": "Accounts",
+    "account": "Account (Primario}",
+    "tasks": "Compiti"
+  },
+  "labels": {
+    "Create User": "Crea Utente",
+    "Generate": "Generare",
+    "Access": "Accesso",
+    "Preferences": "Preferenze",
+    "Change Password": "Cambia password",
+    "Teams and Access Control": "Controllo Teams e Accessi",
+    "Forgot Password?": "Password dimenticata?",
+    "Password Change Request": "Richiesta di cambio password",
+    "Email Address": "Indirizzo Email",
+    "External Accounts": "Account Esterni",
+    "Email Accounts": "Email Accounts",
+    "Portal": "Portale",
+    "Create Portal User": "Crea Utente Portale",
+    "Proceed w/o Contact": "Procedi senza contatto"
+  },
+  "tooltips": {
+    "defaultTeam": "Tutti i record creati da questo utente saranno inseriti di default in questo Team.",
+    "userName": "Lettere a-z, numeri 0-9, puntini, trattini, @ e sottolineature sono permessi.",
+    "isAdmin": "L'utente Admin può accedere a tutto.",
+    "isActive": "Se non verificato , l'utente non sarà in grado di effettuare il login .",
+    "teams": "Team a cui appartiene l'utente. Il livello di controllo di accesso viene ereditato dai ruoli del team.",
+    "roles": "Ruoli di accesso aggiuntivi. Usalo se l'utente non appartiene ad alcun gruppo o è necessario estendere il livello di controllo di accesso in esclusiva per questo utente.",
+    "portalRoles": "Ulteriori ruoli portale . Usalo per estendere il livello di controllo di accesso esclusivamente per questo utente .",
+    "portals": "Portali a cui l'utente ha accesso."
+  },
+  "messages": {
+    "passwordWillBeSent": "La password verrà inviata all'indirizzo email dell'utente.",
+    "accountInfoEmailSubject": "Informazioni di accesso ali utente di EspoCRM",
+    "accountInfoEmailBody": "I tuoi dati di accesso:\n\nUsername: {userName}\nPassword: {password}\n\n{siteUrl}",
+    "passwordChangeLinkEmailSubject": "Richiesta di cambio password",
+    "passwordChanged": "La password è stata modificata",
+    "userCantBeEmpty": "Il Nome utente non può essere vuoto",
+    "wrongUsernamePasword": "I dati forniti non sono corretti",
+    "emailAddressCantBeEmpty": "L'indirizzo Email non può essere vuoto",
+    "userNameEmailAddressNotFound": "Username/Indirizzo Email non trovato",
+    "forbidden": "Vietato , riprova piu tardi",
+    "uniqueLinkHasBeenSent": "L' URL univoco è stato inviato all'indirizzo di posta elettronica specificato .",
+    "passwordChangedByRequest": "La password è stata modificata.",
+    "setupSmtpBefore": "È necessario attivare le <a href=\"{url}\">Impostazioni SMTP</a> perchè il sistema sia in grado di mandare le password via email.",
+    "passwordChangeLinkEmailBody": "Puoi modificare la password seguendo questo link {link}. Questo URL univoco scadrà a breve."
+  },
+  "boolFilters": {
+    "onlyMyTeam": "Solo per il mio Team"
+  },
+  "presetFilters": {
+    "active": "Attivo",
+    "activePortal": "Portale Attivo"
+  },
+  "options": {
+    "gender": {
+      "": "Non impostato",
+      "Male": "Maschio",
+      "Female": "Femmina",
+      "Neutral": "Neutral"
+    }
+  }
+}

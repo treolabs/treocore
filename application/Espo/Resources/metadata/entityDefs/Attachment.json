@@ -1,0 +1,87 @@
+{
+    "fields": {
+        "name": {
+            "type": "varchar",
+            "required": true,
+            "trim": true
+        },
+        "type": {
+            "type": "varchar",
+            "maxLength": 100
+        },
+        "size": {
+            "type": "int",
+            "min": 0
+        },
+        "parent": {
+            "type": "linkParent"
+        },
+        "related": {
+            "type": "linkParent",
+            "noLoad": true
+        },
+        "sourceId": {
+            "type": "varchar",
+            "maxLength": 36,
+            "readOnly": true,
+            "disabled": true
+        },
+        "field": {
+            "type": "varchar",
+            "disabled": true
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true
+        },
+        "contents": {
+            "type": "text",
+            "notStorable": true
+        },
+        "role": {
+            "type": "varchar",
+            "maxLength": 36
+        },
+        "storage": {
+            "type": "varchar",
+            "maxLength": 24,
+            "default": null
+        },
+        "storageFilePath": {
+            "type": "varchar",
+            "maxLength": 260,
+            "default": null
+        },
+        "global": {
+            "type": "bool",
+            "default": false
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "parent": {
+            "type": "belongsToParent",
+            "foreign": "attachments"
+        },
+        "related": {
+            "type": "belongsToParent"
+        }
+    },
+    "collection": {
+        "sortBy": "createdAt",
+        "asc": false
+    },
+    "indexes": {
+        "parent": {
+            "columns": ["parentType", "parentId"]
+        }
+    },
+    "sourceList": ["Document"]
+}

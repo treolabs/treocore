@@ -1,0 +1,70 @@
+{
+  "labels": {
+    "Converted To": "Converti en",
+    "Create Lead": "Créer un prospect",
+    "Convert": "Convertir",
+    "convert": "convert"
+  },
+  "fields": {
+    "name": "Nom",
+    "emailAddress": "Email",
+    "title": "Titre",
+    "website": "Site internet",
+    "phoneNumber": "Téléphone",
+    "accountName": "Nom du compte",
+    "doNotCall": "Ne pas appeler",
+    "address": "Adresse",
+    "status": "Statut",
+    "source": "Source",
+    "opportunityAmount": "Montant en jeu de l'opportunité",
+    "opportunityAmountConverted": "Montant en jeu de l'opportunité (converti)",
+    "description": "Description",
+    "createdAccount": "Compte",
+    "createdContact": "Contact",
+    "createdOpportunity": "Opportunité",
+    "campaign": "Campagne",
+    "targetLists": "Listes de cibles",
+    "targetList": "Liste de cibles",
+    "industry": "Industry",
+    "acceptanceStatus": "Acceptance Status",
+    "opportunityAmountCurrency": "Opportunity Amount Currency",
+    "acceptanceStatusMeetings": "Acceptance Status (Meetings)",
+    "acceptanceStatusCalls": "Acceptance Status (Calls)"
+  },
+  "links": {
+    "targetLists": "Listes de cibles",
+    "campaignLogRecords": "Journaux de campagne",
+    "campaign": "Campagne",
+    "createdAccount": "Compte",
+    "createdContact": "Contact",
+    "createdOpportunity": "Opportunité",
+    "cases": "Tickets",
+    "documents": "Documents"
+  },
+  "options": {
+    "status": {
+      "New": "Nouveau",
+      "Assigned": "Assigné",
+      "In Process": "En cours",
+      "Converted": "Converti",
+      "Recycled": "Recyclé",
+      "Dead": "Dead"
+    },
+    "source": {
+      "": "Aucun",
+      "Call": "Appel",
+      "Email": "Email",
+      "Existing Customer": "Client existant",
+      "Partner": "Partenaire",
+      "Public Relations": "Relations publiques",
+      "Web Site": "Site internet",
+      "Campaign": "Campagne",
+      "Other": "Autre"
+    }
+  },
+  "presetFilters": {
+    "active": "Actif",
+    "actual": "En cours",
+    "converted": "Converti"
+  }
+}

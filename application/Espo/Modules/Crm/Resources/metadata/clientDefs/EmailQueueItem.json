@@ -1,0 +1,9 @@
+{
+    "controller": "controllers/record",
+    "views": {
+        "list": "crm:views/email-queue-item/list"
+    },
+    "recordViews": {
+        "list": "crm:views/email-queue-item/record/list"
+    }
+}

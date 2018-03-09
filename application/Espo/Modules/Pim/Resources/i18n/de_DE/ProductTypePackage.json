@@ -1,0 +1,16 @@
+{
+    "fields": {
+        "product": "Artikel",
+        "packageProduct": "Set-Artikel"
+    },
+    "links": {
+        "product": "Artikel",
+        "unit": "Einheit",
+        "content": "Content",
+        "basicUnit": "Basiseinheit",
+        "packingUnit": "Verpackungseinheit"
+    },
+    "labels": {
+        "Create ProductTypePackage": "Set-artikel anlegen"
+    }
+}

@@ -1,0 +1,337 @@
+{
+    "fields": {
+        "name": {
+            "type": "personName"
+        },
+        "salutationName": {
+            "type": "enum",
+            "options": ["", "Mr.", "Ms.", "Mrs.", "Dr."]
+        },
+        "firstName": {
+            "type": "varchar",
+            "maxLength": 100,
+            "default":"",
+            "trim": true
+        },
+        "lastName": {
+            "type": "varchar",
+            "maxLength": 100,
+            "default":"",
+            "trim": true
+        },
+        "title": {
+            "type": "varchar",
+            "maxLength": 100
+        },
+        "status": {
+            "type": "enum",
+            "options": ["New", "Assigned", "In Process", "Converted", "Recycled", "Dead"],
+            "default": "New",
+            "view": "views/fields/enum-styled",
+            "style": {
+                "Converted": "success",
+                "Recycled": "danger",
+                "Dead": "danger"
+            },
+            "audited": true
+        },
+        "source": {
+            "type": "enum",
+            "options": ["", "Call", "Email", "Existing Customer", "Partner", "Public Relations", "Web Site", "Campaign", "Other"],
+            "default": ""
+        },
+        "industry": {
+            "type": "enum",
+            "view": "crm:views/lead/fields/industry",
+            "customizationOptionsDisabled": true,
+            "default": "",
+            "isSorted": true
+        },
+        "opportunityAmount": {
+            "type": "currency",
+            "audited": true
+        },
+        "opportunityAmountConverted": {
+            "type": "currencyConverted",
+            "readOnly": true
+        },
+        "website": {
+            "type": "url"
+        },
+        "address": {
+            "type": "address"
+        },
+        "addressStreet": {
+            "type": "text",
+            "maxLength": 255,
+            "dbType": "varchar"
+        },
+        "addressCity": {
+            "type": "varchar",
+            "trim": true
+        },
+        "addressState": {
+            "type": "varchar",
+            "trim": true
+        },
+        "addressCountry": {
+            "type": "varchar",
+            "trim": true
+        },
+        "addressPostalCode": {
+            "type": "varchar",
+            "trim": true
+        },
+        "emailAddress": {
+            "type": "email"
+        },
+        "phoneNumber": {
+            "type": "phone",
+            "typeList": ["Mobile", "Office", "Home", "Fax", "Other"],
+            "defaultType": "Mobile"
+        },
+        "doNotCall": {
+            "type": "bool"
+        },
+        "description": {
+            "type": "text"
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "modifiedAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "modifiedBy": {
+            "type": "link",
+            "readOnly": true,
+            "view": "views/fields/user"
+        },
+        "accountName": {
+            "type": "varchar"
+        },
+        "assignedUser": {
+            "type": "link",
+            "view": "views/fields/assigned-user"
+        },
+        "acceptanceStatus": {
+            "type": "varchar",
+            "notStorable": true,
+            "exportDisabled": true,
+            "disabled": true
+        },
+        "acceptanceStatusMeetings": {
+            "type": "enum",
+            "notStorable": true,
+            "layoutListDisabled": true,
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "exportDisabled": true,
+            "view": "crm:views/lead/fields/acceptance-status",
+            "link": "meetings",
+            "column": "status"
+        },
+        "acceptanceStatusCalls": {
+            "type": "enum",
+            "notStorable": true,
+            "layoutListDisabled": true,
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "exportDisabled": true,
+            "view": "crm:views/lead/fields/acceptance-status",
+            "link": "calls",
+            "column": "status"
+        },
+        "teams": {
+            "type": "linkMultiple",
+            "view": "views/fields/teams"
+        },
+        "campaign": {
+            "type": "link",
+            "layoutListDisabled": true
+        },
+        "createdAccount": {
+            "type": "link",
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true
+        },
+        "createdContact": {
+            "type": "link",
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "view": "crm:views/lead/fields/created-contact"
+        },
+        "createdOpportunity": {
+            "type": "link",
+            "layoutDetailDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "view": "crm:views/lead/fields/created-opportunity"
+        },
+        "targetLists": {
+            "type": "linkMultiple",
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "importDisabled": true,
+            "noLoad": true
+        },
+        "targetList": {
+            "type": "link",
+            "notStorable": true,
+            "layoutDetailDisabled": true,
+            "layoutListDisabled": true,
+            "layoutMassUpdateDisabled": true,
+            "layoutFiltersDisabled": true,
+            "entity": "TargetList"
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "modifiedBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "assignedUser": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "teams": {
+            "type": "hasMany",
+            "entity": "Team",
+            "relationName": "entityTeam",
+            "layoutRelationshipsDisabled": true
+        },
+        "meetings": {
+            "type": "hasMany",
+            "entity": "Meeting",
+            "foreign": "leads",
+            "layoutRelationshipsDisabled": true,
+            "audited": true
+        },
+        "calls": {
+            "type": "hasMany",
+            "entity": "Call",
+            "foreign": "leads",
+            "layoutRelationshipsDisabled": true,
+            "audited": true
+        },
+        "tasks": {
+            "type": "hasChildren",
+            "entity": "Task",
+            "foreign": "parent",
+            "layoutRelationshipsDisabled": true,
+            "audited": true
+        },
+        "cases": {
+            "type": "hasMany",
+            "entity": "Case",
+            "foreign": "lead",
+            "audited": true
+        },
+        "emails": {
+            "type": "hasChildren",
+            "entity": "Email",
+            "foreign": "parent",
+            "layoutRelationshipsDisabled": true
+        },
+        "createdAccount": {
+            "type": "belongsTo",
+            "entity": "Account",
+            "noJoin": true,
+            "foreign": "originalLead"
+        },
+        "createdContact": {
+            "type": "belongsTo",
+            "entity": "Contact",
+            "noJoin": true,
+            "foreign": "originalLead"
+        },
+        "createdOpportunity": {
+            "type": "belongsTo",
+            "entity": "Opportunity",
+            "noJoin": true,
+            "foreign": "originalLead"
+        },
+        "campaign": {
+            "type": "belongsTo",
+            "entity": "Campaign",
+            "foreign": "leads",
+            "noJoin": true
+        },
+        "campaignLogRecords": {
+            "type": "hasChildren",
+            "entity": "CampaignLogRecord",
+            "foreign": "parent"
+        },
+        "targetLists": {
+            "type": "hasMany",
+            "entity": "TargetList",
+            "foreign": "leads"
+        },
+        "documents": {
+            "type": "hasMany",
+            "entity": "Document",
+            "foreign": "leads",
+            "audited": true
+        }
+    },
+    "convertEntityList": [
+        "Account",
+        "Contact",
+        "Opportunity"
+    ],
+    "convertFields": {
+        "Contact": {
+        },
+        "Account": {
+            "name": "accountName",
+            "billingAddressStreet": "addressStreet",
+            "billingAddressCity": "addressCity",
+            "billingAddressState": "addressState",
+            "billingAddressPostalCode": "addressPostalCode",
+            "billingAddressCountry": "addressCountry"
+        },
+        "Opportunity": {
+            "amount": "opportunityAmount",
+            "leadSource": "source"
+        }
+    },
+    "collection": {
+        "sortBy": "createdAt",
+        "asc": false,
+        "textFilterFields": ["name", "accountName", "emailAddress"]
+    },
+    "indexes": {
+        "firstName": {
+            "columns": ["firstName", "deleted"]
+        },
+        "name": {
+            "columns": ["firstName", "lastName"]
+        },
+        "status": {
+            "columns": ["status", "deleted"]
+        },
+        "createdAt": {
+            "columns": ["createdAt", "deleted"]
+        },
+        "createdAtStatus": {
+            "columns": ["createdAt", "status"]
+        },
+        "assignedUser": {
+            "columns": ["assignedUserId", "deleted"]
+        },
+        "assignedUserStatus": {
+            "columns": ["assignedUserId", "status"]
+        }
+    }
+}

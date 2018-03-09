@@ -1,0 +1,51 @@
+{
+    "fields": {
+        "massEmail": {
+            "type": "link",
+            "readOnly": true
+        },
+        "status": {
+            "type": "enum",
+            "options": ["Pending", "Sent", "Failed", "Sending"],
+            "readOnly": true
+        },
+        "attemptCount": {
+            "type": "int",
+            "readOnly": true,
+            "default": 0
+        },
+        "target": {
+            "type": "linkParent",
+            "readOnly": true
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "sentAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "emailAddress": {
+            "type": "varchar",
+            "readOnly": true
+        },
+        "isTest": {
+            "type": "bool"
+        }
+    },
+    "links": {
+        "massEmail": {
+            "type": "belongsTo",
+            "entity": "MassEmail",
+            "foreign": "queueItems"
+        },
+        "target": {
+            "type": "belongsToParent"
+        }
+    },
+    "collection": {
+        "sortBy": "createdAt",
+        "asc": false
+    }
+}

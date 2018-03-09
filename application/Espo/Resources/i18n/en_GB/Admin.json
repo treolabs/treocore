@@ -1,0 +1,8 @@
+{
+  "labels": {
+    "Customization": "Customisation"
+  },
+  "descriptions": {
+    "layoutManager": "Customise layouts (list, detail, edit, search, mass update)."
+  }
+}

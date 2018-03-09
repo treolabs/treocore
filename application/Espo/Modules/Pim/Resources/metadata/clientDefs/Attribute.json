@@ -1,0 +1,99 @@
+{
+    "controller": "controllers/record",
+    "boolFilterList": [
+        "onlyMy",
+        "notLinkedWithProductFamily",
+        "notLinkedWithProduct"
+    ],
+    "hiddenBoolFilterList": [
+        "notLinkedWithProductFamily",
+        "notLinkedWithProduct"
+    ],
+    "disabledMassActions": [
+        "merge"
+    ],
+    "views": {
+        "list": "pim:views/list"
+    },
+    "recordViews": {
+        "list": "pim:views/record/list",
+        "search": "pim:views/record/search"
+    },
+    "modalViews": {
+        "select": "pim:views/modals/select-records"
+    },
+    "dynamicLogic": {
+        "fields": {
+            "type": {
+                "readOnly": {
+                    "conditionGroup": [
+                        {
+                            "type": "isNotEmpty",
+                            "attribute": "id"
+                        }
+                    ]
+                }
+            },
+            "typeValue": {
+                "visible": {
+                    "conditionGroup": [
+                        {
+                            "type": "or",
+                            "value": [
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "enum"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "multiEnum"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "enumMultiLang"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "multiEnumMultiLang"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "required": {
+                    "conditionGroup": [
+                        {
+                            "type": "or",
+                            "value": [
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "enum"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "multiEnum"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "enumMultiLang"
+                                },
+                                {
+                                    "type": "equals",
+                                    "attribute": "type",
+                                    "value": "multiEnumMultiLang"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

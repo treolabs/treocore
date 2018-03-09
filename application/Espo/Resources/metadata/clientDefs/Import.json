@@ -1,0 +1,32 @@
+{
+    "controller": "controllers/import",
+    "recordViews": {
+        "list":"Import.Record.List",
+        "detail": "Import.Record.Detail"
+    },
+    "views": {
+    	"list": "Import.List",
+    	"detail": "Import.Detail"
+    },
+    "bottomPanels": {
+    	"detail": [
+	    	{
+	    		"name": "imported",
+	    		"label": "Imported",
+	    		"view": "views/import/record/panels/imported"
+	    	},
+	    	{
+	    		"name": "duplicates",
+	    		"label": "Duplicates",
+	    		"view": "views/import/record/panels/duplicates",
+                "rowActionsView": "views/import/record/row-actions/duplicates"
+	    	},
+	    	{
+	    		"name": "updated",
+	    		"label": "Updated",
+	    		"view": "views/import/record/panels/updated"
+	    	}
+	    ]
+    },
+    "searchPanelDisabled": true
+}

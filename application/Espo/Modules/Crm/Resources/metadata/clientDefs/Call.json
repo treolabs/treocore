@@ -1,0 +1,88 @@
+{
+    "controller": "controllers/record",
+    "acl": "crm:acl/call",
+    "views":{
+        "detail":"crm:views/call/detail"
+    },
+    "recordViews":{
+        "list":"crm:views/call/record/list",
+        "detail":"crm:views/call/record/detail"
+    },
+    "sidePanels":{
+        "detail":[
+            {
+                "name":"attendees",
+                "label":"Attendees",
+                "view":"crm:views/meeting/record/panels/attendees",
+                "sticked": true
+            }
+        ],
+        "detailSmall":[
+            {
+                "name":"attendees",
+                "label":"Attendees",
+                "view":"crm:views/meeting/record/panels/attendees",
+                "sticked": true
+            }
+        ],
+        "edit":[
+            {
+                "name":"attendees",
+                "label":"Attendees",
+                "view":"crm:views/meeting/record/panels/attendees",
+                "sticked": true
+            }
+        ],
+        "editSmall":[
+            {
+                "name":"attendees",
+                "label":"Attendees",
+                "view":"crm:views/meeting/record/panels/attendees",
+                "sticked": true
+            }
+        ]
+    },
+    "filterList": [
+        {
+            "name":"planned"
+        },
+        {
+            "name":"held",
+            "style": "success"
+        },
+        {
+            "name":"todays"
+        }
+    ],
+    "boolFilterList": ["onlyMy"],
+    "activityDefs": {
+        "link": "calls",
+        "activitiesCreate": true,
+        "historyCreate": true
+    },
+    "dynamicLogic":{
+        "fields":{
+            "reminders": {
+                "visible": {
+                    "conditionGroup": [
+                        {
+                            "type":"and",
+                            "value": [
+                                {
+                                    "type":"notEquals",
+                                    "attribute":"status",
+                                    "value":"Held"
+                                },
+                                {
+                                    "type":"notEquals",
+                                    "attribute":"status",
+                                    "value":"Not Held"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

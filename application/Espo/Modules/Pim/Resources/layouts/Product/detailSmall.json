@@ -1,0 +1,56 @@
+[
+    {
+        "label": "",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "type"
+                }
+            ],
+            [
+                {
+                    "name": "isActive"
+                },
+                {
+                    "name": "sku"
+                }
+            ],
+            [
+                {
+                    "name": "mpn"
+                },
+                {
+                    "name": "ean"
+                }
+            ],
+            [
+                {
+                    "name": "productStatus"
+                },
+                {
+                    "name": "productFamily"
+                }
+            ],
+            [
+                {
+                    "name": "tax"
+                },
+                {
+                    "name": "packaging"
+                }
+            ],
+            [
+                {
+                    "name": "brand"
+                },
+                {
+                    "name": "amount"
+                }
+            ]
+        ]
+    }
+]

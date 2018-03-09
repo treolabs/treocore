@@ -1,0 +1,6 @@
+[
+    {"name": "name", "link": true, "width": 30},
+    {"name": "status", "width": 16},
+    {"name": "startAt", "width": 16},
+    {"name": "emailTemplate", "width": 30}
+]

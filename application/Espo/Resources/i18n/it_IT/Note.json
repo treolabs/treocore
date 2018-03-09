@@ -1,0 +1,34 @@
+{
+  "fields": {
+    "post": "Inviare",
+    "attachments": "Allegato",
+    "targetType": "Target",
+    "teams": "Teams",
+    "users": "Utenti",
+    "portals": "Portali",
+    "type": "Tipo",
+    "isGlobal": "Globale",
+    "isInternal": "Interno (per utenti interni)",
+    "related": "Correlato",
+    "createdByGender": "Creato da genere",
+    "data": "Dati",
+    "number": "Numero"
+  },
+  "filters": {
+    "all": "Tutti",
+    "posts": "Messaggi",
+    "updates": "Aggiornamenti"
+  },
+  "messages": {
+    "writeMessage": "Scrivi il tuo messaggio qui"
+  },
+  "options": {
+    "targetType": {
+      "self": "a me stesso",
+      "users": "a utente particolare",
+      "teams": "a team particolare",
+      "all": "a tutti gli utenti interni",
+      "portals": "agli utenti del portale"
+    }
+  }
+}

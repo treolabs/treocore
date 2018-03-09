@@ -1,0 +1,23 @@
+{
+    "entity": false,
+    "layouts": false,
+    "tab": false,
+    "acl": false,
+    "aclPortal": false,
+    "aclPortalLevelList": [
+        "all",
+        "account",
+        "contact",
+        "own",
+        "no"
+    ],
+    "customizable": false,
+    "importable": false,
+    "notifications": false,
+    "stream": false,
+    "disabled": false,
+    "type": "Base",
+    "module": "Pim",
+    "object": true,
+    "isCustom": false
+}

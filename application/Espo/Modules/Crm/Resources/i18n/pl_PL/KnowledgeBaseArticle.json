@@ -1,0 +1,41 @@
+{
+  "labels": {
+    "Create KnowledgeBaseArticle": "Utwórz artykuł",
+    "Any": "Dowolny"
+  },
+  "fields": {
+    "name": "Nazwa",
+    "status": "Status",
+    "type": "Typ",
+    "attachments": "Załączniki",
+    "publishDate": "Data publikacji",
+    "expirationDate": "Data przedawnienia",
+    "description": "Opis",
+    "body": "Treść",
+    "categories": "Kategorie",
+    "language": "Język",
+    "portals": "Portale"
+  },
+  "links": {
+    "cases": "Sprawy",
+    "opportunities": "Szanse sprzedaży",
+    "categories": "Kategorie",
+    "portals": "Portale"
+  },
+  "options": {
+    "status": {
+      "In Review": "W recenzji",
+      "Draft": "Szkic",
+      "Archived": "Zarchiwizowany",
+      "Published": "Opublikowane"
+    },
+    "type": {
+      "Article": "Artykuł"
+    }
+  },
+  "tooltips": {
+  },
+  "presetFilters": {
+    "published": "Published"
+  }
+}

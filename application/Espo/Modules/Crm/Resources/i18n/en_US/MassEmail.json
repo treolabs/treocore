@@ -1,0 +1,58 @@
+{
+    "fields": {
+        "name": "Name",
+        "status": "Status",
+        "storeSentEmails": "Store Sent Emails",
+        "startAt": "Date Start",
+        "fromAddress": "From Address",
+        "fromName": "From Name",
+        "replyToAddress": "Reply-to Address",
+        "replyToName": "Reply-to Name",
+        "campaign": "Campaign",
+        "emailTemplate": "Email Template",
+        "inboundEmail": "Email Account",
+        "targetLists": "Target Lists",
+        "excludingTargetLists": "Excluding Target Lists",
+        "optOutEntirely": "Opt-Out Entirely",
+        "smtpAccount": "SMTP Account"
+    },
+    "links": {
+        "targetLists": "Target Lists",
+        "excludingTargetLists": "Excluding Target Lists",
+        "queueItems": "Queue Items",
+        "campaign": "Campaign",
+        "emailTemplate": "Email Template",
+        "inboundEmail": "Email Account"
+    },
+    "options": {
+        "status": {
+            "Draft": "Draft",
+            "Pending": "Pending",
+            "In Process": "In Process",
+            "Complete": "Complete",
+            "Canceled": "Canceled",
+            "Failed": "Failed"
+        }
+    },
+    "labels": {
+        "Create MassEmail": "Create Mass Email",
+        "Send Test": "Send Test",
+        "System SMTP": "System SMTP",
+        "system": "system",
+        "group": "group"
+    },
+    "messages": {
+        "selectAtLeastOneTarget": "Select at least one target.",
+        "testSent": "Test email(s) supposed to be sent"
+    },
+    "tooltips": {
+        "optOutEntirely": "Email addresses of recipients that unsubscribed will be marked as opted out and they will not receive any mass emails anymore.",
+        "targetLists": "Targets that should receive messages.",
+        "excludingTargetLists": "Targets that should not receive messages.",
+        "storeSentEmails": "Emails will be stored in CRM."
+    },
+    "presetFilters": {
+        "actual": "Actual",
+        "complete": "Complete"
+    }
+}

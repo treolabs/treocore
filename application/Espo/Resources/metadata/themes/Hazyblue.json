@@ -1,0 +1,9 @@
+{
+    "stylesheet": "client/css/espo/hazyblue.css",
+    "stylesheetIframe": "client/css/espo/hazyblue-iframe.css",
+    "dashboardCellHeight": 155,
+    "dashboardCellMargin": 19,
+    "navbarHeight": 44,
+    "modalFooterAtTheTop": true,
+    "modalFullHeight": true
+}

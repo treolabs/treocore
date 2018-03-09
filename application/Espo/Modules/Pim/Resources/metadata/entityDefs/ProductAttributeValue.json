@@ -1,0 +1,37 @@
+{
+    "fields": {
+        "product": {
+            "type": "link"
+        },
+        "attribute": {
+            "type": "link"
+        },
+        "value": {
+            "type": "text",
+            "required": false,
+            "rows": 4,
+            "lengthOfCut": 400,
+            "seeMoreDisabled": false,
+            "readOnly": false,
+            "tooltip": false,
+            "isCustom": false,
+            "isMultilang": true
+        }
+    },
+    "links": {
+        "product": {
+            "type": "belongsTo",
+            "foreign": "productAttributeValues",
+            "entity": "Product",
+            "audited": false,
+            "isCustom": false
+        },
+        "attribute": {
+            "type": "belongsTo",
+            "foreign": "productAttributeValues",
+            "entity": "Attribute",
+            "audited": false,
+            "isCustom": false
+        }
+    }
+}

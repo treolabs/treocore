@@ -1,0 +1,5 @@
+{
+    "itemViews": {
+        "Update": "treo-crm:views/stream/notes/update"
+    }
+}

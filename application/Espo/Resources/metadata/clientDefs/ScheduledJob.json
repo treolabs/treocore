@@ -1,0 +1,15 @@
+{
+  "controller": "controllers/record",
+  "relationshipPanels":{
+     "log":{
+        "readOnly": true
+     }
+  },
+  "recordViews":{
+    "list": "views/scheduled-job/record/list",
+    "detail": "views/scheduled-job/record/detail"
+  },
+  "views": {
+    "list": "views/scheduled-job/list"
+  }
+}

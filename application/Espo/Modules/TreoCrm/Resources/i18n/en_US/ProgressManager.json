@@ -1,0 +1,24 @@
+{
+    "fields": {
+        "name": "Name",
+        "progress": "Progress",
+        "status": "Status"
+    },
+    "progressStatus": {
+        "new": "New",
+        "in_progress": "In progress",
+        "error": "Error",
+        "success": "Success"
+    },
+    "notificationMessages": {
+        "success": "%s was successfully completed",
+        "error": "%s failed"
+    },
+    "labels": {
+        "showMessage": "Show Message",
+        "message": "Message",
+        "cancel": "Cancel",
+        "close": "Close",
+        "progressManager": "Progress Manager"
+    }
+}

@@ -1,0 +1,127 @@
+{
+    "fields": {
+        "name": {
+            "type": "varchar",
+            "required": true,
+            "trim": true
+        },
+        "status": {
+            "type": "enum",
+            "options": ["Draft", "Pending", "Complete", "In Process", "Failed"],
+            "default": "Pending"
+        },
+        "storeSentEmails": {
+            "type": "bool",
+            "default": false,
+            "tooltip": true
+        },
+        "optOutEntirely": {
+            "type": "bool",
+            "default": false,
+            "tooltip": true
+        },
+        "fromAddress": {
+            "type": "varchar",
+            "trim": true,
+            "view": "crm:views/mass-email/fields/from-address"
+        },
+        "fromName": {
+            "type": "varchar"
+        },
+        "replyToAddress": {
+            "type": "varchar",
+            "trim": true
+        },
+        "replyToName": {
+            "type": "varchar"
+        },
+        "startAt": {
+            "type": "datetime",
+            "required": true
+        },
+        "emailTemplate": {
+            "type": "link",
+            "required": true,
+            "view": "crm:views/mass-email/fields/email-template"
+        },
+        "campaign": {
+            "type": "link"
+        },
+        "targetLists": {
+            "type": "linkMultiple",
+            "required": true,
+            "tooltip": true
+        },
+        "excludingTargetLists": {
+            "type": "linkMultiple",
+            "tooltip": true
+        },
+        "inboundEmail": {
+            "type": "link"
+        },
+        "smtpAccount": {
+            "type": "base",
+            "notStorable": true,
+            "view": "crm:views/mass-email/fields/smtp-account"
+        },
+        "createdAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "modifiedAt": {
+            "type": "datetime",
+            "readOnly": true
+        },
+        "createdBy": {
+            "type": "link",
+            "readOnly": true
+        },
+        "modifiedBy": {
+            "type": "link",
+            "readOnly": true
+        }
+    },
+    "links": {
+        "createdBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "modifiedBy": {
+            "type": "belongsTo",
+            "entity": "User"
+        },
+        "emailTemplate": {
+            "type": "belongsTo",
+            "entity": "EmailTemplate"
+        },
+        "campaign": {
+            "type": "belongsTo",
+            "entity": "Campaign",
+            "foreign": "massEmails"
+        },
+        "targetLists": {
+            "type": "hasMany",
+            "entity": "TargetList",
+            "foreign": "massEmails"
+        },
+        "excludingTargetLists": {
+            "type": "hasMany",
+            "entity": "TargetList",
+            "foreign": "massEmailsExcluding",
+            "relationName": "massEmailTargetListExcluding"
+        },
+        "inboundEmail": {
+            "type": "belongsTo",
+            "entity": "InboundEmail"
+        },
+        "queueItems": {
+            "type": "hasMany",
+            "entity": "EmailQueueItem",
+            "foreign": "massEmail"
+        }
+    },
+    "collection": {
+        "sortBy": "createdAt",
+        "asc": false
+    }
+}

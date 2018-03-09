@@ -1,0 +1,62 @@
+[
+    {
+        "route": "/Product/:product_id/itemInProducts",
+        "method": "get",
+        "params": {
+            "controller": "Product",
+            "action": "GetItemInProducts"
+        }
+    },
+    {
+        "route": "/Markets/Attribute/filtersData",
+        "method": "get",
+        "params": {
+            "controller": "Attribute",
+            "action": "GetFiltersData"
+        }
+    },
+    {
+        "route": "/Markets/Channel/:channel_id/Product/:product_id/attributes",
+        "method": "get",
+        "params": {
+            "controller": "Channel",
+            "action": "GetChannelProductAttributes"
+        }
+    },
+    {
+        "route": "/Markets/:controller/:entity_id/:action",
+        "method": "get",
+        "params": {
+            "controller": ":controller",
+            "action": "GetRequest",
+            "name": ":action"
+        }
+    },
+    {
+        "route": "/Markets/:controller/:entity_id/:action",
+        "method": "put",
+        "params": {
+            "controller": ":controller",
+            "action": "UpdateRequest",
+            "name": ":action"
+        }
+    },
+    {
+        "route": "/Markets/:controller/:entity_id/:action",
+        "method": "patch",
+        "params": {
+            "controller": ":controller",
+            "action": "UpdateRequest",
+            "name": ":action"
+        }
+    },
+    {
+        "route": "/Markets/:controller/:entity_id/:action",
+        "method": "delete",
+        "params": {
+            "controller": ":controller",
+            "action": "DeleteRequest",
+            "name": ":action"
+        }
+    }
+]

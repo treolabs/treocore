@@ -1,0 +1,10 @@
+{
+  "labels": {
+    "Create DocumentFolder": "Crea cartella Documenti",
+    "Manage Categories": "Gestione cartelle",
+    "Documents": "Documenti"
+  },
+  "links": {
+    "documents": "Documenti"
+  }
+}

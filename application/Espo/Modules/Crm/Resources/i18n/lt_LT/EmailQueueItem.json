@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "name": "Vardas",
+    "status": "Statusas",
+    "target": "Adresatas",
+    "sentAt": "Išsiuntimo data",
+    "attemptCount": "Bandymai",
+    "emailAddress": "El. pašto adresas",
+    "isTest": "Testuojama"
+  },
+  "links": {
+    "target": "Adresatas"
+  },
+  "options": {
+    "status": {
+      "Pending": "Vykdoma",
+      "Sent": "Išsiųsta",
+      "Failed": "Nepavyko",
+      "Sending": "Siunčiama"
+    }
+  },
+  "presetFilters": {
+    "pending": "Vykdoma",
+    "sent": "Išsiųsta",
+    "failed": "Nepavyko"
+  }
+}

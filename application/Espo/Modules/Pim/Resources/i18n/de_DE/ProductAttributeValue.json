@@ -1,0 +1,16 @@
+{
+    "fields": {
+        "productAttribute": "Artikelattribut",
+        "product": "Artikel",
+        "attribute": "Attribut",
+        "value": "Wert"
+    },
+    "links": {
+        "productAttribute": "Artikelattribut",
+        "product": "Artikel",
+        "attribute": "Attribut"
+    },
+    "labels": {
+        "Create ProductAttributeValue": "Artikelattributwert anlegen"
+    }
+}

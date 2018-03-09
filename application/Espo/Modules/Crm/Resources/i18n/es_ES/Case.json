@@ -1,0 +1,61 @@
+{
+  "fields": {
+    "name": "Nombre",
+    "number": "Número",
+    "status": "Estado",
+    "account": "Cuenta",
+    "contact": "Contacto",
+    "contacts": "Contactos",
+    "priority": "Prioridad",
+    "type": "Tipo",
+    "description": "Descripción",
+    "inboundEmail": "Cuenta de Correo",
+    "lead": "Posible cliente",
+    "attachments": "Adjuntos"
+  },
+  "links": {
+    "inboundEmail": "Cuenta de correo",
+    "account": "Cuenta",
+    "contact": "Contratos (principal)",
+    "Contacts": "Contactos",
+    "meetings": "Reuniones",
+    "calls": "Llamadas",
+    "tasks": "Tareas",
+    "emails": "Correos",
+    "articles": "Artículos de la base de conocimiento",
+    "lead": "Posible cliente",
+    "attachments": "Adjuntos"
+  },
+  "options": {
+    "status": {
+      "New": "Nuevo",
+      "Assigned": "Asignado",
+      "Pending": "Pendiente",
+      "Closed": "Cerrados",
+      "Rejected": "Rechazado",
+      "Duplicate": "Duplicar"
+    },
+    "priority": {
+      "Low": "Baja",
+      "Normal": "Normal",
+      "High": "Alta",
+      "Urgent": "Urgente"
+    },
+    "type": {
+      "Question": "Pregunta",
+      "Incident": "Incidente",
+      "Problem": "Problema"
+    }
+  },
+  "labels": {
+    "Create Case": "Crear ticket",
+    "Close": "Cerrar",
+    "Reject": "Rechazar",
+    "Closed": "Cerrados",
+    "Rejected": "Rechazado"
+  },
+  "presetFilters": {
+    "open": "Abiertos",
+    "closed": "Cerrados"
+  }
+}

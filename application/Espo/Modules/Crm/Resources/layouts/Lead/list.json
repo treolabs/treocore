@@ -1,0 +1,7 @@
+[
+    {"name":"name", "width":25, "link":"true"},
+    {"name":"status"},
+    {"name":"emailAddress", "notSortable": true},
+    {"name":"assignedUser"},
+    {"name":"createdAt"}
+]

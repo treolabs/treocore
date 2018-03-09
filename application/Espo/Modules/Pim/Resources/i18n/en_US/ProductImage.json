@@ -1,0 +1,28 @@
+{
+    "fields": {
+        "image": "Image",
+        "product": "Product",
+        "state": "State",
+        "size": "Size",
+        "width": "Width",
+        "height": "Height",
+        "alt": "Alt",
+        "channels": "Channels",
+        "isMain": "Is Main",
+        "type": "Type",
+        "imageLink": "Image Link"
+    },
+    "options": {
+        "type": {
+            "File": "File",
+            "Link": "Link"
+        }
+    },
+    "links": {
+        "product": "Product",
+        "channels": "Channels"
+    },
+    "labels": {
+        "Create ProductImage": "Create Product Image"
+    }
+}

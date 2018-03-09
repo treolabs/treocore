@@ -1,0 +1,17 @@
+{
+    "labels": {
+        "moduleManager": "Module Manager"
+    },
+    "descriptions": {
+        "upgrade": "TreoPIM aktualisieren.",
+        "moduleManager": "Mechanisms for managing modules",
+        "representationSettings": "Representation settings."
+    },
+    "messages": {
+        "upgradeVersion": "Ihr TreoPIM wird nun auf Version <strong>{version}</strong> aktualisiert. Dies kann einige Zeit dauern.",
+        "upgradeDone": "Ihr TreoPIM wurde auf Version <strong>{version}</strong> aktualisiert.",
+        "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die TreoPIM Dateien sowie die Datenbank zu sichern.",
+        "newVersionIsAvailable": "Neue TreoPIM Version {latestVersion} ist verfügbar.",
+        "downloadUpgradePackage": ""
+    }
+}

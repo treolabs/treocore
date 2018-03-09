@@ -1,0 +1,46 @@
+{
+  "labels": {
+    "Create KnowledgeBaseArticle": "Artikel erstellen",
+    "Any": "Beliebig",
+    "Send in Email": "In E-Mail senden",
+    "Move Up": "Aufwärts",
+    "Move Down": "Abwärts",
+    "Move to Top": "zu Anfang",
+    "Move to Bottom": "zum Ende"
+  },
+  "fields": {
+    "name": "Name",
+    "status": "Status",
+    "type": "Typ",
+    "attachments": "Anhänge",
+    "publishDate": "Veröffentlichungsdatum",
+    "expirationDate": "Ablaufdatum",
+    "description": "Beschreibung",
+    "body": "Inhalt",
+    "categories": "Kategorien",
+    "language": "Sprache",
+    "portals": "Portale"
+  },
+  "links": {
+    "cases": "Fälle",
+    "opportunities": "Verkaufschancen",
+    "categories": "Kategorien",
+    "portals": "Portale"
+  },
+  "options": {
+    "status": {
+      "In Review": "In Prüfung",
+      "Draft": "Entwurf",
+      "Archived": "Archiviert",
+      "Published": "Veröffentlicht"
+    },
+    "type": {
+      "Article": "Artikel"
+    }
+  },
+  "tooltips": {
+  },
+  "presetFilters": {
+    "published": "Publiziert"
+  }
+}
