@@ -106,8 +106,16 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
         },
 
         getFieldViews() {
+            let result = null;
             let gridView = this.getView('grid');
-            return gridView ? gridView.nestedViews : null;
+            if (gridView) {
+                result = {};
+                let allowedViews = Object.keys(gridView.attributes);
+                allowedViews.forEach(function (item) {
+                    result[item] = gridView.nestedViews[item];
+                }, this);
+            }
+            return result;
         },
 
         setupGrid() {
