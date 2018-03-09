@@ -89,6 +89,9 @@ class Composer extends Base
      */
     public function run(string $command): array
     {
+        // set memory limit for composer actions
+        ini_set('memory_limit', '2048M');
+
         putenv("COMPOSER_HOME=".$this->extractDir);
         require_once $this->extractDir."/vendor/autoload.php";
 

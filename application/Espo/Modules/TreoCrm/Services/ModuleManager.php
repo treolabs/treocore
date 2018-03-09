@@ -67,6 +67,11 @@ class ModuleManager extends Base
     protected $moduleRequireds = [];
 
     /**
+     * @var string
+     */
+    protected $passwordSalt = '4fj-v#C&4k?H&MkC';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -98,6 +103,7 @@ class ModuleManager extends Base
 
         if (!empty($authData['http-basic'][self::$gitServer]) && is_array($authData['http-basic'][self::$gitServer])) {
             $result = $authData['http-basic'][self::$gitServer];
+            $result['password'] = $this->passwordSalt;
         }
 
         return $result;
@@ -113,16 +119,21 @@ class ModuleManager extends Base
      */
     public function setComposerUser(string $username, string $password): bool
     {
-        // get auth data
-        $authData = $this->getComposerService()->getAuthData();
+        // prepare result
+        $result = false;
 
-        // prepare auth data
-        $authData['http-basic'][self::$gitServer] = [
-            'username' => $username,
-            'password' => $password
-        ];
+        if (empty($authData = $this->getComposerService()->getAuthData())
+            || $password != $this->passwordSalt) {
+            // prepare auth data
+            $authData['http-basic'][self::$gitServer] = [
+                'username' => $username,
+                'password' => $password
+            ];
 
-        return $this->getComposerService()->setAuthData($authData);
+            $result = $this->getComposerService()->setAuthData($authData);
+        }
+
+        return $result;
     }
 
     /**
