@@ -47,7 +47,7 @@ Espo.define('pim:views/attribute/grid', 'views/base',
 
             this.events = _.extend({
                 'click .inline-remove-link': (e) => this.actionRemoveAttribute($(e.currentTarget).data('name')),
-                'click .inline-edit-link': (e) => {
+                'click .inline-edit-link.edit-attribute': (e) => {
                     this.initInlineEditAttribute($(e.currentTarget).data('name'));
                 }
             }, this.events || {});
