@@ -112,9 +112,11 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
             let gridView = this.getView('grid');
             if (gridView) {
                 result = {};
-                this.allowedAttributeIds.forEach(function (item) {
-                    result[item] = gridView.nestedViews[item];
-                }, this);
+                Object.keys(gridView.nestedViews).forEach((item) => {
+                    if (this.allowedAttributeIds.includes(item)) {
+                        result[item] = gridView.nestedViews[item];
+                    }
+                });
             }
             return result;
         },
@@ -137,6 +139,7 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
 
         updateGrid() {
             let that = this;
+            this.allowedAttributeIds = [];
 
             this.ajaxGetRequest(`Markets/Product/${this.model.id}/attributes`).then(function (response) {
                 if (Array.isArray(response) && response) {
