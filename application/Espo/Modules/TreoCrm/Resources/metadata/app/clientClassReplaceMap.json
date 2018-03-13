@@ -8,6 +8,9 @@
     "controllers/admin": [
         "treo-crm"
     ],
+    "views/modal": [
+        "treo-crm"
+    ],
     "views/record/base": [
         "treo-crm"
     ],

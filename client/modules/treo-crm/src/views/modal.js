@@ -31,17 +31,26 @@
  * and "TreoPIM" word.
  */
 
-$(window).on('keydown', function (e) {
-    if (e.keyCode === 69 && e.ctrlKey) {
-        e.preventDefault();
-        $('button[data-action="edit"]').trigger('click');
-    }
-    if (e.keyCode === 83 && e.ctrlKey) {
-        e.preventDefault();
-        if ($('body').hasClass('modal-open')) {
-            $('.modal-dialog').find('button[data-name="save"]').trigger('click');
-        } else {
-            $('button[data-action="save"]').trigger('click');
-        }
-    }
+Espo.define('treo-crm:views/modal', 'class-replace!treo-crm:views/modal', function (Dep) {
+
+   return Dep.extend({
+
+       init() {
+           Dep.prototype.init.call(this);
+
+           $(window).on('keydown', e => {
+               if (e.keyCode === 69 && e.ctrlKey) {
+                   e.preventDefault();
+               }
+               if (e.keyCode === 83 && e.ctrlKey) {
+                   debugger;
+                   e.preventDefault();
+                   if (typeof this.actionSave === 'function') {
+                       this.actionSave();
+                   }
+               }
+           });
+       }
+
+   });
 });
