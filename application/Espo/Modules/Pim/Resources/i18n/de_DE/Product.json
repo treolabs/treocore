@@ -30,7 +30,7 @@
         "tax": "MwSt.",
         "packaging": "Verpackung",
         "ean": "EAN",
-        "mpn": "MPN",
+        "mpn": "HAN",
         "uvp": "UVP"
     },
     "links": {
