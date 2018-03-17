@@ -18,3 +18,5 @@
 - Ассоциативный продукт.
 
 ![create association product](https://gitlab.zinit1.com/treoCRM/treopim/raw/devel/application/Espo/Modules/Pim/docs/_assets/create-associationproduct.jpg)
+
+hhh
