@@ -44,4 +44,25 @@ use Espo\Modules\Pim\Core\SelectManagers\AbstractSelectManager;
 class ProductFamily extends AbstractSelectManager
 {
 
+    /**
+     * NotLinkedWithAttribute filter
+     *
+     * @param array $result
+     */
+    protected function boolFilterNotLinkedWithAttribute(&$result)
+    {
+
+        $familyAttributes = $this->getEntityManager()
+            ->getRepository('ProductFamilyAttribute')
+            ->where([
+                'attributeId' => (string)$this->getSelectCondition('notLinkedWithAttribute'),
+            ])
+            ->find();
+
+        foreach ($familyAttributes as $row) {
+            $result['whereClause'][] = [
+                'id!=' => $row->get('productFamilyId')
+            ];
+        }
+    }
 }

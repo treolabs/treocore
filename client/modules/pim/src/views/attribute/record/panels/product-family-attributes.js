@@ -36,7 +36,7 @@ Espo.define('pim:views/attribute/record/panels/product-family-attributes', 'view
         linkScope: 'ProductFamilyAttribute',
 
         boolFilterData: {
-            notLinkedWithAttributes() {
+            notLinkedWithAttribute() {
                 return this.model.id;
             }
         },

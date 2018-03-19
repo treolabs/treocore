@@ -25,16 +25,16 @@
     },
     "relationshipPanels": {
         "productFamilyAttributes": {
-            "layout": "listForAttributes",
+            "layout": "listForProductFamilyInAttributes",
             "label": "productFamily",
             "view": "pim:views/attribute/record/panels/product-family-attributes",
             "rowActionsView": "views/record/row-actions/relationship-unlink-only",
             "createAction": "createRelatedEntity",
             "selectAction": "selectRelatedEntity",
-            "selectListLayout": "listForSelectInAttribute",
+            "selectListLayout": "listForSelectProductFamilyInAttribute",
             "create": false,
             "selectBoolFilterList": [
-                "notLinkedWithAttributes"
+                "notLinkedWithAttribute"
             ]
         }
     },
