@@ -41,7 +41,8 @@
         "channelProductAttributeValues": "Channel Product Attribute Values"
     },
     "labels": {
-        "Create Attribute": "Create Attribute"
+        "Create Attribute": "Create Attribute",
+        "productFamily": "Product family"
     },
     "filterLabels": {
         "All": "All"

@@ -13,7 +13,8 @@
         "merge"
     ],
     "views": {
-        "list": "pim:views/list"
+        "list": "pim:views/list",
+        "detail": "pim:views/attribute/detail"
     },
     "recordViews": {
         "list": "pim:views/record/list",
@@ -25,10 +26,13 @@
     "relationshipPanels": {
         "productFamilyAttributes": {
             "layout": "listForAttributes",
+            "label": "productFamily",
             "view": "pim:views/attribute/record/panels/product-family-attributes",
-            "rowActionsView": "views/record/row-actions/relationship-no-remove",
+            "rowActionsView": "views/record/row-actions/relationship-unlink-only",
+            "createAction": "createRelatedEntity",
             "selectAction": "selectRelatedEntity",
             "selectListLayout": "listForSelectInAttribute",
+            "create": false,
             "selectBoolFilterList": [
                 "notLinkedWithAttributes"
             ]

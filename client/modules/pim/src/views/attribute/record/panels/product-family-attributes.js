@@ -33,6 +33,7 @@
 
 Espo.define('pim:views/attribute/record/panels/product-family-attributes', 'views/record/panels/relationship',
     Dep => Dep.extend({
+        linkScope: 'ProductFamilyAttribute',
 
         boolFilterData: {
             notLinkedWithAttributes() {
@@ -49,6 +50,7 @@ Espo.define('pim:views/attribute/record/panels/product-family-attributes', 'view
                 throw new Error('Link \'' + this.link + '\' is not defined in model \'' + this.model.name + '\'');
             }
             this.title = this.translate(this.link, 'links', this.model.name);
+
             this.scope = this.scope || this.model.defs.links[this.link].entity;
 
             var url = this.url || this.model.name + '/' + this.model.id + '/' + this.link;
@@ -69,38 +71,35 @@ Espo.define('pim:views/attribute/record/panels/product-family-attributes', 'view
             }
 
             if (this.defs.create) {
-                if (this.getAcl().check(this.scope, 'create') && !~['User', 'Team'].indexOf()) {
+                if (this.getAcl().check('ProductFamily', 'create') && !~['User', 'Team'].indexOf()) {
                     this.buttonList.push({
                         title: 'Create',
                         action: this.defs.createAction || 'createRelated',
                         link: this.link,
                         acl: 'create',
-                        aclScope: this.scope,
+                        aclScope: 'ProductFamily',
                         html: '<span class="glyphicon glyphicon-plus"></span>',
                         data: {
                             link: this.link,
+                            scope: 'ProductFamily',
+                            afterSaveCallback: 'actionCreateLink'
                         }
                     });
                 }
             }
 
-            if (this.defs.select) {
-                var data = {link: this.link};
-                if (this.defs.selectPrimaryFilterName) {
-                    data.primaryFilterName = this.defs.selectPrimaryFilterName;
+            this.actionList.unshift({
+                label: 'Select',
+                action: this.defs.selectAction || 'selectRelated',
+                data: {
+                    link: this.link,
+                    scope: 'ProductFamily',
+                    afterSelectCallback: 'actionCreateLink',
+                    boolFilterListCallback: 'getSelectBoolFilterList',
+                    boolFilterDataCallback: 'getSelectBoolFilterData',
+                    primaryFilterName: this.defs.selectPrimaryFilterName || null
                 }
-                if (this.defs.selectBoolFilterList) {
-                    data.boolFilterList = this.defs.selectBoolFilterList;
-                }
-
-                this.actionList.unshift({
-                    label: 'Select',
-                    action: this.defs.selectAction || 'selectRelated',
-                    data: data,
-                    acl: 'edit',
-                    aclScope: this.model.name
-                });
-            }
+            });
 
             this.setupActions();
 
@@ -185,6 +184,31 @@ Espo.define('pim:views/attribute/record/panels/product-family-attributes', 'view
                 this.wait(false);
             }, this);
             this.setupFilterActions();
+        },
+
+        actionCreateLink(models) {
+            let items = Array.isArray(models) ? models : [models];
+            Promise.all(items.map(item => this.ajaxPostRequest(this.linkScope, {
+                productFamilyId: item.id,
+                attributeId: this.model.id,
+                isRequired: false,
+                isMultiChannel: false,
+            }))).then(() => {
+                this.notify('Linked', 'success');
+                this.collection.fetch();
+            });
+        },
+
+        getSelectBoolFilterData(boolFilterList) {
+            let data = {};
+            if (Array.isArray(boolFilterList)) {
+                boolFilterList.forEach(item => {
+                    if (this.boolFilterData && typeof this.boolFilterData[item] === 'function') {
+                        data[item] = this.boolFilterData[item].call(this);
+                    }
+                });
+            }
+            return data;
         },
 
         getSelectBoolFilterList() {
