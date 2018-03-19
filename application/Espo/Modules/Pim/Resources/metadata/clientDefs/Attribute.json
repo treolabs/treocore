@@ -22,6 +22,18 @@
     "modalViews": {
         "select": "pim:views/modals/select-records"
     },
+    "relationshipPanels": {
+        "productFamilyAttributes": {
+            "layout": "listForAttributes",
+            "view": "pim:views/attribute/record/panels/product-family-attributes",
+            "rowActionsView": "views/record/row-actions/relationship-no-remove",
+            "selectAction": "selectRelatedEntity",
+            "selectListLayout": "listForSelectInAttribute",
+            "selectBoolFilterList": [
+                "notLinkedWithAttributes"
+            ]
+        }
+    },
     "dynamicLogic": {
         "fields": {
             "type": {
