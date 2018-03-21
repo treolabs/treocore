@@ -38,6 +38,7 @@ namespace Espo\Modules\Pim\Controllers;
 
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
+use Espo\Core\Utils\Json;
 
 /**
  * ProductTypePackage controller
@@ -97,6 +98,9 @@ class ProductTypePackage extends AbstractProductTypeController
      */
     public function actionUpdate($params, $data, Request $request): bool
     {
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
         if (!$request->isPut() && !$request->isPatch()) {
             throw new Exceptions\BadRequest();
         }

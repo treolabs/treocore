@@ -53,13 +53,15 @@ class Category extends AbstractController
      * @param Request $request
      *
      * @return type
+     * @throws Exceptions\BadRequest
      * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
      */
     public function actionUpdate($params, $data, $request)
     {
         if ($this->isEditAction($request, $params['id'])) {
-            if (!empty($data['categoryParentId'])
-                && $this->getRecordService()->isChildCategory($params['id'], $data['categoryParentId'])
+            if (!empty($data->categoryParentId)
+                && $this->getRecordService()->isChildCategory($params['id'], $data->categoryParentId)
             ) {
                 throw new Exceptions\Error('You can not choose a child category');
             }
