@@ -34,6 +34,8 @@
 Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/relationship',
     Dep => Dep.extend({
 
+        allowedAttributeIds: [],
+
         setup() {
             Dep.prototype.__proto__.setup.call(this);
 
@@ -106,8 +108,17 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
         },
 
         getFieldViews() {
+            let result = null;
             let gridView = this.getView('grid');
-            return gridView ? gridView.nestedViews : null;
+            if (gridView) {
+                result = {};
+                Object.keys(gridView.nestedViews).forEach((item) => {
+                    if (this.allowedAttributeIds.includes(item)) {
+                        result[item] = gridView.nestedViews[item];
+                    }
+                });
+            }
+            return result;
         },
 
         setupGrid() {
@@ -128,6 +139,7 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
 
         updateGrid() {
             let that = this;
+            this.allowedAttributeIds = [];
 
             this.ajaxGetRequest(`Markets/Product/${this.model.id}/attributes`).then(function (response) {
                 if (Array.isArray(response) && response) {
@@ -140,6 +152,7 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
                     let inputLanguageList = that.getConfig().get('inputLanguageList');
 
                     response.forEach(attribute => {
+                        this.allowedAttributeIds.push(attribute.attributeId);
                         data[attribute.attributeId] = attribute.value;
                         translates[attribute.attributeId] = attribute.name;
 
