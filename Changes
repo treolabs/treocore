@@ -1,3 +1,4 @@
+1.7.0  2018-03-21 16:02:34 Europe/Kiev
     * FEA #61042 : Виправити проблему зі зміною вхідного параметру в контроллери з array на stdClass (Yuriy  Haiduchyk)
     * FEA #59346 : Ошибка при добавлении условия фильтрации (Yuriy  Haiduchyk, Valeriy Shamota)
     * FEA #60757 : Реализация связи между родительской и специфической ПФ //Front (Yuriy  Haiduchyk)
