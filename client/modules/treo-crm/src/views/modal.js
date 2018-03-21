@@ -43,7 +43,6 @@ Espo.define('treo-crm:views/modal', 'class-replace!treo-crm:views/modal', functi
                    e.preventDefault();
                }
                if (e.keyCode === 83 && e.ctrlKey) {
-                   debugger;
                    e.preventDefault();
                    if (typeof this.actionSave === 'function') {
                        this.actionSave();
