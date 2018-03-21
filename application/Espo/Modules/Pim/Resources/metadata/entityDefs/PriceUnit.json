@@ -77,7 +77,7 @@
         "productTypePackages": {
             "type": "hasMany",
             "foreign": "priceUnit",
-            "entity": "productTypePackage",
+            "entity": "ProductTypePackage",
             "layoutRelationshipsDisabled": true
         }
     },

@@ -10,7 +10,8 @@
         "channels": "Channels",
         "isMain": "Is Main",
         "type": "Type",
-        "imageLink": "Image Link"
+        "imageLink": "Image Link",
+        "imagesMultiple": "Multiple images"
     },
     "options": {
         "type": {

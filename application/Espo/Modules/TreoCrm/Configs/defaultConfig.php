@@ -50,7 +50,7 @@ return [
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'TreoPim',
-    'version' => '5.0.2',
+    'version' => '1.7.0',
     'timeZone' => 'UTC',
     'dateFormat' => 'MM/DD/YYYY',
     'timeFormat' => 'hh:mm a',

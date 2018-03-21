@@ -1,6 +1,6 @@
 
 <div class="row search-row">
-    <div class="form-group col-md-6 col-sm-8">
+    <div class="form-group col-md-7 col-sm-6">
         <div class="input-group">
             <div class="input-group-btn left-dropdown{{#unless leftDropdown}} hidden{{/unless}}">
                 <button type="button" class="btn btn-default dropdown-toggle filters-button" title="{{translate 'Filter'}}" data-toggle="dropdown" tabindex="-1">
@@ -35,29 +35,32 @@
             </div>
         </div>
     </div>
-    <div class="form-group col-md-6 col-sm-4">
+    <div class="form-group col-md-5 col-sm-6">
         <div class="btn-group search-right-buttons-group">
-            <button type="button" class="btn btn-default" data-action="reset">
-                <span class="glyphicon glyphicon-repeat"></span>&nbsp;{{translate 'Reset'}}
-            </button>
-            <button type="button" class="btn btn-default dropdown-toggle add-filter-button" data-toggle="dropdown" tabindex="-1">
-                {{translate 'Add Field'}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu pull-right filter-list">
-                {{#each advancedFields}}
-                    <li data-name="{{name}}" class="{{#if checked}}hide{{/if}}"><a href="javascript:" class="add-filter" data-action="addFilter" data-name="{{name}}">{{translate name scope=../entityType category='fields'}}</a></li>
-                {{/each}}
-            </ul>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" data-action="reset">
+                    <span class="glyphicon glyphicon-repeat"></span>&nbsp;{{translate 'Reset'}}
+                </button>
+                <button type="button" class="btn btn-default dropdown-toggle add-filter-button" data-toggle="dropdown" tabindex="-1">
+                    {{translate 'Add Field'}} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right filter-list">
+                    {{#each advancedFields}}
+                        <li data-name="{{name}}" class="{{#if checked}}hide{{/if}}"><a href="javascript:" class="add-filter" data-action="addFilter" data-name="{{name}}">{{translate name scope=../entityType category='fields'}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
-<div class="row advanced-filters hidden">
-    {{#each filterList}}
-        <div class="filter {{./this}} col-sm-4 col-md-3">
-            {{{var this ../this}}}
-        </div>
+<div class="row advanced-filters hidden" style=" display: flex; flex-wrap: wrap;">
+    <div class="filter-applying-condition text-center hidden col-xs-12">{{{translate "filterApplyingCondition" scope="Search" category="messages"}}}</div>
+    {{#each filterDataList}}
+    <div class="filter filter-{{name}} col-sm-4 col-md-3" data-name="{{name}}">
+        {{{var key ../this}}}
+    </div>
     {{/each}}
 </div>
 
