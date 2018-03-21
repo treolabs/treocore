@@ -39,6 +39,40 @@ Espo.define('treo-crm:views/record/detail', 'class-replace!treo-crm:views/record
 
         panelNavigationView: 'treo-crm:views/record/panel-navigation',
 
+        setup: function () {
+            Dep.prototype.setup.call(this);
+
+            $(window).on('keydown', e => {
+                if (e.keyCode === 69 && e.ctrlKey && !$('body').hasClass('modal-open')) {
+                    this.hotKeyEdit(e);
+                }
+                if (e.keyCode === 83 && e.ctrlKey && !$('body').hasClass('modal-open')) {
+                    this.hotKeySave(e);
+                }
+            });
+        },
+
+        hotKeyEdit: function (e) {
+            e.preventDefault();
+            if (this.mode !== 'edit') {
+                this.actionEdit();
+            }
+        },
+
+        hotKeySave: function (e) {
+            e.preventDefault();
+            if (this.mode === 'edit') {
+                this.actionSave();
+            } else {
+                let viewsFields = this.getFieldViews();
+                Object.keys(viewsFields).forEach(item => {
+                    if (viewsFields[item].mode === "edit") {
+                        viewsFields[item].inlineEditSave();
+                    }
+                });
+            }
+        },
+
         createBottomView: function () {
             var el = this.options.el || '#' + (this.id);
             this.createView('bottom', this.bottomView, {

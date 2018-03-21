@@ -82,6 +82,24 @@ Espo.define('pim:views/product/record/detail', 'pim:views/record/detail',
             }, this);
         },
 
+        hotKeySave: function (e) {
+            e.preventDefault();
+            if (this.mode === 'edit') {
+                this.actionSave();
+            } else {
+                let viewsFields = this.getFieldViews();
+                Object.keys(viewsFields).forEach(item => {
+                    if (viewsFields[item].mode === "edit" ) {
+                        if (viewsFields[item].model.name === 'productAttributesGrid') {
+                            viewsFields[item].getParentView().inlineEditSave(viewsFields[item]);
+                        } else {
+                            viewsFields[item].inlineEditSave();
+                        }
+                    }
+                });
+            }
+        },
+
         cancelEdit() {
             let bottomView = this.getView('bottom');
             if (bottomView) {
