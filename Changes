@@ -1,3 +1,4 @@
+    * BUG #56771 : Feldname beim Hochladen der Bilder // Исправить название поля при загрузке нескольких картинок  (Valeriy Shamota)
     * BUG #59350 : После просмотра списка изменений по атрибутам ошибка при сохранении продукта (Valeriy Shamota)
 ґ    * FEA #60879 : Змінити перелад MPN in HAN  (Yuriy  Haiduchyk)
     * BUG #60031 : Ошибка при добавлении условия фильрации в группе атрибутов (Valeriy Shamota)
