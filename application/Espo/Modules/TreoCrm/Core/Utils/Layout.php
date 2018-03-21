@@ -169,7 +169,7 @@ class Layout extends EspoLayout
      *
      * @param string $scope
      * @param string $name
-     * @param array $data
+     * @param array  $data
      *
      * @return array
      */
@@ -204,10 +204,10 @@ class Layout extends EspoLayout
                 case 'list':
                 case 'listSmall':
                     foreach ($data as $key => $row) {
-                            if (isset($row['name']) && !in_array($row['name'], $fields)) {
-                                unset($data[$key]);
-                            }
+                        if (isset($row['name']) && !in_array($row['name'], $fields)) {
+                            unset($data[$key]);
                         }
+                    }
 
                     break;
             }
