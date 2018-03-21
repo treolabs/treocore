@@ -9,7 +9,8 @@
         "channels": "Kanäle",
         "isMain": "Ist leitend",
         "type": "Typ",
-        "imageLink": "Bildlink"
+        "imageLink": "Bildlink",
+        "imagesMultiple": "Mehrere Bilder hochladen"
     },
     "options": {
         "type": {
