@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,37 +31,7 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\Pim\SelectManagers;
+Espo.define('pim:views/attribute/detail', 'pim:views/detail',
+        Dep => Dep.extend({})
+);
 
-use Espo\Modules\Pim\Core\SelectManagers\AbstractSelectManager;
-
-/**
- * Class of ProductFamily
- *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
- */
-class ProductFamily extends AbstractSelectManager
-{
-
-    /**
-     * NotLinkedWithAttribute filter
-     *
-     * @param array $result
-     */
-    protected function boolFilterNotLinkedWithAttribute(&$result)
-    {
-
-        $familyAttributes = $this->getEntityManager()
-            ->getRepository('ProductFamilyAttribute')
-            ->where([
-                'attributeId' => (string)$this->getSelectCondition('notLinkedWithAttribute'),
-            ])
-            ->find();
-
-        foreach ($familyAttributes as $row) {
-            $result['whereClause'][] = [
-                'id!=' => $row->get('productFamilyId')
-            ];
-        }
-    }
-}
