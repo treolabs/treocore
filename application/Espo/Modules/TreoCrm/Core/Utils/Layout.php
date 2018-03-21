@@ -138,6 +138,9 @@ class Layout extends EspoLayout
             }
         }
 
+        // remove fields from layout if this fields not exist in metadata
+        $data = $this->disableNotExistingFields($scope, $name, $data);
+
         // modify data
         foreach ($this->getMetadata()->getModuleList() as $module) {
             $className = sprintf('Espo\Modules\%s\Layouts\%s', $module, $scope);
@@ -159,6 +162,58 @@ class Layout extends EspoLayout
         }
 
         return Json::encode($data);
+    }
+
+    /**
+     * Disable fields from layout if this fields not exist in metadata
+     *
+     * @param string $scope
+     * @param string $name
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function disableNotExistingFields($scope, $name, $data): array
+    {
+        // get entityDefs
+        $entityDefs = $this->getMetadata()->get('entityDefs')[$scope] ?? [];
+
+        // check if entityDefs exists
+        if (!empty($entityDefs)) {
+            // get fields for entity
+            $fields = array_keys($entityDefs['fields']);
+
+            // remove fields from layout if this fields not exist in metadata
+            switch ($name) {
+                case 'filters':
+                case 'massUpdate':
+                    $data = array_intersect($data, $fields);
+
+                    break;
+                case 'detail':
+                case 'detailSmall':
+                    foreach ($data[0]['rows'] as $key => $row) {
+                        foreach ($row as $fieldKey => $fieldData) {
+                            if (isset($fieldData['name']) && !in_array($fieldData['name'], $fields)) {
+                                $data[0]['rows'][$key][$fieldKey] = false;
+                            }
+                        }
+                    }
+
+                    break;
+                case 'list':
+                case 'listSmall':
+                    foreach ($data as $key => $row) {
+                            if (isset($row['name']) && !in_array($row['name'], $fields)) {
+                                unset($data[$key]);
+                            }
+                        }
+
+                    break;
+            }
+        }
+
+        return $data;
     }
 
     /**
