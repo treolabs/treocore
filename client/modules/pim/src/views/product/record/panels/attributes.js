@@ -133,15 +133,6 @@ Espo.define('pim:views/product/record/panels/attributes', 'views/record/panels/r
                 }, function (view) {
                     view.render();
                     this.updateGrid();
-                    view.listenTo(view, 'after:render', function () {
-                        let groupLabels = this.$el.find('div div.row:first-child');
-                        if (groupLabels.length) {
-                            groupLabels.css({
-                                backgroundColor: '#2895ea',
-                                color: 'white'
-                            });
-                        }
-                    }, view);
                 });
             });
         },

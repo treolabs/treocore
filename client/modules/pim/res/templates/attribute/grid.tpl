@@ -1,7 +1,7 @@
 {{#if gridLayout}}
 {{#each gridLayout}}
 <div data-group="{{id}}">
-    <div class="row"><div class="col-sm-12"><b>{{label}}</b></div></div>
+    <div class="row"><div class="product-attribute col-sm-12"><b>{{label}}</b></div></div>
     {{#each rows}}
     <div class="row">
         {{#each this}}

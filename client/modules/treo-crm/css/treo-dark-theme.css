@@ -11588,3 +11588,8 @@ ul.dropdown-menu > li.checkbox {
         float: right
     }
 }
+
+.record .bottom .product-attribute {
+    background-color: #2895ea;
+    color: #ffffff;
+}
