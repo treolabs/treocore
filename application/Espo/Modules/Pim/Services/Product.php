@@ -123,7 +123,7 @@ class Product extends AbstractService
         // get entity
         $entity = parent::getEntity($id);
 
-        if (empty($entity->get('amount'))) {
+        if (isset($entity) && empty($entity->get('amount'))) {
             $entity->set('amount', 0);
         }
 
