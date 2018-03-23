@@ -1,10 +1,39 @@
 {
+  "fields": {
+    "host": "Host Name",
+    "dbname": "Database Name",
+    "user": "Database User Name",
+    "username": "User Name",
+    "password": "Password",
+    "confirmPassword": "Confirm Password"
+  },
   "labels": {
+    "licenseAgreement": "License Agreement",
+    "databaseConfiguration": "Database configuration",
+    "administratorSetup": "Administrator Setup",
+    "chooseYourLanguage": "Choose your language",
+    "acceptTheAgreement": "I accept the agreement",
+    "hostName": "Host Name",
+    "databaseName": "Database Name",
+    "databaseUserName": "Database User Name",
+    "databaseUserPassword": "Database User Password",
+    "port": "Port",
+    "testConnection": "Test Connection",
+    "userName": "User Name",
+    "password": "Password",
+    "confirmYourPassword": "Confirm Your Password",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish"
   },
   "errors": {
     "alreadyInstalled": "TreoCore already installed",
-    "dbSettingsAlreadyExists": "Database settings already exists",
     "languageNotCorrect": "Input language is not correct",
     "differentPass": "Different passwords"
+  },
+  "messages": {
+    "youMustAgreeToTheLicenseAgreement": "You must agree to the license agreement",
+    "fieldIsRequired": "{field} is required",
+    "connectionSuccessful": "Connection successful!"
   }
 }
