@@ -187,7 +187,7 @@ class Layout extends EspoLayout
             switch ($name) {
                 case 'filters':
                 case 'massUpdate':
-                    $data = array_intersect($data, $fields);
+                    $data = array_values(array_intersect($data, $fields));
 
                     break;
                 case 'detail':
