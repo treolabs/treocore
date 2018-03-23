@@ -240,7 +240,7 @@ class Installer extends Base
         $post = get_object_vars($data);
 
         // check if input params exists
-        if (empty($post['userName']) || empty($post['password']) || empty($post['confirmPassword'])) {
+        if (empty($post['username']) || empty($post['password']) || empty($post['confirmPassword'])) {
             throw new Exceptions\BadRequest();
         }
 
