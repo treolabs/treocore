@@ -408,12 +408,20 @@ class ModuleManager extends Base
     {
         // is system module ?
         if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
-            throw new Exceptions\Error($this->getLanguage()->translate('isSystem', 'exceptions', 'ModuleManager'));
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('isSystem', 'exceptions', 'ModuleManager')
+            );
         }
 
         // checking requireds
         if ($this->hasRequireds($moduleId)) {
-            throw new Exceptions\Error($this->getLanguage()->translate('hasRequiredsDelete', 'exceptions', 'ModuleManager'));
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('hasRequiredsDelete', 'exceptions', 'ModuleManager')
+            );
         }
 
         return true;
