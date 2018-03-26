@@ -213,28 +213,30 @@ class ModuleManager extends Base
             $currentLang = $this->getLanguage()->getLanguage();
 
             foreach ($modules as $moduleId => $max) {
-                // prepare name
-                $name = $moduleId;
-                if (!empty($max['extra']['name'][$currentLang])) {
-                    $name = $max['extra']['name'][$currentLang];
-                } elseif ($max['extra']['name']['default']) {
-                    $name = $max['extra']['name']['default'];
-                }
+                if (empty($this->getComposerModuleService()->getModulePackage($moduleId))) {
+                    // prepare name
+                    $name = $moduleId;
+                    if (!empty($max['extra']['name'][$currentLang])) {
+                        $name = $max['extra']['name'][$currentLang];
+                    } elseif ($max['extra']['name']['default']) {
+                        $name = $max['extra']['name']['default'];
+                    }
 
-                // prepare description
-                $description = '-';
-                if (!empty($max['extra']['description'][$currentLang])) {
-                    $description = $max['extra']['description'][$currentLang];
-                } elseif ($max['extra']['description']['default']) {
-                    $description = $max['extra']['description']['default'];
-                }
+                    // prepare description
+                    $description = '-';
+                    if (!empty($max['extra']['description'][$currentLang])) {
+                        $description = $max['extra']['description'][$currentLang];
+                    } elseif ($max['extra']['description']['default']) {
+                        $description = $max['extra']['description']['default'];
+                    }
 
-                $result['list'][] = [
-                    'id'          => $moduleId,
-                    'version'     => $max['version'],
-                    'name'        => $name,
-                    'description' => $description
-                ];
+                    $result['list'][] = [
+                        'id'          => $moduleId,
+                        'version'     => $max['version'],
+                        'name'        => $name,
+                        'description' => $description
+                    ];
+                }
             }
 
             // prepare total
