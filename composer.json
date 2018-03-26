@@ -47,7 +47,8 @@
   },
   "scripts": {
     "post-create-project-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules",
-    "post-update-project-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules"
+    "post-install-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules",
+    "post-update-cmd": "Espo\\Modules\\TreoCrm\\Services\\Composer::updateTreoModules"
   },
   "repositories": [
     {
