@@ -340,7 +340,7 @@ class ModuleManager extends Base
         if ($this->prepareModuleVersion($package['version']) == $version) {
             throw new Exceptions\Error($this->translateError('Such module version already installed'));
         }
-        if (empty($packages[$version])) {
+        if ($this->prepareModuleVersion($packages['version']) != $version) {
             throw new Exceptions\Error($this->translateError('No such module version'));
         }
 
