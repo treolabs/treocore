@@ -1,9 +1,0 @@
-{
-    "fields": {
-        "value": "Wert",
-        "unit": "Einheit"
-    },
-    "labels": {
-        "Create Unit": "Einheit anlegen"
-    }
-}

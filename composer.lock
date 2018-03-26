@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7ca2694fd4450e0d18e8000553944ff",
+    "content-hash": "f5ad95da3a77021adbb8be00bfe8b9d3",
     "packages": [
         {
             "name": "composer/semver",
@@ -1580,12 +1580,12 @@
             "time": "2017-04-26T08:14:48+00:00"
         },
         {
-            "name": "treo-crm/coloredfields",
-            "version": "v1.1.0",
+            "name": "treo-module/coloredfields",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.zinit1.com/treoCRM/free-plugins/coloredfields.git",
-                "reference": "44b112a1a2ba2e4fae33cd20d95b8647a56977c4"
+                "url": "https://gitlab.zinit1.com/treo/free-module/coloredfields.git",
+                "reference": "a2b91f567750282a9822c22ab5bc0a0a38d11f3d"
             },
             "require": {
                 "php": "^7.1"
@@ -1609,15 +1609,15 @@
                 }
             ],
             "description": "ColoredFields module for TreoPIM",
-            "time": "2018-03-09T08:47:52+00:00"
+            "time": "2018-03-26T07:30:44+00:00"
         },
         {
-            "name": "treo-crm/multilang",
-            "version": "v1.2.0",
+            "name": "treo-module/multilang",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.zinit1.com/treoCRM/free-plugins/multilang.git",
-                "reference": "b42018e35ef144470104d2f235b978c502b715cf"
+                "url": "https://gitlab.zinit1.com/treo/free-module/multilang.git",
+                "reference": "b1b1e456fe8cd8f21bb55156a8f3dbffe75b4981"
             },
             "require": {
                 "php": "^7.1"
@@ -1638,10 +1638,50 @@
                 {
                     "name": "Roman Ratsun",
                     "email": "r.ratsun@zinitsolutions.com"
+                },
+                {
+                    "name": "Yuri Haiduchyk",
+                    "email": "y.haiduchyk@zinitsolutions.com"
+                },
+                {
+                    "name": "Yuri Kondratskyi",
+                    "email": "y.kondratskyi@zinitsolutions.com"
                 }
             ],
             "description": "Multilang module for TreoPIM",
-            "time": "2018-03-09T08:19:13+00:00"
+            "time": "2018-03-26T07:54:44+00:00"
+        },
+        {
+            "name": "treo-module/pim",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/free-module/pim.git",
+                "reference": "253f9d2c60ca6e26559b71715e8788360b92e7fa"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/coloredfields": "^1.1.0",
+                "treo-module/multilang": "^1.2.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Pim",
+                "name": {
+                    "default": "PIM"
+                },
+                "description": {
+                    "default": "PIM module for Treo system"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "PIM module for Treo system",
+            "time": "2018-03-26T08:33:01+00:00"
         },
         {
             "name": "yzalis/identicon",

@@ -13,8 +13,6 @@
 /application/Espo/Modules/*
 !/application/Espo/Modules/Crm/
 !/application/Espo/Modules/TreoCrm/
-!/application/Espo/Modules/Pim/
 /client/modules/*
 !/client/modules/crm/
 !/client/modules/treo-crm/
-!/client/modules/pim/

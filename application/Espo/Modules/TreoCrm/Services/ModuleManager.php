@@ -150,41 +150,41 @@ class ModuleManager extends Base
         ];
 
         foreach ($this->getMetadata()->getAllModules() as $module) {
-            if ($this->isModuleAllowed($module)) {
+            // prepare item
+            $item = [
+                "id"               => $module,
+                "name"             => $module,
+                "description"      => '',
+                "version"          => '-',
+                "availableVersion" => '-',
+                "required"         => [],
+                "isActive"         => $this->getMetadata()->isModuleActive($module),
+                "isSystem"         => false,
+                "isComposer"       => false
+            ];
+
+            // get current module package
+            $package = $this->getComposerModuleService()->getModulePackage($module);
+
+            if (!empty($package)) {
+                // get module packages
+                $packages = $this->getComposerModuleService()->getModulePackages($module);
+
                 // prepare item
-                $item = [
-                    "id"               => $module,
-                    "name"             => $module,
-                    "description"      => '',
-                    "version"          => '-',
-                    "availableVersion" => '-',
-                    "required"         => [],
-                    "isActive"         => $this->getMetadata()->isModuleActive($module),
-                    "isComposer"       => false
-                ];
+                $item['name'] = $this->translateModule($module, 'name');
+                $item['description'] = $this->translateModule($module, 'description');
+                $item['version'] = $this->prepareModuleVersion($package['version']);
+                $item['required'] = $this->getModuleRequireds($module);
+                $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
+                $item['isComposer'] = true;
 
-                // get current module package
-                $package = $this->getComposerModuleService()->getModulePackage($module);
-
-                if (!empty($package)) {
-                    // get module packages
-                    $packages = $this->getComposerModuleService()->getModulePackages($module);
-
-                    // prepare item
-                    $item['name'] = $this->translateModule($module, 'name');
-                    $item['description'] = $this->translateModule($module, 'description');
-                    $item['version'] = $this->prepareModuleVersion($package['version']);
-                    $item['required'] = $this->getModuleRequireds($module);
-                    $item['isComposer'] = true;
-
-                    if (isset($packages)) {
-                        $item['availableVersion'] = $this->prepareModuleVersion($packages['version']);
-                    }
+                if (isset($packages)) {
+                    $item['availableVersion'] = $this->prepareModuleVersion($packages['version']);
                 }
-
-                // push
-                $result['list'][] = $item;
             }
+
+            // push
+            $result['list'][] = $item;
         }
 
         $result['total'] = count($result['list']);
@@ -213,28 +213,30 @@ class ModuleManager extends Base
             $currentLang = $this->getLanguage()->getLanguage();
 
             foreach ($modules as $moduleId => $max) {
-                // prepare name
-                $name = $moduleId;
-                if (!empty($max['extra']['name'][$currentLang])) {
-                    $name = $max['extra']['name'][$currentLang];
-                } elseif ($max['extra']['name']['default']) {
-                    $name = $max['extra']['name']['default'];
-                }
+                if (empty($this->getComposerModuleService()->getModulePackage($moduleId))) {
+                    // prepare name
+                    $name = $moduleId;
+                    if (!empty($max['extra']['name'][$currentLang])) {
+                        $name = $max['extra']['name'][$currentLang];
+                    } elseif ($max['extra']['name']['default']) {
+                        $name = $max['extra']['name']['default'];
+                    }
 
-                // prepare description
-                $description = '-';
-                if (!empty($max['extra']['description'][$currentLang])) {
-                    $description = $max['extra']['description'][$currentLang];
-                } elseif ($max['extra']['description']['default']) {
-                    $description = $max['extra']['description']['default'];
-                }
+                    // prepare description
+                    $description = '-';
+                    if (!empty($max['extra']['description'][$currentLang])) {
+                        $description = $max['extra']['description'][$currentLang];
+                    } elseif ($max['extra']['description']['default']) {
+                        $description = $max['extra']['description']['default'];
+                    }
 
-                $result['list'][] = [
-                    'id'          => $moduleId,
-                    'version'     => $max['version'],
-                    'name'        => $name,
-                    'description' => $description
-                ];
+                    $result['list'][] = [
+                        'id'          => $moduleId,
+                        'version'     => $max['version'],
+                        'name'        => $name,
+                        'description' => $description
+                    ];
+                }
             }
 
             // prepare total
@@ -254,28 +256,23 @@ class ModuleManager extends Base
      */
     public function updateActivation(string $moduleId): bool
     {
-        // get config data
-        $config = $this->getModuleConfigData($moduleId);
+        // prepare result
+        $result = false;
 
-        // is system module ?
-        if (!empty($config['isSystem'])) {
-            throw new Exceptions\Error($this->getLanguage()->translate('isSystem', 'exceptions', 'ModuleManager'));
-        }
+        if ($this->isModuleChangeable($moduleId)) {
+            // get config data
+            $config = $this->getModuleConfigData($moduleId);
 
-        // checking requireds
-        if ($this->hasRequireds($moduleId, $config)) {
-            throw new Exceptions\Error($this->getLanguage()->translate('hasRequireds', 'exceptions', 'ModuleManager'));
-        }
+            // drop cache
+            $this->getMetadata()->dropCache();
 
-        // drop cache
-        $this->getMetadata()->dropCache();
+            // write to file
+            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
 
-        // write to file
-        $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
-
-        // rebuild DB
-        if ($result && !empty($config['disabled'])) {
-            $this->getDataManager()->rebuild();
+            // rebuild DB
+            if ($result && !empty($config['disabled'])) {
+                $this->getDataManager()->rebuild();
+            }
         }
 
         return $result;
@@ -365,33 +362,69 @@ class ModuleManager extends Base
      */
     public function deleteModule(string $id): array
     {
-        // prepare params
-        $package = $this->getComposerModuleService()->getModulePackage($id);
-        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        // prepare result
+        $result = [];
 
-        // validation
-        if (empty($package) || empty($packages)) {
-            throw new Exceptions\Error($this->translateError('No such module'));
-        }
+        if ($this->isModuleChangeable($id)) {
+            // prepare params
+            $package = $this->getComposerModuleService()->getModulePackage($id);
+            $packages = $this->getComposerModuleService()->getModulePackages($id);
 
-        // update modules file
-        $this->updateModuleFile($id, true);
+            // validation
+            if (empty($package) || empty($packages)) {
+                throw new Exceptions\Error($this->translateError('No such module'));
+            }
 
-        // prepare modules diff
-        $beforeDelete = TreoComposer::getTreoModules();
+            // update modules file
+            $this->updateModuleFile($id, true);
 
-        // run composer
-        $result = $this->getComposerService()->run('remove ' . $packages['name']);
-
-        if (empty($result['status'])) {
             // prepare modules diff
-            $afterDelete = TreoComposer::getTreoModules();
+            $beforeDelete = TreoComposer::getTreoModules();
 
-            // delete treo dirs
-            TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+            // run composer
+            $result = $this->getComposerService()->run('remove ' . $packages['name']);
+
+            if (empty($result['status'])) {
+                // prepare modules diff
+                $afterDelete = TreoComposer::getTreoModules();
+
+                // delete treo dirs
+                TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * Is module changable?
+     *
+     * @param string $moduleId
+     *
+     * @return bool
+     * @throws Exceptions\Error
+     */
+    protected function isModuleChangeable(string $moduleId): bool
+    {
+        // is system module ?
+        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('isSystem', 'exceptions', 'ModuleManager')
+            );
+        }
+
+        // checking requireds
+        if ($this->hasRequireds($moduleId)) {
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('hasRequiredsDelete', 'exceptions', 'ModuleManager')
+            );
+        }
+
+        return true;
     }
 
     /**
@@ -470,44 +503,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * Is module allowed
-     *
-     * @param string $module
-     *
-     * @return bool
-     */
-    protected function isModuleAllowed(string $module): bool
-    {
-        // prepare result
-        $result = true;
-
-        // get config
-        $config = $this->getModuleConfigData($module);
-
-        // hide system
-        if ($config['isSystem']) {
-            $result = false;
-        }
-
-        // find system modules in requireds
-        foreach ($this->getMetadata()->getAllModules() as $moduleName) {
-            // get config
-            $rowConfig = $this->getMetadata()->getModuleConfigData($moduleName);
-
-            // get requireds
-            $requireds = $this->getModuleRequireds($module);
-
-            if (!empty($requireds) && in_array($module, $requireds) && $rowConfig['isSystem']) {
-                $result = false;
-
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get module requireds
      *
      * @param string $moduleId
@@ -540,35 +535,13 @@ class ModuleManager extends Base
     }
 
     /**
-     * Prepare requireds
-     *
-     * @param array $requireds
-     *
-     * @return array
-     */
-    protected function prepareRequireds(array $requireds): array
-    {
-        // prepare result
-        $result = [];
-
-        foreach ($requireds as $module) {
-            if ($this->isModuleAllowed($module)) {
-                $result[] = $module;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Is module has requireds
      *
      * @param string $moduleId
-     * @param array  $moduleConfig
      *
      * @return bool
      */
-    protected function hasRequireds(string $moduleId, array $moduleConfig): bool
+    protected function hasRequireds(string $moduleId): bool
     {
         // prepare result
         $result = false;
@@ -580,7 +553,7 @@ class ModuleManager extends Base
         $moduleRequireds = $this->getModuleRequireds($moduleId);
 
         // is module requireds by another modules
-        if (empty($moduleConfig['disabled'])) {
+        if (empty($this->getModuleConfigData("{$moduleId}.disabled"))) {
             foreach ($moduleList as $module) {
                 // get config
                 $config = $this->getModuleConfigData($module);
