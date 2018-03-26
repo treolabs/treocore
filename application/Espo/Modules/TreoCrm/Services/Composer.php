@@ -58,7 +58,7 @@ class Composer extends Base
     /**
      * @var string
      */
-    const TREODIR = 'treo-crm';
+    const TREODIR = 'treo-module';
 
     /**
      * @var string
