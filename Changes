@@ -1,3 +1,9 @@
+1.7.1  2018-03-26 15:24:34 Europe/Kiev
+1.7.1  2018-03-26 15:20:19 Europe/Kiev
+1.7.1  2018-03-26 15:16:56 Europe/Kiev
+1.7.1  2018-03-26 15:16:35 Europe/Kiev
+1.7.1  2018-03-26 15:16:16 Europe/Kiev
+1.7.1  2018-03-26 15:16:04 Europe/Kiev
     * FEA #61205 : PIM це окремий модуль (Roman Ratsun)
     * FEA #61207 : Перейменувати шляхи до пакетів у всіх composer.json, тобто treo-crm/erp має стати treo-module/erp (Roman Ratsun)
     * BUG #60600 : Не обновляется модуль калькуляции  (Roman Ratsun)
