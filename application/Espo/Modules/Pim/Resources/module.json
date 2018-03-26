@@ -1,6 +1,0 @@
-{
-    "isSystem": true,
-    "extends": ["Completeness", "Revisions"],
-    "disabled": false,
-    "order": 5120
-}
