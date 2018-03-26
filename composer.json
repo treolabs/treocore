@@ -1,6 +1,6 @@
 {
-    "name": "treo-crm/treopimsystem",
-    "description": "TreoPIM System",
+    "name": "treo/treopim",
+    "description": "TreoPIM",
     "authors": [
         {
             "name": "Roman Ratsun",
@@ -37,8 +37,8 @@
         "spatie/array-to-xml": "2.7.0",
         "league/csv": "8.2.2",
         "symfony/expression-language": "3.4.3",
-        "treo-crm/coloredfields": "^1.1.0",
-        "treo-crm/multilang": "^1.2.0"
+        "treo-module/coloredfields": "^1.1.0",
+        "treo-module/multilang": "^1.2.0"
     },
     "autoload": {
         "psr-0": {
