@@ -106,10 +106,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             for (let key in rows) {
                                 let setEditMode;
                                 if (rows[key].model.get('isActive')) {
-                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key));
-                                    if (rows[key].model.get('isSystem')) {
-                                        setEditMode = false;
-                                    }
+                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key)) && !rows[key].model.get('isSystem');
                                 } else {
                                     setEditMode = (collection.get(key).get('required') || []).every(item => {
                                         let model = collection.get(item);
@@ -158,7 +155,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
                     }, view => {
                         this.listenTo(view, 'after:render', () => {
-                            debugger;
                             this.$el.find('.list-container td.cell ').css({
                                 'white-space': 'normal',
                                 'text-overflow': 'ellipsis'
