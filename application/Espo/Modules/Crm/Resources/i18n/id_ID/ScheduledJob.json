@@ -1,8 +1,0 @@
-{
-  "options": {
-    "job": {
-      "ProcessMassEmail": "Kirim Mass Email",
-      "ControlKnowledgeBaseArticleStatus": "Basis Pengetahuan kontrol Status Pasal"
-    }
-  }
-}
