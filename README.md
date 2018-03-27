@@ -8,7 +8,7 @@ TreoPIM is a single page application (SPA) with an API-centric architecture and 
 
 ### Documentation
 
-Documentation for administrators, users and developers is available [here](application/Espo/Modules/TreoCore/docs/).
+Documentation for administrators, users and developers is available [here](docs/).
 
 ### Installation
 
