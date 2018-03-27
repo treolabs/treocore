@@ -55,7 +55,7 @@ if (!isset($pathInfo['extension']) || $pathInfo['extension'] !== 'zip' || !is_fi
     die("Unsupported package.\n");
 }
 
-$app = new \Espo\Modules\TreoCrm\Core\Application();
+$app = new \Espo\Modules\TreoCore\Core\Application();
 
 $config = $app->getContainer()->get('config');
 $entityManager = $app->getContainer()->get('entityManager');
@@ -78,7 +78,7 @@ try {
 }
 
 try {
-    $app = new \Espo\Modules\TreoCrm\Core\Application();
+    $app = new \Espo\Modules\TreoCore\Core\Application();
     $app->runRebuild();
 } catch (\Exception $e) {}
 

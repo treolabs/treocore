@@ -1,8 +1,0 @@
-{
-    "EventManager": "Espo\\Modules\\TreoCrm\\Loaders\\EventManagerLoader",
-    "EntityManagerUtil": "Espo\\Modules\\TreoCrm\\Loaders\\EntityManagerUtil",
-    "Layout": "Espo\\Modules\\TreoCrm\\Loaders\\Layout",
-    "FieldManager": "Espo\\Modules\\TreoCrm\\Loaders\\FieldManagerLoader",
-    "CronManager": "Espo\\Modules\\TreoCrm\\Loaders\\CronManager",
-    "ProgressManager": "Espo\\Modules\\TreoCrm\\Loaders\\ProgressManagerLoader"
-}

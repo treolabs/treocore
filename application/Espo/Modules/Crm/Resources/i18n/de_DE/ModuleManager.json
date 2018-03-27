@@ -1,8 +1,8 @@
 {
     "moduleNames": {
-        "TreoCrm": "EspoCRM"
+        "TreoCore": "EspoCRM"
     },
     "moduleDescriptions": {
-        "TreoCrm": "-"
+        "TreoCore": "-"
     }
 }
