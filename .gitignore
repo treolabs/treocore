@@ -11,8 +11,6 @@
 !/apidocs/
 /apidocs/index.html
 /application/Espo/Modules/*
-!/application/Espo/Modules/Crm/
 !/application/Espo/Modules/TreoCore/
 /client/modules/*
-!/client/modules/crm/
 !/client/modules/treo-core/

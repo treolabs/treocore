@@ -1,9 +1,0 @@
-[
-    {
-        "label": "",
-        "rows": [
-            [{"name":"body", "fullWidth": true, "noLabel": true}],
-            [{"name":"attachments", "fullWidth": true, "noLabel": true}]
-        ]
-    }
-]

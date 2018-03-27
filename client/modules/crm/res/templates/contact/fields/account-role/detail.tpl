@@ -1,1 +1,0 @@
-{{#if accountIsInactive}}<del>{{/if}}{{value}}{{#if accountIsInactive}}</del>{{/if}}
