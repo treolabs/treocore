@@ -1,7 +1,0 @@
-[
-    {"name": "name", "link": true, "width": 30},
-    {"name": "campaign"},
-    {"name": "status", "width": 14},
-    {"name": "startAt", "width": 14},
-    {"name": "emailTemplate"}
-]

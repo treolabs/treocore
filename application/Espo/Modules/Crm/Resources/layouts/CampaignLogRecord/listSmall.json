@@ -1,6 +1,0 @@
-[
-    {"name": "action", "notSortable": true, "width": 15},
-    {"name": "data", "notSortable": true, "customLabel": ""},
-    {"name": "campaign", "notSortable": true},
-    {"name": "actionDate", "width": 18}
-]

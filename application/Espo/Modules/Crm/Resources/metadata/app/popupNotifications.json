@@ -1,7 +1,0 @@
-{
-    "event": {
-        "url": "Activities/action/popupNotifications",
-        "interval": 15,
-        "view": "crm:views/meeting/popup-notification"
-    }
-}

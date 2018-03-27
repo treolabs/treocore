@@ -1,7 +1,0 @@
-[
-    {"name":"name","width":30,"link":true},
-    {"name":"emailAddress", "notSortable": true},
-    {"name":"phoneNumber", "notSortable": true},
-    {"name":"accountName"},
-    {"name":"createdAt"}
-]
