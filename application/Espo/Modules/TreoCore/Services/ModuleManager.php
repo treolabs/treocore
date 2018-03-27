@@ -202,8 +202,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public
-    function getAvailableModulesList(): array
+    public function getAvailableModulesList(): array
     {
         // prepare result
         $result = [
@@ -257,9 +256,9 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    public
-    function updateActivation(string $moduleId
-    ): bool {
+    public function updateActivation(string $moduleId
+    ): bool
+    {
         // prepare result
         $result = false;
 
@@ -289,9 +288,9 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public
-    function installModule(string $id
-    ): array {
+    public function installModule(string $id
+    ): array
+    {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
@@ -326,9 +325,9 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public
-    function updateModule(string $id, string $version
-    ): array {
+    public function updateModule(string $id, string $version
+    ): array
+    {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
@@ -366,9 +365,9 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public
-    function deleteModule(string $id
-    ): array {
+    public function deleteModule(string $id
+    ): array
+    {
         // prepare result
         $result = [];
 
@@ -411,9 +410,9 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    protected
-    function isModuleChangeable(string $moduleId
-    ): bool {
+    protected function isModuleChangeable(string $moduleId
+    ): bool
+    {
         // is system module ?
         if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
             throw new Exceptions\Error(
@@ -443,9 +442,9 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected
-    function updateModuleFile(string $moduleId, bool $isDisabled
-    ): bool {
+    protected function updateModuleFile(string $moduleId, bool $isDisabled
+    ): bool
+    {
         // prepare data
         $data = [];
 
@@ -475,9 +474,9 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    protected
-    function createModuleLoadOrder(string $moduleId
-    ): int {
+    protected function createModuleLoadOrder(string $moduleId
+    ): int
+    {
         // prepare result
         $result = 5100;
 
@@ -519,9 +518,9 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    protected
-    function getModuleRequireds(string $moduleId
-    ): array {
+    protected function getModuleRequireds(string $moduleId
+    ): array
+    {
         if (!isset($this->moduleRequireds[$moduleId])) {
             // prepare result
             $this->moduleRequireds[$moduleId] = [];
@@ -552,9 +551,9 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected
-    function hasRequireds(string $moduleId
-    ): bool {
+    protected function hasRequireds(string $moduleId
+    ): bool
+    {
         // prepare result
         $result = false;
 
@@ -603,9 +602,9 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected
-    function translateModule(string $module, string $key
-    ): string {
+    protected function translateModule(string $module, string $key
+    ): string
+    {
         // prepare result
         $result = '';
 
@@ -631,9 +630,9 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected
-    function translateError(string $key
-    ): string {
+    protected function translateError(string $key
+    ): string
+    {
         return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
     }
 
@@ -644,9 +643,9 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected
-    function prepareModuleVersion(string $version
-    ): string {
+    protected function prepareModuleVersion(string $version
+    ): string
+    {
         return str_replace('v', '', $version);
     }
 
@@ -657,9 +656,9 @@ class ModuleManager extends Base
      *
      * @return mixed
      */
-    protected
-    function getModuleConfigData(string $key
-    ) {
+    protected function getModuleConfigData(string $key
+    )
+    {
         return $this->getMetadata()->getModuleConfigData($key);
     }
 
@@ -668,8 +667,7 @@ class ModuleManager extends Base
      *
      * @return DataManager
      */
-    protected
-    function getDataManager(): DataManager
+    protected function getDataManager(): DataManager
     {
         return $this->getInjection('dataManager');
     }
@@ -679,8 +677,7 @@ class ModuleManager extends Base
      *
      * @return ComposerModule
      */
-    protected
-    function getComposerModuleService(): ComposerModule
+    protected function getComposerModuleService(): ComposerModule
     {
         return $this->getInjection('serviceFactory')->create('ComposerModule');
     }
@@ -690,8 +687,7 @@ class ModuleManager extends Base
      *
      * @return Metadata
      */
-    protected
-    function getMetadata(): Metadata
+    protected function getMetadata(): Metadata
     {
         return $this->getInjection('metadata');
     }
@@ -701,8 +697,7 @@ class ModuleManager extends Base
      *
      * @return Language
      */
-    protected
-    function getLanguage(): Language
+    protected function getLanguage(): Language
     {
         return $this->getInjection('language');
     }
@@ -712,8 +707,7 @@ class ModuleManager extends Base
      *
      * @return FileManager
      */
-    protected
-    function getFileManager(): FileManager
+    protected function getFileManager(): FileManager
     {
         return $this->getInjection('fileManager');
     }
@@ -723,8 +717,7 @@ class ModuleManager extends Base
      *
      * @return Composer
      */
-    protected
-    function getComposerService(): Composer
+    protected function getComposerService(): Composer
     {
         return $this->getInjection('serviceFactory')->create('Composer');
     }
@@ -737,9 +730,9 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    private
-    static function moduleListSort(array $a, array $b
-    ): int {
+    private static function moduleListSort(array $a, array $b
+    ): int
+    {
         // prepare params
         $a = $a['name'];
         $b = $b['name'];
