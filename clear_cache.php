@@ -40,6 +40,6 @@ if (substr($sapiName, 0, 3) != 'cli') {
 
 include "bootstrap.php";
 
-$app = new \Espo\Modules\TreoCrm\Core\Application();
+$app = new \Espo\Modules\TreoCore\Core\Application();
 $app->runClearCache();
 

@@ -43,7 +43,7 @@ include "bootstrap.php";
 $arg = isset($_SERVER['argv'][1]) ? trim($_SERVER['argv'][1]) : '';
 
 if ($arg == 'version' || $arg == '-v') {
-    $app = new \Espo\Modules\TreoCrm\Core\Application();
+    $app = new \Espo\Modules\TreoCore\Core\Application();
     die("Current version is " . $app->getContainer()->get('config')->get('version') . ".\n");
 }
 
@@ -60,7 +60,7 @@ if (!isset($pathInfo['extension']) || $pathInfo['extension'] !== 'zip' || !is_fi
     die("Unsupported package.\n");
 }
 
-$app = new \Espo\Modules\TreoCrm\Core\Application();
+$app = new \Espo\Modules\TreoCore\Core\Application();
 
 $config = $app->getContainer()->get('config');
 $entityManager = $app->getContainer()->get('entityManager');
@@ -84,7 +84,7 @@ try {
 }
 
 try {
-    $app = new \Espo\Modules\TreoCrm\Core\Application();
+    $app = new \Espo\Modules\TreoCore\Core\Application();
     $app->runRebuild();
 } catch (\Exception $e) {}
 
