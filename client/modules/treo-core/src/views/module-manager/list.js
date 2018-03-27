@@ -106,7 +106,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             for (let key in rows) {
                                 let setEditMode;
                                 if (rows[key].model.get('isActive')) {
-                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key));
+                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key)) && !rows[key].model.get('isSystem');
                                 } else {
                                     setEditMode = (collection.get(key).get('required') || []).every(item => {
                                         let model = collection.get(item);

@@ -47,13 +47,15 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
                         }
                     });
                 }
-                list.push({
-                    action: 'removeModule',
-                    label: 'removeModule',
-                    data: {
-                        id: this.model.id
-                    }
-                });
+                if (!this.model.get('isSystem')) {
+                    list.push({
+                        action: 'removeModule',
+                        label: 'removeModule',
+                        data: {
+                            id: this.model.id
+                        }
+                    });
+                }
             }
             return list;
         },
