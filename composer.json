@@ -1,5 +1,6 @@
 {
   "name": "treo/treopim",
+  "version": "1.7.2",
   "description": "TreoPIM",
   "authors": [
     {
@@ -9,15 +10,6 @@
   ],
   "require": {
     "php": "^7.1",
-    "ext-json": "*",
-    "ext-openssl": "*",
-    "ext-pdo_mysql": "*",
-    "ext-zip": "*",
-    "ext-gd": "*",
-    "ext-mbstring": "*",
-    "ext-imap": "*",
-    "ext-curl": "*",
-    "ext-xml": "*",
     "doctrine/dbal": "2.4.5",
     "slim/slim": "2.6.2",
     "mtdowling/cron-expression": "1.0.4",
