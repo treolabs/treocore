@@ -268,17 +268,13 @@ class ModuleManager extends Base
             // drop cache
             $this->getMetadata()->dropCache();
 
-            echo '<pre>';
-            print_r('123');
-            die();
+            // write to file
+            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
 
             // rebuild DB
-            if (empty($config['disabled'])) {
+            if ($result && !empty($config['disabled'])) {
                 $this->getDataManager()->rebuild();
             }
-
-            // prepare result
-            $result = true;
         }
 
         return $result;
@@ -304,9 +300,6 @@ class ModuleManager extends Base
         if (!empty($package)) {
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
-
-        // update modules file
-        $this->updateModuleFile($id, true);
 
         // run composer
         $result = $this
@@ -343,9 +336,6 @@ class ModuleManager extends Base
         if ($this->prepareModuleVersion($packages['version']) != $version) {
             throw new Exceptions\Error($this->translateError('No such module version'));
         }
-
-        // update modules file
-        $this->updateModuleFile($id, true);
 
         // run composer
         $result = $this
