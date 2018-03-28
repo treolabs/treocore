@@ -1,3 +1,5 @@
+    * FEA #61328 : Модуль EspoCRM не є системним (Roman Ratsun)
+
 1.7.3  2018-03-27 18:27:03 Europe/Kiev
     * FEA #61203 : Вирізати все що повязано з CRM (Roman Ratsun)
     * FEA #60535 : Перемістити core документацію (Roman Ratsun)
