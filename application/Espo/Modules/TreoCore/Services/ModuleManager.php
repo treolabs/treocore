@@ -268,6 +268,10 @@ class ModuleManager extends Base
             // drop cache
             $this->getMetadata()->dropCache();
 
+            echo '<pre>';
+            print_r('123');
+            die();
+
             // rebuild DB
             if (empty($config['disabled'])) {
                 $this->getDataManager()->rebuild();
@@ -307,10 +311,7 @@ class ModuleManager extends Base
         // run composer
         $result = $this
             ->getComposerService()
-            ->run("require " . $packages['name'] . ":" . $packages['version']);
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+            ->update($packages['name'], $packages['version']);
 
         return $result;
     }
@@ -347,10 +348,9 @@ class ModuleManager extends Base
         $this->updateModuleFile($id, true);
 
         // run composer
-        $result = $this->getComposerService()->run("require " . $packages[$version]['name'] . ":{$version}");
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+        $result = $this
+            ->getComposerService()
+            ->update($packages[$version]['name'], $version);
 
         return $result;
     }
@@ -362,8 +362,8 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function deleteModule(string $id
-    ): array {
+    public function deleteModule(string $id): array
+    {
         // prepare result
         $result = [];
 
@@ -384,7 +384,7 @@ class ModuleManager extends Base
             $beforeDelete = TreoComposer::getTreoModules();
 
             // run composer
-            $result = $this->getComposerService()->run('remove ' . $packages['name']);
+            $result = $this->getComposerService()->delete($packages['name']);
 
             if (empty($result['status'])) {
                 // prepare modules diff
@@ -717,8 +717,8 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    private static function moduleListSort(array $a, array $b
-    ): int {
+    private static function moduleListSort(array $a, array $b): int
+    {
         // prepare params
         $a = $a['name'];
         $b = $b['name'];
