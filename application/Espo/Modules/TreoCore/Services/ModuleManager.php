@@ -269,13 +269,13 @@ class ModuleManager extends Base
             // drop cache
             $this->getMetadata()->dropCache();
 
-            // write to file
-            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
-
             // rebuild DB
-            if ($result && !empty($config['disabled'])) {
+            if (empty($config['disabled'])) {
                 $this->getDataManager()->rebuild();
             }
+
+            // prepare result
+            $result = true;
         }
 
         return $result;
