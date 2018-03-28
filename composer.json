@@ -29,7 +29,15 @@
     "spatie/array-to-xml": "2.7.0",
     "league/csv": "8.2.2",
     "symfony/expression-language": "3.4.3",
+    "wikimedia/composer-merge-plugin": "^1.4",
     "treo-module/pim": "1.*"
+  },
+  "extra": {
+    "merge-plugin": {
+      "require": [
+        "data/composer.json"
+      ]
+    }
   },
   "autoload": {
     "psr-0": {
