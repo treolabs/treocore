@@ -256,8 +256,7 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    public function updateActivation(string $moduleId
-    ): bool
+    public function updateActivation(string $moduleId): bool
     {
         // prepare result
         $result = false;
@@ -288,8 +287,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function installModule(string $id
-    ): array
+    public function installModule(string $id): array
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
@@ -325,8 +323,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function updateModule(string $id, string $version
-    ): array
+    public function updateModule(string $id, string $version): array
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
@@ -366,8 +363,7 @@ class ModuleManager extends Base
      * @return array
      */
     public function deleteModule(string $id
-    ): array
-    {
+    ): array {
         // prepare result
         $result = [];
 
@@ -410,8 +406,7 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    protected function isModuleChangeable(string $moduleId
-    ): bool
+    protected function isModuleChangeable(string $moduleId): bool
     {
         // is system module ?
         if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
@@ -442,8 +437,7 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected function updateModuleFile(string $moduleId, bool $isDisabled
-    ): bool
+    protected function updateModuleFile(string $moduleId, bool $isDisabled): bool
     {
         // prepare data
         $data = [];
@@ -474,8 +468,7 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    protected function createModuleLoadOrder(string $moduleId
-    ): int
+    protected function createModuleLoadOrder(string $moduleId): int
     {
         // prepare result
         $result = 5100;
@@ -518,8 +511,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    protected function getModuleRequireds(string $moduleId
-    ): array
+    protected function getModuleRequireds(string $moduleId): array
     {
         if (!isset($this->moduleRequireds[$moduleId])) {
             // prepare result
@@ -551,8 +543,7 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected function hasRequireds(string $moduleId
-    ): bool
+    protected function hasRequireds(string $moduleId): bool
     {
         // prepare result
         $result = false;
@@ -602,8 +593,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function translateModule(string $module, string $key
-    ): string
+    protected function translateModule(string $module, string $key): string
     {
         // prepare result
         $result = '';
@@ -630,8 +620,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function translateError(string $key
-    ): string
+    protected function translateError(string $key): string
     {
         return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
     }
@@ -643,8 +632,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function prepareModuleVersion(string $version
-    ): string
+    protected function prepareModuleVersion(string $version): string
     {
         return str_replace('v', '', $version);
     }
@@ -656,8 +644,7 @@ class ModuleManager extends Base
      *
      * @return mixed
      */
-    protected function getModuleConfigData(string $key
-    )
+    protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
     }
@@ -731,8 +718,7 @@ class ModuleManager extends Base
      * @return int
      */
     private static function moduleListSort(array $a, array $b
-    ): int
-    {
+    ): int {
         // prepare params
         $a = $a['name'];
         $b = $b['name'];
