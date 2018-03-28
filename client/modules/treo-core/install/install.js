@@ -47,13 +47,8 @@ $(function () {
         render() {
             this.getTranslations().done(function (translations) {
                 this.model.set({translate: translations});
-                let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel});
-                this.changeView(languageAndLicenseStep);
+                let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel, parentEl: this.$el});
             }.bind(this));
-        },
-
-        changeView(viewName) {
-            this.$el.append(viewName.render().el);
         },
 
         getTranslations() {
@@ -114,7 +109,8 @@ $(function () {
             'click .next-step': 'nextStep'
         },
 
-        initialize() {
+        initialize(options) {
+            this.parentEl = options.parentEl;
             this.getLicenseAndLanguages().done(function (data) {
                 this.model.set({licenseAndLanguages: data});
                 this.render();
@@ -123,29 +119,28 @@ $(function () {
 
         render() {
             this.$el.html(this.template(this.model.toJSON()));
-            return this;
+            this.parentEl.append(this.$el);
         },
 
         getLicenseAndLanguages() {
             return $.ajax({
                 url: 'api/v1/Installer/getLicenseAndLanguages',
-                type: 'GET',
-                async: false
+                type: 'GET'
             });
         },
 
         nextStep() {
+            let msgBox = this.$el.find('.msg-box');
             if (this.$el.find('#license-agree').is(':checked')) {
-                if (!this.$el.find('.msg-box').hasClass('hidden')) {
-                    this.$el.find('.msg-box').addClass('hidden');
+                if (!msgBox.hasClass('hidden')) {
+                    msgBox.addClass('hidden');
                 }
                 this.remove();
-                let dbConnectSettings = new DbConnectSettings({model: generalModel});
-                mainView.changeView(dbConnectSettings);
+                let dbConnectSettings = new DbConnectSettings({model: generalModel, parentEl: this.parentEl});
             } else {
-                this.$el.find('.msg-box').text(this.model.get('translate').messages.youMustAgreeToTheLicenseAgreement);
-                this.$el.find('.msg-box').addClass('alert-danger');
-                this.$el.find('.msg-box').removeClass('hidden');
+                msgBox.text(this.model.get('translate').messages.youMustAgreeToTheLicenseAgreement);
+                msgBox.addClass('alert-danger');
+                msgBox.removeClass('hidden');
             }
         },
 
@@ -168,10 +163,11 @@ $(function () {
                         this.render();
                     }.bind(this));
                 } else {
-                    this.$el.find('.msg-box').text(data.message);
-                    this.$el.find('.msg-box').removeClass('alert-success');
-                    this.$el.find('.msg-box').addClass('alert-danger');
-                    this.$el.find('.msg-box').removeClass('hidden');
+                    let msgBox = this.$el.find('.msg-box');
+                    msgBox.text(data.message);
+                    msgBox.removeClass('alert-success');
+                    msgBox.addClass('alert-danger');
+                    msgBox.removeClass('hidden');
                 }
             }.bind(this));
         },
@@ -192,25 +188,25 @@ $(function () {
             'focusout .modal-body input.form-control': 'setFieldsValuesToModel'
         },
 
-        initialize() {
-            if (!this.model.has('dbSettings')) {
-                this.getDefaultDbSettings().done(function (data) {
+        initialize(options) {
+            this.parentEl = options.parentEl;
+            this.getDefaultDbSettings().done(function (data) {
+                if (!this.model.has('dbSettings')) {
                     this.model.set({dbSettings: data});
-                    this.render();
-                }.bind(this));
-            }
+                }
+                this.render();
+            }.bind(this));
         },
 
         render() {
             this.$el.html(this.template(this.model.toJSON()));
-            return this;
+            this.parentEl.append(this.$el);
         },
 
         getDefaultDbSettings() {
             return $.ajax({
                 url: 'api/v1/Installer/getDefaultDbSettings',
-                type: 'GET',
-                async: false
+                type: 'GET'
             });
         },
 
@@ -228,16 +224,17 @@ $(function () {
         testDbConnection() {
             if (mainView.validate.call(this, 'dbSettings')) {
                 this.checkDbConnect().done(function (data) {
+                    let msgBox = this.$el.find('.msg-box');
                     if (data.status) {
-                        this.$el.find('.msg-box').text(this.model.get('translate').messages.connectionSuccessful);
-                        this.$el.find('.msg-box').removeClass('alert-danger');
-                        this.$el.find('.msg-box').addClass('alert-success');
-                        this.$el.find('.msg-box').removeClass('hidden');
+                        msgBox.text(this.model.get('translate').messages.connectionSuccessful);
+                        msgBox.removeClass('alert-danger');
+                        msgBox.addClass('alert-success');
+                        msgBox.removeClass('hidden');
                     } else {
-                        this.$el.find('.msg-box').text(data.message);
-                        this.$el.find('.msg-box').removeClass('alert-success');
-                        this.$el.find('.msg-box').addClass('alert-danger');
-                        this.$el.find('.msg-box').removeClass('hidden');
+                        msgBox.text(data.message);
+                        msgBox.removeClass('alert-success');
+                        msgBox.addClass('alert-danger');
+                        msgBox.removeClass('hidden');
                     }
                 }.bind(this));
             }
@@ -262,8 +259,7 @@ $(function () {
         backStep() {
             this.trigger('destroy');
             this.remove();
-            let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel});
-            mainView.changeView(languageAndLicenseStep);
+            let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel, parentEl: this.parentEl});
         },
 
         nextStep() {
@@ -271,13 +267,13 @@ $(function () {
                 this.setDbSettings().done(function (data) {
                     if (data.status) {
                         this.remove();
-                        let adminCreation = new AdminCreation({model: generalModel});
-                        mainView.changeView(adminCreation);
+                        let adminCreation = new AdminCreation({model: generalModel, parentEl: this.parentEl});
                     } else {
-                        this.$el.find('.msg-box').text(data.message);
-                        this.$el.find('.msg-box').removeClass('alert-success');
-                        this.$el.find('.msg-box').addClass('alert-danger');
-                        this.$el.find('.msg-box').removeClass('hidden');
+                        let msgBox = this.$el.find('.msg-box');
+                        msgBox.text(data.message);
+                        msgBox.removeClass('alert-success');
+                        msgBox.addClass('alert-danger');
+                        msgBox.removeClass('hidden');
                     }
                 }.bind(this));
             }
@@ -315,7 +311,8 @@ $(function () {
             'focusout .modal-body input.form-control': 'setFieldsValuesToModel'
         },
 
-        initialize() {
+        initialize(options) {
+            this.parentEl = options.parentEl;
             if (!this.model.has('adminSettings')) {
                 this.model.set({
                     adminSettings: {
@@ -325,11 +322,12 @@ $(function () {
                     }
                 });
             }
+            this.render();
         },
 
         render() {
             this.$el.html(this.template(this.model.toJSON()));
-            return this;
+            this.parentEl.append(this.$el);
         },
 
         setFieldsValuesToModel() {
@@ -344,8 +342,7 @@ $(function () {
         backStep() {
             this.trigger('destroy');
             this.remove();
-            let dbConnectSettings = new DbConnectSettings({model: generalModel});
-            mainView.changeView(dbConnectSettings);
+            let dbConnectSettings = new DbConnectSettings({model: generalModel, parentEl: this.parentEl});
         },
 
         nextStep() {
@@ -354,10 +351,11 @@ $(function () {
                     if (data.status) {
                         window.location.reload();
                     } else {
-                        this.$el.find('.msg-box').text(data.message);
-                        this.$el.find('.msg-box').removeClass('alert-success');
-                        this.$el.find('.msg-box').addClass('alert-danger');
-                        this.$el.find('.msg-box').removeClass('hidden');
+                        let msgBox = this.$el.find('.msg-box');
+                        msgBox.text(data.message);
+                        msgBox.removeClass('alert-success');
+                        msgBox.addClass('alert-danger');
+                        msgBox.removeClass('hidden');
                     }
                 }.bind(this));
             }

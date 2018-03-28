@@ -27,7 +27,7 @@
     "finish": "Beenden"
   },
   "errors": {
-    "alreadyInstalled": "TreoCrm ist schon installiert",
+    "alreadyInstalled": "TreoCore ist schon installiert",
     "languageNotCorrect": "Die Eingabesprache ist falsch",
     "differentPass": "Verschiedene Passwörter"
   },
