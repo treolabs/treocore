@@ -1,128 +1,136 @@
 [
-    {
-        "route": "/Admin/action/uploadUpgradePackage",
-        "method": "post",
-        "params": {
-            "controller": "TreoAdmin",
-            "action": "uploadUpgradePackage"
-        }
-    },
-    {
-        "route": "/ModuleManager/list",
-        "method": "get",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "list"
-        }
-    },
-    {
-        "route": "/ModuleManager/:moduleId/updateActivation",
-        "method": "put",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "updateActivation"
-        }
-    },
-    {
-        "route": "/ModuleManager/installModule",
-        "method": "post",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "installModule"
-        }
-    },
-    {
-        "route": "/ModuleManager/updateModule",
-        "method": "put",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "updateModule"
-        }
-    },
-    {
-        "route": "/ModuleManager/deleteModule",
-        "method": "delete",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "deleteModule"
-        }
-    },
-    {
-        "route": "/ModuleManager/composerUser",
-        "method": "get",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "getComposerUser"
-        }
-    },
-    {
-        "route": "/ModuleManager/composerUser",
-        "method": "put",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "setComposerUser"
-        }
-    },
-    {
-        "route": "/ModuleManager/availableModulesList",
-        "method": "get",
-        "params": {
-            "controller": "ModuleManager",
-            "action": "getAvailableModulesList"
-        }
-    },
-    {
-        "route": "/ProgressManager/isShowPopup",
-        "method": "get",
-        "params": {
-            "controller": "ProgressManager",
-            "action": "isShowPopup"
-        }
-    },
-    {
-        "route": "/ProgressManager/popupData",
-        "method": "get",
-        "params": {
-            "controller": "ProgressManager",
-            "action": "popupData"
-        }
-    },
-    {
-        "route": "/ProgressManager/:id/cancel",
-        "method": "put",
-        "params": {
-            "controller": "ProgressManager",
-            "action": "cancel"
-        }
-    },
-    {
-        "route": "/ProgressManager/:id/close",
-        "method": "put",
-        "params": {
-            "controller": "ProgressManager",
-            "action": "close"
-        }
-    },
-    {
-        "route":"/Installer/:action",
-        "method":"post",
-        "params":{
-            "controller":"Installer",
-            "action": ":action"
-        },
-        "conditions":{
-            "auth":false
-        }
-    },
-    {
-        "route":"/Installer/:action",
-        "method":"get",
-        "params":{
-            "controller":"Installer",
-            "action": ":action"
-        },
-        "conditions":{
-            "auth":false
-        }
+  {
+    "route": "/Admin/action/uploadUpgradePackage",
+    "method": "post",
+    "params": {
+      "controller": "TreoAdmin",
+      "action": "uploadUpgradePackage"
     }
+  },
+  {
+    "route": "/ModuleManager/list",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "list"
+    }
+  },
+  {
+    "route": "/ModuleManager/:moduleId/updateActivation",
+    "method": "put",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "updateActivation"
+    }
+  },
+  {
+    "route": "/ModuleManager/installModule",
+    "method": "post",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "installModule"
+    }
+  },
+  {
+    "route": "/ModuleManager/updateModule",
+    "method": "put",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "updateModule"
+    }
+  },
+  {
+    "route": "/ModuleManager/deleteModule",
+    "method": "delete",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "deleteModule"
+    }
+  },
+  {
+    "route": "/ModuleManager/composerUser",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "getComposerUser"
+    }
+  },
+  {
+    "route": "/ModuleManager/composerUser",
+    "method": "put",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "setComposerUser"
+    }
+  },
+  {
+    "route": "/ModuleManager/availableModulesList",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "getAvailableModulesList"
+    }
+  },
+  {
+    "route": "/ProgressManager/isShowPopup",
+    "method": "get",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "isShowPopup"
+    }
+  },
+  {
+    "route": "/ProgressManager/popupData",
+    "method": "get",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "popupData"
+    }
+  },
+  {
+    "route": "/ProgressManager/:id/cancel",
+    "method": "put",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "cancel"
+    }
+  },
+  {
+    "route": "/ProgressManager/:id/close",
+    "method": "put",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "close"
+    }
+  },
+  {
+    "route": "/Admin/action/runUpgrade",
+    "method": "post",
+    "params": {
+      "controller": "TreoAdmin",
+      "action": "TreoRunUpgrade"
+    }
+  },
+  {
+    "route": "/Installer/:action",
+    "method": "post",
+    "params": {
+      "controller": "Installer",
+      "action": ":action"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
+    "route": "/Installer/:action",
+    "method": "get",
+    "params": {
+      "controller": "Installer",
+      "action": ":action"
+    },
+    "conditions": {
+      "auth": false
+    }
+  }
 ]
