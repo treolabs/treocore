@@ -32,13 +32,14 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
 use Espo\Controllers\Admin;
 use Espo\Core\Exceptions;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
+use Espo\Modules\TreoCore\Services\Composer;
 
 /**
  * TreoAdmin controller
@@ -47,6 +48,27 @@ use Espo\Modules\TreoCore\Core\UpgradeManager;
  */
 class TreoAdmin extends Admin
 {
+
+    /**
+     * Run upgrade action
+     *
+     * @param mixed $params
+     * @param mixed $data
+     *
+     * @return bool
+     */
+    public function actionTreoRunUpgrade($params, $data)
+    {
+        // get result
+        $result = parent::postActionRunUpgrade($params, $data);
+
+        if ($result) {
+            // run composer
+            $this->getComposerService()->run("update");
+        }
+
+        return $result;
+    }
 
     /**
      * UploadUpgradePackage action
@@ -66,11 +88,21 @@ class TreoAdmin extends Admin
         $upgradeManager = new UpgradeManager($this->getContainer());
 
         $upgradeId = $upgradeManager->upload($data);
-        $manifest  = $upgradeManager->getManifest();
+        $manifest = $upgradeManager->getManifest();
 
         return [
             'id'      => $upgradeId,
             'version' => $manifest['version'],
         ];
+    }
+
+    /**
+     * Get Composer service
+     *
+     * @return Composer
+     */
+    protected function getComposerService(): Composer
+    {
+        return $this->getService('Composer');
     }
 }

@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
@@ -82,12 +82,13 @@ class Config extends EspoConfig
     /**
      * @var array
      */
-    protected $associativeArrayAttributeList = [
-        'currencyRates',
-        'database',
-        'logger',
-        'defaultPermissions',
-    ];
+    protected $associativeArrayAttributeList
+        = [
+            'currencyRates',
+            'database',
+            'logger',
+            'defaultPermissions',
+        ];
 
     /**
      * @var array
@@ -217,7 +218,7 @@ class Config extends EspoConfig
 
         foreach ($name as $key => $value) {
             if (in_array($key, $this->associativeArrayAttributeList) && is_object($value)) {
-                $value = (array) $value;
+                $value = (array)$value;
             }
             $this->data[$key] = $value;
             if (!$dontMarkDirty) {
@@ -277,7 +278,7 @@ class Config extends EspoConfig
 
         if ($result) {
             $this->changedData = array();
-            $this->removeData  = array();
+            $this->removeData = array();
             $this->loadConfig(true);
         }
 
@@ -380,23 +381,34 @@ class Config extends EspoConfig
     protected function loadConfig($reload = false)
     {
         if ($reload || is_null($this->getConfigData())) {
+            // prepare config
+            $config = [];
+
             /**
-             * Main config
+             * Local config
              */
             $configPath = file_exists($this->configPath) ? $this->configPath : $this->defaultConfigPath;
-            $this->setConfigData($this->getFileManager()->getPhpContents($configPath));
+            $localConfig = $this->getFileManager()->getPhpContents($configPath);
+            $config = Util::merge($localConfig, $config);
 
             /**
              * System config
              */
             $systemConfig = $this->getFileManager()->getPhpContents($this->systemConfigPath);
-            $this->setConfigData(Util::merge($systemConfig, $this->getConfigData()));
+            $config = Util::merge($systemConfig, $config);
 
             /**
              * Modules config
              */
-            $modulesConfig['modules'] = $this->getModulesConfig();
-            $this->setConfigData(Util::merge($modulesConfig, $this->getConfigData()));
+            $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
+
+            /**
+             * Set version from composer
+             */
+            $config['version'] = $this->getTreoVersion();
+
+            // set config
+            $this->setConfigData($config);
         }
 
         return $this->getConfigData();
@@ -413,7 +425,7 @@ class Config extends EspoConfig
         $moduleData = [];
 
         foreach ($this->getModules() as $module) {
-            $filePath = $this->pathToModules.'/'.$module.'/Configs/ModuleConfig.php';
+            $filePath = $this->pathToModules . '/' . $module . '/Configs/ModuleConfig.php';
             if (file_exists($filePath)) {
                 $moduleConfigData = include $filePath;
                 if (!empty($moduleConfigData) && is_array($moduleConfigData)) {
@@ -423,6 +435,29 @@ class Config extends EspoConfig
         }
 
         return $moduleData;
+    }
+
+    /**
+     * Get treo version
+     *
+     * @return string
+     */
+    protected function getTreoVersion(): string
+    {
+        // prepare result
+        $result = '1.0.0';
+
+        // prepare path
+        $path = 'composer.json';
+
+        if (file_exists($path)) {
+            $data = Json::decode(file_get_contents($path), true);
+            if (!empty($data['version'])) {
+                $result = $data['version'];
+            }
+        }
+
+        return $result;
     }
 
     /**

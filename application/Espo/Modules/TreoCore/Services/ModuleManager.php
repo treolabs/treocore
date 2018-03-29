@@ -268,13 +268,13 @@ class ModuleManager extends Base
             // drop cache
             $this->getMetadata()->dropCache();
 
+            // write to file
+            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
+
             // rebuild DB
-            if (empty($config['disabled'])) {
+            if ($result && !empty($config['disabled'])) {
                 $this->getDataManager()->rebuild();
             }
-
-            // prepare result
-            $result = true;
         }
 
         return $result;
@@ -301,16 +301,10 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
 
-        // update modules file
-        $this->updateModuleFile($id, true);
-
         // run composer
         $result = $this
             ->getComposerService()
-            ->run("require " . $packages['name'] . ":" . $packages['version']);
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+            ->update($packages['name'], $packages['version']);
 
         return $result;
     }
@@ -343,14 +337,10 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->translateError('No such module version'));
         }
 
-        // update modules file
-        $this->updateModuleFile($id, true);
-
         // run composer
-        $result = $this->getComposerService()->run("require " . $packages[$version]['name'] . ":{$version}");
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+        $result = $this
+            ->getComposerService()
+            ->update($packages[$version]['name'], $version);
 
         return $result;
     }
@@ -362,8 +352,8 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function deleteModule(string $id
-    ): array {
+    public function deleteModule(string $id): array
+    {
         // prepare result
         $result = [];
 
@@ -384,7 +374,7 @@ class ModuleManager extends Base
             $beforeDelete = TreoComposer::getTreoModules();
 
             // run composer
-            $result = $this->getComposerService()->run('remove ' . $packages['name']);
+            $result = $this->getComposerService()->delete($packages['name']);
 
             if (empty($result['status'])) {
                 // prepare modules diff
@@ -717,8 +707,8 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    private static function moduleListSort(array $a, array $b
-    ): int {
+    private static function moduleListSort(array $a, array $b): int
+    {
         // prepare params
         $a = $a['name'];
         $b = $b['name'];

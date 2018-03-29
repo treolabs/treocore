@@ -4,7 +4,6 @@
 /data/*
 !/data/.htaccess
 /vendor/
-/composer_dev.json
 /custom/*
 !/custom/.htaccess
 /nb_metadata
