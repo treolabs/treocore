@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee3eb08457fdd1619010535227501729",
+    "content-hash": "fe03138a9a5bde5dd31471eb305b0019",
     "packages": [
         {
             "name": "composer/semver",
@@ -1580,6 +1580,40 @@
             "time": "2017-04-26T08:14:48+00:00"
         },
         {
+            "name": "treo-module/activitiestasks",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/activitiestasks.git",
+                "reference": "37cee16ff0268ff1bc80b3ed9694a874f433c2ec"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/espo-crm": "^1.0.0",
+                "treo/treo": "^1.7.3"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "ActivitiesTasks",
+                "name": {
+                    "default": "Activities&Tasks",
+                    "de_DE": "Termin- und Aufgaben-Verwaltung"
+                },
+                "description": {
+                    "default": "Planning activities and tasks for TreoCRM entities",
+                    "de_DE": "Termin- und Aufgaben-Verwaltung bei TreoCRM-Entities"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "ActivitiesTasks module for TreoPIM",
+            "time": "2018-03-27T15:11:37+00:00"
+        },
+        {
             "name": "treo-module/coloredfields",
             "version": "1.1.1",
             "source": {
@@ -1612,6 +1646,105 @@
             "time": "2018-03-26T07:30:44+00:00"
         },
         {
+            "name": "treo-module/completeness",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/completeness.git",
+                "reference": "5ac07e7d9194c2244b4514668af97742aca08a7c"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/multilang": "^1.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Completeness",
+                "name": {
+                    "default": "Completeness",
+                    "de_DE": "Vollständigkeit"
+                },
+                "description": {
+                    "default": "The module enables to check the level of filling of entity with the requireds fields. If this level is less then 100%, such an entity is impossible to activate.",
+                    "de_DE": "Das Modul ermöglicht die Entity-Prüfung nach den ausgefüllten Pflichtfeldern. Ist die Vollständigkeit niedriger als 100%, lässt sich der Entity nicht aktivieren."
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "Completeness module for TreoPIM",
+            "time": "2018-03-27T14:26:46+00:00"
+        },
+        {
+            "name": "treo-module/ecbrates",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/ecbrates.git",
+                "reference": "00b0a3c658dadb4c007bdecdc9c89446937a2e1b"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo/treo": "^1.7.2"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "EcbRates",
+                "name": {
+                    "default": "European Central Bank Currencies Rates",
+                    "de_DE": "Umrechnungskurs laut der Europäischen Zentralbank"
+                },
+                "description": {
+                    "default": "Possibility to update currency rates by European Central Bank",
+                    "de_DE": "Möglichkeit, die Wechselkurse laut der Europäischen Zentralbank zu aktualisieren"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "EcbRates module for TreoPIM",
+            "time": "2018-03-27T15:17:41+00:00"
+        },
+        {
+            "name": "treo-module/erp",
+            "version": "1.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/erp.git",
+                "reference": "45922e0b1f99ef22c0505a1104fb1abc43a1aa81"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/pim": "^1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Erp",
+                "name": {
+                    "default": "ERP",
+                    "de_DE": "ERP"
+                },
+                "description": {
+                    "default": "The modules is targeting at the work with orders, deliveries etc.",
+                    "de_DE": "Das Modul für Auftrags- und Versandverwaltung"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "ERP module for TreoPIM",
+            "time": "2018-03-26T08:53:21+00:00"
+        },
+        {
             "name": "treo-module/espo-crm",
             "version": "v1.0.1",
             "source": {
@@ -1641,6 +1774,149 @@
             ],
             "description": "EspoCRM",
             "time": "2018-03-28T08:43:19+00:00"
+        },
+        {
+            "name": "treo-module/export",
+            "version": "1.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/export.git",
+                "reference": "b19fd3539d167ec4cc1a12ceb530f4e3d6debb3a"
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Export",
+                "name": {
+                    "default": "Export profiles",
+                    "de_DE": "Export-Profile"
+                },
+                "description": {
+                    "default": "User-friendly mechanism of data export",
+                    "de_DE": "Benutzerfreundlicher Mechanismus für Datenexport"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "Export module for TreoPIM",
+            "time": "2018-03-26T07:43:31+00:00"
+        },
+        {
+            "name": "treo-module/export-jtl",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/export-jtl.git",
+                "reference": "aaf520412f413c8e8beca9a547292a2146533c28"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/export": "^1.0.0",
+                "treo-module/pim": "^1.0.0",
+                "treo-module/pricing": "^1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "ExportJtl",
+                "name": {
+                    "default": "Jtl export profile types",
+                    "de_DE": "Export-Profiltypen für Jtl"
+                },
+                "description": {
+                    "default": "The module gives profiles export, which enable data export to Jtl.",
+                    "de_DE": "Das Modul stellt Export-Profiltypen für Datenexport aus Jtl zur Verfügung."
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                },
+                {
+                    "name": "Yuri Haiduchyk",
+                    "email": "y.haiduchyk@zinitsolutions.com"
+                }
+            ],
+            "description": "Export type JTL for TreoPIM",
+            "time": "2018-03-26T08:54:43+00:00"
+        },
+        {
+            "name": "treo-module/import",
+            "version": "v1.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/import.git",
+                "reference": "d2fae97afdb80f65071f36931f95bc761ce42961"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/coloredfields": "^1.0.0",
+                "treo/treo": "^1.7.2"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Import",
+                "name": {
+                    "default": "Import profiles",
+                    "de_DE": "Import-Profile"
+                },
+                "description": {
+                    "default": "User-friendly mechanism of data import",
+                    "de_DE": "Benutzerfreundlicher Mechanismus für Datenimport"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "Import module for TreoPIM",
+            "time": "2018-03-27T14:22:27+00:00"
+        },
+        {
+            "name": "treo-module/importafterbuy",
+            "version": "1.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/importafterbuy.git",
+                "reference": "cd11a7496bd48dc6312832afab7dd41113d6b727"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/import": "1.*",
+                "treo-module/pim": "1.*"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "ImportAfterbuy",
+                "name": {
+                    "default": "Afterbuy import profile types",
+                    "de_DE": "Import-Profiltypen für Afterbuy"
+                },
+                "description": {
+                    "default": "The module gives profiles import, which enable data import from Afterbuy.",
+                    "de_DE": "Das Modul stellt Import-Profile für Datenimport aus Afterbuy zur Verfügung."
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                },
+                {
+                    "name": "Yuri Haiduchyk",
+                    "email": "y.haiduchyk@zinitsolutions.com"
+                }
+            ],
+            "description": "ImportAfterbuy module for TreoPIM",
+            "time": "2018-03-27T11:40:39+00:00"
         },
         {
             "name": "treo-module/multilang",
@@ -1684,6 +1960,38 @@
             "time": "2018-03-27T15:14:28+00:00"
         },
         {
+            "name": "treo-module/navmenu",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/navmenu.git",
+                "reference": "63dfd3f05b6fcd871ee8ccc115cf28769151476d"
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "NavMenu",
+                "name": {
+                    "default": "Two-level navigation",
+                    "de_DE": "Zweistufige Navigation"
+                },
+                "description": {
+                    "default": "Two-level navigation for TreoCRM",
+                    "de_DE": "Zweistufige Navigation für TreoCRM"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "NavMenu module for TreoPIM",
+            "time": "2018-03-26T07:57:38+00:00"
+        },
+        {
             "name": "treo-module/pim",
             "version": "v1.1.1",
             "source": {
@@ -1716,6 +2024,175 @@
             ],
             "description": "PIM module for Treo system",
             "time": "2018-03-28T08:46:47+00:00"
+        },
+        {
+            "name": "treo-module/pricecalc",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/pricecalc.git",
+                "reference": "bf7af5ac5529d9fee534f47cf4b52b98f98637dd"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/pricing": "^1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "PriceCalc",
+                "name": {
+                    "default": "Price calculation",
+                    "de_DE": "Konfigurator für Preisberechnung"
+                },
+                "description": {
+                    "default": "Flexible mechanisms to calculate product price",
+                    "de_DE": "Flexible Mechanismen für Artikelpreis-Berechnung"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "PriceCalc module for TreoPIM",
+            "time": "2018-03-26T10:12:55+00:00"
+        },
+        {
+            "name": "treo-module/pricing",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/pricing.git",
+                "reference": "28b77cde9ff14a09e080d9fc0357cb8e95ce8c42"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/pim": "^1.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Pricing",
+                "name": {
+                    "default": "Pricing",
+                    "de_DE": "Preisbildung"
+                },
+                "description": {
+                    "default": "The module enables flexible management of products prices",
+                    "de_DE": "Modul für die flexible Artikelpreis-Verwaltung"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "Pricing module for TreoPIM",
+            "time": "2018-03-27T14:13:18+00:00"
+        },
+        {
+            "name": "treo-module/productvariants",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/productvariants.git",
+                "reference": "911726025aa1d6343c6b5fc176ce6248a22bb40a"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/pim": "^1.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "ProductVariants",
+                "name": {
+                    "default": "Product Variants",
+                    "de_DE": "Produkt-Varianten"
+                },
+                "description": {
+                    "default": "The module allows to manage product variants with the help of user-friendly interfaces.",
+                    "de_DE": "Das Modul stellt benutzerfreundliche Interfaces für Artikelvarianten-Verwaltung zur Verfügung."
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "ProductVariants module for TreoPIM",
+            "time": "2018-03-27T14:17:29+00:00"
+        },
+        {
+            "name": "treo-module/project-one-geo",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/project-one-geo.git",
+                "reference": "709fb71a5dbedfd2a74c0a36b32f5c6732e23c6a"
+            },
+            "require": {
+                "php": "^7.1",
+                "treo-module/import": "^1.0.0",
+                "treo-module/pim": "^1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "OneGeo",
+                "name": {
+                    "default": "1-GEO",
+                    "de_DE": "1-GEO"
+                },
+                "description": {
+                    "default": "-",
+                    "de_DE": "-"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                },
+                {
+                    "name": "Yuri Haiduchyk",
+                    "email": "y.haiduchyk@zinitsolutions.com"
+                }
+            ],
+            "description": "Module for 1-GEO project customizations",
+            "time": "2018-03-26T10:10:25+00:00"
+        },
+        {
+            "name": "treo-module/revisions",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.zinit1.com/treo/premium-module/revisions.git",
+                "reference": "2b62432de42075696773d57d1a96d482e8e24a6b"
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "type": "library",
+            "extra": {
+                "treoId": "Revisions",
+                "name": {
+                    "default": "Revision",
+                    "de_DE": "Ansichtsmodul"
+                },
+                "description": {
+                    "default": "The module gives user-friendly interfaces to check entity fields changes of values and enables their recovery.",
+                    "de_DE": "Das Modul stellt benutzerfreundliche Interfaces die Ansicht von geänderten Entity-Feldern mit der Möglichkeit, die Grundwerte wiederherzustellen."
+                }
+            },
+            "authors": [
+                {
+                    "name": "Roman Ratsun",
+                    "email": "r.ratsun@zinitsolutions.com"
+                }
+            ],
+            "description": "Revisions module for TreoPIM",
+            "time": "2018-03-26T08:09:39+00:00"
         },
         {
             "name": "wikimedia/composer-merge-plugin",
