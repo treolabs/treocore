@@ -1,0 +1,6 @@
+{
+    "messages": {
+        "restoreRecordConfirmation": "Data recovery to the selected state will erase all data that was entered after the selected stream",
+        "restoreRecordUnconfirmed": "Please contact support for clarification"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "fields": {
+        "ownerUser": "Besitzer",
+        "username": "Benutzername",
+        "password": "Passwort"
+    },
+    "links": {
+        "ownerUser": "Besitzer"
+    },
+    "themes": {
+        "TreoDarkTheme": "Treo Dark Theme"
+    },
+    "scopeNames": {
+        "Stream": "Stream"
+    },
+    "messages": {
+        "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen."
+    }
+}
