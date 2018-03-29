@@ -44,6 +44,15 @@
     "views/fields/link-parent": [
         "treo-core"
     ],
+    "views/fields/varchar": [
+        "treo-core"
+    ],
+    "views/fields/varchar-column": [
+        "treo-core"
+    ],
+    "views/fields/text": [
+        "treo-core"
+    ],
     "views/record/detail": [
         "treo-core"
     ],
