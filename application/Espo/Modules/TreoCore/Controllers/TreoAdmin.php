@@ -39,7 +39,6 @@ namespace Espo\Modules\TreoCore\Controllers;
 use Espo\Controllers\Admin;
 use Espo\Core\Exceptions;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
-use Espo\Modules\TreoCore\Services\Composer;
 
 /**
  * TreoAdmin controller
@@ -59,15 +58,16 @@ class TreoAdmin extends Admin
      */
     public function actionTreoRunUpgrade($params, $data)
     {
-        // get result
-        $result = parent::postActionRunUpgrade($params, $data);
-
-        if ($result) {
-            // run composer
-            $this->getComposerService()->run("update");
+        if ($this->getConfig()->get('restrictedMode')) {
+            if (!$this->getUser()->get('isSuperAdmin')) {
+                throw new Exceptions\Forbidden();
+            }
         }
 
-        return $result;
+        $upgradeManager = new UpgradeManager($this->getContainer());
+        $upgradeManager->install(get_object_vars($data));
+
+        return true;
     }
 
     /**
@@ -94,15 +94,5 @@ class TreoAdmin extends Admin
             'id'      => $upgradeId,
             'version' => $manifest['version'],
         ];
-    }
-
-    /**
-     * Get Composer service
-     *
-     * @return Composer
-     */
-    protected function getComposerService(): Composer
-    {
-        return $this->getService('Composer');
     }
 }
