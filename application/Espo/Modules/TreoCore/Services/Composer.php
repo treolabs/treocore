@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
@@ -63,7 +63,12 @@ class Composer extends Base
     /**
      * @var string
      */
-    protected $extractDir = CORE_PATH."/vendor/composer/composer-extract";
+    protected $extractDir = CORE_PATH . "/vendor/composer/composer-extract";
+
+    /**
+     * @var string
+     */
+    protected $moduleComposer = 'data/composer.json';
 
     /**
      * Construct
@@ -75,8 +80,8 @@ class Composer extends Base
         /**
          * Extract composer
          */
-        if (!file_exists($this->extractDir."/vendor/autoload.php") == true) {
-            (new \Phar(CORE_PATH."/composer.phar"))->extractTo($this->extractDir);
+        if (!file_exists($this->extractDir . "/vendor/autoload.php") == true) {
+            (new \Phar(CORE_PATH . "/composer.phar"))->extractTo($this->extractDir);
         }
     }
 
@@ -92,18 +97,62 @@ class Composer extends Base
         // set memory limit for composer actions
         ini_set('memory_limit', '2048M');
 
-        putenv("COMPOSER_HOME=".$this->extractDir);
-        require_once $this->extractDir."/vendor/autoload.php";
+        putenv("COMPOSER_HOME=" . $this->extractDir);
+        require_once $this->extractDir . "/vendor/autoload.php";
 
         $application = new Application();
         $application->setAutoExit(false);
 
-        $input  = new StringInput("{$command} --working-dir=".CORE_PATH);
+        $input = new StringInput("{$command} --working-dir=" . CORE_PATH);
         $output = new BufferedOutput();
 
         $status = $application->run($input, $output);
 
         return ['status' => $status, 'output' => $output->fetch()];
+    }
+
+    /**
+     * Update composer
+     *
+     * @param string $package
+     * @param string $version
+     *
+     * @return array
+     */
+    public function update(string $package, string $version): array
+    {
+        // get composer.json data
+        $data = $this->getModuleComposerJson();
+
+        // prepare data
+        $data['require'] = array_merge($data['require'], [$package => $version]);
+
+        // set composer.json data
+        $this->setModuleComposerJson($data);
+
+        return $this->run('update');
+    }
+
+    /**
+     * Delete composer
+     *
+     * @param string $package
+     *
+     * @return array
+     */
+    public function delete(string $package): array
+    {
+        // get composer.json data
+        $data = $this->getModuleComposerJson();
+
+        if (isset($data['require'][$package])) {
+            unset($data['require'][$package]);
+        }
+
+        // set composer.json data
+        $this->setModuleComposerJson($data);
+
+        return $this->run('update');
     }
 
     /**
@@ -117,7 +166,7 @@ class Composer extends Base
         $result = [];
 
         // prepare path
-        $path = $this->extractDir.'/auth.json';
+        $path = $this->extractDir . '/auth.json';
         if (file_exists($path)) {
             $result = Json::decode(file_get_contents($path), true);
         }
@@ -135,7 +184,7 @@ class Composer extends Base
     public function setAuthData(array $authData): bool
     {
         // prepare path
-        $path = $this->extractDir.'/auth.json';
+        $path = $this->extractDir . '/auth.json';
 
         // delete old
         if (file_exists($path)) {
@@ -151,6 +200,38 @@ class Composer extends Base
     }
 
     /**
+     * Get modules composer.json
+     *
+     * @return array
+     */
+    public function getModuleComposerJson(): array
+    {
+        if (file_exists($this->moduleComposer)) {
+            $result = Json::decode(file_get_contents($this->moduleComposer), true);
+        } else {
+            $result = ['require' => []];
+
+            $this->setModuleComposerJson($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set modules composer.json
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function setModuleComposerJson(array $data): void
+    {
+        $file = fopen($this->moduleComposer, "w");
+        fwrite($file, Json::encode($data));
+        fclose($file);
+    }
+
+    /**
      * Get treo modules
      *
      * @return array
@@ -161,7 +242,7 @@ class Composer extends Base
         $result = [];
 
         // prepare treo crm vendor dir path
-        $path = "vendor/".self::TREODIR."/";
+        $path = "vendor/" . self::TREODIR . "/";
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $row) {
@@ -204,7 +285,7 @@ class Composer extends Base
     {
         foreach ($modules as $moduleId => $key) {
             // delete dir from frontend
-            self::deleteDir('client/modules/'.Util::fromCamelCase($moduleId, '-').'/');
+            self::deleteDir('client/modules/' . Util::fromCamelCase($moduleId, '-') . '/');
 
             // delete dir from backend
             self::deleteDir("application/Espo/Modules/{$moduleId}/");
@@ -221,8 +302,8 @@ class Composer extends Base
         if (array_key_exists($moduleId, self::getTreoModules())) {
             // prepare params
             $moduleKey = self::getTreoModules()[$moduleId];
-            $source    = "vendor/".self::TREODIR."/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
-            $dest      = "application/Espo/Modules/{$moduleId}/";
+            $source = "vendor/" . self::TREODIR . "/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
+            $dest = "application/Espo/Modules/{$moduleId}/";
 
             // delete dir
             self::deleteDir($dest);
@@ -242,9 +323,9 @@ class Composer extends Base
         if (array_key_exists($moduleId, self::getTreoModules())) {
             // prepare params
             $moduleKey = self::getTreoModules()[$moduleId];
-            $module    = Util::fromCamelCase($moduleId, '-');
-            $source    = "vendor/".self::TREODIR."/{$moduleKey}/client/modules/{$module}/";
-            $dest      = "client/modules/{$module}/";
+            $module = Util::fromCamelCase($moduleId, '-');
+            $source = "vendor/" . self::TREODIR . "/{$moduleKey}/client/modules/{$module}/";
+            $dest = "client/modules/{$module}/";
 
             // delete dir
             self::deleteDir($dest);
@@ -277,7 +358,7 @@ class Composer extends Base
         $i = new \DirectoryIterator($src);
         foreach ($i as $f) {
             if ($f->isFile()) {
-                copy($f->getRealPath(), "$dest/".$f->getFilename());
+                copy($f->getRealPath(), "$dest/" . $f->getFilename());
             } elseif (!$f->isDot() && $f->isDir()) {
                 self::copyDir($f->getRealPath(), "$dest/$f");
             }
@@ -309,7 +390,7 @@ class Composer extends Base
         $i = new \DirectoryIterator($src);
         foreach ($i as $f) {
             if ($f->isFile()) {
-                rename($f->getRealPath(), "$dest/".$f->getFilename());
+                rename($f->getRealPath(), "$dest/" . $f->getFilename());
             } elseif (!$f->isDot() && $f->isDir()) {
                 self::moveDir($f->getRealPath(), "$dest/$f");
                 unlink($f->getRealPath());
@@ -343,10 +424,10 @@ class Composer extends Base
 
         while ($file = readdir($dir_handle)) {
             if ($file != "." && $file != "..") {
-                if (!is_dir($dirname."/".$file)) {
-                    unlink($dirname."/".$file);
+                if (!is_dir($dirname . "/" . $file)) {
+                    unlink($dirname . "/" . $file);
                 } else {
-                    self::deleteDir($dirname.'/'.$file);
+                    self::deleteDir($dirname . '/' . $file);
                 }
             }
         }

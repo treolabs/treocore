@@ -207,7 +207,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             this.notify(response.output, 'danger');
                         }
                     }
-                });
+                })
+                .fail(() => this.blockActions = false );
         },
 
         actionUpdateModule(data) {
@@ -233,7 +234,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             this.notify(response.output, 'danger');
                         }
                     }
-                });
+                })
+                .fail(() => this.blockActions = false );
         },
 
         actionRemoveModule(data) {
@@ -259,7 +261,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             this.notify(response.output, 'danger');
                         }
                     }
-                });
+                })
+                .fail(() => this.blockActions = false );
         },
 
         reloadPage(timeout) {

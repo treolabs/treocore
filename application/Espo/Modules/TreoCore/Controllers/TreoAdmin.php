@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
@@ -47,6 +47,28 @@ use Espo\Modules\TreoCore\Core\UpgradeManager;
  */
 class TreoAdmin extends Admin
 {
+
+    /**
+     * Run upgrade action
+     *
+     * @param mixed $params
+     * @param mixed $data
+     *
+     * @return bool
+     */
+    public function actionTreoRunUpgrade($params, $data)
+    {
+        if ($this->getConfig()->get('restrictedMode')) {
+            if (!$this->getUser()->get('isSuperAdmin')) {
+                throw new Exceptions\Forbidden();
+            }
+        }
+
+        $upgradeManager = new UpgradeManager($this->getContainer());
+        $upgradeManager->install(get_object_vars($data));
+
+        return true;
+    }
 
     /**
      * UploadUpgradePackage action
@@ -66,7 +88,7 @@ class TreoAdmin extends Admin
         $upgradeManager = new UpgradeManager($this->getContainer());
 
         $upgradeId = $upgradeManager->upload($data);
-        $manifest  = $upgradeManager->getManifest();
+        $manifest = $upgradeManager->getManifest();
 
         return [
             'id'      => $upgradeId,

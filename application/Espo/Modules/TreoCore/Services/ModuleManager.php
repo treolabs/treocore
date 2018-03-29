@@ -256,8 +256,7 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    public function updateActivation(string $moduleId
-    ): bool
+    public function updateActivation(string $moduleId): bool
     {
         // prepare result
         $result = false;
@@ -288,8 +287,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function installModule(string $id
-    ): array
+    public function installModule(string $id): array
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
@@ -303,16 +301,10 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
 
-        // update modules file
-        $this->updateModuleFile($id, true);
-
         // run composer
         $result = $this
             ->getComposerService()
-            ->run("require " . $packages['name'] . ":" . $packages['version']);
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+            ->update($packages['name'], $packages['version']);
 
         return $result;
     }
@@ -325,8 +317,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function updateModule(string $id, string $version
-    ): array
+    public function updateModule(string $id, string $version): array
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
@@ -346,14 +337,10 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->translateError('No such module version'));
         }
 
-        // update modules file
-        $this->updateModuleFile($id, true);
-
         // run composer
-        $result = $this->getComposerService()->run("require " . $packages[$version]['name'] . ":{$version}");
-
-        // update treo dirs
-        TreoComposer::updateTreoModules();
+        $result = $this
+            ->getComposerService()
+            ->update($packages[$version]['name'], $version);
 
         return $result;
     }
@@ -365,8 +352,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    public function deleteModule(string $id
-    ): array
+    public function deleteModule(string $id): array
     {
         // prepare result
         $result = [];
@@ -388,7 +374,7 @@ class ModuleManager extends Base
             $beforeDelete = TreoComposer::getTreoModules();
 
             // run composer
-            $result = $this->getComposerService()->run('remove ' . $packages['name']);
+            $result = $this->getComposerService()->delete($packages['name']);
 
             if (empty($result['status'])) {
                 // prepare modules diff
@@ -410,8 +396,7 @@ class ModuleManager extends Base
      * @return bool
      * @throws Exceptions\Error
      */
-    protected function isModuleChangeable(string $moduleId
-    ): bool
+    protected function isModuleChangeable(string $moduleId): bool
     {
         // is system module ?
         if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
@@ -442,8 +427,7 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected function updateModuleFile(string $moduleId, bool $isDisabled
-    ): bool
+    protected function updateModuleFile(string $moduleId, bool $isDisabled): bool
     {
         // prepare data
         $data = [];
@@ -474,8 +458,7 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    protected function createModuleLoadOrder(string $moduleId
-    ): int
+    protected function createModuleLoadOrder(string $moduleId): int
     {
         // prepare result
         $result = 5100;
@@ -518,8 +501,7 @@ class ModuleManager extends Base
      *
      * @return array
      */
-    protected function getModuleRequireds(string $moduleId
-    ): array
+    protected function getModuleRequireds(string $moduleId): array
     {
         if (!isset($this->moduleRequireds[$moduleId])) {
             // prepare result
@@ -551,8 +533,7 @@ class ModuleManager extends Base
      *
      * @return bool
      */
-    protected function hasRequireds(string $moduleId
-    ): bool
+    protected function hasRequireds(string $moduleId): bool
     {
         // prepare result
         $result = false;
@@ -602,8 +583,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function translateModule(string $module, string $key
-    ): string
+    protected function translateModule(string $module, string $key): string
     {
         // prepare result
         $result = '';
@@ -630,8 +610,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function translateError(string $key
-    ): string
+    protected function translateError(string $key): string
     {
         return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
     }
@@ -643,8 +622,7 @@ class ModuleManager extends Base
      *
      * @return string
      */
-    protected function prepareModuleVersion(string $version
-    ): string
+    protected function prepareModuleVersion(string $version): string
     {
         return str_replace('v', '', $version);
     }
@@ -656,8 +634,7 @@ class ModuleManager extends Base
      *
      * @return mixed
      */
-    protected function getModuleConfigData(string $key
-    )
+    protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
     }
@@ -730,8 +707,7 @@ class ModuleManager extends Base
      *
      * @return int
      */
-    private static function moduleListSort(array $a, array $b
-    ): int
+    private static function moduleListSort(array $a, array $b): int
     {
         // prepare params
         $a = $a['name'];

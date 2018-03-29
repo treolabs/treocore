@@ -4,10 +4,10 @@
 /data/*
 !/data/.htaccess
 /vendor/
-/composer_dev.json
 /custom/*
 !/custom/.htaccess
 /nb_metadata
+/composer.lock
 !/apidocs/
 /apidocs/index.html
 /application/Espo/Modules/*
