@@ -1,8 +1,0 @@
-{
-    "jobs": {
-        "Cleanup": {
-            "isSystem": true,
-            "scheduling": "1 1 * * 0"
-        }
-    }
-}

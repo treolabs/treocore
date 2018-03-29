@@ -1,8 +1,0 @@
-{
-    "fields": {
-        "isStreamSide": {
-            "type": "bool",
-            "tooltip": true
-        }
-    }
-}

@@ -34,7 +34,7 @@
 
 include "bootstrap.php";
 
-$app = new \Espo\Modules\TreoCrm\Core\Application();
+$app = new \Espo\Modules\TreoCore\Core\Application();
 
 if (!$app->isInstalled()) {
     $app->runInstaller();
