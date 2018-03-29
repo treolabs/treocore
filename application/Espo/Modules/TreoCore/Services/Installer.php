@@ -208,22 +208,17 @@ class Installer extends Base
         // prepare input params
         $dbSettings = $this->prepareDbParams($data);
 
-        // check if params already exists
-        if (!empty($dbParams['dbname']) && !empty($dbParams['user'])) {
-            $result['message'] = $this->translateError('dbSettingsAlreadyExists');
-        } else {
-            try {
-                // check connect to db
-                $this->isConnectToDb($dbSettings);
+        try {
+            // check connect to db
+            $this->isConnectToDb($dbSettings);
 
-                // update config
-                $config->set('database', array_merge($dbParams, $dbSettings));
+            // update config
+            $config->set('database', array_merge($dbParams, $dbSettings));
 
-                $result['status'] = $config->save();
-            } catch (\Exception $e) {
-                $result['message'] = $e->getMessage();
-                $result['status'] = false;
-            }
+            $result['status'] = $config->save();
+        } catch (\Exception $e) {
+            $result['message'] = $e->getMessage();
+            $result['status'] = false;
         }
 
         return $result;
@@ -254,7 +249,7 @@ class Installer extends Base
                 $user = $this->getEntityManager()->getEntity('User');
                 $user->set([
                     'id'       => '1',
-                    'userName' => $params['userName'],
+                    'userName' => $params['username'],
                     'password' => $this->getPasswordHash()->hash($params['password']),
                     'lastName' => 'Admin',
                     'isAdmin'  => '1'
