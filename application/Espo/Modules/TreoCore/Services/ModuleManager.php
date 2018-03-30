@@ -323,7 +323,7 @@ class ModuleManager extends Base
         // run composer
         $result = $this
             ->getComposerService()
-            ->update($packages[$version]['name'], $version);
+            ->update($packages['name'], $version);
 
         return $result;
     }
