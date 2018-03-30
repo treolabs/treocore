@@ -72,23 +72,6 @@ class ModuleManager extends Base
     protected $passwordSalt = '4fj-v#C&4k?H&MkC';
 
     /**
-     * Construct
-     */
-    public function __construct(...$args)
-    {
-        parent::__construct(...$args);
-
-        /**
-         * Add dependencies
-         */
-        $this->addDependency('metadata');
-        $this->addDependency('language');
-        $this->addDependency('fileManager');
-        $this->addDependency('dataManager');
-        $this->addDependency('serviceFactory');
-    }
-
-    /**
      * Get composer user data
      *
      * @return array
@@ -389,6 +372,25 @@ class ModuleManager extends Base
     }
 
     /**
+     * Init
+     */
+    protected function init()
+    {
+        /**
+         * Add dependencies
+         */
+        $this->addDependencyList(
+            [
+                'metadata',
+                'language',
+                'fileManager',
+                'dataManager',
+                'serviceFactory'
+            ]
+        );
+    }
+
+    /**
      * Is module changable?
      *
      * @param string $moduleId
@@ -538,32 +540,13 @@ class ModuleManager extends Base
         // prepare result
         $result = false;
 
-        // get module list
-        $moduleList = $this->getMetadata()->getModuleList();
-
-        // get module requireds
-        $moduleRequireds = $this->getModuleRequireds($moduleId);
-
         // is module requireds by another modules
         if (empty($this->getModuleConfigData("{$moduleId}.disabled"))) {
-            foreach ($moduleList as $module) {
-                // get config
-                $config = $this->getModuleConfigData($module);
-
+            foreach ($this->getMetadata()->getModuleList() as $module) {
                 // get module requireds
                 $requireds = $this->getModuleRequireds($module);
 
                 if (isset($requireds) && in_array($moduleId, $requireds)) {
-                    // prepare result
-                    $result = true;
-
-                    break;
-                }
-            }
-        } elseif (!empty($moduleRequireds)) {
-            // is module has own requireds
-            foreach ($moduleRequireds as $module) {
-                if (!in_array($module, $moduleList)) {
                     // prepare result
                     $result = true;
 
