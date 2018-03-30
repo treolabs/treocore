@@ -111,23 +111,27 @@ return [
         'Opportunity',
     ],
     'tabList'         => [
-        "Account",
-        "Contact",
-        "Lead",
-        "Opportunity",
-        "Case",
-        "Email",
-        "Calendar",
-        "Meeting",
-        "Call",
-        "Task",
-        "Document",
-        "Campaign",
-        "KnowledgeBaseArticle",
-        "Stream",
-        "User"
+        0 => 'Association',
+        1 => 'Attribute',
+        2 => 'AttributeGroup',
+        3 => 'Brand',
+        4 => 'Category',
+        5 => 'Packaging',
+        6 => 'PriceUnit',
+        7 => 'Product',
+        8 => 'ProductFamily',
+        9 => 'Supplier'
     ],
-    'quickCreateList' => ["Account", "Contact", "Lead", "Opportunity", "Meeting", "Call", "Task", "Case", "Email"],
+    'quickCreateList' => [
+        0 => 'Association',
+        1 => 'Attribute',
+        2 => 'AttributeGroup',
+        3 => 'Brand',
+        4 => 'Category',
+        5 => 'Channel',
+        6 => 'Product',
+        7 => 'ProductFamily'
+    ],
     'exportDisabled' => false,
     'adminNotifications' => true,
     'adminNotificationsNewVersion' => true,
@@ -155,7 +159,7 @@ return [
     'displayListViewRecordCount' => true,
     'dashboardLayout' => [
         (object) [
-            'name' => 'My Espo',
+            'name' => 'My TreoPIM',
             'layout' => [
                 (object) [
                     'id' => 'default-activities',
