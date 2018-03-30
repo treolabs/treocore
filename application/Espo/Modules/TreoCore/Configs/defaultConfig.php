@@ -159,7 +159,7 @@ return [
     'displayListViewRecordCount' => true,
     'dashboardLayout' => [
         (object) [
-            'name' => 'My Espo',
+            'name' => 'My TreoPIM',
             'layout' => [
                 (object) [
                     'id' => 'default-activities',
