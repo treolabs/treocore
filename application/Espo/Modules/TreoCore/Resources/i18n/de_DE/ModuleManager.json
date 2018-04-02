@@ -39,6 +39,15 @@
     "updating": "Wird aktualisiert...",
     "updated": "Wurde aktualisiert. Die Seite wird in {value} Sekunden neu geladen",
     "removing": "Wird gelöscht...",
-    "removed": "Wurde gelöscht. Die Seite wird in {value} Sekunden neu geladen"
+    "removed": "Wurde gelöscht. Die Seite wird in {value} Sekunden neu geladen",
+    "errorLogText": "Sie können Fehler Log hier prüfen:",
+    "Error Log": "Fehler Log",
+    "Check Log": "Prüfen Log"
+  },
+  "messages": {
+    "checkLog": "Etwas ist fehlgeschlagen. Prüfen Sie bitte Fehler-Log auf neue Fehler",
+    "errorInstall": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht installiert",
+    "errorUpdate": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht aktualisiert",
+    "errorRemove": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht gelöscht"
   }
 }

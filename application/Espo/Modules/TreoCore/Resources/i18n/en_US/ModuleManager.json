@@ -39,6 +39,15 @@
     "updating": "Updating...",
     "updated": "Updated. This page will be reloaded after {value} seconds",
     "removing": "Removing...",
-    "removed": "Removed. This page will be reloaded after {value} seconds"
+    "removed": "Removed. This page will be reloaded after {value} seconds",
+    "errorLogText": "You can check error log here:",
+    "Error Log": "Error Log",
+    "Check Log": "Check Log"
+  },
+  "messages": {
+    "checkLog": "Something went wrong. Check the log for error-level output",
+    "errorInstall": "Module {module} not installed with error status {status} at {time}",
+    "errorUpdate": "Module {module} not updated with error status {status} at {time}",
+    "errorRemove": "Module {module} not removed with error status {status} at {time}"
   }
 }
