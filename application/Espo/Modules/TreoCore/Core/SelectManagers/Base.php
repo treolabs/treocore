@@ -34,48 +34,41 @@
 
 declare(strict_types = 1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Espo\Modules\TreoCore\Core\SelectManagers;
 
-use Espo\Modules\TreoCore\Listeners\AbstractListener;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Espo\Core\SelectManagers\Base as EspoBase;
+use Espo\Modules\TreoCore\Core\Utils\EventManager;
 
 /**
- * Class of EventManager
+ * Class Base
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class EventManager
+class Base extends EspoBase
 {
 
-    use ContainerTrait;
+    /**
+     * Where
+     *
+     * @param $where
+     * @param $result
+     */
+    protected function where($where, &$result)
+    {
+        $listener = $this->getEntityType() . 'SelectManager';
+
+        $where = $this->getEventManager()->triggered($listener, 'modifyWhere', $where);
+
+        parent::where($where, $result);
+    }
 
     /**
-     * Triggered an event
+     * Get event manager
      *
-     * @param string $target
-     * @param string $action
-     * @param array $data
-     *
-     * @return array
+     * @return EventManager
      */
-    public function triggered(string $target, string $action, array $data = []): array
+    protected function getEventManager(): EventManager
     {
-        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-            // prepare filename
-            $className = sprintf('Espo\Modules\%s\Listeners\%s', $module, $target);
-            if (class_exists($className)) {
-                $listener = new $className();
-                if ($listener instanceof AbstractListener) {
-                    $listener->setContainer($this->getContainer());
-                }
-                if (method_exists($listener, $action)) {
-                    $result = $listener->{$action}($data);
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
-                }
-            }
-        }
-
-        return $data;
+        return $this->getEntityManager()->getContainer()->get('eventManager');
     }
 }
