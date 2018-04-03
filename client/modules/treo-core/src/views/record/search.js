@@ -64,12 +64,10 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                     if (this.advanced.hasOwnProperty(name + '-' + nameCount)) {
                         nameCount++;
                         getLastIndexName.call(this);
-                    } else {
-                        name = name + '-' + nameCount;
-                        nameCount = 1;
                     }
                 };
                 getLastIndexName.call(this);
+                name = name + '-' + nameCount;
                 this.advanced[name] = {};
                 this.advanced = this.sortAdvanced(this.advanced);
 
@@ -112,7 +110,19 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
                 this.manageLabels();
                 this.handleLeftDropdownVisibility();
-            }
+            },
+            'click a[data-action="selectPreset"]': function (e) {
+                var presetName = $(e.currentTarget).data('name') || null;
+                this.selectPreset(presetName);
+                if (presetName) {
+                    this.$el.find('div.filter-applying-condition').removeClass('hidden');
+                }
+            },
+            'keypress .field input[type="text"]': function (e) {
+                if (e.keyCode === 13) {
+                    this.search();
+                }
+            },
         },
 
         afterRender: function () {
@@ -194,6 +204,75 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 defs.push(o);
             }
             return defs;
-        }
+        },
+
+        managePresetFilters: function () {
+            var presetName = this.presetName || null;
+            var data = this.getPresetData();
+            var primary = this.primary;
+
+            this.$el.find('ul.filter-menu a.preset span').remove();
+
+            var filterLabel = this.translate('All');
+            var filterStyle = 'default';
+
+            if (!presetName && primary) {
+                presetName = primary;
+            }
+
+            if (presetName && presetName != primary) {
+                var label = null;
+                var style = 'default';
+                var id = null;
+
+                this.presetFilterList.forEach(function (item) {
+                    if (item.name == presetName) {
+                        label = item.label || false;
+                        style = item.style || 'default';
+                        id = item.id;
+                        return;
+                    }
+                }, this);
+                label = label || this.translate(this.presetName, 'presetFilters', this.entityType);
+
+                filterLabel = label;
+                filterStyle = style;
+
+                if (id) {
+                    this.$el.find('ul.dropdown-menu > li.divider.preset-control').removeClass('hidden');
+                    this.$el.find('ul.dropdown-menu > li.preset-control.remove-preset').removeClass('hidden');
+                }
+
+            } else {
+                if (Object.keys(this.advanced).length !== 0) {
+                    if (!this.disableSavePreset) {
+                        this.$el.find('ul.dropdown-menu > li.divider.preset-control').removeClass('hidden');
+                        this.$el.find('ul.dropdown-menu > li.preset-control.save-preset').removeClass('hidden');
+                        this.$el.find('ul.dropdown-menu > li.preset-control.remove-preset').addClass('hidden');
+
+                    }
+                }
+
+                if (primary) {
+                    var label = this.translate(primary, 'presetFilters', this.entityType);
+                    var style = this.getPrimaryFilterStyle();
+                    filterLabel = label;
+                    filterStyle = style;
+                }
+            }
+
+            this.currentFilterLabelList.push(filterLabel);
+
+            this.$filtersButton.removeClass('btn-default')
+                .removeClass('btn-primary')
+                .removeClass('btn-danger')
+                .removeClass('btn-success')
+                .removeClass('btn-info');
+            this.$filtersButton.addClass('btn-' + filterStyle);
+
+            presetName = presetName || '';
+
+            this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="glyphicon glyphicon-ok pull-right"></span>');
+        },
     });
 });

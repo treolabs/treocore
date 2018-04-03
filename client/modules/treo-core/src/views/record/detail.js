@@ -149,7 +149,37 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     }
                 }
             }.bind(this));
-        }
+        },
+
+        setEditMode: function () {
+            this.trigger('before:set-edit-mode');
+            this.$el.find('.record-buttons').addClass('hidden');
+            this.$el.find('.edit-buttons').removeClass('hidden');
+            this.disableButtons();
+
+            var fields = this.getFieldViews(true);
+            var count = Object.keys(fields || {}).length;
+            for (var field in fields) {
+                var fieldView = fields[field];
+                if (!fieldView.readOnly) {
+                    if (fieldView.mode == 'edit') {
+                        fieldView.fetchToModel();
+                        fieldView.removeInlineEditLinks();
+                    }
+                    fieldView.setMode('edit');
+                    fieldView.render(() => {
+                        count--;
+                        if (count === 0) {
+                            this.enableButtons();
+                        }
+                    });
+                } else {
+                    count--;
+                }
+            }
+            this.mode = 'edit';
+            this.trigger('after:set-edit-mode');
+        },
 
     });
 
