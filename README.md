@@ -12,16 +12,19 @@ Documentation for administrators, users and developers is available [here](docs/
 
 ### Installation
 
-1. Install [composer](https://getcomposer.org/doc/00-intro.md).
-2. If composer is installed globally run 
+1. Download or clone treopim:
+    ````
+    git clone https://github.com/ZinitSolutionsGmbH/treopim.git
+    ````
+2. Go to treopim project:
+    ````
+    cd treopim
+    ````
+3. Update composer:
    ```
-   composer create-project ZinitSolutionsGmbH/treopim my-project
+   php composer.phar install
    ```
-   or if locally run
-   ```
-   php composer.phar create-project ZinitSolutionsGmbH/treopim my-project
-   ```
-3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 
 ### License
 
