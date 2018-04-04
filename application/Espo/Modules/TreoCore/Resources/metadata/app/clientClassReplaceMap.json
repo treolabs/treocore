@@ -11,6 +11,9 @@
     "views/modal": [
         "treo-core"
     ],
+    "views/modals/select-records": [
+        "treo-core"
+    ],
     "views/record/base": [
         "treo-core"
     ],
