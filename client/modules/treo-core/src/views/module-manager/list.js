@@ -46,6 +46,23 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         blockActions: false,
 
+        errorList: [],
+
+        errorsCount: null,
+
+        setup() {
+            Dep.prototype.setup.call(this);
+            this.events['click [data-action="showErrorLog"]'] = () => {
+                this.$el.find('[data-action="showErrorLog"] .new-error').addClass('hidden');
+                this.createView('logs', 'treo-core:views/module-manager/modals/error-log', {
+                    header: this.translate('Error Log', 'labels', 'ModuleManager'),
+                    errorList: this.errorList
+                }, view => {
+                    view.render();
+                });
+            }
+        },
+
         loadList() {
             this.loadSettingsPanel();
             this.loadInstalledModulesList();
@@ -184,6 +201,24 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
         },
 
+        logError(response, data, action) {
+            this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
+            this.errorsCount++;
+            this.errorList.unshift({
+                name: data.id + this.errorsCount,
+                errorMessage: this.translate('errorMessage', 'messages', 'ModuleManager')
+                    .replace('{module}', '<strong>' + data.id + '</strong>')
+                    .replace('{action}', '<strong>' + action + '</strong>')
+                    .replace('{status}', '<strong>' + response.status+ '</strong>')
+                    .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
+                message: response.output
+            });
+            this.$el.find('[data-action="showErrorLog"] .new-error').removeClass('hidden');
+            if (this.hasView('logs')) {
+                this.getView('logs').reRender();
+            }
+        },
+
         actionInstallModule(data) {
             if (this.blockActions) {
                 this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
@@ -204,7 +239,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     } else {
                         this.blockActions = false;
                         if (response.output) {
-                            this.notify(response.output, 'danger');
+                            this.logError(response, data, 'installed');
                         }
                     }
                 })
@@ -231,7 +266,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     } else {
                         this.blockActions = false;
                         if (response.output) {
-                            this.notify(response.output, 'danger');
+                            this.logError(response, data, 'updated');
                         }
                     }
                 })
@@ -258,7 +293,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     } else {
                         this.blockActions = false;
                         if (response.output) {
-                            this.notify(response.output, 'danger');
+                            this.logError(response, data, 'removed');
                         }
                     }
                 })

@@ -7,6 +7,7 @@ $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
 * $target - Условное название слушателя. То есть если $target='Foo', то будут активны слушатели в модулях которые размещены в `application/Espo/Modules/{MODULE_NAME}/Listeners/Foo.php`
 * $action - метод который будет вызван в слушателе
 * $data - данные которые будут переданы на слушатель
+* метод EventManager::triggered() - всегда возврщает массив $data обратно, но массив $data может быть изменен слушателями.
 
 ## Пример: ##
 ```
@@ -18,3 +19,4 @@ $this->getContainer()->get('eventManager')->triggered('Foo', 'afterUpdate', ['na
 * $data - массив
 * Загрузка слушателей происходит в порядке загрузки модулей. При этом разные модули могут слушать одно и то же событие.
 * В слушателе присутствует Container, на при условии если он унаследован от `Espo\Modules\TreoCore\Listeners\AbstractListener`.
+* Слушатель может возвращать только модифицированный массив $data и далее следующим слушателям будет передан массив $data модифицированный предыдущим.
