@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,50 +31,16 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+Espo.define('treo-core:views/module-manager/modals/error-log', 'views/modal',
+    Dep => Dep.extend({
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+        template: 'treo-core:module-manager/modals/error-log',
 
-use Espo\Modules\TreoCore\Listeners\AbstractListener;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
+        data() {
+            return {
+                errorList: this.options.errorList
+            };
+        },
 
-/**
- * Class of EventManager
- *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
- */
-class EventManager
-{
-
-    use ContainerTrait;
-
-    /**
-     * Triggered an event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array $data
-     *
-     * @return array
-     */
-    public function triggered(string $target, string $action, array $data = []): array
-    {
-        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-            // prepare filename
-            $className = sprintf('Espo\Modules\%s\Listeners\%s', $module, $target);
-            if (class_exists($className)) {
-                $listener = new $className();
-                if ($listener instanceof AbstractListener) {
-                    $listener->setContainer($this->getContainer());
-                }
-                if (method_exists($listener, $action)) {
-                    $result = $listener->{$action}($data);
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
-                }
-            }
-        }
-
-        return $data;
-    }
-}
+    })
+);
