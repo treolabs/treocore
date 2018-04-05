@@ -86,9 +86,14 @@ class Metadata extends AbstractMetadata
      */
     protected function prepareOwners(array $data): array
     {
+        // prepare default value for scope
+        $defaultScopeValue = true;
+
         foreach ($data['entityDefs'] as $ent => $row) {
+            // check if exists hasOwner in scope
+            $issetOwnerInScope = isset($data['scopes'][$ent]['hasOwner']);
             // unset ownerUser
-            if (isset($data['scopes'][$ent]['hasOwner']) && empty($data['scopes'][$ent]['hasOwner'])) {
+            if ($issetOwnerInScope && empty($data['scopes'][$ent]['hasOwner'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['ownerUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['ownerUser']);
                 }
@@ -100,8 +105,15 @@ class Metadata extends AbstractMetadata
                 }
             }
 
+            // sets ownerUser to default if this fields not exists in scope
+            if (!$issetOwnerInScope) {
+                $data['scopes'][$ent]['hasOwner'] = $defaultScopeValue;
+            }
+
+            // check if exists hasAssignedUser in scope
+            $issetAssignedUserScope = isset($data['scopes'][$ent]['hasAssignedUser']);
             // unset assignedUser
-            if (isset($data['scopes'][$ent]['hasAssignedUser']) && empty($data['scopes'][$ent]['hasAssignedUser'])) {
+            if ($issetAssignedUserScope && empty($data['scopes'][$ent]['hasAssignedUser'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['assignedUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['assignedUser']);
                 }
@@ -113,14 +125,26 @@ class Metadata extends AbstractMetadata
                 }
             }
 
+            // sets hasAssignedUser to default if this fields not exists in scope
+            if (!$issetAssignedUserScope) {
+                $data['scopes'][$ent]['hasAssignedUser'] = $defaultScopeValue;
+            }
+
+            // check if exists hasTeam in scope
+            $issetTeamInScope = isset($data['scopes'][$ent]['hasTeam']);
             // unset team
-            if (isset($data['scopes'][$ent]['hasTeam']) && empty($data['scopes'][$ent]['hasTeam'])) {
+            if ($issetTeamInScope && empty($data['scopes'][$ent]['hasTeam'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['teams'])) {
                     unset($data['entityDefs'][$ent]['fields']['teams']);
                 }
                 if (isset($data['entityDefs'][$ent]['links']['teams'])) {
                     unset($data['entityDefs'][$ent]['links']['teams']);
                 }
+            }
+
+            // sets hasTeam to default if this fields not exists in scope
+            if (!$issetTeamInScope) {
+                $data['scopes'][$ent]['hasTeam'] = $defaultScopeValue;
             }
         }
 
