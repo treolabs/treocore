@@ -97,7 +97,7 @@ class Metadata extends AbstractMetadata
                 }
                 if (isset($data['entityDefs'][$ent]['indexes'])) {
                     $data['entityDefs'][$ent]['indexes'] = $this
-                        ->prepareOwnersInIndex($data['entityDefs'][$ent]['indexes'], 'ownerUser');
+                        ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'ownerUserId');
                 }
             }
 
@@ -111,7 +111,7 @@ class Metadata extends AbstractMetadata
                 }
                 if (isset($data['entityDefs'][$ent]['indexes'])) {
                     $data['entityDefs'][$ent]['indexes'] = $this
-                        ->prepareOwnersInIndex($data['entityDefs'][$ent]['indexes'], 'assignedUser');
+                        ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'assignedUserId');
                 }
             }
 
@@ -130,18 +130,18 @@ class Metadata extends AbstractMetadata
     }
 
     /**
-     * Remove owner ids from index
+     * Remove field from index
      *
      * @param array  $indexes
      * @param string $fieldName
      *
      * @return array
      */
-    protected function prepareOwnersInIndex(array $indexes, string $fieldName): array
+    protected function removeFieldFromIndex(array $indexes, string $fieldName): array
     {
         foreach ($indexes as $indexName => $fields) {
             // search field in index
-            $key = array_search($fieldName . 'Id', $fields['columns']);
+            $key = array_search($fieldName, $fields['columns']);
             // remove field if exists
             if ($key !== false) {
                 unset($indexes[$indexName]['columns'][$key]);
