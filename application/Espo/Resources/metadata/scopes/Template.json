@@ -4,5 +4,6 @@
     "tab": false,
     "acl": "recordAllTeamNo",
     "customizable": true,
-    "disabled": false
+    "disabled": false,
+    "hasAssignedUser":true
 }

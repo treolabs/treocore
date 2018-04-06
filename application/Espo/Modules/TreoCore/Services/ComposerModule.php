@@ -194,7 +194,8 @@ class ComposerModule extends Base
                     if (is_array($versions)) {
                         $max = null;
                         foreach ($versions as $version => $data) {
-                            if (!empty($treoId = $data['extra']['treoId'])) {
+                            if (!empty($data['extra']['treoId'])) {
+                                $treoId = $data['extra']['treoId'];
                                 if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
                                     || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
                                     // prepare version

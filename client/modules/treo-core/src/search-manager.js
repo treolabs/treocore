@@ -135,8 +135,9 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                      value = defs.value;
                      return {
                          isAttribute: defs.isAttribute,
+                         isImport: defs.isImport,
                          type: type,
-                         attribute: attribute,
+                         attribute: defs.isImport ? undefined : attribute,
                          value: value
                      };
                  }
