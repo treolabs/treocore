@@ -337,10 +337,12 @@ class RestApiDocs extends Base
                 if (isset($row['sample'])) {
                     // prepare route
                     $route = $docs['ApiRoute'][0]['name'];
+                    // prepare method
+                    $method = $docs['ApiMethod'][0]['type'];
 
                     $tr = [
                         '{{ elt_id }}'   => $counter,
-                        '{{ response }}' => $this->getEntityFields($row['sample'], $entity, $route)
+                        '{{ response }}' => $this->getEntityFields($row['sample'], $entity, $route, $method)
                     ];
 
                     // push data
@@ -441,10 +443,14 @@ class RestApiDocs extends Base
         if (!empty($docs['ApiBody'])) {
             // prepare route
             $route = $docs['ApiRoute'][0]['name'];
+            // prepares sample
+            $sample = $docs['ApiBody'][0]['sample'];
+            // prepare method
+            $method = $docs["ApiMethod"][0]["type"];
 
             $content = [
                 '{{ elt_id }}' => $id,
-                '{{ body }}'   => $this->getEntityFields($docs['ApiBody'][0]['sample'], $entity, $route, true)
+                '{{ body }}'   => $this->getEntityFields($sample, $entity, $route, $method, true)
             ];
             $result  = strtr($this->getTemplateContent('Parts/sample-post-body'), $content);
         }
@@ -705,18 +711,19 @@ class RestApiDocs extends Base
      * @param string $sample
      * @param string $entity
      * @param string $route
-     * @param bool $isBody
+     * @param string $method
+     * @param bool   $isBody
      *
      * @return string
      */
-    protected function getEntityFields($sample, string $entity, string $route, bool $isBody = false)
+    protected function getEntityFields($sample, string $entity, string $route, string $method, bool $isBody = false)
     {
         // prepare sample
         if (is_string($sample) && strpos($sample, '{entityDeff}') !== false) {
             // get entity defs
             $entityDeffs = $this->getResponseEntityData($entity);
 
-            if (!$isGet) {
+            if ($method !== 'GET') {
                 unset($entityDeffs['id']);
             }
 

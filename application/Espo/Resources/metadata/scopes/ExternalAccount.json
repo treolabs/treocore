@@ -4,5 +4,6 @@
     "tab":false,
     "acl": "boolean",
     "aclPortal": false,
-    "customizable":false
+    "customizable":false,
+    "hasAssignedUser":true
 }
