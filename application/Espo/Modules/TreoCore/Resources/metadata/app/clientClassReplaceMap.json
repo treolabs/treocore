@@ -47,6 +47,9 @@
     "views/fields/link-parent": [
         "treo-core"
     ],
+    "views/fields/owner-user": [
+        "treo-core"
+    ],
     "views/fields/varchar": [
         "treo-core"
     ],
