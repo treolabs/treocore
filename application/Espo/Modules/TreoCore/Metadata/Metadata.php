@@ -88,33 +88,35 @@ class Metadata extends AbstractMetadata
     {
         foreach ($data['entityDefs'] as $ent => $row) {
             // unset ownerUser
-            if (!isset($data['scopes'][$ent]['hasOwner']) || empty($data['scopes'][$ent]['hasOwner'])) {
+            if (empty($data['scopes'][$ent]['hasOwner'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['ownerUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['ownerUser']);
                 }
                 if (isset($data['entityDefs'][$ent]['links']['ownerUser'])) {
                     unset($data['entityDefs'][$ent]['links']['ownerUser']);
                 }
-                if (isset($data['entityDefs'][$ent]['indexes']['ownerUser'])) {
-                    unset($data['entityDefs'][$ent]['indexes']['ownerUser']);
+                if (isset($data['entityDefs'][$ent]['indexes'])) {
+                    $data['entityDefs'][$ent]['indexes'] = $this
+                        ->prepareOwnersInIndex($data['entityDefs'][$ent]['indexes'], 'ownerUser');
                 }
             }
 
             // unset assignedUser
-            if (!isset($data['scopes'][$ent]['hasAssignedUser']) || empty($data['scopes'][$ent]['hasAssignedUser'])) {
+            if (empty($data['scopes'][$ent]['hasAssignedUser'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['assignedUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['assignedUser']);
                 }
                 if (isset($data['entityDefs'][$ent]['links']['assignedUser'])) {
                     unset($data['entityDefs'][$ent]['links']['assignedUser']);
                 }
-                if (isset($data['entityDefs'][$ent]['indexes']['assignedUser'])) {
-                    unset($data['entityDefs'][$ent]['indexes']['assignedUser']);
+                if (isset($data['entityDefs'][$ent]['indexes'])) {
+                    $data['entityDefs'][$ent]['indexes'] = $this
+                        ->prepareOwnersInIndex($data['entityDefs'][$ent]['indexes'], 'assignedUser');
                 }
             }
 
             // unset team
-            if (!isset($data['scopes'][$ent]['hasTeam']) || empty($data['scopes'][$ent]['hasTeam'])) {
+            if (empty($data['scopes'][$ent]['hasTeam'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['teams'])) {
                     unset($data['entityDefs'][$ent]['fields']['teams']);
                 }
@@ -125,6 +127,28 @@ class Metadata extends AbstractMetadata
         }
 
         return $data;
+    }
+
+    /**
+     * Remove owner ids from index
+     *
+     * @param array  $indexes
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    protected function prepareOwnersInIndex(array $indexes, string $fieldName): array
+    {
+        foreach ($indexes as $indexName => $fields) {
+            // search field in index
+            $key = array_search($fieldName . 'Id', $fields['columns']);
+            // remove field if exists
+            if ($key !== false) {
+                unset($indexes[$indexName]['columns'][$key]);
+            }
+        }
+
+        return $indexes;
     }
 
     /**
