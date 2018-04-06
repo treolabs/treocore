@@ -2,5 +2,6 @@
     "entity": true,
     "layouts": false,
     "tab": false,
-    "acl": false
+    "acl": false,
+    "hasAssignedUser":true
 }
