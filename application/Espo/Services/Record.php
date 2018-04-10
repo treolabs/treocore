@@ -412,7 +412,7 @@ class Record extends \Espo\Core\Services\Base
             return true;
         }
 
-        if ($assignmentPermission === true || !in_array($assignmentPermission, ['team', 'no'])) {
+        if ($assignmentPermission === true || $assignmentPermission === 'yes' || !in_array($assignmentPermission, ['team', 'no'])) {
             return true;
         }
 
@@ -450,11 +450,16 @@ class Record extends \Espo\Core\Services\Base
             return true;
         }
 
-        if (!$entity->hasAttribute('teamsIds')) {
+        if (!$entity->hasLinkMultipleField('teams')) {
             return true;
         }
-        $teamIdList = $entity->get('teamsIds');
+        $teamIdList = $entity->getLinkMultipleIdList('teams');
         if (empty($teamIdList)) {
+            if ($assignmentPermission === 'team') {
+                if (!$entity->get('assignedUserId')) {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -540,6 +545,38 @@ class Record extends \Espo\Core\Services\Base
         }
     }
 
+    public function populateDefaults(Entity $entity, $data)
+    {
+        if (!$this->getUser()->isPortal()) {
+            $forbiddenFieldList = null;
+            if ($entity->hasAttribute('assignedUserId')) {
+                $forbiddenFieldList = $this->getAcl()->getScopeForbiddenFieldList($this->entityType, 'edit');
+                if (in_array('assignedUser', $forbiddenFieldList)) {
+                    $entity->set('assignedUserId', $this->getUser()->id);
+                    $entity->set('assignedUserName', $this->getUser()->get('name'));
+                }
+            }
+
+            if ($entity->hasLinkMultipleField('teams')) {
+                if (is_null($forbiddenFieldList)) {
+                    $forbiddenFieldList = $this->getAcl()->getScopeForbiddenFieldList($this->entityType, 'edit');
+                }
+                if (in_array('teams', $forbiddenFieldList)) {
+                    if ($this->getUser()->get('defaultTeamId')) {
+                        $defaultTeamId = $this->getUser()->get('defaultTeamId');
+                        $entity->addLinkMultipleId('teams', $defaultTeamId);
+                        $teamsNames = $entity->get('teamsNames');
+                        if (!$teamsNames || !is_object($teamsNames)) {
+                            $teamsNames = (object) [];
+                        }
+                        $teamsNames->$defaultTeamId = $this->getUser()->get('defaultTeamName');
+                        $entity->set('teamsNames', $teamsNames);
+                    }
+                }
+            }
+        }
+    }
+
     public function createEntity($data)
     {
         if (!$this->getAcl()->check($this->getEntityType(), 'create')) {
@@ -563,6 +600,8 @@ class Record extends \Espo\Core\Services\Base
         if (!$this->getAcl()->check($entity, 'create')) {
             throw new Forbidden();
         }
+
+        $this->populateDefaults($entity, $data);
 
         $this->beforeCreateEntity($entity, $data);
 
@@ -662,7 +701,7 @@ class Record extends \Espo\Core\Services\Base
 
     protected function beforeUpdateEntity(Entity $entity, $data)
     {
-         $this->beforeUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
+        $this->beforeUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function afterUpdateEntity(Entity $entity, $data)
@@ -766,10 +805,10 @@ class Record extends \Espo\Core\Services\Base
 
         $maxSize = 0;
         if ($disableCount) {
-           if (!empty($params['maxSize'])) {
-               $maxSize = $params['maxSize'];
-               $params['maxSize'] = $params['maxSize'] + 1;
-           }
+            if (!empty($params['maxSize'])) {
+                $maxSize = $params['maxSize'];
+                $params['maxSize'] = $params['maxSize'] + 1;
+            }
         }
 
         $selectParams = $this->getSelectParams($params);
@@ -826,7 +865,7 @@ class Record extends \Espo\Core\Services\Base
 
         $disableCount = false;
         if (
-            in_array($this->entityType, $this->getConfig()->get('disabledCountQueryEntityList', []))
+        in_array($this->entityType, $this->getConfig()->get('disabledCountQueryEntityList', []))
         ) {
             $disableCount = true;
         }
@@ -1288,7 +1327,7 @@ class Record extends \Espo\Core\Services\Base
                 return true;
             }
             if (in_array($entity->getAttributeParam($attribute, 'type'), ['email', 'phone'])) {
-               return true;
+                return true;
             }
         }
     }
