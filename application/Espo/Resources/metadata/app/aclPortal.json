@@ -64,7 +64,8 @@
                 "followCreatedEntities": false,
                 "followEntityOnStreamPost": false,
                 "doNotFillAssignedUserIfNotRequired": false,
-                "doNotFillOwnerUserIfNotRequired": false
+                "useCustomTabList": false,
+                "tabList": false
             },
             "Call": {
                 "reminders": false
