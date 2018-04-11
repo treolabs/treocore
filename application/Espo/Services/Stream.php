@@ -446,10 +446,12 @@ class Stream extends \Espo\Core\Services\Base
 
         $teamIdList = $user->getTeamIdList();
         $teamIdQuotedList = [];
-        foreach ($teamIdList as $teamId) {
-            $teamIdQuotedList[] = $pdo->quote($teamId);
-        }
+
         if (!empty($teamIdList)) {
+            foreach ($teamIdList as $teamId) {
+                $teamIdQuotedList[] = $pdo->quote($teamId);
+            }
+
             $selectParamsList[] = array(
                 'select' => $select,
                 'leftJoins' => ['teams', 'createdBy'],
