@@ -176,6 +176,9 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     });
                 } else {
                     count--;
+                    if (count === 0) {
+                        this.enableButtons();
+                    }
                 }
             }
             this.mode = 'edit';
