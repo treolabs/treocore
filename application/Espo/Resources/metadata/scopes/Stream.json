@@ -3,6 +3,5 @@
     "layouts":false,
     "tab":true,
     "acl":false,
-    "customizable":false,
-    "hasAssignedUser":true
+    "customizable":false
 }

@@ -5,6 +5,5 @@
 	"acl": true,
     "aclActionList": ["read"],
 	"customizable": true,
-    "object": true,
-	"hasAssignedUser":true
+    "object": true
 }

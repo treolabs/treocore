@@ -50,4 +50,12 @@ class Metadata
         }
         return $this->data[$entityType];
     }
+
+    public function has($entityType)
+    {
+        if (!array_key_exists($entityType, $this->data)) {
+            return null;
+        }
+        return true;
+    }
 }

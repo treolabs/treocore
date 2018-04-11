@@ -5,6 +5,5 @@
     "acl": true,
     "aclActionList": ["read"],
     "aclLevelList": ["all", "team", "no"],
-    "customizable": false,
-    "hasAssignedUser":true
+    "customizable": false
 }

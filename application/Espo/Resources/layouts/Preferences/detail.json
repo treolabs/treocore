@@ -49,21 +49,19 @@
                     "name": "emailReplyToAllByDefault"
                 },
                 {
-                    "name": "emailReplyForceHtml"
-                }
-            ],
-            [
-                {
                     "name": "doNotFillAssignedUserIfNotRequired"
-                },
-                {
-                    "name": "doNotFillOwnerUserIfNotRequired"
                 }
             ],
             [
+                {
+                    "name": "emailReplyForceHtml"
+                },
                 {
                     "name": "followEntityOnStreamPost"
-                },
+                }
+            ],
+            [
+                false,
                 {
                     "name": "followCreatedEntities"
                 }

@@ -31,8 +31,7 @@
     "emailReplyToAllByDefault": "Standardmäßig Allen antworten",
     "dashboardLayout": "Dashboard Layout",
     "emailReplyForceHtml": "E-Mail Antwort als HTML",
-    "doNotFillAssignedUserIfNotRequired": "Zugewiesenen Benutzer nicht ausfüllen, wenn optional",
-    "doNotFillOwnerUserIfNotRequired": "Den Besitzer nicht ausfüllen, wenn optional",
+    "doNotFillAssignedUserIfNotRequired": "Zugwiesenen Benutzer nicht ausfüllen wenn optional",
     "followCreatedEntities": "Eigene Einträge abonnieren"
   },
   "options": {
@@ -49,8 +48,6 @@
     "Locale": "Lokalisierungs-Einstellungen"
   },
   "tooltips": {
-    "autoFollowEntityTypeList": "Der Benutzer abonniert automatisch alle neuen Einträge der gewählten Entitätstypen, sieht Neuigkeiten in den Aktivitäten und erhält Benachrichtigungen.",
-    "doNotFillAssignedUserIfNotRequired": "Beim optionalen Feld wird ein zugewiesener Benutzer beim Anlegen des Eintrags nicht ausgefüllt.",
-    "doNotFillOwnerUserIfNotRequired": "Beim optionalen Feld wird ein Besitzer beim Anlegen des Eintrags nicht ausgefüllt."
+    "autoFollowEntityTypeList": "Der Benutzer abonniert automatisch alle neuen Einträge der gewählten Entitätstypen, sieht Neuigkeiten in den Aktivitäten und erhält Benachrichtigungen."
   }
 }
