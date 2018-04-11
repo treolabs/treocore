@@ -83,6 +83,27 @@ class Xlsx extends \Espo\Core\Injectable
                 }
             }
         }
+        foreach ($fieldList as $field) {
+            if ($this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'fields', $field, 'type']) === 'linkMultiple') {
+                if (!$entity->has($field . 'Ids')) {
+                    $entity->loadLinkMultipleField($field);
+                }
+            }
+        }
+    }
+
+    public function filterFieldList($entityType, $fieldList, $exportAllFields)
+    {
+        if ($exportAllFields) {
+            foreach ($fieldList as $i => $field) {
+                $type = $this->getMetadata()->get(['entityDefs', $entityType, 'fields', $field, 'type']);
+                if (in_array($type, ['linkMultiple', 'attachmentMultiple'])) {
+                    unset($fieldList[$i]);
+                }
+            }
+        }
+
+        return array_values($fieldList);
     }
 
     public function addAdditionalAttributes($entityType, &$attributeList, $fieldList)
@@ -150,13 +171,13 @@ class Xlsx extends \Espo\Core\Injectable
 
         $titleStyle = array(
             'font' => array(
-                'bold' => true,
-                'size' => 12
+               'bold' => true,
+               'size' => 12
             )
         );
         $dateStyle = array(
             'font'  => array(
-                'size' => 12
+               'size' => 12
             )
         );
 
@@ -169,7 +190,7 @@ class Xlsx extends \Espo\Core\Injectable
         $sheet->getStyle('B1')->applyFromArray($dateStyle);
 
         $sheet->getStyle('B1')->getNumberFormat()
-            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
+                            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
 
         $azRange = range('A', 'Z');
         $azRangeCopied = $azRange;
@@ -372,6 +393,82 @@ class Xlsx extends \Espo\Core\Injectable
                         }
                         $sheet->setCellValue("$col$rowNumber", $value);
                     }
+                } else if ($type == 'linkMultiple') {
+                    if (array_key_exists($name . 'Ids', $row) && array_key_exists($name . 'Names', $row)) {
+                        $nameList = [];
+                        foreach ($row[$name . 'Ids'] as $relatedId) {
+                            $relatedName = $relatedId;
+                            if (property_exists($row[$name . 'Names'], $relatedId)) {
+                                $relatedName = $row[$name . 'Names']->$relatedId;
+                            }
+                            $nameList[] = $relatedName;
+                        }
+                        $sheet->setCellValue("$col$rowNumber", implode(', ', $nameList));
+                    }
+                } else if ($type == 'address') {
+                    $value = '';
+                    if (!empty($row[$name . 'Street'])) {
+                        $value = $value .= $row[$name.'Street'];
+                    }
+                    if (!empty($row[$name.'City']) || !empty($row[$name.'State']) || !empty($row[$name.'PostalCode'])) {
+                        if ($value) {
+                            $value .= "\n";
+                        }
+                        if (!empty($row[$name.'City'])) {
+                            $value .= $row[$name.'City'];
+                            if (
+                                !empty($row[$name.'State']) || !empty($row[$name.'PostalCode'])
+                            ) {
+                                $value .= ', ';
+                            }
+                        }
+                        if (!empty($row[$name.'State'])) {
+                            $value .= $row[$name.'State'];
+                            if (!empty($row[$name.'PostalCode'])) {
+                                $value .= ' ';
+                            }
+                        }
+                        if (!empty($row[$name.'PostalCode'])) {
+                            $value .= $row[$name.'PostalCode'];
+                        }
+                    }
+                    if (!empty($row[$name.'Country'])) {
+                        if ($value) {
+                            $value .= "\n";
+                        }
+                        $value .= $row[$name.'Country'];
+                    }
+                    $sheet->setCellValue("$col$rowNumber", $value);
+                } else if ($type == 'duration') {
+                    if (!empty($row[$name])) {
+                        $seconds = intval($row[$name]);
+
+                        $days = intval(floor($seconds / 86400));
+                        $seconds = $seconds - $days * 86400;
+                        $hours = intval(floor($seconds / 3600));
+                        $seconds = $seconds - $hours * 3600;
+                        $minutes = intval(floor($seconds / 60));
+
+                        $value = '';
+                        if ($days) {
+                            $value .= (string) $days . $this->getInjection('language')->translate('d', 'durationUnits');
+                            if ($minutes || $hours) {
+                                $value .= ' ';
+                            }
+                        }
+                        if ($hours) {
+                            $value .= (string) $hours . $this->getInjection('language')->translate('h', 'durationUnits');
+                            if ($minutes) {
+                                $value .= ' ';
+                            }
+                        }
+                        if ($minutes) {
+                            $value .= (string) $minutes . $this->getInjection('language')->translate('m', 'durationUnits');
+                        }
+
+                        $sheet->setCellValue("$col$rowNumber", $value);
+                    }
+
                 } else {
                     if (array_key_exists($name, $row)) {
                         $sheet->setCellValue("$col$rowNumber", $row[$name]);
