@@ -150,13 +150,13 @@ class Xlsx extends \Espo\Core\Injectable
 
         $titleStyle = array(
             'font' => array(
-               'bold' => true,
-               'size' => 12
+                'bold' => true,
+                'size' => 12
             )
         );
         $dateStyle = array(
             'font'  => array(
-               'size' => 12
+                'size' => 12
             )
         );
 
@@ -169,7 +169,7 @@ class Xlsx extends \Espo\Core\Injectable
         $sheet->getStyle('B1')->applyFromArray($dateStyle);
 
         $sheet->getStyle('B1')->getNumberFormat()
-                            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
+            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
 
         $azRange = range('A', 'Z');
         $azRangeCopied = $azRange;

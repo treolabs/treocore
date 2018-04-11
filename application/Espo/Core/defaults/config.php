@@ -46,7 +46,7 @@ return array (
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'EspoCRM',
-    'version' => '5.0.2',
+    'version' => '5.0.4',
     'timeZone' => 'UTC',
     'dateFormat' => 'MM/DD/YYYY',
     'timeFormat' => 'hh:mm a',
@@ -93,20 +93,20 @@ return array (
     ],
     'language' => 'en_US',
     'logger' =>
-    array (
-        'path' => 'data/logs/espo.log',
-        'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
-        'rotation' => true,
-        'maxFileNumber' => 30,
-    ),
+        array (
+            'path' => 'data/logs/espo.log',
+            'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
+            'rotation' => true,
+            'maxFileNumber' => 30,
+        ),
     'authenticationMethod' => 'Espo',
     'globalSearchEntityList' =>
-    array (
-        'Account',
-        'Contact',
-        'Lead',
-        'Opportunity',
-    ),
+        array (
+            'Account',
+            'Contact',
+            'Lead',
+            'Opportunity',
+        ),
     'tabList' => ["Account", "Contact", "Lead", "Opportunity", "Case", "Email", "Calendar", "Meeting", "Call", "Task", "_delimiter_", "Document", "Campaign", "KnowledgeBaseArticle", "Stream", "User"],
     'quickCreateList' => ["Account", "Contact", "Lead", "Opportunity", "Meeting", "Call", "Task", "Case", "Email"],
     'exportDisabled' => false,
@@ -172,8 +172,8 @@ return array (
     'cleanupJobPeriod' => '1 month',
     'cleanupActionHistoryPeriod' => '15 days',
     'cleanupAuthTokenPeriod' => '1 month',
-    'currencyFormat' => 1,
-    'currencyDecimalPlaces' => null,
+    'currencyFormat' => 2,
+    'currencyDecimalPlaces' => 2,
     'aclStrictMode' => false,
     'aclAllowDeleteCreated' => false,
     'inlineAttachmentUploadMaxSize' => 20,

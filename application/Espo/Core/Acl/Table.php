@@ -78,6 +78,8 @@ class Table
 
     protected $forbiddenFieldsCache = array();
 
+    protected $isStrictModeForced = false;
+
     protected $isStrictMode = false;
 
     public function __construct(User $user, Config $config = null, FileManager $fileManager = null, Metadata $metadata = null, FieldManagerUtil $fieldManager = null)
@@ -88,7 +90,11 @@ class Table
             'fieldTableQuickAccess' => (object) [],
         ];
 
-        $this->isStrictMode = $config->get('aclStrictMode', false);
+        if ($this->isStrictModeForced) {
+            $this->isStrictMode = true;
+        } else {
+            $this->isStrictMode = $config->get('aclStrictMode', false);
+        }
 
         $this->user = $user;
 
@@ -410,7 +416,12 @@ class Table
             return;
         }
 
-        $data = $this->metadata->get('app.'.$this->type.'.default.scopeLevel', array());
+        $defaultsGroupName = 'default';
+        if ($this->isStrictMode) {
+            $defaultsGroupName = 'strictDefault';
+        }
+
+        $data = $this->metadata->get(['app', $this->type, $defaultsGroupName, 'scopeLevel'], []);
 
         foreach ($data as $scope => $item) {
             if (isset($table->$scope)) continue;
@@ -421,7 +432,7 @@ class Table
             $table->$scope = $value;
         }
 
-        $defaultFieldData = $this->metadata->get('app.'.$this->type.'.default.fieldLevel', array());
+        $defaultFieldData = $this->metadata->get(['app', $this->type, $defaultsGroupName, 'fieldLevel'], []);
 
         foreach ($this->getScopeList() as $scope) {
             if (isset($table->$scope) && $table->$scope === false) continue;
@@ -429,7 +440,7 @@ class Table
 
             $fieldList = array_keys($this->getMetadata()->get("entityDefs.{$scope}.fields", []));
 
-            $defaultScopeFieldData = $this->metadata->get('app.'.$this->type.'.default.scopeFieldLevel.' . $scope, array());
+            $defaultScopeFieldData = $this->metadata->get('app.'.$this->type.'.'.$defaultsGroupName.'.scopeFieldLevel.' . $scope, []);
 
             foreach (array_merge($defaultFieldData, $defaultScopeFieldData) as $field => $f) {
                 if (!in_array($field, $fieldList)) continue;
@@ -583,8 +594,8 @@ class Table
         $scopeList = [];
         $scopes = $this->metadata->get('scopes');
         foreach ($scopes as $scope => $d) {
-        	if (empty($d['acl'])) continue;
-        	$scopeList[] = $scope;
+            if (empty($d['acl'])) continue;
+            $scopeList[] = $scope;
         }
         return $scopeList;
     }
@@ -606,9 +617,9 @@ class Table
 
         foreach ($tableList as $table) {
             foreach ($scopeList as $scope) {
-            	if (!isset($table->$scope)) continue;
+                if (!isset($table->$scope)) continue;
 
-            	$row = $table->$scope;
+                $row = $table->$scope;
 
                 if ($row == false) {
                     if (!isset($data->$scope)) {
@@ -728,4 +739,3 @@ class Table
         return $result;
     }*/
 }
-

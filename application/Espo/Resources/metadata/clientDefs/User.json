@@ -16,43 +16,43 @@
    },
    "defaultSidePanel": {
       "detail": {
-         "name": "default",
-         "label": false,
-         "view": "views/user/record/panels/default-side",
-         "isForm": true
+        "name": "default",
+        "label": false,
+        "view": "views/user/record/panels/default-side",
+        "isForm": true
       },
       "detailSmall": {
-         "name": "default",
-         "label": false,
-         "view": "views/user/record/panels/default-side",
-         "isForm": true
+        "name": "default",
+        "label": false,
+        "view": "views/user/record/panels/default-side",
+        "isForm": true
       },
       "edit": {
-         "name": "default",
-         "label": false,
-         "view": "views/user/record/panels/default-side",
-         "isForm": true
+        "name": "default",
+        "label": false,
+        "view": "views/user/record/panels/default-side",
+        "isForm": true
       },
       "editSmall": {
-         "name": "default",
-         "label": false,
-         "view": "views/user/record/panels/default-side",
-         "isForm": true
+        "name": "default",
+        "label": false,
+        "view": "views/user/record/panels/default-side",
+        "isForm": true
       }
    },
    "defaultSidePanelFieldLists": {
       "detail": [
-         "avatar",
-         "createdAt"
+        "avatar",
+        "createdAt"
       ],
       "detailSmall": [
-         "avatar"
+        "avatar"
       ],
       "edit": [
-         "avatar"
+        "avatar"
       ],
       "editSmall": [
-         "avatar"
+        "avatar"
       ]
    },
    "sidePanels": {
@@ -101,7 +101,7 @@
       "active"
    ],
    "boolFilterList": ["onlyMyTeam"],
-   "selectDefaultFilters": {
-      "filter": "active"
-   }
+    "selectDefaultFilters": {
+        "filter": "active"
+    }
 }

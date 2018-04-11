@@ -190,6 +190,10 @@ class Email extends \Espo\Core\ORM\Repositories\RDB
 
     protected function beforeSave(Entity $entity, array $options = array())
     {
+        if ($entity->isNew() && !$entity->get('messageId')) {
+            $entity->setDummyMessageId();
+        }
+
         $eaRepository = $this->getEntityManager()->getRepository('EmailAddress');
 
         if ($entity->has('attachmentsIds')) {
@@ -327,8 +331,8 @@ class Email extends \Espo\Core\ORM\Repositories\RDB
             }
         }
 
-        if ($entity->get('isBeingImportered')) {
-            $entity->set('isBeingImportered', false);
+        if ($entity->get('isBeingImported')) {
+            $entity->set('isBeingImported', false);
         }
     }
 

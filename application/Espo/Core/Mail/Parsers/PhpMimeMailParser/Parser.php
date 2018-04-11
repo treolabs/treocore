@@ -38,7 +38,7 @@ use \PhpMimeMailParser\Attachment;
 
 class Parser extends \PhpMimeMailParser\Parser
 {
-    public function getAttachments()
+    public function getAttachments($include_inline = true)
     {
         $attachments = [];
         $dispositions = ['attachment', 'inline'];
@@ -60,7 +60,7 @@ class Parser extends \PhpMimeMailParser\Parser
                 }
             } elseif (!in_array($part['content-type'], $non_attachment_types, true)
                 && substr($part['content-type'], 0, 10) !== 'multipart/'
-                ) {
+            ) {
                 // if we cannot get it by getMessageBody(), we assume it is an attachment
                 if ($disposition !== 'inline') {
                     $disposition = 'attachment';

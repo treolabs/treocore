@@ -153,10 +153,6 @@
             "type": "bool",
             "tooltip": true
         },
-        "doNotFillOwnerUserIfNotRequired": {
-            "type": "bool",
-            "tooltip": true
-        },
         "followEntityOnStreamPost": {
             "type": "bool",
             "default": true
