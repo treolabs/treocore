@@ -677,6 +677,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
 
             if (!this.getAcl().checkScope(this.entityType, 'delete')) {
                 this.removeMassAction('remove');
+                this.removeMassAction('merge');
             }
 
             if (!this.getAcl().checkScope(this.entityType, 'edit')) {

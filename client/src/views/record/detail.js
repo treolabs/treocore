@@ -1190,7 +1190,8 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 type: this.type,
                 inlineEditDisabled: this.inlineEditDisabled,
                 recordHelper: this.recordHelper,
-                recordViewObject: this
+                recordViewObject: this,
+                portalLayoutDisabled: this.portalLayoutDisabled
             });
         },
 

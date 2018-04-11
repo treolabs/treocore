@@ -51,6 +51,7 @@ Espo.define('views/record/detail-side', 'view', function (Dep) {
             name: 'default',
             label: false,
             view: 'views/record/panels/default-side',
+            isForm: true,
             options: {
                 fieldList: [
                     {

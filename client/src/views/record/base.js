@@ -524,6 +524,12 @@ Espo.define('views/record/base', ['view', 'view-record-helper', 'dynamic-logic']
                         fillAssignedUser = false;
                         if (this.model.getFieldParam('assignedUser', 'required')) {
                             fillAssignedUser = true;
+                        } else if (this.getAcl().get('assignmentPermission') === 'no') {
+                            fillAssignedUser = true;
+                        } else if (this.getAcl().get('assignmentPermission') === 'team' && !this.getUser().get('defaultTeamId')) {
+                            fillAssignedUser = true;
+                        } else if (~this.getAcl().getScopeForbiddenFieldList(this.model.name, 'edit').indexOf('assignedUser')) {
+                            fillAssignedUser = true;
                         }
                     }
                     if (fillAssignedUser) {

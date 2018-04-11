@@ -83,7 +83,8 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 type: this.type,
                 inlineEditDisabled: this.inlineEditDisabled,
                 recordHelper: this.recordHelper,
-                recordViewObject: this
+                recordViewObject: this,
+                portalLayoutDisabled: this.portalLayoutDisabled
             }, view => {
                 this.listenToOnce(view, 'after:render', () => {
                     this.createPanelNavigationView(view.panelList);

@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('view-helper', ['lib!client/lib/marked.min.js'], function () {
+Espo.define('view-helper', [], function () {
 
     var ViewHelper = function (options) {
         this.urlRegex = /(^|[^\(])(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
@@ -57,7 +57,8 @@ Espo.define('view-helper', ['lib!client/lib/marked.min.js'], function () {
         ];
 
         marked.setOptions({
-            breaks: true
+            breaks: true,
+            tables: false
         });
     }
 
