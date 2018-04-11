@@ -1,3 +1,4 @@
+    * BUG #61940 : Не разблокируются клавиши Save и Cancel после включения режима Edit в сущности (Valeriy Shamota)
     * UST #61909 : Upgrade espo from 5.0.2 to 5.0.3 // Front (Yurii Kondratskyi)
     * UST #61946 : Upgrade espo from 5.0.4 to 5.0.5 // Back (Roman Ratsun)
     * UST #61911 : Upgrade espo from 5.0.3 to 5.0.4 // Back (Roman Ratsun)
