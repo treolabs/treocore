@@ -234,7 +234,7 @@ class CronManager
             throw new NotFound();
         }
 
-        $jobClass = new $className($this->container);
+        $jobClass = new $className($this->getContainer());
         $method = 'run';
         if (!method_exists($jobClass, $method)) {
             throw new NotFound();
