@@ -192,7 +192,9 @@ class RDB extends \Espo\ORM\Repository
 
     public function find(array $params = array())
     {
-        $this->handleSelectParams($params);
+        if (empty($params['skipAdditionalSelectParams'])) {
+            $this->handleSelectParams($params);
+        }
         $params = $this->getSelectParams($params);
 
         $dataArr = $this->getMapper()->select($this->seed, $params);
@@ -235,7 +237,9 @@ class RDB extends \Espo\ORM\Repository
         }
 
         if ($entityType) {
-            $this->getEntityManager()->getRepository($entityType)->handleSelectParams($params);
+            if (empty($params['skipAdditionalSelectParams'])) {
+                $this->getEntityManager()->getRepository($entityType)->handleSelectParams($params);
+            }
         }
 
         $result = $this->getMapper()->selectRelated($entity, $relationName, $params);
@@ -255,7 +259,9 @@ class RDB extends \Espo\ORM\Repository
             return;
         }
         $entityType = $entity->relations[$relationName]['entity'];
-        $this->getEntityManager()->getRepository($entityType)->handleSelectParams($params);
+        if (empty($params['skipAdditionalSelectParams'])) {
+            $this->getEntityManager()->getRepository($entityType)->handleSelectParams($params);
+        }
 
         return intval($this->getMapper()->countRelated($entity, $relationName, $params));
     }
@@ -428,7 +434,9 @@ class RDB extends \Espo\ORM\Repository
 
     public function count(array $params = array())
     {
-        $this->handleSelectParams($params);
+        if (empty($params['skipAdditionalSelectParams'])) {
+            $this->handleSelectParams($params);
+        }
 
         $params = $this->getSelectParams($params);
         $count = $this->getMapper()->count($this->seed, $params);

@@ -1,9 +1,9 @@
 {
-    "entity": true,
-    "layouts": false,
-    "tab": false,
-    "acl": "recordAllTeamNo",
-    "customizable": true,
-    "disabled": false,
-    "hasAssignedUser":true
+  "entity": true,
+  "layouts": false,
+  "tab": true,
+  "acl": "recordAllTeamNo",
+  "customizable": true,
+  "disabled": false,
+  "hasAssignedUser": true
 }
