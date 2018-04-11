@@ -56,7 +56,7 @@ Espo.define('views/email/list', 'views/list', function (Dep) {
                 this.addMenuItem('dropdown', {
                     name: 'reply',
                     label: 'Email Accounts',
-                    link: '#EmailAccount/list/userId=' + this.getUser().id + '&userName=' + this.getUser().get('name')
+                    link: '#EmailAccount/list/userId=' + this.getUser().id + '&userName=' +  encodeURIComponent(this.getUser().get('name'))
                 });
             }
 

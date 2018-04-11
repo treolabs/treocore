@@ -41,6 +41,7 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
             name: 'default',
             label: false,
             view: 'views/record/panels/default-side',
+            isForm: true,
             options: {
                 fieldList: [
                     {

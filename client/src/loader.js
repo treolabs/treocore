@@ -123,7 +123,7 @@ var Espo = Espo || {classMap:{}};
 
                 if (!o) {
                     if (self.cache) {
-                        self.cache.clear('script', subject);
+                        self.cache.clear('a', subject);
                     }
                     throw new Error("Could not load '" + subject + "'");
                 }
@@ -217,6 +217,8 @@ var Espo = Espo || {classMap:{}};
             var dataType, type, path, fetchObject;
             var realName = name;
 
+            var noAppCache = false;
+
             if (name.indexOf('lib!') === 0) {
                 dataType = 'script';
                 type = 'lib';
@@ -228,9 +230,11 @@ var Espo = Espo || {classMap:{}};
                 var exportsAs = realName;
 
                 if (realName in this.libsConfig) {
-                    path = this.libsConfig[realName].path || path;
-                    exportsTo = this.libsConfig[realName].exportsTo || exportsTo;
-                    exportsAs = this.libsConfig[realName].exportsAs || exportsAs;
+                    var libData = this.libsConfig[realName] || {};
+                    path = libData.path || path;
+                    exportsTo = libData.exportsTo || exportsTo;
+                    exportsAs = libData.exportsAs || exportsAs;
+                    noAppCache = libData.noAppCache || noAppCache;
                 }
 
                 fetchObject = function (name, d) {
@@ -276,7 +280,7 @@ var Espo = Espo || {classMap:{}};
             }
 
             if (this.cache) {
-                var cached = this.cache.get(type, name);
+                var cached = this.cache.get('a', name);
                 if (cached) {
                     if (type == 'class') {
                         this.loadingSubject = name;
@@ -325,8 +329,8 @@ var Espo = Espo || {classMap:{}};
                 local: true,
                 url: this.basePath + path,
                 success: function (response) {
-                    if (this.cache) {
-                        this.cache.set(type, name, response);
+                    if (this.cache && !noAppCache) {
+                        this.cache.set('a', name, response);
                     }
 
                     this._addLoadCallback(name, callback);
@@ -368,7 +372,7 @@ var Espo = Espo || {classMap:{}};
 
         loadLib: function (url, callback) {
             if (this.cache) {
-                var script = this.cache.get('script', url);
+                var script = this.cache.get('a', url);
                 if (script) {
                     this._execute(script);
                     if (typeof callback == 'function') {
