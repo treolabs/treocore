@@ -1,3 +1,4 @@
+    * UST #61911 : Upgrade espo from 5.0.3 to 5.0.4 // Back (Roman Ratsun)
     * UST #61829 : Upgrade espo from 5.0.2 to 5.0.3 // Back (Roman Ratsun)
     * BUG #61353 : Наличие оунер в фильтрах при отключенной опции и ошибка в консоли при добавлении условия фильтра (Valeriy Shamota, Yuriy  Haiduchyk)
 
