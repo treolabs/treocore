@@ -1,3 +1,4 @@
+    * BUG #61791 : При неверной конфигурации - выводить сообщения без кодов и с детализацией сообщения (Yuriy  Haiduchyk)
     * INT #62008 : Обновити рібмі на гітхабі (Roman Ratsun)
     * UST #61912 : Upgrade espo from 5.0.3 to 5.0.4 // Front (Yurii Kondratskyi)
     * BUG #61940 : Не разблокируются клавиши Save и Cancel после включения режима Edit в сущности (Valeriy Shamota)
