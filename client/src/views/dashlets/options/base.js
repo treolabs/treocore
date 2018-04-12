@@ -109,6 +109,8 @@ Espo.define('views/dashlets/options/base', ['views/modal', 'views/record/detail'
 
             model.dashletName = this.name;
 
+            this.setupBeforeFinal();
+
             this.createView('record', 'views/record/detail-middle', {
                 model: model,
                 recordHelper: this.recordHelper,
@@ -125,6 +127,8 @@ Espo.define('views/dashlets/options/base', ['views/modal', 'views/record/detail'
 
             this.header = this.getLanguage().translate('Dashlet Options') + ': ' + this.getLanguage().translate(this.name, 'dashlets');
         },
+
+        setupBeforeFinal: function () {},
 
         fetchAttributes: function () {
             var attributes = {};

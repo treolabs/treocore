@@ -37,6 +37,8 @@ Espo.define('views/fields/int', 'views/fields/base', function (Dep) {
 
         type: 'int',
 
+        listTemplate: 'fields/int/list',
+
         detailTemplate: 'fields/int/detail',
 
         editTemplate: 'fields/int/edit',
