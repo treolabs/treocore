@@ -217,7 +217,7 @@ class Installer extends Base
 
             $result['status'] = $config->save();
         } catch (\Exception $e) {
-            $result['message'] = $e->getMessage();
+            $result['message'] =  $this->translateError('notCorrectDatabaseConfig');
             $result['status'] = false;
         }
 
@@ -283,7 +283,7 @@ class Installer extends Base
             $result['status'] = $this->isConnectToDb($this->prepareDbParams($dbSettings));
         } catch (\PDOException $e) {
             $result['status'] = false;
-            $result['message'] = $e->getMessage();
+            $result['message'] = $this->translateError('notCorrectDatabaseConfig');
         }
 
         return $result;
