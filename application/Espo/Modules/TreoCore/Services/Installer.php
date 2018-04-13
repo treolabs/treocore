@@ -55,6 +55,9 @@ class Installer extends Base
      */
     protected $passwordHash = null;
 
+    /**
+     * Init
+     */
     public function init()
     {
         parent::init();
