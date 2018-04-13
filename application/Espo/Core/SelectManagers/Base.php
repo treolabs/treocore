@@ -41,6 +41,7 @@ use \Espo\Core\Acl;
 use \Espo\Core\AclManager;
 use \Espo\Core\Utils\Metadata;
 use \Espo\Core\Utils\Config;
+use \Espo\Core\InjectableFactory;
 
 class Base
 {
@@ -68,15 +69,15 @@ class Base
 
     const MIN_LENGTH_FOR_CONTENT_SEARCH = 4;
 
-    public function __construct($entityManager, \Espo\Entities\User $user, Acl $acl, AclManager $aclManager, Metadata $metadata, Config $config)
+    public function __construct($entityManager, \Espo\Entities\User $user, Acl $acl, AclManager $aclManager, Metadata $metadata, Config $config, InjectableFactory $injectableFactory)
     {
         $this->entityManager = $entityManager;
         $this->user = $user;
         $this->acl = $acl;
         $this->aclManager = $aclManager;
-
         $this->metadata = $metadata;
         $this->config = $config;
+        $this->injectableFactory = $injectableFactory;
     }
 
     protected function getEntityManager()
@@ -107,6 +108,11 @@ class Base
     protected function getAclManager()
     {
         return $this->aclManager;
+    }
+
+    protected function getInjectableFactory()
+    {
+        return $this->injectableFactory;
     }
 
     public function setEntityType($entityType)
@@ -191,7 +197,6 @@ class Base
     {
         $this->prepareResult($result);
 
-        $whereClause = array();
         foreach ($where as $item) {
             if (!isset($item['type'])) continue;
 
@@ -212,10 +217,17 @@ class Base
             }
         }
 
+        $whereClause = $this->convertWhere($where, false, $result);
+
+        $result['whereClause'] = array_merge($result['whereClause'], $whereClause);
+    }
+
+    public function convertWhere(array $where, $ignoreAdditionaFilterTypes = false, &$result = null)
+    {
+        $whereClause = [];
 
         $ignoreTypeList = array_merge(['bool', 'primary'], $this->additionalFilterTypeList);
 
-        $additionalFilters = array();
         foreach ($where as $item) {
             if (!isset($item['type'])) continue;
 
@@ -226,7 +238,7 @@ class Base
                     $whereClause[] = $part;
                 }
             } else {
-                if (in_array($type, $this->additionalFilterTypeList)) {
+                if (!$ignoreAdditionaFilterTypes && in_array($type, $this->additionalFilterTypeList)) {
                     if (!empty($item['value'])) {
                         $methodName = 'apply' . ucfirst($type);
 
@@ -247,7 +259,7 @@ class Base
             }
         }
 
-        $result['whereClause'] = array_merge($result['whereClause'], $whereClause);
+        return $whereClause;
     }
 
     protected function applyLinkedWith($link, $idsValue, &$result)
@@ -1332,6 +1344,20 @@ class Base
         $method = 'filter' . ucfirst($filterName);
         if (method_exists($this, $method)) {
             $this->$method($result);
+        } else {
+            $className = $this->getMetadata()->get(['entityDefs', $this->entityType, 'collection', 'filters', $filterName, 'className']);
+            if ($className) {
+                if (!class_exists($className)) {
+                    $GLOBALS['log']->error("Could find class for filter {$filterName}.");
+                    return;
+                }
+                $impl = $this->getInjectableFactory()->createByClassName($className);
+                if (!$impl) {
+                    $GLOBALS['log']->error("Could not create filter {$filterName} implementation.");
+                    return;
+                }
+                $impl->applyFilter($this->entityType, $filterName, $result, $this);
+            }
         }
     }
 
@@ -1485,10 +1511,11 @@ class Base
         $fieldList = $this->getTextFilterFieldList();
         $d = array();
 
+        $textFilterContainsMinLength = $this->getConfig()->get('textFilterContainsMinLength', self::MIN_LENGTH_FOR_CONTENT_SEARCH);
+
         foreach ($fieldList as $field) {
-            $expression = $textFilter . '%';
             if (
-                strlen($textFilter) >= self::MIN_LENGTH_FOR_CONTENT_SEARCH
+                strlen($textFilter) >= $textFilterContainsMinLength
                 &&
                 (
                     !empty($fieldDefs[$field]['type']) && $fieldDefs[$field]['type'] == 'text'
@@ -1568,4 +1595,3 @@ class Base
         $this->filterFollowed($result);
     }
 }
-

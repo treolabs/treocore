@@ -9,6 +9,5 @@
     "customizable": true,
     "activity": true,
     "activityStatusList": ["Draft"],
-    "historyStatusList": ["Archived", "Sent"],
-    "hasAssignedUser":true
+    "historyStatusList": ["Archived", "Sent"]
 }

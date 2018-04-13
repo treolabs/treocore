@@ -231,10 +231,6 @@ class EmailAccount extends Record
         $portionLimit = $this->getConfig()->get('personalEmailMaxPortionSize', self::PORTION_LIMIT);
 
         $parserName = 'MailMimeParser';
-        if (extension_loaded('mailparse')) {
-            $parserName = 'PhpMimeMailParser';
-        }
-
         if ($this->getConfig()->get('emailParser')) {
             $parserName = $this->getConfig()->get('emailParser');
         }
@@ -373,9 +369,7 @@ class EmailAccount extends Record
             $email = $importer->importMessage($parserName, $message, $userId, $teamIdList, $userIdList, $filterCollection, $fetchOnlyHeader, $folderData);
         } catch (\Exception $e) {
             $GLOBALS['log']->error('EmailAccount '.$emailAccount->id.' (Import Message w/ '.$parserName.'): [' . $e->getCode() . '] ' .$e->getMessage());
-            if ($e->getCode() === 'HY000' && strpos($e->getMessage(), '1100') !== false) {
-                $this->getEntityManager()->getPdo()->query('UNLOCK TABLES');
-            }
+            $this->getEntityManager()->getPdo()->query('UNLOCK TABLES');
         }
         return $email;
     }
@@ -396,8 +390,7 @@ class EmailAccount extends Record
         $emailAccount = $this->getEntityManager()->getRepository('EmailAccount')->where([
             'emailAddress' => $address,
             'assignedUserId' => $user->id,
-            'active' => true,
-            'useSmtp' => true
+            'active' => true
         ])->findOne();
 
         return $emailAccount;

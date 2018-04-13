@@ -55,13 +55,19 @@ class Htmlizer
 
     protected $entityManager;
 
-    public function __construct(FileManager $fileManager, DateTime $dateTime, NumberUtil $number, $acl = null, $entityManager = null)
+    protected $metadata;
+
+    protected $language;
+
+    public function __construct(FileManager $fileManager, DateTime $dateTime, NumberUtil $number, $acl = null, $entityManager = null, $metadata = null, $language = null)
     {
         $this->fileManager = $fileManager;
         $this->dateTime = $dateTime;
         $this->number = $number;
         $this->acl = $acl;
         $this->entityManager = $entityManager;
+        $this->metadata = $metadata;
+        $this->language = $language;
     }
 
     protected function getAcl()
@@ -122,14 +128,14 @@ class Htmlizer
                         if ($item instanceof \StdClass) {
                             $v = json_decode(json_encode($v), true);
                         }
-                        if (!is_array($v)) {
-                            $v = [];
+                        if (is_array($v)) {
+                            foreach ($v as $k => $w) {
+                                $keyRaw = $k . '_RAW';
+                                $v[$keyRaw] = $v[$k];
+                                $v[$k] = $this->format($v[$k]);
+                            }
                         }
-                        foreach ($v as $k => $w) {
-                            $keyRaw = $k . '_RAW';
-                            $v[$keyRaw] = $v[$k];
-                            $v[$k] = $this->format($v[$k]);
-                        }
+
                         $newList[] = $v;
                     }
                     $data[$field] = $newList;
@@ -153,6 +159,14 @@ class Htmlizer
             if (array_key_exists($field, $data)) {
                 $keyRaw = $field . '_RAW';
                 $data[$keyRaw] = $data[$field];
+
+                $fieldType = $this->getFieldType($entity->getEntityType(), $field);
+                if ($fieldType === 'enum') {
+                    if ($this->language) {
+                        $data[$field] = $this->language->translateOption($data[$field], $field, $entity->getEntityType());
+                    }
+                }
+
                 $data[$field] = $this->format($data[$field]);
             }
         }
@@ -251,12 +265,19 @@ class Htmlizer
 
         $data = $this->getDataFromEntity($entity, $skipLinks);
 
+        if (!array_key_exists('today', $data)) {
+            $data['today'] = $this->dateTime->getTodayString();
+        }
+
+        if (!array_key_exists('now', $data)) {
+            $data['now'] = $this->dateTime->getNowString();
+        }
+
         foreach ($additionalData as $k => $value) {
             $data[$k] = $value;
         }
 
         $html = $renderer($data);
-
 
         $html = str_replace('?entryPoint=attachment&amp;', '?entryPoint=attachment&', $html);
 
@@ -273,5 +294,10 @@ class Htmlizer
         }
 
         return $html;
+    }
+
+    protected function getFieldType($entityType, $field) {
+        if (!$this->metadata) return;
+        return $this->metadata->get(['entityDefs', $entityType, 'fields', $field, 'type']);
     }
 }

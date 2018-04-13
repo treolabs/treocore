@@ -65,7 +65,8 @@
                 "followEntityOnStreamPost": false,
                 "doNotFillAssignedUserIfNotRequired": false,
                 "useCustomTabList": false,
-                "tabList": false
+                "tabList": false,
+                "emailUseExternalClient": false
             },
             "Call": {
                 "reminders": false
@@ -83,6 +84,14 @@
             "Email": {
                 "inboundEmails": false,
                 "emailAccounts": false
+            },
+            "User": {
+                "isAdmin": false,
+                "contact": false,
+                "accounts": false,
+                "portalRoles": false,
+                "portals": false,
+                "isActive": false
             }
         }
     },

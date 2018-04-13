@@ -37,7 +37,7 @@ return array (
         'driver' => 'pdo_mysql',
         'host' => 'localhost',
         'port' => '',
-        'charset' => 'utf8',
+        'charset' => 'utf8mb4',
         'dbname' => '',
         'user' => '',
         'password' => '',
@@ -46,7 +46,7 @@ return array (
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'EspoCRM',
-    'version' => '5.0.4',
+    'version' => '5.1.2',
     'timeZone' => 'UTC',
     'dateFormat' => 'MM/DD/YYYY',
     'timeFormat' => 'hh:mm a',
@@ -93,20 +93,20 @@ return array (
     ],
     'language' => 'en_US',
     'logger' =>
-        array (
-            'path' => 'data/logs/espo.log',
-            'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
-            'rotation' => true,
-            'maxFileNumber' => 30,
-        ),
+    array (
+        'path' => 'data/logs/espo.log',
+        'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
+        'rotation' => true,
+        'maxFileNumber' => 30,
+    ),
     'authenticationMethod' => 'Espo',
     'globalSearchEntityList' =>
-        array (
-            'Account',
-            'Contact',
-            'Lead',
-            'Opportunity',
-        ),
+    array (
+        'Account',
+        'Contact',
+        'Lead',
+        'Opportunity',
+    ),
     'tabList' => ["Account", "Contact", "Lead", "Opportunity", "Case", "Email", "Calendar", "Meeting", "Call", "Task", "_delimiter_", "Document", "Campaign", "KnowledgeBaseArticle", "Stream", "User"],
     'quickCreateList' => ["Account", "Contact", "Lead", "Opportunity", "Meeting", "Call", "Task", "Case", "Email"],
     'exportDisabled' => false,
@@ -118,6 +118,7 @@ return array (
     'assignmentNotificationsEntityList' => ['Meeting', 'Call', 'Task', 'Email'],
     "portalStreamEmailNotifications" => true,
     'streamEmailNotificationsEntityList' => ['Case'],
+    'streamEmailNotificationsTypeList' => ['Post', 'Status', 'EmailReceived'],
     'emailMessageMaxSize' => 10,
     'notificationsCheckInterval' => 10,
     'disabledCountQueryEntityList' => ['Email'],
@@ -144,7 +145,7 @@ return array (
                     'x' => 2,
                     'y' => 2,
                     'width' => 2,
-                    'height' => 2
+                    'height' => 4
                 ],
                 (object) [
                     'id' => 'default-stream',
@@ -153,14 +154,6 @@ return array (
                     'y' => 0,
                     'width' => 2,
                     'height' => 4
-                ],
-                (object) [
-                    'id' => 'default-tasks',
-                    'name' => 'Tasks',
-                    'x' => 2,
-                    'y' => 0,
-                    'width' => 2,
-                    'height' => 2
                 ]
             ]
         ]
@@ -177,6 +170,7 @@ return array (
     'aclStrictMode' => false,
     'aclAllowDeleteCreated' => false,
     'inlineAttachmentUploadMaxSize' => 20,
+    'textFilterUseContainsForVarchar' => false,
     'isInstalled' => false
 );
 

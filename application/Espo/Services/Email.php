@@ -61,8 +61,31 @@ class Email extends Record
 
     protected $getEntityBeforeUpdate = true;
 
+    protected $skipSelectTextAttributes = true;
+
     protected $allowedForUpdateAttributeList = [
         'parentType', 'parentId', 'parentName', 'teamsIds', 'teamsNames', 'assignedUserId', 'assignedUserName'
+    ];
+
+    protected $selectAttributeList = [
+        'id',
+        'name',
+        'createdById',
+        'dateSent',
+        'fromString',
+        'fromEmailAddressId',
+        'fromEmailAddressName',
+        'fromName',
+        'parentId',
+        'parentType',
+        'isHtml',
+        'status',
+        'accountId',
+        'folderId',
+        'messageId',
+        'sentById',
+        'replyToString',
+        'hasAttachment'
     ];
 
     protected function getFileManager()
@@ -129,7 +152,7 @@ class Email extends Record
             $emailAccount = $emailAccountService->findAccountForUser($this->getUser(), $fromAddress);
 
             if (!$smtpParams) {
-                if ($emailAccount) {
+                if ($emailAccount && $emailAccount->get('useSmtp')) {
                     $smtpParams = $emailAccountService->getSmtpParamsFromAccount($emailAccount);
                     if ($smtpParams) {
                         $emailSender->useSmtp($smtpParams);
@@ -158,7 +181,7 @@ class Email extends Record
                 throw new Error('Can not use system smtp. System SMTP is not shared.');
             }
             $emailSender->setParams(array(
-                'fromName' => $this->getUser()->get('name')
+                'fromName' => $this->getConfig()->get('outboundEmailFromName')
             ));
         }
 
@@ -564,7 +587,7 @@ class Email extends Record
             if (!empty($idList)) {
                 $arr = [];
                 foreach ($idList as $emailAddressId) {
-                    $person = $this->getEntityManager()->getRepository('EmailAddress')->getEntityByAddressId($emailAddressId);
+                    $person = $this->getEntityManager()->getRepository('EmailAddress')->getEntityByAddressId($emailAddressId, null, true);
                     if ($person) {
                         $arr[] = $person->get('name');
                     } else {
@@ -576,7 +599,7 @@ class Email extends Record
         } else {
             $fromEmailAddressId = $entity->get('fromEmailAddressId');
             if (!empty($fromEmailAddressId)) {
-                $person = $this->getEntityManager()->getRepository('EmailAddress')->getEntityByAddressId($fromEmailAddressId);
+                $person = $this->getEntityManager()->getRepository('EmailAddress')->getEntityByAddressId($fromEmailAddressId, null, true);
                 if ($person) {
                     $entity->set('personStringData', $person->get('name'));
                 } else {
@@ -732,6 +755,10 @@ class Email extends Record
 
         if ($entity->isManuallyArchived()) {
             $skipFilter = true;
+        } else {
+            if ($entity->isAttributeChanged('dateSent')) {
+                $entity->set('dateSent', $entity->getFetched('dateSent'));
+            }
         }
 
         if ($entity->get('status') === 'Draft') {
@@ -740,6 +767,10 @@ class Email extends Record
 
         if ($entity->get('status') === 'Sending' && $entity->getFetched('status') === 'Draft') {
             $skipFilter = true;
+        }
+
+        if ($entity->isAttributeChanged('status') && $entity->getFetched('status') === 'Archived') {
+            $entity->set('status', 'Archived');
         }
 
         if (!$skipFilter) {
