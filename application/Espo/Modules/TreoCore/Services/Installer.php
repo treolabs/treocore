@@ -55,20 +55,20 @@ class Installer extends Base
      */
     protected $passwordHash = null;
 
-    /**
-     * Construct
-     */
-    public function __construct(...$args)
+    public function init()
     {
-        parent::__construct(...$args);
+        parent::init();
 
         /**
          * Add dependencies
          */
-        $this->addDependency('fileManager');
-        $this->addDependency('dataManager');
-        $this->addDependency('crypt');
-        $this->addDependency('language');
+        $this->addDependencyList([
+            'fileManager',
+            'dataManager',
+            'crypt',
+            'language',
+            'container'
+        ]);
     }
 
     /**
@@ -259,6 +259,9 @@ class Installer extends Base
                 // set installed
                 $this->getConfig()->set('isInstalled', true);
                 $this->getConfig()->save();
+
+                // triggered event afterInstallSystem
+                $this->getInjection('container')->get('eventManager')->triggered('Installer', 'afterInstallSystem');
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();
