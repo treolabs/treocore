@@ -54,6 +54,11 @@ class RDB extends \Espo\ORM\Repository
     protected $whereClause = array();
 
     /**
+     * @var array Having clause array.
+     */
+    protected $havingClause = array();
+
+    /**
      * @var array Parameters to be used in further find operations.
      */
     protected $listParams = array();
@@ -94,6 +99,7 @@ class RDB extends \Espo\ORM\Repository
     public function reset()
     {
         $this->whereClause = array();
+        $this->havingClause = array();
         $this->listParams = array();
     }
 
@@ -524,6 +530,19 @@ class RDB extends \Espo\ORM\Repository
         return $this;
     }
 
+    public function having($param1 = array(), $param2 = null)
+    {
+        if (is_array($param1)) {
+            $this->havingClause = $param1 + $this->havingClause;
+        } else {
+            if (!is_null($param2)) {
+                $this->havingClause[$param1] = $param2;
+            }
+        }
+
+        return $this;
+    }
+
     public function order($field = 'id', $direction = "ASC")
     {
         $this->listParams['orderBy'] = $field;
@@ -569,6 +588,11 @@ class RDB extends \Espo\ORM\Repository
         } else {
             $params['whereClause'] = $this->whereClause;
         }
+        if (!empty($params['havingClause'])) {
+            $params['havingClause'] = $params['havingClause'] + $this->havingClause;
+        } else {
+            $params['havingClause'] = $this->havingClause;
+        }
         $params = $params + $this->listParams;
 
         return $params;
@@ -579,4 +603,3 @@ class RDB extends \Espo\ORM\Repository
         return $this->getEntityManager()->getPDO();
     }
 }
-

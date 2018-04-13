@@ -33,6 +33,7 @@
  */
 
 namespace Espo\ORM;
+
 abstract class Repository
 {
     /**

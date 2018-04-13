@@ -26,11 +26,6 @@
             "readOnly": true,
             "view": "views/fields/user"
         },
-        "ownerUser": {
-            "type": "link",
-            "required": true,
-            "view": "views/fields/owner-user"
-        },
         "assignedUser": {
             "type": "link",
             "required": true,
@@ -47,10 +42,6 @@
             "entity": "User"
         },
         "modifiedBy": {
-            "type": "belongsTo",
-            "entity": "User"
-        },
-        "ownerUser": {
             "type": "belongsTo",
             "entity": "User"
         },
@@ -72,9 +63,6 @@
     "indexes": {
         "name": {
             "columns": ["name", "deleted"]
-        },
-        "ownerUser": {
-            "columns": ["ownerUserId", "deleted"]
         },
         "assignedUser": {
             "columns": ["assignedUserId", "deleted"]

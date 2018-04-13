@@ -41,7 +41,9 @@
         "Global": "Global",
         "Preferences": "Preferences",
         "EmailAddress": "Email Address",
-        "PhoneNumber": "Phone Number"
+        "PhoneNumber": "Phone Number",
+        "AuthLogRecord": "Auth Log Record",
+        "AuthFailLogRecord": "Auth Fail Log Record"
     },
     "scopeNamesPlural": {
         "Email": "Emails",
@@ -72,7 +74,9 @@
         "ActionHistoryRecord": "Action History",
         "AuthToken": "Auth Tokens",
         "UniqueId": "Unique IDs",
-        "LastViewed": "Last Viewed"
+        "LastViewed": "Last Viewed",
+        "AuthLogRecord": "Auth Log",
+        "AuthFailLogRecord": "Auth Fail Log"
     },
     "labels": {
         "Misc": "Misc",
@@ -304,6 +308,7 @@
         "assignedUser": "Assigned User",
         "assignedUsers": "Assigned Users",
         "emailAddress": "Email",
+        "emailAddressData": "Email Address Data",
         "assignedUserName": "Assigned User Name",
         "teams": "Teams",
         "createdAt": "Created At",
@@ -318,10 +323,13 @@
         "phoneNumberFax": "Phone (Fax)",
         "phoneNumberOffice": "Phone (Office)",
         "phoneNumberOther": "Phone (Other)",
+        "phoneNumberData": "Phone Number Data",
         "order": "Order",
         "parent": "Parent",
         "children": "Children",
-        "id": "ID"
+        "id": "ID",
+        "ids": "IDs",
+        "names": "Names"
     },
     "links": {
         "assignedUser": "Assigned User",

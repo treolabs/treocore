@@ -149,7 +149,7 @@ class Xlsx extends \Espo\Core\Injectable
             throw new Error();
         }
 
-        $phpExcel = new \PHPExcel();
+        $phpExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $phpExcel->setActiveSheetIndex(0);
 
         if (isset($params['exportName'])) {
@@ -181,10 +181,11 @@ class Xlsx extends \Espo\Core\Injectable
             )
         );
 
+        $now = new \DateTime();
+        $now->setTimezone(new \DateTimeZone($this->getInjection('config')->get('timeZone', 'UTC')));
+
         $sheet->setCellValue('A1', $exportName);
-
-        $sheet->setCellValue('B1', \PHPExcel_Shared_Date::PHPToExcel(strtotime(date('Y-m-d H:i:s'))));
-
+        $sheet->setCellValue('B1', \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel(strtotime($now->format('Y-m-d H:i:s'))));
 
         $sheet->getStyle('A1')->applyFromArray($titleStyle);
         $sheet->getStyle('B1')->applyFromArray($dateStyle);
@@ -308,7 +309,7 @@ class Xlsx extends \Espo\Core\Injectable
                     }
                 } else if ($type == 'currencyConverted') {
                     if (array_key_exists($name, $row)) {
-                        $currency = $this->getConfig()->get('baseCurrency');
+                        $currency = $this->getConfig()->get('defaultCurrency');
                         $currencySymbol = $this->getMetadata()->get(['app', 'currency', 'symbolMap', $currency], '');
 
                         $sheet->getStyle("$col$rowNumber")
@@ -335,7 +336,7 @@ class Xlsx extends \Espo\Core\Injectable
                     }
                 } else if ($type == 'date') {
                     if (isset($row[$name])) {
-                        $sheet->setCellValue("$col$rowNumber", \PHPExcel_Shared_Date::PHPToExcel(strtotime($row[$name])));
+                        $sheet->setCellValue("$col$rowNumber", \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel(strtotime($row[$name])));
                     }
                 } else if ($type == 'datetime' || $type == 'datetimeOptional') {
                     $value = null;
@@ -360,14 +361,14 @@ class Xlsx extends \Espo\Core\Injectable
                         }
                     }
                     if ($value) {
-                        $sheet->setCellValue("$col$rowNumber", \PHPExcel_Shared_Date::PHPToExcel(strtotime($value)));
+                        $sheet->setCellValue("$col$rowNumber", \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel(strtotime($value)));
                     }
                 } else if ($type == 'image') {
                     if (isset($row[$name . 'Id']) && $row[$name . 'Id']) {
                         $attachment = $this->getEntityManager()->getEntity('Attachment', $row[$name . 'Id']);
 
                         if ($attachment) {
-                            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                            $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                             $filePath = $this->getInjection('fileStorageManager')->getLocalFilePath($attachment);
 
                             if ($filePath && file_exists($filePath)) {
@@ -477,6 +478,13 @@ class Xlsx extends \Espo\Core\Injectable
 
                 $link = false;
 
+                $foreignLink = null;
+                $isForeign = false;
+                if (strpos($name, '_')) {
+                    $isForeign = true;
+                    list($foreignLink, $foreignField) = explode('_', $name);
+                }
+
                 if ($name == 'name') {
                     if (array_key_exists('id', $row)) {
                         $link = $this->getConfig()->getSiteUrl() . "/#".$entityType . "/view/" . $row['id'];
@@ -487,7 +495,13 @@ class Xlsx extends \Espo\Core\Injectable
                     }
                 } else if ($type == 'link') {
                     if (array_key_exists($name.'Id', $row)) {
-                        $foreignEntity = $this->getMetadata()->get(['entityDefs', $entityType, 'links', $name, 'entity']);
+                        $foreignEntity = null;
+                        if (!$isForeign) {
+                            $foreignEntity = $this->getMetadata()->get(['entityDefs', $entityType, 'links', $name, 'entity']);
+                        } else {
+                            $foreignEntity1 = $this->getMetadata()->get(['entityDefs', $entityType, 'links', $foreignLink, 'entity']);
+                            $foreignEntity = $this->getMetadata()->get(['entityDefs', $foreignEntity1, 'links', $foreignField, 'entity']);
+                        }
                         if ($foreignEntity) {
                             $link = $this->getConfig()->getSiteUrl() . "/#" . $foreignEntity. "/view/". $row[$name.'Id'];
                         }
@@ -519,12 +533,15 @@ class Xlsx extends \Espo\Core\Injectable
 
         $sheet->getStyle("A2:A$rowNumber")
             ->getNumberFormat()
-            ->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+            ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
 
         $startingRowNumber = 4;
 
         foreach ($fieldList as $i => $name) {
             $col = $azRange[$i];
+            if (!array_key_exists($name, $typesCache)) {
+                break;
+            }
             $type = $typesCache[$name];
 
             switch ($type) {
@@ -570,7 +587,7 @@ class Xlsx extends \Espo\Core\Injectable
             $sheet->getStyle($linkColumn.$startingRowNumber.':'.$linkColumn.$rowNumber)->applyFromArray($linkStyle);
         }
 
-        $objWriter = \PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($phpExcel, 'Xlsx');
 
         if (!$this->getInjection('fileManager')->isDir('data/cache/')) {
             $this->getInjection('fileManager')->mkdir('data/cache/');

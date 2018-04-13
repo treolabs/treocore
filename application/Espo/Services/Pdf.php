@@ -58,6 +58,7 @@ class Pdf extends \Espo\Core\Services\Base
         $this->addDependency('dateTime');
         $this->addDependency('number');
         $this->addDependency('entityManager');
+        $this->addDependency('defaultLanguage');
     }
 
     protected function getAcl()
@@ -100,7 +101,15 @@ class Pdf extends \Espo\Core\Services\Base
             throw new Forbidden();
         }
 
-        $htmlizer = new Htmlizer($this->getFileManager(), $this->getInjection('dateTime'), $this->getInjection('number'), $this->getAcl(), $this->getInjection('entityManager'));
+        $htmlizer = new Htmlizer(
+            $this->getFileManager(),
+            $this->getInjection('dateTime'),
+            $this->getInjection('number'),
+            $this->getAcl(),
+            $this->getInjection('entityManager'),
+            $this->getInjection('metadata'),
+            $this->getInjection('defaultLanguage')
+        );
 
         $pdf = new \Espo\Core\Pdf\Tcpdf();
 
@@ -121,7 +130,20 @@ class Pdf extends \Espo\Core\Services\Base
             $pdf->setPrintFooter(false);
         }
 
-        $pdf->addPage();
+        $pageOrientation = 'Portrait';
+        if ($template->get('pageOrientation')) {
+            $pageOrientation = $template->get('pageOrientation');
+        }
+        $pageFormat = 'A4';
+        if ($template->get('pageFormat')) {
+            $pageFormat = $template->get('pageFormat');
+        }
+        $pageOrientationCode = 'P';
+        if ($pageOrientation === 'Landscape') {
+            $pageOrientationCode = 'L';
+        }
+
+        $pdf->addPage($pageOrientationCode, $pageFormat);
 
         $htmlHeader = $htmlizer->render($entity, $template->get('header'));
         $pdf->writeHTML($htmlHeader, true, false, true, false, '');

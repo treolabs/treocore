@@ -125,6 +125,7 @@ class AdminNotificationManager
         $latestVersion = $config->get('latestVersion');
         if (isset($latestVersion)) {
             $currentVersion = $config->get('version');
+            if ($currentVersion === 'dev') return;
             if (version_compare($latestVersion, $currentVersion, '>')) {
                 return array(
                     'currentVersion' => $currentVersion,
@@ -163,8 +164,8 @@ class AdminNotificationManager
 
         $query = "
             SELECT version FROM extension
-            WHERE name='". $extensionName ."'
-            AND deleted=0
+            WHERE name = ". $pdo->quote($extensionName) ."
+            AND deleted = 0
             AND is_installed = 1
             ORDER BY created_at DESC
         ";
