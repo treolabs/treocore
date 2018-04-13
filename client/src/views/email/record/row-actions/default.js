@@ -37,10 +37,12 @@ Espo.define('views/email/record/row-actions/default', 'views/record/row-actions/
 
         setup: function () {
             Dep.prototype.setup.call(this);
-            this.listenTo(this.model, 'change:isImportant', function () {
-                setTimeout(function () {
-                    this.reRender();
-                }.bind(this), 10);
+            this.listenTo(this.model, 'change', function (model) {
+                if (model.hasChanged('isImportant') || model.hasChanged('inTrash')) {
+                    setTimeout(function () {
+                        this.reRender();
+                    }.bind(this), 10);
+                }
             }, this);
         },
 
@@ -84,7 +86,7 @@ Espo.define('views/email/record/row-actions/default', 'views/record/row-actions/
 
 
             }
-            if (this.getAcl().checkModel(this.model, 'delete')) {
+            if (this.options.acl.delete) {
                 list.push({
                     action: 'quickRemove',
                     label: 'Remove',

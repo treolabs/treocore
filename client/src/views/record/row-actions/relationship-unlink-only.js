@@ -47,8 +47,7 @@ Espo.define('views/record/row-actions/relationship-unlink-only', 'views/record/r
                     }
                 ];
             }
-        },
+        }
     });
 
 });
-

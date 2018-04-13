@@ -164,17 +164,7 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                         rows: 1
                     });
 
-                    this.paramList.forEach(function (o) {
-                        if (o.hidden) {
-                            return;
-                        }
-                        var options = {};
-                        if (o.tooltip ||  ~this.paramWithTooltipList.indexOf(o.name)) {
-                            options.tooltip = true;
-                            options.tooltipText = this.translate(o.name, 'tooltips', 'FieldManager');
-                        }
-                        this.createFieldView(o.type, o.name, null, o, options);
-                    }, this);
+
 
                     this.hasDynamicLogicPanel = false;
                     if (
@@ -232,6 +222,20 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                             this.hasDynamicLogicPanel = true;
                         };
                     }
+
+                    this.model.fetchedAttributes = this.model.getClonedAttributes();
+
+                    this.paramList.forEach(function (o) {
+                        if (o.hidden) {
+                            return;
+                        }
+                        var options = {};
+                        if (o.tooltip ||  ~this.paramWithTooltipList.indexOf(o.name)) {
+                            options.tooltip = true;
+                            options.tooltipText = this.translate(o.name, 'tooltips', 'FieldManager');
+                        }
+                        this.createFieldView(o.type, o.name, null, o, options);
+                    }, this);
 
                     callback();
 
@@ -338,7 +342,19 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
             this.fieldList.push(name);
         },
 
+        disableButtons: function () {
+            this.$el.find('[data-action="save"]').attr('disabled', 'disabled').addClass('disabled');
+            this.$el.find('[data-action="resetToDefault"]').attr('disabled', 'disabled').addClass('disabled');
+        },
+
+        enableButtons: function () {
+            this.$el.find('[data-action="save"]').removeAttr('disabled').removeClass('disabled');
+            this.$el.find('[data-action="resetToDefault"]').removeAttr('disabled').removeClass('disabled');
+        },
+
         save: function () {
+            this.disableButtons();
+
             this.fieldList.forEach(function (field) {
                 var view = this.getView(field);
                 if (!view.readOnly) {
@@ -353,6 +369,8 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
 
             if (notValid) {
                 this.notify('Not valid', 'error');
+
+                this.enableButtons();
                 return;
             }
 
@@ -364,6 +382,7 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
 
             this.listenToOnce(this.model, 'sync', function () {
                 Espo.Ui.notify(false);
+                this.enableButtons();
 
                 this.getMetadata().load(function () {
                     this.getMetadata().storeToCache();
@@ -372,10 +391,36 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
 
                 this.updateLanguage();
 
-            }.bind(this));
+                this.model.fetchedAttributes = this.model.getClonedAttributes();
+            }, this);
 
             this.notify('Saving...');
-            this.model.save();
+
+            if (this.isNew) {
+                this.model.save().error(function () {
+                    this.enableButtons();
+                }.bind(this));
+            } else {
+                var attributes = this.model.getClonedAttributes();
+
+                if (this.model.fetchedAttributes.label === attributes.label) {
+                    delete attributes.label;
+                }
+
+                if (this.model.fetchedAttributes.tooltipText === attributes.tooltipText || !this.model.fetchedAttributes.tooltipText && !attributes.tooltipText) {
+                    delete attributes.tooltipText;
+                }
+
+                if ('translatedOptions' in attributes) {
+                    if (_.isEqual(this.model.fetchedAttributes.translatedOptions, attributes.translatedOptions)) {
+                        delete attributes.translatedOptions;
+                    }
+                }
+
+                this.model.save(attributes, {patch: true}).error(function () {
+                    this.enableButtons();
+                }.bind(this));
+            }
         },
 
         updateLanguage: function () {
