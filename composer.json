@@ -33,7 +33,7 @@
     "treo-module/pim": "1.*"
   },
   "extra": {
-    "espoVersion": "5.0.5",
+    "espoVersion": "5.1.2",
     "merge-plugin": {
       "include": [
         "data/composer.json"
