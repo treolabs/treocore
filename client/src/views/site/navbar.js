@@ -66,14 +66,7 @@ Espo.define('views/site/navbar', 'view', function (Dep) {
                 this.quickCreate(scope);
             },
             'click a.minimizer': function () {
-                var $body = $('body');
-                if ($body.hasClass('minimized')) {
-                    $body.removeClass('minimized');
-                    this.getStorage().clear('state', 'layoutMinimized');
-                } else {
-                    $body.addClass('minimized');
-                    this.getStorage().set('state', 'layoutMinimized', true);
-                }
+                this.switchMinimizer();
             },
             'click a.action': function (e) {
                 var $el = $(e.currentTarget);
@@ -85,6 +78,22 @@ Espo.define('views/site/navbar', 'view', function (Dep) {
                     this[method](data, e);
                     e.preventDefault();
                 }
+            }
+        },
+
+        switchMinimizer: function () {
+            var $body = $('body');
+            if ($body.hasClass('minimized')) {
+                $body.removeClass('minimized');
+                this.getStorage().clear('state', 'layoutMinimized');
+            } else {
+                $body.addClass('minimized');
+                this.getStorage().set('state', 'layoutMinimized', true);
+            }
+            if (window.Event) {
+                try {
+                    window.dispatchEvent(new Event('resize'));
+                } catch (e) {}
             }
         },
 
@@ -201,13 +210,14 @@ Espo.define('views/site/navbar', 'view', function (Dep) {
                 var navbarNeededHeight = (this.getThemeManager().getParam('navbarHeight') || 44) + 1;
 
                 $moreDd = $('#nav-more-tabs-dropdown');
+                $moreLi = $moreDd.closest('li');
 
-                var navbarBaseWidth = this.getThemeManager().getParam('navbarBaseWidth') || 546;
+                var navbarBaseWidth = this.getThemeManager().getParam('navbarBaseWidth') || 516;
 
                 var updateWidth = function () {
                     var windowWidth = $(window.document).width();
                     var windowWidth = window.innerWidth;
-                    var moreWidth = $moreDd.width();
+                    var moreWidth = $moreLi.width();
 
                     $more.children('li.not-in-more').each(function (i, li) {
                         unhideOneTab();
@@ -242,15 +252,20 @@ Espo.define('views/site/navbar', 'view', function (Dep) {
                     }
                 }.bind(this);
 
-                var processUpdateWidth = function () {
+                var processUpdateWidth = function (isRecursive) {
                     if ($navbar.height() > navbarNeededHeight) {
                         updateWidth();
                         setTimeout(function () {
-                            processUpdateWidth();
+                            processUpdateWidth(true);
                         }, 200);
                     } else {
+                        if (!isRecursive) {
+                            setTimeout(function () {
+                                processUpdateWidth(true);
+                            }, 10);
+                        }
                         setTimeout(function () {
-                            processUpdateWidth();
+                            processUpdateWidth(true);
                         }, 1000);
                     }
                 };

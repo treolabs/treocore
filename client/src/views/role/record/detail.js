@@ -43,6 +43,8 @@ Espo.define('views/role/record/detail', 'views/record/detail', function (Dep) {
 
         editModeDisabled: true,
 
+        columnCount: 3,
+
         setup: function () {
             Dep.prototype.setup.call(this);
             this.createView('extra', this.tableView, {

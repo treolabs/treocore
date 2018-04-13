@@ -255,7 +255,7 @@ abstract class Base
             case 'WEEK_0':
                 return "CONCAT(YEAR({$part}), '/', WEEK({$part}, 0))";
             case 'WEEK_1':
-                return "CONCAT(YEAR({$part}), '/', WEEK({$part}, 1))";
+                return "CONCAT(YEAR({$part}), '/', WEEK({$part}, 5))";
             case 'MONTH_NUMBER':
                 $function = 'MONTH';
                 break;
@@ -271,7 +271,7 @@ abstract class Base
             case 'WEEK_NUMBER_0':
                 return "WEEK({$part}, 0)";
             case 'WEEK_NUMBER_1':
-                return "WEEK({$part}, 1)";
+                return "WEEK({$part}, 5)";
             case 'HOUR_NUMBER':
                 $function = 'HOUR';
                 break;
@@ -438,7 +438,7 @@ abstract class Base
 
         if ($alias) {
             return "JOIN `" . $this->toDb($r['entity']) . "` AS `" . $alias . "` ON ".
-                   $this->toDb($entity->getEntityType()) . "." . $this->toDb($key) . " = " . $alias . "." . $this->toDb($foreignKey);
+                $this->toDb($entity->getEntityType()) . "." . $this->toDb($key) . " = " . $alias . "." . $this->toDb($foreignKey);
         }
     }
 

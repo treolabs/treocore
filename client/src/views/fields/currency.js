@@ -45,7 +45,11 @@ Espo.define('views/fields/currency', 'views/fields/float', function (Dep) {
 
         detailTemplate2: 'fields/currency/detail-2',
 
-        listTemplate: 'fields/currency/detail',
+        listTemplate: 'fields/currency/list',
+
+        listTemplate1: 'fields/currency/list-1',
+
+        listTemplate2: 'fields/currency/list-2',
 
         detailTemplateNoCurrency: 'fields/currency/detail-no-currency',
 
@@ -75,7 +79,12 @@ Espo.define('views/fields/currency', 'views/fields/float', function (Dep) {
 
         _getTemplateName: function () {
             if (this.mode == 'detail' || this.mode == 'list') {
-                var prop = 'detailTemplate' + this.getCurrencyFormat().toString();
+                var prop
+                if (this.mode == 'list') {
+                    var prop = 'listTemplate' + this.getCurrencyFormat().toString();
+                } else {
+                    var prop = 'detailTemplate' + this.getCurrencyFormat().toString();
+                }
                 if (this.options.hideCurrency) {
                     prop = 'detailTemplateNoCurrency';
                 }

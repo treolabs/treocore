@@ -96,7 +96,7 @@ class ScheduledJob
         }
 
         $scheduledJob->set('lastRun', $runTime);
-        $entityManager->saveEntity($scheduledJob);
+        $entityManager->saveEntity($scheduledJob, ['silent' => true]);
 
         $scheduledJobLog = $entityManager->getEntity('ScheduledJobLogRecord');
         $scheduledJobLog->set(array(
