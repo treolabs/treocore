@@ -88,8 +88,7 @@ Espo.define('views/stream/panel', ['views/record/panels/relationship', 'lib!Text
             var clientHeight = this.$textarea.prop('clientHeight');
 
             if (clientHeight === lastHeight) return;
-
-            if (scrollHeight > clientHeight) {
+            if (scrollHeight > clientHeight + 1) {
                 this.$textarea.attr('rows', this.$textarea.prop('rows') + 1);
                 this.controlTextareaHeight(clientHeight);
             }
@@ -112,7 +111,7 @@ Espo.define('views/stream/panel', ['views/record/panels/relationship', 'lib!Text
                     if (this.$textarea.val() !== '') return;
 
                     var attachmentsIds = this.seed.get('attachmentsIds');
-                    if (!attachmentsIds.length) {
+                    if (!attachmentsIds.length && !this.getView('attachments').isUploading) {
                         this.disablePostingMode();
                     }
                 }.bind(this));
@@ -364,6 +363,11 @@ Espo.define('views/stream/panel', ['views/record/panels/relationship', 'lib!Text
             this.$textarea.prop('disabled', true);
 
             this.getModelFactory().create('Note', function (model) {
+                if (this.getView('attachments').validateReady()) {
+                    this.$textarea.prop('disabled', false)
+                    return;
+                }
+
                 if (message == '' && this.seed.get('attachmentsIds').length == 0) {
                     this.notify('Post cannot be empty', 'error');
                     this.$textarea.prop('disabled', false);

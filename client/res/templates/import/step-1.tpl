@@ -2,7 +2,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading"><h4 class="panel-title">{{translate 'What to Import?' scope='Import'}}</h4></div>
-            <div class="panel-body">
+            <div class="panel-body panel-body-form">
                 <div class="row">
                     <div class="col-sm-4 form-group cell">
                         <label class="control-label">{{translate 'Entity Type' scope='Import'}}</label>

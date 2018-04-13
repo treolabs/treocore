@@ -29,7 +29,8 @@
   "errors": {
     "alreadyInstalled": "TreoCore ist schon installiert",
     "languageNotCorrect": "Die Eingabesprache ist falsch",
-    "differentPass": "Verschiedene Passwörter"
+    "differentPass": "Verschiedene Passwörter",
+    "notCorrectDatabaseConfig": "Ungültige Datenbank Einstellungen"
   },
   "messages": {
     "youMustAgreeToTheLicenseAgreement": "Sie müssen den Lizenzvertrag akzeptieren",

@@ -287,13 +287,10 @@ class Record extends \Espo\Core\Services\Base
         $fieldDefs = $this->getMetadata()->get('entityDefs.' . $entity->getEntityType() . '.fields', array());
         foreach ($fieldDefs as $field => $defs) {
             if (isset($defs['type']) && $defs['type'] == 'linkParent') {
-                $id = $entity->get($field . 'Id');
-                $scope = $entity->get($field . 'Type');
-
-                if ($scope) {
-                    if ($foreignEntity = $this->getEntityManager()->getEntity($scope, $id)) {
-                        $entity->set($field . 'Name', $foreignEntity->get('name'));
-                    }
+                $parentId = $entity->get($field . 'Id');
+                $parentType = $entity->get($field . 'Type');
+                if ($parentId && $parentType) {
+                    $entity->loadParentNameField($field);
                 }
             }
         }
@@ -412,7 +409,7 @@ class Record extends \Espo\Core\Services\Base
             return true;
         }
 
-        if ($assignmentPermission === true || !in_array($assignmentPermission, ['team', 'no'])) {
+        if ($assignmentPermission === true || $assignmentPermission === 'yes' || !in_array($assignmentPermission, ['team', 'no'])) {
             return true;
         }
 
@@ -450,11 +447,16 @@ class Record extends \Espo\Core\Services\Base
             return true;
         }
 
-        if (!$entity->hasAttribute('teamsIds')) {
+        if (!$entity->hasLinkMultipleField('teams')) {
             return true;
         }
-        $teamIdList = $entity->get('teamsIds');
+        $teamIdList = $entity->getLinkMultipleIdList('teams');
         if (empty($teamIdList)) {
+            if ($assignmentPermission === 'team') {
+                if (!$entity->get('assignedUserId')) {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -540,6 +542,38 @@ class Record extends \Espo\Core\Services\Base
         }
     }
 
+    public function populateDefaults(Entity $entity, $data)
+    {
+        if (!$this->getUser()->isPortal()) {
+            $forbiddenFieldList = null;
+            if ($entity->hasAttribute('assignedUserId')) {
+                $forbiddenFieldList = $this->getAcl()->getScopeForbiddenFieldList($this->entityType, 'edit');
+                if (in_array('assignedUser', $forbiddenFieldList)) {
+                    $entity->set('assignedUserId', $this->getUser()->id);
+                    $entity->set('assignedUserName', $this->getUser()->get('name'));
+                }
+            }
+
+            if ($entity->hasLinkMultipleField('teams')) {
+                if (is_null($forbiddenFieldList)) {
+                    $forbiddenFieldList = $this->getAcl()->getScopeForbiddenFieldList($this->entityType, 'edit');
+                }
+                if (in_array('teams', $forbiddenFieldList)) {
+                    if ($this->getUser()->get('defaultTeamId')) {
+                        $defaultTeamId = $this->getUser()->get('defaultTeamId');
+                        $entity->addLinkMultipleId('teams', $defaultTeamId);
+                        $teamsNames = $entity->get('teamsNames');
+                        if (!$teamsNames || !is_object($teamsNames)) {
+                            $teamsNames = (object) [];
+                        }
+                        $teamsNames->$defaultTeamId = $this->getUser()->get('defaultTeamName');
+                        $entity->set('teamsNames', $teamsNames);
+                    }
+                }
+            }
+        }
+    }
+
     public function createEntity($data)
     {
         if (!$this->getAcl()->check($this->getEntityType(), 'create')) {
@@ -563,6 +597,8 @@ class Record extends \Espo\Core\Services\Base
         if (!$this->getAcl()->check($entity, 'create')) {
             throw new Forbidden();
         }
+
+        $this->populateDefaults($entity, $data);
 
         $this->beforeCreateEntity($entity, $data);
 
@@ -1031,7 +1067,7 @@ class Record extends \Espo\Core\Services\Base
             $ids = $params['ids'];
             foreach ($ids as $id) {
                 $entity = $this->getEntity($id);
-                if ($this->getAcl()->check($entity, 'edit')) {
+                if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
                     $entity->set($data);
                     if ($this->checkAssignment($entity)) {
                         if ($repository->save($entity)) {
@@ -1061,7 +1097,7 @@ class Record extends \Espo\Core\Services\Base
             $collection = $repository->find($selectParams);
 
             foreach ($collection as $entity) {
-                if ($this->getAcl()->check($entity, 'edit')) {
+                if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
                     $entity->set($data);
                     if ($this->checkAssignment($entity)) {
                         if ($repository->save($entity)) {
@@ -1090,6 +1126,11 @@ class Record extends \Espo\Core\Services\Base
     }
 
     protected function checkEntityForMassRemove(Entity $entity)
+    {
+        return true;
+    }
+
+    protected function checkEntityForMassUpdate(Entity $entity, $data)
     {
         return true;
     }
@@ -1272,14 +1313,16 @@ class Record extends \Espo\Core\Services\Base
         return false;
     }
 
-    public function checkAttributeIsAllowedForExport($entity, $attribute)
+    public function checkAttributeIsAllowedForExport($entity, $attribute, $isExportAllFields = false)
     {
         $entity = $this->getEntityManager()->getEntity($this->getEntityType());
 
         if (in_array($attribute, $this->internalAttributeList)) {
             return false;
         }
-
+        if (!$isExportAllFields) {
+            return true;
+        }
         $isNotStorable = $entity->getAttributeParam($attribute, 'notStorable');
         if (!$isNotStorable) {
             return true;
@@ -1386,10 +1429,12 @@ class Record extends \Espo\Core\Services\Base
         }
 
         if (!array_key_exists('fieldList', $params)) {
+            $exportAllFields = true;
             $fieldDefs = $this->getMetadata()->get(['entityDefs', $this->entityType, 'fields'], []);
             $fieldList = array_keys($fieldDefs);
             array_unshift($fieldList, 'id');
         } else {
+            $exportAllFields = false;
             $fieldList = $params['fieldList'];
         }
 
@@ -1400,6 +1445,10 @@ class Record extends \Espo\Core\Services\Base
         }
         $fieldList = array_values($fieldList);
 
+        if (method_exists($exportObj, 'filterFieldList')) {
+            $fieldList = $exportObj->filterFieldList($this->entityType, $fieldList, $exportAllFields);
+        }
+
         if (is_null($attributeList)) {
             $attributeList = [];
             $seed = $this->getEntityManager()->getEntity($this->entityType);
@@ -1407,7 +1456,7 @@ class Record extends \Espo\Core\Services\Base
                 if (in_array($attribute, $attributeListToSkip)) {
                     continue;
                 }
-                if ($this->checkAttributeIsAllowedForExport($seed, $attribute)) {
+                if ($this->checkAttributeIsAllowedForExport($seed, $attribute, true)) {
                     $attributeList[] = $attribute;
                 }
             }
