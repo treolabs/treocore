@@ -1,6 +1,6 @@
 {
   "name": "treo/treo",
-  "version": "1.9.0",
+  "version": "1.8.3",
   "description": "TreoPIM",
   "authors": [
     {
@@ -29,8 +29,8 @@
     "spatie/array-to-xml": "2.7.0",
     "league/csv": "8.2.2",
     "symfony/expression-language": "3.4.3",
-    "wikimedia/composer-merge-plugin": "^1.4",
-    "treo-module/pim": "1.*"
+    "wikimedia/composer-merge-plugin": "1.4.1",
+    "treo-module/pim": "*"
   },
   "extra": {
     "espoVersion": "5.0.5",
