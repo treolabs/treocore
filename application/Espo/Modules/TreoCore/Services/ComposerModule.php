@@ -200,12 +200,14 @@ class ComposerModule extends Base
                                     || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
                                     // prepare version
                                     $version = str_replace('v', '', $matches[0][0]);
-                                    $data['version'] = str_replace('v', '', $data['version']);
+
+                                    // set row
+                                    $this->modulePackage[$treoId][$version] = $data;
 
                                     // set max
                                     if ((int)str_replace('.', '', $max) < (int)str_replace('.', '', $version)) {
                                         $max = $version;
-                                        $this->modulePackage[$treoId] = $data;
+                                        $this->modulePackage[$treoId]['max'] = $data;
                                     }
                                 }
                             }
