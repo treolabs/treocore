@@ -151,9 +151,6 @@ class ModuleManager extends Base
                 $package = $this->getComposerModuleService()->getModulePackage($module);
 
                 if (!empty($package)) {
-                    // get module packages
-                    $packages = $this->getComposerModuleService()->getModulePackages($module);
-
                     // prepare item
                     $item['name'] = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
@@ -162,8 +159,10 @@ class ModuleManager extends Base
                     $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
 
+                    // get module packages
+                    $packages = $this->getComposerModuleService()->getModulePackages($module);
                     if (isset($packages)) {
-                        $item['availableVersion'] = $this->prepareModuleVersion($packages['version']);
+                        $item['availableVersion'] = $this->prepareModuleVersion($packages['max']['version']);
                     }
                 }
 
@@ -197,8 +196,11 @@ class ModuleManager extends Base
             // get current language
             $currentLang = $this->getLanguage()->getLanguage();
 
-            foreach ($modules as $moduleId => $max) {
+            foreach ($modules as $moduleId => $versions) {
                 if (empty($this->getComposerModuleService()->getModulePackage($moduleId))) {
+                    // prepare max
+                    $max = $versions['max'];
+
                     // prepare name
                     $name = $moduleId;
                     if (!empty($max['extra']['name'][$currentLang])) {
@@ -267,10 +269,11 @@ class ModuleManager extends Base
      * Install module
      *
      * @param string $id
+     * @param string $version
      *
      * @return array
      */
-    public function installModule(string $id): array
+    public function installModule(string $id, string $version = null): array
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
@@ -284,10 +287,23 @@ class ModuleManager extends Base
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
 
+
+        if (!empty($version)) {
+            // prepare version
+            $version = $this->prepareModuleVersion($version);
+
+            // validation
+            if (!isset($packages[$version])) {
+                throw new Exceptions\Error($this->translateError('No such module version'));
+            }
+        } else {
+            $version = 'max';
+        }
+
         // run composer
         $result = $this
             ->getComposerService()
-            ->update($packages['name'], $packages['version']);
+            ->update($packages[$version]['name'], $packages[$version]['version']);
 
         return $result;
     }
@@ -306,6 +322,9 @@ class ModuleManager extends Base
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
 
+        // prepare version
+        $version = $this->prepareModuleVersion($version);
+
         // validation
         if (empty($packages)) {
             throw new Exceptions\Error($this->translateError('No such module'));
@@ -316,14 +335,14 @@ class ModuleManager extends Base
         if ($this->prepareModuleVersion($package['version']) == $version) {
             throw new Exceptions\Error($this->translateError('Such module version already installed'));
         }
-        if ($this->prepareModuleVersion($packages['version']) != $version) {
+        if (!isset($version, $packages[$version])) {
             throw new Exceptions\Error($this->translateError('No such module version'));
         }
 
         // run composer
         $result = $this
             ->getComposerService()
-            ->update($packages['name'], $version);
+            ->update($packages[$version]['name'], $packages[$version]['version']);
 
         return $result;
     }
@@ -343,10 +362,9 @@ class ModuleManager extends Base
         if ($this->isModuleChangeable($id)) {
             // prepare params
             $package = $this->getComposerModuleService()->getModulePackage($id);
-            $packages = $this->getComposerModuleService()->getModulePackages($id);
 
             // validation
-            if (empty($package) || empty($packages)) {
+            if (empty($package)) {
                 throw new Exceptions\Error($this->translateError('No such module'));
             }
 
@@ -357,7 +375,7 @@ class ModuleManager extends Base
             $beforeDelete = TreoComposer::getTreoModules();
 
             // run composer
-            $result = $this->getComposerService()->delete($packages['name']);
+            $result = $this->getComposerService()->delete($package['name']);
 
             if (empty($result['status'])) {
                 // prepare modules diff
