@@ -136,15 +136,14 @@ class ModuleManager extends Base
             if ($module != 'TreoCore') {
                 // prepare item
                 $item = [
-                    "id"               => $module,
-                    "name"             => $module,
-                    "description"      => '',
-                    "version"          => '-',
-                    "availableVersion" => '-',
-                    "required"         => [],
-                    "isActive"         => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"         => false,
-                    "isComposer"       => false
+                    "id"          => $module,
+                    "name"        => $module,
+                    "description" => '',
+                    "version"     => '-',
+                    "required"    => [],
+                    "isActive"    => $this->getMetadata()->isModuleActive($module),
+                    "isSystem"    => false,
+                    "isComposer"  => false
                 ];
 
                 // get current module package
@@ -155,16 +154,16 @@ class ModuleManager extends Base
                     $item['name'] = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
                     $item['version'] = $this->prepareModuleVersion($package['version']);
+                    $item['versions'] = $this->prepareModuleVersions($module);
                     $item['required'] = $this->getModuleRequireds($module);
                     $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
-
-                    // get module packages
-                    $packages = $this->getComposerModuleService()->getModulePackages($module);
-                    if (isset($packages)) {
-                        $item['availableVersion'] = $this->prepareModuleVersion($packages['max']['version']);
-                    }
                 }
+
+                /**
+                 * @todo you should remove it at 62200
+                 */
+                $item['availableVersion'] = $item['version'];
 
                 // push
                 $result['list'][] = $item;
@@ -220,6 +219,7 @@ class ModuleManager extends Base
                     $result['list'][] = [
                         'id'          => $moduleId,
                         'version'     => $max['version'],
+                        'versions'    => $this->prepareModuleVersions($moduleId),
                         'name'        => $name,
                         'description' => $description
                     ];
@@ -626,6 +626,38 @@ class ModuleManager extends Base
     protected function prepareModuleVersion(string $version): string
     {
         return str_replace('v', '', $version);
+    }
+
+    /**
+     * Prepare module versions
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function prepareModuleVersions(string $id): array
+    {
+        // prepare result
+        $result = [];
+
+        if (!empty($data = $this->getComposerModuleService()->getModulePackages($id))) {
+            foreach ($data as $version => $row) {
+                if ($version != 'max') {
+                    $result[str_replace('.', '', $version)] = [
+                        'version' => $version,
+                        'require' => $row['require'],
+                    ];
+                }
+            }
+
+            // sort
+            ksort($result);
+
+            // prepare result
+            $result = array_values($result);
+        }
+
+        return $result;
     }
 
     /**
