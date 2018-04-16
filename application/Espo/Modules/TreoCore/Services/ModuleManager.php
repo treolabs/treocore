@@ -640,12 +640,62 @@ class ModuleManager extends Base
         // prepare result
         $result = [];
 
-        if (!empty($data = $this->getComposerModuleService()->getModulePackages($id))) {
+        // get packages
+        $packages = $this->getComposerModuleService()->getModulePackages();
+
+        if (!empty($packages) && !empty($data = $packages[$id])) {
+            // get current language
+            $currentLang = $this->getLanguage()->getLanguage();
+
             foreach ($data as $version => $row) {
                 if ($version != 'max') {
+                    // prepare require
+                    $require = [];
+
+                    foreach ($row['require'] as $k => $v) {
+                        // for system
+                        if ($k == 'treo/treo') {
+                            $require[$k] = [
+                                'id'       => $k,
+                                'name'     => 'Treo System',
+                                'version'  => $v,
+                                'isModule' => false
+                            ];
+                        }
+
+                        // for modules
+                        foreach ($packages as $pac) {
+                            if ($pac['max']['name'] == $k) {
+                                // prepare name
+                                $name = $pac['max']['extra']['name']['default'];
+                                if (isset($pac['max']['extra']['name'][$currentLang])) {
+                                    $name = $pac['max']['extra']['name'][$currentLang];
+                                }
+
+                                $require[$k] = [
+                                    'id'       => $k,
+                                    'name'     => $name,
+                                    'version'  => $v,
+                                    'isModule' => true
+                                ];
+                            }
+                        }
+
+                        // for else
+                        if (!isset($require[$k])) {
+                            $require[$k] = [
+                                'id'       => $k,
+                                'name'     => $k,
+                                'version'  => $v,
+                                'isModule' => false
+                            ];
+                        }
+                    }
+
+                    // push
                     $result[str_replace('.', '', $version)] = [
                         'version' => $version,
-                        'require' => $row['require'],
+                        'require' => array_values($require)
                     ];
                 }
             }
