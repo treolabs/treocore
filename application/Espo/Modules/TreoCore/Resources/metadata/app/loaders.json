@@ -4,5 +4,6 @@
   "Layout": "Espo\\Modules\\TreoCore\\Loaders\\Layout",
   "FieldManager": "Espo\\Modules\\TreoCore\\Loaders\\FieldManagerLoader",
   "CronManager": "Espo\\Modules\\TreoCore\\Loaders\\CronManager",
-  "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader"
+  "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader",
+  "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader"
 }
