@@ -344,6 +344,11 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
+        // run migration
+        if ($result['status'] == 0) {
+            $this->getInjection('migration')->run($id, $package['version'], $version);
+        }
+
         return $result;
     }
 
@@ -403,7 +408,8 @@ class ModuleManager extends Base
                 'language',
                 'fileManager',
                 'dataManager',
-                'serviceFactory'
+                'serviceFactory',
+                'migration'
             ]
         );
     }
