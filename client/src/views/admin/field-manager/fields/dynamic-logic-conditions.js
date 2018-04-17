@@ -35,6 +35,8 @@ Espo.define('views/admin/field-manager/fields/dynamic-logic-conditions', 'views/
 
     return Dep.extend({
 
+        detailTemplate: 'admin/field-manager/fields/dynamic-logic-conditions/detail',
+
         editTemplate: 'admin/field-manager/fields/dynamic-logic-conditions/edit',
 
         events: {
@@ -84,9 +86,11 @@ Espo.define('views/admin/field-manager/fields/dynamic-logic-conditions', 'views/
 
         fetch: function () {
             var data = {};
-            data[this.name] = this.conditionGroup;
+            data[this.name] = {
+                conditionGroup: this.conditionGroup
+            };
 
-            if (data[this.name].length === 0) {
+            if (this.conditionGroup.length === 0) {
                 data[this.name] = null;
             }
 

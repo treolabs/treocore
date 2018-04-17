@@ -44,6 +44,13 @@ Espo.define('views/header', 'view', function (Dep) {
             }
             data.scope = this.scope || this.getParentView().scope;
             data.items = this.getItems();
+
+            data.isXsSingleRow = this.options.isXsSingleRow;
+
+            if ((data.items.buttons || []).length < 2) {
+                data.isHeaderAdditionalSpace = true;
+            }
+
             return data;
         },
 

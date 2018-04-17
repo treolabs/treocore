@@ -123,7 +123,7 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
 
         inlineEditDisabled: false,
 
-        printPdfAction: false,
+        printPdfAction: true,
 
         portalLayoutDisabled: false,
 
@@ -147,7 +147,15 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 this.setEditMode();
                 $(window).scrollTop(0);
             } else {
-                this.getRouter().navigate('#' + this.scope + '/edit/' + this.model.id, {trigger: true});
+                var options = {
+                    id: this.model.id,
+                    model: this.model
+                };
+                if (this.options.rootUrl) {
+                    options.rootUrl = this.options.rootUrl;
+                }
+                this.getRouter().navigate('#' + this.scope + '/edit/' + this.model.id, {trigger: false});
+                this.getRouter().dispatch(this.scope, 'edit', options);
             }
         },
 
@@ -156,7 +164,7 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
         },
 
         actionSave: function () {
-            if (this.save()) {
+            if (this.save(null, true)) {
                 this.setDetailMode();
                 $(window).scrollTop(0)
             }
@@ -228,17 +236,11 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 }
             }
 
-            if (this.type === 'detail') {
-                var printPdfAction = this.printPdfAction;
+            if (this.type === 'detail' && this.printPdfAction) {
+                var printPdfAction = true;
 
-                if (!printPdfAction) {
-                    if (~(this.getHelper().getAppParam('templateEntityTypeList') || []).indexOf(this.entityType)) {
-                        printPdfAction = true;
-                    }
-                }
-
-                if (printPdfAction && !this.getAcl().check('Template', 'read')) {
-                    printPdfAction = false
+                if (!~(this.getHelper().getAppParam('templateEntityTypeList') || []).indexOf(this.entityType)) {
+                    printPdfAction = false;
                 }
 
                 if (printPdfAction) {
@@ -764,6 +766,41 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
             this.initDynamicLogic();
 
             this.setupFieldLevelSecurity();
+
+            this.initDynamicHandler();
+        },
+
+        initDynamicHandler: function () {
+            var dynamicHandlerClassName = this.dynamicHandlerClassName || this.getMetadata().get(['clientDefs', this.model.name, 'dynamicHandler']);
+            if (dynamicHandlerClassName) {
+                this.addReadyCondition(function () {
+                    return !!this.dynamicHandler;
+                }.bind(this));
+
+                require(dynamicHandlerClassName, function (DynamicHandler) {
+                    this.dynamicHandler = new DynamicHandler(this);
+
+                    this.listenTo(this.model, 'change', function (model, o) {
+                        if ('onChange' in this.dynamicHandler) {
+                            this.dynamicHandler.onChange(model, o);
+                        }
+
+                        var changedAttributes = model.changedAttributes();
+                        for (var attribute in changedAttributes) {
+                            var methodName = 'onChange' + Espo.Utils.upperCaseFirst(attribute);
+                            if (methodName in this.dynamicHandler) {
+                                this.dynamicHandler[methodName](model, changedAttributes[attribute], o);
+                            }
+                        }
+                    }, this);
+
+                    if ('init' in this.dynamicHandler) {
+                        this.dynamicHandler.init();
+                    }
+
+                    this.tryReady();
+                }.bind(this));
+            }
         },
 
         setupFinal: function () {
@@ -788,15 +825,17 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
             }
             var id = model.id;
 
+            var scope = model.name || this.scope;
+
             var url;
             if (this.mode === 'edit') {
-                url = '#' + this.scope + '/edit/' + id;
+                url = '#' + scope + '/edit/' + id;
             } else {
-                url = '#' + this.scope + '/view/' + id;
+                url = '#' + scope + '/view/' + id;
             }
 
-            this.getRouter().navigate('#' + this.scope + '/view/' + id, {trigger: false});
-            this.getRouter().dispatch(this.scope, 'view', {
+            this.getRouter().navigate('#' + scope + '/view/' + id, {trigger: false});
+            this.getRouter().dispatch(scope, 'view', {
                 id: id,
                 model: model,
                 indexOfRecord: indexOfRecord
@@ -1282,9 +1321,22 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                     });
                     return;
                 }
-                url = this.options.rootUrl || '#' + this.scope;
                 if (this.model.id) {
                     url = '#' + this.scope + '/view/' + this.model.id;
+
+                    if (!this.returnDispatchParams) {
+                        this.getRouter().navigate(url, {trigger: false});
+                        var options = {
+                            id: this.model.id,
+                            model: this.model
+                        };
+                        if (this.options.rootUrl) {
+                            options.rootUrl = this.options.rootUrl;
+                        }
+                        this.getRouter().dispatch(this.scope, 'view', options);
+                    }
+                } else {
+                    url = this.options.rootUrl || '#' + this.scope;
                 }
             }
 

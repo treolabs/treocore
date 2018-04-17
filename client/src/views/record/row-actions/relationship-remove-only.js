@@ -36,7 +36,7 @@ Espo.define('views/record/row-actions/relationship-remove-only', 'views/record/r
     return Dep.extend({
 
         getActionList: function () {
-            if (this.options.acl.edit) {
+            if (this.options.acl.delete) {
                 return [
                     {
                         action: 'removeRelated',

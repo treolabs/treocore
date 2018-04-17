@@ -105,6 +105,11 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
                         return;
                     }
                 }
+                if (p.accessDataList) {
+                    if (!Espo.Utils.checkAccessDataList(p.accessDataList, this.getAcl(), this.getUser())) {
+                        return false;
+                    }
+                }
                 return true;
             }, this);
 
