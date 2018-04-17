@@ -89,18 +89,16 @@ class Migration
         if ($from < $to) {
             $inc = 1;
             $method = 'up';
+            $to++;
         } else {
             $inc = -1;
             $method = 'down';
         }
 
-        // prepare current
-        $current = $from + 1;
-
-        while ($current != $to + 1) {
-            if (in_array($current, $migrations)) {
+        while ($from != $to) {
+            if (in_array($from, $migrations)) {
                 // prepare class name
-                $className = sprintf($this->namespace, $module, "V{$current}");
+                $className = sprintf($this->namespace, $module, "V{$from}");
 
                 $class = new $className();
                 if ($class instanceof AbstractMigration) {
@@ -110,7 +108,7 @@ class Migration
             }
 
             // change current
-            $current = $current + $inc;
+            $from = $from + $inc;
         }
     }
 
