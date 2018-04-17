@@ -41,16 +41,14 @@ use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class v190 extends AbstractMigration
+class V190 extends AbstractMigration
 {
     /**
      * Up to current
      */
     public function up(): void
     {
-        echo '<pre>';
-        print_r('Up');
-        die();
+        $this->runRebuild();
     }
 
     /**
@@ -58,8 +56,6 @@ class v190 extends AbstractMigration
      */
     public function down(): void
     {
-        echo '<pre>';
-        print_r('Down');
-        die();
+        $this->runRebuild();
     }
 }
