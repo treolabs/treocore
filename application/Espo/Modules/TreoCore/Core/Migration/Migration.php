@@ -99,7 +99,14 @@ class Migration
 
         while ($current != $to + 1) {
             if (in_array($current, $migrations)) {
-                $this->factory($module, $current)->{$method}();
+                // prepare class name
+                $className = sprintf($this->namespace, $module, "V{$current}");
+
+                $class = new $className();
+                if ($class instanceof AbstractMigration) {
+                    $class->setContainer($this->getContainer());
+                    $class->{$method}();
+                }
             }
 
             // change current
@@ -140,21 +147,5 @@ class Migration
         }
 
         return $result;
-    }
-
-    /**
-     * Create migration object
-     *
-     * @param string $module
-     * @param int    $version
-     *
-     * @return AbstractMigration
-     */
-    protected function factory(string $module, int $version): AbstractMigration
-    {
-        // prepare class name
-        $className = sprintf($this->namespace, $module, 'V' . $version);
-
-        return (new $className())->setContainer($this->getContainer());
     }
 }
