@@ -34,7 +34,10 @@
 
 namespace Espo\Modules\TreoCore\Migration;
 
+use DateTime;
 use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+use Espo\Core\Exceptions\Error;
+use PDO;
 
 /**
  * Version 1.9.2
@@ -48,15 +51,86 @@ class V192 extends AbstractMigration
      */
     public function up(): void
     {
-        echo '<pre>';
-        print_r('123');
-        die();
+        // checking mysql version
+        $this->checkMySQLVersion();
+
+        // update users
+        $this->updateUsers();
+
+        // update Mysql character
+        $this->updateMysqlCharacter();
     }
 
     /**
-     * Down to previous  version
+     * Check MySQL version
+     *
+     * @throws Error
      */
-    public function down(): void
+    protected function checkMySQLVersion(): void
     {
+        $sth = $this
+            ->getEntityManager()
+            ->getPDO()
+            ->prepare("SHOW VARIABLES LIKE 'version'");
+        $sth->execute();
+
+        $row = $sth->fetch(PDO::FETCH_ASSOC);
+
+        if (empty($row['Value'])) {
+            return;
+        }
+
+        if (version_compare($row['Value'], '5.5.3') == -1) {
+            throw new Error('Your MySQL version is not supported. Please use MySQL 5.5.3 at least.');
+        }
+    }
+
+    /**
+     * Update users
+     */
+    protected function updateUsers(): void
+    {
+        // get roles
+        $roleList = $this
+            ->getEntityManager()
+            ->getRepository('Role')
+            ->find();
+
+        foreach ($roleList as $role) {
+            $data = $role->get('data');
+            if ($data && isset($data->User) && is_object($data->User)) {
+                $data = clone($data);
+                $data->User->edit = 'no';
+                $role->set('data', $data);
+
+                $this->getEntityManager()->saveEntity($role);
+            }
+        }
+    }
+
+    /**
+     * Update Mysql character
+     */
+    protected function updateMysqlCharacter(): void
+    {
+        // prepare exec time
+        $executeTime = (new DateTime())
+            ->modify('+1 minutes')
+            ->format('Y-m-d H:i:s');
+
+        // create job
+        $job = $this->getEntityManager()->getEntity('Job');
+        $job->set(
+            [
+                'serviceName' => 'MysqlCharacter',
+                'methodName'  => 'jobConvertToMb4',
+                'executeTime' => $executeTime
+            ]
+        );
+        $this->getEntityManager()->saveEntity($job);
+
+        // set to config
+        $this->getConfig()->set('streamEmailNotificationsTypeList', ['Post', 'Status', 'EmailReceived']);
+        $this->getConfig()->save();
     }
 }
