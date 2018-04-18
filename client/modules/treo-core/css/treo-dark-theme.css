@@ -6147,7 +6147,7 @@ a.list-group-item-danger.active, button.list-group-item-danger.active, a.list-gr
 .panel-default > .panel-heading .panel-title {
     font-size: 14px;
     color: #999;
-    font-weight: bold
+    font-weight: 400
 }
 
 .panel-default > .panel-heading + .panel-collapse > .panel-body {
@@ -11590,6 +11590,15 @@ ul.dropdown-menu > li.checkbox {
 }
 
 .record .bottom .product-attribute {
-    background-color: #2895ea;
-    color: #ffffff;
+    background-color: #ffffff;
+    padding: 0 8px 0;
+    margin: 0 0 10px 0;
+}
+
+.record .bottom .product-attribute > b {
+    border-bottom: 1px solid #adadad;
+    display: block;
+    padding: 5px 0 0;
+    color: #000;
+    font-size: 14px;
 }
