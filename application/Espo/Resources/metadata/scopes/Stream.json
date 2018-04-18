@@ -1,8 +1,8 @@
 {
-    "entity":false,
-    "layouts":false,
-    "tab":true,
-    "acl":false,
-    "customizable":false,
-    "hasAssignedUser":true
+  "entity": false,
+  "layouts": false,
+  "tab": true,
+  "acl": false,
+  "customizable": false,
+  "hasAssignedUser": true
 }

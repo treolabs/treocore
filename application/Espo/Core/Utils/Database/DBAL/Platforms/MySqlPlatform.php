@@ -138,7 +138,6 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             );
         }
 
-
         return array_merge($sql, $tableSql, $columnSql);
     }
 
@@ -310,10 +309,23 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
     protected function _getCreateTableSQL($tableName, array $columns, array $options = array())
     {
         if (!isset($options['engine'])) {
-            $options['engine'] = 'MyISAM';
+            $options['engine'] = 'InnoDB';
+        }
+
+        if (!isset($options['charset'])) {
+            $options['charset'] = 'utf8mb4';
+        }
+
+        if (!isset($options['collate'])) {
+            $options['collate'] = 'utf8mb4_unicode_ci';
         }
 
         return parent::_getCreateTableSQL($tableName, $columns, $options);
+    }
+
+    public function getColumnCollationDeclarationSQL($collation)
+    {
+        return $this->getCollationFieldDeclaration($collation);
     }
     //end: ESPO
 }

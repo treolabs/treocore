@@ -99,7 +99,7 @@ class Schema
 
         $this->converter = new \Espo\Core\Utils\Database\Converter($this->metadata, $this->fileManager);
 
-        $this->schemaConverter = new Converter($this->metadata, $this->fileManager);
+        $this->schemaConverter = new Converter($this->metadata, $this->fileManager, $this);
 
         $this->ormMetadata = $ormMetadata;
     }
@@ -317,5 +317,45 @@ class Schema
         }
     }
 
+    public function getMaxIndexLength()
+    {
+        $connection = $this->getConnection();
+        $mysqlEngine = $this->getMysqlEngine();
 
+        switch ($mysqlEngine) {
+            case 'InnoDB':
+                $mysqlVersion = $this->getMysqlVersion();
+
+                if (version_compare($mysqlVersion, '10.0.0') >= 0) {
+                    return 767; //InnoDB, MariaDB
+                }
+
+                if (version_compare($mysqlVersion, '5.7.0') >= 0) {
+                    return 3072; //InnoDB, MySQL 5.7+
+                }
+
+                return 767; //InnoDB
+                break;
+        }
+
+        return 1000; //MyISAM
+    }
+
+    protected function getMysqlVersion()
+    {
+        $connection = $this->getConnection();
+        return $connection->fetchColumn("select version()");
+    }
+
+    protected function getMysqlEngine()
+    {
+        $connection = $this->getConnection();
+        $result = $connection->fetchColumn("SHOW TABLE STATUS WHERE Engine = 'MyISAM'");
+
+        if (!empty($result)) {
+            return 'MyISAM';
+        }
+
+        return 'InnoDB';
+    }
 }

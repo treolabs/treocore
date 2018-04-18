@@ -38,6 +38,18 @@ class AdminNotifications extends \Espo\Core\Services\Base
 {
     public function jobCheckNewVersion($data)
     {
+        $config = $this->getConfig();
+
+        if (!$config->get('adminNotifications') || !$config->get('adminNotificationsNewVersion')) {
+            return true;
+        }
+
+        $latestRelease = $this->getLatestRelease();
+        if (!empty($latestRelease['version']) && $config->get('latestVersion') != $latestRelease['version']) {
+            $config->set('latestVersion', $latestRelease['version']);
+            $config->save();
+        }
+
         return true;
     }
 

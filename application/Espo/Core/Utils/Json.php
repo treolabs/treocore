@@ -76,7 +76,7 @@ class Json
         $json = json_decode($json, $assoc);
 
         $error = self::getLastError();
-        if ($error) {
+        if ($error && isset($GLOBALS['log'])) {
             $GLOBALS['log']->error('Json::decode():' . $error);
         }
 

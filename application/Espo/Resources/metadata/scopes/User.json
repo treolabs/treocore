@@ -1,10 +1,19 @@
 {
-	"entity": true,
-	"layouts": true,
-	"tab": true,
-	"acl": true,
-    "aclActionList": ["read"],
-	"customizable": true,
-    "object": true,
-	"hasAssignedUser":true
+  "entity": true,
+  "layouts": true,
+  "tab": true,
+  "acl": true,
+  "aclActionList": [
+    "read",
+    "edit"
+  ],
+  "aclActionLevelListMap": {
+    "edit": [
+      "own",
+      "no"
+    ]
+  },
+  "customizable": true,
+  "object": true,
+  "hasAssignedUser": true
 }

@@ -37,7 +37,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
 
         type: 'file',
 
-        listTemplate: 'fields/file/detail',
+        listTemplate: 'fields/file/list',
 
         detailTemplate: 'fields/file/detail',
 
@@ -58,6 +58,8 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
         previewSize: 'small',
 
         validations: ['ready', 'required'],
+
+        searchTypeList: ['isNotEmpty', 'isEmpty'],
 
         events: {
             'click a.remove-attachment': function (e) {
@@ -110,6 +112,8 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
             if (this.mode == 'edit') {
                 data.sourceList = this.sourceList;
             }
+
+            data.valueIsSet = this.model.has(this.idName);
 
             return data;
         },
@@ -215,6 +219,11 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
                     e.preventDefault();
                 }.bind(this));
             }
+
+            if (this.mode == 'search') {
+                var type = this.$el.find('select.search-type').val();
+                this.handleSearchType(type);
+            }
         },
 
         getDetailPreview: function (name, type, id) {
@@ -225,7 +234,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/gif':
-                    preview = '<a data-action="showImagePreview" data-id="' + id + '" href="' + this.getImageUrl(id) + '"><img src="'+this.getBasePath()+'?entryPoint=image&size='+this.previewSize+'&id=' + id + '"></a>'; 
+                    preview = '<a data-action="showImagePreview" data-id="' + id + '" href="' + this.getImageUrl(id) + '"><img src="'+this.getBasePath()+'?entryPoint=image&size='+this.previewSize+'&id=' + id + '"></a>';
             }
             return preview;
         },

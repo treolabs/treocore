@@ -59,7 +59,7 @@ class User extends \Espo\Core\ORM\Repositories\RDB
                 throw new Conflict(json_encode(['reason' => 'userNameExists']));
             }
         } else {
-            if ($entity->isFieldChanged('userName')) {
+            if ($entity->isAttributeChanged('userName')) {
                 $userName = $entity->get('userName');
                 if (empty($userName)) {
                     throw new Error();
@@ -119,4 +119,3 @@ class User extends \Espo\Core\ORM\Repositories\RDB
         return false;
     }
 }
-

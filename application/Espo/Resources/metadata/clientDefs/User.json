@@ -1,5 +1,7 @@
 {
    "controller": "controllers/user",
+   "model": "models/user",
+   "acl": "acl/user",
    "views": {
       "detail": "views/user/detail",
       "list": "views/user/list"
@@ -43,10 +45,12 @@
    "defaultSidePanelFieldLists": {
       "detail": [
         "avatar",
-        "createdAt"
+        "createdAt",
+        "lastAccess"
       ],
       "detailSmall": [
-        "avatar"
+        "avatar",
+        "lastAccess"
       ],
       "edit": [
         "avatar"
