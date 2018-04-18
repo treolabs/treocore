@@ -1,30 +1,38 @@
 {
-    "fields": {
-        "name": "Nume",
-        "status": "Status",
-        "job": "Activitate",
-        "scheduling": "Scheduling (crontab notation)"
+  "fields": {
+    "name": "Nume",
+    "status": "Stare",
+    "job": "Activitate",
+    "scheduling": "Planificare"
+  },
+  "links": {
+    "log": "Jurnal"
+  },
+  "labels": {
+    "Create ScheduledJob": "Creați activiate planificată"
+  },
+  "options": {
+    "job": {
+      "Cleanup": "Curățare",
+      "CheckInboundEmails": "Verificare Grup Conturi Email",
+      "CheckEmailAccounts": "Verificare Conturi Personale de Email",
+      "SendEmailReminders": "Trimite Mementouri Email",
+      "AuthTokenControl": "Control Autentificare Token",
+      "SendEmailNotifications": "Trimite Notificări Email",
+      "CheckNewVersion": "Verificați dacă există versiuni mai noi"
     },
-    "links": {
-        "log": "Log"
+    "cronSetup": {
+      "linux": "Notă: Adaugă acestă linie în fișierul crontab pentru a rula Activitățile Espo planificate:",
+      "mac": "Notă: Adaugă acestă linie în fișierul crontab pentru a rula Activitățile Espo planificate:",
+      "windows": "Notă: Crează un fișier batch care să conțina următoarele comenzi pentru a rula Activitățile Espo planificate, folosind Windows Scheduled Tasks:",
+      "default": "Notă: Adaugă această comandă în Cron Job (Sacini planificate):"
     },
-    "labels": {
-        "Create ScheduledJob": "Creare activiate programata"
-    },
-    "options": {
-        "job": {
-            "CheckInboundEmails": "Verificare Intrari Email",
-            "Cleanup": "Curatare"
-        },
-        "cronSetup": {
-            "linux": "Nota: Adauga acesta linie in fisierul crontab pentru a rula Activitatile programate:",
-            "mac": "Nota: Adauga acesta linie in fisierul crontab pentru a rula Activitatile programate:",
-            "windows": "Nota: Creaza un fisier batch care sa contina urmatoarele comenzi pentru a rula Activitatile programate, folosind Windows Scheduled Tasks:",
-            "default": "Note: Add this command to Cron Job (Scheduled Task):"
-        },
-        "status": {
-            "Active": "Activ",
-            "Inactive": "Inactiv"
-        }
+    "status": {
+      "Active": "Activ",
+      "Inactive": "Inactiv"
     }
+  },
+  "tooltips": {
+    "scheduling": "Notificări Crontab. Definește frecvența rulării activității.\n\n*/5 * * * * - la fiecare 5 minute\n\n0 */2 * * * - la fiecare 2 ore\n\n30 1 * * * - la 01:30 o dată pe zi\n\n0 0 1 * * - în prima zi a luni"
+  }
 }

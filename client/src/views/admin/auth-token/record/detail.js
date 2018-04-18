@@ -35,7 +35,9 @@ Espo.define('views/admin/auth-token/record/detail', 'views/record/detail', funct
 
     return Dep.extend({
 
-        sideDisabled: true
+        sideDisabled: true,
+
+        readOnly: true
 
     });
 });

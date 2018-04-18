@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('views/record/detail-side', 'view', function (Dep) {
+Espo.define('views/record/detail-side', ['view'], function (Dep) {
 
     return Dep.extend({
 
@@ -134,6 +134,11 @@ Espo.define('views/record/detail-side', 'view', function (Dep) {
                         return;
                     }
                 }
+                if (p.accessDataList) {
+                    if (!Espo.Utils.checkAccessDataList(p.accessDataList, this.getAcl(), this.getUser())) {
+                        return false;
+                    }
+                }
                 return true;
             }, this);
 
@@ -194,6 +199,8 @@ Espo.define('views/record/detail-side', 'view', function (Dep) {
             var defaultPanelDefs = this.getMetadata().get(['clientDefs', this.scope, 'defaultSidePanel', this.type]);
 
             if (defaultPanelDefs === false) return;
+
+            if (this.getMetadata().get(['clientDefs', this.scope, 'defaultSidePanelDisabled'])) return;
 
             defaultPanelDefs = defaultPanelDefs || this.defaultPanelDefs;
 
@@ -340,4 +347,3 @@ Espo.define('views/record/detail-side', 'view', function (Dep) {
 
     });
 });
-

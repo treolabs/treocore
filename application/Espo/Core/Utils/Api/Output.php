@@ -33,6 +33,7 @@
  */
 
 namespace Espo\Core\Utils\Api;
+
 class Output
 {
     private $slim;
@@ -101,8 +102,8 @@ class Output
         ob_clean();
 
         if (!empty( $this->slim)) {
-            $this->getSlim()->response()->status($statusCode);
-            $this->getSlim()->response()->header('X-Status-Reason', $text);
+            $this->getSlim()->response()->setStatus($statusCode);
+            $this->getSlim()->response()->headers->set('X-Status-Reason', $text);
 
             if ($isPrint) {
                 $status = $this->getCodeDesc($statusCode);
@@ -144,4 +145,3 @@ class Output
         return preg_replace('/"(.*?password.*?)":".*?"/i', '"$1":"*****"', $inputData);
     }
 }
-

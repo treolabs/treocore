@@ -58,6 +58,28 @@ Espo.define('views/email/record/list', 'views/record/list', function (Dep) {
             this.massActionList.push('markAsNotImportant');
             this.massActionList.push('moveToFolder');
             this.massActionList.push('retrieveFromTrash');
+
+            this.listenTo(this.collection, 'moving-to-trash', function (id) {
+                var model = this.collection.get(id);
+                if (model) {
+                    model.set('inTrash', true);
+                }
+
+                if (this.collection.data.folderId !== 'trash' && this.collection.data.folderId !== 'all') {
+                    this.removeRecordFromList(id);
+                }
+            }, this);
+
+            this.listenTo(this.collection, 'retrieving-from-trash', function (id) {
+                var model = this.collection.get(id);
+                if (model) {
+                    model.set('inTrash', false);
+                }
+
+                if (this.collection.data.folderId === 'trash') {
+                    this.removeRecordFromList(id);
+                }
+            }, this);
         },
 
         massActionMarkAsRead: function () {
@@ -160,7 +182,6 @@ Espo.define('views/email/record/list', 'views/record/list', function (Dep) {
 
             ids.forEach(function (id) {
                 this.collection.trigger('moving-to-trash', id);
-                this.removeRecordFromList(id);
             }, this);
         },
 
@@ -182,7 +203,6 @@ Espo.define('views/email/record/list', 'views/record/list', function (Dep) {
 
             ids.forEach(function (id) {
                 this.collection.trigger('retrieving-from-trash', id);
-                this.removeRecordFromList(id);
             }, this);
         },
 
@@ -263,7 +283,6 @@ Espo.define('views/email/record/list', 'views/record/list', function (Dep) {
             }).then(function () {
                 Espo.Ui.warning(this.translate('Moved to Trash', 'labels', 'Email'));
                 this.collection.trigger('moving-to-trash', id);
-                this.removeRecordFromList(id);
             }.bind(this));
         },
 
@@ -274,7 +293,6 @@ Espo.define('views/email/record/list', 'views/record/list', function (Dep) {
             }).then(function () {
                 Espo.Ui.warning(this.translate('Retrieved from Trash', 'labels', 'Email'));
                 this.collection.trigger('retrieving-from-trash', id);
-                this.removeRecordFromList(id);
             }.bind(this));
         },
 

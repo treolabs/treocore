@@ -59,7 +59,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     "label":"Stream",
                     "view":"views/stream/panel",
                     "sticked": false,
-                    "hidden": !streamAllowed
+                    "hidden": !streamAllowed,
+                    "order": 2
                 });
             }
         },
@@ -73,16 +74,6 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
             this.panelList = [];
 
             this.setupPanels();
-
-            this.panelList = this.panelList.map(function (p) {
-                var item = Espo.Utils.clone(p);
-                if (this.recordHelper.getPanelStateParam(p.name, 'hidden') !== null) {
-                    item.hidden = this.recordHelper.getPanelStateParam(p.name, 'hidden');
-                } else {
-                    this.recordHelper.setPanelStateParam(p.name, item.hidden || false);
-                }
-                return item;
-            }, this);
 
             this.wait(true);
 
@@ -109,6 +100,22 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 if (this.relationshipPanels) {
                     this.setupRelationshipPanels();
                 }
+
+                this.panelList = this.panelList.map(function (p) {
+                    var item = Espo.Utils.clone(p);
+                    if (this.recordHelper.getPanelStateParam(p.name, 'hidden') !== null) {
+                        item.hidden = this.recordHelper.getPanelStateParam(p.name, 'hidden');
+                    } else {
+                        this.recordHelper.setPanelStateParam(p.name, item.hidden || false);
+                    }
+                    return item;
+                }, this);
+
+                this.panelList.sort(function(item1, item2) {
+                    var order1 = item1.order || 0;
+                    var order2 = item2.order || 0;
+                    return order1 > order2;
+                });
 
                 if (this.streamPanel && this.getMetadata().get('scopes.' + this.scope + '.stream') && !this.getConfig().get('isStreamSide')) {
                     this.setupStreamPanel();

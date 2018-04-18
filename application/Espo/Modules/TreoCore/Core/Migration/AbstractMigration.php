@@ -36,6 +36,7 @@ namespace Espo\Modules\TreoCore\Core\Migration;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Core\ORM\EntityManager;
+use Espo\Core\Utils\Config;
 
 /**
  * AbstractMigration class
@@ -54,7 +55,9 @@ abstract class AbstractMigration
     /**
      * Down to previous  version
      */
-    abstract public function down(): void;
+    public function down(): void
+    {
+    }
 
     /**
      * Run rebuild action
@@ -72,5 +75,15 @@ abstract class AbstractMigration
     protected function getEntityManager(): EntityManager
     {
         return $this->getContainer()->get('entityManager');
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
     }
 }

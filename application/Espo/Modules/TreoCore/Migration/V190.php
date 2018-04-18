@@ -50,12 +50,4 @@ class V190 extends AbstractMigration
     {
         $this->runRebuild();
     }
-
-    /**
-     * Down to previous  version
-     */
-    public function down(): void
-    {
-        $this->runRebuild();
-    }
 }

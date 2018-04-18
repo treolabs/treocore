@@ -57,7 +57,13 @@ class Entity extends \Espo\ORM\Entity
             if (!$this->entityManager->hasRepository($parentType)) return;
             $repository = $this->entityManager->getRepository($parentType);
 
-            $foreignEntity = $repository->select(['id', 'name'])->where(['id' => $parentId])->findOne();
+            $select = ['id', 'name'];
+            if ($parentType === 'Lead') {
+                $select[] = 'accountName';
+                $select[] = 'emailAddress';
+                $select[] = 'phoneNumber';
+            }
+            $foreignEntity = $repository->select($select)->where(['id' => $parentId])->findOne();
             if ($foreignEntity) {
                 $this->set($field . 'Name', $foreignEntity->get('name'));
             }
@@ -73,26 +79,42 @@ class Entity extends \Espo\ORM\Entity
             $defs['additionalColumns'] = $columns;
         }
 
+        $idsAttribute = $field . 'Ids';
+
         $foreignEntityType = $this->getRelationParam($field, 'entity');
-        if ($foreignEntityType && $this->entityManager) {
-            $foreignEntityDefs = $this->entityManager->getMetadata()->get($foreignEntityType);
-            if ($foreignEntityDefs && !empty($foreignEntityDefs['collection'])) {
-                $collectionDefs = $foreignEntityDefs['collection'];
-                if (!empty($foreignEntityDefs['collection']['orderBy'])) {
-                    $orderBy = $foreignEntityDefs['collection']['orderBy'];
-                    $order = 'ASC';
-                    if (array_key_exists('order', $foreignEntityDefs['collection'])) {
-                        $order = $foreignEntityDefs['collection']['order'];
-                    }
-                    if (array_key_exists($orderBy, $foreignEntityDefs['fields'])) {
-                        $defs['orderBy'] = $orderBy;
-                        $defs['order'] = $order;
+
+        if ($this->getAttributeParam($idsAttribute, 'orderBy')) {
+            $defs['orderBy'] = $this->getAttributeParam($idsAttribute, 'orderBy');
+            $defs['order'] = 'ASC';
+            if ($this->getAttributeParam($idsAttribute, 'orderDirection')) {
+                $defs['order'] = $this->getAttributeParam($idsAttribute, 'orderDirection');
+            }
+        } else {
+            if ($foreignEntityType && $this->entityManager) {
+                $foreignEntityDefs = $this->entityManager->getMetadata()->get($foreignEntityType);
+                if ($foreignEntityDefs && !empty($foreignEntityDefs['collection'])) {
+                    $collectionDefs = $foreignEntityDefs['collection'];
+                    if (!empty($foreignEntityDefs['collection']['orderBy'])) {
+                        $orderBy = $foreignEntityDefs['collection']['orderBy'];
+                        $order = 'ASC';
+                        if (array_key_exists('order', $foreignEntityDefs['collection'])) {
+                            $order = $foreignEntityDefs['collection']['order'];
+                        }
+                        if (array_key_exists($orderBy, $foreignEntityDefs['fields'])) {
+                            $defs['orderBy'] = $orderBy;
+                            $defs['order'] = $order;
+                        }
                     }
                 }
             }
         }
 
         $defs['select'] = ['id', 'name'];
+        if ($foreignEntityType === 'Lead') {
+            $defs['select'][] = 'accountName';
+            $defs['select'][] = 'emailAddress';
+            $defs['select'][] = 'phoneNumber';
+        }
 
         $hasType = false;
         if ($this->hasField($field . 'Types')) {
@@ -125,7 +147,7 @@ class Entity extends \Espo\ORM\Entity
             }
         }
 
-        $this->set($field . 'Ids', $ids);
+        $this->set($idsAttribute, $ids);
         $this->set($field . 'Names', $names);
         if ($hasType) {
             $this->set($field . 'Types', $types);

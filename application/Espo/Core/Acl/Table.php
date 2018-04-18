@@ -215,6 +215,7 @@ class Table
             $this->applyDisabled($aclTable, $fieldTable);
             $this->applyMandatory($aclTable, $fieldTable);
             $this->applyAdditional($aclTable, $fieldTable, $valuePermissionLists);
+            $this->applyReadOnlyFields($fieldTable);
         } else {
             $aclTable = (object) [];
             foreach ($this->getScopeList() as $scope) {
@@ -594,8 +595,8 @@ class Table
         $scopeList = [];
         $scopes = $this->metadata->get('scopes');
         foreach ($scopes as $scope => $d) {
-            if (empty($d['acl'])) continue;
-            $scopeList[] = $scope;
+        	if (empty($d['acl'])) continue;
+        	$scopeList[] = $scope;
         }
         return $scopeList;
     }
@@ -617,9 +618,9 @@ class Table
 
         foreach ($tableList as $table) {
             foreach ($scopeList as $scope) {
-                if (!isset($table->$scope)) continue;
+            	if (!isset($table->$scope)) continue;
 
-                $row = $table->$scope;
+            	$row = $table->$scope;
 
                 if ($row == false) {
                     if (!isset($data->$scope)) {
@@ -718,24 +719,29 @@ class Table
     private function buildCache()
     {
         $this->fileManager->putPhpContents($this->cacheFilePath, $this->data, true);
-        /*$contents = '<' . '?'. 'php return ' .  $this->varExport($this->data)  . ';';
-        $this->fileManager->putContents($this->cacheFilePath, $contents);*/
     }
 
-    /*private function varExport($variable)
+    protected function applyReadOnlyFields(&$fieldTable)
     {
-        if ($variable instanceof \StdClass) {
-            $result = '(object) ' . $this->varExport(get_object_vars($variable), true);
-        } else if (is_array($variable)) {
-            $array = array();
-            foreach ($variable as $key => $value) {
-                $array[] = var_export($key, true).' => ' . $this->varExport($value, true);
+        // TODO Enable in 5.4.0
+        return;
+        $scopeList = $this->getScopeWithAclList();
+        foreach ($scopeList as $scope) {
+            if (!property_exists($fieldTable, $scope)) continue;
+            $fieldList = array_keys($this->getMetadata()->get(['entityDefs', $scope, 'fields'], []));
+            foreach ($fieldList as $field) {
+                if ($this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'readOnly'])) {
+                    if (property_exists($fieldTable->$scope, $field)) {
+                        $fieldTable->$scope->$field->edit = 'no';
+                    } else {
+                        $fieldTable->$scope->$field = (object) [];
+                        foreach ($this->fieldActionList as $action) {
+                            $fieldTable->$scope->$field->$action = 'yes';
+                        }
+                        $fieldTable->$scope->$field->edit = 'no';
+                    }
+                }
             }
-            $result = '['.implode(', ', $array).']';
-        } else {
-            $result = var_export($variable, true);
         }
-
-        return $result;
-    }*/
+    }
 }

@@ -241,17 +241,39 @@ class Metadata
         }
     }
 
-    public function getAllObjects($isJSON = false, $reload = false)
+    protected function getObjData($reload = false)
     {
         if (!isset($this->objData) || $reload) {
             $this->objInit($reload);
         }
 
+        return $this->objData;
+    }
+
+    /**
+    * Get Object Metadata
+    *
+    * @param mixed string|array $key
+    * @param mixed $default
+    *
+    * @return object
+    */
+    public function getObjects($key = null, $default = null)
+    {
+        $objData = $this->getObjData();
+
+        return Util::getValueByKey($objData, $key, $default);
+    }
+
+    public function getAllObjects($isJSON = false, $reload = false)
+    {
+        $objData = $this->getObjData($reload);
+
         if ($isJSON) {
-            return Json::encode($this->objData);
+            return Json::encode($objData);
         }
 
-        return $this->objData;
+        return $objData;
     }
 
     public function getAllForFrontend()
@@ -308,6 +330,47 @@ class Metadata
         }
 
         return $data;
+    }
+
+    /**
+     * Get metadata definition in custom directory
+     *
+     * @param  string|array $key
+     * @param  mixed $default
+     *
+     * @return object|mixed
+     */
+    public function getCustom($key1, $key2, $default = null)
+    {
+        $filePath = array($this->paths['customPath'], $key1, $key2.'.json');
+        $fileContent = $this->getFileManager()->getContents($filePath);
+
+        if ($fileContent) {
+            return Json::decode($fileContent);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set and save metadata in custom directory. The data is not merging with existing data. Use getCustom() to get existing data.
+     *
+     * @param  string $key1
+     * @param  string $key2
+     * @param  array $data
+     *
+     * @return boolean
+     */
+    public function saveCustom($key1, $key2, $data)
+    {
+        $filePath = array($this->paths['customPath'], $key1, $key2.'.json');
+        $changedData = Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        $result = $this->getFileManager()->putContents($filePath, $changedData);
+
+        $this->init(true);
+
+        return true;
     }
 
     /**
