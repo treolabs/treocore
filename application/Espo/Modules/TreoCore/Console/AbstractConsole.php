@@ -68,15 +68,15 @@ abstract class AbstractConsole
         switch ($status) {
             // success
             case 1:
-                echo "\033[0;32m{$message}\033[0m" . PHP_EOL;;
+                echo "\033[0;32m{$message}\033[0m" . PHP_EOL;
                 break;
             // error
             case 2:
-                echo "\033[1;31m{$message}\033[0m" . PHP_EOL;;
+                echo "\033[1;31m{$message}\033[0m" . PHP_EOL;
                 break;
             // default
             default:
-                echo $message . PHP_EOL;;
+                echo $message . PHP_EOL;
                 break;
         }
 
