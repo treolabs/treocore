@@ -32,7 +32,14 @@
  * and "TreoPIM" word.
  */
 
-chdir(dirname(__FILE__));
-set_include_path(dirname(__FILE__));
+declare(strict_types=1);
 
-require_once "vendor/autoload.php";
+namespace Espo\Modules\TreoCore\Configs;
+
+use Espo\Modules\TreoCore\Console;
+
+return [
+    "clear cache" => Console\ClearCache::class,
+    "rebuild"     => Console\Rebuild::class,
+    "cron"        => Console\Cron::class
+];

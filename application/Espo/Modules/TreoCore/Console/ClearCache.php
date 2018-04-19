@@ -32,14 +32,35 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+declare(strict_types=1);
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
+namespace Espo\Modules\TreoCore\Console;
+
+/**
+ * ClearCache console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class ClearCache extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->clearCache();
+
+        if (!empty($result)) {
+            self::show('Cache successfully cleared', 1);
+        } else {
+            self::show('Cache clearing failed', 2);
+        }
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runRebuild();
-

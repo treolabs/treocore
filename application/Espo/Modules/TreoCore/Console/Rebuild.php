@@ -32,7 +32,35 @@
  * and "TreoPIM" word.
  */
 
-chdir(dirname(__FILE__));
-set_include_path(dirname(__FILE__));
+declare(strict_types=1);
 
-require_once "vendor/autoload.php";
+namespace Espo\Modules\TreoCore\Console;
+
+/**
+ * Rebuild console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Rebuild extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->rebuild();
+
+        if (!empty($result)) {
+            self::show('Rebuild successfully finished', 1);
+        } else {
+            self::show('Something wrong. Rebuild failed. Check log for details', 2);
+        }
+    }
+}

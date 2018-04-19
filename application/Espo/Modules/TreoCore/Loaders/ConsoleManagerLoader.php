@@ -32,7 +32,28 @@
  * and "TreoPIM" word.
  */
 
-chdir(dirname(__FILE__));
-set_include_path(dirname(__FILE__));
+declare(strict_types=1);
 
-require_once "vendor/autoload.php";
+namespace Espo\Modules\TreoCore\Loaders;
+
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+
+/**
+ * ConsoleManager loader
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ConsoleManagerLoader extends Base
+{
+
+    /**
+     * Load ConsoleManager
+     *
+     * @return ConsoleManager
+     */
+    public function load()
+    {
+        return (new ConsoleManager())->setContainer($this->getContainer());
+    }
+}

@@ -32,14 +32,56 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+declare(strict_types=1);
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
+namespace Espo\Modules\TreoCore\Console;
+
+use Espo\Modules\TreoCore\Traits\ContainerTrait;
+
+/**
+ * AbtractConsole class
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+abstract class AbstractConsole
+{
+    use ContainerTrait;
+
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    abstract public function run(array $data): array;
+
+    /**
+     * Echo CLI message
+     *
+     * @param string $message
+     * @param int    $status
+     * @param bool   $stop
+     */
+    public static function show(string $message, int $status = 0, bool $stop = false): void
+    {
+        switch ($status) {
+            // success
+            case 1:
+                echo "\033[0;32m{$message}\033[0m" . PHP_EOL;
+                break;
+            // error
+            case 2:
+                echo "\033[1;31m{$message}\033[0m" . PHP_EOL;
+                break;
+            // default
+            default:
+                echo $message . PHP_EOL;
+                break;
+        }
+
+        if ($stop) {
+            die();
+        }
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runClearCache();
-

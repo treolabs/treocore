@@ -32,7 +32,34 @@
  * and "TreoPIM" word.
  */
 
-chdir(dirname(__FILE__));
-set_include_path(dirname(__FILE__));
+declare(strict_types=1);
 
-require_once "vendor/autoload.php";
+namespace Espo\Modules\TreoCore\Console;
+
+use Espo\Modules\TreoCore\Core\Utils\Auth;
+
+/**
+ * Cron console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Cron extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        $auth = new Auth($this->getContainer());
+        $auth->useNoAuth();
+
+        $this
+            ->getContainer()
+            ->get('cronManager')
+            ->run();
+    }
+}

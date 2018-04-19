@@ -12,6 +12,7 @@
 | ProgressManager | beforeUpdate |
 
 ## Инструменты ##
+* [ConsoleManager](console_manager/readme.md)
 * [CronManager](cron_manager/readme.md)
 * [EventManager](event_manager/readme.md)
 * [Metadata modifier](metadata_modifier/readme.md)
