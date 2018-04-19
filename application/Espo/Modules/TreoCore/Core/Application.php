@@ -63,7 +63,10 @@ class Application extends EspoApplication
      */
     public function runConsole(array $argv)
     {
-        $this->getContainer()->get('consoleManager')->run($argv);
+        $this
+            ->getContainer()
+            ->get('consoleManager')
+            ->run(str_replace('console.php ', '', implode(' ', $argv)));
     }
 
     /**

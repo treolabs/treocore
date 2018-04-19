@@ -43,4 +43,18 @@ namespace Espo\Modules\TreoCore\Console;
  */
 class ClearCache extends AbstractConsole
 {
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        echo '<pre>';
+        print_r($data);
+        die();
+        // TODO: Implement run() method.
+    }
 }
