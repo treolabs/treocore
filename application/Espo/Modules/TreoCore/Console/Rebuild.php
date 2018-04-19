@@ -32,14 +32,35 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+declare(strict_types=1);
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
+namespace Espo\Modules\TreoCore\Console;
+
+/**
+ * Rebuild console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Rebuild extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->rebuild();
+
+        if (!empty($result)) {
+            self::show('Rebuild successfully finished', 1);
+        } else {
+            self::show('Something wrong. Rebuild failed. Check log for details', 2);
+        }
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runRebuild();
-

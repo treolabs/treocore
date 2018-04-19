@@ -39,5 +39,6 @@ namespace Espo\Modules\TreoCore\Configs;
 use Espo\Modules\TreoCore\Console;
 
 return [
-    "clear cache" => Console\ClearCache::class
+    "clear cache" => Console\ClearCache::class,
+    "rebuild"     => Console\Rebuild::class
 ];
