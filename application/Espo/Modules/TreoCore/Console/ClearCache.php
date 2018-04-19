@@ -52,9 +52,15 @@ class ClearCache extends AbstractConsole
      */
     public function run(array $data): array
     {
-        echo '<pre>';
-        print_r($data);
-        die();
-        // TODO: Implement run() method.
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->clearCache();
+
+        if (!empty($result)) {
+            self::show('Cache successfully cleared', 1);
+        } else {
+            self::show('Cache clearing failed', 2);
+        }
     }
 }
