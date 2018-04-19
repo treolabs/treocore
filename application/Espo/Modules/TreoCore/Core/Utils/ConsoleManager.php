@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core\Utils;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
+use Espo\Modules\TreoCore\Console\AbstractConsole;
 
 /**
  * ConsoleManager
@@ -59,16 +59,76 @@ class ConsoleManager
     /**
      * Run console command
      *
-     * @param array $argv
+     * @param string $command
      */
-    public function run(array $argv)
+    public function run(string $command)
     {
-        // load routes
-        $routes = $this->loadRoutes();
+        if (!empty($data = $this->getRouteHandler($command))) {
+            if (class_exists($data['handler'])) {
+                // create handler
+                $handler = new $data['handler']();
 
-        echo '<pre>';
-        print_r($routes);
-        die();
+                if (!$handler instanceof AbstractConsole) {
+                    // prepare message
+                    $message = "Handler " . $data['handler'] . " should be instance
+                     of " . AbstractConsole::class;
+
+                    AbstractConsole::show($message, 2, true);
+                }
+
+                $handler->setContainer($this->getContainer());
+                $handler->run($data['data']);
+                die();
+            }
+            AbstractConsole::show('No such console handler as ' . $data['handler'], 2, true);
+        } else {
+            AbstractConsole::show('No such console command!', 2, true);
+        }
+    }
+
+    /**
+     * Get route handler
+     *
+     * @param string $command
+     *
+     * @return array
+     */
+    protected function getRouteHandler(string $command): array
+    {
+        // prepare result
+        $result = [];
+
+        foreach ($this->loadRoutes() as $route => $handler) {
+            if ($route == $command) {
+                $result = [
+                    'handler' => $handler,
+                    'data'    => []
+                ];
+            } elseif (preg_match_all("/\<(.+?)\>/is", $route, $matches)) {
+                // prepare parameters
+                $parameters = $matches[1];
+
+                // prepare pattern
+                $pattern = "/^{$route}$/";
+                foreach ($parameters as $parameter) {
+                    $pattern = str_replace("<$parameter>", "([a-zA-Z0-9]+)", $pattern);
+                }
+
+                if (preg_match_all($pattern, $command, $matches)) {
+                    $data = [];
+                    foreach ($parameters as $k => $name) {
+                        $data[$name] = $matches[$k + 1][0];
+                    }
+
+                    $result = [
+                        'handler' => $handler,
+                        'data'    => $data
+                    ];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
