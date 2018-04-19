@@ -122,6 +122,14 @@ class Application extends EspoApplication
     }
 
     /**
+     * Clear cache
+     */
+    public function runClearCache()
+    {
+        // blocked parent method
+    }
+
+    /**
      * Create auth
      *
      * @return \Espo\Core\Utils\Auth|Auth
