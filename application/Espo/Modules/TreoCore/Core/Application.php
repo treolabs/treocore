@@ -130,6 +130,14 @@ class Application extends EspoApplication
     }
 
     /**
+     * Rebuild
+     */
+    public function runRebuild()
+    {
+        // blocked parent method
+    }
+
+    /**
      * Create auth
      *
      * @return \Espo\Core\Utils\Auth|Auth
