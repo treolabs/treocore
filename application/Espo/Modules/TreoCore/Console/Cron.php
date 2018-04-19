@@ -32,15 +32,34 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+declare(strict_types=1);
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Cron can be run only via CLI");
+namespace Espo\Modules\TreoCore\Console;
+
+use Espo\Modules\TreoCore\Core\Utils\Auth;
+
+/**
+ * Cron console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Cron extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function run(array $data): array
+    {
+        $auth = new Auth($this->getContainer());
+        $auth->useNoAuth();
+
+        $this
+            ->getContainer()
+            ->get('cronManager')
+            ->run();
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-
-$app->runCron();
-
