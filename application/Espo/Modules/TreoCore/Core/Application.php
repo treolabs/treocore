@@ -138,6 +138,14 @@ class Application extends EspoApplication
     }
 
     /**
+     * Run cron
+     */
+    public function runCron()
+    {
+        // blocked parent method
+    }
+
+    /**
      * Create auth
      *
      * @return \Espo\Core\Utils\Auth|Auth
