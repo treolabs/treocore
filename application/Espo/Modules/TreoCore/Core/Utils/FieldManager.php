@@ -181,6 +181,16 @@ class FieldManager extends EspoFieldManager
     }
 
     /**
+     * Get base language
+     *
+     * @return mixed
+     */
+    protected function getBaseLanguage()
+    {
+        return $this->getContainer()->get('baseLanguage');
+    }
+
+    /**
      * Get metadata helper
      *
      * @return MetadataHelper
