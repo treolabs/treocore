@@ -49,10 +49,8 @@ class Cron extends AbstractConsole
      * Run action
      *
      * @param array $data
-     *
-     * @return array
      */
-    public function run(array $data): array
+    public function run(array $data): void
     {
         $auth = new Auth($this->getContainer());
         $auth->useNoAuth();

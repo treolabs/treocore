@@ -51,10 +51,8 @@ abstract class AbstractConsole
      * Run action
      *
      * @param array $data
-     *
-     * @return array
      */
-    abstract public function run(array $data): array;
+    abstract public function run(array $data): void;
 
     /**
      * Echo CLI message
