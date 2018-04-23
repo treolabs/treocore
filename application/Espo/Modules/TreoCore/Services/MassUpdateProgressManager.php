@@ -36,6 +36,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
+use Espo\Core\ServiceFactory;
 
 /**
  * Class MassUpdateProgressManager
@@ -92,31 +93,78 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
      */
     public function executeProgressJob(array $data): bool
     {
-        echo '<pre>';
-        print_r('123');
-        die();
+        // set offset
+        $this->setOffset($data['progressOffset']);
+
+        // prepare data
+        $data = Json::decode($data['data'], true);
+        $this->setData($data);
+
+        // prepare file id
+        $fileId = $data['fileId'];
+
+        // set status
+        $this->setStatus('in_progress');
+
+        // get file data
+        $ids = $this->getDataFromFile($fileId);
+
+        // prepare entityType
+        $entityType = $data['entityType'];
+
+        if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
+            // prepare max
+            $max = $this->getConfig()->get('modules.massUpdateMax.default');
+            if (!empty($this->getConfig()->get("modules.massUpdateMax.{$entityType}"))) {
+                $max = $this->getConfig()->get("modules.massUpdateMax.{$entityType}");
+            }
+
+            $records = [];
+            while (count($records) < $max) {
+                // prepare key
+                $key = $this->getOffset() + count($records);
+
+                // exit
+                if (!isset($ids[$key])) {
+                    break;
+                }
+
+                $records[] = $ids[$key];
+            }
+
+            // get collection
+            $collection = $this
+                ->getEntityManager()
+                ->getRepository($entityType)
+                ->where(['id' => $records])
+                ->find();
+
+            // update
+            $this->getServiceFactory()
+                ->create($entityType)
+                ->massUpdateIteration($collection, $data['data']);
+
+            // set offset
+            $this->setOffset($this->getOffset() + count($records));
+
+            // set progress
+            $this->setProgress(($key + 1) / $data['total'] * 100);
+
+            if ($this->getOffset() == $data['total']) {
+                // set status
+                $this->setStatus('success');
+
+                // set progress
+                $this->setProgress(100);
+            }
+        }
+
+        if (in_array($this->getStatus(), ['success', 'error'])) {
+            // delete file
+            $this->deleteFile($fileId);
+        }
 
         return true;
-    }
-
-    /**
-     * Get progress
-     *
-     * @return float
-     */
-    public function getProgress(): float
-    {
-        return 100;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string
-     */
-    public function getStatus(): string
-    {
-        return 'success';
     }
 
     /**
@@ -128,6 +176,7 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
 
         $this->addDependency('progressManager');
         $this->addDependency('language');
+        $this->addDependency('serviceFactory');
     }
 
     /**
@@ -145,5 +194,52 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
         $file = fopen($path, "w");
         fwrite($file, Json::encode($data));
         fclose($file);
+    }
+
+    /**
+     * Get data from file
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function getDataFromFile(string $id): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare path
+        $path = sprintf($this->filePath, $id);
+
+        if (file_exists($path)) {
+            $result = Json::decode(file_get_contents($path), true);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Delete file
+     *
+     * @param string $id
+     */
+    protected function deleteFile(string $id): void
+    {
+        // prepare path
+        $path = sprintf($this->filePath, $id);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
+    /**
+     * Get ServiceFactory
+     *
+     * @return ServiceFactory
+     */
+    protected function getServiceFactory(): ServiceFactory
+    {
+        return $this->getInjection('serviceFactory');
     }
 }
