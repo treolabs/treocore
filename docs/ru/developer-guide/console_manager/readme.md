@@ -43,10 +43,8 @@ class Task extends AbstractConsole
      * Run action
      *
      * @param array $data
-     *
-     * @return array
      */
-    public function run(array $data): array
+    public function run(array $data): void
     {
         self::show('Task successfully finished', 1);
     }

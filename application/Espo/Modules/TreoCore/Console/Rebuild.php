@@ -47,10 +47,8 @@ class Rebuild extends AbstractConsole
      * Run action
      *
      * @param array $data
-     *
-     * @return array
      */
-    public function run(array $data): array
+    public function run(array $data): void
     {
         $result = $this
             ->getContainer()
