@@ -32,12 +32,76 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Services;
 
-namespace Espo\Modules\TreoCore\Configs;
+/**
+ * Class MassUpdateProgressManager
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class MassUpdateProgressManager extends AbstractProgressManager implements ProgressJobInterface
+{
+    /**
+     * Push
+     *
+     * @param array $data
+     */
+    public function push(array $data): void
+    {
+        // prepare name
+        $name = $this
+            ->getInjection('language')
+            ->translate('massUpdate', 'massActions', 'Global');
 
-return [
-    'massUpdateMax' => [
-        'default' => 1000
-    ]
-];
+        $this
+            ->getInjection('progressManager')
+            ->push($data['entityType'] . '. ' . $name, 'massUpdate', $data);
+    }
+
+    /**
+     * Execute progress job
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function executeProgressJob(array $data): bool
+    {
+        echo '<pre>';
+        print_r('123');
+        die();
+
+        return true;
+    }
+
+    /**
+     * Get progress
+     *
+     * @return float
+     */
+    public function getProgress(): float
+    {
+        return 100;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return 'success';
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('progressManager');
+        $this->addDependency('language');
+    }
+}

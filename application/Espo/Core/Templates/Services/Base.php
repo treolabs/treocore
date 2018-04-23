@@ -72,17 +72,59 @@ class Base extends \Espo\Services\Record
         // filter input
         $this->filterInput($data);
 
-        // prepare query
+        // prepare select params
         $p['where'] = $where;
         if (!empty($params['selectData']) && is_array($params['selectData'])) {
             foreach ($params['selectData'] as $k => $v) {
                 $p[$k] = $v;
             }
         }
+        $selectParams = $this->getSelectParams($p);
 
         // get collection
-        $collection = $this->getRepository()->find($this->getSelectParams($p));
+        $collection = $this->getRepository()->find($selectParams);
 
+        // prepare count
+        $count = count($collection);
+
+        if ($count > 0) {
+            // prepare max
+            $max = $this->getConfig()->get('modules.massUpdateMax.default');
+            if (!empty($this->getConfig()->get('modules.massUpdateMax.' . $this->entityType))) {
+                $max = $this->getConfig()->get('modules.massUpdateMax.' . $this->entityType);
+            }
+
+            if ($count < $max) {
+                $this->massUpdateIteration($collection, $data);
+            } else {
+                $this
+                    ->getServiceFactory()
+                    ->create('MassUpdateProgressManager')
+                    ->push(
+                        [
+                            'entityType'   => $this->entityType,
+                            'selectParams' => $selectParams,
+                            'data'         => $data
+                        ]
+                    );
+            }
+        }
+
+        return [
+            'count' => $count
+        ];
+    }
+
+    /**
+     * @todo treoinject
+     *
+     * MassUpdate iteration
+     *
+     * @param array $collection
+     * @param array $data
+     */
+    public function massUpdateIteration($collection, $data): void
+    {
         $idsUpdated = [];
         foreach ($collection as $entity) {
             if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
@@ -99,11 +141,6 @@ class Base extends \Espo\Services\Record
 
         // call after mass update action
         $this->afterMassUpdate($idsUpdated, $data);
-
-        return [
-            'count' => count($idsUpdated),
-            'ids'   => (array_key_exists('ids', $params)) ? $idsUpdated : null
-        ];
     }
 }
 
