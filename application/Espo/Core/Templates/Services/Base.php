@@ -102,9 +102,10 @@ class Base extends \Espo\Services\Record
                     ->create('MassUpdateProgressManager')
                     ->push(
                         [
-                            'entityType'   => $this->entityType,
-                            'selectParams' => $selectParams,
-                            'data'         => $data
+                            'entityType' => $this->entityType,
+                            'collection' => $collection,
+                            'total'      => $count,
+                            'data'       => $data
                         ]
                     );
             }

@@ -34,6 +34,9 @@
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Json;
+
 /**
  * Class MassUpdateProgressManager
  *
@@ -41,6 +44,14 @@ namespace Espo\Modules\TreoCore\Services;
  */
 class MassUpdateProgressManager extends AbstractProgressManager implements ProgressJobInterface
 {
+
+    /**
+     * Cache file path
+     *
+     * @var string
+     */
+    protected $filePath = 'data/mass_update_%s.json';
+
     /**
      * Push
      *
@@ -53,6 +64,20 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
             ->getInjection('language')
             ->translate('massUpdate', 'massActions', 'Global');
 
+        // create id
+        $data['fileId'] = Util::generateId();
+
+        // prepare ids
+        $ids = [];
+        foreach ($data['collection'] as $entity) {
+            $ids[] = $entity->get('id');
+        }
+        unset($data['collection']);
+
+        // set ids to file
+        $this->setToFile($data['fileId'], $ids);
+
+        // push job
         $this
             ->getInjection('progressManager')
             ->push($data['entityType'] . '. ' . $name, 'massUpdate', $data);
@@ -103,5 +128,22 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
 
         $this->addDependency('progressManager');
         $this->addDependency('language');
+    }
+
+    /**
+     * Set to file
+     *
+     * @param string $id
+     * @param array  $data
+     */
+    protected function setToFile(string $id, array $data): void
+    {
+        // prepare path
+        $path = sprintf($this->filePath, $id);
+
+        // set to file
+        $file = fopen($path, "w");
+        fwrite($file, Json::encode($data));
+        fclose($file);
     }
 }
