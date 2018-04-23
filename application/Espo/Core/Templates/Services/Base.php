@@ -49,13 +49,8 @@ class Base extends \Espo\Services\Record
      */
     public function massUpdate($data, array $params)
     {
-        // prepare data
-        $idsUpdated = [];
-        $repository = $this->getRepository();
-        $count = 0;
-        $where = [];
-
         // prepare where
+        $where = [];
         if (array_key_exists('ids', $params) && is_array($params['ids'])) {
             $values = [];
             foreach ($params['ids'] as $id) {
@@ -77,8 +72,7 @@ class Base extends \Espo\Services\Record
         // filter input
         $this->filterInput($data);
 
-        // prepare params
-        $p = [];
+        // prepare query
         $p['where'] = $where;
         if (!empty($params['selectData']) && is_array($params['selectData'])) {
             foreach ($params['selectData'] as $k => $v) {
@@ -87,15 +81,15 @@ class Base extends \Espo\Services\Record
         }
 
         // get collection
-        $collection = $repository->find($this->getSelectParams($p));
+        $collection = $this->getRepository()->find($this->getSelectParams($p));
 
+        $idsUpdated = [];
         foreach ($collection as $entity) {
             if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
                 $entity->set($data);
                 if ($this->checkAssignment($entity)) {
-                    if ($repository->save($entity)) {
+                    if ($this->getRepository()->save($entity)) {
                         $idsUpdated[] = $entity->id;
-                        $count++;
 
                         $this->processActionHistoryRecord('update', $entity);
                     }
@@ -107,7 +101,7 @@ class Base extends \Espo\Services\Record
         $this->afterMassUpdate($idsUpdated, $data);
 
         return [
-            'count' => $count,
+            'count' => count($idsUpdated),
             'ids'   => (array_key_exists('ids', $params)) ? $idsUpdated : null
         ];
     }
