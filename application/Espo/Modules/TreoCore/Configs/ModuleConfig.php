@@ -38,6 +38,6 @@ namespace Espo\Modules\TreoCore\Configs;
 
 return [
     'massUpdateMax' => [
-        'default' => 1000
+        'default' => 200
     ]
 ];
