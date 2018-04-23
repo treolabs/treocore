@@ -1,3 +1,4 @@
+    * UST #62394 : Модифікувати ProgressManager - надати можливість вказати кому має показуватися попап (Yuriy  Haiduchyk)
     * FEA #58918 : MassUpdate механізмом ProgressManager // Back (Roman Ratsun)
     * BUG #62517 : При додаванні поля типу Field - 500 помилка (Yuriy  Haiduchyk)
     * UST #60037 : Розробити механізм опрацювання CLI (Roman Ratsun)
