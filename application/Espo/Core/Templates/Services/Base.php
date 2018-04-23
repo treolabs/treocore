@@ -86,7 +86,10 @@ class Base extends \Espo\Services\Record
             }
         }
 
-        foreach ($repository->find($this->getSelectParams($p)) as $entity) {
+        // get collection
+        $collection = $repository->find($this->getSelectParams($p));
+
+        foreach ($collection as $entity) {
             if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
                 $entity->set($data);
                 if ($this->checkAssignment($entity)) {
@@ -106,7 +109,6 @@ class Base extends \Espo\Services\Record
         return [
             'count' => $count,
             'ids'   => (array_key_exists('ids', $params)) ? $idsUpdated : null
-
         ];
     }
 }
