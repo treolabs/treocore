@@ -1,3 +1,4 @@
+    * FEA #58918 : MassUpdate механізмом ProgressManager // Back (Roman Ratsun)
     * BUG #62517 : При додаванні поля типу Field - 500 помилка (Yuriy  Haiduchyk)
     * UST #60037 : Розробити механізм опрацювання CLI (Roman Ratsun)
     * UST #62303 : Змінити вивід атрибутів і груп на сторінці продукту (Markiian Khakhula)
