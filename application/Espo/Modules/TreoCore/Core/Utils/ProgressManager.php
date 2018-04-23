@@ -65,11 +65,12 @@ class ProgressManager
      *
      * @param string $name
      * @param string $type
-     * @param array $data
+     * @param array  $data
+     * @param string $userId
      *
      * @return bool
      */
-    public function push(string $name, string $type, array $data = []): bool
+    public function push(string $name, string $type, array $data = [], string $userId = ''): bool
     {
         // prepare result
         $result = false;
@@ -78,7 +79,10 @@ class ProgressManager
         $config = $this->getProgressConfig();
 
         if (isset($config['type'][$type])) {
-            $result = $this->insert($name, $type, $data);
+            // prepare userId
+            $userId = empty($userId) ? $this->getUser()->get('id') : $userId;
+
+            $result = $this->insert($name, $type, $data, $userId);
         }
 
         return $result;
@@ -113,11 +117,12 @@ class ProgressManager
      *
      * @param string $name
      * @param string $type
-     * @param array $data
+     * @param array  $data
+     * @param string $userId
      *
      * @return bool
      */
-    protected function insert(string $name, string $type, array $data): bool
+    protected function insert(string $name, string $type, array $data, string $userId): bool
     {
         // prepare data
         $result = false;
@@ -132,7 +137,7 @@ class ProgressManager
             $type   = $pdo->quote($type);
             $data   = $pdo->quote(Json::encode($data));
             $status = $pdo->quote(AbstractProgressManager::$progressStatus['new']);
-            $userId = $pdo->quote($this->getUser()->get('id'));
+            $userId = $pdo->quote($userId);
             $date   = $pdo->quote(date('Y-m-d H:i:s'));
 
             // prepare sql
