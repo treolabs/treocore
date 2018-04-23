@@ -32,8 +32,12 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Configs;
 
-return [];
+return [
+    'massUpdateMax' => [
+        'default' => 200
+    ]
+];
