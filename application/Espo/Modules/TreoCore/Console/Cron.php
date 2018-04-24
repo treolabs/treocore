@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,17 +32,32 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/fields/version', 'views/fields/varchar',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        getValueForDisplay() {
-            let version = this.model.get(this.name);
-            let availableVersion = this.model.get('availableVersion');
-            if (this.model.get('isComposer') && version !== availableVersion) {
-                version += ` (${availableVersion} ${this.getLanguage().translate('available', 'labels', 'ModuleManager')})`;
-            }
-            return version;
-        }
+namespace Espo\Modules\TreoCore\Console;
 
-    })
-);
+use Espo\Modules\TreoCore\Core\Utils\Auth;
+
+/**
+ * Cron console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Cron extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        $auth = new Auth($this->getContainer());
+        $auth->useNoAuth();
+
+        $this
+            ->getContainer()
+            ->get('cronManager')
+            ->run();
+    }
+}

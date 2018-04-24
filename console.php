@@ -32,15 +32,11 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
-
-if (substr($sapiName, 0, 3) != 'cli') {
+if (substr(php_sapi_name(), 0, 3) != 'cli') {
     die("Cron can be run only via CLI");
 }
 
 include "bootstrap.php";
 
 $app = new \Espo\Modules\TreoCore\Core\Application();
-
-$app->runCron();
-
+$app->runConsole($argv);

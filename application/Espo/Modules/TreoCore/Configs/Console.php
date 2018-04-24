@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,21 +32,14 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/row-actions/available', 'views/record/row-actions/default',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        getActionList: function () {
-            let list = [];
-            list.push({
-                action: 'installModule',
-                label: 'installModule',
-                data: {
-                    id: this.model.id,
-                    mode: 'install'
-                }
-            });
-            return list;
-        },
+namespace Espo\Modules\TreoCore\Configs;
 
-    })
-);
+use Espo\Modules\TreoCore\Console;
+
+return [
+    "clear cache" => Console\ClearCache::class,
+    "rebuild"     => Console\Rebuild::class,
+    "cron"        => Console\Cron::class
+];

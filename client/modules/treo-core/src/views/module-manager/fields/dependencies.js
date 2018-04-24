@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,14 +31,11 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+Espo.define('treo-core:views/module-manager/fields/dependencies', 'views/fields/base',
+    Dep => Dep.extend({
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
-}
+        detailTemplate: 'treo-core:module-manager/fields/dependencies/detail',
 
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runRebuild();
+    })
+);
 

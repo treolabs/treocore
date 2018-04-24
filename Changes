@@ -1,3 +1,13 @@
+1.9.4  2018-04-24 14:39:50 Europe/Kiev
+    * UST #62200 : Надати змогу оновлювати модуль до конкретної версії // Front (Yurii Kondratskyi)
+    * BUG #62524 : При повторной активации owner в сущности - бед респос в консоли (Yuriy  Haiduchyk)
+    * UST #62394 : Модифікувати ProgressManager - надати можливість вказати кому має показуватися попап (Yuriy  Haiduchyk)
+    * UST #62394 : Модифікувати ProgressManager - надати можливість вказати кому має показуватися попап (Yuriy  Haiduchyk)
+    * FEA #58918 : MassUpdate механізмом ProgressManager // Back (Roman Ratsun)
+    * BUG #62517 : При додаванні поля типу Field - 500 помилка (Yuriy  Haiduchyk)
+    * UST #60037 : Розробити механізм опрацювання CLI (Roman Ratsun)
+    * UST #62303 : Змінити вивід атрибутів і груп на сторінці продукту (Markiian Khakhula)
+
 1.9.3  2018-04-18 14:42:28 Europe/Kiev
     * BUG #62259 : При переходе к просмотру пользователя 500 ошибка (Roman Ratsun)
 

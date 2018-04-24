@@ -12,7 +12,6 @@
     {
         "name": "version",
         "notSortable": true,
-        "view": "treo-core:views/module-manager/fields/version",
         "width": 10
     }
 ]

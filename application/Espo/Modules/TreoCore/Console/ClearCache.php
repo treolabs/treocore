@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,21 +32,33 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/row-actions/available', 'views/record/row-actions/default',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        getActionList: function () {
-            let list = [];
-            list.push({
-                action: 'installModule',
-                label: 'installModule',
-                data: {
-                    id: this.model.id,
-                    mode: 'install'
-                }
-            });
-            return list;
-        },
+namespace Espo\Modules\TreoCore\Console;
 
-    })
-);
+/**
+ * ClearCache console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class ClearCache extends AbstractConsole
+{
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->clearCache();
+
+        if (!empty($result)) {
+            self::show('Cache successfully cleared', 1);
+        } else {
+            self::show('Cache clearing failed', 2);
+        }
+    }
+}

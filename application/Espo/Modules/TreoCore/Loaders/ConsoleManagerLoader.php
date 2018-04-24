@@ -32,14 +32,28 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+declare(strict_types=1);
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
+namespace Espo\Modules\TreoCore\Loaders;
+
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+
+/**
+ * ConsoleManager loader
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ConsoleManagerLoader extends Base
+{
+
+    /**
+     * Load ConsoleManager
+     *
+     * @return ConsoleManager
+     */
+    public function load()
+    {
+        return (new ConsoleManager())->setContainer($this->getContainer());
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runClearCache();
-
