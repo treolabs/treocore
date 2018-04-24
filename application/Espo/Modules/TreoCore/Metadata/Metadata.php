@@ -95,6 +95,10 @@ class Metadata extends AbstractMetadata
                 if (isset($data['entityDefs'][$ent]['links']['ownerUser'])) {
                     unset($data['entityDefs'][$ent]['links']['ownerUser']);
                 }
+                if (isset($data['entityDefs'][$ent]['indexes']['ownerUser'])) {
+                    unset($data['entityDefs'][$ent]['indexes']['ownerUser']);
+                }
+                // remove field for other index
                 if (isset($data['entityDefs'][$ent]['indexes'])) {
                     $data['entityDefs'][$ent]['indexes'] = $this
                         ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'ownerUserId');
@@ -109,6 +113,10 @@ class Metadata extends AbstractMetadata
                 if (isset($data['entityDefs'][$ent]['links']['assignedUser'])) {
                     unset($data['entityDefs'][$ent]['links']['assignedUser']);
                 }
+                if (isset($data['entityDefs'][$ent]['indexes']['assignedUser'])) {
+                    unset($data['entityDefs'][$ent]['indexes']['assignedUser']);
+                }
+                // remove field for other index
                 if (isset($data['entityDefs'][$ent]['indexes'])) {
                     $data['entityDefs'][$ent]['indexes'] = $this
                         ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'assignedUserId');
