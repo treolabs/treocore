@@ -42,7 +42,8 @@
     "removed": "Wurde gelöscht. Die Seite wird in {value} Sekunden neu geladen",
     "errorLogText": "Sie können Fehler Log hier prüfen:",
     "Error Log": "Fehler Log",
-    "Check Log": "Prüfen Log"
+    "Check Log": "Prüfen Log",
+    "dependencies": "Abhängigkeiten"
   },
   "messages": {
     "checkLog": "Etwas ist fehlgeschlagen. Prüfen Sie bitte Fehler-Log auf neue Fehler",

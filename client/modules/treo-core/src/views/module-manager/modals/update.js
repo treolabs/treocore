@@ -31,20 +31,25 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/row-actions/available', 'views/record/row-actions/default',
+Espo.define('treo-core:views/module-manager/modals/update', 'treo-core:views/module-manager/modals/install',
     Dep => Dep.extend({
 
-        getActionList: function () {
-            let list = [];
-            list.push({
-                action: 'installModule',
-                label: 'installModule',
-                data: {
-                    id: this.model.id,
-                    mode: 'install'
+        setupHeader() {
+            this.header = this.translate('updateModule', 'labels', 'ModuleManager');
+        },
+
+        setupButtonList() {
+            this.buttonList = [
+                {
+                    name: 'save',
+                    label: this.translate('updateModule', 'labels', 'ModuleManager'),
+                    style: 'primary',
+                },
+                {
+                    name: 'cancel',
+                    label: 'Cancel'
                 }
-            });
-            return list;
+            ];
         },
 
     })
