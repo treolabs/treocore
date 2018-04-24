@@ -160,11 +160,6 @@ class ModuleManager extends Base
                     $item['isComposer'] = true;
                 }
 
-                /**
-                 * @todo you should remove it at 62200
-                 */
-                $item['availableVersion'] = $item['version'];
-
                 // push
                 $result['list'][] = $item;
             }

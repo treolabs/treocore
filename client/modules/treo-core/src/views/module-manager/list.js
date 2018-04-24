@@ -201,13 +201,13 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
         },
 
-        logError(response, data, action) {
+        logError(response, id, action) {
             this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
             this.errorsCount++;
             this.errorList.unshift({
-                name: data.id + this.errorsCount,
+                name: id + this.errorsCount,
                 errorMessage: this.translate('errorMessage', 'messages', 'ModuleManager')
-                    .replace('{module}', '<strong>' + data.id + '</strong>')
+                    .replace('{module}', '<strong>' + id + '</strong>')
                     .replace('{action}', '<strong>' + action + '</strong>')
                     .replace('{status}', '<strong>' + response.status+ '</strong>')
                     .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
@@ -225,52 +225,54 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 return;
             }
 
-            if (!data.id) {
+            if (!data.id || !data.mode) {
                 return;
             }
 
-            this.blockActions = true;
-            this.notify(this.translate('installing', 'labels', 'ModuleManager'));
-            this.ajaxPostRequest('ModuleManager/installModule', {id: data.id}, {timeout: 180000})
-                .then(response => {
-                    if (response.status === 0) {
-                        this.notify(this.translate('installed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                        this.reloadPage(2000);
-                    } else {
-                        this.blockActions = false;
-                        if (response.output) {
-                            this.logError(response, data, 'installed');
+            let currentModel;
+            let viewName;
+            let beforeSaveLabel;
+            let afterSaveLabel;
+            let apiUrl;
+            let requestType;
+            if (data.mode === 'install') {
+                currentModel = this.availableCollection.get(data.id);
+                viewName = 'treo-core:views/module-manager/modals/install';
+                beforeSaveLabel = 'installing';
+                afterSaveLabel = 'installed';
+                apiUrl = 'ModuleManager/installModule';
+                requestType = 'POST';
+            } else {
+                currentModel = this.installedCollection.get(data.id);
+                viewName = 'treo-core:views/module-manager/modals/update';
+                beforeSaveLabel = 'updating';
+                afterSaveLabel = 'updated';
+                apiUrl = 'ModuleManager/updateModule';
+                requestType = 'PUT';
+            }
+
+            this.createView('installModal', viewName, {
+                currentModel: currentModel
+            }, view => {
+                view.render();
+                this.listenTo(view, 'save', saveData => {
+                    this.blockActions = true;
+                    this.notify(this.translate('installing', 'labels', 'ModuleManager'));
+                    this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000})
+                    .then(response => {
+                        if (response.status === 0) {
+                            this.notify(this.translate('installed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
+                            this.reloadPage(2000);
+                        } else {
+                            this.blockActions = false;
+                            if (response.output) {
+                                this.logError(response, data.id, data.mode);
+                            }
                         }
-                    }
-                })
-                .fail(() => this.blockActions = false );
-        },
-
-        actionUpdateModule(data) {
-            if (this.blockActions) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
-                return;
-            }
-
-            if (!data.id || !data.version) {
-                return;
-            }
-
-            this.blockActions = true;
-            this.notify(this.translate('updating', 'labels', 'ModuleManager'));
-            this.ajaxPutRequest('ModuleManager/updateModule', {id: data.id, version: data.version}, {timeout: 180000})
-                .then(response => {
-                    if (response.status === 0) {
-                        this.notify(this.translate('updated', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                        this.reloadPage(2000);
-                    } else {
-                        this.blockActions = false;
-                        if (response.output) {
-                            this.logError(response, data, 'updated');
-                        }
-                    }
-                })
-                .fail(() => this.blockActions = false );
+                    })
+                    .fail(() => this.blockActions = false);
+                });
+            });
         },
 
         actionRemoveModule(data) {
@@ -293,7 +295,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     } else {
                         this.blockActions = false;
                         if (response.output) {
-                            this.logError(response, data, 'removed');
+                            this.logError(response, data.id, 'removed');
                         }
                     }
                 })

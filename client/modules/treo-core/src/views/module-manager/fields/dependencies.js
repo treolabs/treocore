@@ -31,17 +31,11 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/fields/version', 'views/fields/varchar',
+Espo.define('treo-core:views/module-manager/fields/dependencies', 'views/fields/base',
     Dep => Dep.extend({
 
-        getValueForDisplay() {
-            let version = this.model.get(this.name);
-            let availableVersion = this.model.get('availableVersion');
-            if (this.model.get('isComposer') && version !== availableVersion) {
-                version += ` (${availableVersion} ${this.getLanguage().translate('available', 'labels', 'ModuleManager')})`;
-            }
-            return version;
-        }
+        detailTemplate: 'treo-core:module-manager/fields/dependencies/detail',
 
     })
 );
+

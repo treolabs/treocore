@@ -37,16 +37,14 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
         getActionList: function () {
             let list = [];
             if (this.model.get('isComposer')) {
-                if (this.model.get('version') !== this.model.get('availableVersion')) {
-                    list.push({
-                        action: 'updateModule',
-                        label: 'updateModule',
-                        data: {
-                            id: this.model.id,
-                            version: this.model.get('availableVersion')
-                        }
-                    });
-                }
+                list.push({
+                    action: 'installModule',
+                    label: 'updateModule',
+                    data: {
+                        id: this.model.id,
+                        mode: 'update'
+                    }
+                });
                 let checkRequire = this.model.collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(this.model.get('id')));
                 if (checkRequire && !this.model.get('isSystem')) {
                     list.push({
