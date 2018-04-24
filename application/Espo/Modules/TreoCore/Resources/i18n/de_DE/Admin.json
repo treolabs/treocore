@@ -12,6 +12,7 @@
     "upgradeDone": "Ihr TreoPIM wurde auf Version <strong>{version}</strong> aktualisiert.",
     "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die TreoPIM Dateien sowie die Datenbank zu sichern.",
     "newVersionIsAvailable": "Neue TreoPIM Version {latestVersion} ist verfügbar.",
-    "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treopim-upgrades.zinit1.com/\" target=\"_blank\">hier</a>"
+    "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treopim-upgrades.zinit1.com/\" target=\"_blank\">hier</a>",
+    "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treopim-upgrades.zinit1.com/?dev=1\" target=\"_blank\">hier</a>"
   }
 }
