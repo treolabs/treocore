@@ -35,6 +35,8 @@
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.2.1",
     "wikimedia/composer-merge-plugin": "1.4.1",
+    "cboden/ratchet": "0.3.6",
+    "react/zmq": "0.3.0",
     "treo-module/pim": "*"
   },
   "extra": {

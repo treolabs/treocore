@@ -32,28 +32,15 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Services;
 
-namespace Espo\Modules\TreoCore\Configs;
+use Espo\Core\Services\Base;
 
-use Espo\Modules\TreoCore\Services;
-
-return [
-    'websockets'    => [
-        'server'       => [
-            'host'    => '127.0.0.1',
-            'port'    => 8080,
-            'address' => '0.0.0.0'
-        ],
-        'zmq'          => [
-            'host' => '127.0.0.1',
-            'port' => 5555,
-        ],
-        'data-mappers' => [
-            'test' => Services\WebsocketTest::class,
-        ],
-    ],
-    'massUpdateMax' => [
-        'default' => 200
-    ]
-];
+/**
+ * Test websocket
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class WebsocketTest extends Base
+{
+}

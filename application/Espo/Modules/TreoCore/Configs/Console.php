@@ -39,7 +39,8 @@ namespace Espo\Modules\TreoCore\Configs;
 use Espo\Modules\TreoCore\Console;
 
 return [
-    "clear cache" => Console\ClearCache::class,
-    "rebuild"     => Console\Rebuild::class,
-    "cron"        => Console\Cron::class
+    "clear cache"    => Console\ClearCache::class,
+    "rebuild"        => Console\Rebuild::class,
+    "cron"           => Console\Cron::class,
+    "websocket open" => Console\Websocket::class
 ];
