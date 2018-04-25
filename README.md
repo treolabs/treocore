@@ -90,6 +90,15 @@ We are already working on the following connectors for export channels:
    ```
 4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 
+5. Cron jobs start:
+   ```
+   php console.php cron
+   ```
+6. Open websockets connection:
+   ```
+   php console.php websocket open
+   ```
+
 ### License
 
 TreoPIM is published under the GNU GPLv3 [license](LICENSE.txt).
