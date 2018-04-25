@@ -250,7 +250,10 @@ class ComposerModule extends Base
         $result = [];
 
         if (file_exists($this->cacheFile)) {
-            $result = Json::decode(file_get_contents($this->cacheFile), true);
+            $data = Json::decode(file_get_contents($this->cacheFile), true);
+            if (!empty($data)) {
+                $result = $data;
+            }
         }
 
         return $result;
