@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Console;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Espo\Modules\TreoCore\Core\Utils\Config;
 
 /**
  * AbtractConsole class
@@ -81,5 +82,15 @@ abstract class AbstractConsole
         if ($stop) {
             die();
         }
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
     }
 }

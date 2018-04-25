@@ -34,13 +34,42 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Modules\TreoCore\Console;
+use Espo\Modules\TreoCore\Websocket\AbstractService;
 
-return [
-    "clear cache"    => Console\ClearCache::class,
-    "rebuild"        => Console\Rebuild::class,
-    "cron"           => Console\Cron::class,
-    "websocket open" => Console\Websocket::class
-];
+/**
+ * Test websocket
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class WebsocketTest extends AbstractService
+{
+    /**
+     * @var array
+     */
+    protected $filter = [];
+
+    /**
+     * Set filter
+     *
+     * @param array $data
+     */
+    public function setFilter(array $data): void
+    {
+        $this->filter = $data;
+    }
+
+    /**
+     * Get data
+     *
+     * @return array
+     */
+    public function getData(): array
+    {
+        return [
+            'status' => true,
+            'filter' => $this->filter
+        ];
+    }
+}

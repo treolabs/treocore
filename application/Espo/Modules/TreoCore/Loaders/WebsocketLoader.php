@@ -34,13 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Loaders;
 
-use Espo\Modules\TreoCore\Console;
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Websocket\Sender;
 
-return [
-    "clear cache"    => Console\ClearCache::class,
-    "rebuild"        => Console\Rebuild::class,
-    "cron"           => Console\Cron::class,
-    "websocket open" => Console\Websocket::class
-];
+/**
+ * Websocket loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class WebsocketLoader extends Base
+{
+
+    /**
+     * Load Websocket
+     *
+     * @return Sender
+     */
+    public function load()
+    {
+        return (new Sender())->setContainer($this->getContainer());
+    }
+}
