@@ -4,8 +4,7 @@
     var conn = new ab.Session('ws://127.0.0.1:8080',
         function () {
             conn.subscribe('test', function (topic, data) {
-                // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-                console.log('Topic "' + topic + '" : ' + data);
+                console.log(data);
             });
         },
         function () {

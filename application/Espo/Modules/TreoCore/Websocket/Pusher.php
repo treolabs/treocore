@@ -80,8 +80,8 @@ class Pusher implements WampServerInterface
         if (!empty($mappers)) {
             $serviceFactory = $this->getContainer()->get('serviceFactory');
 
-            foreach ($mappers as $service) {
-                $this->dataMappers[] = $serviceFactory->create($service);
+            foreach ($mappers as $k => $service) {
+                $this->dataMappers[$k] = $serviceFactory->create($service);
             }
         }
     }
@@ -281,7 +281,6 @@ class Pusher implements WampServerInterface
     }
 
     /**
-     *
      * @param string $topicId
      * @param string $filter
      *
@@ -297,8 +296,6 @@ class Pusher implements WampServerInterface
         $data = ($filter != 'default') ? unserialize($filter) : [];
         $service->setFilter($data);
 
-        $rs = $service->getData();
-
-        return $rs;
+        return $service->getData();
     }
 }

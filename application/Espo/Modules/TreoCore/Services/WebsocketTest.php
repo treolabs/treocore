@@ -45,4 +45,13 @@ use Espo\Core\Services\Base;
  */
 class WebsocketTest extends Base
 {
+    public function setFilter(array $data): void
+    {
+
+    }
+
+    public function getData()
+    {
+        return ['status' => true];
+    }
 }
