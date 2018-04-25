@@ -46,12 +46,30 @@ use Espo\Modules\TreoCore\Websocket\AbstractService;
 class WebsocketTest extends AbstractService
 {
     /**
+     * @var array
+     */
+    protected $filter = [];
+
+    /**
+     * Set filter
+     *
+     * @param array $data
+     */
+    public function setFilter(array $data): void
+    {
+        $this->filter = $data;
+    }
+
+    /**
      * Get data
      *
      * @return array
      */
     public function getData(): array
     {
-        return ['status' => true];
+        return [
+            'status' => true,
+            'filter' => $this->filter
+        ];
     }
 }

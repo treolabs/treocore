@@ -1,4 +1,7 @@
+<script type="text/javascript" src="/client/lib/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="/client/lib/autobahn.min.js"></script>
+
+<input id="call" type="button" value="Filter"/>
 
 <script type="text/javascript">
     var conn = new ab.Session('ws://127.0.0.1:8080',
@@ -12,4 +15,10 @@
         },
         {'skipSubprotocolCheck': true}
     );
+
+    $(function () {
+        $('#call').click(function () {
+            conn.publish('test', {"test": "1"}, false);
+        });
+    });
 </script>
