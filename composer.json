@@ -34,7 +34,6 @@
     "zbateson/mail-mime-parser": "0.4.6",
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.2.1",
-    "symfony/expression-language": "3.4.3",
     "wikimedia/composer-merge-plugin": "1.4.1",
     "treo-module/pim": "*"
   },
