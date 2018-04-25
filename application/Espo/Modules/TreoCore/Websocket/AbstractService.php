@@ -70,10 +70,19 @@ abstract class AbstractService extends Base
     /**
      * Get filter
      *
-     * @return array
+     * @param string $key
+     *
+     * @return mixed
      */
-    protected function getFilter(): array
+    protected function getFilter(string $key = null)
     {
-        return $this->filter;
+        // prepare result
+        $result = $this->filter;
+
+        if (!empty($key) && isset($this->filter[$key])) {
+            $result = $this->filter[$key];
+        }
+
+        return $result;
     }
 }
