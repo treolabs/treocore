@@ -34,25 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Services;
 
-return [
-    'websockets'    => [
-        'server'       => [
-            'host'    => '127.0.0.1',
-            'port'    => 8080,
-            'address' => '0.0.0.0'
-        ],
-        'zmq'          => [
-            'host' => '127.0.0.1',
-            'port' => 5555,
-        ],
-        'data-mappers' => [
-            'test'             => 'WebsocketTest',
-            'progress_manager' => 'WebsocketProgressManager',
-        ],
-    ],
-    'massUpdateMax' => [
-        'default' => 200
-    ]
-];
+use Espo\Modules\TreoCore\Websocket\AbstractService;
+
+/**
+ * ProgressManager websocket
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class WebsocketProgressManager extends AbstractService
+{
+    /**
+     * Get data
+     *
+     * @return array
+     */
+    public function getData(): array
+    {
+        echo '<pre>';
+        print_r('123');
+        die();
+    }
+}
