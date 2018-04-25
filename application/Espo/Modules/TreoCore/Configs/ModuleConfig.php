@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Configs;
 
-use Espo\Modules\TreoCore\Services;
-
 return [
     'websockets'    => [
         'server'       => [
@@ -50,7 +48,7 @@ return [
             'port' => 5555,
         ],
         'data-mappers' => [
-            'test' => Services\WebsocketTest::class,
+            'test' => 'WebsocketTest',
         ],
     ],
     'massUpdateMax' => [

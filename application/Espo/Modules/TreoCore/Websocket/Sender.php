@@ -34,52 +34,38 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Websocket;
 
-use Espo\Modules\TreoCore\Websocket\Pusher;
-use React\EventLoop\Factory as ReactFactory;
-use React\ZMQ\Context;
-use React\Socket\Server;
-use Ratchet\Http\HttpServer;
-use Ratchet\Server\IoServer;
-use Ratchet\Wamp\WampServer;
-use Ratchet\WebSocket\WsServer;
+use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use ZMQContext;
 use ZMQ;
 
 /**
- * Websocket console
+ * Websocket Sender
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Websocket extends AbstractConsole
+class Sender
 {
+    use ContainerTrait;
+
     /**
-     * Run action
+     * Refresh websocket
      *
-     * @param array $data
+     * @param string $topicId
+     *
+     * @return bool
      */
-    public function run(array $data): void
+    public function refresh(string $topicId)
     {
         // get config
-        $config = $this->getConfig()->get('modules.websockets');
+        $config = $this->getContainer()->get('config')->get('modules.websockets');
 
+        $context = new ZMQContext();
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+        $socket->connect(sprintf('tcp://%s:%s', $config['zmq']['host'], $config['zmq']['port']));
+        $socket->send($topicId);
 
-        $loop = ReactFactory::create();
-        $pusher = new Pusher($this->getContainer());
-
-        // Listen for the web server to make a ZeroMQ push after an ajax request
-        $context = new Context($loop);
-
-        $pull = $context->getSocket(ZMQ::SOCKET_PULL);
-        $pull->bind(sprintf('tcp://%s:%s', $config['zmq']['host'], $config['zmq']['port']));
-        $pull->on('message', array($pusher, 'onChangeData'));
-
-        // Set up our WebSocket server for clients wanting real-time updates
-        $server = new Server($loop);
-        $server->listen($config['server']['port'], $config['server']['address']);
-        $webServer = new IoServer(new HttpServer(new WsServer(new WampServer($pusher))), $server);
-
-        echo 'Websocket running...' . PHP_EOL;
-        $loop->run();
+        return true;
     }
 }

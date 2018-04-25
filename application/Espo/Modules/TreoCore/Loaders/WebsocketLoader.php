@@ -34,52 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Loaders;
 
-use Espo\Modules\TreoCore\Websocket\Pusher;
-use React\EventLoop\Factory as ReactFactory;
-use React\ZMQ\Context;
-use React\Socket\Server;
-use Ratchet\Http\HttpServer;
-use Ratchet\Server\IoServer;
-use Ratchet\Wamp\WampServer;
-use Ratchet\WebSocket\WsServer;
-use ZMQ;
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Websocket\Sender;
 
 /**
- * Websocket console
+ * Websocket loader
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Websocket extends AbstractConsole
+class WebsocketLoader extends Base
 {
+
     /**
-     * Run action
+     * Load Websocket
      *
-     * @param array $data
+     * @return Sender
      */
-    public function run(array $data): void
+    public function load()
     {
-        // get config
-        $config = $this->getConfig()->get('modules.websockets');
-
-
-        $loop = ReactFactory::create();
-        $pusher = new Pusher($this->getContainer());
-
-        // Listen for the web server to make a ZeroMQ push after an ajax request
-        $context = new Context($loop);
-
-        $pull = $context->getSocket(ZMQ::SOCKET_PULL);
-        $pull->bind(sprintf('tcp://%s:%s', $config['zmq']['host'], $config['zmq']['port']));
-        $pull->on('message', array($pusher, 'onChangeData'));
-
-        // Set up our WebSocket server for clients wanting real-time updates
-        $server = new Server($loop);
-        $server->listen($config['server']['port'], $config['server']['address']);
-        $webServer = new IoServer(new HttpServer(new WsServer(new WampServer($pusher))), $server);
-
-        echo 'Websocket running...' . PHP_EOL;
-        $loop->run();
+        return (new Sender())->setContainer($this->getContainer());
     }
 }

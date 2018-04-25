@@ -32,6 +32,8 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Espo\Modules\TreoCore\Websocket;
 
 use Espo\Modules\TreoCore\Core\Container;
