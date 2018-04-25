@@ -61,8 +61,10 @@ class Websocket extends AbstractConsole
     public function run(array $data): void
     {
         // get config
-        $config = $this->getConfig()->get('modules.websockets');
-
+        $config = $this->getContainer()->get('config')->get('websockets');
+        if (empty($config)) {
+            $config = $this->getContainer()->get('config')->get('modules.websockets');
+        }
 
         $loop = ReactFactory::create();
         $pusher = new Pusher($this->getContainer());
