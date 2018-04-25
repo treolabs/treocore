@@ -70,9 +70,9 @@ We are already working on the following connectors for export channels:
 
 ### Documentation
 
-- Documentation for users is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for administrators is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for developers is planned.
+- Documentation for users is available [here](docs/).
+- Documentation for administrators is available [here](docs/).
+- Documentation for developers is available [here](docs/).
 
 ### Installation
 
@@ -94,6 +94,7 @@ We are already working on the following connectors for export channels:
    ```
    php console.php websocket open
    ```
+   Websocket configuration [guide](docs/ru/developer-guide/websocket/readme.md) 
 
 ### License
 
