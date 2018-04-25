@@ -213,7 +213,7 @@ class ModuleManager extends Base
 
                     $result['list'][] = [
                         'id'          => $moduleId,
-                        'version'     => $max['version'],
+                        'version'     => $this->prepareModuleVersion($max['version']),
                         'versions'    => $this->prepareModuleVersions($moduleId),
                         'name'        => $name,
                         'description' => $description

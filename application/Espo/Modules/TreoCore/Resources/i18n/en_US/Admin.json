@@ -3,15 +3,16 @@
     "moduleManager": "Module Manager"
   },
   "descriptions": {
-    "upgrade": "Upgrade TreoPIM.",
+    "upgrade": "Upgrade Treo System.",
     "moduleManager": "Mechanisms for managing modules",
     "representationSettings": "Representation settings."
   },
   "messages": {
-    "upgradeVersion": "TreoPIM will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",
-    "upgradeDone": "TreoPIM has been upgraded to version <strong>{version}</strong>.",
-    "upgradeBackup": "We recommend making a backup of your TreoPIM files and data before upgrading.",
-    "newVersionIsAvailable": "New TreoPIM version {latestVersion} is available.",
-    "downloadUpgradePackage": "Packages for upgrade Treo  you can find <a href=\"http://treopim-upgrades.zinit1.com/\" target=\"_blank\">here</a>"
+    "upgradeVersion": "Treo System will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",
+    "upgradeDone": "Treo System has been upgraded to version <strong>{version}</strong>.",
+    "upgradeBackup": "We recommend making a backup of your Treo System files and data before upgrading.",
+    "newVersionIsAvailable": "New Treo System version {latestVersion} is available.",
+    "downloadUpgradePackage": "Packages for upgrade Treo  you can find <a href=\"http://treopim-upgrades.zinit1.com/\" target=\"_blank\">here</a>",
+    "downloadUpgradePackageDev": "Packages for upgrade Treo  you can find <a href=\"http://treopim-upgrades.zinit1.com/?dev=1\" target=\"_blank\">here</a>"
   }
 }
