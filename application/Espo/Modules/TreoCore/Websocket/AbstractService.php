@@ -34,24 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Espo\Modules\TreoCore\Websocket;
 
-use Espo\Modules\TreoCore\Websocket\AbstractService;
+use Espo\Core\Services\Base;
 
 /**
- * Test websocket
+ * AbstractService of websocket service
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class WebsocketTest extends AbstractService
+abstract class AbstractService extends Base
 {
     /**
      * Get data
      *
      * @return array
      */
-    public function getData(): array
+    abstract public function getData(): array;
+
+    /**
+     * Set filter
+     *
+     * @param array $data
+     */
+    public function setFilter(array $data): void
     {
-        return ['status' => true];
     }
 }
