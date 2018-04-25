@@ -136,8 +136,11 @@ class Migration
         // prepare result
         $result = [];
 
-        if (!empty($files = scandir(sprintf($this->path, $module)))) {
-            foreach ($files as $file) {
+        // prepare path
+        $path = sprintf($this->path, $module);
+
+        if (file_exists($path) && is_dir($path)) {
+            foreach (scandir($path) as $file) {
                 if (!in_array($file, ['.', '..'])) {
                     $result[] = $this->prepareVersion($file);
                 }
