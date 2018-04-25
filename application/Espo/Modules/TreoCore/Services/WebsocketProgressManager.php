@@ -52,8 +52,13 @@ class WebsocketProgressManager extends AbstractService
      */
     public function getData(): array
     {
-        echo '<pre>';
-        print_r('123');
-        die();
+        // prepare result
+        $result = [];
+
+        if (!empty($userId = $this->getFilter('userId'))) {
+
+        }
+
+        return $result;
     }
 }
