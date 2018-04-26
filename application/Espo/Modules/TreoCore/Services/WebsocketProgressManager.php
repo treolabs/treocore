@@ -37,6 +37,8 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Modules\TreoCore\Websocket\AbstractService;
+use Espo\Modules\TreoCore\Services\ProgressManager;
+use PDO;
 
 /**
  * ProgressManager websocket
@@ -56,7 +58,114 @@ class WebsocketProgressManager extends AbstractService
         $result = [];
 
         if (!empty($userId = $this->getFilter('userId'))) {
+            // prepare sql
+            $sql
+                = "SELECT
+                  id              as `id`,
+                  name            as `name`,
+                  deleted         as `deleted`,
+                  progress        as `progress`,
+                  progress_offset as `progressOffset`,
+                  type            as `type`,
+                  data            as `data`,
+                  status          as `status`,
+                  created_at      as `createdAt`,
+                  created_by_id   as `createdById`
+                FROM
+                  progress_manager
+                WHERE 
+                    deleted=0 
+                  AND created_by_id='{$userId}'
+                ORDER BY status ASC, created_at DESC";
 
+            // execute sql
+            $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+            $sth->execute();
+            $data = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+            if (!empty($data)) {
+                foreach ($data as $row) {
+                    $statusKey = array_flip(ProgressManager::$progressStatus)[$row['status']];
+
+                    $result[] = [
+                        'id'       => $row['id'],
+                        'name'     => $row['name'],
+                        'progress' => round($row['progress'], 2),
+                        'status'   => [
+                            'key'       => $statusKey,
+                            'translate' => $this
+                                ->getInjection('language')
+                                ->translate($statusKey, 'progressStatus', 'ProgressManager')
+                        ],
+                        'actions'  => $this
+                            ->getItemActions($statusKey, $row),
+                    ];
+                }
+
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('serviceFactory');
+        $this->addDependency('progressManager');
+    }
+
+    /**
+     * Get item actions
+     *
+     * @param string $status
+     * @param array  $record
+     *
+     * @return array
+     */
+    protected function getItemActions(string $status, array $record): array
+    {
+        // prepare config
+        $config = $this->getInjection('progressManager')->getProgressConfig();
+
+        // prepare data
+        $data = [];
+
+        /**
+         * For status action
+         */
+        if (isset($config['statusAction'][$status]) && is_array($config['statusAction'][$status])) {
+            $data = array_merge($data, $config['statusAction'][$status]);
+        }
+
+        /**
+         * For type action
+         */
+        if (isset($config['type'][$record['type']]['action'][$status])) {
+            $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
+        }
+
+        /**
+         * Set items to result
+         */
+        $result = [];
+        foreach ($data as $action) {
+            if (isset($config['actionService'][$action])) {
+                // create service
+                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
+
+                if (!empty($service) && $service instanceof StatusActionInterface) {
+                    $result[] = [
+                        'type' => $action,
+                        'data' => $service->getProgressStatusActionData($record),
+                    ];
+                }
+            }
         }
 
         return $result;

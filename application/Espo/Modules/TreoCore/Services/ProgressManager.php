@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
@@ -63,7 +63,9 @@ class ProgressManager extends AbstractProgressManager
         $this->addDependency('serviceFactory');
         $this->addDependency('progressManager');
         $this->addDependency('eventManager');
+        $this->addDependency('websocket');
     }
+
     /**
      * @var int
      */
@@ -81,14 +83,15 @@ class ProgressManager extends AbstractProgressManager
         $status = self::$progressStatus['new'];
 
         // prepare sql
-        $sql = "SELECT 
+        $sql
+            = "SELECT 
                   COUNT(id) as `total_count`
                 FROM
                   progress_manager
                 WHERE deleted = 0 AND status='{$status}' AND created_by_id='{$userId}'";
 
         // execute sql
-        $sth    = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
 
@@ -111,7 +114,7 @@ class ProgressManager extends AbstractProgressManager
         ];
 
         // prepare request data
-        $maxSize = (!empty($request->get('maxSize'))) ? (int) $request->get('maxSize') : self::$maxSize;
+        $maxSize = (!empty($request->get('maxSize'))) ? (int)$request->get('maxSize') : self::$maxSize;
 
         if (!empty($data = $this->getDbData($maxSize))) {
             // prepare new records
@@ -181,6 +184,9 @@ class ProgressManager extends AbstractProgressManager
 
             // prepare result
             $result = true;
+
+            // refresh websocket
+            $this->getInjection('websocket')->refresh('progress_manager');
         }
 
         return $result;
@@ -196,7 +202,8 @@ class ProgressManager extends AbstractProgressManager
     protected function getDbData(int $maxSize = null): array
     {
         // prepare sql
-        $sql = "SELECT
+        $sql
+            = "SELECT
                   id              as `id`,
                   name            as `name`,
                   deleted         as `deleted`,
@@ -231,7 +238,7 @@ class ProgressManager extends AbstractProgressManager
         }
 
         // execute sql
-        $sth  = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
         $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -246,7 +253,8 @@ class ProgressManager extends AbstractProgressManager
     protected function getDbDataTotal(): int
     {
         // prepare sql
-        $sql = "SELECT
+        $sql
+            = "SELECT
                    COUNT(id) as `total_count`
                 FROM
                   progress_manager
@@ -254,18 +262,18 @@ class ProgressManager extends AbstractProgressManager
                   deleted = 0";
 
         // execute sql
-        $sth  = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
         $data = $sth->fetch(\PDO::FETCH_ASSOC);
 
-        return (!empty($data['total_count'])) ? (int) $data['total_count'] : 0;
+        return (!empty($data['total_count'])) ? (int)$data['total_count'] : 0;
     }
 
     /**
      * Update record
      *
-     * @param string $id
-     * @param string $type
+     * @param string               $id
+     * @param string               $type
      * @param ProgressJobInterface $service
      *
      * @return bool
@@ -277,11 +285,11 @@ class ProgressManager extends AbstractProgressManager
 
         if (!empty($id)) {
             // prepare params
-            $date      = date('Y-m-d H:i:s');
-            $status    = self::$progressStatus[$service->getStatus()];
-            $progress  = $service->getProgress();
-            $offset    = $service->getOffset();
-            $data      = Json::encode($service->getData());
+            $date = date('Y-m-d H:i:s');
+            $status = self::$progressStatus[$service->getStatus()];
+            $progress = $service->getProgress();
+            $offset = $service->getOffset();
+            $data = Json::encode($service->getData());
             $eventData = [
                 'id'       => $id,
                 'type'     => $type,
@@ -295,7 +303,7 @@ class ProgressManager extends AbstractProgressManager
 
             // prepare sql
             $sql = "UPDATE progress_manager SET `status`='{$status}', `progress`={$progress}, "
-                ."`progress_offset`={$offset}, `data`='{$data}', modified_at='{$date}' WHERE id='{$id}'";
+                . "`progress_offset`={$offset}, `data`='{$data}', modified_at='{$date}' WHERE id='{$id}'";
 
             $sth = $this
                 ->getEntityManager()
@@ -321,7 +329,7 @@ class ProgressManager extends AbstractProgressManager
     {
         // prepare params
         $status = self::$progressStatus[$status];
-        $ids    = implode("','", $ids);
+        $ids = implode("','", $ids);
 
         // prepare sql
         $sql = "UPDATE progress_manager SET `status`='{$status}' WHERE id IN ('{$ids}')";
@@ -337,7 +345,7 @@ class ProgressManager extends AbstractProgressManager
      * Notify user
      *
      * @param ProgressJobInterface $service
-     * @param array $record
+     * @param array                $record
      *
      * @return bool
      */
@@ -349,11 +357,13 @@ class ProgressManager extends AbstractProgressManager
         if (in_array($service->getStatus(), ['success', 'error'])) {
             // create notification
             $notification = $this->getEntityManager()->getEntity('Notification');
-            $notification->set([
-                'type'    => 'Message',
-                'userId'  => $record['createdById'],
-                'message' => sprintf($this->translate('notificationMessages', $service->getStatus()), $record['name'])
-            ]);
+            $notification->set(
+                [
+                    'type'    => 'Message',
+                    'userId'  => $record['createdById'],
+                    'message' => sprintf($this->translate('notificationMessages', $service->getStatus()), $record['name'])
+                ]
+            );
             $this->getEntityManager()->saveEntity($notification);
 
             // prepare result
@@ -367,7 +377,7 @@ class ProgressManager extends AbstractProgressManager
      * Get item actions
      *
      * @param string $status
-     * @param array $record
+     * @param array  $record
      *
      * @return array
      */

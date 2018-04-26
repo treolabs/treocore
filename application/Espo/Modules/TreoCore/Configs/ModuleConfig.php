@@ -48,7 +48,6 @@ return [
             'port' => 5555,
         ],
         'data-mappers' => [
-            'test'             => 'WebsocketTest',
             'progress_manager' => 'WebsocketProgressManager',
         ],
     ],
