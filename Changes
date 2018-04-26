@@ -1,3 +1,5 @@
+    * UST #58990 : Добавить валидацию на значение Scheduling в Scheduled Jobs (Roman Ratsun)
+
 1.9.6  2018-04-26 10:01:57 Europe/Kiev
     * UST #62717 : Перевести ProgressManager на Websocket // back (Roman Ratsun)
     * UST #62646 : Підключити Websocket (Roman Ratsun)
