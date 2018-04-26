@@ -75,7 +75,7 @@ class Pusher implements WampServerInterface
         $mappers = $this
             ->getContainer()
             ->get('config')
-            ->get('modules.websockets.data-mappers');
+            ->get('modules.websockets-mappers');
 
         if (!empty($mappers)) {
             $serviceFactory = $this->getContainer()->get('serviceFactory');

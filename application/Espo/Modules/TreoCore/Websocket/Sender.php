@@ -60,9 +60,6 @@ class Sender
     {
         // get config
         $config = $this->getContainer()->get('config')->get('websockets');
-        if (empty($config)) {
-            $config = $this->getContainer()->get('config')->get('modules.websockets');
-        }
 
         $context = new ZMQContext();
         $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
