@@ -60,8 +60,8 @@ class Upload extends EspoUpload
         $res      = $this->checkPackageType();
 
         // check author
-        if (empty($manifest['author']) || $manifest['author'] != 'TreoPIM') {
-            $this->throwErrorAndRemovePackage('Your should use TreoPIM package.');
+        if (empty($manifest['author']) || !in_array($manifest['author'], ['TreoPIM', 'Treo'])) {
+            $this->throwErrorAndRemovePackage('Your should use Treo package.');
         }
 
         //check php version
