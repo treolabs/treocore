@@ -37,7 +37,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
         template: 'treo-core:record/search',
 
-        typesWithOneFilter: ['bool'],
+        typesWithOneFilter: ['array', 'bool', 'enum', 'multiEnum', 'linkMultiple'],
 
         setup: function () {
             Dep.prototype.setup.call(this);
@@ -72,7 +72,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 this.advanced = this.sortAdvanced(this.advanced);
 
                 var nameType = this.model.getFieldType(name.split('-')[0]);
-                if (this.typesWithOneFilter.indexOf(nameType) > -1) {
+                if (this.typesWithOneFilter.includes(nameType)) {
                     $target.closest('li').addClass('hide');
                 }
 
@@ -92,7 +92,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 var $target = $(e.currentTarget);
                 var name = $target.data('name');
 
-                this.$el.find('ul.filter-list li[data-name="' + name + '"]').removeClass('hide');
+                this.$el.find('ul.filter-list li[data-name="' + name.split('-')[0] + '"]').removeClass('hide');
                 var container = this.getView('filter-' + name).$el.closest('div.filter');
                 this.clearView('filter-' + name);
                 container.remove();
