@@ -56,8 +56,8 @@ We are already working on the following connectors for export channels:
 
 |                      Icon                       | System     | Current State                         |
 | :---------------------------------------------: | ---------- | ------------------------------------- |
-| ![ystem_magento ](docs/_assets/system_magento 1.png) | Magento 1  | Connector is currently in development |
-| ![ystem_magento ](docs/_assets/system_magento 2.png) | Magento 2  | Connector is currently in development |
+| ![ystem_magento](docs/_assets/system_magento 1.png) | Magento 1  | Connector is currently in development |
+| ![ystem_magento](docs/_assets/system_magento 2.png) | Magento 2  | Connector is currently in development |
 |      ![ystem_oxi](docs/_assets/system_oxid.png)      | OXID eShop | Connector is currently in development |
 |  ![ystem_shopwar](docs/_assets/system_shopware.png)  | Shopware   | Connector is currently in development |
 
