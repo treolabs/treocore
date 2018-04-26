@@ -70,9 +70,9 @@ We are already working on the following connectors for export channels:
 
 ### Documentation
 
-- Documentation for users is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for administrators is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for developers is planned.
+- Documentation for users is available [here](docs/).
+- Documentation for administrators is available [here](docs/).
+- Documentation for developers is available [here](docs/).
 
 ### Installation
 
@@ -89,6 +89,12 @@ We are already working on the following connectors for export channels:
    php composer.phar install
    ```
 4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+5. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+6. Run websocket:
+   ```
+   php console.php websocket open
+   ```
+   Websocket configuration [guide](docs/en/developer-guide/websocket/readme.md) 
 
 ### License
 

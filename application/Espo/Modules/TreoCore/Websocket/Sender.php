@@ -34,13 +34,38 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Websocket;
 
-use Espo\Modules\TreoCore\Console;
+use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use ZMQContext;
+use ZMQ;
 
-return [
-    "clear cache"    => Console\ClearCache::class,
-    "rebuild"        => Console\Rebuild::class,
-    "cron"           => Console\Cron::class,
-    "websocket open" => Console\Websocket::class
-];
+/**
+ * Websocket Sender
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Sender
+{
+    use ContainerTrait;
+
+    /**
+     * Refresh websocket
+     *
+     * @param string $topicId
+     *
+     * @return bool
+     */
+    public function refresh(string $topicId)
+    {
+        // get config
+        $config = $this->getContainer()->get('config')->get('websockets');
+
+        $context = new ZMQContext();
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+        $socket->connect(sprintf('tcp://%s:%s', $config['zmq']['host'], $config['zmq']['port']));
+        $socket->send($topicId);
+
+        return true;
+    }
+}

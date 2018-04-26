@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
@@ -83,6 +83,9 @@ class ProgressManager
             $userId = empty($userId) ? $this->getUser()->get('id') : $userId;
 
             $result = $this->insert($name, $type, $data, $userId);
+
+            // refresh websocket
+            $this->getContainer()->get('websocket')->refresh('progress_manager');
         }
 
         return $result;
@@ -132,19 +135,19 @@ class ProgressManager
             $pdo = $this->getEntityManager()->getPDO();
 
             // prepare params
-            $id     = Util::generateId();
-            $name   = $pdo->quote($name);
-            $type   = $pdo->quote($type);
-            $data   = $pdo->quote(Json::encode($data));
+            $id = Util::generateId();
+            $name = $pdo->quote($name);
+            $type = $pdo->quote($type);
+            $data = $pdo->quote(Json::encode($data));
             $status = $pdo->quote(AbstractProgressManager::$progressStatus['new']);
             $userId = $pdo->quote($userId);
-            $date   = $pdo->quote(date('Y-m-d H:i:s'));
+            $date = $pdo->quote(date('Y-m-d H:i:s'));
 
             // prepare sql
             $sql = "INSERT INTO progress_manager SET "
-                ."id='{$id}', progress_manager.name={$name}, progress_manager.type={$type}, "
-                ."progress_manager.data={$data}, progress_manager.status={$status}, progress=0, "
-                ."created_by_id={$userId}, created_at={$date}, modified_at={$date};";
+                . "id='{$id}', progress_manager.name={$name}, progress_manager.type={$type}, "
+                . "progress_manager.data={$data}, progress_manager.status={$status}, progress=0, "
+                . "created_by_id={$userId}, created_at={$date}, modified_at={$date};";
 
             $sth = $this
                 ->getEntityManager()

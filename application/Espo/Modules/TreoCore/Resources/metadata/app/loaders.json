@@ -6,5 +6,6 @@
   "FieldManager": "Espo\\Modules\\TreoCore\\Loaders\\FieldManagerLoader",
   "CronManager": "Espo\\Modules\\TreoCore\\Loaders\\CronManager",
   "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader",
-  "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader"
+  "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader",
+  "Websocket": "Espo\\Modules\\TreoCore\\Loaders\\WebsocketLoader"
 }

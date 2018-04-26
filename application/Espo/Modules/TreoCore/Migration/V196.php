@@ -32,15 +32,36 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Migration;
 
-namespace Espo\Modules\TreoCore\Configs;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
-use Espo\Modules\TreoCore\Console;
+/**
+ * Version 1.9.6
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class V196 extends AbstractMigration
+{
+    /**
+     * Up to current
+     */
+    public function up(): void
+    {
+        $websocketConfig = [
+            'server' => [
+                'host'    => '127.0.0.1',
+                'port'    => 8080,
+                'address' => '0.0.0.0'
+            ],
+            'zmq'    => [
+                'host' => '127.0.0.1',
+                'port' => 5555,
+            ],
+        ];
 
-return [
-    "clear cache"    => Console\ClearCache::class,
-    "rebuild"        => Console\Rebuild::class,
-    "cron"           => Console\Cron::class,
-    "websocket open" => Console\Websocket::class
-];
+        // set to config
+        $this->getConfig()->set('websockets', $websocketConfig);
+        $this->getConfig()->save();
+    }
+}
