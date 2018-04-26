@@ -84,6 +84,11 @@ class WebsocketProgressManager extends AbstractService
             $data = $sth->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($data)) {
+                // create service
+                $progressManagerService = $this
+                    ->getInjection('serviceFactory')
+                    ->create('ProgressManager');
+
                 foreach ($data as $row) {
                     $statusKey = array_flip(ProgressManager::$progressStatus)[$row['status']];
 
@@ -93,11 +98,10 @@ class WebsocketProgressManager extends AbstractService
                         'progress' => round($row['progress'], 2),
                         'status'   => [
                             'key'       => $statusKey,
-                            'translate' => $this
-                                ->getInjection('language')
-                                ->translate($statusKey, 'progressStatus', 'ProgressManager')
+                            'translate' => $progressManagerService
+                                ->translate('progressStatus', $statusKey)
                         ],
-                        'actions'  => $this
+                        'actions'  => $progressManagerService
                             ->getItemActions($statusKey, $row),
                     ];
                 }
@@ -114,59 +118,6 @@ class WebsocketProgressManager extends AbstractService
     {
         parent::init();
 
-        $this->addDependency('language');
         $this->addDependency('serviceFactory');
-        $this->addDependency('progressManager');
-    }
-
-    /**
-     * Get item actions
-     *
-     * @param string $status
-     * @param array  $record
-     *
-     * @return array
-     */
-    protected function getItemActions(string $status, array $record): array
-    {
-        // prepare config
-        $config = $this->getInjection('progressManager')->getProgressConfig();
-
-        // prepare data
-        $data = [];
-
-        /**
-         * For status action
-         */
-        if (isset($config['statusAction'][$status]) && is_array($config['statusAction'][$status])) {
-            $data = array_merge($data, $config['statusAction'][$status]);
-        }
-
-        /**
-         * For type action
-         */
-        if (isset($config['type'][$record['type']]['action'][$status])) {
-            $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
-        }
-
-        /**
-         * Set items to result
-         */
-        $result = [];
-        foreach ($data as $action) {
-            if (isset($config['actionService'][$action])) {
-                // create service
-                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
-
-                if (!empty($service) && $service instanceof StatusActionInterface) {
-                    $result[] = [
-                        'type' => $action,
-                        'data' => $service->getProgressStatusActionData($record),
-                    ];
-                }
-            }
-        }
-
-        return $result;
     }
 }

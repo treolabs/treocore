@@ -193,6 +193,70 @@ class ProgressManager extends AbstractProgressManager
     }
 
     /**
+     * Get item actions
+     *
+     * @param string $status
+     * @param array  $record
+     *
+     * @return array
+     */
+    public function getItemActions(string $status, array $record): array
+    {
+        // prepare config
+        $config = $this->getProgressConfig();
+
+        // prepare data
+        $data = [];
+
+        /**
+         * For status action
+         */
+        if (isset($config['statusAction'][$status]) && is_array($config['statusAction'][$status])) {
+            $data = array_merge($data, $config['statusAction'][$status]);
+        }
+
+        /**
+         * For type action
+         */
+        if (isset($config['type'][$record['type']]['action'][$status])) {
+            $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
+        }
+
+        /**
+         * Set items to result
+         */
+        $result = [];
+        foreach ($data as $action) {
+            if (isset($config['actionService'][$action])) {
+                // create service
+                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
+
+                if (!empty($service) && $service instanceof StatusActionInterface) {
+                    $result[] = [
+                        'type' => $action,
+                        'data' => $service->getProgressStatusActionData($record),
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Translate field
+     *
+     * @param string $tab
+     * @param string $key
+     *
+     * @return string
+     */
+    public function translate(string $tab, string $key): string
+    {
+        return $this->getInjection('language')->translate($key, $tab, 'ProgressManager');
+    }
+
+    /**
      * Get DB data
      *
      * @param int $maxSize
@@ -374,61 +438,6 @@ class ProgressManager extends AbstractProgressManager
         }
 
         return $result;
-    }
-
-    /**
-     * Get item actions
-     *
-     * @param string $status
-     * @param array  $record
-     *
-     * @return array
-     */
-    protected function getItemActions(string $status, array $record): array
-    {
-        // prepare config
-        $config = $this->getProgressConfig();
-
-        // prepare data
-        $data = [];
-
-        if (isset($config['statusAction'][$status]) && is_array($config['statusAction'][$status])) {
-            $data = array_merge($data, $config['statusAction'][$status]);
-        }
-
-        if (isset($config['type'][$record['type']]['action'][$status])) {
-            $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
-        }
-
-        $result = [];
-        foreach ($data as $action) {
-            if (isset($config['actionService'][$action])) {
-                // create service
-                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
-
-                if (!empty($service) && $service instanceof StatusActionInterface) {
-                    $result[] = [
-                        'type' => $action,
-                        'data' => $service->getProgressStatusActionData($record),
-                    ];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Translate field
-     *
-     * @param string $tab
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function translate(string $tab, string $key): string
-    {
-        return $this->getInjection('language')->translate($key, $tab, 'ProgressManager');
     }
 
     /**
