@@ -1,6 +1,6 @@
 {
   "name": "treo/treo",
-  "version": "1.9.6",
+  "version": "1.9.7",
   "description": "TreoPIM",
   "authors": [
     {
@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": "^7.1",
+    "php": "7.1.*",
     "ext-pdo_mysql": "*",
     "ext-openssl": "*",
     "ext-json": "*",
