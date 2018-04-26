@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core;
 
@@ -57,6 +57,19 @@ class Application extends EspoApplication
     }
 
     /**
+     * Run console
+     *
+     * @param array $argv
+     */
+    public function runConsole(array $argv)
+    {
+        $this
+            ->getContainer()
+            ->get('consoleManager')
+            ->run(str_replace('console.php ', '', implode(' ', $argv)));
+    }
+
+    /**
      * Run client
      */
     public function runClient()
@@ -69,8 +82,8 @@ class Application extends EspoApplication
             'html/treo-main.html',
             [
                 'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year' => date('Y'),
-                'version' => $version
+                'year'            => date('Y'),
+                'version'         => $version
             ]
         );
     }
@@ -106,6 +119,30 @@ class Application extends EspoApplication
                 'message' => $result['message']
             ]
         );
+    }
+
+    /**
+     * Clear cache
+     */
+    public function runClearCache()
+    {
+        // blocked parent method
+    }
+
+    /**
+     * Rebuild
+     */
+    public function runRebuild()
+    {
+        // blocked parent method
+    }
+
+    /**
+     * Run cron
+     */
+    public function runCron()
+    {
+        // blocked parent method
     }
 
     /**

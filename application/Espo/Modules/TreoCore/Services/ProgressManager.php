@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
@@ -63,7 +63,9 @@ class ProgressManager extends AbstractProgressManager
         $this->addDependency('serviceFactory');
         $this->addDependency('progressManager');
         $this->addDependency('eventManager');
+        $this->addDependency('websocket');
     }
+
     /**
      * @var int
      */
@@ -81,14 +83,15 @@ class ProgressManager extends AbstractProgressManager
         $status = self::$progressStatus['new'];
 
         // prepare sql
-        $sql = "SELECT 
+        $sql
+            = "SELECT 
                   COUNT(id) as `total_count`
                 FROM
                   progress_manager
                 WHERE deleted = 0 AND status='{$status}' AND created_by_id='{$userId}'";
 
         // execute sql
-        $sth    = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
 
@@ -111,7 +114,7 @@ class ProgressManager extends AbstractProgressManager
         ];
 
         // prepare request data
-        $maxSize = (!empty($request->get('maxSize'))) ? (int) $request->get('maxSize') : self::$maxSize;
+        $maxSize = (!empty($request->get('maxSize'))) ? (int)$request->get('maxSize') : self::$maxSize;
 
         if (!empty($data = $this->getDbData($maxSize))) {
             // prepare new records
@@ -181,183 +184,9 @@ class ProgressManager extends AbstractProgressManager
 
             // prepare result
             $result = true;
-        }
 
-        return $result;
-    }
-
-    /**
-     * Get DB data
-     *
-     * @param int $maxSize
-     *
-     * @return array
-     */
-    protected function getDbData(int $maxSize = null): array
-    {
-        // prepare sql
-        $sql = "SELECT
-                  id              as `id`,
-                  name            as `name`,
-                  deleted         as `deleted`,
-                  progress        as `progress`,
-                  progress_offset as `progressOffset`,
-                  type            as `type`,
-                  data            as `data`,
-                  status          as `status`,
-                  created_at      as `createdAt`,
-                  created_by_id   as `createdById`
-                FROM
-                  progress_manager
-                WHERE 
-                  deleted=0 ";
-
-        if (is_null($maxSize)) {
-            // prepare statuses
-            $statuses = implode("','", [self::$progressStatus['new'], self::$progressStatus['in_progress']]);
-
-            $sql .= "AND status IN ('{$statuses}') ";
-        } else {
-            // prepare user id
-            $userId = $this->getUser()->get('id');
-
-            $sql .= "AND created_by_id='{$userId}' ";
-        }
-
-        $sql .= "ORDER BY status ASC, created_at DESC ";
-
-        if (!is_null($maxSize)) {
-            $sql .= "LIMIT {$maxSize} OFFSET 0";
-        }
-
-        // execute sql
-        $sth  = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-        return (!empty($data)) ? $data : [];
-    }
-
-    /**
-     * Get DB data total
-     *
-     * @return int
-     */
-    protected function getDbDataTotal(): int
-    {
-        // prepare sql
-        $sql = "SELECT
-                   COUNT(id) as `total_count`
-                FROM
-                  progress_manager
-                WHERE
-                  deleted = 0";
-
-        // execute sql
-        $sth  = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $data = $sth->fetch(\PDO::FETCH_ASSOC);
-
-        return (!empty($data['total_count'])) ? (int) $data['total_count'] : 0;
-    }
-
-    /**
-     * Update record
-     *
-     * @param string $id
-     * @param string $type
-     * @param ProgressJobInterface $service
-     *
-     * @return bool
-     */
-    protected function updateRecord(string $id, string $type, ProgressJobInterface $service): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($id)) {
-            // prepare params
-            $date      = date('Y-m-d H:i:s');
-            $status    = self::$progressStatus[$service->getStatus()];
-            $progress  = $service->getProgress();
-            $offset    = $service->getOffset();
-            $data      = Json::encode($service->getData());
-            $eventData = [
-                'id'       => $id,
-                'type'     => $type,
-                'status'   => $status,
-                'progress' => $progress,
-                'data'     => $data,
-            ];
-
-            // triggered event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeUpdate', $eventData);
-
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `status`='{$status}', `progress`={$progress}, "
-                ."`progress_offset`={$offset}, `data`='{$data}', modified_at='{$date}' WHERE id='{$id}'";
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Update status
-     *
-     * @param array $ids
-     *
-     * @return void
-     */
-    protected function updateStatus(array $ids, string $status): void
-    {
-        // prepare params
-        $status = self::$progressStatus[$status];
-        $ids    = implode("','", $ids);
-
-        // prepare sql
-        $sql = "UPDATE progress_manager SET `status`='{$status}' WHERE id IN ('{$ids}')";
-
-        $sth = $this
-            ->getEntityManager()
-            ->getPDO()
-            ->prepare($sql);
-        $sth->execute();
-    }
-
-    /**
-     * Notify user
-     *
-     * @param ProgressJobInterface $service
-     * @param array $record
-     *
-     * @return bool
-     */
-    protected function notifyUser(ProgressJobInterface $service, array $record): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (in_array($service->getStatus(), ['success', 'error'])) {
-            // create notification
-            $notification = $this->getEntityManager()->getEntity('Notification');
-            $notification->set([
-                'type'    => 'Message',
-                'userId'  => $record['createdById'],
-                'message' => sprintf($this->translate('notificationMessages', $service->getStatus()), $record['name'])
-            ]);
-            $this->getEntityManager()->saveEntity($notification);
-
-            // prepare result
-            $result = true;
+            // refresh websocket
+            $this->getInjection('websocket')->refresh('progress_manager');
         }
 
         return $result;
@@ -367,11 +196,11 @@ class ProgressManager extends AbstractProgressManager
      * Get item actions
      *
      * @param string $status
-     * @param array $record
+     * @param array  $record
      *
      * @return array
      */
-    protected function getItemActions(string $status, array $record): array
+    public function getItemActions(string $status, array $record): array
     {
         // prepare config
         $config = $this->getProgressConfig();
@@ -422,9 +251,193 @@ class ProgressManager extends AbstractProgressManager
      *
      * @return string
      */
-    protected function translate(string $tab, string $key): string
+    public function translate(string $tab, string $key): string
     {
         return $this->getInjection('language')->translate($key, $tab, 'ProgressManager');
+    }
+
+    /**
+     * Get DB data
+     *
+     * @param int $maxSize
+     *
+     * @return array
+     */
+    protected function getDbData(int $maxSize = null): array
+    {
+        // prepare sql
+        $sql
+            = "SELECT
+                  id              as `id`,
+                  name            as `name`,
+                  deleted         as `deleted`,
+                  progress        as `progress`,
+                  progress_offset as `progressOffset`,
+                  type            as `type`,
+                  data            as `data`,
+                  status          as `status`,
+                  created_at      as `createdAt`,
+                  created_by_id   as `createdById`
+                FROM
+                  progress_manager
+                WHERE 
+                  deleted=0 ";
+
+        if (is_null($maxSize)) {
+            // prepare statuses
+            $statuses = implode("','", [self::$progressStatus['new'], self::$progressStatus['in_progress']]);
+
+            $sql .= "AND status IN ('{$statuses}') ";
+        } else {
+            // prepare user id
+            $userId = $this->getUser()->get('id');
+
+            $sql .= "AND created_by_id='{$userId}' ";
+        }
+
+        $sql .= "ORDER BY status ASC, created_at DESC ";
+
+        if (!is_null($maxSize)) {
+            $sql .= "LIMIT {$maxSize} OFFSET 0";
+        }
+
+        // execute sql
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth->execute();
+        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+        return (!empty($data)) ? $data : [];
+    }
+
+    /**
+     * Get DB data total
+     *
+     * @return int
+     */
+    protected function getDbDataTotal(): int
+    {
+        // prepare sql
+        $sql
+            = "SELECT
+                   COUNT(id) as `total_count`
+                FROM
+                  progress_manager
+                WHERE
+                  deleted = 0";
+
+        // execute sql
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth->execute();
+        $data = $sth->fetch(\PDO::FETCH_ASSOC);
+
+        return (!empty($data['total_count'])) ? (int)$data['total_count'] : 0;
+    }
+
+    /**
+     * Update record
+     *
+     * @param string               $id
+     * @param string               $type
+     * @param ProgressJobInterface $service
+     *
+     * @return bool
+     */
+    protected function updateRecord(string $id, string $type, ProgressJobInterface $service): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (!empty($id)) {
+            // prepare params
+            $date = date('Y-m-d H:i:s');
+            $status = self::$progressStatus[$service->getStatus()];
+            $progress = $service->getProgress();
+            $offset = $service->getOffset();
+            $data = Json::encode($service->getData());
+            $eventData = [
+                'id'       => $id,
+                'type'     => $type,
+                'status'   => $status,
+                'progress' => $progress,
+                'data'     => $data,
+            ];
+
+            // triggered event
+            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeUpdate', $eventData);
+
+            // prepare sql
+            $sql = "UPDATE progress_manager SET `status`='{$status}', `progress`={$progress}, "
+                . "`progress_offset`={$offset}, `data`='{$data}', modified_at='{$date}' WHERE id='{$id}'";
+
+            $sth = $this
+                ->getEntityManager()
+                ->getPDO()
+                ->prepare($sql);
+            $sth->execute();
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Update status
+     *
+     * @param array $ids
+     *
+     * @return void
+     */
+    protected function updateStatus(array $ids, string $status): void
+    {
+        // prepare params
+        $status = self::$progressStatus[$status];
+        $ids = implode("','", $ids);
+
+        // prepare sql
+        $sql = "UPDATE progress_manager SET `status`='{$status}' WHERE id IN ('{$ids}')";
+
+        $sth = $this
+            ->getEntityManager()
+            ->getPDO()
+            ->prepare($sql);
+        $sth->execute();
+    }
+
+    /**
+     * Notify user
+     *
+     * @param ProgressJobInterface $service
+     * @param array                $record
+     *
+     * @return bool
+     */
+    protected function notifyUser(ProgressJobInterface $service, array $record): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (in_array($service->getStatus(), ['success', 'error'])) {
+            // prepare message
+            $message = $this->translate('notificationMessages', $service->getStatus());
+
+            // create notification
+            $notification = $this->getEntityManager()->getEntity('Notification');
+            $notification->set(
+                [
+                    'type'    => 'Message',
+                    'userId'  => $record['createdById'],
+                    'message' => sprintf($message, $record['name'])
+                ]
+            );
+            $this->getEntityManager()->saveEntity($notification);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
     }
 
     /**

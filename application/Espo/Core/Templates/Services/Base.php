@@ -37,6 +37,111 @@ namespace Espo\Core\Templates\Services;
 
 class Base extends \Espo\Services\Record
 {
+    /**
+     * @todo treoinject
+     *
+     * Mass update action
+     *
+     * @param       $data
+     * @param array $params
+     *
+     * @return array
+     */
+    public function massUpdate($data, array $params)
+    {
+        // prepare where
+        $where = [];
+        if (array_key_exists('ids', $params) && is_array($params['ids'])) {
+            $values = [];
+            foreach ($params['ids'] as $id) {
+                $values[] = [
+                    'type'      => 'equals',
+                    'attribute' => 'id',
+                    'value'     => $id
+                ];
+            }
+            $where[] = [
+                'type'  => 'or',
+                'value' => $values
+            ];
+        } elseif (array_key_exists('where', $params)) {
+            $where = $params['where'];
+        }
 
+
+        // filter input
+        $this->filterInput($data);
+
+        // prepare select params
+        $p['where'] = $where;
+        if (!empty($params['selectData']) && is_array($params['selectData'])) {
+            foreach ($params['selectData'] as $k => $v) {
+                $p[$k] = $v;
+            }
+        }
+        $selectParams = $this->getSelectParams($p);
+
+        // get collection
+        $collection = $this->getRepository()->find($selectParams);
+
+        // prepare count
+        $count = count($collection);
+
+        if ($count > 0) {
+            // prepare max
+            $max = $this->getConfig()->get('modules.massUpdateMax.default');
+            if (!empty($this->getConfig()->get('modules.massUpdateMax.' . $this->entityType))) {
+                $max = $this->getConfig()->get('modules.massUpdateMax.' . $this->entityType);
+            }
+
+            if ($count < $max) {
+                $this->massUpdateIteration($collection, $data);
+            } else {
+                $this
+                    ->getServiceFactory()
+                    ->create('MassUpdateProgressManager')
+                    ->push(
+                        [
+                            'entityType' => $this->entityType,
+                            'collection' => $collection,
+                            'total'      => $count,
+                            'data'       => $data
+                        ]
+                    );
+            }
+        }
+
+        return [
+            'count' => $count
+        ];
+    }
+
+    /**
+     * @todo treoinject
+     *
+     * MassUpdate iteration
+     *
+     * @param array $collection
+     * @param array $data
+     */
+    public function massUpdateIteration($collection, $data): void
+    {
+        $idsUpdated = [];
+        foreach ($collection as $entity) {
+            if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
+                $entity->set($data);
+                if ($this->checkAssignment($entity)) {
+                    if ($this->getRepository()->save($entity)) {
+                        $idsUpdated[] = $entity->id;
+
+                        $this->processActionHistoryRecord('update', $entity);
+                    }
+                }
+            }
+        }
+
+        // call after mass update action
+        $this->afterMassUpdate($idsUpdated, $data);
+    }
 }
 

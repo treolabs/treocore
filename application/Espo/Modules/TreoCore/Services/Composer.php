@@ -68,6 +68,11 @@ class Composer extends Base
     /**
      * @var string
      */
+    protected $moduleOldComposer = 'data/old-composer.json';
+
+    /**
+     * @var string
+     */
     protected $moduleComposer = 'data/composer.json';
 
     /**
@@ -130,7 +135,14 @@ class Composer extends Base
         // set composer.json data
         $this->setModuleComposerJson($data);
 
-        return $this->run('update');
+        $result = $this->run('update');
+
+        if ($result['status'] != 0) {
+            // revert composer.json data
+            $this->revertModuleComposerJson();
+        }
+
+        return $result;
     }
 
     /**
@@ -226,9 +238,34 @@ class Composer extends Base
      */
     public function setModuleComposerJson(array $data): void
     {
+        // delete old file
+        if (file_exists($this->moduleOldComposer)) {
+            unlink($this->moduleOldComposer);
+        }
+
+        // copy file
+        if (file_exists($this->moduleComposer)) {
+            copy($this->moduleComposer, $this->moduleOldComposer);
+        }
+
         $file = fopen($this->moduleComposer, "w");
         fwrite($file, Json::encode($data));
         fclose($file);
+    }
+
+    /**
+     * Revert composer.json data
+     */
+    public function revertModuleComposerJson(): void
+    {
+        if (file_exists($this->moduleOldComposer)) {
+            // delete old file
+            if (file_exists($this->moduleComposer)) {
+                unlink($this->moduleComposer);
+            }
+            // copy file
+            copy($this->moduleOldComposer, $this->moduleComposer);
+        }
     }
 
     /**

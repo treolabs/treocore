@@ -49,7 +49,8 @@ class SelectManagerFactory extends Base
             $this->getContainer()->get('acl'),
             $this->getContainer()->get('aclManager'),
             $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('config')
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('injectableFactory')
         );
     }
 }

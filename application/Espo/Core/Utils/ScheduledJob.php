@@ -46,7 +46,10 @@ class ScheduledJob
 
     protected $cacheFile = 'data/cache/application/jobs.php';
 
-    protected $cronFile = 'cron.php';
+    /**
+     * @todo treoinject
+     */
+    protected $cronFile = 'console.php cron';
 
     protected $allowedMethod = 'run';
 

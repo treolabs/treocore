@@ -6,7 +6,7 @@
 
 TreoPIM is a single page application (SPA) with an API-centric architecture and flexible data model based on entities, entity attributes and relations of all kinds among them. TreoPIM allows you to gather and store all your product content in one place, enrich it and spread it to several channels like own online shop, amazon, eBay, online shops of your distributors, on a tablet or mobile application. TreoPIM will help you to structure and organize all your flexible data and get rid of excel mess. You can use TreoPIM together with EspoCRM as a single instance, so if you need both - a PIM and a CRM, TreoPIM is the best solution for you!
 
-## Why TreoPIM?
+##Why TreoPIM?
 
 - **Extensible with Modules**
 - Really **quick Time-to-Market** and low implementation costs!
@@ -40,7 +40,7 @@ TreoPIM comes with a lot of functions directly from the box.
 
 Want to know more about TreoPIM functions? Please [visit our website](http://treopim.de)!
 
-## Technology
+##Technology
 
 TreoPIM is based on EspoCRM and uses PHP7 and backbone.js.
 
@@ -70,9 +70,9 @@ We are already working on the following connectors for export channels:
 
 ### Documentation
 
-- Documentation for users is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for administrators is available [here](application/Espo/Modules/TreoCrm/docs/).
-- Documentation for developers is planned.
+- Documentation for users is available [here](docs/).
+- Documentation for administrators is available [here](docs/).
+- Documentation for developers is available [here](docs/).
 
 ### Installation
 
@@ -89,6 +89,12 @@ We are already working on the following connectors for export channels:
    php composer.phar install
    ```
 4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+5. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+6. Run websocket:
+   ```
+   php console.php websocket open
+   ```
+   Websocket configuration [guide](docs/en/developer-guide/websocket/readme.md) 
 
 ### License
 

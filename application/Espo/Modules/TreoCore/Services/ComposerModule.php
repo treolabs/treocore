@@ -139,6 +139,28 @@ class ComposerModule extends Base
         // prepare result
         $result = $this->modulePackage;
 
+        // remove unstable
+        if (empty($this->getConfig()->get('allowUnstable'))) {
+            foreach ($result as $module => $versions) {
+                foreach ($versions as $version => $row) {
+                    if (preg_match('/^v(.*)$/', $row['version'])) {
+                        unset($result[$module][$version]);
+                    }
+                }
+            }
+        }
+
+        // set max
+        foreach ($result as $module => $versions) {
+            $max = null;
+            foreach ($versions as $version => $row) {
+                $version = (int)str_replace(['.', 'v'], ['', ''], $version);
+                if ($version > $max) {
+                    $result[$module]['max'] = $row;
+                }
+            }
+        }
+
         if (!is_null($moduleId)) {
             $result = (!isset($this->modulePackage[$moduleId])) ? [] : $this->modulePackage[$moduleId];
         }
@@ -192,7 +214,6 @@ class ComposerModule extends Base
             if ($droppingCache || empty($this->getCachedPackagistData())) {
                 foreach ($this->getPackagistData() as $repository => $versions) {
                     if (is_array($versions)) {
-                        $max = null;
                         foreach ($versions as $version => $data) {
                             if (!empty($data['extra']['treoId'])) {
                                 $treoId = $data['extra']['treoId'];
@@ -200,13 +221,9 @@ class ComposerModule extends Base
                                     || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
                                     // prepare version
                                     $version = str_replace('v', '', $matches[0][0]);
-                                    $data['version'] = str_replace('v', '', $data['version']);
 
-                                    // set max
-                                    if ((int)str_replace('.', '', $max) < (int)str_replace('.', '', $version)) {
-                                        $max = $version;
-                                        $this->modulePackage[$treoId] = $data;
-                                    }
+                                    // set row
+                                    $this->modulePackage[$treoId][$version] = $data;
                                 }
                             }
                         }
@@ -233,7 +250,10 @@ class ComposerModule extends Base
         $result = [];
 
         if (file_exists($this->cacheFile)) {
-            $result = Json::decode(file_get_contents($this->cacheFile), true);
+            $data = file_get_contents($this->cacheFile);
+            if (!empty($data)) {
+                $result = Json::decode($data, true);
+            }
         }
 
         return $result;

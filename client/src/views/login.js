@@ -99,7 +99,7 @@ Espo.define('views/login', 'view', function (Dep) {
                     return;
                 }
 
-                $submit.addClass('disabled');
+                $submit.addClass('disabled').attr('disabled', 'disabled');
 
                 this.notify('Please wait...');
 
@@ -107,7 +107,8 @@ Espo.define('views/login', 'view', function (Dep) {
                     url: 'App/user',
                     headers: {
                         'Authorization': 'Basic ' + Base64.encode(userName  + ':' + password),
-                        'Espo-Authorization': Base64.encode(userName + ':' + password)
+                        'Espo-Authorization': Base64.encode(userName + ':' + password),
+                        'Espo-Authorization-By-Token': false
                     },
                     success: function (data) {
                         this.notify(false);
@@ -119,11 +120,12 @@ Espo.define('views/login', 'view', function (Dep) {
                             user: data.user,
                             preferences: data.preferences,
                             acl: data.acl,
-                            settings: data.settings
+                            settings: data.settings,
+                            appParams: data.appParams
                         });
                     }.bind(this),
                     error: function (xhr) {
-                        $submit.removeClass('disabled');
+                        $submit.removeClass('disabled').removeAttr('disabled');
                         if (xhr.status == 401) {
                             this.onWrong();
                         }

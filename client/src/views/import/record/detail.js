@@ -48,6 +48,8 @@ Espo.define('views/import/record/detail', 'views/record/detail', function (Dep) 
                     this.stopChecking = true;
                 }, this);
             }
+
+            this.hideActionItem('delete');
         },
 
         runChecking: function () {

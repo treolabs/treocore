@@ -241,10 +241,6 @@ class InboundEmail extends \Espo\Services\Record
         }
 
         $parserName = 'MailMimeParser';
-        if (extension_loaded('mailparse')) {
-            $parserName = 'PhpMimeMailParser';
-        }
-
         if ($this->getConfig()->get('emailParser')) {
             $parserName = $this->getConfig()->get('emailParser');
         }
@@ -399,9 +395,7 @@ class InboundEmail extends \Espo\Services\Record
             $email = $importer->importMessage($parserName, $message, $userId, $teamIdList, $userIdList, $filterCollection, $fetchOnlyHeader, $folderData);
         } catch (\Exception $e) {
             $GLOBALS['log']->error('InboundEmail '.$emailAccount->id.' (Import Message w/ '.$parserName.'): [' . $e->getCode() . '] ' .$e->getMessage());
-            if ($e->getCode() === 'HY000' && strpos($e->getMessage(), '1100') !== false) {
-                $this->getEntityManager()->getPdo()->query('UNLOCK TABLES');
-            }
+            $this->getEntityManager()->getPdo()->query('UNLOCK TABLES');
         }
         return $email;
     }
@@ -764,6 +758,8 @@ class InboundEmail extends \Espo\Services\Record
     {
         $groupEmailAccountPermission = $this->getAclManager()->get($user, 'groupEmailAccountPermission');
         $teamIdList = $user->getLinkMultipleIdList('teams');
+
+        $inboundEmail = null;
 
         $groupEmailAccountPermission = $this->getAcl()->get('groupEmailAccountPermission');
         if ($groupEmailAccountPermission && $groupEmailAccountPermission !== 'no') {

@@ -40,7 +40,8 @@ Espo.define('treo-core:views/module-manager/record/row-actions/available', 'view
                 action: 'installModule',
                 label: 'installModule',
                 data: {
-                    id: this.model.id
+                    id: this.model.id,
+                    mode: 'install'
                 }
             });
             return list;

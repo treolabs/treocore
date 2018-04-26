@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,17 +32,36 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/fields/version', 'views/fields/varchar',
-    Dep => Dep.extend({
+namespace Espo\Modules\TreoCore\Migration;
 
-        getValueForDisplay() {
-            let version = this.model.get(this.name);
-            let availableVersion = this.model.get('availableVersion');
-            if (this.model.get('isComposer') && version !== availableVersion) {
-                version += ` (${availableVersion} ${this.getLanguage().translate('available', 'labels', 'ModuleManager')})`;
-            }
-            return version;
-        }
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
-    })
-);
+/**
+ * Version 1.9.6
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class V196 extends AbstractMigration
+{
+    /**
+     * Up to current
+     */
+    public function up(): void
+    {
+        $websocketConfig = [
+            'server' => [
+                'host'    => '127.0.0.1',
+                'port'    => 8080,
+                'address' => '0.0.0.0'
+            ],
+            'zmq'    => [
+                'host' => '127.0.0.1',
+                'port' => 5555,
+            ],
+        ];
+
+        // set to config
+        $this->getConfig()->set('websockets', $websocketConfig);
+        $this->getConfig()->save();
+    }
+}

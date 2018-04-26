@@ -32,8 +32,15 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Configs;
 
-return [];
+return [
+    'websockets-mappers' => [
+        'progress_manager' => 'WebsocketProgressManager',
+    ],
+    'massUpdateMax'      => [
+        'default' => 200
+    ]
+];

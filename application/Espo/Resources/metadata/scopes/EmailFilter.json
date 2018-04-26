@@ -5,6 +5,5 @@
     "acl": false,
     "notifications": false,
     "object": false,
-    "customizable": false,
-    "hasAssignedUser":true
+    "customizable": false
 }

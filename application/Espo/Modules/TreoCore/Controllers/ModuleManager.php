@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
@@ -119,7 +119,8 @@ class ModuleManager extends Base
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/ModuleManager/installModule")
      * @ApiBody(sample="{
-     *     'id': 'Erp'
+     *     'id': 'Erp',
+     *     'version': '1.0.0' - not required
      * }")
      * @ApiReturn(sample="{
      *     'status': 'true',
@@ -145,7 +146,10 @@ class ModuleManager extends Base
         $data = Json::decode(Json::encode($data), true);
 
         if (!empty($data['id'])) {
-            return $this->getModuleManagerService()->installModule($data['id']);
+            // prepare version
+            $version = (!empty($data['version'])) ? $data['version'] : null;
+
+            return $this->getModuleManagerService()->installModule($data['id'], $version);
         }
 
         throw new Exceptions\NotFound();

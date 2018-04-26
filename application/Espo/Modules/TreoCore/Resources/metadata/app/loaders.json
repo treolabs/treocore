@@ -1,8 +1,11 @@
 {
+  "ConsoleManager": "Espo\\Modules\\TreoCore\\Loaders\\ConsoleManagerLoader",
   "EventManager": "Espo\\Modules\\TreoCore\\Loaders\\EventManagerLoader",
   "EntityManagerUtil": "Espo\\Modules\\TreoCore\\Loaders\\EntityManagerUtil",
   "Layout": "Espo\\Modules\\TreoCore\\Loaders\\Layout",
   "FieldManager": "Espo\\Modules\\TreoCore\\Loaders\\FieldManagerLoader",
   "CronManager": "Espo\\Modules\\TreoCore\\Loaders\\CronManager",
-  "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader"
+  "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader",
+  "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader",
+  "Websocket": "Espo\\Modules\\TreoCore\\Loaders\\WebsocketLoader"
 }

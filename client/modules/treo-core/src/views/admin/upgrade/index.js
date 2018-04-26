@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,14 +31,21 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:views/admin/upgrade/index', function (Dep) {
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
-}
+    return Dep.extend({
+        data: function () {
+            // prepare download message
+            var downloadMsg = 'downloadUpgradePackage';
+            if (this.getConfig().get('allowUnstable')) {
+                downloadMsg = 'downloadUpgradePackageDev';
+            }
 
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runRebuild();
-
+            return {
+                versionMsg: this.translate('Current version') + ': ' + this.getConfig().get('version'),
+                backupsMsg: this.translate('upgradeBackup', 'messages', 'Admin'),
+                downloadMsg: this.translate(downloadMsg, 'messages', 'Admin')
+            };
+        }
+    });
+});

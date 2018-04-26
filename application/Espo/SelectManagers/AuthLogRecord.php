@@ -32,14 +32,22 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+namespace Espo\SelectManagers;
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Rebuild can be run only via CLI");
+class AuthLogRecord extends \Espo\Core\SelectManagers\Base
+{
+    protected function filterDenied(&$result)
+    {
+        $result['whereClause'][] = array(
+            'isDenied' => true
+        );
+    }
+
+    protected function filterAccepted(&$result)
+    {
+        $result['whereClause'][] = array(
+            'isDenied' => false
+        );
+    }
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-$app->runClearCache();
 

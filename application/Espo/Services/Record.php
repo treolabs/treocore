@@ -58,7 +58,8 @@ class Record extends \Espo\Core\Services\Base
         'fileManager',
         'selectManagerFactory',
         'fileStorageManager',
-        'injectableFactory'
+        'injectableFactory',
+        'fieldManagerUtil'
     );
 
     protected $getEntityBeforeUpdate = false;
@@ -95,7 +96,15 @@ class Record extends \Espo\Core\Services\Base
 
     protected $listCountQueryDisabled = false;
 
-    const MAX_TEXT_COLUMN_LENGTH_FOR_LIST = 5000;
+    protected $maxSelectTextAttributeLength = null;
+
+    protected $maxSelectTextAttributeLengthDisabled = false;
+
+    protected $skipSelectTextAttributes = false;
+
+    protected $selectAttributeList = null;
+
+    const MAX_SELECT_TEXT_ATTRIBUTE_LENGTH = 5000;
 
     const FOLLOWERS_LIMIT = 4;
 
@@ -147,12 +156,17 @@ class Record extends \Espo\Core\Services\Base
 
     protected function getFileManager()
     {
-        return $this->injections['fileManager'];
+        return $this->getInjection('fileManager');
     }
 
     protected function getMetadata()
     {
-        return $this->injections['metadata'];
+        return $this->getInjection('metadata');
+    }
+
+    protected function getFieldManagerUtil()
+    {
+        return $this->getInjection('fieldManagerUtil');
     }
 
     protected function getRepository()
@@ -183,6 +197,7 @@ class Record extends \Espo\Core\Services\Base
         $historyRecord->set('userId', $this->getUser()->id);
         $historyRecord->set('authTokenId', $this->getUser()->get('authTokenId'));
         $historyRecord->set('ipAddress', $this->getUser()->get('ipAddress'));
+        $historyRecord->set('authLogRecordId', $this->getUser()->get('authLogRecordId'));
 
         if ($entity) {
             $historyRecord->set(array(
@@ -342,8 +357,10 @@ class Record extends \Espo\Core\Services\Base
     {
         $fieldDefs = $this->getMetadata()->get('entityDefs.' . $entity->getEntityType() . '.fields', array());
         if (!empty($fieldDefs['emailAddress']) && $fieldDefs['emailAddress']['type'] == 'email') {
-            $dataFieldName = 'emailAddressData';
-            $entity->set($dataFieldName, $this->getEntityManager()->getRepository('EmailAddress')->getEmailAddressData($entity));
+            $dataAttributeName = 'emailAddressData';
+            $emailAddressData = $this->getEntityManager()->getRepository('EmailAddress')->getEmailAddressData($entity);
+            $entity->set($dataAttributeName, $emailAddressData);
+            $entity->setFetched($dataAttributeName, $emailAddressData);
         }
     }
 
@@ -351,8 +368,10 @@ class Record extends \Espo\Core\Services\Base
     {
         $fieldDefs = $this->getMetadata()->get('entityDefs.' . $entity->getEntityType() . '.fields', array());
         if (!empty($fieldDefs['phoneNumber']) && $fieldDefs['phoneNumber']['type'] == 'phone') {
-            $dataFieldName = 'phoneNumberData';
-            $entity->set($dataFieldName, $this->getEntityManager()->getRepository('PhoneNumber')->getPhoneNumberData($entity));
+            $dataAttributeName = 'phoneNumberData';
+            $phoneNumberData = $this->getEntityManager()->getRepository('PhoneNumber')->getPhoneNumberData($entity);
+            $entity->set($dataAttributeName, $phoneNumberData);
+            $entity->setFetched($dataAttributeName, $phoneNumberData);
         }
     }
 
@@ -402,13 +421,6 @@ class Record extends \Espo\Core\Services\Base
 
         $assignmentPermission = $this->getAcl()->get('assignmentPermission');
 
-        if (empty($assignedUserId)) {
-            if ($assignmentPermission === 'no') {
-                return false;
-            }
-            return true;
-        }
-
         if ($assignmentPermission === true || $assignmentPermission === 'yes' || !in_array($assignmentPermission, ['team', 'no'])) {
             return true;
         }
@@ -416,7 +428,7 @@ class Record extends \Espo\Core\Services\Base
         $toProcess = false;
 
         if (!$entity->isNew()) {
-            if ($entity->isFieldChanged('assignedUserId')) {
+            if ($entity->isAttributeChanged('assignedUserId')) {
                 $toProcess = true;
             }
         } else {
@@ -424,6 +436,12 @@ class Record extends \Espo\Core\Services\Base
         }
 
         if ($toProcess) {
+            if (empty($assignedUserId)) {
+                if ($assignmentPermission == 'no') {
+                    return false;
+                }
+                return true;
+            }
             if ($assignmentPermission == 'no') {
                 if ($this->getUser()->id != $assignedUserId) {
                     return false;
@@ -810,7 +828,14 @@ class Record extends \Espo\Core\Services\Base
 
         $selectParams = $this->getSelectParams($params);
 
-        $selectParams['maxTextColumnsLength'] = $this->getConfig()->get('maxTextColumnLengthForList', self::MAX_TEXT_COLUMN_LENGTH_FOR_LIST);
+        $selectParams['maxTextColumnsLength'] = $this->getMaxSelectTextAttributeLength();
+
+        $selectAttributeList = $this->getSelectAttributeList();
+        if ($selectAttributeList) {
+            $selectParams['select'] = $selectAttributeList;
+        } else {
+            $selectParams['skipTextColumns'] = $this->isSkipSelectTextAttributes();
+        }
 
         $collection = $this->getRepository()->find($selectParams);
 
@@ -839,6 +864,23 @@ class Record extends \Espo\Core\Services\Base
         );
     }
 
+    public function getMaxSelectTextAttributeLength()
+    {
+        if (!$this->maxSelectTextAttributeLengthDisabled) {
+            if ($this->maxSelectTextAttributeLength) {
+                return $this->maxSelectTextAttributeLength;
+            } else {
+                return $this->getConfig()->get('maxSelectTextAttributeLengthForList', self::MAX_SELECT_TEXT_ATTRIBUTE_LENGTH);
+            }
+        }
+        return null;
+    }
+
+    public function isSkipSelectTextAttributes()
+    {
+        return $this->skipSelectTextAttributes;
+    }
+
     public function findLinkedEntities($id, $link, $params)
     {
         $entity = $this->getRepository()->get($id);
@@ -859,6 +901,8 @@ class Record extends \Espo\Core\Services\Base
         if (!$this->getAcl()->check($foreignEntityName, 'read')) {
             throw new Forbidden();
         }
+
+        $recordService = $this->getRecordService($foreignEntityName);
 
         $disableCount = false;
         if (
@@ -881,11 +925,16 @@ class Record extends \Espo\Core\Services\Base
             $selectParams = array_merge($selectParams, $this->linkSelectParams[$link]);
         }
 
-        $selectParams['maxTextColumnsLength'] = $this->getConfig()->get('maxTextColumnLengthForList', self::MAX_TEXT_COLUMN_LENGTH_FOR_LIST);
+        $selectParams['maxTextColumnsLength'] = $recordService->getMaxSelectTextAttributeLength();
+
+        $selectAttributeList = $recordService->getSelectAttributeList();
+        if ($selectAttributeList) {
+            $selectParams['select'] = $selectAttributeList;
+        } else {
+            $selectParams['skipTextColumns'] = $recordService->isSkipSelectTextAttributes();
+        }
 
         $collection = $this->getRepository()->findRelated($entity, $link, $selectParams);
-
-        $recordService = $this->getRecordService($foreignEntityName);
 
         foreach ($collection as $e) {
             $recordService->loadAdditionalFieldsForList($e);
@@ -1830,6 +1879,17 @@ class Record extends \Espo\Core\Services\Base
                     $attributes->{$field . 'Names'} = $nameHash;
                     $attributes->{$field . 'Types'} = $typeHash;
                 }
+            } else if ($type === 'linkMultiple') {
+                $foreignLink = $entity->getRelationParam($field, 'foreign');
+                $foreignEntityType = $entity->getRelationParam($field, 'entity');
+                if ($foreignEntityType && $foreignLink) {
+                    $foreignRelationType = $this->getMetadata()->get(['entityDefs', $foreignEntityType, 'links', $foreignLink, 'type']);
+                    if ($foreignRelationType !== 'hasMany') {
+                        unset($attributes->{$field . 'Ids'});
+                        unset($attributes->{$field . 'Names'});
+                        unset($attributes->{$field . 'Columns'});
+                    }
+                }
             }
         }
 
@@ -1861,6 +1921,16 @@ class Record extends \Espo\Core\Services\Base
                 $repository->relate($entity, $link, $linked);
             }
         }
+    }
+
+    protected function getFieldByTypeList($type)
+    {
+        return $this->getFieldManagerUtil()->getFieldByTypeList($this->entityType, $type);
+    }
+
+    public function getSelectAttributeList()
+    {
+        return $this->selectAttributeList;
     }
 }
 

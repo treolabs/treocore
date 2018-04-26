@@ -32,15 +32,15 @@
  * and "TreoPIM" word.
  */
 
-$sapiName = php_sapi_name();
+namespace Espo\Repositories;
 
-if (substr($sapiName, 0, 3) != 'cli') {
-    die("Cron can be run only via CLI");
+use Espo\ORM\Entity;
+
+class AuthLogRecord extends \Espo\Core\ORM\Repositories\RDB
+{
+    protected $hooksDisabled = true;
+
+    protected $processFieldsAfterSaveDisabled = true;
+
+    protected $processFieldsBeforeSaveDisabled = true;
 }
-
-include "bootstrap.php";
-
-$app = new \Espo\Modules\TreoCore\Core\Application();
-
-$app->runCron();
-

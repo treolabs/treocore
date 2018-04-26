@@ -64,8 +64,20 @@ class TreoAdmin extends Admin
             }
         }
 
+        // prepare current version
+        $currentVersion = $this->getContainer()->get('config')->get('version');
+
         $upgradeManager = new UpgradeManager($this->getContainer());
         $upgradeManager->install(get_object_vars($data));
+
+        // prepare current version
+        $newVersion = $this->getContainer()->get('config')->get('version');
+
+        // call migration
+        $this
+            ->getContainer()
+            ->get('migration')
+            ->run('TreoCore', $currentVersion, $newVersion);
 
         return true;
     }

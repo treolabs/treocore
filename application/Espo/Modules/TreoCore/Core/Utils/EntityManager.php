@@ -252,6 +252,15 @@ class EntityManager extends EspoEntityManager
         return $this->language;
     }
 
+
+    /**
+     * @return object
+     */
+    protected function getBaseLanguage()
+    {
+        return $this->container->get('baseLanguage');
+    }
+
     /**
      * @return object
      */
