@@ -48,20 +48,20 @@ class V196 extends AbstractMigration
      */
     public function up(): void
     {
+        $websocketConfig = [
+            'server' => [
+                'host'    => '127.0.0.1',
+                'port'    => 8080,
+                'address' => '0.0.0.0'
+            ],
+            'zmq'    => [
+                'host' => '127.0.0.1',
+                'port' => 5555,
+            ],
+        ];
+
         // set to config
-        $this->getConfig()->set(
-            'websockets', [
-                'server' => [
-                    'host'    => '127.0.0.1',
-                    'port'    => 8080,
-                    'address' => '0.0.0.0'
-                ],
-                'zmq'    => [
-                    'host' => '127.0.0.1',
-                    'port' => 5555,
-                ],
-            ]
-        );
+        $this->getConfig()->set('websockets', $websocketConfig);
         $this->getConfig()->save();
     }
 }

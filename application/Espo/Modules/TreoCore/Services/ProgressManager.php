@@ -355,13 +355,16 @@ class ProgressManager extends AbstractProgressManager
         $result = false;
 
         if (in_array($service->getStatus(), ['success', 'error'])) {
+            // prepare message
+            $message = $this->translate('notificationMessages', $service->getStatus());
+
             // create notification
             $notification = $this->getEntityManager()->getEntity('Notification');
             $notification->set(
                 [
                     'type'    => 'Message',
                     'userId'  => $record['createdById'],
-                    'message' => sprintf($this->translate('notificationMessages', $service->getStatus()), $record['name'])
+                    'message' => sprintf($message, $record['name'])
                 ]
             );
             $this->getEntityManager()->saveEntity($notification);
@@ -389,23 +392,14 @@ class ProgressManager extends AbstractProgressManager
         // prepare data
         $data = [];
 
-        /**
-         * For status action
-         */
         if (isset($config['statusAction'][$status]) && is_array($config['statusAction'][$status])) {
             $data = array_merge($data, $config['statusAction'][$status]);
         }
 
-        /**
-         * For type action
-         */
         if (isset($config['type'][$record['type']]['action'][$status])) {
             $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
         }
 
-        /**
-         * Set items to result
-         */
         $result = [];
         foreach ($data as $action) {
             if (isset($config['actionService'][$action])) {

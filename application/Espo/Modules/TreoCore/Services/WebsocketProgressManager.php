@@ -101,7 +101,6 @@ class WebsocketProgressManager extends AbstractService
                             ->getItemActions($statusKey, $row),
                     ];
                 }
-
             }
         }
 
