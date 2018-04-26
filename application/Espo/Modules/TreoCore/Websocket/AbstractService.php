@@ -46,6 +46,11 @@ use Espo\Core\Services\Base;
 abstract class AbstractService extends Base
 {
     /**
+     * @var array
+     */
+    protected $filter = [];
+
+    /**
      * Get data
      *
      * @return array
@@ -59,5 +64,25 @@ abstract class AbstractService extends Base
      */
     public function setFilter(array $data): void
     {
+        $this->filter = $data;
+    }
+
+    /**
+     * Get filter
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function getFilter(string $key = null)
+    {
+        // prepare result
+        $result = $this->filter;
+
+        if (!empty($key) && isset($this->filter[$key])) {
+            $result = $this->filter[$key];
+        }
+
+        return $result;
     }
 }

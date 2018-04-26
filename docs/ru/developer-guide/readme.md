@@ -11,6 +11,9 @@
 | EntityManager | afterUpdate |
 | ProgressManager | beforeUpdate |
 
+## Настройки ##
+* [Websocket](websocket/readme.md)
+
 ## Инструменты ##
 * [ConsoleManager](console_manager/readme.md)
 * [CronManager](cron_manager/readme.md)

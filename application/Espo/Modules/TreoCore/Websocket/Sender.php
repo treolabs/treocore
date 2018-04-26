@@ -59,7 +59,7 @@ class Sender
     public function refresh(string $topicId)
     {
         // get config
-        $config = $this->getContainer()->get('config')->get('modules.websockets');
+        $config = $this->getContainer()->get('config')->get('websockets');
 
         $context = new ZMQContext();
         $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');

@@ -37,21 +37,10 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Configs;
 
 return [
-    'websockets'    => [
-        'server'       => [
-            'host'    => '127.0.0.1',
-            'port'    => 8080,
-            'address' => '0.0.0.0'
-        ],
-        'zmq'          => [
-            'host' => '127.0.0.1',
-            'port' => 5555,
-        ],
-        'data-mappers' => [
-            'test' => 'WebsocketTest',
-        ],
+    'websockets-mappers' => [
+        'progress_manager' => 'WebsocketProgressManager',
     ],
-    'massUpdateMax' => [
+    'massUpdateMax'      => [
         'default' => 200
     ]
 ];

@@ -32,44 +32,36 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Migration;
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Modules\TreoCore\Websocket\AbstractService;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
 /**
- * Test websocket
+ * Version 1.9.6
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class WebsocketTest extends AbstractService
+class V196 extends AbstractMigration
 {
     /**
-     * @var array
+     * Up to current
      */
-    protected $filter = [];
-
-    /**
-     * Set filter
-     *
-     * @param array $data
-     */
-    public function setFilter(array $data): void
+    public function up(): void
     {
-        $this->filter = $data;
-    }
-
-    /**
-     * Get data
-     *
-     * @return array
-     */
-    public function getData(): array
-    {
-        return [
-            'status' => true,
-            'filter' => $this->filter
+        $websocketConfig = [
+            'server' => [
+                'host'    => '127.0.0.1',
+                'port'    => 8080,
+                'address' => '0.0.0.0'
+            ],
+            'zmq'    => [
+                'host' => '127.0.0.1',
+                'port' => 5555,
+            ],
         ];
+
+        // set to config
+        $this->getConfig()->set('websockets', $websocketConfig);
+        $this->getConfig()->save();
     }
 }
