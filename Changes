@@ -1,3 +1,4 @@
+    * BUG #62695 : при добавлении изображений 2 иконки добавления (Valeriy Shamota)
     * UST #62775 : Змінити лінк на сервіс онволень (Yuriy  Haiduchyk)
     * UST #58990 : Добавить валидацию на значение Scheduling в Scheduled Jobs (Roman Ratsun)
 
