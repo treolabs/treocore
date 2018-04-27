@@ -34,34 +34,82 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
-
-use Espo\Controllers\Preferences;
-use Espo\Core\Exceptions;
+namespace Espo\Modules\TreoCore\Layouts;
 
 /**
- * TreoPreferences controller
+ * Preferences layout
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class TreoPreferences extends Preferences
+class Preferences extends AbstractLayout
 {
     /**
-     * Read action
+     * @var array
+     */
+    protected $locale
+        = [
+            [
+                [
+                    'name' => 'dateFormat'
+                ],
+                [
+                    'name' => 'timeZone'
+                ],
+            ],
+            [
+                [
+                    'name' => 'timeFormat'
+                ],
+                [
+                    'name' => 'weekStart'
+                ],
+            ],
+            [
+                [
+                    'name' => 'decimalMark'
+                ],
+                [
+                    'name' => 'thousandSeparator'
+                ],
+            ],
+            [
+                [
+                    'name' => 'language'
+                ],
+                [
+                ],
+            ],
+        ];
+
+    /**
+     * Layout detail
      *
-     * @param array $params
+     * @param array $data
      *
      * @return array
-     * @throws Exceptions\NotFound
      */
-    public function actionRead($params)
+    public function layoutDetail(array $data): array
     {
-        // get result
-        $result = parent::actionRead($params);
+        if (isset($data[0]['rows'])) {
+            $data[0]['rows'] = $this->locale;
+        }
 
-        // prepare defaultCurrency
-        $result->defaultCurrency = null;
+        return $data;
+    }
 
-        return $result;
+    /**
+     * Layout detailPortal
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function layoutDetailPortal(array $data): array
+    {
+        if (isset($data[0]['rows'])) {
+            $data[0]['rows'] = $this->locale;
+        }
+
+        return $data;
     }
 }
