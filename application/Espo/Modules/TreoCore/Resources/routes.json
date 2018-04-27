@@ -1,5 +1,13 @@
 [
   {
+    "route": "/Preferences/:id",
+    "method": "get",
+    "params": {
+      "controller": "TreoPreferences",
+      "action": "read"
+    }
+  },
+  {
     "route": "/Admin/action/uploadUpgradePackage",
     "method": "post",
     "params": {
