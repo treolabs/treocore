@@ -327,7 +327,7 @@ class ModuleManager extends Base
     }
 
     /**
-     * @ApiDescription(description="Get modules")
+     * @ApiDescription(description="Get module manager stream data")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/ModuleManager/stream")
      * @ApiReturn(sample="{
