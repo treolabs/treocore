@@ -38,7 +38,6 @@ namespace Espo\Modules\TreoCore\Controllers;
 
 use Espo\Controllers\EntityManager;
 use Espo\Core\Exceptions\BadRequest;
-use Espo\Core\Exceptions\Error;
 
 /**
  * TreoEntityManager controller
@@ -63,73 +62,74 @@ class TreoEntityManager extends EntityManager
         }
 
         // prepare data
-        $data = get_object_vars($data);
-
-        if (empty($name = $data['name']) || empty($type = $data['type'])) {
+        $post = get_object_vars($data);
+        if (empty($name = $post['name'])) {
             throw new BadRequest();
-        }
-
-        // filtering data
-        $name = filter_var($name, \FILTER_SANITIZE_STRING);
-        $type = filter_var($type, \FILTER_SANITIZE_STRING);
-
-        // prepare params
-        $params = [];
-        if (!empty($data['labelSingular'])) {
-            $params['labelSingular'] = $data['labelSingular'];
-        }
-        if (!empty($data['labelPlural'])) {
-            $params['labelPlural'] = $data['labelPlural'];
-        }
-        if (!empty($data['stream'])) {
-            $params['stream'] = $data['stream'];
-        }
-        if (!empty($data['disabled'])) {
-            $params['disabled'] = $data['disabled'];
-        }
-        if (!empty($data['sortBy'])) {
-            $params['sortBy'] = $data['sortBy'];
-        }
-        if (!empty($data['sortDirection'])) {
-            $params['asc'] = $data['sortDirection'] === 'asc';
-        }
-        if (isset($data['textFilterFields']) && is_array($data['textFilterFields'])) {
-            $params['textFilterFields'] = $data['textFilterFields'];
         }
 
         // prepare event data
         $eventData = [
-            'name' => $name,
-            'data' => $data
+            'name' => filter_var($name, \FILTER_SANITIZE_STRING),
+            'data' => $post
         ];
 
         // triggered event
         $this->triggeredEvent('beforeCreate', $eventData);
 
         // create entity
-        $result = $this
-            ->getContainer()
-            ->get('entityManagerUtil')
-            ->create($name, $type, $params);
+        $result = parent::actionCreateEntity($params, $data, $request);
 
         if ($result) {
-            $tabList = $this->getConfig()->get('tabList', []);
-
-            if (!in_array($name, $tabList)) {
-                $tabList[] = $name;
-                $this->getConfig()->set('tabList', $tabList);
-                $this->getConfig()->save();
-            }
-
-            $this->getContainer()->get('dataManager')->rebuild();
-        } else {
-            throw new Error();
+            // triggered event
+            $this->triggeredEvent('afterCreate', $eventData);
         }
 
-        // triggered event
-        $this->triggeredEvent('afterCreate', $eventData);
+        return $result;
+    }
 
-        return true;
+    /**
+     * Update entity action
+     *
+     * @param $params
+     * @param $data
+     * @param $request
+     *
+     * @return bool
+     * @throws BadRequest
+     */
+    public function actionUpdateEntity($params, $data, $request)
+    {
+        if (!$request->isPost()) {
+            throw new BadRequest();
+        }
+
+        // prepare data
+        $post = get_object_vars($data);
+        if (empty($name = $post['name'])) {
+            throw new BadRequest();
+        }
+
+        // prepare event data
+        $eventData = [
+            'name' => filter_var($name, \FILTER_SANITIZE_STRING),
+            'data' => $post
+        ];
+
+        // triggered event
+        $this->triggeredEvent('beforeUpdate', $eventData);
+
+        // prepare result
+        $result = parent::actionUpdateEntity($params, $data, $request);
+
+        if ($result) {
+            // rebuild DB
+            $this->getContainer()->get('dataManager')->rebuild();
+
+            // triggered event
+            $this->triggeredEvent('afterUpdate', $eventData);
+        }
+
+        return $result;
     }
 
     /**
