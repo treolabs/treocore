@@ -46,6 +46,7 @@
     "dependencies": "Dependencies"
   },
   "messages": {
+    "Module '<strong>%s</strong>' (v.%s) succesfully installed. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (v.%s) succesfully installed. <a href=\"/#ModuleManager/list\">Details</a>",
     "checkLog": "Something went wrong. Check the log for error-level output",
     "errorInstall": "Module {module} not installed with error status {status} at {time}",
     "errorUpdate": "Module {module} not updated with error status {status} at {time}",
