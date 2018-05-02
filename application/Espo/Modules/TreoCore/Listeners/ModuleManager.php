@@ -45,14 +45,6 @@ use Espo\Core\ORM\EntityManager;
  */
 class ModuleManager extends AbstractListener
 {
-
-    /**
-     * @param array $data
-     */
-    public function updateUser(array $data)
-    {
-    }
-
     /**
      * @param array $data
      */
@@ -70,6 +62,11 @@ class ModuleManager extends AbstractListener
          * Notify users
          */
         $this->notify($message);
+
+        /**
+         * Stream push
+         */
+        $this->pushToStream('installModule', $data);
     }
 
     /**
@@ -91,6 +88,11 @@ class ModuleManager extends AbstractListener
          * Notify users
          */
         $this->notify($message);
+
+        /**
+         * Stream push
+         */
+        $this->pushToStream('updateModule', $data);
     }
 
     /**
@@ -110,6 +112,11 @@ class ModuleManager extends AbstractListener
          * Notify users
          */
         $this->notify($message);
+
+        /**
+         * Stream push
+         */
+        $this->pushToStream('deleteModule', $data);
     }
 
     /**
@@ -133,6 +140,23 @@ class ModuleManager extends AbstractListener
                 $this->getEntityManager()->saveEntity($notification);
             }
         }
+    }
+
+    /**
+     * Push record to stream
+     *
+     * @param string $type
+     * @param array  $data
+     */
+    protected function pushToStream(string $type, array $data): void
+    {
+        $note = $this->getEntityManager()->getEntity('Note');
+        $note->set('type', $type);
+        $note->set('parentId', 'modules');
+        $note->set('parentType', 'ModuleManager');
+        $note->set('data', $data);
+
+        $this->getEntityManager()->saveEntity($note);
     }
 
     /**
