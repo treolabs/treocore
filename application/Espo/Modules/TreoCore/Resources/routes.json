@@ -16,6 +16,14 @@
     }
   },
   {
+    "route": "/EntityManager/action/createEntity",
+    "method": "post",
+    "params": {
+      "controller": "TreoEntityManager",
+      "action": "createEntity"
+    }
+  },
+  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {

@@ -168,28 +168,6 @@ class EntityManager extends EspoEntityManager
     }
 
     /**
-     * Create action
-     *
-     * @param string $name
-     * @param string $type
-     * @param array $params
-     *
-     * @return boolean
-     * @throws Exceptions\Conflict
-     * @throws Exceptions\Error
-     */
-    public function create($name, $type, $params = [])
-    {
-        // triggered event
-        $this->triggeredEvent('beforeUpdate', ['name' => trim(ucfirst($name)), 'data' => $params]);
-
-        // get result
-        $result = parent::create($name, $type, $params);
-
-        return $result;
-    }
-
-    /**
      * Update action
      *
      * @param string $name
