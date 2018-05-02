@@ -62,7 +62,7 @@ class ModuleManager extends AbstractListener
         $moduleName = $this->getModuleName($data['package']);
 
         // prepare message
-        $message = "Module '<strong>%s</strong>' (v.%s) installed successfully.";
+        $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
         $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
         $message = sprintf($this->translate($message), $moduleName, $data['version']);
 
@@ -77,6 +77,20 @@ class ModuleManager extends AbstractListener
      */
     public function updateModule(array $data)
     {
+        // prepare data
+        $name = $this->getModuleName($data['packageTo']);
+        $from = str_replace('v', '', $data['packageFrom']['version']);
+        $to = str_replace('v', '', $data['packageTo']['version']);
+
+        // prepare message
+        $message = "Module '<strong>%s</strong>' updated from '%s' to '%s'.";
+        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+        $message = sprintf($this->translate($message), $name, $from, $to);
+
+        /**
+         * Notify users
+         */
+        $this->notify($message);
     }
 
     /**
