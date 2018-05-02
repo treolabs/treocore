@@ -46,7 +46,8 @@
     "dependencies": "Abhängigkeiten"
   },
   "messages": {
-    "Module '<strong>%s</strong>' (v.%s) succesfully installed. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (v.%s) succesfully installed. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' (v.%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (v.%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' (v.%s) deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (v.%s) deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "checkLog": "Etwas ist fehlgeschlagen. Prüfen Sie bitte Fehler-Log auf neue Fehler",
     "errorInstall": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht installiert",
     "errorUpdate": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht aktualisiert",

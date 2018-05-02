@@ -58,10 +58,13 @@ class ModuleManager extends AbstractListener
      */
     public function installModule(array $data)
     {
+        // get module name
+        $moduleName = $this->getModuleName($data['package']);
+
         // prepare message
-        $message = "Module '<strong>%s</strong>' (v.%s) succesfully installed.";
+        $message = "Module '<strong>%s</strong>' (v.%s) installed successfully.";
         $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-        $message = sprintf($this->translate($message), $this->getModuleName($data['package']), $data['version']);
+        $message = sprintf($this->translate($message), $moduleName, $data['version']);
 
         /**
          * Notify users
@@ -81,6 +84,18 @@ class ModuleManager extends AbstractListener
      */
     public function deleteModule(array $data)
     {
+        // get module name
+        $moduleName = $this->getModuleName($data['package']);
+
+        // prepare message
+        $message = "Module '<strong>%s</strong>' deleted successfully.";
+        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+        $message = sprintf($this->translate($message), $moduleName);
+
+        /**
+         * Notify users
+         */
+        $this->notify($message);
     }
 
     /**
