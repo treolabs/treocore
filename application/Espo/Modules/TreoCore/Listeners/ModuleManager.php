@@ -53,11 +53,13 @@ class ModuleManager extends AbstractListener
         // get module name
         $moduleName = $this->getModuleName($data['package']);
 
+        // prepare message
         if (empty($data['disabled'])) {
             $template = "Module '<strong>%s</strong>' activated successfully.";
         } else {
             $template = "Module '<strong>%s</strong>' deactivated successfully.";
         }
+        $template .= " <a href=\"/#ModuleManager/list\">Details</a>";
 
         $message = sprintf($this->translate($template), $moduleName);
 
