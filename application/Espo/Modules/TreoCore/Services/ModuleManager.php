@@ -114,6 +114,11 @@ class ModuleManager extends Base
             ];
 
             $result = $this->getComposerService()->setAuthData($authData);
+
+            if ($result) {
+                // triggered event
+                $this->triggeredEvent('updateUser', $authData);
+            }
         }
 
         return $result;
@@ -300,6 +305,18 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
+        if ($result['status'] === 0) {
+            // prepare event data
+            $eventData = [
+                'id'      => $id,
+                'version' => $version,
+                'package' => $packages[$version],
+            ];
+
+            // triggered event
+            $this->triggeredEvent('installModule', $eventData);
+        }
+
         return $result;
     }
 
@@ -339,9 +356,21 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
-        // run migration
-        if ($result['status'] == 0) {
+
+        if ($result['status'] === 0) {
+            // run migration
             $this->getInjection('migration')->run($id, $package['version'], $version);
+
+            // prepare event data
+            $eventData = [
+                'id'          => $id,
+                'version'     => $version,
+                'packageFrom' => $package,
+                'packageTo'   => $packages[$version],
+            ];
+
+            // triggered event
+            $this->triggeredEvent('updateModule', $eventData);
         }
 
         return $result;
@@ -377,12 +406,21 @@ class ModuleManager extends Base
             // run composer
             $result = $this->getComposerService()->delete($package['name']);
 
-            if (empty($result['status'])) {
+            if ($result['status'] === 0) {
                 // prepare modules diff
                 $afterDelete = TreoComposer::getTreoModules();
 
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+
+                // prepare event data
+                $eventData = [
+                    'id'      => $id,
+                    'package' => $package,
+                ];
+
+                // triggered event
+                $this->triggeredEvent('deleteModule', $eventData);
             }
         }
 
@@ -404,7 +442,8 @@ class ModuleManager extends Base
                 'fileManager',
                 'dataManager',
                 'serviceFactory',
-                'migration'
+                'migration',
+                'eventManager'
             ]
         );
     }
@@ -709,6 +748,21 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $action
+     * @param array  $data
+     *
+     * @return void
+     */
+    protected function triggeredEvent(string $action, array $data = [])
+    {
+        $this
+            ->getInjection('eventManager')
+            ->triggered('ModuleManager', $action, $data);
     }
 
     /**
