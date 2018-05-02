@@ -41,6 +41,7 @@ use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
+use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
 
@@ -439,6 +440,53 @@ class ModuleManager extends Base
 
             // triggered event
             $this->triggeredEvent('deleteModule', $eventData);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get stream
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function getStream(Request $request): array
+    {
+        // prepare result
+        $result = [
+            'total' => 0,
+            'list'  => []
+        ];
+
+        // prepare where
+        $where = [
+            'whereClause' => [
+                'parentType' => 'ModuleManager'
+            ],
+            'offset'      => (int)$request->get('offset'),
+            'limit'       => (int)$request->get('maxSize'),
+            'orderBy'     => 'number',
+            'order'       => 'DESC'
+        ];
+
+        $result['total'] = $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->count(['whereClause' => $where['whereClause']]);
+
+        if ($result['total'] > 0) {
+            if (!empty($request->get('after'))) {
+                $where['whereClause']['createdAt>'] = $request->get('after');
+            }
+
+            // get collection
+            $result['list'] = $this
+                ->getEntityManager()
+                ->getRepository('Note')
+                ->find($where)
+                ->toArray();
         }
 
         return $result;

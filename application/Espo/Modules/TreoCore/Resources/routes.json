@@ -96,6 +96,14 @@
     }
   },
   {
+    "route": "/ModuleManager/stream",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "stream"
+    }
+  },
+  {
     "route": "/ProgressManager/isShowPopup",
     "method": "get",
     "params": {
