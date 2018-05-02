@@ -305,17 +305,17 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
-        if ($result['status'] === 0) {
-            // prepare event data
-            $eventData = [
-                'id'      => $id,
-                'version' => $version,
-                'package' => $packages[$version],
-            ];
+        // prepare event data
+        $eventData = [
+            'id'       => $id,
+            'composer' => $result,
+            'version'  => $version,
+            'package'  => $packages[$version],
+        ];
 
-            // triggered event
-            $this->triggeredEvent('installModule', $eventData);
-        }
+        // triggered event
+        $this->triggeredEvent('installModule', $eventData);
+
 
         return $result;
     }
@@ -360,18 +360,19 @@ class ModuleManager extends Base
         if ($result['status'] === 0) {
             // run migration
             $this->getInjection('migration')->run($id, $package['version'], $version);
-
-            // prepare event data
-            $eventData = [
-                'id'          => $id,
-                'version'     => $version,
-                'packageFrom' => $package,
-                'packageTo'   => $packages[$version],
-            ];
-
-            // triggered event
-            $this->triggeredEvent('updateModule', $eventData);
         }
+
+        // prepare event data
+        $eventData = [
+            'id'          => $id,
+            'composer'    => $result,
+            'version'     => $version,
+            'packageFrom' => $package,
+            'packageTo'   => $packages[$version],
+        ];
+
+        // triggered event
+        $this->triggeredEvent('updateModule', $eventData);
 
         return $result;
     }
@@ -412,16 +413,17 @@ class ModuleManager extends Base
 
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
-
-                // prepare event data
-                $eventData = [
-                    'id'      => $id,
-                    'package' => $package,
-                ];
-
-                // triggered event
-                $this->triggeredEvent('deleteModule', $eventData);
             }
+
+            // prepare event data
+            $eventData = [
+                'id'       => $id,
+                'composer' => $result,
+                'package'  => $package,
+            ];
+
+            // triggered event
+            $this->triggeredEvent('deleteModule', $eventData);
         }
 
         return $result;
