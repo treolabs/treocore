@@ -48,6 +48,33 @@ class ModuleManager extends AbstractListener
     /**
      * @param array $data
      */
+    public function updateModuleActivation(array $data)
+    {
+        // get module name
+        $moduleName = $this->getModuleName($data['package']);
+
+        if (empty($data['disabled'])) {
+            $template = "Module '<strong>%s</strong>' activated successfully.";
+        } else {
+            $template = "Module '<strong>%s</strong>' deactivated successfully.";
+        }
+
+        $message = sprintf($this->translate($template), $moduleName);
+
+        /**
+         * Notify users
+         */
+        $this->notify($message);
+
+        /**
+         * Stream push
+         */
+        $this->pushToStream('updateModuleActivation', $data);
+    }
+
+    /**
+     * @param array $data
+     */
     public function installModule(array $data)
     {
         if ($data['composer']['status'] === 0) {

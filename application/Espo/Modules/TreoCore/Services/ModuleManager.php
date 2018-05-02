@@ -256,9 +256,24 @@ class ModuleManager extends Base
             // write to file
             $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
 
-            // rebuild DB
-            if ($result && !empty($config['disabled'])) {
-                $this->getDataManager()->rebuild();
+            if ($result) {
+                // get package
+                $package = $this->getComposerModuleService()->getModulePackage($moduleId);
+
+                // prepare event data
+                $eventData = [
+                    'id'       => $moduleId,
+                    'disabled' => empty($config['disabled']),
+                    'package'  => $package
+                ];
+
+                // triggered event
+                $this->triggeredEvent('updateModuleActivation', $eventData);
+
+                // rebuild DB
+                if (!empty($config['disabled'])) {
+                    $this->getDataManager()->rebuild();
+                }
             }
         }
 
