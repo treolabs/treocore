@@ -45,6 +45,18 @@ use Espo\Core\Services\Base;
  */
 class CancelStatusAction extends Base implements StatusActionInterface
 {
+    /**
+     * Construct
+     */
+    public function init()
+    {
+        parent::init();
+
+        /**
+         * Add dependencies
+         */
+        $this->addDependency('eventManager');
+    }
 
     /**
      * Get progress status action data
@@ -72,7 +84,7 @@ class CancelStatusAction extends Base implements StatusActionInterface
 
         if (!empty($id)) {
             // triggered before event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeCancel', $id);
+            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
 
             // prepare sql
             $sql = "UPDATE progress_manager SET `deleted`=1 WHERE id='%s'";
@@ -88,7 +100,7 @@ class CancelStatusAction extends Base implements StatusActionInterface
             $result = true;
 
             // triggered after event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'afterCancel', $id);
+            $this->getInjection('eventManager')->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
         }
 
         return $result;
