@@ -71,6 +71,9 @@ class CancelStatusAction extends Base implements StatusActionInterface
         $result = false;
 
         if (!empty($id)) {
+            // triggered before event
+            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeCancel', $id);
+
             // prepare sql
             $sql = "UPDATE progress_manager SET `deleted`=1 WHERE id='%s'";
             $sql = sprintf($sql, $id);
@@ -83,6 +86,9 @@ class CancelStatusAction extends Base implements StatusActionInterface
 
             // prepare result
             $result = true;
+
+            // triggered after event
+            $this->getInjection('eventManager')->triggered('ProgressManager', 'afterCancel', $id);
         }
 
         return $result;
