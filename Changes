@@ -1,4 +1,5 @@
     * UST #63014 : Додати event для прогрес менеджера (Yuriy  Haiduchyk)
+    * UST #63014 : Додати event для прогрес менеджера (Yuriy  Haiduchyk)
     * UST #62953 : Логування в ModuleManager // Back (Roman Ratsun)
     * BUG #62614 : При создании новой сущности при включении показателей оунер и комплитнесс изначально - не выносятся данные показатели  (Roman Ratsun)
     * UST #59567 : Spracheingabe = Kürzel bei allen Ländern (Roman Ratsun)
