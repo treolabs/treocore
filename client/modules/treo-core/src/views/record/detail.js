@@ -112,7 +112,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             var stickTop = this.getThemeManager().getParam('stickTop') || 62;
             var blockHeight = this.getThemeManager().getParam('blockHeight') || 21;
 
-            var $block = $('<div>').css('height', blockHeight + 'px').html('&nbsp;').hide().insertAfter($container);
+            var $block = this.$el.find('.detail-button-container + div');
             var $window = $(window);
             var screenWidthXs = this.getThemeManager().getParam('screenWidthXs');
 
@@ -134,7 +134,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                             var $p = $('.popover');
                             $p.each(function (i, el) {
                                 var $el = $(el);
-                                let top = $el.css('top').slice(0, -2);
                                 $el.css('top', ($el.position().top - ($container.height() - blockHeight * 2 + 10)) + 'px');
                             }.bind(this));
                         }
@@ -145,7 +144,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                             var $p = $('.popover');
                             $p.each(function (i, el) {
                                 var $el = $(el);
-                                let top = $el.css('top').slice(0, -2);
                                 $el.css('top', ($el.position().top + ($container.height() - blockHeight * 2 + 10)) + 'px');
                             }.bind(this));
                         }
