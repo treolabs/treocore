@@ -1,0 +1,8 @@
+{
+    "fields": {
+        "allowUnstable": "Unstabile Versionen erlauben"
+    },
+    "tooltips": {
+        "allowUnstable": "Admin kann das Treo System oder Module bis zu den unstabilen Versionen aktualisieren."
+    }
+}

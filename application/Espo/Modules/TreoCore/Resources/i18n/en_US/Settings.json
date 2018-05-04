@@ -1,9 +1,11 @@
 {
     "fields": {
-        "isStreamSide": "Is stream in side"
+        "isStreamSide": "Is stream in side",
+        "allowUnstable": "Allow unstable versions"
     },
     "tooltips": {
-        "isStreamSide": "If enabled: Stream panel will be shown in side."
+        "isStreamSide": "If enabled: Stream panel will be shown in side.",
+        "allowUnstable": "Administrators will be able to update the Treo system or module(s) to unstable versions."
     },
     "labels": {
         "Representation": "Representation"
