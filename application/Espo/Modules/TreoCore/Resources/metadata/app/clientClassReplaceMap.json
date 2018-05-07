@@ -82,5 +82,8 @@
   ],
   "views/settings/fields/tab-list": [
     "treo-core"
+  ],
+  "views/settings/record/edit": [
+    "treo-core"
   ]
 }
