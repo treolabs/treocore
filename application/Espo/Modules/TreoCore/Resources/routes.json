@@ -1,5 +1,15 @@
 [
   {
+    "route": "I18n",
+    "method": "get",
+    "params": {
+      "controller": "TreoI18n"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
     "route": "/Preferences/:id",
     "method": "get",
     "params": {
