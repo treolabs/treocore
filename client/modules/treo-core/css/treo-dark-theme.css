@@ -11321,33 +11321,72 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #login {
-    background: #424242;
-    color: #fff
+    background: #fff;
+    color: #424242;
+    margin-top: 50px;
 }
 
 #login.panel > .panel-heading {
     text-align: center;
-    padding: 6px
+    padding: 6px;
+    border-top: 0;
+}
+
+#login.panel > .panel-body {
+    border: 1px solid #424242;
 }
 
 #login .logo-container {
     display: inline-block
 }
 
+#login .form-control {
+    padding: 6px 10px 6px 30px;
+}
+
+#login label[for='field-username'],
+#login label[for='login']{
+    position: relative;
+}
+
+#login label[for='field-username']::before,
+#login label[for='login']::before {
+    position: absolute;
+    top: 31px;
+    left: 10px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#login label[for='field-username']::before {
+    content: "\e008";
+}
+
+#login label[for='login']::before {
+    content: "\e033";
+}
+
 #login #btn-login {
-    background-color: #424242;
-    border-color: #fff;
-    color: #fff
+    background-color: #ffffff;
+    border-color: #eaeaea;
+    color: #000;
 }
 
 #login #btn-login:hover {
-    background-color: #fff;
-    border-color: #fff;
-    color: #424242
+    border-color: #424242;
 }
 
 #login .btn-link {
-    color: #fff
+    color: #000
+}
+
+#login input:focus {
+    border-color: #424242;
 }
 
 #header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a, {
