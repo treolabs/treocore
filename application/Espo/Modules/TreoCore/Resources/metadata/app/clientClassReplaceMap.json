@@ -68,6 +68,9 @@
   "views/record/detail": [
     "treo-core"
   ],
+  "views/preferences/record/edit": [
+    "treo-core"
+  ],
   "views/site/header": [
     "treo-core"
   ],
