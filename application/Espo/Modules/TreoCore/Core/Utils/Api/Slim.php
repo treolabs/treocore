@@ -46,16 +46,17 @@ use Espo\Modules\TreoCore\Core\Slim\Http\Request;
  */
 class Slim extends EspoSlim
 {
+    /**
+     * Slim construct
+     */
     public function __construct(...$args)
     {
         // call parent
         parent::__construct(...$args);
 
-        // Default request
-        $this->container->singleton(
-            'request', function ($c) {
+        // set request
+        $this->container->singleton('request', function ($c) {
             return new Request($c['environment']);
-        }
-        );
+        });
     }
 }
