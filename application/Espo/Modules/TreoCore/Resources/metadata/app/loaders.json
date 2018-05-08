@@ -1,4 +1,5 @@
 {
+  "ControllerManager": "Espo\\Modules\\TreoCore\\Loaders\\ControllerManagerLoader",
   "ConsoleManager": "Espo\\Modules\\TreoCore\\Loaders\\ConsoleManagerLoader",
   "EventManager": "Espo\\Modules\\TreoCore\\Loaders\\EventManagerLoader",
   "Layout": "Espo\\Modules\\TreoCore\\Loaders\\Layout",
