@@ -49,6 +49,28 @@ class EntityManager extends AbstractListener
     protected $scopesConfig = null;
 
     /**
+     * After create action
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function afterCreate(array $data)
+    {
+        // prepare name
+        $name = trim(ucfirst($data['name']));
+
+        // update scopes
+        $this
+            ->getContainer()
+            ->get('metadata')
+            ->set('scopes', $name, $this->getPreparedScopesData($data['data']));
+
+        // save
+        $this->getContainer()->get('metadata')->save();
+    }
+
+    /**
      * Before update action
      *
      * @param array $data

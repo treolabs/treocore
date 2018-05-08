@@ -32,77 +32,84 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Services\Base;
+namespace Espo\Modules\TreoCore\Layouts;
 
 /**
- * CancelStatusAction service
+ * Preferences layout
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CancelStatusAction extends Base implements StatusActionInterface
+class Preferences extends AbstractLayout
 {
     /**
-     * Construct
+     * @var array
      */
-    public function init()
-    {
-        parent::init();
-
-        /**
-         * Add dependencies
-         */
-        $this->addDependency('eventManager');
-    }
+    protected $locale
+        = [
+            [
+                [
+                    'name' => 'dateFormat'
+                ],
+                [
+                    'name' => 'timeZone'
+                ],
+            ],
+            [
+                [
+                    'name' => 'timeFormat'
+                ],
+                [
+                    'name' => 'weekStart'
+                ],
+            ],
+            [
+                [
+                    'name' => 'decimalMark'
+                ],
+                [
+                    'name' => 'thousandSeparator'
+                ],
+            ],
+            [
+                [
+                    'name' => 'language'
+                ],
+                [
+                ],
+            ],
+        ];
 
     /**
-     * Get progress status action data
+     * Layout detail
      *
      * @param array $data
      *
      * @return array
      */
-    public function getProgressStatusActionData(array $data): array
+    public function layoutDetail(array $data): array
     {
-        return [];
+        if (isset($data[0]['rows'])) {
+            $data[0]['rows'] = $this->locale;
+        }
+
+        return $data;
     }
 
     /**
-     * Cancel action
+     * Layout detailPortal
      *
-     * @param string $id
+     * @param array $data
      *
-     * @return bool
+     * @return array
      */
-    public function cancel(string $id): bool
+    public function layoutDetailPortal(array $data): array
     {
-        // prepare result
-        $result = false;
-
-        if (!empty($id)) {
-            // triggered before event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
-
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `deleted`=1 WHERE id='%s'";
-            $sql = sprintf($sql, $id);
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-
-            // triggered after event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
+        if (isset($data[0]['rows'])) {
+            $data[0]['rows'] = $this->locale;
         }
 
-        return $result;
+        return $data;
     }
 }

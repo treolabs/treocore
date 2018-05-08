@@ -32,76 +32,35 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Espo\Modules\TreoCore\Controllers;
 
-use Espo\Core\Services\Base;
+use Espo\Controllers\Preferences;
+use Espo\Core\Exceptions;
 
 /**
- * CancelStatusAction service
+ * TreoPreferences controller
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CancelStatusAction extends Base implements StatusActionInterface
+class TreoPreferences extends Preferences
 {
     /**
-     * Construct
-     */
-    public function init()
-    {
-        parent::init();
-
-        /**
-         * Add dependencies
-         */
-        $this->addDependency('eventManager');
-    }
-
-    /**
-     * Get progress status action data
+     * Read action
      *
-     * @param array $data
+     * @param array $params
      *
      * @return array
+     * @throws Exceptions\NotFound
      */
-    public function getProgressStatusActionData(array $data): array
+    public function actionRead($params)
     {
-        return [];
-    }
+        // get result
+        $result = parent::actionRead($params);
 
-    /**
-     * Cancel action
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function cancel(string $id): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($id)) {
-            // triggered before event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
-
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `deleted`=1 WHERE id='%s'";
-            $sql = sprintf($sql, $id);
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-
-            // triggered after event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
-        }
+        // prepare defaultCurrency
+        $result->defaultCurrency = null;
 
         return $result;
     }

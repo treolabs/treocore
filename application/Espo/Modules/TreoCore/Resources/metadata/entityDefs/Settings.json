@@ -3,6 +3,10 @@
         "isStreamSide": {
             "type": "bool",
             "tooltip": true
+        },
+        "allowUnstable": {
+            "type": "bool",
+            "tooltip": true
         }
     }
 }

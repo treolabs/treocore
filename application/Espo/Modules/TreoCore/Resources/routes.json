@@ -1,10 +1,44 @@
 [
   {
+    "route": "I18n",
+    "method": "get",
+    "params": {
+      "controller": "TreoI18n"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
+    "route": "/Preferences/:id",
+    "method": "get",
+    "params": {
+      "controller": "TreoPreferences",
+      "action": "read"
+    }
+  },
+  {
     "route": "/Admin/action/uploadUpgradePackage",
     "method": "post",
     "params": {
       "controller": "TreoAdmin",
       "action": "uploadUpgradePackage"
+    }
+  },
+  {
+    "route": "/EntityManager/action/createEntity",
+    "method": "post",
+    "params": {
+      "controller": "TreoEntityManager",
+      "action": "createEntity"
+    }
+  },
+  {
+    "route": "/EntityManager/action/updateEntity",
+    "method": "post",
+    "params": {
+      "controller": "TreoEntityManager",
+      "action": "updateEntity"
     }
   },
   {
@@ -69,6 +103,14 @@
     "params": {
       "controller": "ModuleManager",
       "action": "getAvailableModulesList"
+    }
+  },
+  {
+    "route": "/ModuleManager/stream",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "stream"
     }
   },
   {

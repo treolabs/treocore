@@ -32,28 +32,39 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Espo\Modules\TreoCore\Controllers;
 
-use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\EntityManager;
+use Espo\Controllers\I18n;
+use Slim\Http\Request;
 
 /**
- * EntityManagerUtil loader
+ * TreoI18n controller
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class EntityManagerUtil extends Base
+class TreoI18n extends I18n
 {
-
     /**
-     * Load EntityManager util
+     * Read action
      *
-     * @return EntityManager
+     * @param array   $params
+     * @param array   $data
+     * @param Request $request
+     *
+     * @return mixed
      */
-    public function load()
+    public function actionRead($params, $data, $request)
     {
-        return new EntityManager($this->getContainer());
+        if (!empty($locale = $request->get('locale'))) {
+            // set locale
+            $this
+                ->getContainer()
+                ->get('language')
+                ->setLanguage($locale);
+        }
+
+        return parent::actionRead($params, $data, $request);
     }
 }

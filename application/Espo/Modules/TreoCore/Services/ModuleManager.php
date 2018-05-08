@@ -41,6 +41,7 @@ use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
+use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
 
@@ -114,6 +115,11 @@ class ModuleManager extends Base
             ];
 
             $result = $this->getComposerService()->setAuthData($authData);
+
+            if ($result) {
+                // triggered event
+                $this->triggeredEvent('updateUser', $authData);
+            }
         }
 
         return $result;
@@ -251,9 +257,24 @@ class ModuleManager extends Base
             // write to file
             $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
 
-            // rebuild DB
-            if ($result && !empty($config['disabled'])) {
-                $this->getDataManager()->rebuild();
+            if ($result) {
+                // get package
+                $package = $this->getComposerModuleService()->getModulePackage($moduleId);
+
+                // prepare event data
+                $eventData = [
+                    'id'       => $moduleId,
+                    'disabled' => empty($config['disabled']),
+                    'package'  => $package
+                ];
+
+                // triggered event
+                $this->triggeredEvent('updateModuleActivation', $eventData);
+
+                // rebuild DB
+                if (!empty($config['disabled'])) {
+                    $this->getDataManager()->rebuild();
+                }
             }
         }
 
@@ -300,6 +321,18 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
+        // prepare event data
+        $eventData = [
+            'id'       => $id,
+            'composer' => $result,
+            'version'  => $version,
+            'package'  => $packages[$version],
+        ];
+
+        // triggered event
+        $this->triggeredEvent('installModule', $eventData);
+
+
         return $result;
     }
 
@@ -339,10 +372,23 @@ class ModuleManager extends Base
             ->getComposerService()
             ->update($packages[$version]['name'], $packages[$version]['version']);
 
-        // run migration
-        if ($result['status'] == 0) {
+
+        if ($result['status'] === 0) {
+            // run migration
             $this->getInjection('migration')->run($id, $package['version'], $version);
         }
+
+        // prepare event data
+        $eventData = [
+            'id'          => $id,
+            'composer'    => $result,
+            'version'     => $version,
+            'packageFrom' => $package,
+            'packageTo'   => $packages[$version],
+        ];
+
+        // triggered event
+        $this->triggeredEvent('updateModule', $eventData);
 
         return $result;
     }
@@ -377,13 +423,70 @@ class ModuleManager extends Base
             // run composer
             $result = $this->getComposerService()->delete($package['name']);
 
-            if (empty($result['status'])) {
+            if ($result['status'] === 0) {
                 // prepare modules diff
                 $afterDelete = TreoComposer::getTreoModules();
 
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
             }
+
+            // prepare event data
+            $eventData = [
+                'id'       => $id,
+                'composer' => $result,
+                'package'  => $package,
+            ];
+
+            // triggered event
+            $this->triggeredEvent('deleteModule', $eventData);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get stream
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function getStream(Request $request): array
+    {
+        // prepare result
+        $result = [
+            'total' => 0,
+            'list'  => []
+        ];
+
+        // prepare where
+        $where = [
+            'whereClause' => [
+                'parentType' => 'ModuleManager'
+            ],
+            'offset'      => (int)$request->get('offset'),
+            'limit'       => (int)$request->get('maxSize'),
+            'orderBy'     => 'number',
+            'order'       => 'DESC'
+        ];
+
+        $result['total'] = $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->count(['whereClause' => $where['whereClause']]);
+
+        if ($result['total'] > 0) {
+            if (!empty($request->get('after'))) {
+                $where['whereClause']['createdAt>'] = $request->get('after');
+            }
+
+            // get collection
+            $result['list'] = $this
+                ->getEntityManager()
+                ->getRepository('Note')
+                ->find($where)
+                ->toArray();
         }
 
         return $result;
@@ -404,7 +507,8 @@ class ModuleManager extends Base
                 'fileManager',
                 'dataManager',
                 'serviceFactory',
-                'migration'
+                'migration',
+                'eventManager'
             ]
         );
     }
@@ -709,6 +813,21 @@ class ModuleManager extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $action
+     * @param array  $data
+     *
+     * @return void
+     */
+    protected function triggeredEvent(string $action, array $data = [])
+    {
+        $this
+            ->getInjection('eventManager')
+            ->triggered('ModuleManager', $action, $data);
     }
 
     /**

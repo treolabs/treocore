@@ -11,6 +11,9 @@
   "views/modal": [
     "treo-core"
   ],
+  "views/login": [
+    "treo-core"
+  ],
   "views/modals/select-records": [
     "treo-core"
   ],
@@ -78,6 +81,9 @@
     "treo-core"
   ],
   "views/settings/fields/tab-list": [
+    "treo-core"
+  ],
+  "views/settings/record/edit": [
     "treo-core"
   ]
 }

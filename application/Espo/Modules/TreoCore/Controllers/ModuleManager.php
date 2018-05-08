@@ -327,6 +327,32 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Get module manager stream data")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/ModuleManager/stream")
+     * @ApiReturn(sample="{
+     *     'total': 'int',
+     *     'list': 'array'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     */
+    public function actionStream($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getModuleManagerService()->getStream($request);
+    }
+
+    /**
      * Get module manager service
      *
      * @return ModuleManagerService
