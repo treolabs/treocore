@@ -39,6 +39,7 @@ Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:vi
 
         setup() {
             this.layoutName = this.options.layoutName || this.layoutName;
+            this.rowActionsDisabled = this.options.rowActionsDisabled || this.rowActionsDisabled;
 
             Dep.prototype.setup.call(this);
         },
@@ -56,6 +57,7 @@ Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:vi
                     massActionsDisabled: true,
                     rowActionsView: false,
                     layoutName: this.layoutName,
+                    rowActionsDisabled: this.rowActionsDisabled,
                     searchManager: this.searchManager,
                     checkAllResultDisabled: !this.massRelateEnabled,
                     buttonsDisabled: true
