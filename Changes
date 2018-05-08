@@ -1,3 +1,4 @@
+1.9.7  2018-05-08 10:06:26 Europe/Kiev
     * BUG #62536 : Высплывающее окно про необходимость заполнения поля при скролле сдвигается (Valeriy Shamota)
     * UST #62690 : Додати налаштування в системі allowUnstable // Front (Valeriy Shamota)
     * UST #63144 : Создание нового класса TreoUi  (Valeriy Shamota)
