@@ -45,7 +45,7 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
                         mode: 'update'
                     }
                 });
-                let checkRequire = this.model.collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(this.model.get('id')));
+                let checkRequire = this.model.collection.every(model => !(model.get('required') || []).includes(this.model.get('id')));
                 if (checkRequire && !this.model.get('isSystem')) {
                     list.push({
                         action: 'removeModule',
