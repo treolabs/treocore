@@ -219,8 +219,7 @@ class ModuleManager extends AbstractListener
     {
         // get current language
         $currentLang = $this
-            ->getContainer()
-            ->get('language')
+            ->getLanguage()
             ->getLanguage();
 
         // prepare result
@@ -245,16 +244,7 @@ class ModuleManager extends AbstractListener
     protected function translate(string $key): string
     {
         return $this
-            ->getContainer()
-            ->get('language')
+            ->getLanguage()
             ->translate($key, 'messages', 'ModuleManager');
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager(): EntityManager
-    {
-        return $this->getContainer()->get('entityManager');
     }
 }
