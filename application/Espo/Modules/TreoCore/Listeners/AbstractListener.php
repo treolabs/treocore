@@ -32,11 +32,15 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Core\Services\Base as BaseService;
+use Espo\Core\ORM\EntityManager;
+use Espo\Core\Utils\Language;
 use Espo\Modules\TreoCore\Core\Container;
+use Espo\Modules\TreoCore\Core\Utils\Config;
 
 /**
  * AbstractListener class
@@ -49,6 +53,11 @@ abstract class AbstractListener
      * @var Container
      */
     protected $container;
+
+    /**
+     * @var array
+     */
+    protected $services = [];
 
     /**
      * Set container
@@ -65,6 +74,19 @@ abstract class AbstractListener
     }
 
     /**
+     * Common listening of all actions
+     *
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    public function common(string $action, array $data): array
+    {
+        return $data;
+    }
+
+    /**
      * Get container
      *
      * @return Container
@@ -72,5 +94,54 @@ abstract class AbstractListener
     protected function getContainer(): Container
     {
         return $this->container;
+    }
+
+    /**
+     * Get service
+     *
+     * @param string $name
+     *
+     * @return BaseService
+     */
+    protected function getService(string $name): BaseService
+    {
+        if (!isset($this->services[$name])) {
+            $this->services[$name] = $this
+                ->getContainer()
+                ->get('serviceFactory')
+                ->create($name);
+        }
+
+        return $this->services[$name];
+    }
+
+    /**
+     * Get entity manager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->getContainer()->get('entityManager');
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get language
+     *
+     * @return Language
+     */
+    protected function getLanguage(): Language
+    {
+        return $this->getContainer()->get('language');
     }
 }
