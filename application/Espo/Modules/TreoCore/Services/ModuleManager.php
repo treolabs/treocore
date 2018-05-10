@@ -251,11 +251,11 @@ class ModuleManager extends Base
             // get config data
             $config = $this->getModuleConfigData($moduleId);
 
-            // drop cache
-            $this->getMetadata()->dropCache();
-
             // write to file
             $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
+
+            // drop cache
+            $this->getDataManager()->clearCache();
 
             if ($result) {
                 // get package
@@ -288,6 +288,7 @@ class ModuleManager extends Base
      * @param string $version
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function installModule(string $id, string $version = null): array
     {
@@ -343,6 +344,7 @@ class ModuleManager extends Base
      * @param string $version
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function updateModule(string $id, string $version): array
     {
@@ -399,6 +401,7 @@ class ModuleManager extends Base
      * @param string $id
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function deleteModule(string $id): array
     {
@@ -414,9 +417,6 @@ class ModuleManager extends Base
                 throw new Exceptions\Error($this->translateError('No such module'));
             }
 
-            // clear module activation and sort order data
-            $this->clearModuleData($id);
-
             // prepare modules diff
             $beforeDelete = TreoComposer::getTreoModules();
 
@@ -429,6 +429,12 @@ class ModuleManager extends Base
 
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+
+                // clear module activation and sort order data
+                $this->clearModuleData($id);
+
+                // drop cache
+                $this->getDataManager()->clearCache();
             }
 
             // prepare event data
