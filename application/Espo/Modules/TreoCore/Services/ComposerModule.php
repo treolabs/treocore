@@ -149,6 +149,10 @@ class ComposerModule extends Base
                 }
             }
         }
+        // remove empty module
+        if (empty($result[$module])) {
+            unset($result[$module]);
+        }
 
         // set max
         foreach ($result as $module => $versions) {
