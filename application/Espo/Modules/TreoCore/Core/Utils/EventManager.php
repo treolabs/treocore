@@ -67,13 +67,13 @@ class EventManager
                 $listener = new $className();
                 if ($listener instanceof AbstractListener) {
                     $listener->setContainer($this->getContainer());
-                }
-                if (method_exists($listener, $action)) {
-                    $result = $listener->{$action}($data);
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
-                } else {
-                    $data = $listener->{'common'}($action, $data);
+                    if (method_exists($listener, $action)) {
+                        $result = $listener->{$action}($data);
+                        // check if exists result and update data
+                        $data = isset($result) ? $result : $data;
+                    } else {
+                        $data = $listener->{'common'}($action, $data);
+                    }
                 }
             }
         }
