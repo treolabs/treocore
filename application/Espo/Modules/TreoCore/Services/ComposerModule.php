@@ -147,12 +147,11 @@ class ComposerModule extends Base
                         unset($result[$module][$version]);
                     }
                 }
+                // remove empty module
+                if (empty($result[$module])) {
+                    unset($result[$module]);
+                }
             }
-        }
-
-        // remove empty module
-        if (empty($result[$module])) {
-            unset($result[$module]);
         }
 
         // set max
