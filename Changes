@@ -1,3 +1,4 @@
+    * BUG #63164 : Ошибка при переходе в модуль менеджер на  http://source-demo-treopim.zinit1.com/#ModuleManager/list (Roman Ratsun)
     * UST #63409 : Додати можливість слухати всі події сутності для EventManager (Roman Ratsun)
 
 1.9.9  2018-05-08 15:37:50 Europe/Kiev
