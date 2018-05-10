@@ -120,7 +120,7 @@ abstract class AbstractListener
      *
      * @return EntityManager
      */
-    protected function getEntityManager()
+    protected function getEntityManager(): EntityManager
     {
         return $this->getContainer()->get('entityManager');
     }
