@@ -83,6 +83,7 @@ abstract class AbstractListener
      */
     public function common(string $action, array $data): array
     {
+        return $data;
     }
 
     /**
@@ -119,7 +120,7 @@ abstract class AbstractListener
      *
      * @return EntityManager
      */
-    protected function getEntityManager(): EntityManager
+    protected function getEntityManager()
     {
         return $this->getContainer()->get('entityManager');
     }

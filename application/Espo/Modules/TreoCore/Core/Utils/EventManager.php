@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
@@ -54,7 +54,7 @@ class EventManager
      *
      * @param string $target
      * @param string $action
-     * @param array $data
+     * @param array  $data
      *
      * @return array
      */
@@ -72,6 +72,8 @@ class EventManager
                     $result = $listener->{$action}($data);
                     // check if exists result and update data
                     $data = isset($result) ? $result : $data;
+                } else {
+                    $data = $listener->{'common'}($action, $data);
                 }
             }
         }
