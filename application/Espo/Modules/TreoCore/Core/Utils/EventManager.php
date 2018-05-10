@@ -40,7 +40,7 @@ use Espo\Modules\TreoCore\Listeners\AbstractListener;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 
 /**
- * Class of EventManager
+ * EventManager class
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
