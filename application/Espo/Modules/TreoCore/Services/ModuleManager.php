@@ -414,8 +414,8 @@ class ModuleManager extends Base
                 throw new Exceptions\Error($this->translateError('No such module'));
             }
 
-            // update modules file
-            $this->updateModuleFile($id, true);
+            // clear module activation and sort order data
+            $this->clearModuleData($id);
 
             // prepare modules diff
             $beforeDelete = TreoComposer::getTreoModules();
@@ -574,6 +574,18 @@ class ModuleManager extends Base
         }
 
         return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+    }
+
+    /**
+     * Clear module data from "module.json" file
+     *
+     * @param string $moduleId
+     *
+     * @return bool
+     */
+    protected function clearModuleData(string $moduleId): bool
+    {
+        return $this->getFileManager()->unsetContents($this->moduleJsonPath, $moduleId);
     }
 
     /**
