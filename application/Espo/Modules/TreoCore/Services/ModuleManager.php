@@ -142,14 +142,15 @@ class ModuleManager extends Base
             if ($module != 'TreoCore') {
                 // prepare item
                 $item = [
-                    "id"          => $module,
-                    "name"        => $module,
-                    "description" => '',
-                    "version"     => '-',
-                    "required"    => [],
-                    "isActive"    => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"    => false,
-                    "isComposer"  => false
+                    "id"           => $module,
+                    "name"         => $module,
+                    "description"  => '',
+                    "version"      => '-',
+                    "versionLabel" => '-',
+                    "required"     => [],
+                    "isActive"     => $this->getMetadata()->isModuleActive($module),
+                    "isSystem"     => false,
+                    "isComposer"   => false
                 ];
 
                 // get current module package
@@ -160,10 +161,18 @@ class ModuleManager extends Base
                     $item['name'] = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
                     $item['version'] = $this->prepareModuleVersion($package['version']);
+                    $item['versionLabel'] = $item['version'];
                     $item['versions'] = $this->prepareModuleVersions($module);
                     $item['required'] = $this->getModuleRequireds($module);
                     $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
+
+                    if (!empty($versions = $item['versions'])) {
+                        $max = array_pop($versions)['version'];
+                        if ($max != $item['version']) {
+                            $item['versionLabel'] = $item['version'] . ' (' . $max . ')';
+                        }
+                    }
                 }
 
                 // push
