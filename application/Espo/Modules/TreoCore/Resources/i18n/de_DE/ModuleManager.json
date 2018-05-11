@@ -7,7 +7,7 @@
   },
   "fields": {
     "status": "Status",
-    "version": "Version",
+    "versionLabel": "Version",
     "required": "Erforderlich",
     "isActive": "Ist aktiv"
   },
