@@ -97,7 +97,10 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             }
             //END espo
 
-            //$queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
+            /**
+             * @todo treoinject
+             */
+            $queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
         }
 
         foreach ($diff->changedColumns as $columnDiff) {
