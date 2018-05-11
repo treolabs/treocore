@@ -1,3 +1,4 @@
+    * UST #63448 : Видаляти колонки при видаленні поля через EntityManager (Roman Ratsun)
     * UST #63495 : Showing available new version in ModuleManager (Roman Ratsun)
     * UST #63362 : Убрать возможность удаления импорт джобов при фильтрации  (Valeriy Shamota)
     * UST #63304 : Обмежити можливість видалення модулю якщо є модулі які від нього залежні (Valeriy Shamota)
