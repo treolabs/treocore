@@ -458,23 +458,15 @@ class ModuleManager extends Base
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
 
-                foreach ($modules as $package) {
-                    // clear module activation and sort order data
-                    $this->clearModuleData($package['extra']['treoId']);
-
-                    // prepare event data
-                    $eventData = [
-                        'id'       => $package['extra']['treoId'],
-                        'composer' => $result,
-                        'package'  => $package,
-                    ];
-
-                    // triggered event
-                    $this->triggeredEvent('deleteModule', $eventData);
-                }
+                // clear module activation and sort order data
+                $this->clearModuleData($modules);
 
                 // drop cache
                 $this->getDataManager()->clearCache();
+
+                // triggered event
+                $eventData = ['modules' => $modules, 'composer' => $result];
+                $this->triggeredEvent('deleteModules', $eventData);
             }
         }
 
@@ -631,13 +623,19 @@ class ModuleManager extends Base
     /**
      * Clear module data from "module.json" file
      *
-     * @param string $moduleId
+     * @param array $modules
      *
      * @return bool
      */
-    protected function clearModuleData(string $moduleId): bool
+    protected function clearModuleData(array $modules): bool
     {
-        return $this->getFileManager()->unsetContents($this->moduleJsonPath, $moduleId);
+        foreach ($modules as $package) {
+            $this
+                ->getFileManager()
+                ->unsetContents($this->moduleJsonPath, $package['extra']['treoId']);
+        }
+
+        return true;
     }
 
     /**
