@@ -405,32 +405,51 @@ class ModuleManager extends Base
     }
 
     /**
-     * Delete module
+     * Delete module(s)
      *
-     * @param string $id
+     * @param array $ids
      *
      * @return array
      * @throws Exceptions\Error
      */
-    public function deleteModule(string $id): array
+    public function deleteModule(array $ids): array
     {
         // prepare result
         $result = [];
 
-        if ($this->isModuleChangeable($id)) {
-            // prepare params
-            $package = $this->getComposerModuleService()->getModulePackage($id);
+        // prepare modules
+        foreach ($ids as $id) {
+            if (!$this->isModuleSystem($id)) {
+                // prepare params
+                $package = $this->getComposerModuleService()->getModulePackage($id);
 
-            // validation
-            if (empty($package)) {
-                throw new Exceptions\Error($this->translateError('No such module'));
+                // validation
+                if (empty($package)) {
+                    throw new Exceptions\Error($this->translateError('No such module'));
+                }
+
+                $modules[] = $package;
             }
+        }
 
+        if (!empty($modules)) {
             // prepare modules diff
             $beforeDelete = TreoComposer::getTreoModules();
 
+            // get composer.json data
+            $composerData = $this->getComposerService()->getModuleComposerJson();
+
+            foreach ($modules as $package) {
+                if (isset($composerData['require'][$package['name']])) {
+                    unset($composerData['require'][$package['name']]);
+                }
+            }
+
+            // set composer.json data
+            $this->getComposerService()->setModuleComposerJson($composerData);
+
             // run composer
-            $result = $this->getComposerService()->delete($package['name']);
+            $result = $this->getComposerService()->run('update');
 
             if ($result['status'] === 0) {
                 // prepare modules diff
@@ -439,22 +458,24 @@ class ModuleManager extends Base
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
 
-                // clear module activation and sort order data
-                $this->clearModuleData($id);
+                foreach ($modules as $package) {
+                    // clear module activation and sort order data
+                    $this->clearModuleData($package['extra']['treoId']);
+
+                    // prepare event data
+                    $eventData = [
+                        'id'       => $package['extra']['treoId'],
+                        'composer' => $result,
+                        'package'  => $package,
+                    ];
+
+                    // triggered event
+                    $this->triggeredEvent('deleteModule', $eventData);
+                }
 
                 // drop cache
                 $this->getDataManager()->clearCache();
             }
-
-            // prepare event data
-            $eventData = [
-                'id'       => $id,
-                'composer' => $result,
-                'package'  => $package,
-            ];
-
-            // triggered event
-            $this->triggeredEvent('deleteModule', $eventData);
         }
 
         return $result;
@@ -539,13 +560,7 @@ class ModuleManager extends Base
     protected function isModuleChangeable(string $moduleId): bool
     {
         // is system module ?
-        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
-            throw new Exceptions\Error(
-                $this
-                    ->getLanguage()
-                    ->translate('isSystem', 'exceptions', 'ModuleManager')
-            );
-        }
+        $this->isModuleSystem($moduleId);
 
         // checking requireds
         if ($this->hasRequireds($moduleId)) {
@@ -557,6 +572,28 @@ class ModuleManager extends Base
         }
 
         return true;
+    }
+
+    /**
+     * Is module system ?
+     *
+     * @param string $moduleId
+     *
+     * @return bool
+     * @throws Exceptions\Error
+     */
+    protected function isModuleSystem(string $moduleId): bool
+    {
+        // is system module ?
+        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('isSystem', 'exceptions', 'ModuleManager')
+            );
+        }
+
+        return false;
     }
 
     /**
