@@ -36,6 +36,10 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
 
         attributes: null,
 
+        errorList: [],
+
+        errorsCount: null,
+
         model: null,
 
         mode: 'detail',
@@ -52,6 +56,15 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
                 if (typeof this[action] === 'function') {
                     this[action]();
                 }
+            },
+            'click [data-action="showErrorLog"]': function () {
+                this.$el.find('[data-action="showErrorLog"] .new-error').addClass('hidden');
+                this.createView('logs', 'treo-core:views/module-manager/modals/error-log', {
+                    header: this.translate('Error Log', 'labels', 'ModuleManager'),
+                    errorList: this.errorList
+                }, view => {
+                    view.render();
+                });
             }
         },
 
@@ -200,6 +213,23 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
                 } else {
                     button.removeClass('hidden');
                 }
+            }
+        },
+
+        logError(response, id, action) {
+            this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
+            this.errorsCount++;
+            this.errorList.unshift({
+                name: id + this.errorsCount,
+                errorMessage: this.translate('error' +  Espo.Utils.upperCaseFirst(action), 'messages', 'ModuleManager')
+                    .replace('{module}', '<strong>' + id + '</strong>')
+                    .replace('{status}', '<strong>' + response.status+ '</strong>')
+                    .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
+                message: response.output
+            });
+            this.$el.find('[data-action="showErrorLog"] .new-error').removeClass('hidden');
+            if (this.hasView('logs')) {
+                this.getView('logs').reRender();
             }
         },
 

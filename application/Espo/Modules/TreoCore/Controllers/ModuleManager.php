@@ -198,7 +198,7 @@ class ModuleManager extends Base
      * @ApiMethod(type="DELETE")
      * @ApiRoute(name="/ModuleManager/deleteModule")
      * @ApiBody(sample="{
-     *     'id': 'Erp'
+     *     'ids': ['Erp']
      * }")
      * @ApiReturn(sample="{
      *     'status': 'true',
@@ -223,8 +223,8 @@ class ModuleManager extends Base
         // prepare data
         $data = Json::decode(Json::encode($data), true);
 
-        if (!empty($data['id'])) {
-            return $this->getModuleManagerService()->deleteModule($data['id']);
+        if (!empty($ids = $data['ids']) && is_array($ids)) {
+            return $this->getModuleManagerService()->deleteModule($ids);
         }
 
         throw new Exceptions\NotFound();

@@ -46,23 +46,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         blockActions: false,
 
-        errorList: [],
-
-        errorsCount: null,
-
-        setup() {
-            Dep.prototype.setup.call(this);
-            this.events['click [data-action="showErrorLog"]'] = () => {
-                this.$el.find('[data-action="showErrorLog"] .new-error').addClass('hidden');
-                this.createView('logs', 'treo-core:views/module-manager/modals/error-log', {
-                    header: this.translate('Error Log', 'labels', 'ModuleManager'),
-                    errorList: this.errorList
-                }, view => {
-                    view.render();
-                });
-            }
-        },
-
         loadList() {
             this.loadSettingsPanel();
             this.loadInstalledModulesList();
@@ -201,24 +184,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
         },
 
-        logError(response, id, action) {
-            this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
-            this.errorsCount++;
-            this.errorList.unshift({
-                name: id + this.errorsCount,
-                errorMessage: this.translate('errorMessage', 'messages', 'ModuleManager')
-                    .replace('{module}', '<strong>' + id + '</strong>')
-                    .replace('{action}', '<strong>' + action + '</strong>')
-                    .replace('{status}', '<strong>' + response.status+ '</strong>')
-                    .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
-                message: response.output
-            });
-            this.$el.find('[data-action="showErrorLog"] .new-error').removeClass('hidden');
-            if (this.hasView('logs')) {
-                this.getView('logs').reRender();
-            }
-        },
-
         actionInstallModule(data) {
             if (this.blockActions) {
                 this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
@@ -266,7 +231,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         } else {
                             this.blockActions = false;
                             if (response.output) {
-                                this.logError(response, data.id, data.mode);
+                                this.getView('settingsPanel').logError(response, data.id, data.mode);
                             }
                         }
                     })
@@ -287,7 +252,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
             this.blockActions = true;
             this.notify(this.translate('removing', 'labels', 'ModuleManager'));
-            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id}), {timeout: 180000})
+            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({ids: [data.id]}), {timeout: 180000})
                 .then(response => {
                     if (response.status === 0) {
                         this.notify(this.translate('removed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
@@ -295,7 +260,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     } else {
                         this.blockActions = false;
                         if (response.output) {
-                            this.logError(response, data.id, 'removed');
+                            this.getView('settingsPanel').logError(response, data.id, 'removed');
                         }
                     }
                 })

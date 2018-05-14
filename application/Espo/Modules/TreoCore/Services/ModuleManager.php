@@ -142,14 +142,15 @@ class ModuleManager extends Base
             if ($module != 'TreoCore') {
                 // prepare item
                 $item = [
-                    "id"          => $module,
-                    "name"        => $module,
-                    "description" => '',
-                    "version"     => '-',
-                    "required"    => [],
-                    "isActive"    => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"    => false,
-                    "isComposer"  => false
+                    "id"           => $module,
+                    "name"         => $module,
+                    "description"  => '',
+                    "version"      => '-',
+                    "versionLabel" => '-',
+                    "required"     => [],
+                    "isActive"     => $this->getMetadata()->isModuleActive($module),
+                    "isSystem"     => false,
+                    "isComposer"   => false
                 ];
 
                 // get current module package
@@ -160,10 +161,18 @@ class ModuleManager extends Base
                     $item['name'] = $this->translateModule($module, 'name');
                     $item['description'] = $this->translateModule($module, 'description');
                     $item['version'] = $this->prepareModuleVersion($package['version']);
+                    $item['versionLabel'] = $item['version'];
                     $item['versions'] = $this->prepareModuleVersions($module);
                     $item['required'] = $this->getModuleRequireds($module);
                     $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
+
+                    if (!empty($versions = $item['versions'])) {
+                        $max = array_pop($versions)['version'];
+                        if ($max != $item['version']) {
+                            $item['versionLabel'] = $item['version'] . ' (' . $max . ')';
+                        }
+                    }
                 }
 
                 // push
@@ -251,11 +260,11 @@ class ModuleManager extends Base
             // get config data
             $config = $this->getModuleConfigData($moduleId);
 
-            // drop cache
-            $this->getMetadata()->dropCache();
-
             // write to file
             $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
+
+            // drop cache
+            $this->getDataManager()->clearCache();
 
             if ($result) {
                 // get package
@@ -288,6 +297,7 @@ class ModuleManager extends Base
      * @param string $version
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function installModule(string $id, string $version = null): array
     {
@@ -343,6 +353,7 @@ class ModuleManager extends Base
      * @param string $version
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function updateModule(string $id, string $version): array
     {
@@ -394,34 +405,51 @@ class ModuleManager extends Base
     }
 
     /**
-     * Delete module
+     * Delete module(s)
      *
-     * @param string $id
+     * @param array $ids
      *
      * @return array
+     * @throws Exceptions\Error
      */
-    public function deleteModule(string $id): array
+    public function deleteModule(array $ids): array
     {
         // prepare result
         $result = [];
 
-        if ($this->isModuleChangeable($id)) {
-            // prepare params
-            $package = $this->getComposerModuleService()->getModulePackage($id);
+        // prepare modules
+        foreach ($ids as $id) {
+            if (!$this->isModuleSystem($id)) {
+                // prepare params
+                $package = $this->getComposerModuleService()->getModulePackage($id);
 
-            // validation
-            if (empty($package)) {
-                throw new Exceptions\Error($this->translateError('No such module'));
+                // validation
+                if (empty($package)) {
+                    throw new Exceptions\Error($this->translateError('No such module'));
+                }
+
+                $modules[] = $package;
             }
+        }
 
-            // update modules file
-            $this->updateModuleFile($id, true);
-
+        if (!empty($modules)) {
             // prepare modules diff
             $beforeDelete = TreoComposer::getTreoModules();
 
+            // get composer.json data
+            $composerData = $this->getComposerService()->getModuleComposerJson();
+
+            foreach ($modules as $package) {
+                if (isset($composerData['require'][$package['name']])) {
+                    unset($composerData['require'][$package['name']]);
+                }
+            }
+
+            // set composer.json data
+            $this->getComposerService()->setModuleComposerJson($composerData);
+
             // run composer
-            $result = $this->getComposerService()->delete($package['name']);
+            $result = $this->getComposerService()->run('update');
 
             if ($result['status'] === 0) {
                 // prepare modules diff
@@ -429,17 +457,17 @@ class ModuleManager extends Base
 
                 // delete treo dirs
                 TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+
+                // clear module activation and sort order data
+                $this->clearModuleData($modules);
+
+                // drop cache
+                $this->getDataManager()->clearCache();
+
+                // triggered event
+                $eventData = ['modules' => $modules, 'composer' => $result];
+                $this->triggeredEvent('deleteModules', $eventData);
             }
-
-            // prepare event data
-            $eventData = [
-                'id'       => $id,
-                'composer' => $result,
-                'package'  => $package,
-            ];
-
-            // triggered event
-            $this->triggeredEvent('deleteModule', $eventData);
         }
 
         return $result;
@@ -524,13 +552,7 @@ class ModuleManager extends Base
     protected function isModuleChangeable(string $moduleId): bool
     {
         // is system module ?
-        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
-            throw new Exceptions\Error(
-                $this
-                    ->getLanguage()
-                    ->translate('isSystem', 'exceptions', 'ModuleManager')
-            );
-        }
+        $this->isModuleSystem($moduleId);
 
         // checking requireds
         if ($this->hasRequireds($moduleId)) {
@@ -542,6 +564,28 @@ class ModuleManager extends Base
         }
 
         return true;
+    }
+
+    /**
+     * Is module system ?
+     *
+     * @param string $moduleId
+     *
+     * @return bool
+     * @throws Exceptions\Error
+     */
+    protected function isModuleSystem(string $moduleId): bool
+    {
+        // is system module ?
+        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
+            throw new Exceptions\Error(
+                $this
+                    ->getLanguage()
+                    ->translate('isSystem', 'exceptions', 'ModuleManager')
+            );
+        }
+
+        return false;
     }
 
     /**
@@ -574,6 +618,24 @@ class ModuleManager extends Base
         }
 
         return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+    }
+
+    /**
+     * Clear module data from "module.json" file
+     *
+     * @param array $modules
+     *
+     * @return bool
+     */
+    protected function clearModuleData(array $modules): bool
+    {
+        foreach ($modules as $package) {
+            $this
+                ->getFileManager()
+                ->unsetContents($this->moduleJsonPath, $package['extra']['treoId']);
+        }
+
+        return true;
     }
 
     /**
