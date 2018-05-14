@@ -1,3 +1,4 @@
+    * UST #63541 : Mass deleting of all modules in ModuleManager // Back (Roman Ratsun)
     * UST #63448 : Видаляти колонки при видаленні поля через EntityManager (Roman Ratsun)
     * UST #63495 : Showing available new version in ModuleManager (Roman Ratsun)
     * UST #63362 : Убрать возможность удаления импорт джобов при фильтрации  (Valeriy Shamota)
