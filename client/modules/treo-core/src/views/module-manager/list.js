@@ -252,7 +252,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
             this.blockActions = true;
             this.notify(this.translate('removing', 'labels', 'ModuleManager'));
-            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id}), {timeout: 180000})
+            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({ids: [data.id]}), {timeout: 180000})
                 .then(response => {
                     if (response.status === 0) {
                         this.notify(this.translate('removed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
