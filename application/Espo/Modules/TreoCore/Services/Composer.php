@@ -111,9 +111,15 @@ class Composer extends Base
         $input = new StringInput("{$command} --working-dir=" . CORE_PATH);
         $output = new BufferedOutput();
 
+        // prepare response
         $status = $application->run($input, $output);
+        $output = str_replace(
+            'Espo\\Modules\\TreoCore\\Services\\Composer::updateTreoModules',
+            '',
+            $output->fetch()
+        );
 
-        return ['status' => $status, 'output' => $output->fetch()];
+        return ['status' => $status, 'output' => $output];
     }
 
     /**
