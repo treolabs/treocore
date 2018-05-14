@@ -131,14 +131,17 @@ class ModuleManager extends AbstractListener
     /**
      * @param array $data
      */
-    public function deleteModule(array $data)
+    public function deleteModules(array $data)
     {
         if ($data['composer']['status'] === 0) {
-            // get module name
-            $moduleName = $this->getModuleName($data['package']);
+            // get modules name
+            foreach ($data['modules'] as $package) {
+                $names[] = $this->getModuleName($package);
+            }
+            $moduleName = implode(", ", $names);
 
             // prepare message
-            $message = "Module '<strong>%s</strong>' deleted successfully.";
+            $message = "Module(s) '<strong>%s</strong>' deleted successfully.";
             $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
             $message = sprintf($this->translate($message), $moduleName);
 
