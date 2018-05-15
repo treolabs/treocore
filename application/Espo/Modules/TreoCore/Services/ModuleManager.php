@@ -877,32 +877,46 @@ class ModuleManager extends Base
             $result = array_values($result);
         }
 
-        // prepare data
-        $data = [];
+        if (!empty($result)) {
+            // prepare data
+            $responseData = [];
 
-        // prepare patern
-        $pattern = "/^(.*)\.(.*)\..$/";
-        foreach ($result as $k => $row) {
-            // push
-            $data[] = $row;
+            // prepare patern
+            $pattern = "/^(.*)\.(.*)\.(.*)$/";
 
-            if (isset($result[$k + 1])) {
-                // parse version
-                preg_match_all($pattern, $row['version'], $currentMatches);
-                preg_match_all($pattern, $result[$k + 1]['version'], $nextMatches);
+            foreach ($result as $k => $row) {
+                // push
+                $responseData[] = $row;
 
-                if ($currentMatches[2][0] != $nextMatches[2][0]) {
-                    $newRow = $row;
-                    $newRow['version'] = $currentMatches[1][0] . '.' . $currentMatches[2][0] . '.*';
-                    
-                    // push
-                    $data[] = $newRow;
+                if (isset($result[$k + 1])) {
+                    // parse version
+                    preg_match_all($pattern, $row['version'], $currentMatches);
+                    preg_match_all($pattern, $result[$k + 1]['version'], $nextMatches);
+
+                    if ($currentMatches[2][0] != $nextMatches[2][0]) {
+                        $newRow = $row;
+                        $newRow['version'] = $currentMatches[1][0] . '.' . $currentMatches[2][0] . '.*';
+
+                        // push
+                        $responseData[] = $newRow;
+                    }
                 }
             }
-        }
 
-        if (!empty($data)) {
-            $result = $data;
+            // get max
+            $max = array_pop($result);
+
+            // parse version
+            preg_match_all($pattern, $max['version'], $maxMatches);
+
+            $newRow = $max;
+            $newRow['version'] = $maxMatches[1][0] . '.' . $maxMatches[2][0] . '.*';
+
+            // push
+            $responseData[] = $newRow;
+
+            // set result
+            $result = $responseData;
         }
 
         return $result;
