@@ -114,6 +114,14 @@
     }
   },
   {
+    "route": "/ModuleManager/updateComposer",
+    "method": "post",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "updateComposer"
+    }
+  },
+  {
     "route": "/ProgressManager/isShowPopup",
     "method": "get",
     "params": {

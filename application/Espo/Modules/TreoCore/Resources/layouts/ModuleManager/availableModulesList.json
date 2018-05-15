@@ -10,7 +10,7 @@
         "width": 40
     },
     {
-        "name": "version",
+        "name": "settingVersion",
         "notSortable": true,
         "width": 10
     }

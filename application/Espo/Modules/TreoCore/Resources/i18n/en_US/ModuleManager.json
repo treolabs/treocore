@@ -7,7 +7,9 @@
   },
   "fields": {
     "status": "Status",
-    "versionLabel": "Version",
+    "settingVersion": "Setting Version",
+    "currentVersion": "Current Version",
+    "availableVersions": "Available Versions",
     "required": "Required",
     "isActive": "Is active"
   },

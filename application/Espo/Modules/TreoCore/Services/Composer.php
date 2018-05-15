@@ -91,6 +91,18 @@ class Composer extends Base
     }
 
     /**
+     * Run composer UPDATE command
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function runUpdate(array $data = []): void
+    {
+        $this->run('update');
+    }
+
+    /**
      * Run composer command
      *
      * @param string $command
@@ -111,9 +123,15 @@ class Composer extends Base
         $input = new StringInput("{$command} --working-dir=" . CORE_PATH);
         $output = new BufferedOutput();
 
+        // prepare response
         $status = $application->run($input, $output);
+        $output = str_replace(
+            'Espo\\Modules\\TreoCore\\Services\\Composer::updateTreoModules',
+            '',
+            $output->fetch()
+        );
 
-        return ['status' => $status, 'output' => $output->fetch()];
+        return ['status' => $status, 'output' => $output];
     }
 
     /**
