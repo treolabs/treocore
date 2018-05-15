@@ -48,7 +48,6 @@ class EntityManager extends AbstractListener
      */
     protected $scopesConfig = null;
 
-
     /**
      * @param array $data
      *
@@ -156,5 +155,4 @@ class EntityManager extends AbstractListener
 
         return $this->scopesConfig;
     }
-
 }
