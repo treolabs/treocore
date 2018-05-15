@@ -863,7 +863,7 @@ class ModuleManager extends Base
                     }
 
                     // push
-                    $result[$version] = [
+                    $result[str_replace('*', '999', $version)] = [
                         'version' => $version,
                         'require' => array_values($require)
                     ];
