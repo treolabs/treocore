@@ -877,6 +877,34 @@ class ModuleManager extends Base
             $result = array_values($result);
         }
 
+        // prepare data
+        $data = [];
+
+        // prepare patern
+        $pattern = "/^(.*)\.(.*)\..$/";
+        foreach ($result as $k => $row) {
+            // push
+            $data[] = $row;
+
+            if (isset($result[$k + 1])) {
+                // parse version
+                preg_match_all($pattern, $row['version'], $currentMatches);
+                preg_match_all($pattern, $result[$k + 1]['version'], $nextMatches);
+
+                if ($currentMatches[2][0] != $nextMatches[2][0]) {
+                    $newRow = $row;
+                    $newRow['version'] = $currentMatches[1][0] . '.' . $currentMatches[2][0] . '.*';
+                    
+                    // push
+                    $data[] = $newRow;
+                }
+            }
+        }
+
+        if (!empty($data)) {
+            $result = $data;
+        }
+
         return $result;
     }
 

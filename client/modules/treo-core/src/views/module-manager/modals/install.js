@@ -49,7 +49,7 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
 
             this.listenTo(this.model, 'change:version', () => {
                 this.model.set({
-                    dependencies: this.getRequire(this.model.get('version'))
+                    dependencies: this.getRequire(this.model.get('currentVersion'))
                 });
             });
 
