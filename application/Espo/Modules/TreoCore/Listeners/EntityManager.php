@@ -46,15 +46,7 @@ class EntityManager extends AbstractListener
     /**
      * @var array
      */
-    protected $scopes
-        = [
-            'hasOwner',
-            'hasAssignedUser',
-            'hasTeam',
-            'hasActivities', //@todo remove it after module upgrading
-            'hasTasks', //@todo remove it after module upgrading
-            'hasCompleteness', //@todo remove it after module upgrading
-        ];
+    protected $scopesConfig = null;
 
     /**
      * @param array $data
@@ -67,7 +59,6 @@ class EntityManager extends AbstractListener
         $this->updateScope(get_object_vars($data['data']));
 
         if ($data['result']) {
-            // rebuild DB
             $this->getContainer()->get('dataManager')->rebuild();
         }
 
@@ -95,7 +86,6 @@ class EntityManager extends AbstractListener
     public function afterActionUpdateEntity(array $data): array
     {
         if ($data['result']) {
-            // rebuild DB
             $this->getContainer()->get('dataManager')->rebuild();
         }
 
@@ -134,11 +124,35 @@ class EntityManager extends AbstractListener
         $scopeData = [];
 
         foreach ($data as $key => $value) {
-            if (in_array($key, $this->scopes)) {
+            if (in_array($key, $this->getScopesConfig()['edited'])) {
                 $scopeData[$key] = $value;
             }
         }
 
         return $scopeData;
+    }
+
+    /**
+     * Get scopes config
+     *
+     * @return array
+     */
+    protected function getScopesConfig(): array
+    {
+        if (is_null($this->scopesConfig)) {
+            // prepare result
+            $this->scopesConfig = [];
+
+            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+                // prepare file
+                $file = sprintf('application/Espo/Modules/%s/Configs/Scopes.php', $module);
+
+                if (file_exists($file)) {
+                    $this->scopesConfig = array_merge_recursive($this->scopesConfig, include $file);
+                }
+            }
+        }
+
+        return $this->scopesConfig;
     }
 }
