@@ -147,7 +147,10 @@ class ControllerManager
             $controllerName,
             'after' . ucfirst($primaryActionMethodName),
             [
-                'result' => $result
+                'params'  => $params,
+                'data'    => $data,
+                'request' => $request,
+                'result'  => $result
             ]
         );
 
