@@ -284,7 +284,6 @@ class ComposerModule extends Base
 
                     // push
                     $this->modulePackage[$moduleId][$version] = $newRow;
-
                 }
 
                 // caching
