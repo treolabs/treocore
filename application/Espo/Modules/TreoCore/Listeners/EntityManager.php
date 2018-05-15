@@ -63,20 +63,8 @@ class EntityManager extends AbstractListener
      */
     public function afterActionCreateEntity(array $data): array
     {
-        // prepare data
-        $postData = get_object_vars($data['data']);
-
-        // prepare name
-        $name = trim(ucfirst($postData['name']));
-
         // update scopes
-        $this
-            ->getContainer()
-            ->get('metadata')
-            ->set('scopes', $name, $this->getPreparedScopesData($postData));
-
-        // save
-        $this->getContainer()->get('metadata')->save();
+        $this->updateScope(get_object_vars($data['data']));
 
         return $data;
     }
@@ -88,19 +76,29 @@ class EntityManager extends AbstractListener
      */
     public function beforeActionUpdateEntity(array $data): array
     {
-        // prepare data
-        $postData = get_object_vars($data['data']);
-
-        // prepare name
-        $name = trim(ucfirst($postData['name']));
-
         // update scopes
+        $this->updateScope(get_object_vars($data['data']));
+
+        return $data;
+    }
+
+    /**
+     * Set data to scope
+     *
+     * @param array $data
+     */
+    protected function updateScope(array $data): void
+    {
+        // prepare name
+        $name = trim(ucfirst($data['name']));
+
         $this
             ->getContainer()
             ->get('metadata')
-            ->set('scopes', $name, $this->getPreparedScopesData($postData));
+            ->set('scopes', $name, $this->getPreparedScopesData($data));
 
-        return $data;
+        // save
+        $this->getContainer()->get('metadata')->save();
     }
 
     /**
