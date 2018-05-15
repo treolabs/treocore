@@ -353,6 +353,33 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Call composer update command by web interface")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/ModuleManager/updateComposer")
+     * @ApiReturn(sample="{
+     *     'status': 'true',
+     *     'output': 'some text from composer'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionUpdateComposer($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getService('Composer')->run('update');
+    }
+
+    /**
      * Get module manager service
      *
      * @return ModuleManagerService

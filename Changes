@@ -1,3 +1,6 @@
+1.11.1  2018-05-15 11:49:29 Europe/Kiev
+    * UST #63555 : Add possibility to automatic update module(s) patch (Roman Ratsun)
+
 1.11.0  2018-05-14 14:29:47 Europe/Kiev
     * UST #63551 : Modify notification of modules deleting event (Roman Ratsun)
     * UST #63541 : Mass deleting of all modules in ModuleManager // Back (Roman Ratsun)
