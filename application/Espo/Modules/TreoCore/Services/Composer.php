@@ -91,6 +91,16 @@ class Composer extends Base
     }
 
     /**
+     * Run composer UPDATE command
+     *
+     * @return array
+     */
+    public function runUpdate(): array
+    {
+        return $this->run('update');
+    }
+
+    /**
      * Run composer command
      *
      * @param string $command
