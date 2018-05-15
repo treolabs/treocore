@@ -107,7 +107,7 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         prepareAttributes() {
-            let version = this.model.get('version');
+            let version = this.model.get('currentVersion');
             if (typeof version === 'string' && version.substring(0, 1) == 'v') {
                 version = version.substr(1);
             }
