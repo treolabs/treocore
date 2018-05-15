@@ -70,24 +70,9 @@ class EntityManager extends AbstractListener
      *
      * @return array
      */
-    public function beforeActionUpdateEntity(array $data): array
-    {
-        // update scopes
-        $this->updateScope(get_object_vars($data['data']));
-
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     public function afterActionUpdateEntity(array $data): array
     {
-        if ($data['result']) {
-            $this->getContainer()->get('dataManager')->rebuild();
-        }
+        $this->afterActionCreateEntity($data);
 
         return $data;
     }
