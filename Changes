@@ -1,3 +1,5 @@
+    * BUG #63616 : 500 помилка на сторінці сутності, коли переходимо на сутність відразу після її створення (Roman Ratsun)
+
 1.11.1  2018-05-15 11:49:29 Europe/Kiev
     * UST #63555 : Add possibility to automatic update module(s) patch (Roman Ratsun)
 
