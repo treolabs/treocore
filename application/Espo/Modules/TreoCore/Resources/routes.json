@@ -26,22 +26,6 @@
     }
   },
   {
-    "route": "/EntityManager/action/createEntity",
-    "method": "post",
-    "params": {
-      "controller": "TreoEntityManager",
-      "action": "createEntity"
-    }
-  },
-  {
-    "route": "/EntityManager/action/updateEntity",
-    "method": "post",
-    "params": {
-      "controller": "TreoEntityManager",
-      "action": "updateEntity"
-    }
-  },
-  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {

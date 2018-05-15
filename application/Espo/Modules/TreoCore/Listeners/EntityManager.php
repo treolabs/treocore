@@ -46,44 +46,79 @@ class EntityManager extends AbstractListener
     /**
      * @var array
      */
-    protected $scopesConfig = null;
+    protected $scopes
+        = [
+            'hasOwner',
+            'hasAssignedUser',
+            'hasTeam',
+            'hasActivities', //@todo remove it after module upgrading
+            'hasTasks', //@todo remove it after module upgrading
+            'hasCompleteness', //@todo remove it after module upgrading
+        ];
 
     /**
-     * After create action
-     *
      * @param array $data
      *
-     * @return void
+     * @return array
      */
-    public function afterCreate(array $data)
+    public function afterActionCreateEntity(array $data): array
+    {
+        // update scopes
+        $this->updateScope(get_object_vars($data['data']));
+
+        if ($data['result']) {
+            // rebuild DB
+            $this->getContainer()->get('dataManager')->rebuild();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function beforeActionUpdateEntity(array $data): array
+    {
+        // update scopes
+        $this->updateScope(get_object_vars($data['data']));
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterActionUpdateEntity(array $data): array
+    {
+        if ($data['result']) {
+            // rebuild DB
+            $this->getContainer()->get('dataManager')->rebuild();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set data to scope
+     *
+     * @param array $data
+     */
+    protected function updateScope(array $data): void
     {
         // prepare name
         $name = trim(ucfirst($data['name']));
 
-        // update scopes
         $this
             ->getContainer()
             ->get('metadata')
-            ->set('scopes', $name, $this->getPreparedScopesData($data['data']));
+            ->set('scopes', $name, $this->getPreparedScopesData($data));
 
         // save
         $this->getContainer()->get('metadata')->save();
-    }
-
-    /**
-     * Before update action
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    public function beforeUpdate(array $data)
-    {
-        // update scopes
-        $this
-            ->getContainer()
-            ->get('metadata')
-            ->set('scopes', $data['name'], $this->getPreparedScopesData($data['data']));
     }
 
     /**
@@ -95,37 +130,15 @@ class EntityManager extends AbstractListener
      */
     protected function getPreparedScopesData(array $data): array
     {
+        // prepare result
         $scopeData = [];
+
         foreach ($data as $key => $value) {
-            if (in_array($key, $this->getScopesConfig()['edited'])) {
+            if (in_array($key, $this->scopes)) {
                 $scopeData[$key] = $value;
             }
         }
 
         return $scopeData;
-    }
-
-    /**
-     * Get scopes config
-     *
-     * @return array
-     */
-    protected function getScopesConfig(): array
-    {
-        if (is_null($this->scopesConfig)) {
-            // prepare result
-            $this->scopesConfig = [];
-
-            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-                // prepare file
-                $file = sprintf('application/Espo/Modules/%s/Configs/Scopes.php', $module);
-
-                if (file_exists($file)) {
-                    $this->scopesConfig = array_merge_recursive($this->scopesConfig, include $file);
-                }
-            }
-        }
-
-        return $this->scopesConfig;
     }
 }
