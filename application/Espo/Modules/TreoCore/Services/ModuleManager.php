@@ -863,7 +863,7 @@ class ModuleManager extends Base
                     }
 
                     // push
-                    $result[str_replace('.', '', $version)] = [
+                    $result[$version] = [
                         'version' => $version,
                         'require' => array_values($require)
                     ];
@@ -875,48 +875,6 @@ class ModuleManager extends Base
 
             // prepare result
             $result = array_values($result);
-        }
-
-        if (!empty($result)) {
-            // prepare data
-            $responseData = [];
-
-            // prepare patern
-            $pattern = "/^(.*)\.(.*)\.(.*)$/";
-
-            foreach ($result as $k => $row) {
-                // push
-                $responseData[] = $row;
-
-                if (isset($result[$k + 1])) {
-                    // parse version
-                    preg_match_all($pattern, $row['version'], $currentMatches);
-                    preg_match_all($pattern, $result[$k + 1]['version'], $nextMatches);
-
-                    if ($currentMatches[2][0] != $nextMatches[2][0]) {
-                        $newRow = $row;
-                        $newRow['version'] = $currentMatches[1][0] . '.' . $currentMatches[2][0] . '.*';
-
-                        // push
-                        $responseData[] = $newRow;
-                    }
-                }
-            }
-
-            // get max
-            $max = array_pop($result);
-
-            // parse version
-            preg_match_all($pattern, $max['version'], $maxMatches);
-
-            $newRow = $max;
-            $newRow['version'] = $maxMatches[1][0] . '.' . $maxMatches[2][0] . '.*';
-
-            // push
-            $responseData[] = $newRow;
-
-            // set result
-            $result = $responseData;
         }
 
         return $result;
