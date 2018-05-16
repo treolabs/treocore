@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core;
 
@@ -47,6 +47,26 @@ use Espo\Core\Utils\File\Manager as FileManager;
  */
 class Container extends EspoContainer
 {
+
+    /**
+     * Reload object
+     *
+     * @param string $name
+     *
+     * @return Container
+     */
+    public function reload(string $name): Container
+    {
+        // unset
+        if (isset($this->data[$name])) {
+            unset($this->data[$name]);
+        }
+
+        // load
+        $this->load($name);
+
+        return $this;
+    }
 
     /**
      * Load metadata
