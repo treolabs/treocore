@@ -11340,8 +11340,12 @@ ul.dropdown-menu > li.checkbox {
     display: inline-block
 }
 
-#login .form-control {
+#login input.form-control {
     padding: 6px 10px 6px 30px;
+}
+
+#login select.form-control {
+    padding: 6px 10px 6px 3px;
 }
 
 #login label[for='field-username'],
