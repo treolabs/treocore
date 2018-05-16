@@ -111,12 +111,6 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     return item;
                 }, this);
 
-                this.panelList.sort(function(item1, item2) {
-                    var order1 = item1.order || 0;
-                    var order2 = item2.order || 0;
-                    return order1 > order2;
-                });
-
                 if (this.streamPanel && this.getMetadata().get('scopes.' + this.scope + '.stream') && !this.getConfig().get('isStreamSide')) {
                     this.setupStreamPanel();
                 }

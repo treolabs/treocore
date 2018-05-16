@@ -11,6 +11,9 @@
   "views/modal": [
     "treo-core"
   ],
+  "views/list": [
+    "treo-core"
+  ],
   "views/login": [
     "treo-core"
   ],
