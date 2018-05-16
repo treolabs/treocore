@@ -1,3 +1,4 @@
+    * BUG #62888 : После отключения модуля комплитнесс с выведенными полями комплит через лояуты - 500 ошибка при переходе в список в котором вывеждены поля (Yurii Kondratskyi)
     * UST #63773 : Add possibility to reload objects in Container (Roman Ratsun)
     * ADD #63595 : В попапі логіну вибір мови розташований не по лінії іконок (Yurii Kondratskyi)
     * UST #63510 : При виборі мови при логіні мова інтерфейсу залишається, такою як в налаштуваннях (Yuriy  Haiduchyk, Yurii Kondratskyi)
