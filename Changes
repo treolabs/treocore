@@ -1,3 +1,4 @@
+    * UST #63773 : Add possibility to reload objects in Container (Roman Ratsun)
     * ADD #63595 : В попапі логіну вибір мови розташований не по лінії іконок (Yurii Kondratskyi)
     * UST #63510 : При виборі мови при логіні мова інтерфейсу залишається, такою як в налаштуваннях (Yuriy  Haiduchyk, Yurii Kondratskyi)
     * BUG #63623 : На сторінці сутності не відображається Owner при створенні запису (Roman Ratsun)
