@@ -47,7 +47,7 @@ class App extends AbstractListener
 
     /**
      * After action user
-     * (update language)
+     * (change language)
      *
      * @param array $data
      *
@@ -56,12 +56,13 @@ class App extends AbstractListener
     public function afterActionUser(array $data): array
     {
         $language = $data['request']->get('language');
+        $currentLanguage = $data['result']['language'] ?? '';
 
-        if (!empty($data['result']['user']) && !empty($language)) {
+        if (!empty($data['result']['user']) && !empty($language) && $currentLanguage !== $language) {
             /** @var Entity $preferences */
             $preferences = $this->getContainer()->get('Preferences');
 
-            // update language for user
+            // change language for user
             $preferences->set('language', $language);
             $this->getEntityManager()->saveEntity($preferences);
 
