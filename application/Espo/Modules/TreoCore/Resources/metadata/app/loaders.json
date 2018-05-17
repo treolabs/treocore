@@ -9,5 +9,6 @@
   "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader",
   "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader",
   "Websocket": "Espo\\Modules\\TreoCore\\Loaders\\WebsocketLoader",
-  "ServiceFactory": "Espo\\Modules\\TreoCore\\Loaders\\ServiceFactoryLoader"
+  "ServiceFactory": "Espo\\Modules\\TreoCore\\Loaders\\ServiceFactoryLoader",
+  "HookManager": "Espo\\Modules\\TreoCore\\Loaders\\HookManagerLoader"
 }

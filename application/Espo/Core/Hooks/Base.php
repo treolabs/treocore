@@ -34,37 +34,101 @@
 
 namespace Espo\Core\Hooks;
 
+use Espo\Core\Acl;
+use Espo\Core\AclManager;
 use Espo\Core\Interfaces\Injectable;
+use Espo\Core\ORM\Repositories\RDB as Repository;
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Metadata;
+use Espo\ORM\EntityManager;
+use Espo\Entities\User;
 
+/**
+ * Abstract hook Base
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo   treoinject
+ */
 abstract class Base implements Injectable
 {
-    protected $dependencies = array(
-        'container',
-        'entityManager',
-        'config',
-        'metadata',
-        'aclManager',
-        'user',
-    );
-
-    protected $injections = array();
-
+    /**
+     * @var int
+     */
     public static $order = 9;
 
+    /**
+     * @var array
+     */
+    protected $dependencies
+        = [
+            'entityManager',
+            'config',
+            'metadata',
+            'aclManager',
+            'user',
+        ];
+
+    /**
+     * @var Container
+     */
+    private $container = null;
+
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->init();
     }
 
-    protected function init()
+    /**
+     * Set container
+     *
+     * @param Container $container
+     *
+     * @return Base
+     */
+    public function setContainer(Container $container)
     {
+        if (is_null($this->container)) {
+            $this->container = $container;
+        }
+
+        return $this;
     }
 
+    /**
+     * Get dependency list
+     *
+     * @return array
+     */
     public function getDependencyList()
     {
         return $this->dependencies;
     }
 
+    /**
+     * Init
+     */
+    protected function init()
+    {
+    }
+
+    /**
+     * Add dependency
+     *
+     * @param string $name
+     */
+    protected function addDependency($name)
+    {
+        $this->dependencies[] = $name;
+    }
+
+    /**
+     * Add dependency list
+     *
+     * @param array $list
+     */
     protected function addDependencyList(array $list)
     {
         foreach ($list as $item) {
@@ -72,56 +136,87 @@ abstract class Base implements Injectable
         }
     }
 
-    protected function addDependency($name)
-    {
-        $this->dependencies[] = $name;
-    }
-
+    /**
+     * Get injection
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
     protected function getInjection($name)
     {
-        return $this->injections[$name];
+        if (!in_array($name, $this->getDependencyList())) {
+            throw new Error('No such dependency');
+        }
+
+        return $this->getContainer()->get($name);
     }
 
-    public function inject($name, $object)
-    {
-        $this->injections[$name] = $object;
-    }
-
+    /**
+     * Get container
+     *
+     * @return Container
+     */
     protected function getContainer()
     {
-        return $this->getInjection('container');
+        return $this->container;
     }
 
+    /**
+     * Get EntityManager
+     *
+     * @return EntityManager
+     */
     protected function getEntityManager()
     {
-        return $this->getInjection('entityManager');
+        return $this->getContainer()->get('entityManager');
     }
 
+    /**
+     * Get User
+     *
+     * @return User
+     */
     protected function getUser()
     {
-        return $this->getInjection('user');
+        return $this->getContainer()->get('user');
     }
 
+    /**
+     * @return Acl;
+     */
     protected function getAcl()
     {
         return $this->getContainer()->get('acl');
     }
 
+    /**
+     * @return AclManager;
+     */
     protected function getAclManager()
     {
-        return $this->getInjection('aclManager');
+        return $this->getContainer()->get('aclManager');
     }
 
+    /**
+     * @return Config;
+     */
     protected function getConfig()
     {
-        return $this->getInjection('config');
+        return $this->getContainer()->get('config');
     }
 
+    /**
+     * @return Metadata;
+     */
     protected function getMetadata()
     {
-        return $this->getInjection('metadata');
+        return $this->getContainer()->get('metadata');
     }
 
+    /**
+     * @return Repository
+     */
     protected function getRepository()
     {
         return $this->getEntityManager()->getRepository($this->entityName);

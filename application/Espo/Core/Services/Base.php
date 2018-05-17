@@ -114,7 +114,7 @@ abstract class Base implements Injectable
      */
     protected function getInjection($name)
     {
-        if (!in_array($name, $this->dependencies)) {
+        if (!in_array($name, $this->getDependencyList())) {
             throw new Error('No such dependency');
         }
 
