@@ -87,7 +87,7 @@ class Metadata extends AbstractMetadata
     protected function prepareOwners(array $data): array
     {
         foreach ($data['entityDefs'] as $ent => $row) {
-            // unset ownerUser
+            // prepare ownerUser
             if (empty($data['scopes'][$ent]['hasOwner'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['ownerUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['ownerUser']);
@@ -103,9 +103,31 @@ class Metadata extends AbstractMetadata
                     $data['entityDefs'][$ent]['indexes'] = $this
                         ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'ownerUserId');
                 }
+            } else {
+                if (empty($data['entityDefs'][$ent]['fields']['ownerUser'])) {
+                    $data['entityDefs'][$ent]['fields']['ownerUser'] = [
+                        'type'     => 'link',
+                        'required' => true,
+                        'view'     => 'views/fields/owner-user'
+                    ];
+                }
+                if (empty($data['entityDefs'][$ent]['links']['ownerUser'])) {
+                    $data['entityDefs'][$ent]['links']['ownerUser'] = [
+                        'type'   => 'belongsTo',
+                        'entity' => 'User'
+                    ];
+                }
+                if (empty($data['entityDefs'][$ent]['indexes']['ownerUser'])) {
+                    $data['entityDefs'][$ent]['indexes']['ownerUser'] = [
+                        'columns' => [
+                            'ownerUserId',
+                            'deleted'
+                        ]
+                    ];
+                }
             }
 
-            // unset assignedUser
+            // prepare assignedUser
             if (empty($data['scopes'][$ent]['hasAssignedUser'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['assignedUser'])) {
                     unset($data['entityDefs'][$ent]['fields']['assignedUser']);
@@ -121,15 +143,51 @@ class Metadata extends AbstractMetadata
                     $data['entityDefs'][$ent]['indexes'] = $this
                         ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'assignedUserId');
                 }
+            } else {
+                if (empty($data['entityDefs'][$ent]['fields']['assignedUser'])) {
+                    $data['entityDefs'][$ent]['fields']['assignedUser'] = [
+                        'type'     => 'link',
+                        'required' => true,
+                        'view'     => 'views/fields/assigned-user'
+                    ];
+                }
+                if (empty($data['entityDefs'][$ent]['links']['assignedUser'])) {
+                    $data['entityDefs'][$ent]['links']['assignedUser'] = [
+                        'type'   => 'belongsTo',
+                        'entity' => 'User'
+                    ];
+                }
+                if (empty($data['entityDefs'][$ent]['indexes']['assignedUser'])) {
+                    $data['entityDefs'][$ent]['indexes']['assignedUser'] = [
+                        'columns' => [
+                            'assignedUserId',
+                            'deleted'
+                        ]
+                    ];
+                }
             }
 
-            // unset team
+            // prepare team
             if (empty($data['scopes'][$ent]['hasTeam'])) {
                 if (isset($data['entityDefs'][$ent]['fields']['teams'])) {
                     unset($data['entityDefs'][$ent]['fields']['teams']);
                 }
                 if (isset($data['entityDefs'][$ent]['links']['teams'])) {
                     unset($data['entityDefs'][$ent]['links']['teams']);
+                }
+            } else {
+                if (empty($data['entityDefs'][$ent]['fields']['teams'])) {
+                    $data['entityDefs'][$ent]['fields']['teams'] = [
+                        'type'                        => 'hasMany',
+                        'entity'                      => 'Team',
+                        'relationName'                => 'EntityTeam',
+                        'layoutRelationshipsDisabled' => true
+                    ];
+                }
+                if (empty($data['entityDefs'][$ent]['links']['teams'])) {
+                    $data['entityDefs'][$ent]['links']['teams'] = [
+                        'type' => 'linkMultiple'
+                    ];
                 }
             }
         }

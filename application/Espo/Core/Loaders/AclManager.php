@@ -44,8 +44,10 @@ class AclManager extends Base
      */
     public function load()
     {
-        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+        // prepare classname
+        $className = $this
+            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
 
-        return new $className($this->getContainer()->get('container'));
+        return new $className($this->getContainer());
     }
 }

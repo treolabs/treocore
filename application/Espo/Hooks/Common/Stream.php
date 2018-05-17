@@ -54,6 +54,8 @@ class Stream extends \Espo\Core\Hooks\Base
     {
         parent::init();
         $this->addDependency('serviceFactory');
+        //@todo treoinject
+        $this->addDependency('preferences');
     }
 
     protected function getServiceFactory()
@@ -63,7 +65,8 @@ class Stream extends \Espo\Core\Hooks\Base
 
     protected function getPreferences()
     {
-        return $this->getInjection('container')->get('preferences');
+        //@todo treoinject
+        return $this->getInjection('preferences');
     }
 
     protected function checkHasStream(Entity $entity)

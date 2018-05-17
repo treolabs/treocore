@@ -171,6 +171,11 @@ class ModuleManager extends Base
                     $item['versions'] = $this->prepareModuleVersions($module);
                     if (!empty($item['versions'])) {
                         $versions = array_column($item['versions'], 'version');
+                        foreach ($versions as $k => $version) {
+                            if (strpos($version, '*') !== false) {
+                                unset($versions[$k]);
+                            }
+                        }
                         $item['availableVersions'] = implode(", ", $versions);
                     }
                     $item['required'] = $this->getModuleRequireds($module);

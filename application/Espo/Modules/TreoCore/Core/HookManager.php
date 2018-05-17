@@ -31,66 +31,50 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core;
 
-use Espo\Core\Container as EspoContainer;
-use Espo\Modules\TreoCore\Core\Utils\Config;
-use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\Container;
+use Espo\Core\HookManager as EspoHookManager;
 
 /**
- * Container class
+ * HookManager class
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class Container extends EspoContainer
+class HookManager extends EspoHookManager
 {
+    /**
+     * @var Container
+     */
+    protected $protectedContainer;
 
     /**
-     * Reload object
+     * Create hoo by classname
      *
-     * @param string $name
+     * @param string $className
      *
-     * @return Container
+     * @return mixed
      */
-    public function reload(string $name): Container
+    public function createHookByClassName($className)
     {
-        // unset
-        if (isset($this->data[$name])) {
-            unset($this->data[$name]);
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->protectedContainer);
         }
 
-        // load
-        $this->load($name);
+        $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return HookManager
+     */
+    public function setProtectedContainer(Container $container): HookManager
+    {
+        $this->protectedContainer = $container;
 
         return $this;
-    }
-
-    /**
-     * Load metadata
-     *
-     * @return Utils\Metadata
-     */
-    protected function loadMetadata(): Utils\Metadata
-    {
-        // create metadata
-        $metadata = new Utils\Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
-    }
-
-    /**
-     * Load config
-     *
-     * @return Config
-     */
-    protected function loadConfig()
-    {
-        return new Config(new FileManager());
     }
 }

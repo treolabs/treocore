@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,65 +31,18 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
+    Dep => Dep.extend({
 
-namespace Espo\Modules\TreoCore\Core;
+        setupSorting() {
+            var sortingParams = this.getStorage().get('listSorting', this.collection.name);
 
-use Espo\Core\Container as EspoContainer;
-use Espo\Modules\TreoCore\Core\Utils\Config;
-use Espo\Core\Utils\File\Manager as FileManager;
+            if (sortingParams && sortingParams.sortBy && !(sortingParams.sortBy in this.getMetadata().get(['entityDefs', this.collection.name, 'fields']))) {
+                this.getStorage().clear('listSorting', this.collection.name);
+            }
 
-/**
- * Container class
- *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
- */
-class Container extends EspoContainer
-{
-
-    /**
-     * Reload object
-     *
-     * @param string $name
-     *
-     * @return Container
-     */
-    public function reload(string $name): Container
-    {
-        // unset
-        if (isset($this->data[$name])) {
-            unset($this->data[$name]);
+            Dep.prototype.setupSorting.call(this);
         }
 
-        // load
-        $this->load($name);
-
-        return $this;
-    }
-
-    /**
-     * Load metadata
-     *
-     * @return Utils\Metadata
-     */
-    protected function loadMetadata(): Utils\Metadata
-    {
-        // create metadata
-        $metadata = new Utils\Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
-    }
-
-    /**
-     * Load config
-     *
-     * @return Config
-     */
-    protected function loadConfig()
-    {
-        return new Config(new FileManager());
-    }
-}
+    })
+);

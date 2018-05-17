@@ -31,66 +31,32 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core;
 
-use Espo\Core\Container as EspoContainer;
-use Espo\Modules\TreoCore\Core\Utils\Config;
-use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\ServiceFactory as EspoServiceFactory;
 
 /**
- * Container class
+ * ServiceFactory class
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class Container extends EspoContainer
+class ServiceFactory extends EspoServiceFactory
 {
-
     /**
-     * Reload object
+     * Create by classname
      *
-     * @param string $name
+     * @param $className
      *
-     * @return Container
+     * @return mixed
      */
-    public function reload(string $name): Container
+    protected function createByClassName($className)
     {
-        // unset
-        if (isset($this->data[$name])) {
-            unset($this->data[$name]);
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->getContainer());
         }
 
-        // load
-        $this->load($name);
-
-        return $this;
-    }
-
-    /**
-     * Load metadata
-     *
-     * @return Utils\Metadata
-     */
-    protected function loadMetadata(): Utils\Metadata
-    {
-        // create metadata
-        $metadata = new Utils\Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
-    }
-
-    /**
-     * Load config
-     *
-     * @return Config
-     */
-    protected function loadConfig()
-    {
-        return new Config(new FileManager());
+        throw new Error("Class '$className' does not exist.");
     }
 }
