@@ -72,7 +72,7 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             Dep.prototype.setup.call(this);
 
             this.wait(true);
-            this.ajaxGetRequest('ModuleManager/composerUser')
+            this.ajaxGetRequest('Composer/gitAuth')
                 .then(response => {
                     this.getModelFactory().create(null, model => {
                         this.model = model;
@@ -187,7 +187,7 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             this.attributes = this.model.getClonedAttributes();
             this.actionCancelEdit();
             this.notify('Saving...');
-            this.ajaxPutRequest('ModuleManager/composerUser', data)
+            this.ajaxPutRequest('Composer/gitAuth', data)
                 .then(response => {
                     if (response) {
                         this.trigger('after:save');
