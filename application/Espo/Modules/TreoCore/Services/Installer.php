@@ -70,7 +70,7 @@ class Installer extends Base
             'dataManager',
             'crypt',
             'language',
-            'container'
+            'eventManager'
         ]);
     }
 
@@ -263,8 +263,8 @@ class Installer extends Base
                 $this->getConfig()->set('isInstalled', true);
                 $this->getConfig()->save();
 
-                // triggered event afterInstallSystem
-                $this->getInjection('container')->get('eventManager')->triggered('Installer', 'afterInstallSystem');
+                //@todo treoinject
+                $this->getInjection('eventManager')->triggered('Installer', 'afterInstallSystem');
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();

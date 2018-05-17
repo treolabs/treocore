@@ -59,7 +59,7 @@ class Stream extends \Espo\Core\Services\Base
             'metadata',
             'acl',
             'aclManager',
-            'container'
+            'serviceFactory'
         ]);
     }
 
@@ -71,7 +71,8 @@ class Stream extends \Espo\Core\Services\Base
 
     protected function getServiceFactory()
     {
-        return $this->getInjection('container')->get('serviceFactory');
+        //@todo treoinject
+        return $this->getInjection('serviceFactory');
     }
 
     protected function getAcl()
