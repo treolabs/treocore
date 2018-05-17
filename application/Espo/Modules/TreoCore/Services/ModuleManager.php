@@ -55,75 +55,12 @@ class ModuleManager extends Base
     /**
      * @var string
      */
-    public static $gitServer = 'gitlab.zinit1.com';
-
-    /**
-     * @var string
-     */
     protected $moduleJsonPath = 'custom/Espo/Custom/Resources/module.json';
 
     /**
      * @var array
      */
     protected $moduleRequireds = [];
-
-    /**
-     * @var string
-     */
-    protected $passwordSalt = '4fj-v#C&4k?H&MkC';
-
-    /**
-     * Get composer user data
-     *
-     * @return array
-     */
-    public function getComposerUser(): array
-    {
-        // prepare result
-        $result = [];
-
-        // get auth data
-        $authData = $this->getComposerService()->getAuthData();
-
-        if (!empty($authData['http-basic'][self::$gitServer]) && is_array($authData['http-basic'][self::$gitServer])) {
-            $result = $authData['http-basic'][self::$gitServer];
-            $result['password'] = $this->passwordSalt;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Set composer user data
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @return bool
-     */
-    public function setComposerUser(string $username, string $password): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (empty($authData = $this->getComposerService()->getAuthData())
-            || $password != $this->passwordSalt) {
-            // prepare auth data
-            $authData['http-basic'][self::$gitServer] = [
-                'username' => $username,
-                'password' => $password
-            ];
-
-            $result = $this->getComposerService()->setAuthData($authData);
-
-            if ($result) {
-                // triggered event
-                $this->triggeredEvent('updateUser', $authData);
-            }
-        }
-
-        return $result;
-    }
 
     /**
      * Get list

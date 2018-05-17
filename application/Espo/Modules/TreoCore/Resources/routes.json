@@ -66,19 +66,19 @@
     }
   },
   {
-    "route": "/ModuleManager/composerUser",
+    "route": "/Composer/gitAuth",
     "method": "get",
     "params": {
-      "controller": "ModuleManager",
-      "action": "getComposerUser"
+      "controller": "Composer",
+      "action": "getGitAuthData"
     }
   },
   {
-    "route": "/ModuleManager/composerUser",
+    "route": "/Composer/gitAuth",
     "method": "put",
     "params": {
-      "controller": "ModuleManager",
-      "action": "setComposerUser"
+      "controller": "Composer",
+      "action": "setGitAuthData"
     }
   },
   {
