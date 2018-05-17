@@ -118,7 +118,7 @@ abstract class Base implements Injectable
             throw new Error('No such dependency');
         }
 
-        return $this->getContainer()->get($name);
+        return $this->container->get($name);
     }
 
     /**
@@ -171,16 +171,6 @@ abstract class Base implements Injectable
     protected function getUser()
     {
         return $this->getInjection('user');
-    }
-
-    /**
-     * Get container
-     *
-     * @return Container
-     */
-    private function getContainer()
-    {
-        return $this->container;
     }
 }
 
