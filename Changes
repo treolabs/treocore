@@ -1,3 +1,4 @@
+1.11.2  2018-05-17 11:56:36 Europe/Kiev
     * UST #63802 : Modify abstract service "Base" and ServiceFactory (Roman Ratsun)
     * BUG #62888 : После отключения модуля комплитнесс с выведенными полями комплит через лояуты - 500 ошибка при переходе в список в котором вывеждены поля (Yurii Kondratskyi)
     * UST #63773 : Add possibility to reload objects in Container (Roman Ratsun)
