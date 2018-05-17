@@ -31,22 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Core\Interfaces;
+namespace Espo\Modules\TreoCore\Loaders;
+
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\ServiceFactory;
 
 /**
- * Interface Injectable
+ * ServiceFactory Loader
  *
  * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
  */
-interface Injectable
+class ServiceFactoryLoader extends Base
 {
     /**
-     * Get dependency list
+     * Load ServiceFactory
      *
-     * @return array
+     * @return ServiceFactory
      */
-    public function getDependencyList();
+    public function load()
+    {
+        return new ServiceFactory($this->getContainer());
+    }
 }
-

@@ -31,22 +31,32 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Core\Interfaces;
+namespace Espo\Modules\TreoCore\Core;
+
+use Espo\Core\ServiceFactory as EspoServiceFactory;
 
 /**
- * Interface Injectable
+ * ServiceFactory class
  *
  * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
  */
-interface Injectable
+class ServiceFactory extends EspoServiceFactory
 {
     /**
-     * Get dependency list
+     * Create by classname
      *
-     * @return array
+     * @param $className
+     *
+     * @return mixed
      */
-    public function getDependencyList();
-}
+    protected function createByClassName($className)
+    {
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->getContainer());
+        }
 
+        throw new Error("Class '$className' does not exist.");
+    }
+}
