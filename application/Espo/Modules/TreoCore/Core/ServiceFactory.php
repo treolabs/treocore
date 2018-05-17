@@ -31,23 +31,32 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Core\Loaders;
+namespace Espo\Modules\TreoCore\Core;
 
-class AclManager extends Base
+use Espo\Core\ServiceFactory as EspoServiceFactory;
+
+/**
+ * ServiceFactory class
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class ServiceFactory extends EspoServiceFactory
 {
-
     /**
-     * Load AclManager
+     * Create by classname
+     *
+     * @param $className
      *
      * @return mixed
      */
-    public function load()
+    protected function createByClassName($className)
     {
-        // prepare classname
-        $className = $this
-            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->getContainer());
+        }
 
-        return new $className($this->getContainer());
+        throw new Error("Class '$className' does not exist.");
     }
 }

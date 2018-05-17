@@ -46,10 +46,12 @@ class App extends \Espo\Core\Services\Base
     {
         $this->addDependency('preferences');
         $this->addDependency('acl');
-        $this->addDependency('container');
         $this->addDependency('entityManager');
         $this->addDependency('metadata');
         $this->addDependency('selectManagerFactory');
+
+        //@todo treoinject
+        $this->addDependency('dataManager');
     }
 
     protected function getPreferences()
@@ -244,12 +246,14 @@ class App extends \Espo\Core\Services\Base
 
     public function jobClearCache()
     {
-        $this->getInjection('container')->get('dataManager')->clearCache();
+        //@todo treoinject
+        $this->getInjection('dataManager')->clearCache();
     }
 
     public function jobRebuild()
     {
-        $this->getInjection('container')->get('dataManager')->rebuild();
+        //@todo treoinject
+        $this->getInjection('dataManager')->rebuild();
     }
 
 }

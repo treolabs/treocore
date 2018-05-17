@@ -31,23 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Core\Loaders;
+namespace Espo\Modules\TreoCore\Loaders;
 
-class AclManager extends Base
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\ServiceFactory;
+
+/**
+ * ServiceFactory Loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class ServiceFactoryLoader extends Base
 {
-
     /**
-     * Load AclManager
+     * Load ServiceFactory
      *
-     * @return mixed
+     * @return ServiceFactory
      */
     public function load()
     {
-        // prepare classname
-        $className = $this
-            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
-
-        return new $className($this->getContainer());
+        return new ServiceFactory($this->getContainer());
     }
 }

@@ -41,13 +41,15 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     protected function init()
     {
         parent::init();
-        $this->addDependency('container');
         $this->addDependency('config');
+        //@todo treoinject
+        $this->addDependency('fileStorageManager');
     }
 
     protected function getFileStorageManager()
     {
-        return $this->getInjection('container')->get('fileStorageManager');
+        //@todo treoinject
+        return $this->getInjection('fileStorageManager');
     }
 
     protected function getConfig()

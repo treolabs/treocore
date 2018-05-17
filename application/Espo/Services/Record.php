@@ -134,14 +134,22 @@ class Record extends \Espo\Core\Services\Base
         return $this->entityType;
     }
 
+    /**
+     * @todo treoinject
+     * @return \Espo\Core\ServiceFactory
+     */
     protected function getServiceFactory()
     {
-        return $this->injections['serviceFactory'];
+        return $this->getInjection('serviceFactory');
     }
 
+    /**
+     * @todo treoinject
+     * @return \Espo\Core\SelectManagerFactory
+     */
     protected function getSelectManagerFactory()
     {
-        return $this->injections['selectManagerFactory'];
+        return $this->getInjection('selectManagerFactory');
     }
 
     protected function getAcl()

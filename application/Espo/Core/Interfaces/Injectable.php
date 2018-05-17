@@ -34,10 +34,19 @@
 
 namespace Espo\Core\Interfaces;
 
+/**
+ * Interface Injectable
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo   treoinject
+ */
 interface Injectable
 {
+    /**
+     * Get dependency list
+     *
+     * @return array
+     */
     public function getDependencyList();
-
-    public function inject($name, $object);
 }
 

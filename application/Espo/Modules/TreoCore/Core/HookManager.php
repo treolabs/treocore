@@ -31,23 +31,50 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Core\Loaders;
+namespace Espo\Modules\TreoCore\Core;
 
-class AclManager extends Base
+use Espo\Core\Container;
+use Espo\Core\HookManager as EspoHookManager;
+
+/**
+ * HookManager class
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class HookManager extends EspoHookManager
 {
+    /**
+     * @var Container
+     */
+    protected $protectedContainer;
 
     /**
-     * Load AclManager
+     * Create hoo by classname
+     *
+     * @param string $className
      *
      * @return mixed
      */
-    public function load()
+    public function createHookByClassName($className)
     {
-        // prepare classname
-        $className = $this
-            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->protectedContainer);
+        }
 
-        return new $className($this->getContainer());
+        $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return HookManager
+     */
+    public function setProtectedContainer(Container $container): HookManager
+    {
+        $this->protectedContainer = $container;
+
+        return $this;
     }
 }

@@ -59,7 +59,9 @@ class Stream extends \Espo\Core\Services\Base
             'metadata',
             'acl',
             'aclManager',
-            'container'
+            //@todo treoinject
+            'serviceFactory',
+            'fieldManager'
         ]);
     }
 
@@ -71,7 +73,8 @@ class Stream extends \Espo\Core\Services\Base
 
     protected function getServiceFactory()
     {
-        return $this->getInjection('container')->get('serviceFactory');
+        //@todo treoinject
+        return $this->getInjection('serviceFactory');
     }
 
     protected function getAcl()
@@ -91,7 +94,8 @@ class Stream extends \Espo\Core\Services\Base
 
     protected function getFieldManager()
     {
-        return $this->getInjection('container')->get('fieldManager');
+        //@todo treoinject
+        return $this->getInjection('fieldManager');
     }
 
     protected function getNotificationService()
