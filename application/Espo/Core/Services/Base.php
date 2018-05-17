@@ -144,6 +144,16 @@ abstract class Base implements Injectable
     }
 
     /**
+     * Reload dependency
+     *
+     * @param string $name
+     */
+    protected function reloadDependency($name)
+    {
+        $this->container->reload($name);
+    }
+
+    /**
      * Get EntityManager
      *
      * @return EntityManager
