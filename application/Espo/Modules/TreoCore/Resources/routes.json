@@ -66,6 +66,22 @@
     }
   },
   {
+    "route": "/ModuleManager/availableModulesList",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "getAvailableModulesList"
+    }
+  },
+  {
+    "route": "/ModuleManager/logs",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "logs"
+    }
+  },
+  {
     "route": "/Composer/gitAuth",
     "method": "get",
     "params": {
@@ -82,27 +98,11 @@
     }
   },
   {
-    "route": "/ModuleManager/availableModulesList",
-    "method": "get",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "getAvailableModulesList"
-    }
-  },
-  {
-    "route": "/ModuleManager/stream",
-    "method": "get",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "stream"
-    }
-  },
-  {
-    "route": "/ModuleManager/updateComposer",
+    "route": "/Composer/update",
     "method": "post",
     "params": {
-      "controller": "ModuleManager",
-      "action": "updateComposer"
+      "controller": "Composer",
+      "action": "update"
     }
   },
   {

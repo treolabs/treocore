@@ -31,36 +31,33 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Listeners;
 
-return [
-    'scheduledJobs'         => [
-        [
-            'scheduling' => '0 0 * * *',
-            'service'    => 'RestApiDocs',
-            'method'     => 'generateDocumentation',
-            'name'       => 'Generate REST API documentation',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '* * * * *',
-            'service'    => 'ProgressManager',
-            'method'     => 'executeProgressJobs',
-            'name'       => 'Execute progress manager jobs',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '0 */2 * * *',
-            'service'    => 'ComposerModule',
-            'method'     => 'cachingPackages',
-            'name'       => 'Caching module packages',
-            'data'       => []
-        ]
-    ],
-    'scheduledJobsServices' => [
-        // array of services
-    ]
-];
+/**
+ * Composer listener
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Composer extends AbstractListener
+{
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterActionUpdate(array $data): array
+    {
+        // create note
+        $note = $this->getEntityManager()->getEntity('Note');
+        $note->set('type', 'composerUpdate');
+        $note->set('parentType', 'ModuleManager');
+        $note->set('data', $data['result']);
+
+        // save note
+        $this->getEntityManager()->saveEntity($note);
+
+        return $data;
+    }
+}
