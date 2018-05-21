@@ -49,13 +49,27 @@ class Composer extends AbstractListener
      *
      * @return array
      */
-    public function afterActionUpdate(array $data): array
+    public function beforeComposerUpdate(array $data): array
     {
-        if (!empty($res = $data['result']) && is_array($res)) {
-            // push to stream
-            $this->pushToStream($res);
+        echo '<pre>';
+        print_r('123');
+        die();
 
-            if (isset($res['status']) && $res['status'] === 0) {
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterComposerUpdate(array $data): array
+    {
+        if (!empty($data)) {
+            // push to stream
+            $this->pushToStream($data);
+
+            if (isset($data['status']) && $data['status'] === 0) {
                 // save stable-composer.json file
                 $this->getService('Composer')->saveComposerJson();
             }

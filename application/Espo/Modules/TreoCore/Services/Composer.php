@@ -97,7 +97,21 @@ class Composer extends Base
      */
     public function runUpdate(): array
     {
-        return $this->run('update');
+        // get event manager
+        $eventManager = $this->getInjection('eventManager');
+
+        // triggered before action
+        $eventManager
+            ->triggered('Composer', 'beforeComposerUpdate', []);
+
+        // call composer
+        $composer = $this->run('update');
+
+        // triggered after action
+        $composer = $eventManager
+            ->triggered('Composer', 'afterComposerUpdate', $composer);
+
+        return $composer;
     }
 
     /**
@@ -319,6 +333,16 @@ class Composer extends Base
             // delete dir from backend
             self::deleteDir("application/Espo/Modules/{$moduleId}/");
         }
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('eventManager');
     }
 
     /**
