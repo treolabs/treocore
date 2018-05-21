@@ -267,7 +267,7 @@ class ModuleManager extends Base
     /**
      * @ApiDescription(description="Get module manager stream data")
      * @ApiMethod(type="GET")
-     * @ApiRoute(name="/ModuleManager/stream")
+     * @ApiRoute(name="/ModuleManager/logs")
      * @ApiReturn(sample="{
      *     'total': 'int',
      *     'list': 'array'
@@ -277,7 +277,7 @@ class ModuleManager extends Base
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      */
-    public function actionStream($params, $data, Request $request): array
+    public function actionLogs($params, $data, Request $request): array
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -287,7 +287,7 @@ class ModuleManager extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getModuleManagerService()->getStream($request);
+        return $this->getModuleManagerService()->getLogs($request);
     }
 
     /**

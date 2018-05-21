@@ -419,13 +419,13 @@ class ModuleManager extends Base
     }
 
     /**
-     * Get stream
+     * Get logs
      *
      * @param Request $request
      *
      * @return array
      */
-    public function getStream(Request $request): array
+    public function getLogs(Request $request): array
     {
         // prepare result
         $result = [

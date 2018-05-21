@@ -74,11 +74,11 @@
     }
   },
   {
-    "route": "/ModuleManager/stream",
+    "route": "/ModuleManager/logs",
     "method": "get",
     "params": {
       "controller": "ModuleManager",
-      "action": "stream"
+      "action": "logs"
     }
   },
   {
