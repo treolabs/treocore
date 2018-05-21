@@ -303,9 +303,14 @@ class Composer extends Base
                         'package' => $package
                     ];
                 } elseif ($version != $composerStableData['require'][$package]) {
+                    // prepare data
+                    $id = $this->getModuleId($package);
+                    $from = $composerModule->getModulePackage($id)['version'];
+
                     $result['update'][] = [
-                        'id'      => $this->getModuleId($package),
-                        'package' => $package
+                        'id'      => $id,
+                        'package' => $package,
+                        'from'    => $from
                     ];
                 }
             }

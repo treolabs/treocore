@@ -81,13 +81,15 @@ class Composer extends AbstractListener
                 // for updated modules
                 if (!empty($composerDiff['update'])) {
                     foreach ($composerDiff['update'] as $row) {
-//                        // prepare data
-//                        $to = '';
-//
-//                        // run migration
-//                        $this->getContainer()
-//                            ->get('migration')
-//                            ->run($row['id'], $row['from'], $to);
+                        // get current version
+                        $to = $this
+                                  ->getService('ComposerModule')
+                                  ->getModulePackage($row['id'])['version'];
+
+                        // run migration
+                        $this->getContainer()
+                            ->get('migration')
+                            ->run($row['id'], $row['from'], $to);
                     }
                 }
 
