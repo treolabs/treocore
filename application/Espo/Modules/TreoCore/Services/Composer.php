@@ -154,10 +154,8 @@ class Composer extends Base
      * Delete composer
      *
      * @param string $package
-     *
-     * @return array
      */
-    public function delete(string $package): array
+    public function delete(string $package): void
     {
         // get composer.json data
         $data = $this->getModuleComposerJson();
@@ -168,8 +166,6 @@ class Composer extends Base
 
         // set composer.json data
         $this->setModuleComposerJson($data);
-
-        return $this->runUpdate();
     }
 
     /**
@@ -256,7 +252,7 @@ class Composer extends Base
         if (file_exists($this->moduleComposer)) {
             // delete old file
             if (file_exists($this->moduleStableComposer)) {
-                unlink($this->$this->moduleStableComposer);
+                unlink($this->moduleStableComposer);
             }
 
             // copy file

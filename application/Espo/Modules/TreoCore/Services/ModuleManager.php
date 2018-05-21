@@ -241,14 +241,19 @@ class ModuleManager extends Base
      * @param string $id
      * @param string $version
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Error
      */
-    public function installModule(string $id, string $version = null): array
+    public function installModule(string $id, string $version = null): bool
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
+
+        // prepare version
+        if (empty($version)) {
+            $version = '*';
+        }
 
         // validation
         if (empty($packages) || empty($packages)) {
@@ -257,38 +262,16 @@ class ModuleManager extends Base
         if (!empty($package)) {
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
-
-
-        if (!empty($version)) {
-            // prepare version
-            $version = $this->prepareModuleVersion($version);
-
-            // validation
-            if (!isset($packages[$version])) {
-                throw new Exceptions\Error($this->translateError('No such module version'));
-            }
-        } else {
-            $version = 'max';
+        if (!$this->isVersionValid($version)) {
+            throw new Exceptions\Error($this->translateError('Version in invalid'));
         }
 
-        // run composer
-        $result = $this
+        // update composer.json
+        $this
             ->getComposerService()
-            ->update($packages[$version]['name'], $packages[$version]['version']);
+            ->update(array_pop($packages)['name'], $version);
 
-        // prepare event data
-        $eventData = [
-            'id'       => $id,
-            'composer' => $result,
-            'version'  => $version,
-            'package'  => $packages[$version],
-        ];
-
-        // triggered event
-        $this->triggeredEvent('installModule', $eventData);
-
-
-        return $result;
+        return true;
     }
 
     /**
@@ -326,72 +309,34 @@ class ModuleManager extends Base
     }
 
     /**
-     * Delete module(s)
+     * Delete module
      *
-     * @param array $ids
+     * @param string $id
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Error
      */
-    public function deleteModule(array $ids): array
+    public function deleteModule(string $id): bool
     {
-        // prepare result
-        $result = [];
-
         // prepare modules
-        foreach ($ids as $id) {
-            if (!$this->isModuleSystem($id)) {
-                // prepare params
-                $package = $this->getComposerModuleService()->getModulePackage($id);
-
-                // validation
-                if (empty($package)) {
-                    throw new Exceptions\Error($this->translateError('No such module'));
-                }
-
-                $modules[] = $package;
-            }
+        if ($this->isModuleSystem($id)) {
+            throw new Exceptions\Error($this->translateError('isSystem'));
         }
 
-        if (!empty($modules)) {
-            // prepare modules diff
-            $beforeDelete = TreoComposer::getTreoModules();
+        // prepare params
+        $package = $this->getComposerModuleService()->getModulePackage($id);
 
-            // get composer.json data
-            $composerData = $this->getComposerService()->getModuleComposerJson();
-
-            foreach ($modules as $package) {
-                if (isset($composerData['require'][$package['name']])) {
-                    unset($composerData['require'][$package['name']]);
-                }
-            }
-
-            // set composer.json data
-            $this->getComposerService()->setModuleComposerJson($composerData);
-
-            // run composer
-            $result = $this->getComposerService()->runUpdate();
-
-            if ($result['status'] === 0) {
-                // prepare modules diff
-                $afterDelete = TreoComposer::getTreoModules();
-
-                // delete treo dirs
-                TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
-
-                // clear module activation and sort order data
-                $this->clearModuleData($modules);
-
-                // drop cache
-                $this->getDataManager()->clearCache();
-
-                // triggered event
-                $eventData = ['modules' => $modules, 'composer' => $result];
-                $this->triggeredEvent('deleteModules', $eventData);
-            }
+        // validation
+        if (empty($package)) {
+            throw new Exceptions\Error($this->translateError('No such module'));
         }
 
-        return $result;
+        // update composer.json
+        $this
+            ->getComposerService()
+            ->delete($package['name']);
+
+        return true;
     }
 
     /**

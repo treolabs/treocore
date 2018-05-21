@@ -122,17 +122,14 @@ class ModuleManager extends Base
      *     'id': 'Erp',
      *     'version': '1.0.0' - not required
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionInstallModule($params, $data, Request $request): array
+    public function actionInstallModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -195,19 +192,16 @@ class ModuleManager extends Base
      * @ApiMethod(type="DELETE")
      * @ApiRoute(name="/ModuleManager/deleteModule")
      * @ApiBody(sample="{
-     *     'ids': ['Erp']
+     *     'id': 'Erp'
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionDeleteModule($params, $data, Request $request): array
+    public function actionDeleteModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -220,8 +214,8 @@ class ModuleManager extends Base
         // prepare data
         $data = Json::decode(Json::encode($data), true);
 
-        if (!empty($ids = $data['ids']) && is_array($ids)) {
-            return $this->getModuleManagerService()->deleteModule($ids);
+        if (!empty($id = $data['id'])) {
+            return $this->getModuleManagerService()->deleteModule($id);
         }
 
         throw new Exceptions\NotFound();

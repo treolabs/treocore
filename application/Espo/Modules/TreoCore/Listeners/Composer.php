@@ -55,8 +55,8 @@ class Composer extends AbstractListener
             // push to stream
             $this->pushToStream($res);
 
-            // save stable-composer.json file
             if (isset($res['status']) && $res['status'] === 0) {
+                // save stable-composer.json file
                 $this->getService('Composer')->saveComposerJson();
             }
         }
@@ -64,6 +64,25 @@ class Composer extends AbstractListener
 //        if ($result['status'] === 0) {
 //            // run migration
 //            $this->getInjection('migration')->run($id, $package['version'], $version);
+//        }
+
+        //delete
+//        if ($result['status'] === 0) {
+//            // prepare modules diff
+//            $afterDelete = TreoComposer::getTreoModules();
+//
+//            // delete treo dirs
+//            TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
+//
+//            // clear module activation and sort order data
+//            $this->clearModuleData($modules);
+//
+//            // drop cache
+//            $this->getDataManager()->clearCache();
+//
+//            // triggered event
+//            $eventData = ['modules' => $modules, 'composer' => $result];
+//            $this->triggeredEvent('deleteModules', $eventData);
 //        }
 
         return $data;
