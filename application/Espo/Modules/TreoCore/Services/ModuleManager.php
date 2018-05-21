@@ -394,7 +394,7 @@ class ModuleManager extends Base
             $this->getComposerService()->setModuleComposerJson($composerData);
 
             // run composer
-            $result = $this->getComposerService()->run('update');
+            $result = $this->getComposerService()->runUpdate();
 
             if ($result['status'] === 0) {
                 // prepare modules diff

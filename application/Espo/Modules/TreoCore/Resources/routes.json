@@ -98,11 +98,11 @@
     }
   },
   {
-    "route": "/ModuleManager/updateComposer",
+    "route": "/Composer/update",
     "method": "post",
     "params": {
-      "controller": "ModuleManager",
-      "action": "updateComposer"
+      "controller": "Composer",
+      "action": "update"
     }
   },
   {

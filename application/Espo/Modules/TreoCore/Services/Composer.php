@@ -95,11 +95,11 @@ class Composer extends Base
      *
      * @param array $data
      *
-     * @return void
+     * @return array
      */
-    public function runUpdate(array $data = []): void
+    public function runUpdate(array $data = []): array
     {
-        $this->run('update');
+        return $this->run('update');
     }
 
     /**
@@ -153,7 +153,7 @@ class Composer extends Base
         // set composer.json data
         $this->setModuleComposerJson($data);
 
-        $result = $this->run('update');
+        $result = $this->runUpdate();
 
         if ($result['status'] != 0) {
             // revert composer.json data
@@ -182,7 +182,7 @@ class Composer extends Base
         // set composer.json data
         $this->setModuleComposerJson($data);
 
-        return $this->run('update');
+        return $this->runUpdate();
     }
 
     /**

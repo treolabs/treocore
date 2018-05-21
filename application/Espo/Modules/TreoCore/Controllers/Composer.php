@@ -141,6 +141,33 @@ class Composer extends Base
     }
 
     /**
+     * @ApiDescription(description="Call composer update command")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Composer/update")
+     * @ApiReturn(sample="{
+     *     'status': 'true',
+     *     'output': 'some text from composer'
+     * }")
+     *
+     * @return array
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionUpdate($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getComposerService()->runUpdate();
+    }
+
+    /**
      * @return ComposerService
      */
     protected function getComposerService(): ComposerService
