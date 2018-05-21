@@ -21,7 +21,8 @@
     "Such module is already installed": "Dieses Modul ist schon installiert",
     "Module was not installed": "Das Modul wurde nicht installiert",
     "Such module version already installed": "Diese Modul-Version ist schon installiert",
-    "No such module version": "Es gibt keine solche Modul-Version"
+    "No such module version": "Es gibt keine solche Modul-Version",
+    "Version in invalid": "Version in ungültig"
   },
   "labels": {
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen",

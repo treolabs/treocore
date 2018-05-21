@@ -33,58 +33,26 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Espo\Modules\TreoCore\Migration;
 
-use Espo\Core\Exceptions\Error;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
 /**
- * Composer listener
+ * Version 1.11.3
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Composer extends AbstractListener
+class V1113 extends AbstractMigration
 {
     /**
-     * @param array $data
-     *
-     * @return array
+     * Up to current
      */
-    public function afterActionUpdate(array $data): array
+    public function up(): void
     {
-        if (!empty($res = $data['result']) && is_array($res)) {
-            // push to stream
-            $this->pushToStream($res);
-
-            // save stable-composer.json file
-            if (isset($res['status']) && $res['status'] === 0) {
-                $this->getService('Composer')->saveComposerJson();
-            }
-        }
-
-//        if ($result['status'] === 0) {
-//            // run migration
-//            $this->getInjection('migration')->run($id, $package['version'], $version);
-//        }
-
-        return $data;
-    }
-
-    /**
-     * Push to stream
-     *
-     * @param array $data
-     *
-     * @throws Error
-     */
-    protected function pushToStream(array $data): void
-    {
-        // create note
-        $note = $this->getEntityManager()->getEntity('Note');
-        $note->set('type', 'composerUpdate');
-        $note->set('parentType', 'ModuleManager');
-        $note->set('data', $data);
-
-        // save note
-        $this->getEntityManager()->saveEntity($note);
+        $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->saveComposerJson();
     }
 }

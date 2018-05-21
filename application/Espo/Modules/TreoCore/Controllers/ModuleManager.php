@@ -163,17 +163,14 @@ class ModuleManager extends Base
      *     'id': 'Erp',
      *     'version': '1.1.0'
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionUpdateModule($params, $data, Request $request): array
+    public function actionUpdateModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();

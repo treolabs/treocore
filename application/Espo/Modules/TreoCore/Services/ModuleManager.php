@@ -297,17 +297,14 @@ class ModuleManager extends Base
      * @param string $id
      * @param string $version
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Error
      */
-    public function updateModule(string $id, string $version): array
+    public function updateModule(string $id, string $version): bool
     {
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
-
-        // prepare version
-        $version = $this->prepareModuleVersion($version);
 
         // validation
         if (empty($packages)) {
@@ -316,37 +313,16 @@ class ModuleManager extends Base
         if (empty($package)) {
             throw new Exceptions\Error($this->translateError('Module was not installed'));
         }
-        if ($this->prepareModuleVersion($package['version']) == $version) {
-            throw new Exceptions\Error($this->translateError('Such module version already installed'));
-        }
-        if (!isset($version, $packages[$version])) {
-            throw new Exceptions\Error($this->translateError('No such module version'));
+        if (!$this->isVersionValid($version)) {
+            throw new Exceptions\Error($this->translateError('Version in invalid'));
         }
 
-        // run composer
-        $result = $this
+        // update composer.json
+        $this
             ->getComposerService()
-            ->update($packages[$version]['name'], $packages[$version]['version']);
+            ->update($package['name'], $version);
 
-
-        if ($result['status'] === 0) {
-            // run migration
-            $this->getInjection('migration')->run($id, $package['version'], $version);
-        }
-
-        // prepare event data
-        $eventData = [
-            'id'          => $id,
-            'composer'    => $result,
-            'version'     => $version,
-            'packageFrom' => $package,
-            'packageTo'   => $packages[$version],
-        ];
-
-        // triggered event
-        $this->triggeredEvent('updateModule', $eventData);
-
-        return $result;
+        return true;
     }
 
     /**
@@ -817,6 +793,30 @@ class ModuleManager extends Base
 
             // prepare result
             $result = array_values($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Is version valid?
+     *
+     * @param string $version
+     *
+     * @return bool
+     */
+    protected function isVersionValid(string $version): bool
+    {
+        // prepare result
+        $result = true;
+
+        // create version parser
+        $versionParser = new \Composer\Semver\VersionParser();
+
+        try {
+            $versionParser->parseConstraints($version)->getPrettyString();
+        } catch (\Exception $e) {
+            $result = false;
         }
 
         return $result;

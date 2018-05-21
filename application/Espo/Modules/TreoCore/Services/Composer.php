@@ -68,7 +68,7 @@ class Composer extends Base
     /**
      * @var string
      */
-    protected $moduleOldComposer = 'data/old-composer.json';
+    protected $moduleStableComposer = 'data/stable-composer.json';
 
     /**
      * @var string
@@ -137,10 +137,8 @@ class Composer extends Base
      *
      * @param string $package
      * @param string $version
-     *
-     * @return array
      */
-    public function update(string $package, string $version): array
+    public function update(string $package, string $version): void
     {
         // get composer.json data
         $data = $this->getModuleComposerJson();
@@ -150,15 +148,6 @@ class Composer extends Base
 
         // set composer.json data
         $this->setModuleComposerJson($data);
-
-        $result = $this->runUpdate();
-
-        if ($result['status'] != 0) {
-            // revert composer.json data
-            $this->revertModuleComposerJson();
-        }
-
-        return $result;
     }
 
     /**
@@ -254,33 +243,24 @@ class Composer extends Base
      */
     public function setModuleComposerJson(array $data): void
     {
-        // delete old file
-        if (file_exists($this->moduleOldComposer)) {
-            unlink($this->moduleOldComposer);
-        }
-
-        // copy file
-        if (file_exists($this->moduleComposer)) {
-            copy($this->moduleComposer, $this->moduleOldComposer);
-        }
-
         $file = fopen($this->moduleComposer, "w");
         fwrite($file, Json::encode($data));
         fclose($file);
     }
 
     /**
-     * Revert composer.json data
+     * Save stable-composer.json file
      */
-    public function revertModuleComposerJson(): void
+    public function saveComposerJson(): void
     {
-        if (file_exists($this->moduleOldComposer)) {
+        if (file_exists($this->moduleComposer)) {
             // delete old file
-            if (file_exists($this->moduleComposer)) {
-                unlink($this->moduleComposer);
+            if (file_exists($this->moduleStableComposer)) {
+                unlink($this->$this->moduleStableComposer);
             }
+
             // copy file
-            copy($this->moduleOldComposer, $this->moduleComposer);
+            copy($this->moduleComposer, $this->moduleStableComposer);
         }
     }
 
