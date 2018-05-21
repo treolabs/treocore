@@ -34,33 +34,27 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Jobs;
 
-return [
-    'scheduledJobs'         => [
-        [
-            'scheduling' => '0 0 * * *',
-            'service'    => 'RestApiDocs',
-            'method'     => 'generateDocumentation',
-            'name'       => 'Generate REST API documentation',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '* * * * *',
-            'service'    => 'ProgressManager',
-            'method'     => 'executeProgressJobs',
-            'name'       => 'Execute progress manager jobs',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '0 */2 * * *',
-            'service'    => 'ComposerModule',
-            'method'     => 'cachingPackages',
-            'name'       => 'Caching module packages',
-            'data'       => []
-        ]
-    ],
-    'scheduledJobsServices' => [
-        // array of services
-    ]
-];
+use Espo\Core\Jobs\Base;
+
+/**
+ * ModuleAutoUpdate job
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ModuleAutoUpdate extends Base
+{
+
+    /**
+     * Run cron job
+     *
+     * @return bool
+     */
+    public function run(): bool
+    {
+        $this->getServiceFactory()->create('Composer')->runUpdate();
+
+        return true;
+    }
+}
