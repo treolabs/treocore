@@ -66,22 +66,6 @@
     }
   },
   {
-    "route": "/Composer/gitAuth",
-    "method": "get",
-    "params": {
-      "controller": "Composer",
-      "action": "getGitAuthData"
-    }
-  },
-  {
-    "route": "/Composer/gitAuth",
-    "method": "put",
-    "params": {
-      "controller": "Composer",
-      "action": "setGitAuthData"
-    }
-  },
-  {
     "route": "/ModuleManager/availableModulesList",
     "method": "get",
     "params": {
@@ -95,6 +79,22 @@
     "params": {
       "controller": "ModuleManager",
       "action": "stream"
+    }
+  },
+  {
+    "route": "/Composer/gitAuth",
+    "method": "get",
+    "params": {
+      "controller": "Composer",
+      "action": "getGitAuthData"
+    }
+  },
+  {
+    "route": "/Composer/gitAuth",
+    "method": "put",
+    "params": {
+      "controller": "Composer",
+      "action": "setGitAuthData"
     }
   },
   {
