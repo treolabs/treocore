@@ -387,6 +387,20 @@ class ModuleManager extends Base
     }
 
     /**
+     * Clear module data from "module.json" file
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function clearModuleData(string $id): void
+    {
+        $this
+            ->getFileManager()
+            ->unsetContents($this->moduleJsonPath, $id);
+    }
+
+    /**
      * Init
      */
     protected function init()
@@ -484,24 +498,6 @@ class ModuleManager extends Base
         }
 
         return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
-    }
-
-    /**
-     * Clear module data from "module.json" file
-     *
-     * @param array $modules
-     *
-     * @return bool
-     */
-    protected function clearModuleData(array $modules): bool
-    {
-        foreach ($modules as $package) {
-            $this
-                ->getFileManager()
-                ->unsetContents($this->moduleJsonPath, $package['extra']['treoId']);
-        }
-
-        return true;
     }
 
     /**

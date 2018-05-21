@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Espo\Core\Exceptions\Error;
 
 /**
@@ -51,9 +52,10 @@ class Composer extends AbstractListener
      */
     public function beforeComposerUpdate(array $data): array
     {
-        echo '<pre>';
-        print_r('123');
-        die();
+        // prepare diff
+        $_SESSION['composerDiff'] = $this
+            ->getService('Composer')
+            ->getComposerDiff();
 
         return $data;
     }
@@ -72,32 +74,38 @@ class Composer extends AbstractListener
             if (isset($data['status']) && $data['status'] === 0) {
                 // save stable-composer.json file
                 $this->getService('Composer')->saveComposerJson();
+
+                // get composer diff
+                $composerDiff = $_SESSION['composerDiff'];
+
+                // for updated modules
+                if (!empty($composerDiff['update'])) {
+                    foreach ($composerDiff['update'] as $row) {
+//                        // prepare data
+//                        $to = '';
+//
+//                        // run migration
+//                        $this->getContainer()
+//                            ->get('migration')
+//                            ->run($row['id'], $row['from'], $to);
+                    }
+                }
+
+                // for deleted modules
+                if (!empty($composerDiff['delete'])) {
+                    foreach ($composerDiff['delete'] as $row) {
+                        // clear module activation and sort order data
+                        $this->clearModuleData($row['id']);
+
+                        // delete dir
+                        ComposerService::deleteTreoModule([$row['id'] => $row['package']]);
+                    }
+                }
+
+                // drop cache
+                $this->getContainer()->get('dataManager')->clearCache();
             }
         }
-
-//        if ($result['status'] === 0) {
-//            // run migration
-//            $this->getInjection('migration')->run($id, $package['version'], $version);
-//        }
-
-        //delete
-//        if ($result['status'] === 0) {
-//            // prepare modules diff
-//            $afterDelete = TreoComposer::getTreoModules();
-//
-//            // delete treo dirs
-//            TreoComposer::deleteTreoModule(array_diff($beforeDelete, $afterDelete));
-//
-//            // clear module activation and sort order data
-//            $this->clearModuleData($modules);
-//
-//            // drop cache
-//            $this->getDataManager()->clearCache();
-//
-//            // triggered event
-//            $eventData = ['modules' => $modules, 'composer' => $result];
-//            $this->triggeredEvent('deleteModules', $eventData);
-//        }
 
         return $data;
     }
@@ -119,5 +127,17 @@ class Composer extends AbstractListener
 
         // save note
         $this->getEntityManager()->saveEntity($note);
+    }
+
+    /**
+     * Clear module data from "module.json" file
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    protected function clearModuleData(string $id): void
+    {
+        $this->getService('ModuleManager')->clearModuleData($id);
     }
 }

@@ -275,6 +275,55 @@ class Composer extends Base
     }
 
     /**
+     * Get composer diff
+     *
+     * @return array
+     */
+    public function getComposerDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        if (file_exists($this->moduleStableComposer)) {
+            // prepare data
+            $composerData = $this->getModuleComposerJson();
+            $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+
+            // create service
+            $composerModule = $this->getInjection('serviceFactory')->create('ComposerModule');
+
+            foreach ($composerData['require'] as $package => $version) {
+                if (!isset($composerStableData['require'][$package])) {
+                    $result['install'][] = [
+                        'id'      => $this->getModuleId($package),
+                        'package' => $package
+                    ];
+                } elseif ($version != $composerStableData['require'][$package]) {
+                    $result['update'][] = [
+                        'id'      => $this->getModuleId($package),
+                        'package' => $package
+                    ];
+                }
+            }
+
+            foreach ($composerStableData['require'] as $package => $version) {
+                if (!isset($composerData['require'][$package])) {
+                    $result['delete'][] = [
+                        'id'      => $this->getModuleId($package),
+                        'package' => $package
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get treo modules
      *
      * @return array
@@ -343,6 +392,34 @@ class Composer extends Base
         parent::init();
 
         $this->addDependency('eventManager');
+        $this->addDependency('serviceFactory');
+    }
+
+    /**
+     * Get module ID
+     *
+     * @param string $package
+     *
+     * @return string
+     */
+    protected function getModuleId(string $package): string
+    {
+        // prepare result
+        $result = $package;
+
+        // get packages
+        $packages = $this
+            ->getInjection('serviceFactory')
+            ->create('ComposerModule')
+            ->getModulePackages();
+
+        foreach ($packages as $id => $versions) {
+            if ($versions['max']['name'] == $package) {
+                $result = $id;
+            }
+        }
+
+        return $result;
     }
 
     /**
