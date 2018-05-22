@@ -31,44 +31,28 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Espo\Modules\TreoCore\Migration;
+
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
 /**
- * ModuleManager listener
+ * Version 1.11.3
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class ModuleManager extends Composer
+class V1113 extends AbstractMigration
 {
     /**
-     * @param array $data
+     * Up to current
      */
-    public function updateModuleActivation(array $data)
+    public function up(): void
     {
-        // get module name
-        $moduleName = $this->getModuleName($data['package']);
-
-        // prepare message
-        if (empty($data['disabled'])) {
-            $template = "Module '<strong>%s</strong>' activated successfully.";
-        } else {
-            $template = "Module '<strong>%s</strong>' deactivated successfully.";
-        }
-        $template .= " <a href=\"/#ModuleManager/list\">Details</a>";
-
-        $message = sprintf($this->translate($template), $moduleName);
-
-        /**
-         * Notify users
-         */
-        $this->notify($message);
-
-        /**
-         * Stream push
-         */
-        $this->pushToStream('updateModuleActivation', $data);
+        $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->saveComposerJson();
     }
 }

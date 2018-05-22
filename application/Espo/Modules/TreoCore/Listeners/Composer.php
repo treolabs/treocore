@@ -35,6 +35,9 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Modules\TreoCore\Services\Composer as ComposerService;
+use Espo\Modules\TreoCore\Services\ComposerModule as ComposerModuleService;
+
 /**
  * Composer listener
  *
@@ -47,17 +50,309 @@ class Composer extends AbstractListener
      *
      * @return array
      */
-    public function afterActionUpdate(array $data): array
+    public function beforeComposerUpdate(array $data): array
     {
-        // create note
-        $note = $this->getEntityManager()->getEntity('Note');
-        $note->set('type', 'composerUpdate');
-        $note->set('parentType', 'ModuleManager');
-        $note->set('data', $data['result']);
-
-        // save note
-        $this->getEntityManager()->saveEntity($note);
+        // prepare diff
+        $_SESSION['composerDiff'] = $this
+            ->getComposerService()
+            ->getComposerDiff();
 
         return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterComposerUpdate(array $data): array
+    {
+        if (!empty($data)) {
+            // push to stream
+            $this->pushToStream('composerUpdate', $data);
+
+            if (isset($data['status']) && $data['status'] === 0) {
+                // save stable-composer.json file
+                $this->getComposerService()->saveComposerJson();
+
+                // get composer diff
+                $composerDiff = $_SESSION['composerDiff'];
+
+                // for install module
+                if (!empty($composerDiff['install'])) {
+                    foreach ($composerDiff['install'] as $row) {
+                        // notify
+                        $this->notifyInstall($row['id']);
+                    }
+                }
+
+                // for updated modules
+                if (!empty($composerDiff['update'])) {
+                    foreach ($composerDiff['update'] as $row) {
+                        // notify
+                        $this->notifyUpdate($row['id'], $row['from']);
+                    }
+                }
+
+                // for deleted modules
+                if (!empty($composerDiff['delete'])) {
+                    foreach ($composerDiff['delete'] as $row) {
+                        // clear module activation and sort order data
+                        $this->clearModuleData($row['id']);
+
+                        // delete dir
+                        ComposerService::deleteTreoModule([$row['id'] => $row['package']]);
+
+                        // notify
+                        $this->notifyDelete($row['id']);
+                    }
+                }
+
+                // drop cache
+                $this->getContainer()->get('dataManager')->clearCache();
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Notify about install
+     *
+     * @param string $id
+     */
+    protected function notifyInstall(string $id)
+    {
+        // get package
+        $package = $this
+            ->getComposerModuleService()
+            ->getModulePackage($id);
+
+        if (!empty($package)) {
+            // get module name
+            $moduleName = $this->getModuleName($package);
+
+            // prepare data
+            $version = str_replace('v', '', $package['version']);
+
+            // prepare message
+            $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
+            $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+            $message = sprintf($this->translate($message), $moduleName, $version);
+
+            /**
+             * Notify users
+             */
+            $this->notify($message);
+
+            // push to stream
+            $this->pushToStream('installModule', ['package' => $package]);
+        }
+    }
+
+
+    /**
+     * Notify about update
+     *
+     * @param string $id
+     * @param string $from
+     */
+    protected function notifyUpdate(string $id, string $from)
+    {
+        // get package
+        $package = $this
+            ->getComposerModuleService()
+            ->getModulePackage($id);
+
+        if (!empty($package)) {
+            // prepare data
+            $from = str_replace('v', '', $from);
+            $to = str_replace('v', '', $package['version']);
+
+            if ($from != $to) {
+                // get module name
+                $name = $this->getModuleName($package);
+
+                // prepare message
+                $message = "Module '<strong>%s</strong>' updated from '%s' to '%s'.";
+                $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+                $message = sprintf($this->translate($message), $name, $from, $to);
+
+                /**
+                 * Notify users
+                 */
+                $this->notify($message);
+
+                /**
+                 * Stream push
+                 */
+                $this->pushToStream('updateModule', ['package' => $package]);
+
+                // run migration
+                $this->getContainer()->get('migration')->run($id, $from, $to);
+            }
+        }
+    }
+
+
+    /**
+     * Notify about delete
+     *
+     * @param string $id
+     */
+    protected function notifyDelete(string $id)
+    {
+        // get package
+        $packages = $this
+            ->getComposerModuleService()
+            ->getModulePackages($id);
+
+        if (!empty($packages) && is_array($packages)) {
+            // prepare package
+            $package = array_pop($packages);
+
+            // get module name
+            $moduleName = $this->getModuleName($package);
+
+            // prepare message
+            $message = "Module '<strong>%s</strong>' deleted successfully.";
+            $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+            $message = sprintf($this->translate($message), $moduleName);
+
+            /**
+             * Notify users
+             */
+            $this->notify($message);
+
+            /**
+             * Stream push
+             */
+            $this->pushToStream('deleteModule', ['package' => $package]);
+        }
+    }
+
+    /**
+     * Notify
+     *
+     * @param string $message
+     */
+    protected function notify(string $message): void
+    {
+        if (!empty($users = $this->getAdminUsers())) {
+            foreach ($users as $user) {
+                // create notification
+                $notification = $this->getEntityManager()->getEntity('Notification');
+                $notification->set(
+                    [
+                        'type'    => 'Message',
+                        'userId'  => $user->get('id'),
+                        'message' => $message
+                    ]
+                );
+                $this->getEntityManager()->saveEntity($notification);
+            }
+        }
+    }
+
+    /**
+     * Push record to stream
+     *
+     * @param string $type
+     * @param array  $data
+     */
+    protected function pushToStream(string $type, array $data): void
+    {
+        $note = $this->getEntityManager()->getEntity('Note');
+        $note->set('type', $type);
+        $note->set('parentType', 'ModuleManager');
+        $note->set('data', $data);
+
+        $this->getEntityManager()->saveEntity($note);
+    }
+
+    /**
+     * Clear module data from "module.json" file
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    protected function clearModuleData(string $id): void
+    {
+        $this->getService('ModuleManager')->clearModuleData($id);
+    }
+
+    /**
+     * Get admin users
+     *
+     * @return mixed
+     */
+    protected function getAdminUsers()
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->where(['isAdmin' => true])
+            ->find();
+    }
+
+    /**
+     * Get module name
+     *
+     * @param array $package
+     *
+     * @return string
+     */
+    protected function getModuleName(array $package): string
+    {
+        // get current language
+        $currentLang = $this
+            ->getLanguage()
+            ->getLanguage();
+
+        // prepare result
+        $result = $package['extra']['id'];
+
+        if (!empty($package['extra']['name'][$currentLang])) {
+            $result = $package['extra']['name'][$currentLang];
+        } elseif ($package['extra']['name']['default']) {
+            $result = $package['extra']['name']['default'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Translate
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function translate(string $key): string
+    {
+        return $this
+            ->getLanguage()
+            ->translate($key, 'messages', 'ModuleManager');
+    }
+
+    /**
+     * Get ComposerModule service
+     *
+     * @return ComposerModuleService
+     */
+    protected function getComposerModuleService(): ComposerModuleService
+    {
+        return $this->getService('ComposerModule');
+    }
+
+    /**
+     * Get Composer service
+     *
+     * @return ComposerService
+     */
+    protected function getComposerService(): ComposerService
+    {
+        return $this->getService('Composer');
     }
 }

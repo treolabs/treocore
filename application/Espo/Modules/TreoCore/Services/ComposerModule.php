@@ -139,21 +139,6 @@ class ComposerModule extends Base
         // prepare result
         $result = $this->modulePackage;
 
-        // remove unstable
-        if (empty($this->getConfig()->get('allowUnstable'))) {
-            foreach ($result as $module => $versions) {
-                foreach ($versions as $version => $row) {
-                    if (preg_match('/^v(.*)$/', $row['version'])) {
-                        unset($result[$module][$version]);
-                    }
-                }
-                // remove empty module
-                if (empty($result[$module])) {
-                    unset($result[$module]);
-                }
-            }
-        }
-
         // set max
         foreach ($result as $module => $versions) {
             $max = null;
@@ -166,7 +151,7 @@ class ComposerModule extends Base
         }
 
         if (!is_null($moduleId)) {
-            $result = (!isset($this->modulePackage[$moduleId])) ? [] : $this->modulePackage[$moduleId];
+            $result = (!isset($result[$moduleId])) ? [] : $result[$moduleId];
         }
 
         return $result;
@@ -215,10 +200,6 @@ class ComposerModule extends Base
         if (!$this->isModulePackagesLoaded) {
             $this->isModulePackagesLoaded = true;
 
-            // prepare patterns
-            $pattern = '/^v\d.\d.\d$/';
-            $pattern1 = '/^\d.\d.\d$/';
-
             if ($droppingCache || empty($this->getCachedPackagistData())) {
                 // prepare packages
                 foreach ($this->getPackagistData() as $repository => $versions) {
@@ -237,53 +218,6 @@ class ComposerModule extends Base
                             }
                         }
                     }
-                }
-
-                // prepare pattern
-                $pattern = "/^(.*)\.(.*)\.(.*)$/";
-
-                foreach ($this->modulePackage as $moduleId => $versions) {
-                    $data = array_values($versions);
-                    foreach ($data as $k => $row) {
-                        if (isset($data[$k + 1])) {
-                            // prepare version
-                            $currentVersion = str_replace('v', '', $row['version']);
-                            $nextVersion = str_replace('v', '', $data[$k + 1]['version']);
-
-                            // parse version
-                            preg_match_all($pattern, $currentVersion, $currentMatches);
-                            preg_match_all($pattern, $nextVersion, $nextMatches);
-
-                            if ($currentMatches[2][0] != $nextMatches[2][0]) {
-                                // prepare version name
-                                $version = $currentMatches[1][0] . '.' . $currentMatches[2][0] . '.*';
-
-                                $newRow = $row;
-                                $newRow['version'] = $version;
-
-                                // push
-                                $this->modulePackage[$moduleId][$version] = $newRow;
-                            }
-                        }
-                    }
-
-                    // get max
-                    $max = array_pop($data);
-
-                    // prepare version
-                    $maxVersion = str_replace('v', '', $max['version']);
-
-                    // parse version
-                    preg_match_all($pattern, $maxVersion, $maxMatches);
-
-                    // prepare version name
-                    $version = $maxMatches[1][0] . '.' . $maxMatches[2][0] . '.*';
-
-                    $newRow = $max;
-                    $newRow['version'] = $version;
-
-                    // push
-                    $this->modulePackage[$moduleId][$version] = $newRow;
                 }
 
                 // caching

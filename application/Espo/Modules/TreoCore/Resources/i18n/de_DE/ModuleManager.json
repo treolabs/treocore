@@ -21,7 +21,8 @@
     "Such module is already installed": "Dieses Modul ist schon installiert",
     "Module was not installed": "Das Modul wurde nicht installiert",
     "Such module version already installed": "Diese Modul-Version ist schon installiert",
-    "No such module version": "Es gibt keine solche Modul-Version"
+    "No such module version": "Es gibt keine solche Modul-Version",
+    "Version in invalid": "Version in ungültig"
   },
   "labels": {
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen",
@@ -51,7 +52,7 @@
     "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Modul '<strong>%s</strong>' erfolgreich aktiviert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Modul '<strong>%s</strong>' erfolgreich deaktiviert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) erfolgreich installiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
-    "Module(s) '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' wurde erfolgreich gelöscht. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
+    "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' wurde erfolgreich gelöscht. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Das Modul '<strong>%s</strong>' wurde von '%s' auf '%s' aktualisiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "checkLog": "Etwas ist fehlgeschlagen. Prüfen Sie bitte Fehler-Log auf neue Fehler",
     "errorInstall": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht installiert",

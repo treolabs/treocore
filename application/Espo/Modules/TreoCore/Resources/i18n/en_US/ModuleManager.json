@@ -21,7 +21,8 @@
     "Such module is already installed": "Such module is already installed",
     "Module was not installed": "Module was not installed",
     "Such module version already installed": "Such module version already installed",
-    "No such module version": "No such module version"
+    "No such module version": "No such module version",
+    "Version in invalid": "Version in invalid"
   },
   "labels": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
@@ -51,7 +52,7 @@
     "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>",
-    "Module(s) '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module(s) <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>",
     "checkLog": "Something went wrong. Check the log for error-level output",
     "errorInstall": "Module {module} not installed with error status {status} at {time}",

@@ -106,6 +106,14 @@
     }
   },
   {
+    "route": "/Composer/cancel",
+    "method": "delete",
+    "params": {
+      "controller": "Composer",
+      "action": "cancel"
+    }
+  },
+  {
     "route": "/ProgressManager/isShowPopup",
     "method": "get",
     "params": {

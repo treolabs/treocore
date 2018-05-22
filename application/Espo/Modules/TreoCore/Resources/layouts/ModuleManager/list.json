@@ -18,10 +18,6 @@
     "notSortable": true
   },
   {
-    "name": "availableVersions",
-    "notSortable": true
-  },
-  {
     "name": "required",
     "notSortable": true,
     "view": "treo-core:views/module-manager/fields/required"

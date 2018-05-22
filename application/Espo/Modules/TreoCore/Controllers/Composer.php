@@ -168,6 +168,33 @@ class Composer extends Base
     }
 
     /**
+     * @ApiDescription(description="Cancel changes")
+     * @ApiMethod(type="DELETE")
+     * @ApiRoute(name="/Composer/cancel")
+     * @ApiReturn(sample="'bool'")
+     *
+     * @return bool
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionCancel($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isDelete()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // cancel changes
+        $this->getComposerService()->cancelChanges();
+
+        return true;
+    }
+
+    /**
      * @return ComposerService
      */
     protected function getComposerService(): ComposerService
