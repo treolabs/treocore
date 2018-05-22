@@ -115,6 +115,21 @@ class Composer extends Base
     }
 
     /**
+     * Cancel changes
+     */
+    public function cancelChanges(): void
+    {
+        if (file_exists($this->moduleStableComposer)) {
+            if (file_exists($this->moduleComposer)) {
+                unlink($this->moduleComposer);
+            }
+
+            // copy file
+            copy($this->moduleStableComposer, $this->moduleComposer);
+        }
+    }
+
+    /**
      * Run composer command
      *
      * @param string $command
