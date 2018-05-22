@@ -17,6 +17,9 @@
   "views/login": [
     "treo-core"
   ],
+  "views/dashboard": [
+    "treo-core"
+  ],
   "views/modals/select-records": [
     "treo-core"
   ],
