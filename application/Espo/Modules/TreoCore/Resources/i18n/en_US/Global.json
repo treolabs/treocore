@@ -87,6 +87,7 @@
     "TreoDarkTheme": "Treo Dark Theme"
   },
   "messages": {
-    "successAndReload": "Changes saved. This page will be reloaded after {value} seconds"
+    "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
+    "massUpdateResult": "Updating {count} records"
   }
 }
