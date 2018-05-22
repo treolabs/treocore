@@ -128,21 +128,26 @@ class Composer extends AbstractListener
             ->getComposerModuleService()
             ->getModulePackage($id);
 
-        // get module name
-        $moduleName = $this->getModuleName($package);
+        if (!empty($package)) {
+            // get module name
+            $moduleName = $this->getModuleName($package);
 
-        // prepare message
-        $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
-        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-        $message = sprintf($this->translate($message), $moduleName, $package['version']);
+            // prepare data
+            $version = str_replace('v', '', $package['version']);
 
-        /**
-         * Notify users
-         */
-        $this->notify($message);
+            // prepare message
+            $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
+            $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+            $message = sprintf($this->translate($message), $moduleName, $version);
 
-        // push to stream
-        $this->pushToStream('installModule', ['package' => $package]);
+            /**
+             * Notify users
+             */
+            $this->notify($message);
+
+            // push to stream
+            $this->pushToStream('installModule', ['package' => $package]);
+        }
     }
 
 
@@ -159,28 +164,34 @@ class Composer extends AbstractListener
             ->getComposerModuleService()
             ->getModulePackage($id);
 
-        // prepare data
-        $name = $this->getModuleName($package);
-        $from = str_replace('v', '', $from);
-        $to = str_replace('v', '', $package['version']);
+        if (!empty($package)) {
+            // prepare data
+            $from = str_replace('v', '', $from);
+            $to = str_replace('v', '', $package['version']);
 
-        // prepare message
-        $message = "Module '<strong>%s</strong>' updated from '%s' to '%s'.";
-        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-        $message = sprintf($this->translate($message), $name, $from, $to);
+            if ($from != $to) {
+                // get module name
+                $name = $this->getModuleName($package);
 
-        /**
-         * Notify users
-         */
-        $this->notify($message);
+                // prepare message
+                $message = "Module '<strong>%s</strong>' updated from '%s' to '%s'.";
+                $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+                $message = sprintf($this->translate($message), $name, $from, $to);
 
-        /**
-         * Stream push
-         */
-        $this->pushToStream('updateModule', ['package' => $package]);
+                /**
+                 * Notify users
+                 */
+                $this->notify($message);
 
-        // run migration
-        $this->getContainer()->get('migration')->run($id, $from, $to);
+                /**
+                 * Stream push
+                 */
+                $this->pushToStream('updateModule', ['package' => $package]);
+
+                // run migration
+                $this->getContainer()->get('migration')->run($id, $from, $to);
+            }
+        }
     }
 
 
@@ -192,27 +203,32 @@ class Composer extends AbstractListener
     protected function notifyDelete(string $id)
     {
         // get package
-        $package = $this
+        $packages = $this
             ->getComposerModuleService()
-            ->getModulePackage($id);
+            ->getModulePackages($id);
 
-        // get module name
-        $moduleName = $this->getModuleName($package);
+        if (!empty($packages) && is_array($packages)) {
+            // prepare package
+            $package = array_pop($packages);
 
-        // prepare message
-        $message = "Module '<strong>%s</strong>' deleted successfully.";
-        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-        $message = sprintf($this->translate($message), $moduleName);
+            // get module name
+            $moduleName = $this->getModuleName($package);
 
-        /**
-         * Notify users
-         */
-        $this->notify($message);
+            // prepare message
+            $message = "Module '<strong>%s</strong>' deleted successfully.";
+            $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+            $message = sprintf($this->translate($message), $moduleName);
 
-        /**
-         * Stream push
-         */
-        $this->pushToStream('deleteModule', ['package' => $package]);
+            /**
+             * Notify users
+             */
+            $this->notify($message);
+
+            /**
+             * Stream push
+             */
+            $this->pushToStream('deleteModule', ['package' => $package]);
+        }
     }
 
     /**
