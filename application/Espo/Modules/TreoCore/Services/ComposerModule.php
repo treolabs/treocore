@@ -151,7 +151,7 @@ class ComposerModule extends Base
         }
 
         if (!is_null($moduleId)) {
-            $result = (!isset($this->modulePackage[$moduleId])) ? [] : $this->modulePackage[$moduleId];
+            $result = (!isset($result[$moduleId])) ? [] : $result[$moduleId];
         }
 
         return $result;

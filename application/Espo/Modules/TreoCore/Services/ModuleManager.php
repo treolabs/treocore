@@ -78,19 +78,24 @@ class ModuleManager extends Base
         // prepare composer data
         $composerData = $this->getComposerService()->getModuleComposerJson();
 
+        // get diff
+        $composerDiff = $this->getComposerService()->getComposerDiff();
+
+        // for installed modules
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if ($module != 'TreoCore') {
                 // prepare item
                 $item = [
-                    "id"                => $module,
-                    "name"              => $module,
-                    "description"       => '',
-                    "settingVersion"    => '-',
-                    "currentVersion"    => '-',
-                    "required"          => [],
-                    "isActive"          => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"          => false,
-                    "isComposer"        => false
+                    "id"             => $module,
+                    "name"           => $module,
+                    "description"    => '',
+                    "settingVersion" => '-',
+                    "currentVersion" => '-',
+                    "required"       => [],
+                    "isActive"       => $this->getMetadata()->isModuleActive($module),
+                    "isSystem"       => false,
+                    "isComposer"     => false,
+                    "status"         => $this->getModuleStatus($composerDiff, $module)
                 ];
 
                 // get current module package
@@ -98,8 +103,8 @@ class ModuleManager extends Base
 
                 if (!empty($package)) {
                     // prepare item
-                    $item['name'] = $this->translateModule($module, 'name');
-                    $item['description'] = $this->translateModule($module, 'description');
+                    $item['name'] = $this->translateModule($package, 'name');
+                    $item['description'] = $this->translateModule($package, 'description');
                     if (!empty($settingVersion = $composerData['require'][$package['name']])) {
                         $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
                     }
@@ -113,6 +118,36 @@ class ModuleManager extends Base
                 // push
                 $result['list'][] = $item;
             }
+        }
+
+        // for uninstalled modules
+        foreach ($composerDiff['install'] as $row) {
+            $item = [
+                "id"             => $row['id'],
+                "name"           => $row['id'],
+                "description"    => '',
+                "settingVersion" => '-',
+                "currentVersion" => '-',
+                "required"       => [],
+                "isActive"       => false,
+                "isSystem"       => false,
+                "isComposer"     => true,
+                "status"         => 'install'
+            ];
+
+            // get module packages
+            $packages = $this->getComposerModuleService()->getModulePackages($row['id']);
+
+            if (!empty($package = $packages['max'])) {
+                $item['name'] = $this->translateModule($package, 'name');
+                $item['description'] = $this->translateModule($package, 'description');
+                if (!empty($settingVersion = $composerData['require'][$package['name']])) {
+                    $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
+                }
+            }
+
+            // push
+            $result['list'][] = $item;
         }
 
         $result['total'] = count($result['list']);
@@ -140,8 +175,18 @@ class ModuleManager extends Base
             // get current language
             $currentLang = $this->getLanguage()->getLanguage();
 
+            // get diff
+            $diff = $this->getComposerService()->getComposerDiff();
+
+            // prepare toInstall
+            $toInstall = array_column($diff['install'], 'id');
+
             foreach ($modules as $moduleId => $versions) {
-                if (empty($this->getComposerModuleService()->getModulePackage($moduleId))) {
+                $package = $this
+                    ->getComposerModuleService()
+                    ->getModulePackage($moduleId);
+
+                if (empty($package) && !in_array($moduleId, $toInstall)) {
                     // prepare max
                     $max = $versions['max'];
 
@@ -412,6 +457,27 @@ class ModuleManager extends Base
     }
 
     /**
+     * Get module status
+     *
+     * @param array  $diff
+     * @param string $id
+     *
+     * @return mixed
+     */
+    protected function getModuleStatus(array $diff, string $id)
+    {
+        foreach ($diff as $status => $row) {
+            foreach ($row as $item) {
+                if ($item['id'] == $id) {
+                    return $status;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Is module changable?
      *
      * @param string $moduleId
@@ -598,21 +664,18 @@ class ModuleManager extends Base
     /**
      * Translate field
      *
-     * @param string $module
+     * @param array  $package
      * @param string $key
      *
      * @return string
      */
-    protected function translateModule(string $module, string $key): string
+    protected function translateModule(array $package, string $key): string
     {
         // prepare result
         $result = '';
 
         // get language
         $lang = $this->getLanguage()->getLanguage();
-
-        // get module packages
-        $package = $this->getComposerModuleService()->getModulePackage($module);
 
         if (!empty($translate = $package['extra'][$key][$lang])) {
             $result = $translate;
