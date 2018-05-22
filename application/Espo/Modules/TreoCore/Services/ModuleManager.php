@@ -87,7 +87,6 @@ class ModuleManager extends Base
                     "description"       => '',
                     "settingVersion"    => '-',
                     "currentVersion"    => '-',
-                    "availableVersions" => '-',
                     "required"          => [],
                     "isActive"          => $this->getMetadata()->isModuleActive($module),
                     "isSystem"          => false,
@@ -106,10 +105,6 @@ class ModuleManager extends Base
                     }
                     $item['currentVersion'] = $this->prepareModuleVersion($package['version']);
                     $item['versions'] = $this->prepareModuleVersions($module);
-                    if (!empty($item['versions'])) {
-                        $versions = array_column($item['versions'], 'version');
-                        $item['availableVersions'] = implode(", ", $versions);
-                    }
                     $item['required'] = $this->getModuleRequireds($module);
                     $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
