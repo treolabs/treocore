@@ -1,5 +1,4 @@
 <div class="page-header">{{{header}}}</div>
-<div class="settings-panel detail">{{{settingsPanel}}}</div>
 <div class="search-container">{{{search}}}</div>
 <div class="panel panel-default panel-channelProducts" style="margin-left: -15px; margin-right: -15px;">
     <div class="panel-heading">
