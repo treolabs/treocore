@@ -1,3 +1,4 @@
+    * UST #63139 : При запуске масс апдейта значения помещаются в прогресс менеджер но сразу пишет, что значения обновлены (Yuriy  Haiduchyk)
     * UST #63866 : Змінити реалізацію ModuleManager // Back (Roman Ratsun)
     * UST #63865 : Додати кнопку оновлення композера в ModuleManager // Back (Roman Ratsun)
     * UST #63863 : Інтерфейс вводу git користувача // Back (Roman Ratsun)
