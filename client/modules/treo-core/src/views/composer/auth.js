@@ -31,20 +31,16 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
+Espo.define('treo-core:views/composer/auth', 'view',
     Dep => Dep.extend({
+
+        template: 'treo-core:composer/auth',
 
         attributes: null,
 
-        errorList: [],
-
-        errorsCount: null,
-
         model: null,
 
-        mode: 'detail',
-
-        template: 'treo-core:module-manager/record/settings-panel',
+        mode: 'edit',
 
         events: {
             'click .action': function (e) {
@@ -56,15 +52,6 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
                 if (typeof this[action] === 'function') {
                     this[action]();
                 }
-            },
-            'click [data-action="showErrorLog"]': function () {
-                this.$el.find('[data-action="showErrorLog"] .new-error').addClass('hidden');
-                this.createView('logs', 'treo-core:views/module-manager/modals/error-log', {
-                    header: this.translate('Error Log', 'labels', 'ModuleManager'),
-                    errorList: this.errorList
-                }, view => {
-                    view.render();
-                });
             }
         },
 
@@ -72,25 +59,18 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             Dep.prototype.setup.call(this);
 
             this.wait(true);
-            this.ajaxGetRequest('Composer/gitAuth')
-                .then(response => {
-                    this.getModelFactory().create(null, model => {
-                        this.model = model;
-                        this.attributes = {
-                            username: typeof response.username !== 'undefined' ? response.username : null,
-                            password: typeof response.password !== 'undefined' ? response.password : null
-                        };
-                        model.set(this.attributes);
-                        this.createFieldsViews();
-                        this.wait(false);
-                    })
-                });
-        },
-
-        data() {
-            return {
-                isDetailMode: this.mode === 'detail'
-            };
+            this.ajaxGetRequest('Composer/gitAuth').then(response => {
+                this.getModelFactory().create(null, model => {
+                    this.model = model;
+                    this.attributes = {
+                        username: typeof response.username !== 'undefined' ? response.username : null,
+                        password: typeof response.password !== 'undefined' ? response.password : null
+                    };
+                    model.set(this.attributes);
+                    this.createFieldsViews();
+                    this.wait(false);
+                })
+            });
         },
 
         createFieldsViews() {
@@ -132,14 +112,6 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             return fieldsViews
         },
 
-        setFieldViewsMode() {
-            let fieldViews = this.getFieldViews();
-            for (let key in fieldViews) {
-                fieldViews[key].setMode(this.mode);
-                fieldViews[key].reRender();
-            }
-        },
-
         fetch() {
             let data = {};
             let fieldViews = this.getFieldViews();
@@ -158,14 +130,6 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             return notValid;
         },
 
-        actionEdit() {
-            this.mode = 'edit';
-            this.setFieldViewsMode();
-            this.toggleActionButton('edit', true);
-            this.toggleActionButton('save');
-            this.toggleActionButton('cancelEdit');
-        },
-
         actionSave() {
             let data = this.fetch();
             let isDataChanged = false;
@@ -176,7 +140,6 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
             }
             if (!isDataChanged) {
                 this.notify(this.translate('notModified', 'messages'), 'warning', 2000);
-                this.actionCancelEdit();
                 return;
             }
             if (this.validate()) {
@@ -185,52 +148,22 @@ Espo.define('treo-core:views/module-manager/record/settings-panel', 'view',
 
             this.model.set(data, {silent: true});
             this.attributes = this.model.getClonedAttributes();
-            this.actionCancelEdit();
             this.notify('Saving...');
-            this.ajaxPutRequest('Composer/gitAuth', data)
-                .then(response => {
-                    if (response) {
-                        this.trigger('after:save');
-                        this.notify('Saved', 'success');
-                    }
-                });
+            this.ajaxPutRequest('Composer/gitAuth', data).then(response => {
+                if (response) {
+                    this.trigger('after:save');
+                    this.notify('Saved', 'success');
+                }
+            });
         },
 
         actionCancelEdit() {
             this.model.set(this.attributes, {silent: true});
-            this.mode = 'detail';
-            this.setFieldViewsMode();
-            this.toggleActionButton('edit');
-            this.toggleActionButton('save', true);
-            this.toggleActionButton('cancelEdit', true);
+            this.getRouter().navigate('#Admin', {trigger: true});
         },
 
-        toggleActionButton(action, hide) {
-            let button = $(this.options.el).find(`.detail-button-container button.action[data-action="${action}"]`);
-            if (button.length) {
-                if (hide) {
-                    button.addClass('hidden');
-                } else {
-                    button.removeClass('hidden');
-                }
-            }
-        },
-
-        logError(response, id, action) {
-            this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
-            this.errorsCount++;
-            this.errorList.unshift({
-                name: id + this.errorsCount,
-                errorMessage: this.translate('error' +  Espo.Utils.upperCaseFirst(action), 'messages', 'ModuleManager')
-                    .replace('{module}', '<strong>' + id + '</strong>')
-                    .replace('{status}', '<strong>' + response.status+ '</strong>')
-                    .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
-                message: response.output
-            });
-            this.$el.find('[data-action="showErrorLog"] .new-error').removeClass('hidden');
-            if (this.hasView('logs')) {
-                this.getView('logs').reRender();
-            }
+        updatePageTitle() {
+            this.setPageTitle(this.getLanguage().translate('Git Authentication', 'labels', 'Admin'));
         },
 
     })

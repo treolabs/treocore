@@ -1,6 +1,7 @@
 {
   "labels": {
-    "moduleManager": "Module Manager"
+    "Module Manager": "Module Manager",
+    "Git Authentication": "Git Authentication"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",

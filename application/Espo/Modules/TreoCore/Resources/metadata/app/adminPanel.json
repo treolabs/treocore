@@ -18,7 +18,7 @@
         "description": "authentication"
       },
       {
-        "url": "#Composer/Auth",
+        "url": "#Composer/auth",
         "label": "Git Authentication",
         "description": "gitAuth"
       },

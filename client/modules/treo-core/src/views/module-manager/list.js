@@ -47,21 +47,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         blockActions: false,
 
         loadList() {
-            this.loadSettingsPanel();
             this.loadInstalledModulesList();
             this.loadAvailableModulesList();
-        },
-
-        loadSettingsPanel() {
-            this.createView('settingsPanel', 'treo-core:views/module-manager/record/settings-panel', {
-                el: `${this.options.el} .settings-panel`
-            }, view => {
-                this.listenTo(view, 'after:save', () => {
-                    this.installedCollection.fetch();
-                    this.availableCollection.fetch();
-                });
-                view.render();
-            });
         },
 
         loadInstalledModulesList() {
@@ -169,11 +156,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         getHeader() {
-            return '<a href="#Admin">' + this.translate('Administration') + "</a> » " + this.getLanguage().translate('moduleManager', 'labels', 'Admin');
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> » " + this.getLanguage().translate('Module Manager', 'labels', 'Admin');
         },
 
         updatePageTitle() {
-            this.setPageTitle(this.getLanguage().translate('moduleManager', 'labels', 'Admin'));
+            this.setPageTitle(this.getLanguage().translate('Module Manager', 'labels', 'Admin'));
         },
 
         actionRefresh(data) {
@@ -230,9 +217,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             this.reloadPage(2000);
                         } else {
                             this.blockActions = false;
-                            if (response.output) {
-                                this.getView('settingsPanel').logError(response, data.id, data.mode);
-                            }
                         }
                     })
                     .fail(() => this.blockActions = false);
@@ -259,9 +243,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         this.reloadPage(2000);
                     } else {
                         this.blockActions = false;
-                        if (response.output) {
-                            this.getView('settingsPanel').logError(response, data.id, 'removed');
-                        }
                     }
                 })
                 .fail(() => this.blockActions = false );
