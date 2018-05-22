@@ -1,6 +1,6 @@
 {
   "name": "treo/treo",
-  "version": "1.11.2",
+  "version": "1.11.3",
   "description": "TreoPIM",
   "authors": [
     {
@@ -61,7 +61,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://packagist.zinitsolutions.com"
+      "url": "https://packagist.treopim.com"
     }
   ]
 }
