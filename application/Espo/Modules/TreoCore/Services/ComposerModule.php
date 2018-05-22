@@ -50,7 +50,7 @@ class ComposerModule extends Base
     /**
      * @var string
      */
-    public static $packagistPath = 'https://packagist.zinitsolutions.com';
+    public static $packagistPath = 'https://packagist.treopim.com';
 
     /**
      * @var array
