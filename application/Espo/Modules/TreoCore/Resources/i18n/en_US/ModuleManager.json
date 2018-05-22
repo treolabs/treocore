@@ -52,7 +52,7 @@
     "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>",
-    "Module(s) '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module(s) <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>",
     "checkLog": "Something went wrong. Check the log for error-level output",
     "errorInstall": "Module {module} not installed with error status {status} at {time}",
