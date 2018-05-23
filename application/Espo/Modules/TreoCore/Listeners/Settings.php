@@ -79,7 +79,7 @@ class Settings extends AbstractListener
 
             // create new file
             $file = fopen($path, "w");
-            fwrite($file, Json::encode($data));
+            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
             fclose($file);
         }
     }
