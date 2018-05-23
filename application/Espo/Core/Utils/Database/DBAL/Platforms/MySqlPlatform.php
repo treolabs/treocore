@@ -96,11 +96,7 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
                 $diff->changedColumns[$columnName] = new ColumnDiff($columnName, $changedColumn, $changedProperties, $column);
             }
             //END espo
-
-            /**
-             * @todo treoinject
-             */
-            $queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
+            //$queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
         }
 
         foreach ($diff->changedColumns as $columnDiff) {
