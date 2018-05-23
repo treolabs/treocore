@@ -269,7 +269,7 @@ class Composer extends Base
     public function setModuleComposerJson(array $data): void
     {
         $file = fopen($this->moduleComposer, "w");
-        fwrite($file, Json::encode($data));
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
         fclose($file);
     }
 
