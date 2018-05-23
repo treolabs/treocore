@@ -208,7 +208,10 @@ class ComposerModule extends Base
                             if (!empty($data['extra']['treoId'])) {
                                 $treoId = $data['extra']['treoId'];
                                 if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
-                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
+                                    || preg_match_all('/^v\d.\d.\d-RC\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d-RC\d$/', $version, $matches)
+                                ) {
                                     // prepare version
                                     $version = str_replace('v', '', $matches[0][0]);
 
