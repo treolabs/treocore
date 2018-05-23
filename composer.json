@@ -39,7 +39,7 @@
     "react/zmq": "0.3.0",
     "treo-module/pim": "*"
   },
-  "minimum-stability": "RC",
+  "minimum-stability": "stable",
   "extra": {
     "espoVersion": "5.1.2",
     "merge-plugin": {
