@@ -207,10 +207,11 @@ class ComposerModule extends Base
                         foreach ($versions as $version => $data) {
                             if (!empty($data['extra']['treoId'])) {
                                 $treoId = $data['extra']['treoId'];
+                                $version = strtolower($version);
                                 if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
-                                    || preg_match_all('/^v\d.\d.\d-RC\d$/', $version, $matches)
+                                    || preg_match_all('/^v\d.\d.\d-rc\d$/', $version, $matches)
                                     || preg_match_all('/^\d.\d.\d$/', $version, $matches)
-                                    || preg_match_all('/^\d.\d.\d-RC\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d-rc\d$/', $version, $matches)
                                 ) {
                                     // prepare version
                                     $version = str_replace('v', '', $matches[0][0]);

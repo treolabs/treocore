@@ -785,7 +785,8 @@ class ModuleManager extends Base
             // for unstable version
             if (!$this->getConfig()->get('allowUnstable')) {
                 foreach ($result as $version => $row) {
-                    if (preg_match('/^\d.\d.\d-RC\d$/', $version)) {
+                    $version = strtolower($version);
+                    if (preg_match('/^\d.\d.\d-rc\d$/', $version)) {
                         unset($result[$version]);
                     }
                 }
