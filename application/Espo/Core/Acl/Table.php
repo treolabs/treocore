@@ -298,7 +298,6 @@ class Table
             }
         }
 
-
         return $roleList;
     }
 
