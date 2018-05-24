@@ -285,15 +285,19 @@ class Table
         }
 
         $teamList = $this->getUser()->get('teams');
-        if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
-            throw new Error();
-        }
-        foreach ($teamList as $team) {
-            $teamRoleList = $team->get('roles');
-            foreach ($teamRoleList as $role) {
-                $roleList[] = $role;
+        //@todo treoinject
+        if (!empty($teamList)) {
+            if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
+                throw new Error();
+            }
+            foreach ($teamList as $team) {
+                $teamRoleList = $team->get('roles');
+                foreach ($teamRoleList as $role) {
+                    $roleList[] = $role;
+                }
             }
         }
+
 
         return $roleList;
     }
