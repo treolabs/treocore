@@ -44,7 +44,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         availableCollection: null,
 
-        blockActions: false,
+        actionsInProgress: 0,
 
         loadList() {
             this.loadInstalledModulesList();
@@ -105,12 +105,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                                     rows[key].getView('isActive').reRender();
                                 }
                             }
-                            this.$el.find('.list-container td.cell ').css({
-                                'white-space': 'normal',
-                                'text-overflow': 'ellipsis'
-                            })
                         });
                         view.render();
+                        //todo: set color for rows
                     });
                 });
 
@@ -141,13 +138,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: false,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
                     }, view => {
-                        this.listenTo(view, 'after:render', () => {
-                            this.$el.find('.list-container td.cell ').css({
-                                'white-space': 'normal',
-                                'text-overflow': 'ellipsis'
-                            })
-                        });
                         view.render();
+                        //todo: set color for rows
                     });
                 });
 
@@ -172,11 +164,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         actionInstallModule(data) {
-            if (this.blockActions) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
-                return;
-            }
-
             if (!data.id || !data.mode) {
                 return;
             }
@@ -190,15 +177,15 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             if (data.mode === 'install') {
                 currentModel = this.availableCollection.get(data.id);
                 viewName = 'treo-core:views/module-manager/modals/install';
-                beforeSaveLabel = 'installing';
-                afterSaveLabel = 'installed';
+                beforeSaveLabel = 'settingModuleForInstalling';
+                afterSaveLabel = 'settedModuleForInstalling';
                 apiUrl = 'ModuleManager/installModule';
                 requestType = 'POST';
             } else {
                 currentModel = this.installedCollection.get(data.id);
                 viewName = 'treo-core:views/module-manager/modals/update';
-                beforeSaveLabel = 'updating';
-                afterSaveLabel = 'updated';
+                beforeSaveLabel = 'settingModuleForUpdating';
+                afterSaveLabel = 'settedModuleForUpdating';
                 apiUrl = 'ModuleManager/updateModule';
                 requestType = 'PUT';
             }
@@ -208,44 +195,53 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }, view => {
                 view.render();
                 this.listenTo(view, 'save', saveData => {
-                    this.blockActions = true;
-                    this.notify(this.translate('installing', 'labels', 'ModuleManager'));
-                    this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000})
-                    .then(response => {
-                        if (response.status === 0) {
-                            this.notify(this.translate('installed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                            this.reloadPage(2000);
-                        } else {
-                            this.blockActions = false;
+                    this.actionsInProgress++;
+                    this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
+                    this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000}).then(response => {
+                        if (response) {
+                            this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                            this.actionsInProgress--;
+                            currentModel.set({settingVersion: saveData.version});
+                            //todo: set status in model and set color
                         }
-                    })
-                    .fail(() => this.blockActions = false);
+                    });
                 });
             });
         },
 
         actionRemoveModule(data) {
-            if (this.blockActions) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
-                return;
-            }
-
             if (!data.id) {
                 return;
             }
 
-            this.blockActions = true;
-            this.notify(this.translate('removing', 'labels', 'ModuleManager'));
-            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id}), {timeout: 180000})
-                .then(response => {
-                    if (response.status === 0) {
-                        this.notify(this.translate('removed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                        this.reloadPage(2000);
-                    } else {
-                        this.blockActions = false;
-                    }
-                })
-                .fail(() => this.blockActions = false );
+            this.actionsInProgress++;
+            this.notify(this.translate('settingModuleForRemoving', 'labels', 'ModuleManager'));
+            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id})).then(response => {
+                if (response) {
+                    this.notify(this.translate('settedModuleForRemoving', 'labels', 'ModuleManager'), 'success');
+                    this.actionsInProgress--;
+                    //todo: set status in model and set color
+                }
+            });
+        },
+
+        actionRunUpdate() {
+            if (this.actionsInProgress) {
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
+                return;
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate('updating', 'labels', 'ModuleManager'));
+            this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
+                if (response.status === 0) {
+                    this.notify(this.translate('updated', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
+                    this.reloadPage(2000);
+                } else {
+                    this.notify(this.translate('failed', 'labels', 'ModuleManager'), 'danger');
+                    this.actionsInProgress--;
+                }
+            }).fail(() => this.actionsInProgress--);;
         },
 
         reloadPage(timeout) {
