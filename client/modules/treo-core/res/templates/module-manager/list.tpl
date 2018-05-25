@@ -5,19 +5,20 @@
         text-overflow: ellipsis
     }
     .install-module-row {
-        background-color: #b7ffd5;
+        background-color: #dfffec;
     }
     .update-module-row {
-        background-color: #c4e2ff;
+        background-color: #dbebff;
     }
-    .remove-module-row {
-        background-color: #ffcece;
+    .delete-module-row {
+        background-color: #ffe5e5;
     }
 </style>
 <div class="page-header">{{{header}}}</div>
 <div class="detail-button-container button-container record-buttons clearfix">
     <div class="btn-group pull-left" role="group">
         <button class="btn btn-primary action" data-action="runUpdate" type="button">{{translate 'Run Update' scope='ModuleManager' category='labels'}}</button>
+        <button class="btn btn-default action" data-action="cancelUpdate" type="button" style="display: none;">{{translate 'Cancel'}}</button>
     </div>
     <div class="clearfix"></div>
 </div>
