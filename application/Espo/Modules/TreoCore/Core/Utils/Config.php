@@ -409,8 +409,10 @@ class Config extends EspoConfig
 
             /**
              * Set version from composer
+             *
+             * @todo remove ot soon
              */
-            $config['version'] = $this->getTreoVersion();
+//            $config['version'] = $this->getTreoVersion();
 
             /**
              * Set allowUnstable param from composer
