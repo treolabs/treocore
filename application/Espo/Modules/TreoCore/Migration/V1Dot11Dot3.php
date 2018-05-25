@@ -42,7 +42,7 @@ use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1113 extends AbstractMigration
+class V1Dot11Dot3 extends AbstractMigration
 {
     /**
      * Up to current

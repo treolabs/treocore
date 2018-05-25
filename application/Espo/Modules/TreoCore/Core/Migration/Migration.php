@@ -81,24 +81,43 @@ class Migration
         $from = $this->prepareVersion($from);
         $to = $this->prepareVersion($to);
 
-        if ($from == $to) {
+        // prepare data
+        $data = $migrations;
+        $data[] = $from;
+        $data[] = $to;
+        $data = array_unique($data);
+
+        // sort
+        natsort($data);
+
+        $data = array_values($data);
+
+        // prepare keys
+        $keyFrom = array_search($from, $data);
+        $keyTo = array_search($to, $data);
+
+        if ($keyFrom == $keyTo) {
             return;
         }
 
         // prepare increment
-        if ($from < $to) {
-            $inc = 1;
+        if ($keyFrom < $keyTo) {
             $method = 'up';
-            $to++;
         } else {
-            $inc = -1;
             $method = 'down';
+
+            $data = array_reverse($data);
         }
 
-        while ($from != $to) {
-            if (in_array($from, $migrations)) {
+        $isAllowed = false;
+        foreach ($data as $className) {
+            if ($from == $className) {
+                $isAllowed = true;
+            }
+
+            if ($from != $className && $isAllowed && in_array($className, $migrations)) {
                 // prepare class name
-                $className = sprintf($this->namespace, $module, "V{$from}");
+                $className = sprintf($this->namespace, $module, $className);
 
                 $class = new $className();
                 if ($class instanceof AbstractMigration) {
@@ -107,8 +126,9 @@ class Migration
                 }
             }
 
-            // change current
-            $from = $from + $inc;
+            if ($to == $className) {
+                $isAllowed = false;
+            }
         }
     }
 
@@ -119,9 +139,19 @@ class Migration
      *
      * @return int
      */
-    protected function prepareVersion(string $version): int
+    protected function prepareVersion(string $version)
     {
-        return (int)str_replace(['v', '.', 'php', 'V'], ['', '', '', ''], $version);
+        // prepare version
+        $version = str_replace('v', '', $version);
+
+        if (preg_match_all('/^(.*)\.(.*)\.(.*)$/', $version, $matches)) {
+            // prepare data
+            $major = (int)$matches[1][0];
+            $version = (int)$matches[2][0];
+            $patch = (int)$matches[3][0];
+
+            return "V{$major}Dot{$version}Dot{$patch}";
+        }
     }
 
     /**
@@ -141,8 +171,10 @@ class Migration
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $file) {
-                if (!in_array($file, ['.', '..'])) {
-                    $result[] = $this->prepareVersion($file);
+                // prepare file name
+                $file = str_replace('.php', '', $file);
+                if (preg_match('/^V(.*)Dot(.*)Dot(.*)$/', $file)) {
+                    $result[] = $file;
                 }
             }
         }
