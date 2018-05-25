@@ -39,6 +39,8 @@
     "anotherActionInProgress": "Ein anderes Workflow ist gerade in Arbeit. Warten Sie bitte ab, bis dieses abgeschlossen ist ",
     "updating": "Wird aktualisiert...",
     "updated": "Wurde aktualisiert. Die Seite wird in {value} Sekunden neu geladen",
+    "canceling": "Stornieren...",
+    "canceled": "Abgebrochen",
     "dependencies": "Abhängigkeiten",
     "Run Update": "Starte das Update",
     "failed": "Die Aktualisierung der Module ist fehlgeschlagen. Weitere Informationen finden Sie in den Log",

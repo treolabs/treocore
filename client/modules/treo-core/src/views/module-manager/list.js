@@ -90,24 +90,33 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         }
                         this.listenTo(view, 'after:render', () => {
                             let rows = view.nestedViews || {};
-                            for (let key in rows) {
+                            let showCancelAction = false;
+                            collection.each(currentModel => {
                                 let setEditMode;
-                                if (rows[key].model.get('isActive')) {
-                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key)) && !rows[key].model.get('isSystem');
+                                if (currentModel.get('isActive')) {
+                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(currentModel.id)) && !currentModel.get('isSystem');
                                 } else {
-                                    setEditMode = (collection.get(key).get('required') || []).every(item => {
+                                    setEditMode = (currentModel.get('required') || []).every(item => {
                                         let model = collection.get(item);
                                         return model && model.get('isActive');
                                     });
                                 }
-                                if (setEditMode) {
-                                    rows[key].getView('isActive').setMode('edit');
-                                    rows[key].getView('isActive').reRender();
+                                if (setEditMode && !currentModel.get('status')) {
+                                    let isActiveView = rows[currentModel.id].getView('isActive');
+                                    isActiveView.setMode('edit');
+                                    isActiveView.reRender();
                                 }
-                            }
+
+                                let status = currentModel.get('status');
+                                if (status) {
+                                    showCancelAction = true;
+                                    rows[currentModel.id].$el.addClass(`${status}-module-row`);
+                                    rows[currentModel.id].getView('status').$el.html(this.getLanguage().translateOption(status, 'status', 'ModuleManager'));
+                                }
+                            });
+                            this.toggleActionButton('cancelUpdate', showCancelAction);
                         });
                         view.render();
-                        //todo: set color for rows
                     });
                 });
 
@@ -139,7 +148,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
                     }, view => {
                         view.render();
-                        //todo: set color for rows
                     });
                 });
 
@@ -201,8 +209,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         if (response) {
                             this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
                             this.actionsInProgress--;
-                            currentModel.set({settingVersion: saveData.version});
-                            //todo: set status in model and set color
+                            if (data.mode === 'install') {
+                                this.availableCollection.fetch();
+                            }
+                            this.installedCollection.fetch();
                         }
                     });
                 });
@@ -220,7 +230,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 if (response) {
                     this.notify(this.translate('settedModuleForRemoving', 'labels', 'ModuleManager'), 'success');
                     this.actionsInProgress--;
-                    //todo: set status in model and set color
+                    this.installedCollection.fetch();
                 }
             });
         },
@@ -241,7 +251,34 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.notify(this.translate('failed', 'labels', 'ModuleManager'), 'danger');
                     this.actionsInProgress--;
                 }
-            }).fail(() => this.actionsInProgress--);;
+            }).fail(() => this.actionsInProgress--);
+        },
+
+        actionCancelUpdate() {
+            if (this.actionsInProgress) {
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
+                return;
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate('canceling', 'labels', 'ModuleManager'));
+            this.ajaxRequest('Composer/cancel', 'DELETE').then(response => {
+                if (response) {
+                    this.notify(this.translate('canceled', 'labels', 'ModuleManager'), 'success');
+                    this.actionsInProgress--;
+                    this.availableCollection.fetch();
+                    this.installedCollection.fetch();
+                }
+            });
+        },
+
+        toggleActionButton(action, show) {
+            let button = this.$el.find(`.detail-button-container button[data-action="${action}"]`);
+            if (show) {
+                button.show();
+            } else {
+                button.hide();
+            }
         },
 
         reloadPage(timeout) {
