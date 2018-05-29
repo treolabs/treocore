@@ -200,7 +200,10 @@ class ComposerModule extends Base
         if (!$this->isModulePackagesLoaded) {
             $this->isModulePackagesLoaded = true;
 
-            if ($droppingCache || empty($this->getCachedPackagistData())) {
+            // get cache data
+            $cacheData = $this->getCachedPackagistData();
+
+            if ($droppingCache || empty($cacheData)) {
                 // prepare packages
                 foreach ($this->getPackagistData() as $repository => $versions) {
                     if (is_array($versions)) {
@@ -222,6 +225,11 @@ class ComposerModule extends Base
                             }
                         }
                     }
+                }
+
+                // find new version in modules
+                if ($droppingCache && !empty($cacheData)) {
+                    $this->findUpdatedModules($cacheData, $this->modulePackage);
                 }
 
                 // caching
@@ -261,7 +269,7 @@ class ComposerModule extends Base
     protected function cachingPackagistData(array $data): void
     {
         $fp = fopen($this->cacheFile, 'w');
-        fwrite($fp, Json::encode($data));
+        fwrite($fp, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         fclose($fp);
     }
 
@@ -283,5 +291,40 @@ class ComposerModule extends Base
             // prepare data
             $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
         }
+    }
+
+    /**
+     * Find new version in modules
+     *
+     * @param array $oldDara
+     * @param array $newData
+     */
+    protected function findUpdatedModules(array $oldDara, array $newData): void
+    {
+        foreach ($newData as $module => $versions) {
+            if (isset($oldDara[$module])) {
+                foreach ($versions as $version => $row) {
+                    if (!isset($oldDara[$module][$version])) {
+                        $this->sendNotification('newModuleVersion', $module, $row);
+                    }
+                }
+            } else {
+                $this->sendNotification('newModule', $module, array_pop($versions));
+            }
+        }
+    }
+
+    /**
+     * Send notification(s)
+     *
+     * @param string $type
+     * @param string $module
+     * @param array  $data
+     */
+    protected function sendNotification(string $type, string $module, array $data): void
+    {
+        echo '<pre>';
+        print_r($data);
+        die();
     }
 }

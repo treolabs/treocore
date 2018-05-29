@@ -94,5 +94,11 @@
   ],
   "views/settings/record/edit": [
     "treo-core"
+  ],
+  "views/notification/items/new-module-version": [
+    "treo-core"
+  ],
+  "views/notification/items/new-module": [
+    "treo-core"
   ]
 }
