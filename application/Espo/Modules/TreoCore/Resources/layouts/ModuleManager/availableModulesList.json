@@ -1,17 +1,11 @@
 [
-    {
-        "name": "name",
-        "notSortable": true,
-        "width": 20
-    },
-    {
-        "name": "description",
-        "notSortable": true,
-        "width": 40
-    },
-    {
-        "name": "settingVersion",
-        "notSortable": true,
-        "width": 10
-    }
+  {
+    "name": "name",
+    "notSortable": true,
+    "width": 30
+  },
+  {
+    "name": "description",
+    "notSortable": true
+  }
 ]
