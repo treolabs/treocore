@@ -191,6 +191,16 @@ class ComposerModule extends Base
     }
 
     /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+    }
+
+    /**
      * Load module packages
      *
      * @param bool $droppingCache
@@ -305,11 +315,11 @@ class ComposerModule extends Base
             if (isset($oldDara[$module])) {
                 foreach ($versions as $version => $row) {
                     if (!isset($oldDara[$module][$version])) {
-                        $this->sendNotification('newModuleVersion', $module, $row);
+                        $this->sendNotification('newModuleVersion', $row);
                     }
                 }
             } else {
-                $this->sendNotification('newModule', $module, array_pop($versions));
+                $this->sendNotification('newModule', array_pop($versions));
             }
         }
     }
@@ -318,13 +328,76 @@ class ComposerModule extends Base
      * Send notification(s)
      *
      * @param string $type
-     * @param string $module
      * @param array  $data
      */
-    protected function sendNotification(string $type, string $module, array $data): void
+    protected function sendNotification(string $type, array $data): void
     {
-        echo '<pre>';
-        print_r($data);
-        die();
+        // get users
+        $users = $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->where(['isAdmin' => true])
+            ->find();
+
+        if (!empty($users)) {
+            // prepere message data
+            $messageData = [
+                'messageTemplate' => $type,
+                'messageVars'     => []
+            ];
+
+            switch ($type) {
+                case 'newModule':
+                    $messageData['messageVars'] = [
+                        'moduleName' => $this->getModuleTranslateName($data)
+                    ];
+                    break;
+                case 'newModuleVersion':
+                    $messageData['messageVars'] = [
+                        'moduleName'    => $this->getModuleTranslateName($data),
+                        'moduleVersion' => str_replace('v', '', $data['version'])
+                    ];
+                    break;
+            }
+
+            foreach ($users as $user) {
+                // create notification
+                $notification = $this->getEntityManager()->getEntity('Notification');
+                $notification->set(
+                    [
+                        'type'   => 'TreoMessage',
+                        'userId' => $user->get('id'),
+                        'data'   => $messageData
+                    ]
+                );
+                $this->getEntityManager()->saveEntity($notification);
+            }
+        }
+    }
+
+    /**
+     * Get module name
+     *
+     * @param array $package
+     *
+     * @return string
+     */
+    public function getModuleTranslateName(array $package): string
+    {
+        // get current language
+        $currentLang = $this
+            ->getInjection('language')
+            ->getLanguage();
+
+        // prepare result
+        $result = $package['extra']['id'];
+
+        if (!empty($package['extra']['name'][$currentLang])) {
+            $result = $package['extra']['name'][$currentLang];
+        } elseif ($package['extra']['name']['default']) {
+            $result = $package['extra']['name']['default'];
+        }
+
+        return $result;
     }
 }

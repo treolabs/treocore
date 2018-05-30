@@ -30,38 +30,33 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-/**
- * @todo Developing new notification type
- */
-Espo.define('treo-core:views/notification/items/new-module', 'views/notification/items/base', function (Dep) {
+Espo.define('treo-core:views/notification/items/treo-message', 'views/notification/items/message', function (Dep) {
 
     return Dep.extend({
-
-        template: 'notification/items/message',
-
-        data: function () {
-            return _.extend({
-                style: this.style,
-            }, Dep.prototype.data.call(this));
-        },
-
         setup: function () {
+            // prepare data
             var data = this.model.get('data') || {};
 
+            // prepare style
             this.style = data.style || 'text-muted';
 
-            this.messageTemplate = this.model.get('message') || data.message || '';
-
+            // prepare user
             this.userId = data.userId;
 
-            this.messageData['entityType'] = Espo.Utils.upperCaseFirst((this.translate(data.entityType, 'scopeNames') || '').toLowerCase());
-
-            this.messageData['user'] = '<a href="#User/view/' + data.userId + '">' + data.userName + '</a>';
-            this.messageData['entity'] = '<a href="#' + data.entityType + '/view/' + data.entityId + '">' + data.entityName + '</a>';
+            // prepare message
+            this.messageTemplate = '';
+            if (typeof data.messageTemplate != 'undefined') {
+                var message = this.translate(data.messageTemplate, 'treoNotifications', 'TreoNotification');
+                if (typeof data.messageVars != 'undefined') {
+                    $.each(data.messageVars, function (k, v) {
+                        message = message.replace("{{" + k + "}}", v);
+                    })
+                }
+                this.messageTemplate = message;
+            }
 
             this.createMessage();
         }
-
     });
 });
 

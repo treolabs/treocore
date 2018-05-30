@@ -1,0 +1,6 @@
+{
+  "treoNotifications": {
+    "newModule": "New module '{{moduleName}}' available",
+    "newModuleVersion": "New version '{{moduleVersion}}' available for module '{{moduleName}}'"
+  }
+}
