@@ -94,5 +94,8 @@
   ],
   "views/settings/record/edit": [
     "treo-core"
+  ],
+  "views/notification/items/treo-message": [
+    "treo-core"
   ]
 }
