@@ -133,7 +133,7 @@ class Composer extends AbstractListener
             $moduleName = $this->getModuleName($package);
 
             // prepare data
-            $version = str_replace('v', '', $package['version']);
+            $version = ComposerModuleService::prepareVersion($package['version']);
 
             // prepare message
             $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
@@ -166,8 +166,8 @@ class Composer extends AbstractListener
 
         if (!empty($package)) {
             // prepare data
-            $from = str_replace('v', '', $from);
-            $to = str_replace('v', '', $package['version']);
+            $from = ComposerModuleService::prepareVersion($from);
+            $to = ComposerModuleService::prepareVersion($package['version']);
 
             if ($from != $to) {
                 // get module name

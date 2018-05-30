@@ -191,6 +191,18 @@ class ComposerModule extends Base
     }
 
     /**
+     * Prepare version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    public static function prepareVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
+    }
+
+    /**
      * Init
      */
     protected function init()
@@ -198,6 +210,7 @@ class ComposerModule extends Base
         parent::init();
 
         $this->addDependency('language');
+        $this->addDependency('metadata');
     }
 
     /**
@@ -227,7 +240,7 @@ class ComposerModule extends Base
                                     || preg_match_all('/^\d.\d.\d-rc\d$/', $version, $matches)
                                 ) {
                                     // prepare version
-                                    $version = str_replace('v', '', $matches[0][0]);
+                                    $version = self::prepareVersion($matches[0][0]);
 
                                     // set row
                                     $this->modulePackage[$treoId][$version] = $data;
@@ -311,14 +324,26 @@ class ComposerModule extends Base
      */
     protected function findUpdatedModules(array $oldDara, array $newData): void
     {
+        // prepare config
+        $config = $this->getConfig();
+
+        // get all modules
+        $modules = $this->getInjection('metadata')->getAllModules();
+
         foreach ($newData as $module => $versions) {
             if (isset($oldDara[$module])) {
                 foreach ($versions as $version => $row) {
-                    if (!isset($oldDara[$module][$version])) {
+                    if (!isset($oldDara[$module][$version])
+                        && empty($config->get('notificationNewModuleVersionDisabled'))
+                        && in_array($module, $modules)
+                        && $this->isAllowedVersion($row['version'])) {
                         $this->sendNotification('newModuleVersion', $row);
                     }
                 }
-            } else {
+            } elseif (empty(
+                $config->get('notificationNewModuleDisabled')
+                && !in_array($module, $modules)
+            )) {
                 $this->sendNotification('newModule', array_pop($versions));
             }
         }
@@ -355,7 +380,7 @@ class ComposerModule extends Base
                 case 'newModuleVersion':
                     $messageData['messageVars'] = [
                         'moduleName'    => $this->getModuleTranslateName($data),
-                        'moduleVersion' => str_replace('v', '', $data['version'])
+                        'moduleVersion' => self::prepareVersion($data['version'])
                     ];
                     break;
             }
@@ -382,7 +407,7 @@ class ComposerModule extends Base
      *
      * @return string
      */
-    public function getModuleTranslateName(array $package): string
+    protected function getModuleTranslateName(array $package): string
     {
         // get current language
         $currentLang = $this
@@ -399,5 +424,26 @@ class ComposerModule extends Base
         }
 
         return $result;
+    }
+
+    /**
+     * Is module version allowed to sending notification
+     *
+     * @param string $version
+     *
+     * @return bool
+     */
+    protected function isAllowedVersion(string $version): bool
+    {
+        // prepare version
+        $version = self::prepareVersion($version);
+
+        if (!empty($this->getConfig()->get('allowUnstable'))) {
+            $result = preg_match('/^\d.\d.\d-rc\d$/', $version);
+        } else {
+            $result = preg_match('/^\d.\d.\d$/', $version);
+        }
+
+        return (bool)$result;
     }
 }

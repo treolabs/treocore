@@ -44,6 +44,7 @@ use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
+use Espo\Modules\TreoCore\Services\ComposerModule;
 
 /**
  * ModuleManager service
@@ -706,7 +707,7 @@ class ModuleManager extends Base
      */
     protected function prepareModuleVersion(string $version): string
     {
-        return str_replace('v', '', $version);
+        return ComposerModule::prepareVersion($version);
     }
 
     /**
