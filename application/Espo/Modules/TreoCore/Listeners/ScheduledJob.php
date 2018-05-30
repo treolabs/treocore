@@ -119,32 +119,14 @@ class ScheduledJob extends Settings
     protected function checkingAllowUnstableParam(): void
     {
         if (!$this->isModuleAutoUpdateJob()) {
-            $this->blockingAllowUnstableParam();
+            // set stable minimum stability
+            $this->setMinimumStability('stable');
+
+            $this->getConfig()->set('allowUnstableBlocked', true);
         } else {
-            $this->unblockingAllowUnstableParam();
+            $this->getConfig()->set('allowUnstableBlocked', false);
         }
-    }
 
-    /**
-     * Blocking allowUnstable param
-     */
-    protected function blockingAllowUnstableParam(): void
-    {
-        // set stable minimum stability
-        $this->setMinimumStability('stable');
-
-        // blocking allowUnstable param
-        $this->getConfig()->set('allowUnstableBlocked', true);
-        $this->getConfig()->save();
-    }
-
-    /**
-     * Unblocking allowUnstable param
-     */
-    protected function unblockingAllowUnstableParam(): void
-    {
-        // blocking allowUnstable param
-        $this->getConfig()->set('allowUnstableBlocked', false);
         $this->getConfig()->save();
     }
 
