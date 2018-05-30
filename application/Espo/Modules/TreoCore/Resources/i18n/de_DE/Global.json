@@ -89,6 +89,7 @@
     "Stream": "Stream"
   },
   "messages": {
+    "allowUnstableParamBlocked": "Param kann nicht geändert werden. Sie sollten den Cron-Job 'ModuleAutoUpdate' zuerst deaktivieren.",
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
     "massUpdateResult": "{count} Einträge werden aktualisiert"
   }

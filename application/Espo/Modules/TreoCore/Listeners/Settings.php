@@ -35,6 +35,7 @@
 namespace Espo\Modules\TreoCore\Listeners;
 
 use Espo\Core\Utils\Json;
+use Espo\Core\Exceptions\BadRequest;
 
 /**
  * Settings listener
@@ -51,6 +52,14 @@ class Settings extends AbstractListener
     public function afterActionPatch(array $data): array
     {
         if (isset($data['data']->allowUnstable)) {
+            if (!empty($this->getConfig()->get('allowUnstableBlocked'))) {
+                $message = $this
+                    ->getLanguage()
+                    ->translate('allowUnstableParamBlocked', 'messages');
+
+                throw new BadRequest($message);
+            }
+
             $this->setMinimumStability((!empty($data['data']->allowUnstable)) ? 'RC' : 'stable');
 
             $data['result']['allowUnstable'] = !empty($data['data']->allowUnstable);
@@ -79,7 +88,7 @@ class Settings extends AbstractListener
 
             // create new file
             $file = fopen($path, "w");
-            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             fclose($file);
         }
     }
