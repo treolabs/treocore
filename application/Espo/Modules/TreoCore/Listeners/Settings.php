@@ -50,7 +50,8 @@ class Settings extends AbstractListener
      */
     public function afterActionPatch(array $data): array
     {
-        if (isset($data['data']->allowUnstable)) {
+        if (isset($data['data']->allowUnstable)
+            && empty($this->getConfig()->get('allowUnstableBlocked'))) {
             $this->setMinimumStability((!empty($data['data']->allowUnstable)) ? 'RC' : 'stable');
 
             $data['result']['allowUnstable'] = !empty($data['data']->allowUnstable);
@@ -79,7 +80,7 @@ class Settings extends AbstractListener
 
             // create new file
             $file = fopen($path, "w");
-            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             fclose($file);
         }
     }
