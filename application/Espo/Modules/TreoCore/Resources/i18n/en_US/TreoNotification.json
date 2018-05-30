@@ -1,6 +1,6 @@
 {
   "treoNotifications": {
-    "newModule": "New module '{{moduleName}}' available",
-    "newModuleVersion": "New version '{{moduleVersion}}' available for module '{{moduleName}}'"
+    "newModule": "New module '{{moduleName}}' available. <a href=\"/#ModuleManager/list\">Details</a>",
+    "newModuleVersion": "New version '{{moduleVersion}}' available for module '{{moduleName}}'. <a href=\"/#ModuleManager/list\">Details</a>"
   }
 }
