@@ -80,6 +80,12 @@
     "username": "Username",
     "password": "Password"
   },
+  "labels": {
+    "status": "Status",
+    "fail": "Fail",
+    "success": "Success",
+    "viewDetails": "View Details"
+  },
   "links": {
     "ownerUser": "Owner"
   },
@@ -90,5 +96,23 @@
     "allowUnstableParamBlocked": "Param cannot be modified. You should deactivate 'ModuleAutoUpdate' cron job first.",
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
     "massUpdateResult": "Updating {count} records"
+  },
+  "streamMessages": {
+    "updateModuleThis": "{user} updated module",
+    "installModuleThis": "{user} installed module",
+    "deleteModuleThis": "{user} removed module",
+    "composerUpdateThis": "{user} ran update"
+  },
+  "streamMessagesMale": {
+    "updateModuleThis": "{user} updated module",
+    "installModuleThis": "{user} installed module",
+    "deleteModuleThis": "{user} removed module",
+    "composerUpdateThis": "{user} ran update"
+  },
+  "streamMessagesFemale": {
+    "updateModuleThis": "{user} updated module",
+    "installModuleThis": "{user} installed module",
+    "deleteModuleThis": "{user} removed module",
+    "composerUpdateThis": "{user} ran update"
   }
 }

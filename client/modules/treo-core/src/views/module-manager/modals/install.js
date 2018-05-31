@@ -47,12 +47,6 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
 
             this.prepareAttributes();
 
-            this.listenTo(this.model, 'change:settingVersion', () => {
-                this.model.set({
-                    dependencies: this.getRequire(this.model.get('settingVersion'))
-                });
-            });
-
             this.createVersionView();
             this.createDependenciesView();
 
@@ -79,15 +73,12 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         createVersionView() {
-            this.createView('settingVersion', 'views/fields/enum', {
+            this.createView('settingVersion', 'views/fields/varchar', {
                 el: `${this.options.el} .field[data-name="settingVersion"]`,
                 model: this.model,
                 mode: 'edit',
                 defs: {
                     name: 'settingVersion',
-                    params: {
-                        options: this.model.get('versions').map(item => item.version) || []
-                    }
                 }
             });
         },
@@ -98,7 +89,7 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
                 model: this.model,
                 mode: 'detail',
                 defs: {
-                    name: 'dependencies',
+                    name: 'versions',
                     params: {
                         readOnly: true
                     }
@@ -113,13 +104,8 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
             }
 
             this.model.set({
-                settingVersion: settingVersion,
-                dependencies: this.getRequire(settingVersion)
+                settingVersion: settingVersion
             });
-        },
-
-        getRequire(version) {
-            return (this.model.get('versions') || []).find(item => item.version === version).require || [];
         },
 
         actionSave() {

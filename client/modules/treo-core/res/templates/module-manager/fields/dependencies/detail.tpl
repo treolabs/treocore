@@ -1,6 +1,12 @@
+<table class="table">
 {{#each value}}
-<div class="row">
-    <div class="col-xs-10">{{name}}</div>
-    <div class="col-xs-2">{{version}}</div>
-</div>
+<tr>
+    <td>{{version}}</td>
+    <td>
+        {{#each require}}
+        <div>{{name}}: {{version}}</div>
+        {{/each}}
+    </td>
+</tr>
 {{/each}}
+</table>

@@ -49,6 +49,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         loadList() {
             this.loadInstalledModulesList();
             this.loadAvailableModulesList();
+            this.loadLogList();
+        },
+
+        loadLogList() {
+            this.createView('logList', 'treo-core:views/module-manager/record/panels/log', {
+                el: `${this.options.el} .log-list-container`
+            }, view => {
+                view.render();
+                this.listenTo(this, 'composer:update', () => {
+                    view.actionRefresh();
+                });
+            })
         },
 
         loadInstalledModulesList() {
@@ -251,7 +263,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.notify(this.translate('failed', 'labels', 'ModuleManager'), 'danger');
                     this.actionsInProgress--;
                 }
-            }).fail(() => this.actionsInProgress--);
+                this.trigger('composer:update');
+            }).fail(() => {
+                this.actionsInProgress--;
+                this.trigger('composer:update');
+            });
         },
 
         actionCancelUpdate() {

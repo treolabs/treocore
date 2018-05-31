@@ -49,17 +49,14 @@
     "settingModuleForInstalling": "Einstellmodul für die Installation...",
     "settedModuleForInstalling": "Das Modul wurde für die Installation eingerichtet",
     "settingModuleForUpdating": "Einstellmodul für die Aktualisierung...",
-    "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet"
+    "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet",
+    "Log": "Log"
   },
   "messages": {
     "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Modul '<strong>%s</strong>' erfolgreich aktiviert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Modul '<strong>%s</strong>' erfolgreich deaktiviert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) erfolgreich installiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
     "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' wurde erfolgreich gelöscht. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
-    "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Das Modul '<strong>%s</strong>' wurde von '%s' auf '%s' aktualisiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",
-    "checkLog": "Etwas ist fehlgeschlagen. Prüfen Sie bitte Fehler-Log auf neue Fehler",
-    "errorInstall": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht installiert",
-    "errorUpdate": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht aktualisiert",
-    "errorRemove": "Das Modul {module} ist mit dem Fehler-Status {status} um {time} nicht gelöscht"
+    "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Das Modul '<strong>%s</strong>' wurde von '%s' auf '%s' aktualisiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>"
   }
 }
