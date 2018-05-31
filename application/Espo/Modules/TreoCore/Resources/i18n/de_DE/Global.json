@@ -79,6 +79,12 @@
     "username": "Benutzername",
     "password": "Passwort"
   },
+  "labels": {
+    "status": "Status",
+    "fail": "Fehlgeschlagen",
+    "success": "Erfolg",
+    "viewDetails": "Details anzeigen"
+  },
   "links": {
     "ownerUser": "Besitzer"
   },
@@ -92,5 +98,23 @@
     "allowUnstableParamBlocked": "Param kann nicht geändert werden. Sie sollten den Cron-Job 'ModuleAutoUpdate' zuerst deaktivieren.",
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
     "massUpdateResult": "{count} Einträge werden aktualisiert"
+  },
+  "streamMessages": {
+    "updateModuleThis": "{user} hat das Modul aktualisiert",
+    "installModuleThis": "{user} hat das Modul installiert",
+    "deleteModuleThis": "{user} hat das Modul entfernt",
+    "composerUpdateThis": "{user} hat Update ausgeführt"
+  },
+  "streamMessagesMale": {
+    "updateModuleThis": "{user} hat das Modul aktualisiert",
+    "installModuleThis": "{user} hat das Modul installiert",
+    "deleteModuleThis": "{user} hat das Modul entfernt",
+    "composerUpdateThis": "{user} hat Update ausgeführt"
+  },
+  "streamMessagesFemale": {
+    "updateModuleThis": "{user} hat das Modul aktualisiert",
+    "installModuleThis": "{user} hat das Modul installiert",
+    "deleteModuleThis": "{user} hat das Modul entfernt",
+    "composerUpdateThis": "{user} hat Update ausgeführt"
   }
 }

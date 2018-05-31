@@ -54,17 +54,14 @@
     "settingModuleForInstalling": "Setting module for installing...",
     "settedModuleForInstalling": "Module has been setted for installing",
     "settingModuleForUpdating": "Setting module for updating...",
-    "settedModuleForUpdating": "Module has been setted for updating"
+    "settedModuleForUpdating": "Module has been setted for updating",
+    "Log": "Log"
   },
   "messages": {
     "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>",
     "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
-    "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>",
-    "checkLog": "Something went wrong. Check the log for error-level output",
-    "errorInstall": "Module {module} not installed with error status {status} at {time}",
-    "errorUpdate": "Module {module} not updated with error status {status} at {time}",
-    "errorRemove": "Module {module} not removed with error status {status} at {time}"
+    "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>"
   }
 }

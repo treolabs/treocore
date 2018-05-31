@@ -31,14 +31,34 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/modals/error-log', 'views/modal',
+Espo.define('treo-core:views/module-manager/modals/update-details', 'views/modal',
     Dep => Dep.extend({
 
-        template: 'treo-core:module-manager/modals/error-log',
+        template: 'treo-core:module-manager/modals/update-details',
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.setupHeader();
+            this.setupButtonList();
+        },
+
+        setupHeader() {
+            this.header = this.translate('Details');
+        },
+
+        setupButtonList() {
+            this.buttonList = [
+                {
+                    name: 'cancel',
+                    label: 'Cancel'
+                }
+            ];
+        },
 
         data() {
             return {
-                errorList: this.options.errorList
+                output: this.options.output
             };
         },
 
