@@ -7,6 +7,12 @@
         "allowUnstable": {
             "type": "bool",
             "tooltip": true
+        },
+        "notificationNewModuleVersionDisabled": {
+            "type": "bool"
+        },
+        "notificationNewModuleDisabled": {
+            "type": "bool"
         }
     }
 }
