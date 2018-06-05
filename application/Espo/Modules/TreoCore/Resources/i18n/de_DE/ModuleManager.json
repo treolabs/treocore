@@ -42,6 +42,7 @@
     "canceling": "Stornieren...",
     "canceled": "Abgebrochen",
     "dependencies": "Abhängigkeiten",
+    "version": "Version",
     "Run Update": "Starte das Update",
     "failed": "Die Aktualisierung der Module ist fehlgeschlagen. Weitere Informationen finden Sie in den Log",
     "settingModuleForRemoving": "Einstellmodul zum Entfernen...",
