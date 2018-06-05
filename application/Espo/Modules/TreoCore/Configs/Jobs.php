@@ -58,13 +58,6 @@ return [
             'method'     => 'cachingPackages',
             'name'       => 'Caching module packages',
             'data'       => []
-        ],
-        [
-            'scheduling' => '0 0 * * *',
-            'service'    => 'Composer',
-            'method'     => 'runUpdate',
-            'name'       => 'Run composer update command',
-            'data'       => []
         ]
     ],
     'scheduledJobsServices' => [

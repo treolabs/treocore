@@ -122,17 +122,14 @@ class ModuleManager extends Base
      *     'id': 'Erp',
      *     'version': '1.0.0' - not required
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionInstallModule($params, $data, Request $request): array
+    public function actionInstallModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -163,17 +160,14 @@ class ModuleManager extends Base
      *     'id': 'Erp',
      *     'version': '1.1.0'
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionUpdateModule($params, $data, Request $request): array
+    public function actionUpdateModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -198,19 +192,16 @@ class ModuleManager extends Base
      * @ApiMethod(type="DELETE")
      * @ApiRoute(name="/ModuleManager/deleteModule")
      * @ApiBody(sample="{
-     *     'ids': ['Erp']
+     *     'id': 'Erp'
      * }")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionDeleteModule($params, $data, Request $request): array
+    public function actionDeleteModule($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -223,70 +214,8 @@ class ModuleManager extends Base
         // prepare data
         $data = Json::decode(Json::encode($data), true);
 
-        if (!empty($ids = $data['ids']) && is_array($ids)) {
-            return $this->getModuleManagerService()->deleteModule($ids);
-        }
-
-        throw new Exceptions\NotFound();
-    }
-
-    /**
-     * @ApiDescription(description="Get composer user")
-     * @ApiMethod(type="GET")
-     * @ApiRoute(name="/ModuleManager/composerUser")
-     * @ApiReturn(sample="{
-     *     'username': 'test',
-     *     'password': 'qwerty'
-     * }")
-     *
-     * @return array
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionGetComposerUser($params, $data, Request $request): array
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isGet()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        return $this->getModuleManagerService()->getComposerUser();
-    }
-
-    /**
-     * @ApiDescription(description="Set composer user")
-     * @ApiMethod(type="PUT")
-     * @ApiRoute(name="/ModuleManager/composerUser")
-     * @ApiBody(sample="{
-     *     'username': 'test',
-     *     'password': 'qwerty'
-     * }")
-     * @ApiReturn(sample="true")
-     *
-     * @return bool
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionSetComposerUser($params, $data, Request $request): bool
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPut()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        // prepare data
-        $data = Json::decode(Json::encode($data), true);
-
-        if (!empty($data['username']) && !empty($data['password'])) {
-            return $this->getModuleManagerService()->setComposerUser($data['username'], $data['password']);
+        if (!empty($id = $data['id'])) {
+            return $this->getModuleManagerService()->deleteModule($id);
         }
 
         throw new Exceptions\NotFound();
@@ -329,7 +258,7 @@ class ModuleManager extends Base
     /**
      * @ApiDescription(description="Get module manager stream data")
      * @ApiMethod(type="GET")
-     * @ApiRoute(name="/ModuleManager/stream")
+     * @ApiRoute(name="/ModuleManager/logs")
      * @ApiReturn(sample="{
      *     'total': 'int',
      *     'list': 'array'
@@ -339,7 +268,7 @@ class ModuleManager extends Base
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      */
-    public function actionStream($params, $data, Request $request): array
+    public function actionLogs($params, $data, Request $request): array
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -349,34 +278,7 @@ class ModuleManager extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getModuleManagerService()->getStream($request);
-    }
-
-    /**
-     * @ApiDescription(description="Call composer update command by web interface")
-     * @ApiMethod(type="POST")
-     * @ApiRoute(name="/ModuleManager/updateComposer")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
-     *
-     * @return array
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionUpdateComposer($params, $data, Request $request): array
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPost()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        return $this->getService('Composer')->run('update');
+        return $this->getModuleManagerService()->getLogs($request);
     }
 
     /**

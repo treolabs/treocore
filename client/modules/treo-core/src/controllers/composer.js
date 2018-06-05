@@ -31,15 +31,13 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/modals/error-log', 'views/modal',
+Espo.define('treo-core:controllers/composer', 'controller',
     Dep => Dep.extend({
 
-        template: 'treo-core:module-manager/modals/error-log',
+        defaultAction: "auth",
 
-        data() {
-            return {
-                errorList: this.options.errorList
-            };
+        auth() {
+            this.main('treo-core:views/composer/auth');
         },
 
     })

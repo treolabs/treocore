@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,22 +31,36 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Migration;
+Espo.define('treo-core:views/module-manager/modals/update-details', 'views/modal',
+    Dep => Dep.extend({
 
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+        template: 'treo-core:module-manager/modals/update-details',
 
-/**
- * Version 1.9.0
- *
- * @author r.ratsun@zinitsolutions.com
- */
-class V190 extends AbstractMigration
-{
-    /**
-     * Up to current
-     */
-    public function up(): void
-    {
-        $this->runRebuild();
-    }
-}
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.setupHeader();
+            this.setupButtonList();
+        },
+
+        setupHeader() {
+            this.header = this.translate('Details');
+        },
+
+        setupButtonList() {
+            this.buttonList = [
+                {
+                    name: 'cancel',
+                    label: 'Cancel'
+                }
+            ];
+        },
+
+        data() {
+            return {
+                output: this.options.output
+            };
+        },
+
+    })
+);

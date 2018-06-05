@@ -49,7 +49,10 @@ class User extends Record
     {
         parent::init();
 
-        $this->addDependency('container');
+        //@todo treoinject
+        $this->addDependency('mailSender');
+        $this->addDependency('language');
+        $this->addDependency('fileManager');
     }
 
     protected $internalAttributeList = ['password'];
@@ -70,22 +73,20 @@ class User extends Record
 
     protected function getMailSender()
     {
-        return $this->getContainer()->get('mailSender');
+        //@todo treoinject
+        return $this->getInjection('mailSender');
     }
 
     protected function getLanguage()
     {
-        return $this->getContainer()->get('language');
+        //@todo treoinject
+        return $this->getInjection('language');
     }
 
     protected function getFileManager()
     {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    protected function getContainer()
-    {
-        return $this->injections['container'];
+        //@todo treoinject
+        return $this->getInjection('fileManager');
     }
 
     public function getEntity($id = null)

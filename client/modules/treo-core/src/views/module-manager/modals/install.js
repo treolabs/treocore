@@ -47,12 +47,6 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
 
             this.prepareAttributes();
 
-            this.listenTo(this.model, 'change:version', () => {
-                this.model.set({
-                    dependencies: this.getRequire(this.model.get('settingVersion'))
-                });
-            });
-
             this.createVersionView();
             this.createDependenciesView();
 
@@ -79,15 +73,12 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         createVersionView() {
-            this.createView('version', 'views/fields/enum', {
-                el: `${this.options.el} .field[data-name="version"]`,
+            this.createView('settingVersion', 'views/fields/varchar', {
+                el: `${this.options.el} .field[data-name="settingVersion"]`,
                 model: this.model,
                 mode: 'edit',
                 defs: {
-                    name: 'version',
-                    params: {
-                        options: this.model.get('versions').map(item => item.version) || []
-                    }
+                    name: 'settingVersion',
                 }
             });
         },
@@ -98,7 +89,7 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
                 model: this.model,
                 mode: 'detail',
                 defs: {
-                    name: 'dependencies',
+                    name: 'versions',
                     params: {
                         readOnly: true
                     }
@@ -107,23 +98,18 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         prepareAttributes() {
-            let version = this.model.get('settingVersion');
-            if (typeof version === 'string' && version.substring(0, 1) == 'v') {
-                version = version.substr(1);
+            let settingVersion = this.model.get('settingVersion');
+            if (typeof settingVersion === 'string' && settingVersion.substring(0, 1) == 'v') {
+                settingVersion = settingVersion.substr(1);
             }
 
             this.model.set({
-                version: version,
-                dependencies: this.getRequire(version)
+                settingVersion: settingVersion
             });
         },
 
-        getRequire(version) {
-            return (this.model.get('versions') || []).find(item => item.version === version).require || [];
-        },
-
         actionSave() {
-            this.trigger('save', {id: this.model.id, version: this.model.get('version')});
+            this.trigger('save', {id: this.model.id, version: this.model.get('settingVersion')});
             this.close();
         }
 

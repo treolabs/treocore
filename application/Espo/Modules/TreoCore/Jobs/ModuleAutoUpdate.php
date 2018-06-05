@@ -32,36 +32,29 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Migration;
+declare(strict_types=1);
 
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+namespace Espo\Modules\TreoCore\Jobs;
+
+use Espo\Core\Jobs\Base;
 
 /**
- * Version 1.9.6
+ * ModuleAutoUpdate job
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class V196 extends AbstractMigration
+class ModuleAutoUpdate extends Base
 {
-    /**
-     * Up to current
-     */
-    public function up(): void
-    {
-        $websocketConfig = [
-            'server' => [
-                'host'    => '127.0.0.1',
-                'port'    => 8080,
-                'address' => '0.0.0.0'
-            ],
-            'zmq'    => [
-                'host' => '127.0.0.1',
-                'port' => 5555,
-            ],
-        ];
 
-        // set to config
-        $this->getConfig()->set('websockets', $websocketConfig);
-        $this->getConfig()->save();
+    /**
+     * Run cron job
+     *
+     * @return bool
+     */
+    public function run(): bool
+    {
+        $this->getServiceFactory()->create('Composer')->runUpdate();
+
+        return true;
     }
 }

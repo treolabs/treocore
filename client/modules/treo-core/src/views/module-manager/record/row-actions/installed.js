@@ -36,7 +36,7 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
 
         getActionList: function () {
             let list = [];
-            if (this.model.get('isComposer')) {
+            if (this.model.get('isComposer') && !this.model.get('status')) {
                 list.push({
                     action: 'installModule',
                     label: 'updateModule',

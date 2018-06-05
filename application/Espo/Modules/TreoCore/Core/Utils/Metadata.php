@@ -116,7 +116,7 @@ class Metadata extends EspoMetadata
                 foreach ($modules as $moduleName) {
                     if (!empty($moduleName) && !isset($data[$moduleName])) {
                         $data[$moduleName] = $this
-                                ->getModuleConfig()->get($moduleName.'.order', $this->defaultModuleOrder);
+                            ->getModuleConfig()->get($moduleName . '.order', $this->defaultModuleOrder);
                     }
                 }
             }
@@ -141,7 +141,7 @@ class Metadata extends EspoMetadata
             $this->moduleList = [];
 
             foreach ($this->getAllModules() as $module) {
-                if (empty($this->getModuleConfig()->get($module.'.disabled'))) {
+                if (empty($this->getModuleConfig()->get($module . '.disabled'))) {
                     $this->moduleList[] = $module;
                 }
             }
@@ -214,6 +214,39 @@ class Metadata extends EspoMetadata
         if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
         }
+    }
+
+    /**
+     * Get additional field lists
+     *
+     * @param string $scope
+     * @param string $field
+     *
+     * @return array
+     */
+    public function getFieldList(string $scope, string $field): array
+    {
+        // prepare result
+        $result = [];
+
+        // get field data
+        $fieldData = $this->get("entityDefs.$scope.fields.$field");
+
+        if (!empty($fieldData)) {
+            // prepare result
+            $result[$field] = $fieldData;
+
+            $additionalFields = $this
+                ->getMetadataHelper()
+                ->getAdditionalFieldList($field, $fieldData, $this->get("fields"));
+
+            if (!empty($additionalFields)) {
+                // prepare result
+                $result = $result + $additionalFields;
+            }
+        }
+
+        return $result;
     }
 
     /**

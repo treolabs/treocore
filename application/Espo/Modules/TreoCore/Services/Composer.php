@@ -68,7 +68,7 @@ class Composer extends Base
     /**
      * @var string
      */
-    protected $moduleOldComposer = 'data/old-composer.json';
+    protected $moduleStableComposer = 'data/stable-composer.json';
 
     /**
      * @var string
@@ -93,13 +93,40 @@ class Composer extends Base
     /**
      * Run composer UPDATE command
      *
-     * @param array $data
-     *
-     * @return void
+     * @return array
      */
-    public function runUpdate(array $data = []): void
+    public function runUpdate(): array
     {
-        $this->run('update');
+        // get event manager
+        $eventManager = $this->getInjection('eventManager');
+
+        // triggered before action
+        $eventManager
+            ->triggered('Composer', 'beforeComposerUpdate', []);
+
+        // call composer
+        $composer = $this->run('update');
+
+        // triggered after action
+        $composer = $eventManager
+            ->triggered('Composer', 'afterComposerUpdate', $composer);
+
+        return $composer;
+    }
+
+    /**
+     * Cancel changes
+     */
+    public function cancelChanges(): void
+    {
+        if (file_exists($this->moduleStableComposer)) {
+            if (file_exists($this->moduleComposer)) {
+                unlink($this->moduleComposer);
+            }
+
+            // copy file
+            copy($this->moduleStableComposer, $this->moduleComposer);
+        }
     }
 
     /**
@@ -139,10 +166,8 @@ class Composer extends Base
      *
      * @param string $package
      * @param string $version
-     *
-     * @return array
      */
-    public function update(string $package, string $version): array
+    public function update(string $package, string $version): void
     {
         // get composer.json data
         $data = $this->getModuleComposerJson();
@@ -152,25 +177,14 @@ class Composer extends Base
 
         // set composer.json data
         $this->setModuleComposerJson($data);
-
-        $result = $this->run('update');
-
-        if ($result['status'] != 0) {
-            // revert composer.json data
-            $this->revertModuleComposerJson();
-        }
-
-        return $result;
     }
 
     /**
      * Delete composer
      *
      * @param string $package
-     *
-     * @return array
      */
-    public function delete(string $package): array
+    public function delete(string $package): void
     {
         // get composer.json data
         $data = $this->getModuleComposerJson();
@@ -181,8 +195,6 @@ class Composer extends Base
 
         // set composer.json data
         $this->setModuleComposerJson($data);
-
-        return $this->run('update');
     }
 
     /**
@@ -256,34 +268,79 @@ class Composer extends Base
      */
     public function setModuleComposerJson(array $data): void
     {
-        // delete old file
-        if (file_exists($this->moduleOldComposer)) {
-            unlink($this->moduleOldComposer);
-        }
-
-        // copy file
-        if (file_exists($this->moduleComposer)) {
-            copy($this->moduleComposer, $this->moduleOldComposer);
-        }
-
         $file = fopen($this->moduleComposer, "w");
-        fwrite($file, Json::encode($data));
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
         fclose($file);
     }
 
     /**
-     * Revert composer.json data
+     * Save stable-composer.json file
      */
-    public function revertModuleComposerJson(): void
+    public function saveComposerJson(): void
     {
-        if (file_exists($this->moduleOldComposer)) {
+        if (file_exists($this->moduleComposer)) {
             // delete old file
-            if (file_exists($this->moduleComposer)) {
-                unlink($this->moduleComposer);
+            if (file_exists($this->moduleStableComposer)) {
+                unlink($this->moduleStableComposer);
             }
+
             // copy file
-            copy($this->moduleOldComposer, $this->moduleComposer);
+            copy($this->moduleComposer, $this->moduleStableComposer);
         }
+    }
+
+    /**
+     * Get composer diff
+     *
+     * @return array
+     */
+    public function getComposerDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        if (file_exists($this->moduleStableComposer)) {
+            // prepare data
+            $composerData = $this->getModuleComposerJson();
+            $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+
+            // create service
+            $composerModule = $this->getInjection('serviceFactory')->create('ComposerModule');
+
+            foreach ($composerData['require'] as $package => $version) {
+                if (!isset($composerStableData['require'][$package])) {
+                    $result['install'][] = [
+                        'id'      => $this->getModuleId($package),
+                        'package' => $package
+                    ];
+                } elseif ($version != $composerStableData['require'][$package]) {
+                    // prepare data
+                    $id = $this->getModuleId($package);
+                    $from = $composerModule->getModulePackage($id)['version'];
+
+                    $result['update'][] = [
+                        'id'      => $id,
+                        'package' => $package,
+                        'from'    => $from
+                    ];
+                }
+            }
+
+            foreach ($composerStableData['require'] as $package => $version) {
+                if (!isset($composerData['require'][$package])) {
+                    $result['delete'][] = [
+                        'id'      => $this->getModuleId($package),
+                        'package' => $package
+                    ];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -345,6 +402,44 @@ class Composer extends Base
             // delete dir from backend
             self::deleteDir("application/Espo/Modules/{$moduleId}/");
         }
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('eventManager');
+        $this->addDependency('serviceFactory');
+    }
+
+    /**
+     * Get module ID
+     *
+     * @param string $package
+     *
+     * @return string
+     */
+    protected function getModuleId(string $package): string
+    {
+        // prepare result
+        $result = $package;
+
+        // get packages
+        $packages = $this
+            ->getInjection('serviceFactory')
+            ->create('ComposerModule')
+            ->getModulePackages();
+
+        foreach ($packages as $id => $versions) {
+            if ($versions['max']['name'] == $package) {
+                $result = $id;
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -17,6 +17,9 @@
   "views/login": [
     "treo-core"
   ],
+  "views/dashboard": [
+    "treo-core"
+  ],
   "views/modals/select-records": [
     "treo-core"
   ],
@@ -45,6 +48,9 @@
     "treo-core"
   ],
   "views/admin/index": [
+    "treo-core"
+  ],
+  "views/admin/notifications":[
     "treo-core"
   ],
   "views/admin/upgrade/index": [
@@ -90,6 +96,9 @@
     "treo-core"
   ],
   "views/settings/record/edit": [
+    "treo-core"
+  ],
+  "views/notification/items/treo-message": [
     "treo-core"
   ]
 }

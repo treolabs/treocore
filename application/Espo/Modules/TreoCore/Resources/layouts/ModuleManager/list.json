@@ -10,6 +10,10 @@
     "width": 30
   },
   {
+    "name": "status",
+    "notSortable": true
+  },
+  {
     "name": "settingVersion",
     "notSortable": true
   },
@@ -18,13 +22,10 @@
     "notSortable": true
   },
   {
-    "name": "availableVersions",
-    "notSortable": true
-  },
-  {
     "name": "required",
     "notSortable": true,
-    "view": "treo-core:views/module-manager/fields/required"
+    "view": "treo-core:views/module-manager/fields/required",
+    "width": 15
   },
   {
     "name": "isActive",

@@ -66,22 +66,6 @@
     }
   },
   {
-    "route": "/ModuleManager/composerUser",
-    "method": "get",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "getComposerUser"
-    }
-  },
-  {
-    "route": "/ModuleManager/composerUser",
-    "method": "put",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "setComposerUser"
-    }
-  },
-  {
     "route": "/ModuleManager/availableModulesList",
     "method": "get",
     "params": {
@@ -90,19 +74,43 @@
     }
   },
   {
-    "route": "/ModuleManager/stream",
+    "route": "/ModuleManager/logs",
     "method": "get",
     "params": {
       "controller": "ModuleManager",
-      "action": "stream"
+      "action": "logs"
     }
   },
   {
-    "route": "/ModuleManager/updateComposer",
+    "route": "/Composer/gitAuth",
+    "method": "get",
+    "params": {
+      "controller": "Composer",
+      "action": "getGitAuthData"
+    }
+  },
+  {
+    "route": "/Composer/gitAuth",
+    "method": "put",
+    "params": {
+      "controller": "Composer",
+      "action": "setGitAuthData"
+    }
+  },
+  {
+    "route": "/Composer/update",
     "method": "post",
     "params": {
-      "controller": "ModuleManager",
-      "action": "updateComposer"
+      "controller": "Composer",
+      "action": "update"
+    }
+  },
+  {
+    "route": "/Composer/cancel",
+    "method": "delete",
+    "params": {
+      "controller": "Composer",
+      "action": "cancel"
     }
   },
   {

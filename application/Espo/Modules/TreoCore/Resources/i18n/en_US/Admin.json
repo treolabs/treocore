@@ -1,9 +1,11 @@
 {
   "labels": {
-    "moduleManager": "Module Manager"
+    "Module Manager": "Module Manager",
+    "Git Authentication": "Git Authentication"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
+    "gitAuth": "Git authentication settings.",
     "moduleManager": "Mechanisms for managing modules",
     "representationSettings": "Representation settings."
   },
