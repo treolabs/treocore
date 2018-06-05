@@ -47,6 +47,7 @@
     "canceling": "Canceling...",
     "canceled": "Canceled",
     "dependencies": "Dependencies",
+    "version": "Version",
     "Run Update": "Run Update",
     "failed": "Modules update failed. See logs for details",
     "settingModuleForRemoving": "Setting module for removing...",

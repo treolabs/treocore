@@ -1,12 +1,20 @@
 <table class="table">
-{{#each value}}
-<tr>
-    <td>{{version}}</td>
-    <td>
-        {{#each require}}
-        <div>{{name}}: {{version}}</div>
-        {{/each}}
-    </td>
-</tr>
-{{/each}}
+    <thead>
+    <tr>
+        <th>{{translate 'version' scope='ModuleManager' category='labels'}}</th>
+        <th>{{translate 'dependencies' scope='ModuleManager' category='labels'}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each value}}
+    <tr>
+        <td>{{version}}</td>
+        <td>
+            {{#each require}}
+            <div>{{name}}: {{version}}</div>
+            {{/each}}
+        </td>
+    </tr>
+    {{/each}}
+    </tbody>
 </table>
