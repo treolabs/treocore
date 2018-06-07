@@ -101,18 +101,24 @@
     "updateModuleThis": "{user} updated module",
     "installModuleThis": "{user} installed module",
     "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update"
+    "composerUpdateThis": "{user} ran update",
+    "activateModuleThis": "{user} activated module",
+    "deactivateModuleThis": "{user} deactivated module"
   },
   "streamMessagesMale": {
     "updateModuleThis": "{user} updated module",
     "installModuleThis": "{user} installed module",
     "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update"
+    "composerUpdateThis": "{user} ran update",
+    "activateModuleThis": "{user} activated module",
+    "deactivateModuleThis": "{user} deactivated module"
   },
   "streamMessagesFemale": {
     "updateModuleThis": "{user} updated module",
     "installModuleThis": "{user} installed module",
     "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update"
+    "composerUpdateThis": "{user} ran update",
+    "activateModuleThis": "{user} activated module",
+    "deactivateModuleThis": "{user} deactivated module"
   }
 }

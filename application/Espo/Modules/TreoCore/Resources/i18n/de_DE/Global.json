@@ -103,18 +103,24 @@
     "updateModuleThis": "{user} hat das Modul aktualisiert",
     "installModuleThis": "{user} hat das Modul installiert",
     "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt"
+    "composerUpdateThis": "{user} hat Update ausgeführt",
+    "activateModuleThis": "{user} hat das Modul aktiviert",
+    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
   },
   "streamMessagesMale": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",
     "installModuleThis": "{user} hat das Modul installiert",
     "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt"
+    "composerUpdateThis": "{user} hat Update ausgeführt",
+    "activateModuleThis": "{user} hat das Modul aktiviert",
+    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
   },
   "streamMessagesFemale": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",
     "installModuleThis": "{user} hat das Modul installiert",
     "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt"
+    "composerUpdateThis": "{user} hat Update ausgeführt",
+    "activateModuleThis": "{user} hat das Modul aktiviert",
+    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
   }
 }
