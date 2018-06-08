@@ -57,6 +57,12 @@ Espo.define('treo-core:views/record/panel-navigation', 'view',
             };
         },
 
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.$el.removeClass('pull-left');
+        },
+
         actionScrollToPanel(name) {
             if (!name) {
                 return;
