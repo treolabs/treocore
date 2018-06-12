@@ -11217,6 +11217,12 @@ a:hover, a:focus {
     color: #8e8e8e
 }
 
+.fixed-header-breadcrumbs {
+    position: fixed;
+    top: 8px;
+    z-index: 2000;
+}
+
 .panel-default > .panel-heading {
     padding: 5px 10px 6px;
     color: rgba(0, 0, 0, 0.87);

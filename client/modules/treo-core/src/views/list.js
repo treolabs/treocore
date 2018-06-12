@@ -42,6 +42,24 @@ Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
             }
 
             Dep.prototype.setupSorting.call(this);
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            let $window = $(window);
+
+            $window.off('scroll.main');
+            $window.on('scroll.main', () => {
+                let scrollTop = $window.scrollTop();
+                let header = this.$el.find('.header-breadcrumbs');
+
+                if (scrollTop > this.$el.find('.page-header').outerHeight()) {
+                    header.addClass('fixed-header-breadcrumbs');
+                } else {
+                    header.removeClass('fixed-header-breadcrumbs');
+                }
+            });
         }
 
     })
