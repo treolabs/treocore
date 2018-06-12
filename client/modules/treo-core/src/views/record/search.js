@@ -125,6 +125,15 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             },
         },
 
+        updateAddFilterButton: function () {
+            var $ul = this.$el.find('ul.filter-list');
+            if ($ul.children().not('.hide').size() == 0) {
+                this.$el.find('a.add-filter-button').addClass('disabled');
+            } else {
+                this.$el.find('a.add-filter-button').removeClass('disabled');
+            }
+        },
+
         afterRender: function () {
             if (Object.keys(this.advanced).length) {
                 this.$el.find('div.filter-applying-condition').removeClass('hidden');
