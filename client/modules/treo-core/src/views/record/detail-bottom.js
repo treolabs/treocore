@@ -138,7 +138,7 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 let name = p.name;
 
                 let links = (this.model.defs || {}).links || {};
-                let bottomPanels = this.getMetadata().get(['clientDefs', this.scope, 'bottomPanels', 'detail']);
+                let bottomPanels = this.getMetadata().get(['clientDefs', this.scope, 'bottomPanels', 'detail']) || [];
                 let bottomPanelOptions = bottomPanels.find(panel => panel.name === name);
                 if (!(name in links) && !bottomPanelOptions) {
                     return;
