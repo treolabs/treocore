@@ -35,11 +35,7 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
 
     return Dep.extend({
 
-        setupPanels: function () {
-            var scope = this.scope;
-
-            this.panelList = Espo.Utils.clone(this.getMetadata().get('clientDefs.' + scope + '.bottomPanels.' + this.type) || this.panelList || []);
-        },
+        setupPanels: function () {},
 
         setupStreamPanel: function () {
             var streamAllowed = this.getAcl().checkModel(this.model, 'stream', true);
