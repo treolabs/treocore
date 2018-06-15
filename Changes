@@ -1,3 +1,4 @@
+    * UST #63986 : Перенести вибір фільтрів в дропдаун зліва від пошуку (модуль TreoCore) (Valeriy Shamota, Yurii Kondratskyi)
     * UST #63910 : Додати Bottom Panels в налаштуванні Relationship Panels (Valeriy Shamota)
     * BUG #63116 : при изменении размера экрана табы опускаются ниже кнопки эдит (Valeriy Shamota)
     * UST #60526 : при скролі сторінки вниз її назва має фіксуватись на таскбарі (Valeriy Shamota)
