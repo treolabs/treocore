@@ -1,3 +1,4 @@
+    * BUG #64011 : Не работает кнопка пагинации в прогресс менеджере  (Roman Ratsun, Valeriy Shamota)
     * UST #63986 : Перенести вибір фільтрів в дропдаун зліва від пошуку (модуль TreoCore) (Valeriy Shamota, Yurii Kondratskyi)
     * UST #63910 : Додати Bottom Panels в налаштуванні Relationship Panels (Valeriy Shamota)
     * BUG #63116 : при изменении размера экрана табы опускаются ниже кнопки эдит (Valeriy Shamota)
