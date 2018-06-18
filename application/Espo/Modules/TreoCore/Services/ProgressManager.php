@@ -316,6 +316,9 @@ class ProgressManager extends AbstractProgressManager
      */
     protected function getDbDataTotal(): int
     {
+        // prepare user id
+        $userId = $this->getUser()->get('id');
+
         // prepare sql
         $sql
             = "SELECT
@@ -323,7 +326,7 @@ class ProgressManager extends AbstractProgressManager
                 FROM
                   progress_manager
                 WHERE
-                  deleted = 0";
+                  deleted = 0 AND created_by_id='{$userId}'";
 
         // execute sql
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
