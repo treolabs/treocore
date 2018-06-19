@@ -107,6 +107,9 @@ class Composer extends Base
         // call composer
         $composer = $this->run('update');
 
+        // rebuild
+        $this->getInjection('dataManager')->rebuild();
+
         // triggered after action
         $composer = $eventManager
             ->triggered('Composer', 'afterComposerUpdate', $composer);
@@ -413,6 +416,7 @@ class Composer extends Base
 
         $this->addDependency('eventManager');
         $this->addDependency('serviceFactory');
+        $this->addDependency('dataManager');
     }
 
     /**
