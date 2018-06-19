@@ -48,8 +48,12 @@ Espo.define('treo-core:views/stream/notes/update-module-activation', 'views/stre
             return data;
         },
 
-        setup() {
+        init() {
             this.messageName = this.model.get('data').disabled ? 'deactivateModule' : 'activateModule';
+            Dep.prototype.init.call(this);
+        },
+
+        setup() {
             this.createMessage();
         },
 
