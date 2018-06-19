@@ -65,6 +65,9 @@
   "views/admin/layouts/relationships": [
     "treo-core"
   ],
+  "views/fields/base": [
+    "treo-core"
+  ],
   "views/fields/link-parent": [
     "treo-core"
   ],
