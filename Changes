@@ -1,3 +1,4 @@
+    * BUG #64952 : При поступовому видаленні значень атрибуту типу Multi-Enum Multi Lang/Enum Multi Lang та зберіганні - видаляється лише перше значення, та зберігає не однакову кількість полів (Valeriy Shamota)
     * UST #65453 : Rebuild при кожному Run Update (Roman Ratsun)
     * UST #65440 : Надати можливість приховувати деякі поля сутності в EntityManager (Roman Ratsun)
     * BUG #64011 : Не работает кнопка пагинации в прогресс менеджере  (Roman Ratsun, Valeriy Shamota)
