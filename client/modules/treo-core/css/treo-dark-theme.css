@@ -10869,7 +10869,7 @@ pre > code {
 }
 
 .panel-heading > .btn-group > .btn {
-    padding-top: 6px;
+    padding-top: 5px;
     padding-bottom: 4px
 }
 
@@ -11234,13 +11234,21 @@ a:hover, a:focus {
     border-top: 1px solid gainsboro
 }
 
+.side .panel-default > .panel-heading  {
+    border-top: 0;
+}
+
 .panel-default > .panel-heading > .btn-group > .btn-default {
     background-color: #ececec;
     border-color: #dcdcdc;
     border-right: 0;
-    border-bottom: 0;
     padding-left: 8px;
     padding-right: 8px
+}
+
+.panel-default > .panel-heading > .btn-group > .btn-default:hover {
+    z-index: 0;
+    background: #fafafa
 }
 
 .list > table thead {
@@ -11325,7 +11333,8 @@ ul.dropdown-menu > li.checkbox {
     content: attr(data-action);
 }
 
-.side > .panel.panel-default.panel-default:first-child {
+.side > .panel.panel-default.panel-default,
+.side > .panel.panel-default.panel-default  .list {
     background: #fafafa;
     margin-bottom: 0
 }
@@ -11592,23 +11601,24 @@ ul.dropdown-menu > li.checkbox {
     .edit > .row > .col-md-8,
     .detail > .row > .col-md-8 {
         padding-right: 0;
-        padding-left: 0
+        padding-left: 0;
+        min-height: 79.6vh;
     }
 
     #main .edit > .row,
     #main .detail > .row {
         margin-left: -15px;
-        margin-right: -14px
+        margin-right: -14px;
     }
 
     .edit > .row > .side,
     .detail > .row > .side {
         padding: 0;
-        position: relative
+        position: relative;
     }
 
     .nav > li > a {
-        padding: 7px 15px
+        padding: 7px 15px;
     }
 
     .stick-sub.button-container {
@@ -11665,6 +11675,19 @@ ul.dropdown-menu > li.checkbox {
         display: inline-block;
         float: right
     }
+
+    .record .middle .panel-body,
+    .record .bottom .panel-body,
+    .home-content > .row.dashlets .panel-body {
+        padding: 0;
+    }
+
+    .panel-body > div > .list {
+        margin: 0 !important;
+        width: 100%;
+    }
+
+
 }
 
 .record .bottom .product-attribute {
@@ -11674,7 +11697,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 .record .bottom .product-attribute > b {
-    border-bottom: 1px solid #adadad;
+    border-bottom: 1px solid #d8d8d8;
     display: block;
     padding: 5px 0 0;
     color: #000;
