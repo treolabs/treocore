@@ -59,7 +59,7 @@ Espo.define('treo-core:views/stream/notes/update-module-activation', 'views/stre
 
         getPackage() {
             let locale = this.getPreferences().get('language') || this.getConfig().get('language');
-            let package = this.model.get('data').package;
+            let package = (this.model.get('data') || {}).package || {};
             let names = (package.extra || {}).name || {};
             return {
                 id: package.name,
