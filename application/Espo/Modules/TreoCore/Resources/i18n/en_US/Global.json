@@ -98,27 +98,27 @@
     "massUpdateResult": "Updating {count} records"
   },
   "streamMessages": {
-    "updateModuleThis": "{user} updated module",
-    "installModuleThis": "{user} installed module",
-    "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update",
-    "activateModuleThis": "{user} activated module",
-    "deactivateModuleThis": "{user} deactivated module"
+    "updateModuleThis": "{user} has updated module",
+    "installModuleThis": "{user} has installed module",
+    "deleteModuleThis": "{user} has removed module",
+    "composerUpdateThis": "{user} has run update",
+    "activateModuleThis": "{user} has activated module",
+    "deactivateModuleThis": "{user} has deactivated module"
   },
   "streamMessagesMale": {
-    "updateModuleThis": "{user} updated module",
-    "installModuleThis": "{user} installed module",
-    "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update",
-    "activateModuleThis": "{user} activated module",
-    "deactivateModuleThis": "{user} deactivated module"
+    "updateModuleThis": "{user} has updated module",
+    "installModuleThis": "{user} has installed module",
+    "deleteModuleThis": "{user} has removed module",
+    "composerUpdateThis": "{user} has run update",
+    "activateModuleThis": "{user} has activated module",
+    "deactivateModuleThis": "{user} has deactivated module"
   },
   "streamMessagesFemale": {
-    "updateModuleThis": "{user} updated module",
-    "installModuleThis": "{user} installed module",
-    "deleteModuleThis": "{user} removed module",
-    "composerUpdateThis": "{user} ran update",
-    "activateModuleThis": "{user} activated module",
-    "deactivateModuleThis": "{user} deactivated module"
+    "updateModuleThis": "{user} has updated module",
+    "installModuleThis": "{user} has installed module",
+    "deleteModuleThis": "{user} has removed module",
+    "composerUpdateThis": "{user} has run update",
+    "activateModuleThis": "{user} has activated module",
+    "deactivateModuleThis": "{user} has deactivated module"
   }
 }

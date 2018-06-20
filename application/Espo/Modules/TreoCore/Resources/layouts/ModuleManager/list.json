@@ -10,10 +10,6 @@
     "width": 30
   },
   {
-    "name": "status",
-    "notSortable": true
-  },
-  {
     "name": "settingVersion",
     "notSortable": true
   },

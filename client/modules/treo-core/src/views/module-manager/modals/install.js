@@ -102,6 +102,9 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
             if (typeof settingVersion === 'string' && settingVersion.substring(0, 1) == 'v') {
                 settingVersion = settingVersion.substr(1);
             }
+            if (!settingVersion) {
+                settingVersion = '*';
+            }
 
             this.model.set({
                 settingVersion: settingVersion
