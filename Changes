@@ -1,3 +1,4 @@
+    * UST #65405 : Виправити деякі неточності в ModuleManager (Yurii Kondratskyi)
     * BUG #65594 : Додати перевірку формату даних в логах ModuleManager (Yurii Kondratskyi)
     * UST #65508 : Зробити праву панель повністю сірою, незалежно від наявності контенту та інші дрібні зміни по верстці (Markiian Khakhula)
     * UST #65512 : Модифицировать layout relationship (Valeriy Shamota)
