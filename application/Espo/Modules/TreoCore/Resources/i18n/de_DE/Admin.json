@@ -15,5 +15,8 @@
     "newVersionIsAvailable": "Neue Treo System Version {latestVersion} ist verfügbar.",
     "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/\" target=\"_blank\">hier</a>",
     "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/?dev=1\" target=\"_blank\">hier</a>"
+  },
+  "layouts": {
+    "relationships": "Unterer Paneele"
   }
 }

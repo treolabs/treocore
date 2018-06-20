@@ -61,7 +61,7 @@ Espo.define('treo-core:views/stream/notes/composer-update', 'views/stream/note',
 
         actionShowUpdateDetails() {
             this.createView('updateDetailsModal', 'treo-core:views/module-manager/modals/update-details', {
-                output: this.model.get('data').output
+                output: (this.model.get('data') || {}).output
             }, view => {
                 view.render();
             });
