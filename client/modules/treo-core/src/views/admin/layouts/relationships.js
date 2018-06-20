@@ -48,7 +48,11 @@ Espo.define('treo-core:views/admin/layouts/relationships', 'class-replace!treo-c
                     }
 
                     let bottomPanels = this.getMetadata().get(['clientDefs', this.scope, 'bottomPanels', 'detail']) || [];
-                    bottomPanels.forEach(panel => allFields.push(panel.name));
+                    bottomPanels.forEach(panel => {
+                        if (!panel.layoutRelationshipsDisabled) {
+                            allFields.push(panel.name);
+                        }
+                    });
 
                     allFields.sort(function (v1, v2) {
                         let v1Name, v2Name;
