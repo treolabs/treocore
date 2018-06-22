@@ -107,12 +107,12 @@ class Composer extends Base
         // call composer
         $composer = $this->run('update');
 
-        // rebuild
-        $this->rebuild();
-
         // triggered after action
         $composer = $eventManager
             ->triggered('Composer', 'afterComposerUpdate', $composer);
+
+        // rebuild
+        $this->rebuild();
 
         return $composer;
     }
