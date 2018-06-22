@@ -1,3 +1,5 @@
+    * INT #65317 : Додати на гітхаб документацію (Roman Ratsun)
+
 1.11.5-rc1  2018-06-22 9:40:39 Europe/Kiev
     * BUG #65525 : Rebuild має виконуватися після перегрузки метаданих (Roman Ratsun)
     * UST #65405 : Виправити деякі неточності в ModuleManager (Yurii Kondratskyi)
