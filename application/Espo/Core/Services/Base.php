@@ -56,7 +56,8 @@ abstract class Base implements Injectable
         = [
             'config',
             'entityManager',
-            'user'
+            'user',
+            'dataManager'
         ];
 
     /**
@@ -151,6 +152,17 @@ abstract class Base implements Injectable
     protected function reloadDependency($name)
     {
         $this->container->reload($name);
+    }
+
+    /**
+     * Rebuild
+     *
+     * @throws Error
+     */
+    protected function rebuild(): void
+    {
+        $this->reloadDependency('entityManager');
+        $this->getInjection('dataManager')->rebuild();
     }
 
     /**
