@@ -108,7 +108,7 @@ class Composer extends Base
         $composer = $this->run('update');
 
         // rebuild
-        $this->getInjection('dataManager')->rebuild();
+        $this->rebuild();
 
         // triggered after action
         $composer = $eventManager
@@ -272,7 +272,7 @@ class Composer extends Base
     public function setModuleComposerJson(array $data): void
     {
         $file = fopen($this->moduleComposer, "w");
-        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         fclose($file);
     }
 
