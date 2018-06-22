@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core;
 
 use Espo\Core\ServiceFactory as EspoServiceFactory;
+use Espo\Core\Exceptions\Error;
 
 /**
  * ServiceFactory class
