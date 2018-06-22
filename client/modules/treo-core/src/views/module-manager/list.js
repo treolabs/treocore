@@ -113,17 +113,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                                         return model && model.get('isActive');
                                     });
                                 }
-                                if (setEditMode && !currentModel.get('status')) {
+
+                                let status = currentModel.get('status');
+
+                                if (setEditMode && !status) {
                                     let isActiveView = rows[currentModel.id].getView('isActive');
                                     isActiveView.setMode('edit');
                                     isActiveView.reRender();
                                 }
 
-                                let status = currentModel.get('status');
                                 if (status) {
                                     showCancelAction = true;
                                     rows[currentModel.id].$el.addClass(`${status}-module-row`);
-                                    rows[currentModel.id].getView('status').$el.html(this.getLanguage().translateOption(status, 'status', 'ModuleManager'));
                                 }
                             });
                             this.toggleActionButton('cancelUpdate', showCancelAction);
