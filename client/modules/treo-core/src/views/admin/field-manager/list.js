@@ -31,42 +31,29 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/stream/notes/composer-update', 'views/stream/note',
-    Dep =>  Dep.extend({
+Espo.define('treo-core:views/admin/field-manager/list', 'class-replace!treo-core:views/admin/field-manager/list', function (Dep) {
 
-        template: 'treo-core:stream/notes/composer-update',
+    return Dep.extend({
 
-        isEditable: false,
+        data: function () {
+            // get scope fields
+            var scopeFields = this.getMetadata().get('entityDefs.' + this.scope + '.fields');
 
-        isRemovable: false,
-
-        messageName: 'composerUpdate',
-
-        events: {
-            'click .action[data-action="showUpdateDetails"]': function () {
-                this.actionShowUpdateDetails();
-            }
-        },
-
-        data() {
-            let updateData = this.model.get('data');
-            let data = Dep.prototype.data.call(this);
-            data.fail = !!updateData.status;
-            return data;
-        },
-
-        setup() {
-            this.createMessage();
-        },
-
-        actionShowUpdateDetails() {
-            this.createView('updateDetailsModal', 'treo-core:views/module-manager/modals/update-details', {
-                output: (this.model.get('data') || {}).output
-            }, view => {
-                view.render();
+            // prepare fieldDefsArray
+            var fieldDefsArray = [];
+            $.each(this.fieldDefsArray, function (k, v) {
+                if (!scopeFields[v.name].emHidden) {
+                    fieldDefsArray.push(v);
+                }
             });
+
+            return {
+                scope: this.scope,
+                fieldDefsArray: fieldDefsArray,
+                typeList: this.typeList
+            };
         },
 
-    })
-);
+    });
+});
 

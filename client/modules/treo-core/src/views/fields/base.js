@@ -31,42 +31,55 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/stream/notes/composer-update', 'views/stream/note',
-    Dep =>  Dep.extend({
+Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields/base', function (Dep) {
 
-        template: 'treo-core:stream/notes/composer-update',
+    return Dep.extend({
 
-        isEditable: false,
+        inlineEditSave: function () {
+            var data = this.fetch();
 
-        isRemovable: false,
+            var self = this;
+            var model = this.model;
+            var prev = Espo.Utils.cloneDeep(this.initialAttributes);
 
-        messageName: 'composerUpdate',
+            model.set(data, {silent: true});
+            data = model.attributes;
 
-        events: {
-            'click .action[data-action="showUpdateDetails"]': function () {
-                this.actionShowUpdateDetails();
+            var attrs = false;
+            for (var attr in data) {
+                if (_.isEqual(prev[attr], data[attr])) {
+                    continue;
+                }
+                (attrs || (attrs = {}))[attr] =    data[attr];
             }
-        },
 
-        data() {
-            let updateData = this.model.get('data');
-            let data = Dep.prototype.data.call(this);
-            data.fail = !!updateData.status;
-            return data;
-        },
+            if (!attrs) {
+                this.inlineEditClose();
+                return;
+            }
 
-        setup() {
-            this.createMessage();
-        },
+            if (this.validate()) {
+                this.notify('Not valid', 'error');
+                model.set(prev, {silent: true});
+                return;
+            }
 
-        actionShowUpdateDetails() {
-            this.createView('updateDetailsModal', 'treo-core:views/module-manager/modals/update-details', {
-                output: (this.model.get('data') || {}).output
-            }, view => {
-                view.render();
+            this.notify('Saving...');
+            model.save(attrs, {
+                success: function () {
+                    self.trigger('after:save');
+                    model.trigger('after:save');
+                    self.notify('Saved', 'success');
+                },
+                error: function () {
+                    self.notify('Error occured', 'error');
+                    model.set(prev, {silent: true});
+                    self.render()
+                },
+                patch: true
             });
+            this.inlineEditClose(true);
         },
 
     })
-);
-
+});

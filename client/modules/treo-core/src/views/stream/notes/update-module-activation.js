@@ -31,42 +31,42 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/stream/notes/composer-update', 'views/stream/note',
+Espo.define('treo-core:views/stream/notes/update-module-activation', 'views/stream/note',
     Dep =>  Dep.extend({
 
-        template: 'treo-core:stream/notes/composer-update',
+        template: 'treo-core:stream/notes/update-module-activation',
 
         isEditable: false,
 
         isRemovable: false,
 
-        messageName: 'composerUpdate',
-
-        events: {
-            'click .action[data-action="showUpdateDetails"]': function () {
-                this.actionShowUpdateDetails();
-            }
-        },
+        messageName: null,
 
         data() {
-            let updateData = this.model.get('data');
             let data = Dep.prototype.data.call(this);
-            data.fail = !!updateData.status;
+            data.package = this.getPackage();
             return data;
+        },
+
+        init() {
+            this.messageName = this.model.get('data').disabled ? 'deactivateModule' : 'activateModule';
+            Dep.prototype.init.call(this);
         },
 
         setup() {
             this.createMessage();
         },
 
-        actionShowUpdateDetails() {
-            this.createView('updateDetailsModal', 'treo-core:views/module-manager/modals/update-details', {
-                output: (this.model.get('data') || {}).output
-            }, view => {
-                view.render();
-            });
-        },
-
+        getPackage() {
+            let locale = this.getPreferences().get('language') || this.getConfig().get('language');
+            let package = (this.model.get('data') || {}).package || {};
+            let names = (package.extra || {}).name || {};
+            return {
+                id: package.name,
+                name: names[locale] || names['default'] || package.name,
+                version: package.version
+            };
+        }
     })
 );
 

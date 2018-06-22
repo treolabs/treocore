@@ -1,3 +1,19 @@
+1.11.5-rc1  2018-06-22 9:40:39 Europe/Kiev
+    * BUG #65525 : Rebuild має виконуватися після перегрузки метаданих (Roman Ratsun)
+    * UST #65405 : Виправити деякі неточності в ModuleManager (Yurii Kondratskyi)
+    * BUG #65594 : Додати перевірку формату даних в логах ModuleManager (Yurii Kondratskyi)
+    * UST #65508 : Зробити праву панель повністю сірою, незалежно від наявності контенту та інші дрібні зміни по верстці (Markiian Khakhula)
+    * UST #65512 : Модифицировать layout relationship (Valeriy Shamota)
+    * BUG #64952 : При поступовому видаленні значень атрибуту типу Multi-Enum Multi Lang/Enum Multi Lang та зберіганні - видаляється лише перше значення, та зберігає не однакову кількість полів (Valeriy Shamota)
+    * UST #65453 : Rebuild при кожному Run Update (Roman Ratsun)
+    * UST #65440 : Надати можливість приховувати деякі поля сутності в EntityManager (Roman Ratsun)
+    * BUG #64011 : Не работает кнопка пагинации в прогресс менеджере  (Roman Ratsun, Valeriy Shamota)
+    * UST #63986 : Перенести вибір фільтрів в дропдаун зліва від пошуку (модуль TreoCore) (Valeriy Shamota, Yurii Kondratskyi)
+    * UST #63910 : Додати Bottom Panels в налаштуванні Relationship Panels (Valeriy Shamota)
+    * BUG #63116 : при изменении размера экрана табы опускаются ниже кнопки эдит (Valeriy Shamota)
+    * UST #60526 : при скролі сторінки вниз її назва має фіксуватись на таскбарі (Valeriy Shamota)
+    * BUG #64803 : При входе в модуль менеджер - ошибка в консоли (Valeriy Shamota)
+
 1.11.4-rc1  2018-06-05 12:51:35 Europe/Kiev
     * UST #63874 : Змінити попап оновлення(встановлення) версії модулю // Front (Yurii Kondratskyi)
     * UST #64530 : Надати можливість вкл і викл системні сповіщення. Сповіщення про вихід нової версії модулю або вихід нового модулю (Valeriy Shamota)
