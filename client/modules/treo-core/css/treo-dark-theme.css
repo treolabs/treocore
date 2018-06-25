@@ -11280,7 +11280,25 @@ a:hover, a:focus {
 }
 
 .list-container .list-buttons-container {
-    margin-bottom: 30px
+    margin-bottom: 15px
+}
+
+.list-container .list-buttons-container .actions-button {
+    color: #000;
+    text-decoration: underline;
+    border: 0;
+    padding-left: 0;
+}
+
+.list-container .list-buttons-container .actions-button:hover,
+.list-container .list-buttons-container .actions-button:focus,
+.list-container .list-buttons-container .actions-button:active {
+    background: #fff;
+    box-shadow: none;
+}
+
+.list-container .list-buttons-container .total-count {
+    color: #000;
 }
 
 .list-container > .list, .panel, .dashlet-container, #main > .calendar-container .calendar, #main > .calendar-container .timeline, .well, .admin-content .table.table-bordered, .admin-content iframe, .list-group-panel {
@@ -11329,8 +11347,13 @@ ul.dropdown-menu > li.checkbox {
     margin: 0 2px
 }
 
-.search-row .text-filter + .input-group-btn .search::after {
-    content: attr(data-action);
+.search-row .text-filter + .input-group-btn .search::after:first-letter {
+    text-transform: uppercase;
+}
+
+.filter > .form-group .field .selectize-control .selectize-input {
+    border: 1px solid #eaeaea;
+    min-height: 30px
 }
 
 .side > .panel.panel-default.panel-default,
@@ -11441,6 +11464,21 @@ ul.dropdown-menu > li.checkbox {
 
 .table-admin-panel tr > td:first-child {
     width: 200px
+}
+
+#main .page-header > h3 > a {
+    position: relative;
+}
+
+#main .page-header > h3 > a::after {
+    content: '›';
+    display: inline-block;
+    color: #000;
+    background: #fff;
+    height: 100%;
+    width: 25px;
+    text-align: center;
+    position: absolute;
 }
 
 @media (min-width: 1200px) {
@@ -11556,7 +11594,11 @@ ul.dropdown-menu > li.checkbox {
 
     .search-row .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
         float: right;
-        margin-left: -1px
+        margin-left: -1px;
+    }
+
+    .input-group .form-control:not(:first-child):not(:last-child) {
+        padding: 6px 45px 6px 12px;
     }
 
     .search-row > div > .input-group > .left-dropdown {
@@ -11686,8 +11728,6 @@ ul.dropdown-menu > li.checkbox {
         margin: 0 !important;
         width: 100%;
     }
-
-
 }
 
 .record .bottom .product-attribute {

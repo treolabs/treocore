@@ -7,8 +7,11 @@
   ],
   "controllers/admin": [
     "treo-core"
-  ],
+  ],  
   "views/modal": [
+    "treo-core"
+  ],
+  "views/main": [
     "treo-core"
   ],
   "views/list": [
