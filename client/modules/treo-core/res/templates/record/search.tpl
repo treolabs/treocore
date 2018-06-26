@@ -43,6 +43,7 @@
             <div class="input-group-btn">
                 <button type="button" class="btn btn-primary search btn-icon" data-action="search">
                     <span class="glyphicon glyphicon-search"></span>
+                    <span>{{translate 'Search'}}</span>
                 </button>
             </div>
         </div>

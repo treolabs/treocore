@@ -169,7 +169,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         getHeader() {
-            return '<a href="#Admin">' + this.translate('Administration') + "</a> » " + this.getLanguage().translate('Module Manager', 'labels', 'Admin');
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> &rsaquo; " + this.getLanguage().translate('Module Manager', 'labels', 'Admin');
         },
 
         updatePageTitle() {
