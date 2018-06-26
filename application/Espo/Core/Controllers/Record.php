@@ -141,9 +141,11 @@ class Record extends Base
         if (empty($maxSize)) {
             $maxSize = self::MAX_SIZE_LIMIT;
         }
-        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
-        }
+
+        // @todo treoinject
+//        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
+//            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
+//        }
 
         $params = array(
             'where' => $where,
