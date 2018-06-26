@@ -35,6 +35,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
     return Dep.extend({
 
+        template: 'treo-core:record/list',
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -65,6 +67,70 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.getRouter().dispatch(scope, 'view', options);
                 },
             });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.fixedTableHead()
+        },
+
+        fixedTableHead() {
+
+            let $window = $(window),
+                fixedTable = this.$el.find('.fixed-header-table'),
+                fullTable = this.$el.find('.full-table'),
+                navBarRight = $('.navbar-right'),
+                posTopTable = 0,
+                posLeftTable = 0,
+                navBarHeight = 0,
+
+
+                setPosition = function() {
+                    posLeftTable = fullTable.position().left;
+                    posTopTable = fullTable.position().top;
+                    navBarHeight = navBarRight.outerHeight();
+
+                    fixedTable.css({
+                        'position': 'fixed',
+                        'left': posLeftTable,
+                        'top': navBarHeight - 1,
+                        'right': 0,
+                        'z-index': 1
+                    });
+                },
+                setWidth = function () {
+                    let widthTable = fullTable.outerWidth();
+
+                    fixedTable.css('width', widthTable);
+
+                    fullTable.find('thead').find('th').each(function (i) {
+                        let width = $(this).outerWidth();
+                        fixedTable.find('th').eq(i).css('width', width);
+                    });
+                },
+                toggleClass = function () {
+                    let showPosition = posTopTable - navBarHeight;
+
+                    if ($window.scrollTop() > showPosition && $window.width() >= 768) {
+                        fixedTable.removeClass('hidden');
+                    } else {
+                        fixedTable.addClass('hidden');
+                    }
+                };
+
+            if (fullTable.length) {
+                setPosition();
+                setWidth();
+
+                $window.on('scroll', toggleClass);
+                $window.on('resize', function () {
+                    setPosition();
+                    setWidth();
+                });
+
+                $window.trigger('scroll');
+            }
         }
     });
 });
