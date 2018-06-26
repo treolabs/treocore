@@ -23,7 +23,7 @@
     <div class="hidden details stream-details-container">
         <span>
             {{#each fieldsArr}}
-                {{translate field category='fields' scope=../parentType}}: <div class="was">{{{var was ../this}}}</div> &raquo; <div class="became">{{{var became ../this}}}</div>
+            {{#if customLabel}}{{customLabel}}{{else}}{{translate field category='fields' scope=../parentType}}{{/if}}: <div class="was">{{{var was ../this}}}</div> &raquo; <div class="became">{{{var became ../this}}}</div>
                 <br>
             {{/each}}
         </span>
