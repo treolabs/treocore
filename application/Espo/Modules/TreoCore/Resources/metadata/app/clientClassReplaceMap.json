@@ -112,5 +112,11 @@
   ],
   "views/notification/items/treo-message": [
     "treo-core"
+  ],
+  "views/record/edit-small": [
+    "treo-core"
+  ],
+  "views/record/detail-small": [
+    "treo-core"
   ]
 }

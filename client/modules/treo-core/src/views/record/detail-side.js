@@ -138,6 +138,13 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
             }.bind(this));
         },
 
+        setupDefaultPanel() {
+            let hasAnyField = (this.defaultPanelDefs.options.fieldList || []).some(fieldDefs => this.model.has(fieldDefs.name));
+            if (this.mode === 'detail' || hasAnyField) {
+                Dep.prototype.setupDefaultPanel.call(this);
+            }
+        }
+
     });
 });
 
