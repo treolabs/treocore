@@ -32,36 +32,27 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Migration;
+declare(strict_types=1);
 
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+namespace Espo\Modules\TreoCore\Loaders;
+
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\Utils\Api\Slim;
 
 /**
- * Version 1.9.6
+ * Slim loader
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V196 extends AbstractMigration
+class SlimLoader extends Base
 {
     /**
-     * Up to current
+     * Load Slim
+     *
+     * @return Slim
      */
-    public function up(): void
+    public function load()
     {
-        $websocketConfig = [
-            'server' => [
-                'host'    => '127.0.0.1',
-                'port'    => 8080,
-                'address' => '0.0.0.0'
-            ],
-            'zmq'    => [
-                'host' => '127.0.0.1',
-                'port' => 5555,
-            ],
-        ];
-
-        // set to config
-        $this->getConfig()->set('websockets', $websocketConfig);
-        $this->getConfig()->save();
+        return new Slim();
     }
 }

@@ -112,7 +112,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             var stickTop = this.getThemeManager().getParam('stickTop') || 62;
             var blockHeight = this.getThemeManager().getParam('blockHeight') || 21;
 
-            var $block = $('<div>').css('height', blockHeight + 'px').html('&nbsp;').hide().insertAfter($container);
+            var $block = this.$el.find('.detail-button-container + div');
             var $window = $(window);
             var screenWidthXs = this.getThemeManager().getParam('screenWidthXs');
 
@@ -130,24 +130,51 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
 
                 if (scrollTop < edge) {
                     if (scrollTop > stickTop) {
+                        if (!$container.hasClass('stick-sub') && this.mode !== 'edit') {
+                            var $p = $('.popover');
+                            $p.each(function (i, el) {
+                                var $el = $(el);
+                                $el.css('top', ($el.position().top - ($container.height() - blockHeight * 2 + 10)) + 'px');
+                            }.bind(this));
+                        }
                         $container.addClass('stick-sub');
                         $block.show();
-
-                        var $p = $('.popover');
-                        $p.each(function (i, el) {
-                            var $el = $(el);
-                            $el.css('top', ($el.position().top - blockHeight) + 'px');
-                        });
                     } else {
+                        if ($container.hasClass('stick-sub') && this.mode !== 'edit') {
+                            var $p = $('.popover');
+                            $p.each(function (i, el) {
+                                var $el = $(el);
+                                $el.css('top', ($el.position().top + ($container.height() - blockHeight * 2 + 10)) + 'px');
+                            }.bind(this));
+                        }
                         $container.removeClass('stick-sub');
                         $block.hide();
-
-                        var $p = $('.popover');
-                        $p.each(function (i, el) {
-                            var $el = $(el);
-                            $el.css('top', ($el.position().top + blockHeight) + 'px');
-                        });
                     }
+                    var $p = $('.popover');
+                    $p.each(function (i, el) {
+                        var $el = $(el);
+                        let top = $el.css('top').slice(0, -2);
+                        if (stickTop > $container.height()) {
+                            if (top - scrollTop > stickTop) {
+                                $el.removeClass('hidden');
+                            } else {
+                                $el.addClass('hidden');
+                            }
+                        } else {
+                            if (top - scrollTop > ($container.height() + blockHeight * 2 + 10)) {
+                                $el.removeClass('hidden');
+                            } else {
+                                $el.addClass('hidden');
+                            }
+                        }
+                    }.bind(this));
+                }
+                let header = this.$el.find('.header-breadcrumbs');
+
+                if (scrollTop > this.$el.find('.page-header').outerHeight()) {
+                    header.addClass('fixed-header-breadcrumbs');
+                } else {
+                    header.removeClass('fixed-header-breadcrumbs');
                 }
             }.bind(this));
         },

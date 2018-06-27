@@ -4509,6 +4509,10 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
     margin-left: 2px
 }
 
+.nav-pills > li.bound {
+    margin-left: 0
+}
+
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
     color: #fff;
     background-color: #537898
@@ -10197,6 +10201,31 @@ td.cell[data-name="buttons"] > .btn-group {
     color: #39f
 }
 
+label.attach-file-label {
+    overflow: hidden;
+    width: 50px;
+    cursor: pointer;
+    margin-bottom: 0
+}
+
+label.attach-file-label > span.btn {
+    cursor: pointer;
+    margin-bottom: 0
+}
+
+label.attach-file-label > input.file {
+    opacity: 0;
+    width: 1px
+}
+
+.attachment-upload > .attachment-control > .dropdown > .btn {
+    margin-bottom: 0
+}
+
+.attachment-upload > .attachments > div:first-child {
+    margin-top: 2px
+}
+
 .gray-box {
     background-color: #eee;
     margin: 0 5px 3px 0;
@@ -10840,7 +10869,7 @@ pre > code {
 }
 
 .panel-heading > .btn-group > .btn {
-    padding-top: 6px;
+    padding-top: 5px;
     padding-bottom: 4px
 }
 
@@ -11192,6 +11221,12 @@ a:hover, a:focus {
     color: #8e8e8e
 }
 
+.fixed-header-breadcrumbs {
+    position: fixed;
+    top: 8px;
+    z-index: 2000;
+}
+
 .panel-default > .panel-heading {
     padding: 5px 10px 6px;
     color: rgba(0, 0, 0, 0.87);
@@ -11199,13 +11234,21 @@ a:hover, a:focus {
     border-top: 1px solid gainsboro
 }
 
+.side .panel-default > .panel-heading  {
+    border-top: 0;
+}
+
 .panel-default > .panel-heading > .btn-group > .btn-default {
     background-color: #ececec;
     border-color: #dcdcdc;
     border-right: 0;
-    border-bottom: 0;
     padding-left: 8px;
     padding-right: 8px
+}
+
+.panel-default > .panel-heading > .btn-group > .btn-default:hover {
+    z-index: 0;
+    background: #fafafa
 }
 
 .list > table thead {
@@ -11290,39 +11333,83 @@ ul.dropdown-menu > li.checkbox {
     content: attr(data-action);
 }
 
-.side > .panel.panel-default.panel-default:first-child {
+.side > .panel.panel-default.panel-default,
+.side > .panel.panel-default.panel-default  .list {
     background: #fafafa;
     margin-bottom: 0
 }
 
 #login {
-    background: #424242;
-    color: #fff
+    background: #fff;
+    color: #424242;
+    margin-top: 50px;
 }
 
 #login.panel > .panel-heading {
     text-align: center;
-    padding: 6px
+    padding: 6px;
+    border-top: 0;
+}
+
+#login.panel > .panel-body {
+    border: 1px solid #424242;
 }
 
 #login .logo-container {
     display: inline-block
 }
 
+#login input.form-control {
+    padding: 6px 10px 6px 30px;
+}
+
+#login select.form-control {
+    padding: 6px 10px 6px 3px;
+}
+
+#login label[for='field-username'],
+#login label[for='login']{
+    position: relative;
+}
+
+#login label[for='field-username']::before,
+#login label[for='login']::before {
+    position: absolute;
+    top: 31px;
+    left: 10px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#login label[for='field-username']::before {
+    content: "\e008";
+}
+
+#login label[for='login']::before {
+    content: "\e033";
+}
+
 #login #btn-login {
-    background-color: #424242;
-    border-color: #fff;
-    color: #fff
+    background-color: #ffffff;
+    border-color: #eaeaea;
+    color: #000;
 }
 
 #login #btn-login:hover {
-    background-color: #fff;
-    border-color: #fff;
-    color: #424242
+    border-color: #424242;
 }
 
 #login .btn-link {
-    color: #fff
+    color: #000
+}
+
+#login input:focus {
+    border-color: #424242;
 }
 
 #header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a, {
@@ -11514,23 +11601,24 @@ ul.dropdown-menu > li.checkbox {
     .edit > .row > .col-md-8,
     .detail > .row > .col-md-8 {
         padding-right: 0;
-        padding-left: 0
+        padding-left: 0;
+        min-height: 79.6vh;
     }
 
     #main .edit > .row,
     #main .detail > .row {
         margin-left: -15px;
-        margin-right: -14px
+        margin-right: -14px;
     }
 
     .edit > .row > .side,
     .detail > .row > .side {
         padding: 0;
-        position: relative
+        position: relative;
     }
 
     .nav > li > a {
-        padding: 7px 15px
+        padding: 7px 15px;
     }
 
     .stick-sub.button-container {
@@ -11587,6 +11675,19 @@ ul.dropdown-menu > li.checkbox {
         display: inline-block;
         float: right
     }
+
+    .record .middle .panel-body,
+    .record .bottom .panel-body,
+    .home-content > .row.dashlets .panel-body {
+        padding: 0;
+    }
+
+    .panel-body > div > .list {
+        margin: 0 !important;
+        width: 100%;
+    }
+
+
 }
 
 .record .bottom .product-attribute {
@@ -11596,9 +11697,51 @@ ul.dropdown-menu > li.checkbox {
 }
 
 .record .bottom .product-attribute > b {
-    border-bottom: 1px solid #adadad;
+    border-bottom: 1px solid #d8d8d8;
     display: block;
     padding: 5px 0 0;
     color: #000;
     font-size: 14px;
+}
+
+.filter-menu .family-list {
+    max-height: 50vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 248px;
+}
+
+.filter-menu .dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    display: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    box-shadow: none;
+    width: 100%;
+    margin: 0;
+}
+
+.filter-menu > .dropdown-submenu > .dropdown-menu {
+    left: 100%;
+    box-shadow: 0 0 13px rgba(0, 0, 0, 0.175);
+    position: absolute;
+}
+
+.filter-menu > .dropdown-submenu:hover > ul.show-list {
+    display: block;
+}
+
+.filter-menu .dropdown-submenu .attribute-filter-list > li > a {
+    padding: 10px 0 10px 40px;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.autocomplete-suggestions:hover + ul.show-list {
+    display: block;
 }

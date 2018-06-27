@@ -4,6 +4,7 @@
   },
   "descriptions": {
     "upgrade": "Treo System aktualisieren.",
+    "gitAuth": "Git authentifizierungseinstellungen.",
     "moduleManager": "Mechanisms for managing modules",
     "representationSettings": "Representation settings."
   },
@@ -12,7 +13,10 @@
     "upgradeDone": "Ihr Treo System wurde auf Version <strong>{version}</strong> aktualisiert.",
     "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die Treo System Dateien sowie die Datenbank zu sichern.",
     "newVersionIsAvailable": "Neue Treo System Version {latestVersion} ist verfügbar.",
-    "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treopim-upgrades.zinit1.com/\" target=\"_blank\">hier</a>",
-    "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treopim-upgrades.zinit1.com/?dev=1\" target=\"_blank\">hier</a>"
+    "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/\" target=\"_blank\">hier</a>",
+    "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/?dev=1\" target=\"_blank\">hier</a>"
+  },
+  "layouts": {
+    "relationships": "Unterer Paneele"
   }
 }

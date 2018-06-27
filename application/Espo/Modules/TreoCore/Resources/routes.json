@@ -1,5 +1,23 @@
 [
   {
+    "route": "I18n",
+    "method": "get",
+    "params": {
+      "controller": "TreoI18n"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
+    "route": "/Preferences/:id",
+    "method": "get",
+    "params": {
+      "controller": "TreoPreferences",
+      "action": "read"
+    }
+  },
+  {
     "route": "/Admin/action/uploadUpgradePackage",
     "method": "post",
     "params": {
@@ -48,27 +66,51 @@
     }
   },
   {
-    "route": "/ModuleManager/composerUser",
-    "method": "get",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "getComposerUser"
-    }
-  },
-  {
-    "route": "/ModuleManager/composerUser",
-    "method": "put",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "setComposerUser"
-    }
-  },
-  {
     "route": "/ModuleManager/availableModulesList",
     "method": "get",
     "params": {
       "controller": "ModuleManager",
       "action": "getAvailableModulesList"
+    }
+  },
+  {
+    "route": "/ModuleManager/logs",
+    "method": "get",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "logs"
+    }
+  },
+  {
+    "route": "/Composer/gitAuth",
+    "method": "get",
+    "params": {
+      "controller": "Composer",
+      "action": "getGitAuthData"
+    }
+  },
+  {
+    "route": "/Composer/gitAuth",
+    "method": "put",
+    "params": {
+      "controller": "Composer",
+      "action": "setGitAuthData"
+    }
+  },
+  {
+    "route": "/Composer/update",
+    "method": "post",
+    "params": {
+      "controller": "Composer",
+      "action": "update"
+    }
+  },
+  {
+    "route": "/Composer/cancel",
+    "method": "delete",
+    "params": {
+      "controller": "Composer",
+      "action": "cancel"
     }
   },
   {

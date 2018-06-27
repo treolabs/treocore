@@ -34,7 +34,13 @@
 
 namespace Espo\Core\Portal;
 
-class Container extends \Espo\Core\Container
+/**
+ * Container class
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo treoinject
+ */
+class Container extends \Espo\Modules\TreoCore\Core\Container
 {
     protected function getServiceClassName($name, $default)
     {
@@ -55,12 +61,8 @@ class Container extends \Espo\Core\Container
         $className = $this->getServiceClassName('aclManager', '\\Espo\\Core\\Portal\\AclManager');
         $mainClassName = $this->getServiceMainClassName('aclManager', '\\Espo\\Core\\AclManager');
 
-        $obj = new $className(
-            $this->get('container')
-        );
-        $objMain = new $mainClassName(
-            $this->get('container')
-        );
+        $obj = new $className($this);
+        $objMain = new $mainClassName($this);
         $obj->setMainManager($objMain);
 
         return $obj;

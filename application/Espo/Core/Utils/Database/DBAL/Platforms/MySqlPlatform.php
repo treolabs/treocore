@@ -96,7 +96,6 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
                 $diff->changedColumns[$columnName] = new ColumnDiff($columnName, $changedColumn, $changedProperties, $column);
             }
             //END espo
-
             //$queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
         }
 

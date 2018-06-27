@@ -44,7 +44,7 @@ use PDO;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V192 extends AbstractMigration
+class V1Dot9Dot2 extends AbstractMigration
 {
     /**
      * Up to current

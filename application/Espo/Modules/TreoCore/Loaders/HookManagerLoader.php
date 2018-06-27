@@ -31,23 +31,28 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
+namespace Espo\Modules\TreoCore\Loaders;
 
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\HookManager;
 
 /**
- * Version 1.9.0
+ * HookManager loader
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V190 extends AbstractMigration
+class HookManagerLoader extends Base
 {
     /**
-     * Up to current
+     * Load HookManager
+     *
+     * @return HookManager
      */
-    public function up(): void
+    public function load()
     {
-        $this->runRebuild();
+        return (new HookManager($this->getContainer()))
+            ->setProtectedContainer($this->getContainer());
     }
 }

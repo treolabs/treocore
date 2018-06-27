@@ -1,29 +1,33 @@
 [
-    {
-        "name": "name",
-        "notSortable": true,
-        "width": 20
-    },
-    {
-        "name": "description",
-        "notSortable": true,
-        "width": 40
-    },
-    {
-        "name": "version",
-        "notSortable": true,
-        "width": 10
-    },
-    {
-        "name": "required",
-        "notSortable": true,
-        "view": "treo-core:views/module-manager/fields/required"
-    },
-    {
-        "name": "isActive",
-        "notSortable": true,
-        "type": "bool",
-        "width": 10,
-        "disabled": false
-    }
+  {
+    "name": "name",
+    "notSortable": true,
+    "width": 20
+  },
+  {
+    "name": "description",
+    "notSortable": true,
+    "width": 30
+  },
+  {
+    "name": "settingVersion",
+    "notSortable": true
+  },
+  {
+    "name": "currentVersion",
+    "notSortable": true
+  },
+  {
+    "name": "required",
+    "notSortable": true,
+    "view": "treo-core:views/module-manager/fields/required",
+    "width": 15
+  },
+  {
+    "name": "isActive",
+    "notSortable": true,
+    "type": "bool",
+    "width": 5,
+    "disabled": false
+  }
 ]

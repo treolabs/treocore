@@ -44,41 +44,23 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         availableCollection: null,
 
-        blockActions: false,
-
-        errorList: [],
-
-        errorsCount: null,
-
-        setup() {
-            Dep.prototype.setup.call(this);
-            this.events['click [data-action="showErrorLog"]'] = () => {
-                this.$el.find('[data-action="showErrorLog"] .new-error').addClass('hidden');
-                this.createView('logs', 'treo-core:views/module-manager/modals/error-log', {
-                    header: this.translate('Error Log', 'labels', 'ModuleManager'),
-                    errorList: this.errorList
-                }, view => {
-                    view.render();
-                });
-            }
-        },
+        actionsInProgress: 0,
 
         loadList() {
-            this.loadSettingsPanel();
             this.loadInstalledModulesList();
             this.loadAvailableModulesList();
+            this.loadLogList();
         },
 
-        loadSettingsPanel() {
-            this.createView('settingsPanel', 'treo-core:views/module-manager/record/settings-panel', {
-                el: `${this.options.el} .settings-panel`
+        loadLogList() {
+            this.createView('logList', 'treo-core:views/module-manager/record/panels/log', {
+                el: `${this.options.el} .log-list-container`
             }, view => {
-                this.listenTo(view, 'after:save', () => {
-                    this.installedCollection.fetch();
-                    this.availableCollection.fetch();
-                });
                 view.render();
-            });
+                this.listenTo(this, 'composer:update', () => {
+                    view.actionRefresh();
+                });
+            })
         },
 
         loadInstalledModulesList() {
@@ -120,25 +102,32 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         }
                         this.listenTo(view, 'after:render', () => {
                             let rows = view.nestedViews || {};
-                            for (let key in rows) {
+                            let showCancelAction = false;
+                            collection.each(currentModel => {
                                 let setEditMode;
-                                if (rows[key].model.get('isActive')) {
-                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(key)) && !rows[key].model.get('isSystem');
+                                if (currentModel.get('isActive')) {
+                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(currentModel.id)) && !currentModel.get('isSystem');
                                 } else {
-                                    setEditMode = (collection.get(key).get('required') || []).every(item => {
+                                    setEditMode = (currentModel.get('required') || []).every(item => {
                                         let model = collection.get(item);
                                         return model && model.get('isActive');
                                     });
                                 }
-                                if (setEditMode) {
-                                    rows[key].getView('isActive').setMode('edit');
-                                    rows[key].getView('isActive').reRender();
+
+                                let status = currentModel.get('status');
+
+                                if (setEditMode && !status) {
+                                    let isActiveView = rows[currentModel.id].getView('isActive');
+                                    isActiveView.setMode('edit');
+                                    isActiveView.reRender();
                                 }
-                            }
-                            this.$el.find('.list-container td.cell ').css({
-                                'white-space': 'normal',
-                                'text-overflow': 'ellipsis'
-                            })
+
+                                if (status) {
+                                    showCancelAction = true;
+                                    rows[currentModel.id].$el.addClass(`${status}-module-row`);
+                                }
+                            });
+                            this.toggleActionButton('cancelUpdate', showCancelAction);
                         });
                         view.render();
                     });
@@ -171,12 +160,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: false,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
                     }, view => {
-                        this.listenTo(view, 'after:render', () => {
-                            this.$el.find('.list-container td.cell ').css({
-                                'white-space': 'normal',
-                                'text-overflow': 'ellipsis'
-                            })
-                        });
                         view.render();
                     });
                 });
@@ -186,11 +169,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         getHeader() {
-            return '<a href="#Admin">' + this.translate('Administration') + "</a> » " + this.getLanguage().translate('moduleManager', 'labels', 'Admin');
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> » " + this.getLanguage().translate('Module Manager', 'labels', 'Admin');
         },
 
         updatePageTitle() {
-            this.setPageTitle(this.getLanguage().translate('moduleManager', 'labels', 'Admin'));
+            this.setPageTitle(this.getLanguage().translate('Module Manager', 'labels', 'Admin'));
         },
 
         actionRefresh(data) {
@@ -201,30 +184,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
         },
 
-        logError(response, id, action) {
-            this.notify(this.translate('checkLog', 'messages', 'ModuleManager'), 'error', 3000);
-            this.errorsCount++;
-            this.errorList.unshift({
-                name: id + this.errorsCount,
-                errorMessage: this.translate('errorMessage', 'messages', 'ModuleManager')
-                    .replace('{module}', '<strong>' + id + '</strong>')
-                    .replace('{action}', '<strong>' + action + '</strong>')
-                    .replace('{status}', '<strong>' + response.status+ '</strong>')
-                    .replace('{time}', moment().format('MMMM Do YYYY, h:mm:ss a')),
-                message: response.output
-            });
-            this.$el.find('[data-action="showErrorLog"] .new-error').removeClass('hidden');
-            if (this.hasView('logs')) {
-                this.getView('logs').reRender();
-            }
-        },
-
         actionInstallModule(data) {
-            if (this.blockActions) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
-                return;
-            }
-
             if (!data.id || !data.mode) {
                 return;
             }
@@ -238,15 +198,15 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             if (data.mode === 'install') {
                 currentModel = this.availableCollection.get(data.id);
                 viewName = 'treo-core:views/module-manager/modals/install';
-                beforeSaveLabel = 'installing';
-                afterSaveLabel = 'installed';
+                beforeSaveLabel = 'settingModuleForInstalling';
+                afterSaveLabel = 'settedModuleForInstalling';
                 apiUrl = 'ModuleManager/installModule';
                 requestType = 'POST';
             } else {
                 currentModel = this.installedCollection.get(data.id);
                 viewName = 'treo-core:views/module-manager/modals/update';
-                beforeSaveLabel = 'updating';
-                afterSaveLabel = 'updated';
+                beforeSaveLabel = 'settingModuleForUpdating';
+                afterSaveLabel = 'settedModuleForUpdating';
                 apiUrl = 'ModuleManager/updateModule';
                 requestType = 'PUT';
             }
@@ -256,50 +216,86 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }, view => {
                 view.render();
                 this.listenTo(view, 'save', saveData => {
-                    this.blockActions = true;
-                    this.notify(this.translate('installing', 'labels', 'ModuleManager'));
-                    this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000})
-                    .then(response => {
-                        if (response.status === 0) {
-                            this.notify(this.translate('installed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                            this.reloadPage(2000);
-                        } else {
-                            this.blockActions = false;
-                            if (response.output) {
-                                this.logError(response, data.id, data.mode);
+                    this.actionsInProgress++;
+                    this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
+                    this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000}).then(response => {
+                        if (response) {
+                            this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                            this.actionsInProgress--;
+                            if (data.mode === 'install') {
+                                this.availableCollection.fetch();
                             }
+                            this.installedCollection.fetch();
                         }
-                    })
-                    .fail(() => this.blockActions = false);
+                    });
                 });
             });
         },
 
         actionRemoveModule(data) {
-            if (this.blockActions) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
-                return;
-            }
-
             if (!data.id) {
                 return;
             }
 
-            this.blockActions = true;
-            this.notify(this.translate('removing', 'labels', 'ModuleManager'));
-            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id}), {timeout: 180000})
-                .then(response => {
-                    if (response.status === 0) {
-                        this.notify(this.translate('removed', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                        this.reloadPage(2000);
-                    } else {
-                        this.blockActions = false;
-                        if (response.output) {
-                            this.logError(response, data.id, 'removed');
-                        }
-                    }
-                })
-                .fail(() => this.blockActions = false );
+            this.actionsInProgress++;
+            this.notify(this.translate('settingModuleForRemoving', 'labels', 'ModuleManager'));
+            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id})).then(response => {
+                if (response) {
+                    this.notify(this.translate('settedModuleForRemoving', 'labels', 'ModuleManager'), 'success');
+                    this.actionsInProgress--;
+                    this.installedCollection.fetch();
+                }
+            });
+        },
+
+        actionRunUpdate() {
+            if (this.actionsInProgress) {
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
+                return;
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate('updating', 'labels', 'ModuleManager'));
+            this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
+                if (response.status === 0) {
+                    this.notify(this.translate('updated', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
+                    this.reloadPage(2000);
+                } else {
+                    this.notify(this.translate('failed', 'labels', 'ModuleManager'), 'danger');
+                    this.actionsInProgress--;
+                }
+                this.trigger('composer:update');
+            }).fail(() => {
+                this.actionsInProgress--;
+                this.trigger('composer:update');
+            });
+        },
+
+        actionCancelUpdate() {
+            if (this.actionsInProgress) {
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
+                return;
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate('canceling', 'labels', 'ModuleManager'));
+            this.ajaxRequest('Composer/cancel', 'DELETE').then(response => {
+                if (response) {
+                    this.notify(this.translate('canceled', 'labels', 'ModuleManager'), 'success');
+                    this.actionsInProgress--;
+                    this.availableCollection.fetch();
+                    this.installedCollection.fetch();
+                }
+            });
+        },
+
+        toggleActionButton(action, show) {
+            let button = this.$el.find(`.detail-button-container button[data-action="${action}"]`);
+            if (show) {
+                button.show();
+            } else {
+                button.hide();
+            }
         },
 
         reloadPage(timeout) {

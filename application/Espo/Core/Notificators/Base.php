@@ -87,12 +87,14 @@ class Base implements Injectable
 
     protected function getEntityManager()
     {
-        return $this->injections['entityManager'];
+        //@todo treoinject
+        return $this->getInjection('entityManager');
     }
 
     protected function getUser()
     {
-        return $this->injections['user'];
+        //@todo treoinject
+        return $this->getInjection('user');
     }
 
     public function process(Entity $entity)

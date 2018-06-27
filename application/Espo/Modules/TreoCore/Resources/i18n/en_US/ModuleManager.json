@@ -7,9 +7,18 @@
   },
   "fields": {
     "status": "Status",
-    "version": "Version",
+    "settingVersion": "Setting Version",
+    "currentVersion": "Current Version",
+    "availableVersions": "Available Versions",
     "required": "Required",
     "isActive": "Is active"
+  },
+  "options": {
+    "status": {
+      "install": "Install",
+      "update": "Update",
+      "delete": "Remove"
+    }
   },
   "exceptions": {
     "hasRequireds": "Module has not satisfied requireds",
@@ -19,7 +28,8 @@
     "Such module is already installed": "Such module is already installed",
     "Module was not installed": "Module was not installed",
     "Such module version already installed": "Such module version already installed",
-    "No such module version": "No such module version"
+    "No such module version": "No such module version",
+    "Version in invalid": "Version in invalid"
   },
   "labels": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
@@ -29,26 +39,30 @@
     "installModule": "Install",
     "updateModule": "Update",
     "removeModule": "Remove",
-    "settings": "Settings",
-    "settingsText": "You should register to install or update TreoPIM modules...",
     "username": "Username",
     "password": "Password",
     "anotherActionInProgress": "An another action is in progress. Wait until it get finished",
-    "installing": "Installing...",
-    "installed": "Installed. This page will be reloaded after {value} seconds",
     "updating": "Updating...",
     "updated": "Updated. This page will be reloaded after {value} seconds",
-    "removing": "Removing...",
-    "removed": "Removed. This page will be reloaded after {value} seconds",
-    "errorLogText": "You can check error log here:",
-    "Error Log": "Error Log",
-    "Check Log": "Check Log",
-    "dependencies": "Dependencies"
+    "canceling": "Canceling...",
+    "canceled": "Canceled",
+    "dependencies": "Dependencies",
+    "version": "Version",
+    "Run Update": "Run Update",
+    "failed": "Modules update failed. See logs for details",
+    "settingModuleForRemoving": "Setting module for removing...",
+    "settedModuleForRemoving": "Module has been setted for removing",
+    "settingModuleForInstalling": "Setting module for installing...",
+    "settedModuleForInstalling": "Module has been setted for installing",
+    "settingModuleForUpdating": "Setting module for updating...",
+    "settedModuleForUpdating": "Module has been setted for updating",
+    "Log": "Log"
   },
   "messages": {
-    "checkLog": "Something went wrong. Check the log for error-level output",
-    "errorInstall": "Module {module} not installed with error status {status} at {time}",
-    "errorUpdate": "Module {module} not updated with error status {status} at {time}",
-    "errorRemove": "Module {module} not removed with error status {status} at {time}"
+    "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' activated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' deactivated successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>": "<strong>%s</strong>' (%s) installed successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>": "Module <strong>%s</strong>' deleted successfully. <a href=\"/#ModuleManager/list\">Details</a>",
+    "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>"
   }
 }

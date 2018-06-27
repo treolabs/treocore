@@ -49,19 +49,51 @@ class EntityManager extends AbstractListener
     protected $scopesConfig = null;
 
     /**
-     * Before update action
-     *
      * @param array $data
      *
-     * @return void
+     * @return array
      */
-    public function beforeUpdate(array $data)
+    public function afterActionCreateEntity(array $data): array
     {
         // update scopes
+        $this->updateScope(get_object_vars($data['data']));
+
+        if ($data['result']) {
+            $this->getContainer()->get('dataManager')->rebuild();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterActionUpdateEntity(array $data): array
+    {
+        $this->afterActionCreateEntity($data);
+
+        return $data;
+    }
+
+    /**
+     * Set data to scope
+     *
+     * @param array $data
+     */
+    protected function updateScope(array $data): void
+    {
+        // prepare name
+        $name = trim(ucfirst($data['name']));
+
         $this
             ->getContainer()
             ->get('metadata')
-            ->set('scopes', $data['name'], $this->getPreparedScopesData($data['data']));
+            ->set('scopes', $name, $this->getPreparedScopesData($data));
+
+        // save
+        $this->getContainer()->get('metadata')->save();
     }
 
     /**
@@ -73,7 +105,9 @@ class EntityManager extends AbstractListener
      */
     protected function getPreparedScopesData(array $data): array
     {
+        // prepare result
         $scopeData = [];
+
         foreach ($data as $key => $value) {
             if (in_array($key, $this->getScopesConfig()['edited'])) {
                 $scopeData[$key] = $value;

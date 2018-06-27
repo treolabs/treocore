@@ -1,0 +1,10 @@
+{
+  "exceptions": {
+    "Wrong crontab configuration": "Falsche Crontab-Konfiguration"
+  },
+  "options": {
+    "job": {
+      "ModuleAutoUpdate": "Alle installierten Module automatisch aktualisieren"
+    }
+  }
+}

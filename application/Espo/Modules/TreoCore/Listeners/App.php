@@ -31,29 +31,44 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-declare(strict_types = 1);
+namespace Espo\Modules\TreoCore\Listeners;
 
-namespace Espo\Modules\TreoCore\Loaders;
-
-use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\EntityManager;
+use Espo\ORM\Entity;
 
 /**
- * EntityManagerUtil loader
+ * Class App
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class EntityManagerUtil extends Base
+class App extends AbstractListener
 {
 
     /**
-     * Load EntityManager util
+     * After action user
+     * (change language)
      *
-     * @return EntityManager
+     * @param array $data
+     *
+     * @return array
      */
-    public function load()
+    public function afterActionUser(array $data): array
     {
-        return new EntityManager($this->getContainer());
+        $language = $data['request']->get('language');
+        $currentLanguage = $data['result']['language'] ?? '';
+
+        if (!empty($data['result']['user']) && !empty($language) && $currentLanguage !== $language) {
+            /** @var Entity $preferences */
+            $preferences = $this->getContainer()->get('Preferences');
+
+            // change language for user
+            $preferences->set('language', $language);
+            $this->getEntityManager()->saveEntity($preferences);
+
+            $data['result']['language'] = $language;
+        }
+
+        return $data;
     }
 }

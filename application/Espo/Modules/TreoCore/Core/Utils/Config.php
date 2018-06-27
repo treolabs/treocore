@@ -126,6 +126,11 @@ class Config extends EspoConfig
     protected $modules = null;
 
     /**
+     * @var array
+     */
+    protected $composerJsonData = null;
+
+    /**
      * Construct
      */
     public function __construct(FileManager $fileManager)
@@ -404,8 +409,15 @@ class Config extends EspoConfig
 
             /**
              * Set version from composer
+             *
+             * @todo remove ot soon
              */
-            $config['version'] = $this->getTreoVersion();
+//            $config['version'] = $this->getTreoVersion();
+
+            /**
+             * Set allowUnstable param from composer
+             */
+            $config['allowUnstable'] = $this->getAllowUnstableParam();
 
             // set config
             $this->setConfigData($config);
@@ -447,14 +459,26 @@ class Config extends EspoConfig
         // prepare result
         $result = '1.0.0';
 
-        // prepare path
-        $path = 'composer.json';
+        if (!empty($version = $this->getComposerJsonData()['version'])) {
+            $result = $version;
+        }
 
-        if (file_exists($path)) {
-            $data = Json::decode(file_get_contents($path), true);
-            if (!empty($data['version'])) {
-                $result = $data['version'];
-            }
+        return $result;
+    }
+
+    /**
+     * Get allowUnstable param from composer
+     *
+     * @return bool
+     */
+    protected function getAllowUnstableParam(): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (!empty($this->getComposerJsonData()['minimum-stability'])
+            && $this->getComposerJsonData()['minimum-stability'] == 'RC') {
+            $result = true;
         }
 
         return $result;
@@ -579,5 +603,27 @@ class Config extends EspoConfig
         }
 
         return true;
+    }
+
+    /**
+     * Get composer.json data
+     *
+     * @return array
+     */
+    protected function getComposerJsonData(): array
+    {
+        if (is_null($this->composerJsonData)) {
+            // prepare result
+            $this->composerJsonData = [];
+
+            // prepare path
+            $path = 'composer.json';
+
+            if (file_exists($path)) {
+                $this->composerJsonData = Json::decode(file_get_contents($path), true);
+            }
+        }
+
+        return $this->composerJsonData;
     }
 }

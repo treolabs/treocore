@@ -34,42 +34,109 @@
 
 namespace Espo\Core\Services;
 
-use \Espo\Core\Interfaces\Injectable;
+use Espo\Core\Container;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Interfaces\Injectable;
+use Espo\Core\Utils\Config;
+use Espo\Entities\User;
+use Espo\Orm\EntityManager;
 
+/**
+ * Abstract service Base
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo   treoinject
+ */
 abstract class Base implements Injectable
 {
-    protected $dependencies = array(
-        'config',
-        'entityManager',
-        'user',
-    );
+    /**
+     * @var array
+     */
+    protected $dependencies
+        = [
+            'config',
+            'entityManager',
+            'user',
+            'dataManager'
+        ];
 
-    protected $injections = array();
+    /**
+     * @var Container
+     */
+    private $container = null;
 
-    public function inject($name, $object)
-    {
-        $this->injections[$name] = $object;
-    }
-
+    /**
+     * Construct
+     */
     public function __construct()
     {
         $this->init();
     }
 
+    /**
+     * Set container
+     *
+     * @param Container $container
+     *
+     * @return Base
+     */
+    public function setContainer(Container $container)
+    {
+        if (is_null($this->container)) {
+            $this->container = $container;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get dependency list
+     *
+     * @return array
+     */
+    public function getDependencyList()
+    {
+        return $this->dependencies;
+    }
+
+    /**
+     * Init
+     */
     protected function init()
     {
     }
 
+    /**
+     * Get injection
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
     protected function getInjection($name)
     {
-        return $this->injections[$name];
+        if (!in_array($name, $this->getDependencyList())) {
+            throw new Error('No such dependency');
+        }
+
+        return $this->container->get($name);
     }
 
+    /**
+     * Add dependency
+     *
+     * @param string $name
+     */
     protected function addDependency($name)
     {
         $this->dependencies[] = $name;
     }
 
+    /**
+     * Add dependency list
+     *
+     * @param array $list
+     */
     protected function addDependencyList(array $list)
     {
         foreach ($list as $item) {
@@ -77,21 +144,52 @@ abstract class Base implements Injectable
         }
     }
 
-    public function getDependencyList()
+    /**
+     * Reload dependency
+     *
+     * @param string $name
+     */
+    protected function reloadDependency($name)
     {
-        return $this->dependencies;
+        $this->container->reload($name);
     }
 
+    /**
+     * Rebuild
+     *
+     * @throws Error
+     */
+    protected function rebuild(): void
+    {
+        $this->reloadDependency('entityManager');
+        $this->getInjection('dataManager')->rebuild();
+    }
+
+    /**
+     * Get EntityManager
+     *
+     * @return EntityManager
+     */
     protected function getEntityManager()
     {
         return $this->getInjection('entityManager');
     }
 
+    /**
+     * Get Config
+     *
+     * @return Config
+     */
     protected function getConfig()
     {
         return $this->getInjection('config');
     }
 
+    /**
+     * Get User
+     *
+     * @return User
+     */
     protected function getUser()
     {
         return $this->getInjection('user');

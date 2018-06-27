@@ -32,18 +32,29 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+declare(strict_types=1);
 
-class Container extends Base
+namespace Espo\Modules\TreoCore\Jobs;
+
+use Espo\Core\Jobs\Base;
+
+/**
+ * ModuleAutoUpdate job
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ModuleAutoUpdate extends Base
 {
 
     /**
-     * Load Container
+     * Run cron job
      *
-     * @return \Espo\Core\Container
+     * @return bool
      */
-    public function load()
+    public function run(): bool
     {
-        return $this->getContainer();
+        $this->getServiceFactory()->create('Composer')->runUpdate();
+
+        return true;
     }
 }

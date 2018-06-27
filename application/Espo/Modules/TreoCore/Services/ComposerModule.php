@@ -50,7 +50,7 @@ class ComposerModule extends Base
     /**
      * @var string
      */
-    public static $packagistPath = 'https://packagist.zinitsolutions.com';
+    public static $packagistPath = 'https://packagist.treopim.com';
 
     /**
      * @var array
@@ -139,17 +139,6 @@ class ComposerModule extends Base
         // prepare result
         $result = $this->modulePackage;
 
-        // remove unstable
-        if (empty($this->getConfig()->get('allowUnstable'))) {
-            foreach ($result as $module => $versions) {
-                foreach ($versions as $version => $row) {
-                    if (preg_match('/^v(.*)$/', $row['version'])) {
-                        unset($result[$module][$version]);
-                    }
-                }
-            }
-        }
-
         // set max
         foreach ($result as $module => $versions) {
             $max = null;
@@ -162,7 +151,7 @@ class ComposerModule extends Base
         }
 
         if (!is_null($moduleId)) {
-            $result = (!isset($this->modulePackage[$moduleId])) ? [] : $this->modulePackage[$moduleId];
+            $result = (!isset($result[$moduleId])) ? [] : $result[$moduleId];
         }
 
         return $result;
@@ -202,6 +191,29 @@ class ComposerModule extends Base
     }
 
     /**
+     * Prepare version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    public static function prepareVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('metadata');
+    }
+
+    /**
      * Load module packages
      *
      * @param bool $droppingCache
@@ -211,16 +223,24 @@ class ComposerModule extends Base
         if (!$this->isModulePackagesLoaded) {
             $this->isModulePackagesLoaded = true;
 
-            if ($droppingCache || empty($this->getCachedPackagistData())) {
+            // get cache data
+            $cacheData = $this->getCachedPackagistData();
+
+            if ($droppingCache || empty($cacheData)) {
+                // prepare packages
                 foreach ($this->getPackagistData() as $repository => $versions) {
                     if (is_array($versions)) {
                         foreach ($versions as $version => $data) {
                             if (!empty($data['extra']['treoId'])) {
                                 $treoId = $data['extra']['treoId'];
+                                $version = strtolower($version);
                                 if (preg_match_all('/^v\d.\d.\d$/', $version, $matches)
-                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)) {
+                                    || preg_match_all('/^v\d.\d.\d-rc\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d$/', $version, $matches)
+                                    || preg_match_all('/^\d.\d.\d-rc\d$/', $version, $matches)
+                                ) {
                                     // prepare version
-                                    $version = str_replace('v', '', $matches[0][0]);
+                                    $version = self::prepareVersion($matches[0][0]);
 
                                     // set row
                                     $this->modulePackage[$treoId][$version] = $data;
@@ -228,6 +248,11 @@ class ComposerModule extends Base
                             }
                         }
                     }
+                }
+
+                // find new version in modules
+                if ($droppingCache && !empty($cacheData)) {
+                    $this->findUpdatedModules($cacheData, $this->modulePackage);
                 }
 
                 // caching
@@ -267,7 +292,7 @@ class ComposerModule extends Base
     protected function cachingPackagistData(array $data): void
     {
         $fp = fopen($this->cacheFile, 'w');
-        fwrite($fp, Json::encode($data));
+        fwrite($fp, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         fclose($fp);
     }
 
@@ -289,5 +314,136 @@ class ComposerModule extends Base
             // prepare data
             $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
         }
+    }
+
+    /**
+     * Find new version in modules
+     *
+     * @param array $oldDara
+     * @param array $newData
+     */
+    protected function findUpdatedModules(array $oldDara, array $newData): void
+    {
+        // prepare config
+        $config = $this->getConfig();
+
+        // get all modules
+        $modules = $this->getInjection('metadata')->getAllModules();
+
+        foreach ($newData as $module => $versions) {
+            if (isset($oldDara[$module])) {
+                foreach ($versions as $version => $row) {
+                    if (!isset($oldDara[$module][$version])
+                        && empty($config->get('notificationNewModuleVersionDisabled'))
+                        && in_array($module, $modules)
+                        && $this->isAllowedVersion($row['version'])) {
+                        $this->sendNotification('newModuleVersion', $row);
+                    }
+                }
+            } elseif (empty(
+                $config->get('notificationNewModuleDisabled')
+                && !in_array($module, $modules)
+            )) {
+                $this->sendNotification('newModule', array_pop($versions));
+            }
+        }
+    }
+
+    /**
+     * Send notification(s)
+     *
+     * @param string $type
+     * @param array  $data
+     */
+    protected function sendNotification(string $type, array $data): void
+    {
+        // get users
+        $users = $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->where(['isAdmin' => true])
+            ->find();
+
+        if (!empty($users)) {
+            // prepere message data
+            $messageData = [
+                'messageTemplate' => $type,
+                'messageVars'     => []
+            ];
+
+            switch ($type) {
+                case 'newModule':
+                    $messageData['messageVars'] = [
+                        'moduleName' => $this->getModuleTranslateName($data)
+                    ];
+                    break;
+                case 'newModuleVersion':
+                    $messageData['messageVars'] = [
+                        'moduleName'    => $this->getModuleTranslateName($data),
+                        'moduleVersion' => self::prepareVersion($data['version'])
+                    ];
+                    break;
+            }
+
+            foreach ($users as $user) {
+                // create notification
+                $notification = $this->getEntityManager()->getEntity('Notification');
+                $notification->set(
+                    [
+                        'type'   => 'TreoMessage',
+                        'userId' => $user->get('id'),
+                        'data'   => $messageData
+                    ]
+                );
+                $this->getEntityManager()->saveEntity($notification);
+            }
+        }
+    }
+
+    /**
+     * Get module name
+     *
+     * @param array $package
+     *
+     * @return string
+     */
+    protected function getModuleTranslateName(array $package): string
+    {
+        // get current language
+        $currentLang = $this
+            ->getInjection('language')
+            ->getLanguage();
+
+        // prepare result
+        $result = $package['extra']['id'];
+
+        if (!empty($package['extra']['name'][$currentLang])) {
+            $result = $package['extra']['name'][$currentLang];
+        } elseif ($package['extra']['name']['default']) {
+            $result = $package['extra']['name']['default'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Is module version allowed to sending notification
+     *
+     * @param string $version
+     *
+     * @return bool
+     */
+    protected function isAllowedVersion(string $version): bool
+    {
+        // prepare version
+        $version = self::prepareVersion($version);
+
+        if (!empty($this->getConfig()->get('allowUnstable'))) {
+            $result = preg_match('/^\d.\d.\d-rc\d$/', $version);
+        } else {
+            $result = preg_match('/^\d.\d.\d$/', $version);
+        }
+
+        return (bool)$result;
     }
 }

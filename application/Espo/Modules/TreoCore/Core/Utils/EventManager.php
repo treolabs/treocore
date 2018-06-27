@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
@@ -40,7 +40,7 @@ use Espo\Modules\TreoCore\Listeners\AbstractListener;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 
 /**
- * Class of EventManager
+ * EventManager class
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
@@ -54,7 +54,7 @@ class EventManager
      *
      * @param string $target
      * @param string $action
-     * @param array $data
+     * @param array  $data
      *
      * @return array
      */
@@ -67,11 +67,13 @@ class EventManager
                 $listener = new $className();
                 if ($listener instanceof AbstractListener) {
                     $listener->setContainer($this->getContainer());
-                }
-                if (method_exists($listener, $action)) {
-                    $result = $listener->{$action}($data);
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
+                    if (method_exists($listener, $action)) {
+                        $result = $listener->{$action}($data);
+                        // check if exists result and update data
+                        $data = isset($result) ? $result : $data;
+                    } else {
+                        $data = $listener->{'common'}($action, $data);
+                    }
                 }
             }
         }
