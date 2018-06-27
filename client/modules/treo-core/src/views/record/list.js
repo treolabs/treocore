@@ -85,8 +85,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 posLeftTable = 0,
                 navBarHeight = 0,
 
-
-                setPosition = function() {
+                setPosition = () => {
                     posLeftTable = fullTable.position().left;
                     posTopTable = fullTable.position().top;
                     navBarHeight = navBarRight.outerHeight();
@@ -99,7 +98,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                         'z-index': 1
                     });
                 },
-                setWidth = function () {
+                setWidth = () => {
                     let widthTable = fullTable.outerWidth();
 
                     fixedTable.css('width', widthTable);
@@ -109,7 +108,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                         fixedTable.find('th').eq(i).css('width', width);
                     });
                 },
-                toggleClass = function () {
+                toggleClass = () => {
                     let showPosition = posTopTable - navBarHeight;
 
                     if ($window.scrollTop() > showPosition && $window.width() >= 768) {
@@ -122,14 +121,13 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             if (fullTable.length) {
                 setPosition();
                 setWidth();
+                toggleClass();
 
                 $window.on('scroll', toggleClass);
                 $window.on('resize', function () {
                     setPosition();
                     setWidth();
                 });
-
-                $window.trigger('scroll');
             }
         }
     });
