@@ -34,6 +34,14 @@
 Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
     Dep => Dep.extend({
 
+        enabledfixedHeader: true,
+
+        prepareRecordViewOptions(options) {
+            Dep.prototype.prepareRecordViewOptions.call(this, options);
+
+            options.enabledfixedHeader = this.enabledfixedHeader;
+        },
+
         setupSorting() {
             var sortingParams = this.getStorage().get('listSorting', this.collection.name);
 

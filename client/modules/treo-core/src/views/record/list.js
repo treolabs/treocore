@@ -37,8 +37,12 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         template: 'treo-core:record/list',
 
+        enabledfixedHeader: false,
+
         setup() {
             Dep.prototype.setup.call(this);
+
+            this.enabledfixedHeader = this.options.enabledfixedHeader || this.enabledfixedHeader;
 
             _.extend(this.events, {
                 'click a.link': function (e) {
@@ -72,7 +76,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            this.fixedTableHead()
+            if (this.enabledfixedHeader) {
+                this.fixedTableHead()
+            }
         },
 
         fixedTableHead() {
