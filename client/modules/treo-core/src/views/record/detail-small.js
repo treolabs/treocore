@@ -31,44 +31,50 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
+Espo.define('treo-core:views/record/detail-small', 'class-replace!treo-core:views/record/detail-small',
     Dep => Dep.extend({
 
-        enabledfixedHeader: true,
+        setup() {
+            Dep.prototype.setup.call(this);
 
-        prepareRecordViewOptions(options) {
-            Dep.prototype.prepareRecordViewOptions.call(this, options);
-
-            options.enabledfixedHeader = this.enabledfixedHeader;
+            this.isWide = this.sideDisabled;
         },
 
-        setupSorting() {
-            var sortingParams = this.getStorage().get('listSorting', this.collection.name);
+        prepareLayoutAfterConverting(layout) {
+            layout = Dep.prototype.prepareLayoutAfterConverting.call(this, layout);
 
-            if (sortingParams && sortingParams.sortBy && !(sortingParams.sortBy in this.getMetadata().get(['entityDefs', this.collection.name, 'fields']))) {
-                this.getStorage().clear('listSorting', this.collection.name);
-            }
-
-            Dep.prototype.setupSorting.call(this);
-        },
-
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            let $window = $(window);
-
-            $window.off('scroll.main');
-            $window.on('scroll.main', () => {
-                let scrollTop = $window.scrollTop();
-                let header = this.$el.find('.header-breadcrumbs');
-
-                if (scrollTop > this.$el.find('.page-header').outerHeight()) {
-                    header.addClass('fixed-header-breadcrumbs');
-                } else {
-                    header.removeClass('fixed-header-breadcrumbs');
-                }
+            (layout || []).forEach(panel => {
+                (panel.rows || []).forEach(row => {
+                    if (row[0]) {
+                        if (!row[1]) {
+                            row[0].fullWidth = true;
+                        }
+                    }
+                });
             });
-        }
+
+            return layout;
+        },
+
+        createSideView() {
+            this.wait(true);
+            let el = this.options.el || '#' + (this.id);
+            this.createView('side', this.sideView, {
+                model: this.model,
+                scope: this.scope,
+                el: el + ' .side',
+                type: this.type,
+                readOnly: this.readOnly,
+                inlineEditDisabled: this.inlineEditDisabled,
+                recordHelper: this.recordHelper,
+                recordViewObject: this
+            }, view => {
+                if (!view.panelList.length) {
+                    this.isWide = true;
+                }
+                this.wait(false);
+            });
+        },
 
     })
 );

@@ -35,6 +35,38 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
 
     return Dep.extend({
 
+        template: 'treo-core:site/navbar',
+
+        openMenu: function () {
+            this.events = _.extend({}, this.events || {}, {
+                'click .navbar-toggle': function () {
+                    this.$el.find('.menu').toggleClass('open-menu');
+                },
+
+                'click .menu.open-menu a.nav-link': function (e) {
+                    var $a = $(e.currentTarget);
+                    var href = $a.attr('href');
+                    if (href && href != '#') {
+                        this.$el.find('.menu').removeClass('open-menu');
+                    }
+                },
+
+                'click .search-toggle': function () {
+                    this.$el.find('.navbar-collapse ').toggleClass('open-search');
+                },
+            });
+        },
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.createView('notificationsBadgeRight', 'views/notification/badge', {
+                el: `${'.navbar-right'} .notifications-badge-container`
+            });
+
+            this.openMenu();
+        },
+
         init() {
             Dep.prototype.init.call(this);
 
@@ -44,9 +76,16 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
         },
 
         initProgressBadge() {
-            this.$el.find('.notifications-badge-container').before('<li class="dropdown progress-badge-container"></li>');
-            this.createView('progressBadge', 'treo-core:views/progress-manager/badge', {
-                el: `${this.options.el} .progress-badge-container`
+            this.$el.find('.navbar-header').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container"></li>');
+            this.createView('progressBadgeHeader', 'treo-core:views/progress-manager/badge', {
+                el: `${'.navbar-header'} .progress-badge-container`
+            }, view => {
+                view.render();
+            });
+
+            this.$el.find('.navbar-right').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container hidden-xs"></li>');
+            this.createView('progressBadgeRight', 'treo-core:views/progress-manager/badge', {
+                el: `${'.navbar-right'} .progress-badge-container`
             }, view => {
                 view.render();
             });

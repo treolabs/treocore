@@ -819,6 +819,9 @@ class ModuleManager extends Base
 
         try {
             $versionParser->parseConstraints($version)->getPrettyString();
+            if (preg_match("/^(.*)\-$/", $version)) {
+                $result = false;
+            }
         } catch (\Exception $e) {
             $result = false;
         }

@@ -7,8 +7,11 @@
   ],
   "controllers/admin": [
     "treo-core"
-  ],
+  ],  
   "views/modal": [
+    "treo-core"
+  ],
+  "views/main": [
     "treo-core"
   ],
   "views/list": [
@@ -108,6 +111,12 @@
     "treo-core"
   ],
   "views/notification/items/treo-message": [
+    "treo-core"
+  ],
+  "views/record/edit-small": [
+    "treo-core"
+  ],
+  "views/record/detail-small": [
     "treo-core"
   ]
 }
