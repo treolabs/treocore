@@ -212,6 +212,16 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             this.trigger('after:set-edit-mode');
         },
 
+        convertDetailLayout(simplifiedLayout) {
+            let layout = Dep.prototype.convertDetailLayout.call(this, simplifiedLayout);
+
+            return this.prepareLayoutAfterConverting(layout);
+        },
+
+        prepareLayoutAfterConverting(layout) {
+            return layout;
+        }
+
     });
 
 });

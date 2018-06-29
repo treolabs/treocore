@@ -35,8 +35,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
     return Dep.extend({
 
+        template: 'treo-core:record/list',
+
+        enabledfixedHeader: false,
+
         setup() {
             Dep.prototype.setup.call(this);
+
+            this.enabledfixedHeader = this.options.enabledfixedHeader || this.enabledfixedHeader;
 
             _.extend(this.events, {
                 'click a.link': function (e) {
@@ -65,6 +71,70 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.getRouter().dispatch(scope, 'view', options);
                 },
             });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.enabledfixedHeader) {
+                this.fixedTableHead()
+            }
+        },
+
+        fixedTableHead() {
+
+            let $window = $(window),
+                fixedTable = this.$el.find('.fixed-header-table'),
+                fullTable = this.$el.find('.full-table'),
+                navBarRight = $('.navbar-right'),
+                posTopTable = 0,
+                posLeftTable = 0,
+                navBarHeight = 0,
+
+                setPosition = () => {
+                    posLeftTable = fullTable.position().left;
+                    posTopTable = fullTable.position().top;
+                    navBarHeight = navBarRight.outerHeight();
+
+                    fixedTable.css({
+                        'position': 'fixed',
+                        'left': posLeftTable,
+                        'top': navBarHeight - 1,
+                        'right': 0,
+                        'z-index': 1
+                    });
+                },
+                setWidth = () => {
+                    let widthTable = fullTable.outerWidth();
+
+                    fixedTable.css('width', widthTable);
+
+                    fullTable.find('thead').find('th').each(function (i) {
+                        let width = $(this).outerWidth();
+                        fixedTable.find('th').eq(i).css('width', width);
+                    });
+                },
+                toggleClass = () => {
+                    let showPosition = posTopTable - navBarHeight;
+
+                    if ($window.scrollTop() > showPosition && $window.width() >= 768) {
+                        fixedTable.removeClass('hidden');
+                    } else {
+                        fixedTable.addClass('hidden');
+                    }
+                };
+
+            if (fullTable.length) {
+                setPosition();
+                setWidth();
+                toggleClass();
+
+                $window.on('scroll', toggleClass);
+                $window.on('resize', function () {
+                    setPosition();
+                    setWidth();
+                });
+            }
         }
     });
 });

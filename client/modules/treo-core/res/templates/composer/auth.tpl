@@ -1,6 +1,6 @@
 <div class="header page-header">
     <h3>
-        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> » {{translate 'Git Authentication' scope='Admin' category='labels'}}
+        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> &rsaquo; {{translate 'Git Authentication' scope='Admin' category='labels'}}
     </h3>
 </div>
 <div class="record">
