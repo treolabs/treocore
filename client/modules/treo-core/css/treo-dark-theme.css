@@ -9992,6 +9992,10 @@ table.no-margin {
     overflow: hidden
 }
 
+.dependencies-list > table td {
+    white-space: normal;
+}
+
 .list > table td[data-name="r-checkbox"] {
     overflow: visible
 }
