@@ -793,7 +793,7 @@ class ModuleManager extends Base
             }
 
             // sort
-            krsort($result);
+            ksort($result);
 
             // prepare result
             $result = array_values($result);

@@ -144,12 +144,6 @@ class Composer extends Base
         // set memory limit for composer actions
         ini_set('memory_limit', '2048M');
 
-        // set max execution time limit for composer actions
-        ini_set('max_execution_time', '0');
-
-        // set time limit for composer actions
-        set_time_limit(0);
-
         putenv("COMPOSER_HOME=" . $this->extractDir);
         require_once $this->extractDir . "/vendor/autoload.php";
 
