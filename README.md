@@ -76,6 +76,14 @@ We are already working on the following connectors for export channels:
 
 ### Installation
 
+1. Create your new project by running:
+    ````
+    composer create-project treo/treo my-treopim-project
+    ````
+2. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+3. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+
+### Alternative installation
 1. Download or clone treopim:
     ````
     git clone https://github.com/ZinitSolutionsGmbH/treopim.git
@@ -90,11 +98,6 @@ We are already working on the following connectors for export channels:
    ```
 4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 5. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
-6. Run websocket:
-   ```
-   php console.php websocket open
-   ```
-   Websocket configuration [guide](docs/en/developer-guide/websocket/readme.md) 
 
 ### License
 
