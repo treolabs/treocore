@@ -1,3 +1,4 @@
+1.11.7-rc1  2018-07-02 14:57:02 Europe/Kiev
     * UST #65965 : Вирішити проблему таймаутів в ModuleManager (Roman Ratsun)
     * UST #66068 : Доповнити інструкцію по встановленню системи (Roman Ratsun)
     * UST #65516 : видалити з фільтрів текст про ОR (Valeriy Shamota)
