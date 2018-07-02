@@ -117,7 +117,7 @@ class Install extends EspoInstall
         $this->afterRunAction();
 
         // call composer
-        $composerData = $this->getComposerService()->run("update");
+        $composerData = $this->getComposerService()->runUpdate();
         if ($composerData['status'] != 0) {
             $this->throwErrorAndRemovePackage('Composer requirements error! Log:' . $composerData['output']);
         }
