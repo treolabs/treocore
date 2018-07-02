@@ -82,6 +82,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                     view.populateDefaults();
                     this.fetch();
                     this.updateSearch();
+                    this.setupOperatorLabels();
                 }.bind(this));
                 this.updateAddFilterButton();
                 this.handleLeftDropdownVisibility();
@@ -97,10 +98,6 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 this.clearView('filter-' + name);
                 container.remove();
                 delete this.advanced[name];
-                if (!Object.keys(this.advanced).length) {
-                    this.$el.find('div.filter-applying-condition').addClass('hidden');
-                    this.reRender();
-                }
                 this.presetName = this.primary;
 
                 this.updateAddFilterButton();
@@ -110,13 +107,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
                 this.manageLabels();
                 this.handleLeftDropdownVisibility();
-            },
-            'click a[data-action="selectPreset"]': function (e) {
-                var presetName = $(e.currentTarget).data('name') || null;
-                this.selectPreset(presetName);
-                if (presetName) {
-                    this.$el.find('div.filter-applying-condition').removeClass('hidden');
-                }
+                this.setupOperatorLabels();
             },
             'keypress .field input[type="text"]': function (e) {
                 if (e.keyCode === 13) {
@@ -135,10 +126,6 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
         },
 
         afterRender: function () {
-            if (Object.keys(this.advanced).length) {
-                this.$el.find('div.filter-applying-condition').removeClass('hidden');
-            }
-
             this.$filtersLabel = this.$el.find('.search-row span.filters-label');
             this.$filtersButton = this.$el.find('.search-row button.filters-button');
             this.$leftDropdown = this.$el.find('div.search-row div.left-dropdown');
@@ -149,6 +136,59 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             this.$advancedFiltersPanel = this.$el.find('.advanced-filters');
 
             this.manageLabels();
+            this.setupOperatorLabels();
+        },
+
+        setupOperatorLabels() {
+            let filters = this.$advancedFiltersPanel.find('.filter');
+
+            let el = $(filters[0]);
+            let curLabel = el.find('label.control-label');
+            curLabel.text(this.getFilterName(el.data('name')));
+
+            filters.each((index, filter) => {
+                if (filters[index + 1]) {
+                    let prevFilter = $(filter);
+                    let prevName = prevFilter.data('name');
+                    let nextFilter = $(filters[index + 1]);
+                    let nextName = nextFilter.data('name');
+                    let nextLabel = nextFilter.find('label.control-label');
+                    if (this.checkFieldsEqual(prevName, nextName)) {
+                        nextLabel.text('OR ' + this.getFilterName(nextName));
+                    } else {
+                        nextLabel.text('AND ' + this.getFilterName(nextName));
+                    }
+                }
+            });
+        },
+
+        checkFieldsEqual(first, second) {
+            let check = false;
+            let prevView = this.getView('filter-' + first);
+            let nextView = this.getView('filter-' + second);
+            if (prevView && prevView.options.isImport && nextView && nextView.options.isImport) {
+                let fullNamePrev = first.split('-')[0] + ' ' + prevView.options.params.importJobDate;
+                let fullNameNext = second.split('-')[0] + ' ' + nextView.options.params.importJobDate;
+                check = fullNamePrev === fullNameNext;
+            } else if (first.split('-')[0] === second.split('-')[0]) {
+                check = true;
+            }
+            return check;
+        },
+
+        getFilterName(filter) {
+            let name = '';
+            let nextView = this.getView('filter-' + filter);
+            if (nextView) {
+                if (nextView.options.isAttribute) {
+                    name = nextView.options.label;
+                } else if (nextView.options.isImport) {
+                    name = nextView.options.name.split('-')[0] + ' ' + nextView.options.params.importJobDate;
+                } else {
+                    name = this.translate(nextView.generalName, 'fields', this.scope);
+                }
+            }
+            return name;
         },
 
         createFilter: function (name, params, callback, noRender) {
@@ -185,7 +225,6 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 params: params,
                 el: this.options.el + ' .filter[data-name="' + name + '"]'
             }, function (view) {
-                this.$el.find('div.filter-applying-condition').removeClass('hidden');
                 if (typeof callback === 'function') {
                     view.once('after:render', function () {
                         callback(view);

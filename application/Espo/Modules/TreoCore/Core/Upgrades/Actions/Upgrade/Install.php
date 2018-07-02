@@ -35,110 +35,26 @@
 namespace Espo\Modules\TreoCore\Core\Upgrades\Actions\Upgrade;
 
 use Espo\Core\Upgrades\Actions\Upgrade\Install as EspoInstall;
-use Espo\Modules\TreoCore\Services\Composer;
 
 class Install extends EspoInstall
 {
     /**
-     * Main installation process
-     *
-     * @param  string $processId Upgrade/Extension ID, gotten in upload stage
-     *
-     * @return bool
+     * After run action
      */
-    public function run($data)
+    protected function afterRunAction()
     {
-        $processId = $data['id'];
-
-        $GLOBALS['log']->debug('Installation process [' . $processId . ']: start run.');
-
-        if (empty($processId)) {
-            throw new Error('Installation package ID was not specified.');
-        }
-
-        $this->setProcessId($processId);
-
-        $this->initialize();
-
-        /** check if an archive is unzipped, if no then unzip */
-        $packagePath = $this->getPackagePath();
-        if (!file_exists($packagePath)) {
-            $this->unzipArchive();
-            $this->isAcceptable();
-        }
-
-        //check permissions copied and deleted files
-        $this->checkIsWritable();
-
-        $this->beforeRunAction();
-
-        $this->backupExistingFiles();
-
-        //beforeInstallFiles
-        if (!$this->copyFiles('before')) {
-            $this->throwErrorAndRemovePackage('Cannot copy beforeInstall files.');
-        }
-
-        /* run before install script */
-        if (!isset($data['skipBeforeScript']) || !$data['skipBeforeScript']) {
-            $this->runScript('before');
-        }
-
-        /* remove files defined in a manifest "deleteBeforeCopy" */
-        $this->deleteFiles('deleteBeforeCopy', true);
-
-        /* copy files from directory "Files" to EspoCRM files */
-        if (!$this->copyFiles()) {
-            $this->throwErrorAndRemovePackage('Cannot copy files.');
-        }
-
-        /* remove files defined in a manifest */
-        $this->deleteFiles('delete', true);
-
-        $this->deleteFiles('vendor');
-        $this->copyFiles('vendor');
-
-        if (!isset($data['skipSystemRebuild']) || !$data['skipSystemRebuild']) {
-            if (!$this->systemRebuild()) {
-                $this->throwErrorAndRemovePackage('Error occurred while EspoCRM rebuild.');
-            }
-        }
-
-        //afterInstallFiles
-        if (!$this->copyFiles('after')) {
-            $this->throwErrorAndRemovePackage('Cannot copy afterInstall files.');
-        }
-
-        /* run before install script */
-        if (!isset($data['skipAfterScript']) || !$data['skipAfterScript']) {
-            $this->runScript('after');
-        }
-
-        $this->afterRunAction();
+        // call parent
+        parent::afterRunAction();
 
         // call composer
-        $composerData = $this->getComposerService()->run("update");
+        $composerData = $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->runUpdate();
+
         if ($composerData['status'] != 0) {
             $this->throwErrorAndRemovePackage('Composer requirements error! Log:' . $composerData['output']);
         }
-
-        $this->clearCache();
-
-        /* delete unziped files */
-        $this->deletePackageFiles();
-
-        $this->finalize();
-
-        $GLOBALS['log']->debug('Installation process [' . $processId . ']: end run.');
-    }
-
-    /**
-     * Get Composer service
-     *
-     * @return Composer
-     */
-    protected function getComposerService(): Composer
-    {
-        return $this->getContainer()->get('serviceFactory')->create('Composer');
     }
 }
