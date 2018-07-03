@@ -41,6 +41,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\PasswordHash;
+use Espo\Core\Utils\Json;
 
 /**
  * Class Installer
@@ -65,13 +66,15 @@ class Installer extends Base
         /**
          * Add dependencies
          */
-        $this->addDependencyList([
-            'fileManager',
-            'dataManager',
-            'crypt',
-            'language',
-            'eventManager'
-        ]);
+        $this->addDependencyList(
+            [
+                'fileManager',
+                'dataManager',
+                'crypt',
+                'language',
+                'eventManager'
+            ]
+        );
     }
 
     /**
@@ -220,7 +223,7 @@ class Installer extends Base
 
             $result['status'] = $config->save();
         } catch (\Exception $e) {
-            $result['message'] =  $this->translateError('notCorrectDatabaseConfig');
+            $result['message'] = $this->translateError('notCorrectDatabaseConfig');
             $result['status'] = false;
         }
 
@@ -250,17 +253,24 @@ class Installer extends Base
 
                 // create user
                 $user = $this->getEntityManager()->getEntity('User');
-                $user->set([
-                    'id'       => '1',
-                    'userName' => $params['username'],
-                    'password' => $this->getPasswordHash()->hash($params['password']),
-                    'lastName' => 'Admin',
-                    'isAdmin'  => '1'
-                ]);
+                $user->set(
+                    [
+                        'id'       => '1',
+                        'userName' => $params['username'],
+                        'password' => $this->getPasswordHash()->hash($params['password']),
+                        'lastName' => 'Admin',
+                        'isAdmin'  => '1'
+                    ]
+                );
                 $result['status'] = $this->getEntityManager()->saveEntity($user) && $result['status'];
 
                 // set installed
                 $this->getConfig()->set('isInstalled', true);
+
+                // set version
+                $this->getConfig()->set('version', $this->getComposerVersion());
+
+                // save config
                 $this->getConfig()->save();
 
                 //@todo treoinject
@@ -423,5 +433,17 @@ class Installer extends Base
     protected function translateError(string $error): string
     {
         return $this->getInjection('language')->translate($error, 'errors', 'Installer');
+    }
+
+    /**
+     * Get composer version
+     *
+     * @return string
+     */
+    protected function getComposerVersion(): string
+    {
+        $data = Json::decode(file_get_contents(CORE_PATH . '/composer.json'), true);
+
+        return $data['version'];
     }
 }

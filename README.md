@@ -94,7 +94,7 @@ We are already working on the following connectors for export channels:
     ````
 3. Update composer:
    ```
-   php composer.phar install 
+   php composer.phar install
    ```
 4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 5. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions

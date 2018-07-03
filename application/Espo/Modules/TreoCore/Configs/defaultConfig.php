@@ -46,6 +46,7 @@ return [
         'user' => '',
         'password' => '',
     ],
+    'version' => '',
     'useCache' => true,
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
