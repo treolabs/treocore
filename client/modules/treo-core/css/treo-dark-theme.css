@@ -11224,7 +11224,7 @@ a:hover, a:focus {
 .fixed-header-breadcrumbs {
     position: fixed;
     top: 8px;
-    z-index: 2000;
+    z-index: 1040;
 }
 
 .panel-default > .panel-heading {
@@ -11913,4 +11913,8 @@ ul.dropdown-menu > li.checkbox {
 
 .autocomplete-suggestions:hover + ul.show-list {
     display: block;
+}
+
+.dashlets.grid-stack .grid-stack-item .dashlet .dashlet-body {
+    width: 100%;
 }

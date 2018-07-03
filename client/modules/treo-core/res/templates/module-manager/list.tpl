@@ -18,7 +18,7 @@
         margin-right: -8px;
     }
     .log-list-container {
-        border-left: 1px solid #e8eced;
+        border-left: 1px solid #dcdcdc;
         margin-left: -8px;
         margin-right: -15px;
     }
