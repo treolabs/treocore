@@ -90,7 +90,7 @@ class ModuleManager extends Base
                     "id"             => $module,
                     "name"           => $module,
                     "description"    => '',
-                    "settingVersion" => '-',
+                    "settingVersion" => '*',
                     "currentVersion" => '-',
                     "required"       => [],
                     "isActive"       => $this->getMetadata()->isModuleActive($module),
