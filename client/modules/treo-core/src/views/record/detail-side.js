@@ -139,7 +139,7 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
         },
 
         setupDefaultPanel() {
-            let hasAnyField = (this.defaultPanelDefs.options.fieldList || []).some(fieldDefs => this.model.has(fieldDefs.name));
+            let hasAnyField = (this.defaultPanelDefs.options.fieldList || []).some(fieldDefs => this.model.hasLink(fieldDefs.name));
             if (this.mode === 'detail' || hasAnyField) {
                 Dep.prototype.setupDefaultPanel.call(this);
             }
