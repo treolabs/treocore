@@ -62,7 +62,6 @@ class ProgressManager extends AbstractProgressManager
         $this->addDependency('metadata');
         $this->addDependency('serviceFactory');
         $this->addDependency('progressManager');
-        $this->addDependency('eventManager');
         $this->addDependency('websocket');
     }
 
@@ -366,7 +365,7 @@ class ProgressManager extends AbstractProgressManager
             ];
 
             // triggered event
-            $this->getInjection('eventManager')->triggered('ProgressManager', 'beforeUpdate', $eventData);
+            $this->triggered('ProgressManager', 'beforeUpdate', $eventData);
 
             // prepare sql
             $sql = "UPDATE progress_manager SET `status`='{$status}', `progress`={$progress}, "

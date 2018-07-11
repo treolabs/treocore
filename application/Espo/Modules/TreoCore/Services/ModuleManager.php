@@ -90,7 +90,7 @@ class ModuleManager extends Base
                     "id"             => $module,
                     "name"           => $module,
                     "description"    => '',
-                    "settingVersion" => '*',
+                    "settingVersion" => '-',
                     "currentVersion" => '-',
                     "required"       => [],
                     "isActive"       => $this->getMetadata()->isModuleActive($module),
@@ -440,6 +440,7 @@ class ModuleManager extends Base
      */
     protected function init()
     {
+        parent::init();
         /**
          * Add dependencies
          */
@@ -450,8 +451,7 @@ class ModuleManager extends Base
                 'fileManager',
                 'dataManager',
                 'serviceFactory',
-                'migration',
-                'eventManager'
+                'migration'
             ]
         );
     }
@@ -839,9 +839,7 @@ class ModuleManager extends Base
      */
     protected function triggeredEvent(string $action, array $data = [])
     {
-        $this
-            ->getInjection('eventManager')
-            ->triggered('ModuleManager', $action, $data);
+        $this->triggered('ModuleManager', $action, $data);
     }
 
     /**

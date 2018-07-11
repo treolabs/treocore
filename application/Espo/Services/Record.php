@@ -59,7 +59,8 @@ class Record extends \Espo\Core\Services\Base
         'selectManagerFactory',
         'fileStorageManager',
         'injectableFactory',
-        'fieldManagerUtil'
+        'fieldManagerUtil',
+        'eventManager'
     );
 
     protected $getEntityBeforeUpdate = false;
@@ -713,32 +714,49 @@ class Record extends \Espo\Core\Services\Base
 
     protected function beforeCreateEntity(Entity $entity, $data)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'beforeCreateEntity', ['entity' => $entity, 'data' => $data]);
 
         $this->beforeCreate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function afterCreateEntity(Entity $entity, $data)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'afterCreateEntity', ['entity' => $entity, 'data' => $data]);
+
         $this->afterCreate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function beforeUpdateEntity(Entity $entity, $data)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'beforeUpdateEntity', ['entity' => $entity, 'data' => $data]);
+
          $this->beforeUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function afterUpdateEntity(Entity $entity, $data)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'afterUpdateEntity', ['entity' => $entity, 'data' => $data]);
+
         $this->afterUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function beforeDeleteEntity(Entity $entity)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'beforeDeleteEntity', ['entity' => $entity]);
+
         $this->beforeDelete($entity); // TODO remove in 5.1.0
     }
 
     protected function afterDeleteEntity(Entity $entity)
     {
+        // @todo treoinject
+        $this->triggered($entity->getEntityType(), 'afterDeleteEntity', ['entity' => $entity]);
+
         $this->afterDelete($entity); // TODO remove in 5.1.0
     }
 
@@ -774,10 +792,14 @@ class Record extends \Espo\Core\Services\Base
 
     protected function afterMassUpdate(array $idList, $data)
     {
+        // @todo treoinject
+        $this->triggered($this->entityType, 'afterMassUpdate', ['idList' => $idList, 'data' => $data]);
     }
 
     protected function afterMassRemove(array $idList)
     {
+        // @todo treoinject
+        $this->triggered($this->entityType, 'afterMassRemove', ['idList' => $idList]);
     }
 
     public function deleteEntity($id)

@@ -65,15 +65,15 @@ class EventManager
             $className = sprintf('Espo\Modules\%s\Listeners\%s', $module, $target);
             if (class_exists($className)) {
                 $listener = new $className();
-                if ($listener instanceof AbstractListener) {
+                if ($listener instanceof AbstractListener && method_exists($listener, $action)) {
+                    // set container
                     $listener->setContainer($this->getContainer());
-                    if (method_exists($listener, $action)) {
-                        $result = $listener->{$action}($data);
-                        // check if exists result and update data
-                        $data = isset($result) ? $result : $data;
-                    } else {
-                        $data = $listener->{'common'}($action, $data);
-                    }
+
+                    // call
+                    $result = $listener->{$action}($data);
+
+                    // check if exists result and update data
+                    $data = isset($result) ? $result : $data;
                 }
             }
         }

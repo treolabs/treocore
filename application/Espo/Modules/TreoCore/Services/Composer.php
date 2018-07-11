@@ -97,19 +97,14 @@ class Composer extends Base
      */
     public function runUpdate(): array
     {
-        // get event manager
-        $eventManager = $this->getInjection('eventManager');
-
         // triggered before action
-        $eventManager
-            ->triggered('Composer', 'beforeComposerUpdate', []);
+        $this->triggered('Composer', 'beforeComposerUpdate', []);
 
         // call composer
         $composer = $this->run('update');
 
         // triggered after action
-        $composer = $eventManager
-            ->triggered('Composer', 'afterComposerUpdate', $composer);
+        $composer = $this->triggered('Composer', 'afterComposerUpdate', $composer);
 
         // rebuild
         $this->rebuild();
