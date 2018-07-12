@@ -38,5 +38,8 @@ if (substr(php_sapi_name(), 0, 3) != 'cli') {
 
 include "bootstrap.php";
 
+// define gloabal variables
+define('CORE_PATH', __DIR__);
+
 $app = new \Espo\Modules\TreoCore\Core\Application();
 $app->runConsole($argv);

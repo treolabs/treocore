@@ -144,17 +144,14 @@ class Composer extends Base
      * @ApiDescription(description="Call composer update command")
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/Composer/update")
-     * @ApiReturn(sample="{
-     *     'status': 'true',
-     *     'output': 'some text from composer'
-     * }")
+     * @ApiReturn(sample="'bool'")
      *
-     * @return array
+     * @return bool
      * @throws Exceptions\Forbidden
      * @throws Exceptions\BadRequest
      * @throws Exceptions\NotFound
      */
-    public function actionUpdate($params, $data, Request $request): array
+    public function actionUpdate($params, $data, Request $request): bool
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -164,7 +161,10 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getComposerService()->runUpdate();
+        $this->getConfig()->set('isNeedToUpdateComposer', true);
+        $this->getConfig()->save();
+
+        return true;
     }
 
     /**

@@ -91,6 +91,27 @@ class Composer extends Base
     }
 
     /**
+     * Run composer UPDATE command by CLI
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function runUpdateJob(array $data = []): bool
+    {
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            // update config
+            $this->getConfig()->set('isNeedToUpdateComposer', false);
+            $this->getConfig()->save();
+
+            // run update
+            $this->runUpdate();
+        }
+
+        return true;
+    }
+
+    /**
      * Run composer UPDATE command
      *
      * @return array
@@ -105,6 +126,12 @@ class Composer extends Base
 
         // triggered after action
         $composer = $this->triggered('Composer', 'afterComposerUpdate', $composer);
+
+        if ($composer['status'] == 0) {
+            // loggout all users
+            $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
+            $sth->execute();
+        }
 
         // rebuild
         $this->rebuild();
