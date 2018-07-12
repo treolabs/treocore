@@ -44,6 +44,16 @@ namespace Espo\Modules\TreoCore\Console;
 class Rebuild extends AbstractConsole
 {
     /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Run database rebuild.';
+    }
+
+    /**
      * Run action
      *
      * @param array $data

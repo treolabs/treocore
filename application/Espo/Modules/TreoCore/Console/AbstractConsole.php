@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Console;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Modules\TreoCore\Core\Utils\Config;
+use Espo\Modules\TreoCore\Core\Utils\Metadata;
 
 /**
  * AbtractConsole class
@@ -54,6 +55,13 @@ abstract class AbstractConsole
      * @param array $data
      */
     abstract public function run(array $data): void;
+
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    abstract public static function getDescription(): string;
 
     /**
      * Echo CLI message
@@ -73,6 +81,10 @@ abstract class AbstractConsole
             case 2:
                 echo "\033[1;31m{$message}\033[0m" . PHP_EOL;
                 break;
+            // info
+            case 3:
+                echo "\033[0;36m{$message}\033[0m" . PHP_EOL;
+                break;
             // default
             default:
                 echo $message . PHP_EOL;
@@ -85,6 +97,50 @@ abstract class AbstractConsole
     }
 
     /**
+     * Array to table
+     *
+     * @param array $data
+     *
+     * @return string
+     */
+    public static function ArrayToTable(array $data): string
+    {
+        // prepare data
+        foreach ($data as $row_key => $row) {
+            foreach ($row as $cell_key => $cell) {
+                // prepare color
+                $color = (!empty($cell_key % 2)) ? '0;37' : '0;32';
+
+                // inject breaklines and color
+                $data[$row_key][$cell_key] = '| ' . "\033[{$color}m{$cell}\033[0m";
+            }
+            $data[$row_key][] = '|';
+        }
+
+        // Find longest string in each column
+        $columns = [];
+        foreach ($data as $row_key => $row) {
+            foreach ($row as $cell_key => $cell) {
+                $length = strlen($cell);
+                if (empty($columns[$cell_key]) || $columns[$cell_key] < $length) {
+                    $columns[$cell_key] = $length;
+                }
+            }
+        }
+
+        // Output table, padding columns
+        $table = '';
+        foreach ($data as $row_key => $row) {
+            foreach ($row as $cell_key => $cell) {
+                $table .= str_pad($cell, $columns[$cell_key]) . '   ';
+            }
+            $table .= PHP_EOL;
+        }
+
+        return $table;
+    }
+
+    /**
      * Get config
      *
      * @return Config
@@ -92,5 +148,30 @@ abstract class AbstractConsole
     protected function getConfig(): Config
     {
         return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Get translated message
+     *
+     * @param string $label
+     * @param string $category
+     * @param string $scope
+     * @param null   $requiredOptions
+     *
+     * @return string
+     */
+    protected function translate(string $label, string $category, string $scope, $requiredOptions = null): string
+    {
+        return $this->getContainer()->get('language')->translate($label, $category, $scope, $requiredOptions);
     }
 }

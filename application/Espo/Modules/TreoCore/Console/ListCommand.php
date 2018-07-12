@@ -36,12 +36,14 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Console;
 
+use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+
 /**
- * ClearCache console
+ * ListCommand console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class ClearCache extends AbstractConsole
+class ListCommand extends AbstractConsole
 {
     /**
      * Get console command description
@@ -50,7 +52,7 @@ class ClearCache extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Cache clearing.';
+        return 'Show all existiong command and them descriptions.';
     }
 
     /**
@@ -60,15 +62,39 @@ class ClearCache extends AbstractConsole
      */
     public function run(array $data): void
     {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->clearCache();
+        // get console config
+        $config = $this->getConsoleConfig();
 
-        if (!empty($result)) {
-            self::show('Cache successfully cleared', 1);
-        } else {
-            self::show('Cache clearing failed', 2);
+        // prepare data
+        $data = [];
+        foreach ($config as $command => $class) {
+            if (method_exists($class, 'getDescription')) {
+                $data[] = [$command, $class::getDescription()];
+            }
         }
+
+        // render
+        self::show('Available commands:', 3);
+        echo self::ArrayToTable($data);
+    }
+
+    /**
+     * Get console config
+     *
+     * @return array
+     */
+    protected function getConsoleConfig(): array
+    {
+        // prepare result
+        $result = [];
+
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            $path = sprintf(ConsoleManager::$configPath, $module);
+            if (file_exists($path)) {
+                $result = array_merge($result, include $path);
+            }
+        }
+
+        return $result;
     }
 }

@@ -54,7 +54,7 @@ class ConsoleManager
      *
      * @var string
      */
-    protected $configPath = 'application/Espo/Modules/%s/Configs/Console.php';
+    public static $configPath = 'application/Espo/Modules/%s/Configs/Console.php';
 
     /**
      * Run console command
@@ -142,7 +142,7 @@ class ConsoleManager
         $result = [];
 
         foreach ($this->getMetadata()->getModuleList() as $module) {
-            $path = sprintf($this->configPath, $module);
+            $path = sprintf(self::$configPath, $module);
             if (file_exists($path)) {
                 $result = array_merge($result, include $path);
             }

@@ -46,6 +46,16 @@ use Espo\Modules\TreoCore\Core\Utils\Auth;
 class Cron extends AbstractConsole
 {
     /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Run CRON jobs.';
+    }
+
+    /**
      * Run action
      *
      * @param array $data
