@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\CronManager;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Util;
@@ -91,33 +92,75 @@ class Composer extends Base
     }
 
     /**
+     * Create cron job for update composer
+     *
+     * @return bool
+     */
+    public function createUpdateJob(): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (empty($this->getConfig()->get('isNeedToUpdateComposer'))) {
+            // update config
+            $this->getConfig()->set('isNeedToUpdateComposer', true);
+            $this->getConfig()->save();
+
+            // create job
+            $jobEntity = $this->getEntityManager()->getEntity('Job');
+            $jobEntity->set(
+                [
+                    'name'        => 'Run composer update command if it needs',
+                    'status'      => CronManager::PENDING,
+                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'serviceName' => 'Composer',
+                    'method'      => 'runUpdateJob',
+                    'data'        => ['createdById' => $this->getUser()->get('id')]
+                ]
+            );
+            $this->getEntityManager()->saveEntity($jobEntity);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * Run composer UPDATE command by CLI
      *
      * @param array $data
      *
-     * @return bool
+     * @throws \Espo\Core\Exceptions\Error
      */
-    public function runUpdateJob(array $data = []): bool
+    public function runUpdateJob(array $data): void
     {
         if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            // run update
+            $this->runUpdate($data['createdById']);
+
             // update config
             $this->getConfig()->set('isNeedToUpdateComposer', false);
             $this->getConfig()->save();
-
-            // run update
-            $this->runUpdate();
         }
-
-        return true;
     }
 
     /**
      * Run composer UPDATE command
      *
+     * @param string|null $createdById
+     *
      * @return array
+     * @throws \Espo\Core\Exceptions\Error
      */
-    public function runUpdate(): array
+    public function runUpdate(string $createdById = null): array
     {
+        // prepare creator user id
+        if (is_null($createdById)) {
+            $createdById = $this->getUser()->get('id');
+        }
+
         // triggered before action
         $this->triggered('Composer', 'beforeComposerUpdate', []);
 
@@ -125,8 +168,10 @@ class Composer extends Base
         $composer = $this->run('update');
 
         // triggered after action
-        $composer = $this->triggered('Composer', 'afterComposerUpdate', $composer);
+        $eventData = $this
+            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
 
+        $composer = $eventData['composer'];
         if ($composer['status'] == 0) {
             // loggout all users
             $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");

@@ -161,10 +161,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        $this->getConfig()->set('isNeedToUpdateComposer', true);
-        $this->getConfig()->save();
-
-        return true;
+        return $this->getComposerService()->createUpdateJob();
     }
 
     /**

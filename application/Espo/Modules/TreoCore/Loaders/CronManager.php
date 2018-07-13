@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Loaders;
 
@@ -53,6 +53,6 @@ class CronManager extends Base
      */
     public function load()
     {
-        return (new \Espo\Modules\TreoCore\Core\CronManager())->setContainer($this->getContainer());
+        return new \Espo\Modules\TreoCore\Core\CronManager($this->getContainer());
     }
 }

@@ -77,11 +77,6 @@
         "Dummy": {
             "isSystem": true,
             "scheduling": "1 */12 * * *"
-        },
-        "CheckNewVersion": {
-            "name": "Check for New Version",
-            "isSystem": true,
-            "scheduling": "15 5 * * *"
         }
     }
 }
