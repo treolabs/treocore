@@ -1,4 +1,7 @@
 {
+  "app": [
+    "treo-core"
+  ],
   "search-manager": [
     "treo-core"
   ],
