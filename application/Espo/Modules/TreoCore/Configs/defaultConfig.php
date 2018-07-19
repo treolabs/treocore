@@ -97,11 +97,8 @@ return [
         2 => 'AttributeGroup',
         3 => 'Brand',
         4 => 'Category',
-        5 => 'Packaging',
-        6 => 'PriceUnit',
-        7 => 'Product',
-        8 => 'ProductFamily',
-        9 => 'Supplier'
+        5 => 'Product',
+        6 => 'ProductFamily'
     ],
     'quickCreateList' => [
         0 => 'Association',
