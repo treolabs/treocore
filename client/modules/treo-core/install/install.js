@@ -347,6 +347,10 @@ $(function () {
 
         nextStep() {
             if (mainView.validate.call(this, 'adminSettings')) {
+                // hide buttons
+                $('.back-step').hide();
+                $('.next-step').hide();
+
                 this.setAdminSettings().done(function (data) {
                     if (data.status) {
                         window.location.reload();
