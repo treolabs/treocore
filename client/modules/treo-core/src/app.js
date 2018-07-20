@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,43 +31,28 @@
  * and "TreoPIM" word.
  */
 
-include "../bootstrap.php";
+Espo.define('treo-core:app', 'class-replace!treo-core:app', function (App) {
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
+     _.extend(App.prototype, {
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
-if (!$app->isInstalled()) {
-    exit;
-}
+         initAuth: function () {
+             this.auth = this.storage.get('user', 'auth') || null;
 
-$url = $_SERVER['REQUEST_URI'];
-$portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
+             this.baseController.on('login', function (data) {
+                 this.auth = Base64.encode(data.auth.userName  + ':' + data.auth.token);
+                 this.storage.set('user', 'auth', this.auth);
 
-if (!isset($portalId)) {
-    $url = $_SERVER['REDIRECT_URL'];
-    $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-}
+                 this.setCookieAuth(data.auth.userName, data.auth.token);
 
-$a = explode('?', $url);
-if (substr($a[0], -1) !== '/') {
-    $url = $a[0] . '/';
-    if (count($a) > 1) {
-        $url .= '?' . $a[1];
-    }
-    header("Location: " . $url);
-    exit();
-}
+                 window.location.reload(true);
+             }.bind(this));
 
-if ($portalId) {
-    $app->setBasePath('../../');
-} else {
-    $app->setBasePath('../');
-}
+             this.baseController.on('logout', function () {
+                 this.logout();
+             }.bind(this));
+         },
 
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
+    });
 
-$app->runEntryPoint('portal');
+    return App;
+});

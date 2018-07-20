@@ -65,7 +65,6 @@ class Settings extends ParentSettings
         $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
         $this->getContainer()->get('eventManager')->triggered('SettingsController', 'afterUpdate', $eventData);
 
-
         return $result;
     }
 }

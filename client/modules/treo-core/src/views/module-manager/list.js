@@ -46,6 +46,12 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionsInProgress: 0,
 
+        data() {
+            return {
+                disabledRunUpdateButton: this.getConfig().get('isNeedToUpdateComposer')
+            }
+        },
+
         loadList() {
             this.loadInstalledModulesList();
             this.loadAvailableModulesList();
@@ -256,18 +262,28 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 return;
             }
 
-            this.actionsInProgress++;
-            this.notify(this.translate('updating', 'labels', 'ModuleManager'));
-            this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
-                if (response.status === 0) {
-                    this.notify(this.translate('updated', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                    this.reloadPage(2000);
-                } else {
-                    this.notify(this.translate('failed', 'labels', 'ModuleManager'), 'danger');
-                }
-            }).always(() => {
-                this.actionsInProgress--;
-                this.trigger('composer:update');
+            this.confirm({
+                message: this.translate('confirmRun', 'labels', 'ModuleManager'),
+                confirmText: this.translate('Run Update', 'labels', 'ModuleManager')
+            }, () => {
+                this.actionsInProgress++;
+                this.notify(this.translate('updating', 'labels', 'ModuleManager'));
+                this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
+                    if (response) {
+                        this.notify(this.translate('updateStarted', 'labels', 'ModuleManager'), 'success');
+                    } else {
+                        this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
+                    }
+                    this.getConfig().fetch({
+                        success: function (config) {
+                            this.disableActionButton('runUpdate', !!config.get('isNeedToUpdateComposer'));
+                            this.disableActionButton('cancelUpdate', !!config.get('isNeedToUpdateComposer'));
+                        }.bind(this)
+                    });
+                }).always(() => {
+                    this.actionsInProgress--;
+                    this.trigger('composer:update');
+                });
             });
         },
 
@@ -297,6 +313,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             } else {
                 button.hide();
             }
+        },
+
+        disableActionButton(action, disabled) {
+            let button = this.$el.find(`.detail-button-container button[data-action="${action}"]`);
+            button.prop('disabled', disabled);
         },
 
         reloadPage(timeout) {

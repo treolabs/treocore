@@ -54,6 +54,16 @@ use ZMQ;
 class Websocket extends AbstractConsole
 {
     /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Open websocket channel.';
+    }
+
+    /**
      * Run action
      *
      * @param array $data

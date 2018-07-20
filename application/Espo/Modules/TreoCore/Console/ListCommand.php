@@ -32,43 +32,69 @@
  * and "TreoPIM" word.
  */
 
-include "../bootstrap.php";
+declare(strict_types=1);
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
+namespace Espo\Modules\TreoCore\Console;
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
-if (!$app->isInstalled()) {
-    exit;
-}
+use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
 
-$url = $_SERVER['REQUEST_URI'];
-$portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-
-if (!isset($portalId)) {
-    $url = $_SERVER['REDIRECT_URL'];
-    $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-}
-
-$a = explode('?', $url);
-if (substr($a[0], -1) !== '/') {
-    $url = $a[0] . '/';
-    if (count($a) > 1) {
-        $url .= '?' . $a[1];
+/**
+ * ListCommand console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class ListCommand extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Show all existiong command and them descriptions.';
     }
-    header("Location: " . $url);
-    exit();
-}
 
-if ($portalId) {
-    $app->setBasePath('../../');
-} else {
-    $app->setBasePath('../');
-}
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        // get console config
+        $config = $this->getConsoleConfig();
 
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
+        // prepare data
+        $data = [];
+        foreach ($config as $command => $class) {
+            if (method_exists($class, 'getDescription')) {
+                $data[] = [$command, $class::getDescription()];
+            }
+        }
 
-$app->runEntryPoint('portal');
+        // render
+        self::show('Available commands:', 3);
+        echo self::ArrayToTable($data);
+    }
+
+    /**
+     * Get console config
+     *
+     * @return array
+     */
+    protected function getConsoleConfig(): array
+    {
+        // prepare result
+        $result = [];
+
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            $path = sprintf(ConsoleManager::$configPath, $module);
+            if (file_exists($path)) {
+                $result = array_merge($result, include $path);
+            }
+        }
+
+        return $result;
+    }
+}

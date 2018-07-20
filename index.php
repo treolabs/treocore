@@ -34,6 +34,9 @@
 
 include "bootstrap.php";
 
+// define gloabal variables
+define('CORE_PATH', __DIR__);
+
 $app = new \Espo\Modules\TreoCore\Core\Application();
 
 if (!$app->isInstalled()) {

@@ -52,10 +52,8 @@ class Composer extends AbstractListener
      */
     public function beforeComposerUpdate(array $data): array
     {
-        // prepare diff
-        $_SESSION['composerDiff'] = $this
-            ->getComposerService()
-            ->getComposerDiff();
+        // storing old composer.lock
+        $this->getComposerService()->storeComposerLock();
 
         return $data;
     }
@@ -69,20 +67,20 @@ class Composer extends AbstractListener
     {
         if (!empty($data)) {
             // push to stream
-            $this->pushToStream('composerUpdate', $data);
+            $this->pushToStream('composerUpdate', $data['composer'], $data['createdById']);
 
-            if (isset($data['status']) && $data['status'] === 0) {
+            if (isset($data['composer']['status']) && $data['composer']['status'] === 0) {
                 // save stable-composer.json file
                 $this->getComposerService()->saveComposerJson();
 
                 // get composer diff
-                $composerDiff = $_SESSION['composerDiff'];
+                $composerDiff = $this->getComposerService()->getComposerLockDiff();
 
                 // for install module
                 if (!empty($composerDiff['install'])) {
                     foreach ($composerDiff['install'] as $row) {
                         // notify
-                        $this->notifyInstall($row['id']);
+                        $this->notifyInstall($row['id'], $data['createdById']);
                     }
                 }
 
@@ -90,7 +88,7 @@ class Composer extends AbstractListener
                 if (!empty($composerDiff['update'])) {
                     foreach ($composerDiff['update'] as $row) {
                         // notify
-                        $this->notifyUpdate($row['id'], $row['from']);
+                        $this->notifyUpdate($row['id'], $row['from'], $data['createdById']);
                     }
                 }
 
@@ -104,7 +102,7 @@ class Composer extends AbstractListener
                         ComposerService::deleteTreoModule([$row['id'] => $row['package']]);
 
                         // notify
-                        $this->notifyDelete($row['id']);
+                        $this->notifyDelete($row['id'], $data['createdById']);
                     }
                 }
 
@@ -120,8 +118,9 @@ class Composer extends AbstractListener
      * Notify about install
      *
      * @param string $id
+     * @param string $createdById
      */
-    protected function notifyInstall(string $id)
+    protected function notifyInstall(string $id, string $createdById)
     {
         // get package
         $package = $this
@@ -146,7 +145,7 @@ class Composer extends AbstractListener
             $this->notify($message);
 
             // push to stream
-            $this->pushToStream('installModule', ['package' => $package]);
+            $this->pushToStream('installModule', ['package' => $package], $createdById);
         }
     }
 
@@ -156,8 +155,9 @@ class Composer extends AbstractListener
      *
      * @param string $id
      * @param string $from
+     * @param string $createdById
      */
-    protected function notifyUpdate(string $id, string $from)
+    protected function notifyUpdate(string $id, string $from, string $createdById)
     {
         // get package
         $package = $this
@@ -186,7 +186,7 @@ class Composer extends AbstractListener
                 /**
                  * Stream push
                  */
-                $this->pushToStream('updateModule', ['package' => $package]);
+                $this->pushToStream('updateModule', ['package' => $package], $createdById);
 
                 // run migration
                 $this->getContainer()->get('migration')->run($id, $from, $to);
@@ -199,8 +199,9 @@ class Composer extends AbstractListener
      * Notify about delete
      *
      * @param string $id
+     * @param string $createdById
      */
-    protected function notifyDelete(string $id)
+    protected function notifyDelete(string $id, string $createdById)
     {
         // get package
         $packages = $this
@@ -227,7 +228,7 @@ class Composer extends AbstractListener
             /**
              * Stream push
              */
-            $this->pushToStream('deleteModule', ['package' => $package]);
+            $this->pushToStream('deleteModule', ['package' => $package], $createdById);
         }
     }
 
@@ -259,15 +260,17 @@ class Composer extends AbstractListener
      *
      * @param string $type
      * @param array  $data
+     * @param string $createdById
      */
-    protected function pushToStream(string $type, array $data): void
+    protected function pushToStream(string $type, array $data, string $createdById): void
     {
         $note = $this->getEntityManager()->getEntity('Note');
         $note->set('type', $type);
         $note->set('parentType', 'ModuleManager');
         $note->set('data', $data);
+        $note->set('createdById', $createdById);
 
-        $this->getEntityManager()->saveEntity($note);
+        $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
     }
 
     /**

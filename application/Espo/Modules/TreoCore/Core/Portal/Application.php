@@ -32,43 +32,35 @@
  * and "TreoPIM" word.
  */
 
-include "../bootstrap.php";
+declare(strict_types=1);
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
+namespace Espo\Modules\TreoCore\Core\Portal;
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
-if (!$app->isInstalled()) {
-    exit;
-}
+use Espo\Core\Portal\Application as EspoApplication;
 
-$url = $_SERVER['REQUEST_URI'];
-$portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
+/**
+ * Portal Application class
+ *
+ */
+class Application extends EspoApplication
+{
+    /**
+     * Run client
+     */
+    public function runClient()
+    {
+        $modules = $this->getContainer()->get('config')->get('modules');
+        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
 
-if (!isset($portalId)) {
-    $url = $_SERVER['REDIRECT_URL'];
-    $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-}
-
-$a = explode('?', $url);
-if (substr($a[0], -1) !== '/') {
-    $url = $a[0] . '/';
-    if (count($a) > 1) {
-        $url .= '?' . $a[1];
+        $this->getContainer()->get('clientManager')->display(
+            null,
+            'html/treo-portal.html',
+            [
+                'portalId' => $this->getPortal()->id,
+                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+                'year' => date('Y'),
+                'version' => $version
+            ]
+        );
     }
-    header("Location: " . $url);
-    exit();
 }
-
-if ($portalId) {
-    $app->setBasePath('../../');
-} else {
-    $app->setBasePath('../');
-}
-
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
-
-$app->runEntryPoint('portal');

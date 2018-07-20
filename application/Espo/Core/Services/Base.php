@@ -57,7 +57,8 @@ abstract class Base implements Injectable
             'config',
             'entityManager',
             'user',
-            'dataManager'
+            'dataManager',
+            'eventManager'
         ];
 
     /**
@@ -193,6 +194,20 @@ abstract class Base implements Injectable
     protected function getUser()
     {
         return $this->getInjection('user');
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    protected function triggered(string $target, string $action, array $data = []): array
+    {
+        return $this->getInjection('eventManager')->triggered($target, $action, $data);
     }
 }
 

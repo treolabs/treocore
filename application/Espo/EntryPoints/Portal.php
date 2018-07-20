@@ -65,7 +65,8 @@ class Portal extends \Espo\Core\EntryPoints\Base
             }
         }
 
-        $application = new \Espo\Core\Portal\Application($id);
+        $application = new \Espo\Modules\TreoCore\Core\Portal\Application($id);
+
         $application->setBasePath($this->getContainer()->get('clientManager')->getBasePath());
         $application->runClient();
     }

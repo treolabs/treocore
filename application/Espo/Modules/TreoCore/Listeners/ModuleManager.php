@@ -69,6 +69,6 @@ class ModuleManager extends Composer
         /**
          * Stream push
          */
-        $this->pushToStream('updateModuleActivation', $data);
+        $this->pushToStream('updateModuleActivation', $data, $this->getContainer()->get('user')->get('id'));
     }
 }

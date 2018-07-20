@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\CronManager;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Util;
@@ -73,6 +74,16 @@ class Composer extends Base
     /**
      * @var string
      */
+    protected $composerLock = 'composer.lock';
+
+    /**
+     * @var string
+     */
+    protected $oldComposerLock = 'data/old-composer.lock';
+
+    /**
+     * @var string
+     */
     protected $moduleComposer = 'data/composer.json';
 
     /**
@@ -91,25 +102,94 @@ class Composer extends Base
     }
 
     /**
+     * Create cron job for update composer
+     *
+     * @return bool
+     */
+    public function createUpdateJob(): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (empty($this->getConfig()->get('isNeedToUpdateComposer'))) {
+            // update config
+            $this->getConfig()->set('isNeedToUpdateComposer', true);
+            $this->getConfig()->save();
+
+            // create job
+            $jobEntity = $this->getEntityManager()->getEntity('Job');
+            $jobEntity->set(
+                [
+                    'name'        => 'Run composer update command',
+                    'status'      => CronManager::PENDING,
+                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'serviceName' => 'Composer',
+                    'method'      => 'runUpdateJob',
+                    'data'        => ['createdById' => $this->getUser()->get('id')]
+                ]
+            );
+            $this->getEntityManager()->saveEntity($jobEntity);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Run composer UPDATE command by CLI
+     *
+     * @param array $data
+     *
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function runUpdateJob(array $data): void
+    {
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            // run update
+            try {
+                $this->runUpdate($data['createdById']);
+            } catch (\Exception $e) {
+            }
+
+            // update config
+            $this->getConfig()->set('isNeedToUpdateComposer', false);
+            $this->getConfig()->save();
+        }
+    }
+
+    /**
      * Run composer UPDATE command
      *
+     * @param string|null $createdById
+     *
      * @return array
+     * @throws \Espo\Core\Exceptions\Error
      */
-    public function runUpdate(): array
+    public function runUpdate(string $createdById = null): array
     {
-        // get event manager
-        $eventManager = $this->getInjection('eventManager');
+        // prepare creator user id
+        if (is_null($createdById)) {
+            $createdById = $this->getUser()->get('id');
+        }
 
         // triggered before action
-        $eventManager
-            ->triggered('Composer', 'beforeComposerUpdate', []);
+        $this->triggered('Composer', 'beforeComposerUpdate', []);
 
         // call composer
         $composer = $this->run('update');
 
         // triggered after action
-        $composer = $eventManager
-            ->triggered('Composer', 'afterComposerUpdate', $composer);
+        $eventData = $this
+            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
+
+        $composer = $eventData['composer'];
+        if ($composer['status'] == 0) {
+            // loggout all users
+            $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
+            $sth->execute();
+        }
 
         // rebuild
         $this->rebuild();
@@ -122,13 +202,15 @@ class Composer extends Base
      */
     public function cancelChanges(): void
     {
-        if (file_exists($this->moduleStableComposer)) {
-            if (file_exists($this->moduleComposer)) {
-                unlink($this->moduleComposer);
-            }
+        if (empty($this->getConfig()->get('isNeedToUpdateComposer'))) {
+            if (file_exists($this->moduleStableComposer)) {
+                if (file_exists($this->moduleComposer)) {
+                    unlink($this->moduleComposer);
+                }
 
-            // copy file
-            copy($this->moduleStableComposer, $this->moduleComposer);
+                // copy file
+                copy($this->moduleStableComposer, $this->moduleComposer);
+            }
         }
     }
 
@@ -293,6 +375,65 @@ class Composer extends Base
     }
 
     /**
+     * Storing composer.lock
+     */
+    public function storeComposerLock(): void
+    {
+        if (file_exists($this->oldComposerLock)) {
+            unlink($this->oldComposerLock);
+        }
+        if (file_exists($this->composerLock)) {
+            copy($this->composerLock, $this->oldComposerLock);
+        }
+    }
+
+    /**
+     * Get composer.lock diff
+     *
+     * @return array
+     */
+    public function getComposerLockDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        if (file_exists($this->oldComposerLock) && file_exists($this->composerLock)) {
+            // prepare data
+            $oldData = $this->getComposerLockTreoPackages($this->oldComposerLock);
+            $newData = $this->getComposerLockTreoPackages($this->composerLock);
+
+            foreach ($oldData as $package) {
+                if (!isset($newData[$package['name']])) {
+                    $result['delete'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $package
+                    ];
+                } elseif ($package['version'] != $newData[$package['name']]['version']) {
+                    $result['update'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $newData[$package['name']],
+                        'from'    => $package['version']
+                    ];
+                }
+            }
+            foreach ($newData as $package) {
+                if (!isset($oldData[$package['name']])) {
+                    $result['install'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $package
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get composer diff
      *
      * @return array
@@ -440,6 +581,32 @@ class Composer extends Base
         foreach ($packages as $id => $versions) {
             if ($versions['max']['name'] == $package) {
                 $result = $id;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get prepared composer.lock treo packages
+     *
+     * @param string $path
+     *
+     * @return array
+     */
+    protected function getComposerLockTreoPackages(string $path): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($path)) {
+            $data = Json::decode(file_get_contents($path), true);
+            if (!empty($packages = $data['packages'])) {
+                foreach ($packages as $package) {
+                    if (!empty($package['extra']['treoId'])) {
+                        $result[$package['name']] = $package;
+                    }
+                }
             }
         }
 
