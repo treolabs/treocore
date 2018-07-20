@@ -32,42 +32,35 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\EntryPoints;
+declare(strict_types=1);
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\BadRequest;
+namespace Espo\Modules\TreoCore\Core\Portal;
 
-class Portal extends \Espo\Core\EntryPoints\Base
+use Espo\Core\Portal\Application as EspoApplication;
+
+/**
+ * Portal Application class
+ *
+ */
+class Application extends EspoApplication
 {
-    public static $authRequired = false;
-
-    public function run($data = array())
+    /**
+     * Run client
+     */
+    public function runClient()
     {
-        if (!empty($_GET['id'])) {
-            $id = $_GET['id'];
-        } else if (!empty($data['id'])) {
-            $id = $data['id'];
-        } else {
-            $url = $_SERVER['REQUEST_URI'];
-            $id = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
+        $modules = $this->getContainer()->get('config')->get('modules');
+        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
 
-            if (!isset($id)) {
-                $url = $_SERVER['REDIRECT_URL'];
-                $id = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-            }
-
-            if (!$id) {
-                $id = $this->getConfig()->get('defaultPortalId');
-            }
-            if (!$id) {
-                throw new NotFound();
-            }
-        }
-
-        $application = new \Espo\Modules\TreoCore\Core\Portal\Application($id);
-
-        $application->setBasePath($this->getContainer()->get('clientManager')->getBasePath());
-        $application->runClient();
+        $this->getContainer()->get('clientManager')->display(
+            null,
+            'html/treo-portal.html',
+            [
+                'portalId' => $this->getPortal()->id,
+                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+                'year' => date('Y'),
+                'version' => $version
+            ]
+        );
     }
 }
