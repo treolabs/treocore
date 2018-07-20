@@ -1,7 +1,9 @@
 {
     "name": "treo/treo",
-    "version": "1.12.0",
+    "version": "1.12.1",
     "description": "TreoPIM",
+    "homepage": "https://treopim.de/",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "Roman Ratsun",
