@@ -277,6 +277,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.getConfig().fetch({
                         success: function (config) {
                             this.disableActionButton('runUpdate', !!config.get('isNeedToUpdateComposer'));
+                            this.disableActionButton('cancelUpdate', !!config.get('isNeedToUpdateComposer'));
                         }.bind(this)
                     });
                 }).always(() => {
