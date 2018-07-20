@@ -120,7 +120,7 @@ class Composer extends Base
             $jobEntity = $this->getEntityManager()->getEntity('Job');
             $jobEntity->set(
                 [
-                    'name'        => 'Run composer update command if it needs',
+                    'name'        => 'Run composer update command',
                     'status'      => CronManager::PENDING,
                     'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'serviceName' => 'Composer',
@@ -148,7 +148,10 @@ class Composer extends Base
     {
         if ($this->getConfig()->get('isNeedToUpdateComposer')) {
             // run update
-            $this->runUpdate($data['createdById']);
+            try {
+                $this->runUpdate($data['createdById']);
+            } catch (\Exception $e) {
+            }
 
             // update config
             $this->getConfig()->set('isNeedToUpdateComposer', false);
