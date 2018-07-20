@@ -74,6 +74,16 @@ class Composer extends Base
     /**
      * @var string
      */
+    protected $composerLock = 'composer.lock';
+
+    /**
+     * @var string
+     */
+    protected $oldComposerLock = 'data/old-composer.lock';
+
+    /**
+     * @var string
+     */
     protected $moduleComposer = 'data/composer.json';
 
     /**
@@ -362,6 +372,65 @@ class Composer extends Base
     }
 
     /**
+     * Storing composer.lock
+     */
+    public function storeComposerLock(): void
+    {
+        if (file_exists($this->oldComposerLock)) {
+            unlink($this->oldComposerLock);
+        }
+        if (file_exists($this->composerLock)) {
+            copy($this->composerLock, $this->oldComposerLock);
+        }
+    }
+
+    /**
+     * Get composer.lock diff
+     *
+     * @return array
+     */
+    public function getComposerLockDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        if (file_exists($this->oldComposerLock) && file_exists($this->composerLock)) {
+            // prepare data
+            $oldData = $this->getComposerLockTreoPackages($this->oldComposerLock);
+            $newData = $this->getComposerLockTreoPackages($this->composerLock);
+
+            foreach ($oldData as $package) {
+                if (!isset($newData[$package['name']])) {
+                    $result['delete'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $package
+                    ];
+                } elseif ($package['version'] != $newData[$package['name']]['version']) {
+                    $result['update'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $newData[$package['name']],
+                        'from'    => $package['version']
+                    ];
+                }
+            }
+            foreach ($newData as $package) {
+                if (!isset($oldData[$package['name']])) {
+                    $result['install'][] = [
+                        'id'      => $package['extra']['treoId'],
+                        'package' => $package
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get composer diff
      *
      * @return array
@@ -509,6 +578,32 @@ class Composer extends Base
         foreach ($packages as $id => $versions) {
             if ($versions['max']['name'] == $package) {
                 $result = $id;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get prepared composer.lock treo packages
+     *
+     * @param string $path
+     *
+     * @return array
+     */
+    protected function getComposerLockTreoPackages(string $path): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($path)) {
+            $data = Json::decode(file_get_contents($path), true);
+            if (!empty($packages = $data['packages'])) {
+                foreach ($packages as $package) {
+                    if (!empty($package['extra']['treoId'])) {
+                        $result[$package['name']] = $package;
+                    }
+                }
             }
         }
 

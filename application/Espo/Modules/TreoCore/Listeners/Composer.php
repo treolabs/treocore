@@ -52,10 +52,8 @@ class Composer extends AbstractListener
      */
     public function beforeComposerUpdate(array $data): array
     {
-        // prepare diff
-        $_SESSION['composerDiff'] = $this
-            ->getComposerService()
-            ->getComposerDiff();
+        // storing old composer.lock
+        $this->getComposerService()->storeComposerLock();
 
         return $data;
     }
@@ -76,7 +74,7 @@ class Composer extends AbstractListener
                 $this->getComposerService()->saveComposerJson();
 
                 // get composer diff
-                $composerDiff = $_SESSION['composerDiff'];
+                $composerDiff = $this->getComposerService()->getComposerLockDiff();
 
                 // for install module
                 if (!empty($composerDiff['install'])) {
