@@ -78,7 +78,7 @@ We are already working on the following connectors for export channels:
 
 1. Create your new project by running:
     ````
-    composer create-project treo/treo my-treopim-project
+    composer create-project treo/treopim my-treopim-project
     ````
 2. Install TreoPIM by following the TreoPIM installation wizard in web interface.
 3. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
