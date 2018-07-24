@@ -39,6 +39,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         enabledfixedHeader: false,
 
+        checkedAll: false,
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -69,6 +71,56 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
                     this.getRouter().navigate('#' + scope + '/view/' + id, {trigger: false});
                     this.getRouter().dispatch(scope, 'view', options);
+                },
+
+                'click tr': function (e) {
+                    if (e.target.tagName === 'TD') {
+                        let $target = $(e.currentTarget);
+                        let id = $target.data('id');
+                        let checked = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0).checked;
+
+                        if (!checked) {
+                            this.checkRecord(id);
+                        } else {
+                            this.uncheckRecord(id);
+                        }
+                    }
+                },
+
+                'click .select-all': function (e) {
+                    let checkbox = this.$el.find('.full-table').find('.select-all');
+                    let checkboxFixed = this.$el.find('.fixed-header-table').find('.select-all');
+
+                    if (!this.checkedAll) {
+                        checkbox.prop('checked', true);
+                        checkboxFixed.prop('checked', true);
+                    } else {
+                        checkbox.prop('checked', false);
+                        checkboxFixed.prop('checked', false);
+                    }
+
+                    this.checkedList = [];
+
+                    if (e.currentTarget.checked) {
+                        this.$el.find('input.record-checkbox').prop('checked', true);
+                        this.$el.find('.actions-button').removeAttr('disabled');
+                        this.collection.models.forEach(function (model) {
+                            this.checkedList.push(model.id);
+                        }, this);
+
+                        this.$el.find('.list > table tbody tr').addClass('active');
+
+                        this.checkedAll = true;
+                    } else {
+                        if (this.allResultIsChecked) {
+                            this.unselectAllResult();
+                        }
+                        this.$el.find('input.record-checkbox').prop('checked', false);
+                        this.$el.find('.actions-button').attr('disabled', true);
+                        this.$el.find('.list > table tbody tr').removeClass('active');
+
+                        this.checkedAll = false;
+                    }
                 },
             });
         },

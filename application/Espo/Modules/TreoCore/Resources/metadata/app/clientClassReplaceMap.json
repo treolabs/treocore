@@ -14,6 +14,9 @@
   "views/main": [
     "treo-core"
   ],
+  "views/header": [
+    "treo-core"
+  ],
   "views/list": [
     "treo-core"
   ],
@@ -42,6 +45,9 @@
     "treo-core"
   ],
   "views/record/search": [
+    "treo-core"
+  ],
+  "views/record/row-actions/default": [
     "treo-core"
   ],
   "views/stream/record/list": [

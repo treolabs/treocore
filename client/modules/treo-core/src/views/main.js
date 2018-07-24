@@ -5,10 +5,10 @@ Espo.define('treo-core:views/main', 'class-replace!treo-core:views/main', functi
         buildHeaderHtml: function (arr) {
             var a = [];
             arr.forEach(function (item) {
-                a.push('<div class="pull-left">' + item + '</div>');
+                a.push('<span>' + item + '</span>');
             }, this);
 
-            return '<div class="clearfix header-breadcrumbs">' + a.join('<div class="pull-left breadcrumb-separator"> &rsaquo; </div>') + '</div>';
+            return '<div class="header-breadcrumbs">' + a.join('<span class="breadcrumb-separator"> &rsaquo; </span>') + '</div>';
         },
 
     });
