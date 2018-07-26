@@ -184,15 +184,15 @@ class Composer extends Base
         $eventData = $this
             ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
 
+        // rebuild
+        $this->rebuild();
+
         $composer = $eventData['composer'];
         if ($composer['status'] == 0) {
             // loggout all users
             $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
             $sth->execute();
         }
-
-        // rebuild
-        $this->rebuild();
 
         return $composer;
     }
