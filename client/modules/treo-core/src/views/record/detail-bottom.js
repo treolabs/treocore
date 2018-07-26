@@ -144,19 +144,23 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     return;
                 }
 
-                let foreignScope = (links[name] || {}).entity;
-
-                if ((scopesDefs[foreignScope] || {}).disabled) return;
-
-                if (foreignScope && !this.getAcl().check(foreignScope, 'read')) {
-                    return;
-                }
-
                 let defs = this.getMetadata().get('clientDefs.' + scope + '.relationshipPanels.' + name) || {};
                 if (bottomPanelOptions) {
                     defs = bottomPanelOptions;
                 }
                 defs = Espo.Utils.clone(defs);
+
+                if (defs.aclScopesList) {
+                    if (!defs.aclScopesList.every(item => this.getAcl().checkScope(item, 'read'))) {
+                        return;
+                    }
+                } else {
+                    let foreignScope = (links[name] || {}).entity;
+                    if ((scopesDefs[foreignScope] || {}).disabled) return;
+                    if (foreignScope && !this.getAcl().check(foreignScope, 'read')) {
+                        return;
+                    }
+                }
 
                 for (let i in defs) {
                     if (i in p) continue;
