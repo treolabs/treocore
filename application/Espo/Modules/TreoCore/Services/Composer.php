@@ -151,6 +151,7 @@ class Composer extends Base
             try {
                 $this->runUpdate($data['createdById']);
             } catch (\Exception $e) {
+                $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
             }
 
             // update config
@@ -180,21 +181,20 @@ class Composer extends Base
         // call composer
         $composer = $this->run('update');
 
-        // triggered after action
-        $eventData = $this
-            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
+        // rebuild
+        $this->rebuild();
 
-        $composer = $eventData['composer'];
         if ($composer['status'] == 0) {
             // loggout all users
             $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
             $sth->execute();
         }
 
-        // rebuild
-        $this->rebuild();
+        // triggered after action
+        $eventData = $this
+            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
 
-        return $composer;
+        return $eventData['composer'];
     }
 
     /**
