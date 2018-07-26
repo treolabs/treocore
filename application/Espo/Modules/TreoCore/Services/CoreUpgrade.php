@@ -94,7 +94,9 @@ class CoreUpgrade extends Base
         $json = file_get_contents(sprintf(self::CORE_PACKAGES, $this->getConfig()->get('version')));
         if (!empty($json)) {
             $data = Json::decode($json, true);
-            $result = $data[0];
+            if (!empty($data[0]) && is_array($data[0])) {
+                $result = $data[0];
+            }
         }
 
         return $result;
