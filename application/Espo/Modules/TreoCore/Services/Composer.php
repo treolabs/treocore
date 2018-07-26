@@ -151,6 +151,7 @@ class Composer extends Base
             try {
                 $this->runUpdate($data['createdById']);
             } catch (\Exception $e) {
+                $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
             }
 
             // update config
