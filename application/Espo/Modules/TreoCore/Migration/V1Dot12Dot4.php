@@ -31,60 +31,25 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-declare(strict_types = 1);
+namespace Espo\Modules\TreoCore\Migration;
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Services\Base;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
 /**
- * CloseStatusAction service
+ * Version 1.12.4
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CloseStatusAction extends Base implements StatusActionInterface
+class V1Dot12Dot4 extends AbstractMigration
 {
-
     /**
-     * Get progress status action data
-     *
-     * @param array $data
-     *
-     * @return array
+     * Up to current
      */
-    public function getProgressStatusActionData(array $data): array
+    public function up(): void
     {
-        return [];
-    }
-
-    /**
-     * Close action
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function close(string $id): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($id)) {
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
-            $sql = sprintf($sql, $id);
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
+        $this->getConfig()->set('pmLimit', 5);
+        $this->getConfig()->save();
     }
 }

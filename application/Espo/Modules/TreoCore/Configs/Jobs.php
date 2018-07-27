@@ -46,13 +46,6 @@ return [
             'data'       => []
         ],
         [
-            'scheduling' => '* * * * *',
-            'service'    => 'ProgressManager',
-            'method'     => 'executeProgressJobs',
-            'name'       => 'Execute progress manager jobs',
-            'data'       => []
-        ],
-        [
             'scheduling' => '0 */2 * * *',
             'service'    => 'ComposerModule',
             'method'     => 'cachingPackages',

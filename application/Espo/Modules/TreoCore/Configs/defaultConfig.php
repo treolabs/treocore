@@ -189,5 +189,6 @@ return [
             'port' => 5555
         ]
     ],
+    'pmLimit' => 5,
     'isInstalled' => false
 ];

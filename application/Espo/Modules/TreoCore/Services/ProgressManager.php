@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Services\StatusActionInterface;
 use Slim\Http\Request;
 
 /**
@@ -47,24 +45,6 @@ use Slim\Http\Request;
  */
 class ProgressManager extends AbstractProgressManager
 {
-
-    /**
-     * Construct
-     */
-    public function __construct(...$args)
-    {
-        parent::__construct(...$args);
-
-        /**
-         * Add dependencies
-         */
-        $this->addDependency('language');
-        $this->addDependency('metadata');
-        $this->addDependency('serviceFactory');
-        $this->addDependency('progressManager');
-        $this->addDependency('websocket');
-    }
-
     /**
      * @var int
      */
@@ -154,44 +134,6 @@ class ProgressManager extends AbstractProgressManager
     }
 
     /**
-     * Execute job
-     *
-     * @return bool
-     */
-    public function executeProgressJobs(): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($records = $this->getDbData())) {
-            // get config
-            $config = $this->getProgressConfig();
-
-            foreach ($records as $record) {
-                if (isset($config['type'][$record['type']]['service'])) {
-                    // create service
-                    $service = $this->getInjection('serviceFactory')
-                        ->create($config['type'][$record['type']]['service']);
-                    if ($service instanceof ProgressJobInterface && $service->executeProgressJob($record)) {
-                        // update record
-                        $this->updateRecord($record['id'], $record['type'], $service);
-                        // notify user
-                        $this->notifyUser($service, $record);
-                    }
-                }
-            }
-
-            // prepare result
-            $result = true;
-
-            // refresh websocket
-            $this->getInjection('websocket')->refresh('progress_manager');
-        }
-
-        return $result;
-    }
-
-    /**
      * Get item actions
      *
      * @param string $status
@@ -256,14 +198,29 @@ class ProgressManager extends AbstractProgressManager
     }
 
     /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('serviceFactory');
+        $this->addDependency('progressManager');
+    }
+
+    /**
      * Get DB data
      *
      * @param int $maxSize
      *
      * @return array
      */
-    protected function getDbData(int $maxSize = null): array
+    protected function getDbData(int $maxSize): array
     {
+        // prepare user id
+        $userId = $this->getUser()->get('id');
+
         // prepare sql
         $sql
             = "SELECT
@@ -280,25 +237,11 @@ class ProgressManager extends AbstractProgressManager
                 FROM
                   progress_manager
                 WHERE 
-                  deleted=0 ";
-
-        if (is_null($maxSize)) {
-            // prepare statuses
-            $statuses = implode("','", [self::$progressStatus['new'], self::$progressStatus['in_progress']]);
-
-            $sql .= "AND status IN ('{$statuses}') ";
-        } else {
-            // prepare user id
-            $userId = $this->getUser()->get('id');
-
-            $sql .= "AND created_by_id='{$userId}' ";
-        }
-
-        $sql .= "ORDER BY status ASC, created_at DESC ";
-
-        if (!is_null($maxSize)) {
-            $sql .= "LIMIT {$maxSize} OFFSET 0";
-        }
+                     deleted=0 
+                 AND is_closed=0 
+                 AND created_by_id='{$userId}' 
+                ORDER BY status ASC, created_at DESC 
+                LIMIT {$maxSize} OFFSET 0";
 
         // execute sql
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
@@ -325,7 +268,7 @@ class ProgressManager extends AbstractProgressManager
                 FROM
                   progress_manager
                 WHERE
-                  deleted = 0 AND created_by_id='{$userId}'";
+                  deleted=0 AND is_closed=0 AND created_by_id='{$userId}'";
 
         // execute sql
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
@@ -335,54 +278,6 @@ class ProgressManager extends AbstractProgressManager
         return (!empty($data['total_count'])) ? (int)$data['total_count'] : 0;
     }
 
-    /**
-     * Update record
-     *
-     * @param string               $id
-     * @param string               $type
-     * @param ProgressJobInterface $service
-     *
-     * @return bool
-     */
-    protected function updateRecord(string $id, string $type, ProgressJobInterface $service): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($id)) {
-            // prepare params
-            $date = date('Y-m-d H:i:s');
-            $status = self::$progressStatus[$service->getStatus()];
-            $progress = $service->getProgress();
-            $offset = $service->getOffset();
-            $data = Json::encode($service->getData());
-            $eventData = [
-                'id'       => $id,
-                'type'     => $type,
-                'status'   => $status,
-                'progress' => $progress,
-                'data'     => $data,
-            ];
-
-            // triggered event
-            $this->triggered('ProgressManager', 'beforeUpdate', $eventData);
-
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `status`='{$status}', `progress`={$progress}, "
-                . "`progress_offset`={$offset}, `data`='{$data}', modified_at='{$date}' WHERE id='{$id}'";
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
-    }
 
     /**
      * Update status
@@ -405,41 +300,6 @@ class ProgressManager extends AbstractProgressManager
             ->getPDO()
             ->prepare($sql);
         $sth->execute();
-    }
-
-    /**
-     * Notify user
-     *
-     * @param ProgressJobInterface $service
-     * @param array                $record
-     *
-     * @return bool
-     */
-    protected function notifyUser(ProgressJobInterface $service, array $record): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (in_array($service->getStatus(), ['success', 'error'])) {
-            // prepare message
-            $message = $this->translate('notificationMessages', $service->getStatus());
-
-            // create notification
-            $notification = $this->getEntityManager()->getEntity('Notification');
-            $notification->set(
-                [
-                    'type'    => 'Message',
-                    'userId'  => $record['createdById'],
-                    'message' => sprintf($message, $record['name'])
-                ]
-            );
-            $this->getEntityManager()->saveEntity($notification);
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
     }
 
     /**

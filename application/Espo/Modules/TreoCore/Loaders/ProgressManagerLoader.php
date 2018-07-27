@@ -37,7 +37,7 @@ declare(strict_types = 1);
 namespace Espo\Modules\TreoCore\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\ProgressManager;
+use Espo\Modules\TreoCore\Core\ProgressManager;
 
 /**
  * ProgressManager Loader

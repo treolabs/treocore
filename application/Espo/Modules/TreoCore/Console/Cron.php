@@ -62,6 +62,20 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
+        // run cron jobs
+        $this->runCronJobs();
+
+        // run ProgressManager jobs
+        $this->getContainer()->get('progressManager')->run();
+    }
+
+    /**
+     * Run cron jobs
+     *
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function runCronJobs(): void
+    {
         $auth = new Auth($this->getContainer());
         $auth->useNoAuth();
 
