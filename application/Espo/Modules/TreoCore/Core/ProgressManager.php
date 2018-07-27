@@ -126,16 +126,12 @@ class ProgressManager
 
                             // notify user
                             $this->notifyUser($service->getStatus(), $job);
-
-                            return true;
                         } else {
                             // set error status
                             $this->setErrorStatus($job['id']);
 
                             // notify user
                             $this->notifyUser('error', $job);
-
-                            return true;
                         }
 
                     } else {
@@ -145,9 +141,6 @@ class ProgressManager
                     $GLOBALS['log']->error('No such ProgressManager job type: ' . $job['type']);
                 }
             }
-
-            // refresh websocket
-            $this->getContainer()->get('websocket')->refresh('progress_manager');
         }
 
         return true;
