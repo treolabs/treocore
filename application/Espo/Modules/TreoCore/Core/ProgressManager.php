@@ -97,7 +97,7 @@ class ProgressManager
     /**
      * Run jobs
      */
-    public function run(): bool
+    public function run(): void
     {
         if (!empty($jobs = $this->getJobs())) {
             // get config
@@ -109,41 +109,58 @@ class ProgressManager
                         // create service
                         $service = $this->getServiceFactory()->create($serviceName);
                     } catch (\Exception $e) {
+                        // set error status
+                        $this->setErrorStatus($job['id']);
+
                         $GLOBALS['log']->error("No such service: {$serviceName}");
                     }
 
                     if (!empty($service) && $service instanceof ProgressJobInterface) {
-                        try {
-                            $isExecuted = $service->executeProgressJob($job);
-                        } catch (\Exception $e) {
-                            $isExecuted = false;
-                            $GLOBALS['log']->error('ProgressManager job running failed: ' . $e->getMessage());
-                        }
+                        // set job user as system user
+                        if ($this->setJobUser($job['createdById'])) {
+                            try {
+                                $isExecuted = $service->executeProgressJob($job);
+                            } catch (\Exception $e) {
+                                $isExecuted = false;
+                                $GLOBALS['log']->error('ProgressManager job running failed: ' . $e->getMessage());
+                            }
 
-                        if ($isExecuted) {
-                            // update job
-                            $this->updateJob($job['id'], $job['type'], $service);
+                            if ($isExecuted) {
+                                // update job
+                                $this->updateJob($job['id'], $job['type'], $service);
 
-                            // notify user
-                            $this->notifyUser($service->getStatus(), $job);
+                                // notify user
+                                $this->notifyUser($service->getStatus(), $job);
+                            } else {
+                                // set error status
+                                $this->setErrorStatus($job['id']);
+
+                                // notify user
+                                $this->notifyUser('error', $job);
+                            }
                         } else {
                             // set error status
                             $this->setErrorStatus($job['id']);
 
-                            // notify user
-                            $this->notifyUser('error', $job);
+                            $GLOBALS['log']->error('No such user: ' . $job['createdById']);
                         }
-
                     } else {
+                        // set error status
+                        $this->setErrorStatus($job['id']);
+
                         $GLOBALS['log']->error('ProgressManager service should be instance of: ' . ProgressJobInterface::class);
                     }
                 } else {
+                    // set error status
+                    $this->setErrorStatus($job['id']);
+
                     $GLOBALS['log']->error('No such ProgressManager job type: ' . $job['type']);
                 }
             }
-        }
 
-        return true;
+            // set cron user as system user
+            $this->setJobUser('system');
+        }
     }
 
     /**
@@ -360,6 +377,32 @@ class ProgressManager
                 ]
             );
             $this->getEntityManager()->saveEntity($notification);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set user as system user
+     *
+     * @param string $userId
+     */
+    protected function setJobUser(string $userId): bool
+    {
+        // prepare result
+        $result = false;
+
+        $user = $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->get($userId);
+
+        if (!empty($user)) {
+            $this->getEntityManager()->setUser($user);
+            $this->getContainer()->setUser($user);
 
             // prepare result
             $result = true;
