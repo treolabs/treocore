@@ -47,7 +47,7 @@ use Espo\Modules\TreoCore\Services\AbstractProgressManager;
 use Espo\Modules\TreoCore\Services\ProgressJobInterface;
 
 /**
- * Class of ProgressManager
+ * ProgressManager
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
@@ -117,6 +117,7 @@ class ProgressManager
                             $isExecuted = $service->executeProgressJob($job);
                         } catch (\Exception $e) {
                             $isExecuted = false;
+                            $GLOBALS['log']->error('ProgressManager job running failed: ' . $e->getMessage());
                         }
 
                         if ($isExecuted) {
