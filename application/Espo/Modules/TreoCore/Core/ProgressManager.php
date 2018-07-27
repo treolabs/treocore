@@ -248,6 +248,7 @@ class ProgressManager
         $sql
             = "SELECT
                   id              as `id`,
+                  name            as `name`,
                   progress        as `progress`,
                   progress_offset as `progressOffset`,
                   type            as `type`,
