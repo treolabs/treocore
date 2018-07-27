@@ -110,9 +110,7 @@ class ProgressManager
                         $service = $this->getServiceFactory()->create($serviceName);
                     } catch (\Exception $e) {
                         // set error status
-                        $this->setErrorStatus($job['id']);
-
-                        $GLOBALS['log']->error("No such service: {$serviceName}");
+                        $this->setErrorStatus($job, "No such service: {$serviceName}");
                     }
 
                     if (!empty($service) && $service instanceof ProgressJobInterface) {
@@ -122,7 +120,6 @@ class ProgressManager
                                 $isExecuted = $service->executeProgressJob($job);
                             } catch (\Exception $e) {
                                 $isExecuted = false;
-                                $GLOBALS['log']->error('ProgressManager job running failed: ' . $e->getMessage());
                             }
 
                             if ($isExecuted) {
@@ -133,28 +130,19 @@ class ProgressManager
                                 $this->notifyUser($service->getStatus(), $job);
                             } else {
                                 // set error status
-                                $this->setErrorStatus($job['id']);
-
-                                // notify user
-                                $this->notifyUser('error', $job);
+                                $this->setErrorStatus($job, 'ProgressManager job running failed: ' . $e->getMessage());
                             }
                         } else {
                             // set error status
-                            $this->setErrorStatus($job['id']);
-
-                            $GLOBALS['log']->error('No such user: ' . $job['createdById']);
+                            $this->setErrorStatus($job, 'No such user: ' . $job['createdById']);
                         }
                     } else {
                         // set error status
-                        $this->setErrorStatus($job['id']);
-
-                        $GLOBALS['log']->error('ProgressManager service should be instance of: ' . ProgressJobInterface::class);
+                        $this->setErrorStatus($job, 'ProgressManager service should be instance of: ' . ProgressJobInterface::class);
                     }
                 } else {
                     // set error status
-                    $this->setErrorStatus($job['id']);
-
-                    $GLOBALS['log']->error('No such ProgressManager job type: ' . $job['type']);
+                    $this->setErrorStatus($job, 'No such ProgressManager job type: ' . $job['type']);
                 }
             }
 
@@ -335,8 +323,11 @@ class ProgressManager
      *
      * @param string $id
      */
-    protected function setErrorStatus(string $id): void
+    protected function setErrorStatus(array $job, string $message): void
     {
+        // prepare id
+        $id = $job['id'];
+
         // prepare params
         $status = AbstractProgressManager::$progressStatus['error'];
 
@@ -348,6 +339,12 @@ class ProgressManager
             ->getPDO()
             ->prepare($sql);
         $sth->execute();
+
+        // notify user
+        $this->notifyUser('error', $job);
+
+        // to log
+        $GLOBALS['log']->error($message);
     }
 
     /**
