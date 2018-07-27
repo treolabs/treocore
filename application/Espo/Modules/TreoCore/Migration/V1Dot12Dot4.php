@@ -31,29 +31,25 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-declare(strict_types = 1);
+namespace Espo\Modules\TreoCore\Migration;
 
-namespace Espo\Modules\TreoCore\Loaders;
-
-use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\ProgressManager;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 
 /**
- * ProgressManager Loader
+ * Version 1.12.4
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class ProgressManagerLoader extends Base
+class V1Dot12Dot4 extends AbstractMigration
 {
-
     /**
-     * Load ProgressManager
-     *
-     * @return ProgressManager
+     * Up to current
      */
-    public function load()
+    public function up(): void
     {
-        return (new ProgressManager())->setContainer($this->getContainer());
+        $this->getConfig()->set('pmLimit', 5);
+        $this->getConfig()->save();
     }
 }
