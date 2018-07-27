@@ -259,6 +259,7 @@ class ProgressManager
                   progress_manager
                 WHERE 
                      deleted=0 
+                 AND is_closed=0 
                  AND status IN ('{$statuses}')
                 ORDER BY status DESC, created_at DESC 
                 LIMIT {$limit} OFFSET 0";

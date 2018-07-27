@@ -75,7 +75,7 @@ class CancelStatusAction extends Base implements StatusActionInterface
             $this->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
 
             // prepare sql
-            $sql = "UPDATE progress_manager SET `deleted`=1 WHERE id='%s'";
+            $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
             $sql = sprintf($sql, $id);
 
             $sth = $this

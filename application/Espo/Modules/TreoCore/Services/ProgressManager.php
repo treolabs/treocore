@@ -238,6 +238,7 @@ class ProgressManager extends AbstractProgressManager
                   progress_manager
                 WHERE 
                      deleted=0 
+                 AND is_closed=0 
                  AND created_by_id='{$userId}' 
                 ORDER BY status ASC, created_at DESC 
                 LIMIT {$maxSize} OFFSET 0";
@@ -267,7 +268,7 @@ class ProgressManager extends AbstractProgressManager
                 FROM
                   progress_manager
                 WHERE
-                  deleted = 0 AND created_by_id='{$userId}'";
+                  deleted=0 AND is_closed=0 AND created_by_id='{$userId}'";
 
         // execute sql
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
