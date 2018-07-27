@@ -44,7 +44,7 @@ use Espo\Entities\User;
 use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Modules\TreoCore\Services\AbstractProgressManager;
-use Espo\Modules\TreoCore\Services\ProgressJobInterface;
+use Espo\Modules\TreoCore\Services\ProgressJobInterface as PMInterface;
 
 /**
  * ProgressManager
@@ -113,13 +113,17 @@ class ProgressManager
                         $this->setErrorStatus($job, "No such service: {$serviceName}");
                     }
 
-                    if (!empty($service) && $service instanceof ProgressJobInterface) {
+                    if (!empty($service) && $service instanceof PMInterface) {
                         // set job user as system user
                         if ($this->setJobUser($job['createdById'])) {
                             try {
                                 $isExecuted = $service->executeProgressJob($job);
                             } catch (\Exception $e) {
                                 $isExecuted = false;
+
+                                // set error status
+                                $message = 'ProgressManager job running failed: ' . $e->getMessage();
+                                $this->setErrorStatus($job, $message);
                             }
 
                             if ($isExecuted) {
@@ -128,9 +132,6 @@ class ProgressManager
 
                                 // notify user
                                 $this->notifyUser($service->getStatus(), $job);
-                            } else {
-                                // set error status
-                                $this->setErrorStatus($job, 'ProgressManager job running failed: ' . $e->getMessage());
                             }
                         } else {
                             // set error status
@@ -138,7 +139,8 @@ class ProgressManager
                         }
                     } else {
                         // set error status
-                        $this->setErrorStatus($job, 'ProgressManager service should be instance of: ' . ProgressJobInterface::class);
+                        $message = 'ProgressManager service should be instance of: ' . PMInterface::class;
+                        $this->setErrorStatus($job, $message);
                     }
                 } else {
                     // set error status
@@ -272,13 +274,13 @@ class ProgressManager
     /**
      * Update job
      *
-     * @param string               $id
-     * @param string               $type
-     * @param ProgressJobInterface $service
+     * @param string      $id
+     * @param string      $type
+     * @param PMInterface $service
      *
      * @return bool
      */
-    protected function updateJob(string $id, string $type, ProgressJobInterface $service): bool
+    protected function updateJob(string $id, string $type, PMInterface $service): bool
     {
         // prepare result
         $result = false;
