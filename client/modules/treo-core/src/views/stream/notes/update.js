@@ -42,7 +42,7 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
         setup: function () {
             var data = this.model.get('data');
 
-            var fields = data.fields;
+            var fields = data.fields || [];
 
             this.createMessage();
 
