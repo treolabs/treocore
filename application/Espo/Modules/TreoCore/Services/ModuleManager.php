@@ -792,11 +792,16 @@ class ModuleManager extends Base
                 }
             }
 
-            // sort
-            krsort($result);
+            // sorting result
+            $sortOrder = array_keys($result);
+            natsort($sortOrder);
+            $sortData = [];
+            foreach (array_reverse($sortOrder) as $v) {
+                $sortData[] = $result[$v];
+            }
 
             // prepare result
-            $result = array_values($result);
+            $result = $sortData;
         }
 
         return $result;

@@ -46,7 +46,7 @@ class Metadata extends AbstractMetadata
     /**
      * @var array
      */
-    protected $crmEntities = ['Account', 'Contact', 'Lead', 'Opportunity', 'Case'];
+    private $systemEntity = ['User'];
 
     /**
      * @var array
@@ -65,10 +65,10 @@ class Metadata extends AbstractMetadata
         // prepare entity defs for entity owners
         $data = $this->prepareOwners($data);
 
-        // delete activities from CRM entity
+        // delete activities
         $data = $this->deleteActivities($data);
 
-        // delete tasks from CRM entity
+        // delete tasks
         $data = $this->deleteTasks($data);
 
         // set allowed themes
@@ -217,8 +217,9 @@ class Metadata extends AbstractMetadata
         return $indexes;
     }
 
+
     /**
-     * Delete activities from CRM entity
+     * Delete activities
      *
      * @param array $data
      *
@@ -226,31 +227,34 @@ class Metadata extends AbstractMetadata
      */
     protected function deleteActivities(array $data): array
     {
-        foreach ($this->crmEntities as $entity) {
-            // remove from entityList
-            $entityList = [];
-            foreach ($data['entityDefs']['Meeting']['fields']['parent']['entityList'] as $item) {
-                if ($entity != $item) {
-                    $entityList[] = $item;
-                }
-            }
-            $data['entityDefs']['Meeting']['fields']['parent']['entityList'] = $entityList;
-
-            // delete link
-            if (isset($data['entityDefs'][$entity]['links']['meetings'])) {
-                unset($data['entityDefs'][$entity]['links']['meetings']);
-            }
-
-            // delete from side panel
-            foreach (['detail', 'detailSmall'] as $panel) {
-                if (!empty($data['clientDefs'][$entity]['sidePanels'][$panel])) {
-                    $sidePanelsData = [];
-                    foreach ($data['clientDefs'][$entity]['sidePanels'][$panel] as $k => $item) {
-                        if (!in_array($item['name'], ['activities', 'history'])) {
-                            $sidePanelsData[] = $item;
-                        }
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($data['scopes'][$entity]['hasActivities']) && empty($data['scopes'][$entity]['hasActivities'])) {
+                // remove from entityList
+                $entityList = [];
+                foreach ($data['entityDefs']['Meeting']['fields']['parent']['entityList'] as $item) {
+                    if ($entity != $item) {
+                        $entityList[] = $item;
                     }
-                    $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                }
+                $data['entityDefs']['Meeting']['fields']['parent']['entityList'] = $entityList;
+
+                // delete from side panel
+                foreach (['detail', 'detailSmall'] as $panel) {
+                    if (!empty($data['clientDefs'][$entity]['sidePanels'][$panel])) {
+                        $sidePanelsData = [];
+                        foreach ($data['clientDefs'][$entity]['sidePanels'][$panel] as $k => $item) {
+                            if (!in_array($item['name'], ['activities', 'history'])) {
+                                $sidePanelsData[] = $item;
+                            }
+                        }
+                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                    }
+                }
+
+                // delete link
+                if (isset($data['entityDefs'][$entity]['links']['meetings'])
+                    && !in_array($entity, $this->systemEntity)) {
+                    unset($data['entityDefs'][$entity]['links']['meetings']);
                 }
             }
         }
@@ -259,7 +263,7 @@ class Metadata extends AbstractMetadata
     }
 
     /**
-     * Delete tasks from CRM entity
+     * Delete tasks
      *
      * @param array $data
      *
@@ -267,26 +271,28 @@ class Metadata extends AbstractMetadata
      */
     protected function deleteTasks(array $data): array
     {
-        foreach ($this->crmEntities as $entity) {
-            // remove from entityList
-            $entityList = [];
-            foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
-                if ($entity != $item) {
-                    $entityList[] = $item;
-                }
-            }
-            $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
-
-            // remove from client defs
-            if (isset($data['clientDefs'][$entity]['sidePanels'])) {
-                foreach ($data['clientDefs'][$entity]['sidePanels'] as $panel => $rows) {
-                    $sidePanelsData = [];
-                    foreach ($rows as $k => $row) {
-                        if ($row['name'] != 'tasks') {
-                            $sidePanelsData[] = $row;
-                        }
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($data['scopes'][$entity]['hasTasks']) && $data['scopes'][$entity]['hasTasks'] === false) {
+                // remove from entityList
+                $entityList = [];
+                foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
+                    if ($entity != $item) {
+                        $entityList[] = $item;
                     }
-                    $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                }
+                $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
+
+                // remove from client defs
+                if (isset($data['clientDefs'][$entity]['sidePanels'])) {
+                    foreach ($data['clientDefs'][$entity]['sidePanels'] as $panel => $rows) {
+                        $sidePanelsData = [];
+                        foreach ($rows as $k => $row) {
+                            if ($row['name'] != 'tasks') {
+                                $sidePanelsData[] = $row;
+                            }
+                        }
+                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                    }
                 }
             }
         }
