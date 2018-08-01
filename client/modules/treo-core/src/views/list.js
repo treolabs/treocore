@@ -61,11 +61,14 @@ Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
             $window.on('scroll.main', () => {
                 let scrollTop = $window.scrollTop();
                 let header = this.$el.find('.header-breadcrumbs');
+                let width = $('.header-breadcrumbs').parent().parent().width();
 
                 if (scrollTop > this.$el.find('.page-header').outerHeight()) {
-                    header.addClass('fixed-header-breadcrumbs');
+                    header.addClass('fixed-header-breadcrumbs')
+                        .css('width',width);
                 } else {
-                    header.removeClass('fixed-header-breadcrumbs');
+                    header.removeClass('fixed-header-breadcrumbs')
+                        .css('width','auto');
                 }
             });
         }
