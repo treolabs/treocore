@@ -46,6 +46,11 @@ class Metadata extends AbstractMetadata
     /**
      * @var array
      */
+    private $systemEntity = ['User'];
+
+    /**
+     * @var array
+     */
     protected $allowedTheme = ['TreoDarkTheme'];
 
     /**
@@ -247,7 +252,8 @@ class Metadata extends AbstractMetadata
                 }
 
                 // delete link
-                if (isset($data['entityDefs'][$entity]['links']['meetings'])) {
+                if (isset($data['entityDefs'][$entity]['links']['meetings'])
+                    && !in_array($entity, $this->systemEntity)) {
                     unset($data['entityDefs'][$entity]['links']['meetings']);
                 }
             }
