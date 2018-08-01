@@ -70,10 +70,11 @@ class ProgressManager
      * @param string $type
      * @param array  $data
      * @param string $userId
+     * @param bool   $isHidden
      *
      * @return bool
      */
-    public function push(string $name, string $type, array $data = [], string $userId = ''): bool
+    public function push(string $name, string $type, array $data = [], string $userId = '', bool $isHidden = false): bool
     {
         // prepare result
         $result = false;
@@ -85,7 +86,7 @@ class ProgressManager
             // prepare userId
             $userId = empty($userId) ? $this->getUser()->get('id') : $userId;
 
-            $result = $this->insert($name, $type, $data, $userId);
+            $result = $this->insert($name, $type, $data, $userId, $isHidden);
 
             // refresh websocket
             $this->getContainer()->get('websocket')->refresh('progress_manager');
@@ -184,10 +185,11 @@ class ProgressManager
      * @param string $type
      * @param array  $data
      * @param string $userId
+     * @param bool   $isHidden
      *
      * @return bool
      */
-    protected function insert(string $name, string $type, array $data, string $userId): bool
+    protected function insert(string $name, string $type, array $data, string $userId, bool $isHidden = false): bool
     {
         // prepare data
         $result = false;
@@ -204,12 +206,13 @@ class ProgressManager
             $status = $pdo->quote(AbstractProgressManager::$progressStatus['new']);
             $userId = $pdo->quote($userId);
             $date = $pdo->quote(date('Y-m-d H:i:s'));
+            $isHidden = (empty($isHidden)) ? 0 : 1;
 
             // prepare sql
             $sql = "INSERT INTO progress_manager SET "
                 . "id='{$id}', progress_manager.name={$name}, progress_manager.type={$type}, "
                 . "progress_manager.data={$data}, progress_manager.status={$status}, progress=0, "
-                . "created_by_id={$userId}, created_at={$date}, modified_at={$date};";
+                . "created_by_id={$userId}, created_at={$date}, modified_at={$date}, is_hidden={$isHidden};";
 
             $sth = $this
                 ->getEntityManager()
