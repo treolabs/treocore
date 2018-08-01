@@ -736,7 +736,7 @@ class ModuleManager extends Base
 
                     foreach ($row['require'] as $k => $v) {
                         // for system
-                        if ($k == 'treo/treo') {
+                        if ($k == 'treo/treopim') {
                             $require[$k] = [
                                 'id'       => $k,
                                 'name'     => 'Treo System',

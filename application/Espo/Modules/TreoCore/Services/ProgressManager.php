@@ -69,6 +69,7 @@ class ProgressManager extends AbstractProgressManager
                   progress_manager
                 WHERE 
                      deleted=0 
+                 AND is_closed=0
                  AND is_hidden=0     
                  AND status='{$status}' 
                  AND created_by_id='{$userId}'";
@@ -273,7 +274,7 @@ class ProgressManager extends AbstractProgressManager
                 FROM
                   progress_manager
                 WHERE
-                  deleted=0 AND is_closed=0 AND created_by_id='{$userId}'";
+                  deleted=0 AND is_closed=0 AND is_hidden=0 AND created_by_id='{$userId}'";
 
         // execute sql
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
