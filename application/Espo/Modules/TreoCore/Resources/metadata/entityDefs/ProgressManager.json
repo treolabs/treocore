@@ -50,6 +50,10 @@
     "isClosed": {
       "type": "bool",
       "default": 0
+    },
+    "isHidden": {
+      "type": "bool",
+      "default": 0
     }
   },
   "links": {
