@@ -252,6 +252,7 @@ class ProgressManager
                   progress        as `progress`,
                   progress_offset as `progressOffset`,
                   type            as `type`,
+                  is_hidden       as `isHidden`,
                   data            as `data`,
                   status          as `status`,
                   created_by_id   as `createdById`
@@ -363,7 +364,7 @@ class ProgressManager
         // prepare result
         $result = false;
 
-        if (in_array($status, ['success', 'error'])) {
+        if (in_array($status, ['success', 'error']) && empty($job['isHidden'])) {
             // prepare message
             $message = $this->translate('notificationMessages', $status);
 
