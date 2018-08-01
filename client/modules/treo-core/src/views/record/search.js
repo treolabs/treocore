@@ -183,7 +183,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 if (nextView.options.isAttribute) {
                     name = nextView.options.label;
                 } else if (nextView.options.isImport) {
-                    name = nextView.options.name.split('-')[0] + ' ' + nextView.options.params.importJobDate;
+                    name = nextView.options.params.label + ' ' + nextView.options.params.importJobDate;
                 } else {
                     name = this.translate(nextView.generalName, 'fields', this.scope);
                 }
