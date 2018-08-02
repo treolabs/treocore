@@ -3950,7 +3950,9 @@ tbody.collapse.in {
     font-weight: normal;
     line-height: 1.36;
     color: #333;
-    white-space: nowrap
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
@@ -11335,7 +11337,7 @@ table.table > thead th > a {
 }
 
 ul.dropdown-menu > li.checkbox {
-    padding: 10px 0 10px 20px
+    padding: 10px 10px 10px 20px
 }
 
 .search-row > div {
