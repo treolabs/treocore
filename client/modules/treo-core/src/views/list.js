@@ -34,12 +34,12 @@
 Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
     Dep => Dep.extend({
 
-        enabledfixedHeader: true,
+        enabledFixedHeader: true,
 
         prepareRecordViewOptions(options) {
             Dep.prototype.prepareRecordViewOptions.call(this, options);
 
-            options.enabledfixedHeader = this.enabledfixedHeader;
+            options.enabledFixedHeader = this.enabledFixedHeader;
         },
 
         setupSorting() {
@@ -51,27 +51,6 @@ Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
 
             Dep.prototype.setupSorting.call(this);
         },
-
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            let $window = $(window);
-
-            $window.off('scroll.main');
-            $window.on('scroll.main', () => {
-                let scrollTop = $window.scrollTop();
-                let header = this.$el.find('.header-breadcrumbs');
-                let width = $('.header-breadcrumbs').parent().parent().width();
-
-                if (scrollTop > this.$el.find('.page-header').outerHeight()) {
-                    header.addClass('fixed-header-breadcrumbs')
-                        .css('width',width);
-                } else {
-                    header.removeClass('fixed-header-breadcrumbs')
-                        .css('width','auto');
-                }
-            });
-        }
 
     })
 );
