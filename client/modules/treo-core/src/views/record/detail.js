@@ -169,13 +169,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                         }
                     }.bind(this));
                 }
-                let header = this.$el.find('.header-breadcrumbs');
-
-                if (scrollTop > this.$el.find('.page-header').outerHeight()) {
-                    header.addClass('fixed-header-breadcrumbs');
-                } else {
-                    header.removeClass('fixed-header-breadcrumbs');
-                }
             }.bind(this));
         },
 
