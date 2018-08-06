@@ -60,14 +60,6 @@ class Events extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // prepare result
-        $result[] = [
-            'class'  => 'CLASS NAME',
-            'target' => 'TARGET',
-            'action' => 'ACTION',
-            'data'   => 'DATA'
-        ];
-
         if (!empty($files = $this->getDirFiles('application/Espo'))) {
             $classes = [];
             $tmp = [];
@@ -85,10 +77,10 @@ class Events extends AbstractConsole
 
                     foreach ($parsed as $row) {
                         $tmp[$className] = [
-                            'class'  => $className,
-                            'target' => $row['target'],
-                            'action' => $row['action'],
-                            'data'   => $row['data']
+                            $className,
+                            $row['target'],
+                            $row['action'],
+                            $row['data']
                         ];
                     }
                 }
@@ -105,7 +97,7 @@ class Events extends AbstractConsole
 
         // render
         self::show('Triggered events:', 3);
-        echo self::ArrayToTable($result);
+        echo self::ArrayToTable($result, ['CLASS NAME', 'TARGET', 'ACTION', 'DATA']);
     }
 
     /**
