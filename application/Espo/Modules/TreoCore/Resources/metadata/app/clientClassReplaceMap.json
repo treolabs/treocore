@@ -53,9 +53,6 @@
   "views/record/row-actions/default": [
     "treo-core"
   ],
-  "views/stream/record/list": [
-    "treo-core"
-  ],
   "views/stream/row-actions/default": [
     "treo-core"
   ],
