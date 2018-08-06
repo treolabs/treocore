@@ -47,7 +47,7 @@ return [
         'password' => '',
     ],
     'version' => '',
-    'useCache' => true,
+    'useCache' => false,
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'TreoPim',
