@@ -59,7 +59,7 @@ class Installer extends Base
     /**
      * Init
      */
-    public function init()
+    protected function init()
     {
         parent::init();
 

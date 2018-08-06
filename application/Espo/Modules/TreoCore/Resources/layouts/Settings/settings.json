@@ -2,11 +2,11 @@
     {
         "label": "System",
         "rows": [
-            [{"name": "useCache"}, {"name": "siteUrl"}],
+            [{"name": "allowUnstable"}, {"name": "siteUrl"}],
             [{"name": "exportDisabled"}, {"name": "globalSearchEntityList"}],
             [{"name": "followCreatedEntities"}, {"name": "b2cMode"}],
             [{"name": "aclStrictMode"}, {"name": "aclAllowDeleteCreated"}],
-            [{"name": "textFilterUseContainsForVarchar"}, {"name": "allowUnstable"}]
+            [{"name": "textFilterUseContainsForVarchar"}, false]
         ]
     },
     {
