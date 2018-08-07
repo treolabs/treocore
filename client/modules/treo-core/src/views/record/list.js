@@ -139,13 +139,11 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 fixedTable = this.$el.find('.fixed-header-table'),
                 fullTable = this.$el.find('.full-table'),
                 navBarRight = $('.navbar-right'),
-                posTopTable = 0,
                 posLeftTable = 0,
                 navBarHeight = 0,
 
                 setPosition = () => {
-                    posLeftTable = fullTable.position().left;
-                    posTopTable = fullTable.position().top;
+                    posLeftTable = fullTable.offset().left;
                     navBarHeight = navBarRight.outerHeight();
 
                     fixedTable.css({
@@ -167,7 +165,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     });
                 },
                 toggleClass = () => {
-                    let showPosition = posTopTable - navBarHeight;
+                    let showPosition = fullTable.offset().top;
 
                     if ($window.scrollTop() > showPosition && $window.width() >= 768) {
                         fixedTable.removeClass('hidden');
