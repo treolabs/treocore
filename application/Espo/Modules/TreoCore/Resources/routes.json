@@ -125,6 +125,17 @@
     }
   },
   {
+    "route": "/ProgressManager/popupShowed",
+    "method": "post",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "popupShowed"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
     "route": "/ProgressManager/popupData",
     "method": "get",
     "params": {

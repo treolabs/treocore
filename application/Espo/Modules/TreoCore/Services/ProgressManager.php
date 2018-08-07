@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\Utils\Json;
 use Espo\Modules\TreoCore\Core\ProgressManager as PM;
 use Slim\Http\Request;
 
@@ -50,29 +51,6 @@ class ProgressManager extends AbstractProgressManager
      * @var int
      */
     public static $maxSize = 15;
-
-    /**
-     * Is need to show progress popup
-     *
-     * @param string $userId
-     *
-     * @return bool
-     */
-    public function isShowPopup(string $userId): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (file_exists(PM::CACHE_PATH)) {
-            // get data
-            $data = include PM::CACHE_PATH;
-
-            // prepare result
-            $result = in_array($userId, $data);
-        }
-
-        return $result;
-    }
 
     /**
      * Get data for progresses popup

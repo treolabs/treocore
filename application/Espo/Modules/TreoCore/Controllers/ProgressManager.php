@@ -63,9 +63,37 @@ class ProgressManager extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this
-            ->getService('ProgressManager')
-            ->isShowPopup((string)$userId);
+        // get data
+        $data = $this
+            ->getContainer()
+            ->get('progressManager')
+            ->getPopupData();
+
+        return (!empty($data) && in_array("'$userId'", $data));
+    }
+
+
+    /**
+     * @ApiDescription(description="Set popup as showed for user")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/Progress/popupShowed")
+     * @ApiReturn(sample="'true'")
+     *
+     * @return bool
+     * @throws Exceptions\BadRequest
+     */
+    public function actionpopupShowed($params, $data, Request $request): bool
+    {
+        if (!$request->isPost() || empty($userId = $data->userId)) {
+            throw new Exceptions\BadRequest();
+        }
+
+        $this
+            ->getContainer()
+            ->get('progressManager')
+            ->hidePopup((string)$userId);
+
+        return true;
     }
 
     /**

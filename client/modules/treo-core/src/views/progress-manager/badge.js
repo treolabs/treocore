@@ -87,6 +87,9 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
                 view.render();
             }.bind(this));
 
+            // set popup as showed
+            this.ajaxPostRequest('ProgressManager/popupShowed', {"userId": this.getUser().get('id')});
+
             $(document).on('mouseup.progress', function (e) {
                 let container = this.$el.find('.progress-panel-container');
                 if (!container.is(e.target) && container.has(e.target).length === 0) {

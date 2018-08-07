@@ -59,7 +59,7 @@ class ProgressManager
      */
     use ContainerTrait;
 
-    const CACHE_PATH = 'data/popup.php';
+    const CACHE_PATH = 'data/pm-show-popup.json';
 
     /**
      * @var array
@@ -93,6 +93,43 @@ class ProgressManager
         }
 
         return $result;
+    }
+
+    /**
+     * Get popup data
+     *
+     * @return array
+     */
+    public function getPopupData(): array
+    {
+        // prepare data
+        $data = [];
+
+        if (file_exists(self::CACHE_PATH)) {
+            $data = Json::decode(file_get_contents(self::CACHE_PATH), true);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Hide popup
+     *
+     * @param string $userId
+     */
+    public function hidePopup(string $userId): void
+    {
+        // prepare data
+        $data = $this->getPopupData();
+
+        foreach ($data as $k => $v) {
+            if ($v == "'$userId'") {
+                unset($data[$k]);
+            }
+        }
+
+        // set to file
+        $this->savePopupFile($data);
     }
 
     /**
@@ -219,6 +256,11 @@ class ProgressManager
                 ->getPDO()
                 ->prepare($sql);
             $sth->execute();
+
+            // set user to popup data
+            $popupData = $this->getPopupData();
+            $popupData[] = $userId;
+            $this->savePopupFile($popupData);
 
             // prepare result
             $result = true;
@@ -413,6 +455,18 @@ class ProgressManager
         }
 
         return $result;
+    }
+
+    /**
+     * Save popup file
+     *
+     * @param array $data
+     */
+    protected function savePopupFile(array $data): void
+    {
+        $file = fopen(self::CACHE_PATH, "w");
+        fwrite($file, Json::encode($data));
+        fclose($file);
     }
 
     /**
