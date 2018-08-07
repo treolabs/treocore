@@ -58,6 +58,9 @@ class ProgressManager
      * Traits
      */
     use ContainerTrait;
+
+    const CACHE_PATH = 'data/popup.php';
+
     /**
      * @var array
      */

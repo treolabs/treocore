@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
@@ -59,11 +59,13 @@ class ProgressManager extends Base
      */
     public function actionIsShowPopup($params, $data, Request $request): bool
     {
-        if (!$request->isGet()) {
+        if (!$request->isGet() || empty($userId = $request->get('userId'))) {
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getService('ProgressManager')->isShowPopup();
+        return $this
+            ->getService('ProgressManager')
+            ->isShowPopup((string)$userId);
     }
 
     /**

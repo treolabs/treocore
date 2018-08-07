@@ -65,7 +65,7 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
         initProgressShowInterval() {
             this.interval = window.setInterval(() => {
                 if (!this.isPanelShowed) {
-                    this.ajaxGetRequest('ProgressManager/isShowPopup', {})
+                    this.ajaxGetRequest('ProgressManager/isShowPopup', {"userId": this.getUser().get('id')})
                         .then(response => {
                             if (response && !this.isPanelShowed) {
                                 this.showProgress();

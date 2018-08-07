@@ -119,6 +119,9 @@
     "params": {
       "controller": "ProgressManager",
       "action": "isShowPopup"
+    },
+    "conditions": {
+      "auth": false
     }
   },
   {
