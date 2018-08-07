@@ -66,6 +66,14 @@
     }
   },
   {
+    "route": "/ModuleManager/cancel",
+    "method": "post",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "cancel"
+    }
+  },
+  {
     "route": "/ModuleManager/availableModulesList",
     "method": "get",
     "params": {

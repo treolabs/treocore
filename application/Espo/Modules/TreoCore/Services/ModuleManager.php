@@ -375,6 +375,46 @@ class ModuleManager extends Base
     }
 
     /**
+     * Cancel module changes
+     *
+     * @param string $id
+     *
+     * @return bool
+     * @throws Exceptions\Error
+     */
+    public function cancel(string $id): bool
+    {
+        // prepare result
+        $result = false;
+
+        // get package
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        if (!empty($packages)) {
+            $package = array_pop($packages);
+        }
+
+        if (!empty($name = $package['name'])) {
+            // get data
+            $composerData = $this->getComposerService()->getModuleComposerJson();
+            $composerStableData = $this->getComposerService()->getModuleStableComposerJson();
+
+            if (!empty($value = $composerStableData['require'][$name])) {
+                $composerData['require'][$name] = $value;
+            } elseif (isset($composerData['require'][$name])) {
+                unset($composerData['require'][$name]);
+            }
+
+            // save
+            $this->getComposerService()->setModuleComposerJson($composerData);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get logs
      *
      * @param Request $request
