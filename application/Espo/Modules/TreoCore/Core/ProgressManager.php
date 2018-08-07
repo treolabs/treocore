@@ -90,9 +90,6 @@ class ProgressManager
             $userId = empty($userId) ? $this->getUser()->get('id') : $userId;
 
             $result = $this->insert($name, $type, $data, $userId, $isHidden);
-
-            // refresh websocket
-            $this->getContainer()->get('websocket')->refresh('progress_manager');
         }
 
         return $result;
