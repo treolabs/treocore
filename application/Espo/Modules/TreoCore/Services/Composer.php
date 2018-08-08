@@ -188,6 +188,12 @@ class Composer extends Base
             // loggout all users
             $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
             $sth->execute();
+
+            // update module file for load order
+            $this
+                ->getInjection('serviceFactory')
+                ->create('ModuleManager')
+                ->updateModuleFile();
         }
 
         // triggered after action
@@ -339,6 +345,23 @@ class Composer extends Base
             $result = ['require' => []];
 
             $this->setModuleComposerJson($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get modules stable-composer.json
+     *
+     * @return array
+     */
+    public function getModuleStableComposerJson(): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($this->moduleStableComposer)) {
+            $result = Json::decode(file_get_contents($this->moduleStableComposer), true);
         }
 
         return $result;
@@ -669,13 +692,11 @@ class Composer extends Base
         if (!is_dir($src)) {
             return false;
         }
-
         if (!is_dir($dest)) {
             if (!mkdir($dest)) {
                 return false;
             }
         }
-
         $i = new \DirectoryIterator($src);
         foreach ($i as $f) {
             if ($f->isFile()) {
@@ -701,13 +722,11 @@ class Composer extends Base
         if (!is_dir($src)) {
             return false;
         }
-
         if (!is_dir($dest)) {
             if (!mkdir($dest)) {
                 return false;
             }
         }
-
         $i = new \DirectoryIterator($src);
         foreach ($i as $f) {
             if ($f->isFile()) {
@@ -734,15 +753,12 @@ class Composer extends Base
         if (!file_exists($dirname)) {
             return false;
         }
-
         if (is_dir($dirname)) {
             $dir_handle = opendir($dirname);
         }
-
         if (!$dir_handle) {
             return false;
         }
-
         while ($file = readdir($dir_handle)) {
             if ($file != "." && $file != "..") {
                 if (!is_dir($dirname . "/" . $file)) {

@@ -65,7 +65,7 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
         initProgressShowInterval() {
             this.interval = window.setInterval(() => {
                 if (!this.isPanelShowed) {
-                    this.ajaxGetRequest('ProgressManager/isShowPopup', {})
+                    this.ajaxGetRequest('ProgressManager/isShowPopup', {"userId": this.getUser().get('id')})
                         .then(response => {
                             if (response && !this.isPanelShowed) {
                                 this.showProgress();
@@ -86,6 +86,9 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
             }, function (view) {
                 view.render();
             }.bind(this));
+
+            // set popup as showed
+            this.ajaxPostRequest('ProgressManager/popupShowed', {"userId": this.getUser().get('id')});
 
             $(document).on('mouseup.progress', function (e) {
                 let container = this.$el.find('.progress-panel-container');

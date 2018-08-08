@@ -7,7 +7,7 @@
   {
     "name": "description",
     "notSortable": true,
-    "width": 30
+    "width": 35
   },
   {
     "name": "settingVersion",
@@ -18,16 +18,8 @@
     "notSortable": true
   },
   {
-    "name": "required",
+    "name": "requiredTranslates",
     "notSortable": true,
-    "view": "treo-core:views/module-manager/fields/required",
     "width": 15
-  },
-  {
-    "name": "isActive",
-    "notSortable": true,
-    "type": "bool",
-    "width": 5,
-    "disabled": false
   }
 ]

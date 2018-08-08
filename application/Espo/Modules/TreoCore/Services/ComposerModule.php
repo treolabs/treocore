@@ -335,7 +335,7 @@ class ComposerModule extends Base
         $config = $this->getConfig();
 
         // get all modules
-        $modules = $this->getInjection('metadata')->getAllModules();
+        $modules = $this->getInjection('metadata')->getModuleList();
 
         foreach ($newData as $module => $versions) {
             if (isset($oldDara[$module])) {

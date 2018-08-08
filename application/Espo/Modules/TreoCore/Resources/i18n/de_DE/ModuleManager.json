@@ -10,8 +10,7 @@
     "settingVersion": "Version einstellen",
     "currentVersion": "Aktuelle Version",
     "availableVersions": "Verfügbare Versionen",
-    "required": "Erforderlich",
-    "isActive": "Ist aktiv"
+    "requiredTranslates": "Erforderlich"
   },
   "exceptions": {
     "hasRequireds": "Das Modul hat die Anforderungen nicht erfüllt",
@@ -32,6 +31,7 @@
     "installModule": "Installieren",
     "updateModule": "Aktualisieren",
     "removeModule": "Löschen",
+    "cancelModule": "Stornieren",
     "settings": "Einstellungen",
     "settingsText": "Sie müssen registriert sein, um TreoPIM Module installieren oder aktualisieren zu können...",
     "username": "Benutzer",
@@ -51,6 +51,10 @@
     "settedModuleForInstalling": "Das Modul wurde für die Installation eingerichtet",
     "settingModuleForUpdating": "Einstellmodul für die Aktualisierung...",
     "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet",
+    "cancelingModuleUpdate": "Modulupdate wird abgebrochen...",
+    "canceledModuleUpdate": "Die Modulaktualisierung wurde abgebrochen",
+    "cancelingModuleInstall": "Abbrechen der Modulinstallation...",
+    "canceledModuleInstall": "Die Installation des Moduls wurde abgebrochen",
     "Log": "Log",
     "confirmRun": "Nach der Aktualisierungsaktion würden sich alle Benutzer vom System abmelden. Bist du sicher, dass du diese Aktion machen willst?"
   },

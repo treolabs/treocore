@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\DataManager;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -44,7 +43,6 @@ use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
-use Espo\Modules\TreoCore\Services\ComposerModule;
 
 /**
  * ModuleManager service
@@ -53,6 +51,8 @@ use Espo\Modules\TreoCore\Services\ComposerModule;
  */
 class ModuleManager extends Base
 {
+    const INACTIVE_MODULES_PATH = 'data/inactive-modules';
+
     /**
      * @var string
      */
@@ -83,41 +83,52 @@ class ModuleManager extends Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getAllModules() as $module) {
-            if ($module != 'TreoCore') {
-                // prepare item
-                $item = [
-                    "id"             => $module,
-                    "name"           => $module,
-                    "description"    => '',
-                    "settingVersion" => '*',
-                    "currentVersion" => '*',
-                    "required"       => [],
-                    "isActive"       => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"       => false,
-                    "isComposer"     => false,
-                    "status"         => $this->getModuleStatus($composerDiff, $module)
-                ];
+        foreach ($this->getMetadata()->getModuleList() as $id) {
+            // skip core module
+            if ($id == 'TreoCore') {
+                continue;
+            }
 
-                // get current module package
-                $package = $this->getComposerModuleService()->getModulePackage($module);
+            // push for custom module
+            $result['list'][$id] = [
+                'id'                 => $id,
+                'name'               => $id,
+                'description'        => '',
+                'settingVersion'     => '',
+                'currentVersion'     => '',
+                'versions'           => [],
+                'required'           => [],
+                'requiredTranslates' => [],
+                'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                'isComposer'         => false,
+                'status'             => $this->getModuleStatus($composerDiff, $id),
+            ];
 
-                if (!empty($package)) {
-                    // prepare item
-                    $item['name'] = $this->translateModule($package, 'name');
-                    $item['description'] = $this->translateModule($package, 'description');
-                    if (!empty($settingVersion = $composerData['require'][$package['name']])) {
-                        $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
-                    }
-                    $item['currentVersion'] = $this->prepareModuleVersion($package['version']);
-                    $item['versions'] = $this->prepareModuleVersions($module);
-                    $item['required'] = $this->getModuleRequireds($module);
-                    $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
-                    $item['isComposer'] = true;
+            // get package
+            $package = $this
+                ->getComposerModuleService()
+                ->getModulePackage($id);
+
+            if (!empty($package)) {
+                $result['list'][$id]['name'] = $this->translateModule($package, 'name');
+                $result['list'][$id]['description'] = $this->translateModule($package, 'description');
+                $result['list'][$id]['settingVersion'] = '*';
+                if ($settingVersion = $composerData['require'][$package['name']]) {
+                    $result['list'][$id]['settingVersion'] = $this->prepareModuleVersion($settingVersion);
                 }
-
-                // push
-                $result['list'][] = $item;
+                $result['list'][$id]['currentVersion'] = $this->prepareModuleVersion($package['version']);
+                $result['list'][$id]['versions'] = $this->prepareModuleVersions($id);
+                if (!empty($requireds = $this->getModuleRequireds($id))) {
+                    $result['list'][$id]['required'] = $requireds;
+                    foreach ($requireds as $required) {
+                        $pRequired = $this
+                            ->getComposerModuleService()
+                            ->getModulePackage($required);
+                        $result['list'][$id]['requiredTranslates'][] = $this
+                            ->translateModule($pRequired, 'name');
+                    }
+                }
+                $result['list'][$id]['isComposer'] = true;
             }
         }
 
@@ -128,9 +139,8 @@ class ModuleManager extends Base
                 "name"           => $row['id'],
                 "description"    => '',
                 "settingVersion" => '*',
-                "currentVersion" => '*',
+                "currentVersion" => '',
                 "required"       => [],
-                "isActive"       => false,
                 "isSystem"       => false,
                 "isComposer"     => true,
                 "status"         => 'install'
@@ -148,9 +158,11 @@ class ModuleManager extends Base
             }
 
             // push
-            $result['list'][] = $item;
+            $result['list'][$row['id']] = $item;
         }
 
+        // prepare result
+        $result['list'] = array_values($result['list']);
         $result['total'] = count($result['list']);
 
         // sorting
@@ -218,53 +230,6 @@ class ModuleManager extends Base
 
             // prepare total
             $result['total'] = count($result['list']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Update module activation
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    public function updateActivation(string $moduleId): bool
-    {
-        // prepare result
-        $result = false;
-
-        if ($this->isModuleChangeable($moduleId)) {
-            // get config data
-            $config = $this->getModuleConfigData($moduleId);
-
-            // write to file
-            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
-
-            // drop cache
-            $this->getDataManager()->clearCache();
-
-            if ($result) {
-                // get package
-                $package = $this->getComposerModuleService()->getModulePackage($moduleId);
-
-                // prepare event data
-                $eventData = [
-                    'id'       => $moduleId,
-                    'disabled' => empty($config['disabled']),
-                    'package'  => $package
-                ];
-
-                // triggered event
-                $this->triggeredEvent('updateModuleActivation', $eventData);
-
-                // rebuild DB
-                if (!empty($config['disabled'])) {
-                    $this->getDataManager()->rebuild();
-                }
-            }
         }
 
         return $result;
@@ -375,6 +340,46 @@ class ModuleManager extends Base
     }
 
     /**
+     * Cancel module changes
+     *
+     * @param string $id
+     *
+     * @return bool
+     * @throws Exceptions\Error
+     */
+    public function cancel(string $id): bool
+    {
+        // prepare result
+        $result = false;
+
+        // get package
+        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        if (!empty($packages)) {
+            $package = array_pop($packages);
+        }
+
+        if (!empty($name = $package['name'])) {
+            // get data
+            $composerData = $this->getComposerService()->getModuleComposerJson();
+            $composerStableData = $this->getComposerService()->getModuleStableComposerJson();
+
+            if (!empty($value = $composerStableData['require'][$name])) {
+                $composerData['require'][$name] = $value;
+            } elseif (isset($composerData['require'][$name])) {
+                unset($composerData['require'][$name]);
+            }
+
+            // save
+            $this->getComposerService()->setModuleComposerJson($composerData);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get logs
      *
      * @param Request $request
@@ -422,6 +427,30 @@ class ModuleManager extends Base
     }
 
     /**
+     * Update module file
+     *
+     * @return bool
+     */
+    public function updateModuleFile(): bool
+    {
+        // prepare data
+        $data = [];
+
+        // reload modules
+        $this->getMetadata()->init(true);
+
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            if (!in_array($module, ['Crm', 'TreoCore'])) {
+                $data[$module] = [
+                    'order' => $this->createModuleLoadOrder($module)
+                ];
+            }
+        }
+
+        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+    }
+
+    /**
      * Clear module data from "module.json" file
      *
      * @param string $id
@@ -449,9 +478,7 @@ class ModuleManager extends Base
                 'metadata',
                 'language',
                 'fileManager',
-                'dataManager',
-                'serviceFactory',
-                'migration'
+                'serviceFactory'
             ]
         );
     }
@@ -478,31 +505,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * Is module changable?
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    protected function isModuleChangeable(string $moduleId): bool
-    {
-        // is system module ?
-        $this->isModuleSystem($moduleId);
-
-        // checking requireds
-        if ($this->hasRequireds($moduleId)) {
-            throw new Exceptions\Error(
-                $this
-                    ->getLanguage()
-                    ->translate('hasRequiredsDelete', 'exceptions', 'ModuleManager')
-            );
-        }
-
-        return true;
-    }
-
-    /**
      * Is module system ?
      *
      * @param string $moduleId
@@ -522,38 +524,6 @@ class ModuleManager extends Base
         }
 
         return false;
-    }
-
-    /**
-     * Update module file
-     *
-     * @param string $moduleId
-     * @param bool   $isDisabled
-     *
-     * @return bool
-     */
-    protected function updateModuleFile(string $moduleId, bool $isDisabled): bool
-    {
-        // prepare data
-        $data = [];
-
-        // reload modules
-        $this->getMetadata()->init(true);
-
-        foreach ($this->getMetadata()->getAllModules() as $module) {
-            if (!in_array($module, ['Crm', 'TreoCore'])) {
-                $data[$module] = [
-                    'order'    => $this->createModuleLoadOrder($module),
-                    'disabled' => !in_array($module, $this->getMetadata()->getModuleList())
-                ];
-
-                if ($module == $moduleId) {
-                    $data[$module]['disabled'] = $isDisabled;
-                }
-            }
-        }
-
-        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
     }
 
     /**
@@ -857,16 +827,6 @@ class ModuleManager extends Base
     protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
-    }
-
-    /**
-     * Get DataManager
-     *
-     * @return DataManager
-     */
-    protected function getDataManager(): DataManager
-    {
-        return $this->getInjection('dataManager');
     }
 
     /**

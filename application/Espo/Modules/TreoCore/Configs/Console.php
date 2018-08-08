@@ -43,5 +43,5 @@ return [
     "clear cache"    => Console\ClearCache::class,
     "rebuild"        => Console\Rebuild::class,
     "cron"           => Console\Cron::class,
-    "websocket open" => Console\Websocket::class
+    "events"         => Console\Events::class
 ];

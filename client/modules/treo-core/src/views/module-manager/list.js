@@ -91,43 +91,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: false,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/installed'
                     }, view => {
-                        let rows = view.nestedViews || {};
-                        for (let key in rows) {
-                            view.listenTo(rows[key].model, `change:isActive`, model => {
-                                this.notify('Saving...');
-                                this.ajaxPutRequest(`ModuleManager/${model.get('id')}/updateActivation`)
-                                .then(() => {
-                                    this.notify(this.translate('successAndReload', 'labels', 'ModuleManager').replace('{value}', 2), 'success');
-                                    for (let k in rows) {
-                                        rows[k].getView('isActive').setMode('list');
-                                    }
-                                    this.getView('list').reRender();
-                                    this.reloadPage(2000);
-                                });
-                            });
-                        }
                         this.listenTo(view, 'after:render', () => {
                             let rows = view.nestedViews || {};
                             let showCancelAction = false;
                             collection.each(currentModel => {
-                                let setEditMode;
-                                if (currentModel.get('isActive')) {
-                                    setEditMode = collection.every(model => !model.get('isActive') || !(model.get('required') || []).includes(currentModel.id)) && !currentModel.get('isSystem');
-                                } else {
-                                    setEditMode = (currentModel.get('required') || []).every(item => {
-                                        let model = collection.get(item);
-                                        return model && model.get('isActive');
-                                    });
-                                }
-
                                 let status = currentModel.get('status');
-
-                                if (setEditMode && !status) {
-                                    let isActiveView = rows[currentModel.id].getView('isActive');
-                                    isActiveView.setMode('edit');
-                                    isActiveView.reRender();
-                                }
-
                                 if (status) {
                                     showCancelAction = true;
                                     rows[currentModel.id].$el.addClass(`${status}-module-row`);
@@ -249,6 +217,36 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id})).then(response => {
                 if (response) {
                     this.notify(this.translate('settedModuleForRemoving', 'labels', 'ModuleManager'), 'success');
+                    this.installedCollection.fetch();
+                }
+            }).always(() => {
+                this.actionsInProgress--;
+            });
+        },
+
+        actionCancelModule(data) {
+            if (!data.id || !data.status) {
+                return;
+            }
+
+            let beforeSaveLabel;
+            let afterSaveLabel;
+            if (data.status = 'install') {
+                beforeSaveLabel = 'cancelingModuleUpdate';
+                afterSaveLabel = 'canceledModuleUpdate';
+            } else {
+                beforeSaveLabel = 'cancelingModuleInstall';
+                afterSaveLabel = 'canceledModuleInstall';
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
+            this.ajaxPostRequest('ModuleManager/cancel', {id: data.id}).then(response => {
+                if (response) {
+                    this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                    if (data.status = 'install') {
+                        this.availableCollection.fetch();
+                    }
                     this.installedCollection.fetch();
                 }
             }).always(() => {

@@ -100,16 +100,23 @@ abstract class AbstractConsole
      * Array to table
      *
      * @param array $data
+     * @param array $header
      *
      * @return string
      */
-    public static function ArrayToTable(array $data): string
+    public static function ArrayToTable(array $data, array $header = []): string
     {
         // prepare data
+        $data = array_merge([$header], $data);
         foreach ($data as $row_key => $row) {
+            $isHeader = (!empty($header) && $row_key == 0);
             foreach ($row as $cell_key => $cell) {
                 // prepare color
-                $color = (!empty($cell_key % 2)) ? '0;37' : '0;32';
+                if ($isHeader) {
+                    $color = '0;31';
+                } else {
+                    $color = (!empty($cell_key % 2)) ? '0;37' : '0;32';
+                }
 
                 // inject breaklines and color
                 $data[$row_key][$cell_key] = '| ' . "\033[{$color}m{$cell}\033[0m";

@@ -86,35 +86,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * @ApiDescription(description="Update module activation. If 1 then 0, if 0 then 1.")
-     * @ApiMethod(type="PUT")
-     * @ApiRoute(name="/ModuleManager/:moduleId/updateActivation")
-     * @ApiParams(name="moduleId", type="string", is_required=1, description="Module ID")
-     * @ApiReturn(sample="true")
-     *
-     * @return bool
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionUpdateActivation($params, $data, Request $request): bool
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPut()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        if (!empty($moduleId = $params['moduleId'])) {
-            return $this->getModuleManagerService()->updateActivation($moduleId);
-        }
-
-        throw new Exceptions\NotFound();
-    }
-
-    /**
      * @ApiDescription(description="Install module")
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/ModuleManager/installModule")
@@ -216,6 +187,40 @@ class ModuleManager extends Base
 
         if (!empty($id = $data['id'])) {
             return $this->getModuleManagerService()->deleteModule($id);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
+     * @ApiDescription(description="Cancel module changes")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/ModuleManager/cancel")
+     * @ApiBody(sample="{
+     *     'id': 'Erp'
+     * }")
+     * @ApiReturn(sample="'bool'")
+     *
+     * @return bool
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionCancel($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($id = $data['id'])) {
+            return $this->getModuleManagerService()->cancel($id);
         }
 
         throw new Exceptions\NotFound();

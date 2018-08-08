@@ -37,9 +37,6 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Configs;
 
 return [
-    'websockets-mappers' => [
-        'progress_manager' => 'WebsocketProgressManager',
-    ],
     'massUpdateMax'      => [
         'default' => 200
     ]

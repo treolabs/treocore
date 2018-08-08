@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\Utils\Json;
+use Espo\Modules\TreoCore\Core\ProgressManager as PM;
 use Slim\Http\Request;
 
 /**
@@ -49,38 +51,6 @@ class ProgressManager extends AbstractProgressManager
      * @var int
      */
     public static $maxSize = 15;
-
-    /**
-     * Is need to show progress popup
-     *
-     * @return bool
-     */
-    public function isShowPopup(): bool
-    {
-        // prepare params
-        $userId = $this->getUser()->get('id');
-        $status = self::$progressStatus['new'];
-
-        // prepare sql
-        $sql
-            = "SELECT 
-                  COUNT(id) as `total_count`
-                FROM
-                  progress_manager
-                WHERE 
-                     deleted=0 
-                 AND is_closed=0
-                 AND is_hidden=0     
-                 AND status='{$status}' 
-                 AND created_by_id='{$userId}'";
-
-        // execute sql
-        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
-
-        return !empty($result['total_count']);
-    }
 
     /**
      * Get data for progresses popup

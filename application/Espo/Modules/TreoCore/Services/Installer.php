@@ -273,7 +273,7 @@ class Installer extends Base
                 $this->getConfig()->save();
 
                 //@todo treoinject
-                $this->triggered('Installer', 'afterInstallSystem');
+                $this->triggered('Installer', 'afterInstallSystem', []);
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();

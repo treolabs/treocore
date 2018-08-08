@@ -34,14 +34,6 @@
     }
   },
   {
-    "route": "/ModuleManager/:moduleId/updateActivation",
-    "method": "put",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "updateActivation"
-    }
-  },
-  {
     "route": "/ModuleManager/installModule",
     "method": "post",
     "params": {
@@ -63,6 +55,14 @@
     "params": {
       "controller": "ModuleManager",
       "action": "deleteModule"
+    }
+  },
+  {
+    "route": "/ModuleManager/cancel",
+    "method": "post",
+    "params": {
+      "controller": "ModuleManager",
+      "action": "cancel"
     }
   },
   {
@@ -119,6 +119,20 @@
     "params": {
       "controller": "ProgressManager",
       "action": "isShowPopup"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
+    "route": "/ProgressManager/popupShowed",
+    "method": "post",
+    "params": {
+      "controller": "ProgressManager",
+      "action": "popupShowed"
+    },
+    "conditions": {
+      "auth": false
     }
   },
   {
