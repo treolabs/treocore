@@ -7,9 +7,11 @@
         </button>
         <a class="navbar-brand nav-link" href="#"><img src="{{logoSrc}}" class="logo"><span class="home-icon glyphicon glyphicon-th-large" title="{{translate 'Home'}}"></span></a>
         <div class="navbar-header-inner pull-right">
-            <button type="button" class="search-toggle pull-left visible-xs">
-                <span class="glyphicon glyphicon-search"></span>
-            </button>
+            {{#if globalSearch}}
+                <button type="button" class="search-toggle pull-left visible-xs">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            {{/if}}
             <div class="dropdown menu-container visible-xs pull-left">
                 <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
@@ -55,23 +57,6 @@
     <div class="collapse navbar-collapse navbar-body">
 
         <ul class="nav navbar-nav navbar-right">
-            <li class="nav navbar-nav navbar-form global-search-container">
-                {{{globalSearch}}}
-            </li>
-            <li class="dropdown notifications-badge-container hidden-xs">
-                {{{notificationsBadge}}}
-            </li>
-            {{#if enableQuickCreate}}
-            <li class="dropdown hidden-xs quick-create-container hidden-xs">
-                <a id="nav-quick-create-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="nav-quick-create-dropdown">
-                    <li class="dropdown-header">{{translate 'Create'}}</li>
-                    {{#each quickCreateList}}
-                    <li><a href="#{{./this}}/create" data-name="{{./this}}" data-action="quick-create">{{translate this category='scopeNames'}}</a></li>
-                    {{/each}}
-                </ul>
-            </li>
-            {{/if}}
             <li class="dropdown menu-container hidden-xs">
                 <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
@@ -86,6 +71,25 @@
                     {{/each}}
                 </ul>
             </li>
+            {{#if enableQuickCreate}}
+            <li class="dropdown hidden-xs quick-create-container hidden-xs">
+                <a id="nav-quick-create-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="nav-quick-create-dropdown">
+                    <li class="dropdown-header">{{translate 'Create'}}</li>
+                    {{#each quickCreateList}}
+                    <li><a href="#{{./this}}/create" data-name="{{./this}}" data-action="quick-create">{{translate this category='scopeNames'}}</a></li>
+                    {{/each}}
+                </ul>
+            </li>
+            {{/if}}
+            <li class="dropdown notifications-badge-container hidden-xs">
+                {{{notificationsBadge}}}
+            </li>
+            {{#if globalSearch}}
+            <li class="nav navbar-nav navbar-form global-search-container">
+                {{{globalSearch}}}
+            </li>
+            {{/if}}
         </ul>
         <a class="minimizer" href="javascript:">
             <span class="glyphicon glyphicon glyphicon-menu-right right"></span>

@@ -11631,6 +11631,16 @@ ul.dropdown-menu > li.checkbox {
         border-bottom: 1px solid #dcdcdc
     }
 
+    #navbar .nav.navbar-nav.navbar-right > li {
+        float: right;
+        position: static;
+    }
+
+    #header .navbar-right {
+        width: calc(100% - 220px);
+        padding-right: 0;
+    }
+
     #header .navbar-right .global-search-container {
         border-right: 1px solid #dedede;
         border-left: 1px solid #dedede
@@ -11787,26 +11797,6 @@ ul.dropdown-menu > li.checkbox {
         top: -1px;
         right: 1px;
         position: absolute
-    }
-
-    #header .navbar-right .global-search-container {
-        position: fixed;
-        top: 0;
-        right: 140px;
-    }
-
-    #header .navbar-right .notifications-badge-container {
-        position: fixed;
-        top: 0;
-        right: 105px;
-        width: 35px;
-    }
-
-    #header .navbar-right .progress-badge-container {
-        position: fixed;
-        top: 0;
-        right: 70px;
-        width: 35px;
     }
 
     #main {
