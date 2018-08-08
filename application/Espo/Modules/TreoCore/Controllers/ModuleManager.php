@@ -86,35 +86,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * @ApiDescription(description="Update module activation. If 1 then 0, if 0 then 1.")
-     * @ApiMethod(type="PUT")
-     * @ApiRoute(name="/ModuleManager/:moduleId/updateActivation")
-     * @ApiParams(name="moduleId", type="string", is_required=1, description="Module ID")
-     * @ApiReturn(sample="true")
-     *
-     * @return bool
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionUpdateActivation($params, $data, Request $request): bool
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPut()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        if (!empty($moduleId = $params['moduleId'])) {
-            return $this->getModuleManagerService()->updateActivation($moduleId);
-        }
-
-        throw new Exceptions\NotFound();
-    }
-
-    /**
      * @ApiDescription(description="Install module")
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/ModuleManager/installModule")

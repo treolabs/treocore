@@ -34,14 +34,6 @@
     }
   },
   {
-    "route": "/ModuleManager/:moduleId/updateActivation",
-    "method": "put",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "updateActivation"
-    }
-  },
-  {
     "route": "/ModuleManager/installModule",
     "method": "post",
     "params": {

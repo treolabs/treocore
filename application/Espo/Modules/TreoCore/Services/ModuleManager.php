@@ -85,31 +85,47 @@ class ModuleManager extends Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getModules() as $id => $module) {
-            // prepare settingVersion param
-            $module['settingVersion'] = '';
-            if ($module['isComposer']) {
-                $module['settingVersion'] = '*';
-                if (!empty($settingVersion = $composerData['require'][$module['repository']])) {
-                    $module['settingVersion'] = $this->prepareModuleVersion($settingVersion);
-                }
+        foreach ($this->getMetadata()->getModuleList() as $id) {
+            // skip core module
+            if ($id == 'TreoCore') {
+                continue;
             }
 
-            // push
-            $result['list'][] = [
+            // push for custom module
+            $result['list'][$id] = [
                 'id'             => $id,
-                'name'           => $module['name'],
-                'description'    => $module['description'],
-                'settingVersion' => $module['settingVersion'],
-                'currentVersion' => $this->prepareModuleVersion($module['version']),
-                'versions'       => $this->prepareModuleVersions($id),
-                'required'       => $module['required'],
-                'isActive'       => $module['isActive'],
+                'name'           => $id,
+                'description'    => '',
+                'settingVersion' => '',
+                'currentVersion' => '',
+                'versions'       => [],
+                'required'       => '',
                 'isSystem'       => !empty($this->getModuleConfigData("{$id}.isSystem")),
-                'isComposer'     => $module['isComposer'],
+                'isComposer'     => false,
                 'status'         => $this->getModuleStatus($composerDiff, $id),
             ];
+
+            // get package
+            $package = $this
+                ->getComposerModuleService()
+                ->getModulePackage($id);
+
+            if (!empty($package)) {
+                $result['list'][$id]['name'] = $this->translateModule($package, 'name');
+                $result['list'][$id]['description'] = $this->translateModule($package, 'description');
+                $result['list'][$id]['settingVersion'] = '*';
+                if ($settingVersion = $composerData['require'][$package['name']]) {
+                    $result['list'][$id]['settingVersion'] = $this->prepareModuleVersion($settingVersion);
+                }
+                $result['list'][$id]['currentVersion'] = $this->prepareModuleVersion($package['version']);
+                $result['list'][$id]['versions'] = $this->prepareModuleVersions($id);
+                $result['list'][$id]['required'] = $this->getModuleRequireds($id);
+                $result['list'][$id]['isComposer'] = true;
+            }
         }
+
+        // prepare list result
+        $result['list'] = array_values($result['list']);
 
         // for uninstalled modules
         foreach ($composerDiff['install'] as $row) {
@@ -208,97 +224,6 @@ class ModuleManager extends Base
 
             // prepare total
             $result['total'] = count($result['list']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Update module activation
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    public function updateActivation(string $moduleId): bool
-    {
-        // prepare result
-        $result = false;
-
-        if ($this->isModuleChangeable($moduleId)) {
-            // prepare module front id
-            $moduleFrontId = Util::fromCamelCase($moduleId, '-');
-
-            // is module now is active ?
-            $isModuleActive = in_array($moduleId, $this->getMetadata()->getModuleList());
-
-            // prepare dir path
-            $pathBackend = self::INACTIVE_MODULES_PATH . '/backend';
-            $pathFrontend = self::INACTIVE_MODULES_PATH . '/frontend';
-
-            // create dirs if it needs
-            if (!file_exists(self::INACTIVE_MODULES_PATH)) {
-                mkdir(self::INACTIVE_MODULES_PATH);
-            }
-            if (!file_exists($pathBackend)) {
-                mkdir($pathBackend);
-            }
-            if (!file_exists($pathFrontend)) {
-                mkdir($pathFrontend);
-            }
-
-            // prepare pathes
-            $backModulePath = "application/Espo/Modules/$moduleId";
-            $backInactiveModulePath = "$pathBackend/$moduleId";
-            $frontModulePath = "client/modules/$moduleFrontId";
-            $frontInactiveModulePath = "$pathFrontend/$moduleFrontId";
-
-            if ($isModuleActive) {
-                $backSrc = $backModulePath;
-                $backDest = $backInactiveModulePath;
-
-                $frontSrc = $frontModulePath;
-                $frontDest = $frontInactiveModulePath;
-            } else {
-                $backSrc = $backInactiveModulePath;
-                $backDest = $backModulePath;
-
-                $frontSrc = $frontInactiveModulePath;
-                $frontDest = $frontModulePath;
-            }
-
-            // move backend files
-            if (file_exists($backSrc)) {
-                TreoComposer::copyDir($backSrc, $backDest);
-                TreoComposer::deleteDir($backSrc);
-            }
-
-            // move frontend files
-            if (file_exists($frontSrc)) {
-                TreoComposer::copyDir($frontSrc, $frontDest);
-                TreoComposer::deleteDir($frontSrc);
-            }
-
-            if ($result) {
-                // get package
-                $package = $this->getComposerModuleService()->getModulePackage($moduleId);
-
-                // prepare event data
-                $eventData = [
-                    'id'       => $moduleId,
-                    'disabled' => $isModuleActive,
-                    'package'  => $package
-                ];
-
-                // triggered event
-                $this->triggeredEvent('updateModuleActivation', $eventData);
-
-                // rebuild DB
-                if (!$isModuleActive) {
-                    $this->getDataManager()->rebuild();
-                }
-            }
         }
 
         return $result;
@@ -512,31 +437,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * Is module changable?
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    protected function isModuleChangeable(string $moduleId): bool
-    {
-        // is system module ?
-        $this->isModuleSystem($moduleId);
-
-        // checking requireds
-        if ($this->hasRequireds($moduleId)) {
-            throw new Exceptions\Error(
-                $this
-                    ->getLanguage()
-                    ->translate('hasRequiredsDelete', 'exceptions', 'ModuleManager')
-            );
-        }
-
-        return true;
-    }
-
-    /**
      * Is module system ?
      *
      * @param string $moduleId
@@ -562,11 +462,10 @@ class ModuleManager extends Base
      * Update module file
      *
      * @param string $moduleId
-     * @param bool   $isDisabled
      *
      * @return bool
      */
-    protected function updateModuleFile(string $moduleId, bool $isDisabled): bool
+    protected function updateModuleFile(string $moduleId): bool
     {
         // prepare data
         $data = [];
@@ -858,79 +757,6 @@ class ModuleManager extends Base
             }
         } catch (\Exception $e) {
             $result = false;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get modules
-     *
-     * @return array
-     */
-    protected function getModules(): array
-    {
-        // prepare resutl
-        $result = [];
-
-        // get modules
-        $modules = [
-            'active'   => $this->getMetadata()->getModuleList(),
-            'inactive' => $this->getInactiveModules()
-        ];
-
-        foreach ($modules as $state => $row) {
-            foreach ($row as $id) {
-                // skip core module
-                if ($id == 'TreoCore') {
-                    continue;
-                }
-
-                $result[$id] = [
-                    'id'          => $id,
-                    'name'        => $id,
-                    'description' => '',
-                    'repository'  => '',
-                    'version'     => '',
-                    'isComposer'  => false,
-                    'required'    => [],
-                    'isActive'    => ($state == 'active'),
-                ];
-
-                if (!empty($package = $this->getComposerModuleService()->getModulePackage($id))) {
-                    $result[$id]['name'] = $this->translateModule($package, 'name');
-                    $result[$id]['description'] = $this->translateModule($package, 'description');
-                    $result[$id]['repository'] = $package['name'];
-                    $result[$id]['version'] = $package['version'];
-                    $result[$id]['isComposer'] = true;
-                    $result[$id]['required'] = $this->getModuleRequireds($id);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get inactive modules
-     *
-     * @return array
-     */
-    protected function getInactiveModules(): array
-    {
-        // prepare resutl
-        $result = [];
-
-        $path = self::INACTIVE_MODULES_PATH . '/backend';
-        if (file_exists($path) && is_dir($path)) {
-            $data = scandir($path);
-            if (!empty($data)) {
-                foreach ($data as $v) {
-                    if (!in_array($v, ['.', '..'])) {
-                        $result[] = $v;
-                    }
-                }
-            }
         }
 
         return $result;
