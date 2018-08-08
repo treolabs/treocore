@@ -196,7 +196,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             el.on('show.bs.dropdown', function (e) {
                 let target = e.relatedTarget,
-                    menu = $(target).next('.dropdown-menu'),
+                    menu = $(target).siblings('.dropdown-menu'),
                     menuHeight = menu.height(),
                     pageHeight = $(document).height(),
                     positionTop = $(target).offset().top + $(target).outerHeight(true);
