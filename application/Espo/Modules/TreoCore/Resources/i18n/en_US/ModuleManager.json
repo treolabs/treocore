@@ -39,6 +39,7 @@
     "installModule": "Install",
     "updateModule": "Update",
     "removeModule": "Remove",
+    "cancelModule": "Cancel",
     "username": "Username",
     "password": "Password",
     "anotherActionInProgress": "An another action is in progress. Wait until it get finished",
@@ -56,6 +57,10 @@
     "settedModuleForInstalling": "Module has been setted for installing",
     "settingModuleForUpdating": "Setting module for updating...",
     "settedModuleForUpdating": "Module has been setted for updating",
+    "cancelingModuleUpdate": "Canceling module update...",
+    "canceledModuleUpdate": "Module update has been canceled",
+    "cancelingModuleInstall": "Canceling module install...",
+    "canceledModuleInstall": "Module install has been canceled",
     "Log": "Log",
     "confirmRun": "After update action all users would logout from system. Are you sure you want to do that action?"
   },

@@ -256,6 +256,36 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             });
         },
 
+        actionCancelModule(data) {
+            if (!data.id || !data.status) {
+                return;
+            }
+
+            let beforeSaveLabel;
+            let afterSaveLabel;
+            if (data.status = 'install') {
+                beforeSaveLabel = 'cancelingModuleUpdate';
+                afterSaveLabel = 'canceledModuleUpdate';
+            } else {
+                beforeSaveLabel = 'cancelingModuleInstall';
+                afterSaveLabel = 'canceledModuleInstall';
+            }
+
+            this.actionsInProgress++;
+            this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
+            this.ajaxPostRequest('ModuleManager/cancel', {id: data.id}).then(response => {
+                if (response) {
+                    this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                    if (data.status = 'install') {
+                        this.availableCollection.fetch();
+                    }
+                    this.installedCollection.fetch();
+                }
+            }).always(() => {
+                this.actionsInProgress--;
+            });
+        },
+
         actionRunUpdate() {
             if (this.actionsInProgress) {
                 this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'));
