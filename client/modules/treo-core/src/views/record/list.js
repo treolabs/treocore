@@ -77,16 +77,13 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (e.target.tagName === 'TD') {
                         let $target = $(e.currentTarget);
                         let id = $target.data('id');
-
-                        let checked = false;
-                        if (typeof this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0) != 'undefined') {
-                            checked = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0).checked;
-                        }
-
-                        if (!checked) {
-                            this.checkRecord(id);
-                        } else {
-                            this.uncheckRecord(id);
+                        let checkbox = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0);
+                        if (checkbox) {
+                            if (!checkbox.checked) {
+                                this.checkRecord(id);
+                            } else {
+                                this.uncheckRecord(id);
+                            }
                         }
                     }
                 },
@@ -135,6 +132,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             if (this.enabledFixedHeader) {
                 this.fixedTableHead()
             }
+
+            this.changeDropDownPosition();
         },
 
         fixedTableHead() {
@@ -191,6 +190,32 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     setWidth();
                 });
             }
+        },
+
+        changeDropDownPosition() {
+            let el = this.$el;
+
+            el.on('show.bs.dropdown', function (e) {
+                let target = e.relatedTarget,
+                    menu = $(target).siblings('.dropdown-menu'),
+                    menuHeight = menu.height(),
+                    pageHeight = $(document).height(),
+                    positionTop = $(target).offset().top + $(target).outerHeight(true);
+
+                if ((positionTop + menuHeight) > pageHeight) {
+                    menu.css({
+                        'top': `-${menuHeight}px`
+                    })
+                }
+            });
+
+            el.on('hide.bs.dropdown', function (e) {
+                let target = e.relatedTarget,
+                    menu = $(target).next('.dropdown-menu');
+
+                menu.removeAttr('style');
+            });
         }
+
     });
 });
