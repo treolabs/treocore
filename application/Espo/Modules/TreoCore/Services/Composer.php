@@ -146,17 +146,10 @@ class Composer extends Base
      */
     public function runUpdateJob(array $data): void
     {
-        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
-            // run update
-            try {
-                $this->runUpdate($data['createdById']);
-            } catch (\Exception $e) {
-                $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
-            }
-
-            // update config
-            $this->getConfig()->set('isNeedToUpdateComposer', false);
-            $this->getConfig()->save();
+        try {
+            $this->runUpdate($data['createdById']);
+        } catch (\Exception $e) {
+            $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
         }
     }
 
