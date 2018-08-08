@@ -252,7 +252,7 @@ class ModuleManager extends Base
             $backModulePath = "application/Espo/Modules/$moduleId";
             $backInactiveModulePath = "$pathBackend/$moduleId";
             $frontModulePath = "client/modules/$moduleFrontId";
-            $frontInactiveModulePath = "$pathFrontend/$moduleId";
+            $frontInactiveModulePath = "$pathFrontend/$moduleFrontId";
 
             if ($isModuleActive) {
                 $backSrc = $backModulePath;
