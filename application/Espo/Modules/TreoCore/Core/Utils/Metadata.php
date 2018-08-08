@@ -77,16 +77,6 @@ class Metadata extends EspoMetadata
     /**
      * @var array
      */
-    protected $moduleListAll = null;
-
-    /**
-     * @var array
-     */
-    protected $moduleList = null;
-
-    /**
-     * @var array
-     */
     protected $deletedData = [];
 
     /**
@@ -98,57 +88,6 @@ class Metadata extends EspoMetadata
      * @var string
      */
     protected $moduleMetadataClass = 'Espo\Modules\%s\Metadata\Metadata';
-
-    /**
-     * Get all modules
-     *
-     * @return array
-     */
-    public function getAllModules(): array
-    {
-        if (is_null($this->moduleListAll)) {
-            // get all
-            $modules = $this->getFileManager()->getFileList($this->pathToModules, false, '', false);
-
-            // prepare modules
-            $data = [];
-            if (is_array($modules)) {
-                foreach ($modules as $moduleName) {
-                    if (!empty($moduleName) && !isset($data[$moduleName])) {
-                        $data[$moduleName] = $this
-                            ->getModuleConfig()->get($moduleName . '.order', $this->defaultModuleOrder);
-                    }
-                }
-            }
-            // sorting
-            array_multisort(array_values($data), SORT_ASC, array_keys($data), SORT_ASC, $data);
-
-            // prepare result
-            $this->moduleListAll = array_keys($data);
-        }
-
-        return $this->moduleListAll;
-    }
-
-    /**
-     * Get Module List
-     *
-     * @return array
-     */
-    public function getModuleList()
-    {
-        if (!isset($this->moduleList)) {
-            $this->moduleList = [];
-
-            foreach ($this->getAllModules() as $module) {
-                if (empty($this->getModuleConfig()->get($module . '.disabled'))) {
-                    $this->moduleList[] = $module;
-                }
-            }
-        }
-
-        return $this->moduleList;
-    }
 
     /**
      * Get module config data
@@ -280,7 +219,6 @@ class Metadata extends EspoMetadata
     {
         parent::clearVars();
 
-        $this->moduleList = null;
         $this->moduleConfig = null;
     }
 

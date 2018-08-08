@@ -85,42 +85,30 @@ class ModuleManager extends Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            if ($module != 'TreoCore') {
-                // prepare item
-                $item = [
-                    "id"             => $module,
-                    "name"           => $module,
-                    "description"    => '-',
-                    "settingVersion" => '-',
-                    "currentVersion" => '-',
-                    "required"       => $this->getModuleRequireds($module),
-                    "isActive"       => true,
-                    "isSystem"       => !empty($this->getModuleConfigData("{$module}.isSystem")),
-                    "isComposer"     => false,
-                    "status"         => $this->getModuleStatus($composerDiff, $module)
-                ];
-
-                // get current module package
-                $package = $this->getComposerModuleService()->getModulePackage($module);
-
-                if (!empty($package)) {
-                    // prepare item
-                    $item['name'] = $this->translateModule($package, 'name');
-                    $item['description'] = $this->translateModule($package, 'description');
-                    if (!empty($settingVersion = $composerData['require'][$package['name']])) {
-                        $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
-                    } else {
-                        $item['settingVersion'] = '*';
-                    }
-                    $item['currentVersion'] = $this->prepareModuleVersion($package['version']);
-                    $item['versions'] = $this->prepareModuleVersions($module);
-                    $item['isComposer'] = true;
+        foreach ($this->getModules() as $id => $module) {
+            // prepare settingVersion param
+            $module['settingVersion'] = '';
+            if ($module['isComposer']) {
+                $module['settingVersion'] = '*';
+                if (!empty($settingVersion = $composerData['require'][$module['repository']])) {
+                    $module['settingVersion'] = $this->prepareModuleVersion($settingVersion);
                 }
-
-                // push
-                $result['list'][] = $item;
             }
+
+            // push
+            $result['list'][] = [
+                'id'             => $id,
+                'name'           => $module['name'],
+                'description'    => $module['description'],
+                'settingVersion' => $module['settingVersion'],
+                'currentVersion' => $this->prepareModuleVersion($module['version']),
+                'versions'       => $this->prepareModuleVersions($id),
+                'required'       => $module['required'],
+                'isActive'       => $module['isActive'],
+                'isSystem'       => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                'isComposer'     => $module['isComposer'],
+                'status'         => $this->getModuleStatus($composerDiff, $id),
+            ];
         }
 
         // for uninstalled modules
@@ -589,8 +577,7 @@ class ModuleManager extends Base
         foreach ($this->getMetadata()->getAllModules() as $module) {
             if (!in_array($module, ['Crm', 'TreoCore'])) {
                 $data[$module] = [
-                    'order'    => $this->createModuleLoadOrder($module),
-                    'disabled' => !in_array($module, $this->getMetadata()->getModuleList())
+                    'order' => $this->createModuleLoadOrder($module)
                 ];
 
                 if ($module == $moduleId) {
@@ -875,6 +862,79 @@ class ModuleManager extends Base
             }
         } catch (\Exception $e) {
             $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get modules
+     *
+     * @return array
+     */
+    protected function getModules(): array
+    {
+        // prepare resutl
+        $result = [];
+
+        // get modules
+        $modules = [
+            'active'   => $this->getMetadata()->getModuleList(),
+            'inactive' => $this->getInactiveModules()
+        ];
+
+        foreach ($modules as $state => $row) {
+            foreach ($row as $id) {
+                // skip core module
+                if ($id == 'TreoCore') {
+                    continue;
+                }
+
+                $result[$id] = [
+                    'id'          => $id,
+                    'name'        => $id,
+                    'description' => '',
+                    'repository'  => '',
+                    'version'     => '',
+                    'isComposer'  => false,
+                    'required'    => [],
+                    'isActive'    => ($state == 'active'),
+                ];
+
+                if (!empty($package = $this->getComposerModuleService()->getModulePackage($id))) {
+                    $result[$id]['name'] = $this->translateModule($package, 'name');
+                    $result[$id]['description'] = $this->translateModule($package, 'description');
+                    $result[$id]['repository'] = $package['name'];
+                    $result[$id]['version'] = $package['version'];
+                    $result[$id]['isComposer'] = true;
+                    $result[$id]['required'] = $this->getModuleRequireds($id);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get inactive modules
+     *
+     * @return array
+     */
+    protected function getInactiveModules(): array
+    {
+        // prepare resutl
+        $result = [];
+
+        $path = self::INACTIVE_MODULES_PATH . '/backend';
+        if (file_exists($path) && is_dir($path)) {
+            $data = scandir($path);
+            if (!empty($data)) {
+                foreach ($data as $v) {
+                    if (!in_array($v, ['.', '..'])) {
+                        $result[] = $v;
+                    }
+                }
+            }
         }
 
         return $result;
