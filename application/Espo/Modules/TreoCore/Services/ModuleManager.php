@@ -574,15 +574,11 @@ class ModuleManager extends Base
         // reload modules
         $this->getMetadata()->init(true);
 
-        foreach ($this->getMetadata()->getAllModules() as $module) {
+        foreach ($this->getMetadata()->getModuleList() as $module) {
             if (!in_array($module, ['Crm', 'TreoCore'])) {
                 $data[$module] = [
                     'order' => $this->createModuleLoadOrder($module)
                 ];
-
-                if ($module == $moduleId) {
-                    $data[$module]['disabled'] = $isDisabled;
-                }
             }
         }
 
