@@ -83,7 +83,8 @@
     "status": "Status",
     "fail": "Fehlgeschlagen",
     "success": "Erfolg",
-    "viewDetails": "Details anzeigen"
+    "viewDetails": "Details anzeigen",
+    "showFullList": "Vollständige Liste anzeigen"
   },
   "links": {
     "ownerUser": "Besitzer"
