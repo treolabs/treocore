@@ -91,6 +91,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: false,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/installed'
                     }, view => {
+                        this.listenTo(view, 'after:render', () => {
+                            let rows = view.nestedViews || {};
+                            let showCancelAction = false;
+                            collection.each(currentModel => {
+                                let status = currentModel.get('status');
+                                if (status) {
+                                    showCancelAction = true;
+                                    rows[currentModel.id].$el.addClass(`${status}-module-row`);
+                                }
+                            });
+                            this.toggleActionButton('cancelUpdate', showCancelAction);
+                        });
                         view.render();
                     });
                 });

@@ -124,19 +124,15 @@ class ModuleManager extends Base
             }
         }
 
-        // prepare list result
-        $result['list'] = array_values($result['list']);
-
         // for uninstalled modules
         foreach ($composerDiff['install'] as $row) {
             $item = [
                 "id"             => $row['id'],
                 "name"           => $row['id'],
-                "description"    => '-',
+                "description"    => '',
                 "settingVersion" => '*',
-                "currentVersion" => '-',
+                "currentVersion" => '',
                 "required"       => [],
-                "isActive"       => false,
                 "isSystem"       => false,
                 "isComposer"     => true,
                 "status"         => 'install'
@@ -154,9 +150,11 @@ class ModuleManager extends Base
             }
 
             // push
-            $result['list'][] = $item;
+            $result['list'][$row['id']] = $item;
         }
 
+        // prepare result
+        $result['list'] = array_values($result['list']);
         $result['total'] = count($result['list']);
 
         // sorting
