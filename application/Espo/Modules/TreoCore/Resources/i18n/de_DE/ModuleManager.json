@@ -10,8 +10,7 @@
     "settingVersion": "Version einstellen",
     "currentVersion": "Aktuelle Version",
     "availableVersions": "Verfügbare Versionen",
-    "required": "Erforderlich",
-    "isActive": "Ist aktiv"
+    "required": "Erforderlich"
   },
   "exceptions": {
     "hasRequireds": "Das Modul hat die Anforderungen nicht erfüllt",

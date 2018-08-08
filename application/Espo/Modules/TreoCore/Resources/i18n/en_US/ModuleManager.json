@@ -10,8 +10,7 @@
     "settingVersion": "Setting Version",
     "currentVersion": "Current Version",
     "availableVersions": "Available Versions",
-    "required": "Required",
-    "isActive": "Is active"
+    "required": "Required"
   },
   "options": {
     "status": {

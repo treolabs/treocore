@@ -36,11 +36,9 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\DataManager;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Core\Utils\Util;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
@@ -379,6 +377,30 @@ class ModuleManager extends Base
     }
 
     /**
+     * Update module file
+     *
+     * @return bool
+     */
+    public function updateModuleFile(): bool
+    {
+        // prepare data
+        $data = [];
+
+        // reload modules
+        $this->getMetadata()->init(true);
+
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            if (!in_array($module, ['Crm', 'TreoCore'])) {
+                $data[$module] = [
+                    'order' => $this->createModuleLoadOrder($module)
+                ];
+            }
+        }
+
+        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+    }
+
+    /**
      * Clear module data from "module.json" file
      *
      * @param string $id
@@ -406,9 +428,7 @@ class ModuleManager extends Base
                 'metadata',
                 'language',
                 'fileManager',
-                'dataManager',
-                'serviceFactory',
-                'migration'
+                'serviceFactory'
             ]
         );
     }
@@ -454,32 +474,6 @@ class ModuleManager extends Base
         }
 
         return false;
-    }
-
-    /**
-     * Update module file
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     */
-    protected function updateModuleFile(string $moduleId): bool
-    {
-        // prepare data
-        $data = [];
-
-        // reload modules
-        $this->getMetadata()->init(true);
-
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            if (!in_array($module, ['Crm', 'TreoCore'])) {
-                $data[$module] = [
-                    'order' => $this->createModuleLoadOrder($module)
-                ];
-            }
-        }
-
-        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
     }
 
     /**
@@ -783,16 +777,6 @@ class ModuleManager extends Base
     protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
-    }
-
-    /**
-     * Get DataManager
-     *
-     * @return DataManager
-     */
-    protected function getDataManager(): DataManager
-    {
-        return $this->getInjection('dataManager');
     }
 
     /**
