@@ -549,6 +549,108 @@ class Composer extends Base
     }
 
     /**
+     * Recursively move files from one directory to another
+     *
+     * @param string $src
+     * @param string $dest
+     *
+     * @return bool
+     */
+    public static function moveDir(string $src, string $dest): bool
+    {
+        if (!is_dir($src)) {
+            return false;
+        }
+
+        if (!is_dir($dest)) {
+            if (!mkdir($dest)) {
+                return false;
+            }
+        }
+
+        $i = new \DirectoryIterator($src);
+        foreach ($i as $f) {
+            if ($f->isFile()) {
+                rename($f->getRealPath(), "$dest/" . $f->getFilename());
+            } elseif (!$f->isDot() && $f->isDir()) {
+                self::moveDir($f->getRealPath(), "$dest/$f");
+                unlink($f->getRealPath());
+            }
+        }
+        unlink($src);
+
+        return true;
+    }
+
+    /**
+     * Recursively copy files from one directory to another
+     *
+     * @param string $src
+     * @param string $dest
+     *
+     * @return bool
+     */
+    public static function copyDir(string $src, string $dest): bool
+    {
+        if (!is_dir($src)) {
+            return false;
+        }
+
+        if (!is_dir($dest)) {
+            if (!mkdir($dest)) {
+                return false;
+            }
+        }
+
+        $i = new \DirectoryIterator($src);
+        foreach ($i as $f) {
+            if ($f->isFile()) {
+                copy($f->getRealPath(), "$dest/" . $f->getFilename());
+            } elseif (!$f->isDot() && $f->isDir()) {
+                self::copyDir($f->getRealPath(), "$dest/$f");
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete directory
+     *
+     * @param string $dirname
+     *
+     * @return bool
+     */
+    public static function deleteDir(string $dirname): bool
+    {
+        if (!file_exists($dirname)) {
+            return false;
+        }
+
+        if (is_dir($dirname)) {
+            $dir_handle = opendir($dirname);
+        }
+
+        if (!$dir_handle) {
+            return false;
+        }
+
+        while ($file = readdir($dir_handle)) {
+            if ($file != "." && $file != "..") {
+                if (!is_dir($dirname . "/" . $file)) {
+                    unlink($dirname . "/" . $file);
+                } else {
+                    self::deleteDir($dirname . '/' . $file);
+                }
+            }
+        }
+        closedir($dir_handle);
+        rmdir($dirname);
+
+        return true;
+    }
+
+    /**
      * Init
      */
     protected function init()
@@ -654,107 +756,5 @@ class Composer extends Base
             // copy dir
             self::copyDir($source, $dest);
         }
-    }
-
-    /**
-     * Recursively copy files from one directory to another
-     *
-     * @param string $src
-     * @param string $dest
-     *
-     * @return bool
-     */
-    protected static function copyDir(string $src, string $dest): bool
-    {
-        if (!is_dir($src)) {
-            return false;
-        }
-
-        if (!is_dir($dest)) {
-            if (!mkdir($dest)) {
-                return false;
-            }
-        }
-
-        $i = new \DirectoryIterator($src);
-        foreach ($i as $f) {
-            if ($f->isFile()) {
-                copy($f->getRealPath(), "$dest/" . $f->getFilename());
-            } elseif (!$f->isDot() && $f->isDir()) {
-                self::copyDir($f->getRealPath(), "$dest/$f");
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Recursively move files from one directory to another
-     *
-     * @param string $src
-     * @param string $dest
-     *
-     * @return bool
-     */
-    protected static function moveDir(string $src, string $dest): bool
-    {
-        if (!is_dir($src)) {
-            return false;
-        }
-
-        if (!is_dir($dest)) {
-            if (!mkdir($dest)) {
-                return false;
-            }
-        }
-
-        $i = new \DirectoryIterator($src);
-        foreach ($i as $f) {
-            if ($f->isFile()) {
-                rename($f->getRealPath(), "$dest/" . $f->getFilename());
-            } elseif (!$f->isDot() && $f->isDir()) {
-                self::moveDir($f->getRealPath(), "$dest/$f");
-                unlink($f->getRealPath());
-            }
-        }
-        unlink($src);
-
-        return true;
-    }
-
-    /**
-     * Delete directory
-     *
-     * @param string $dirname
-     *
-     * @return bool
-     */
-    protected static function deleteDir(string $dirname): bool
-    {
-        if (!file_exists($dirname)) {
-            return false;
-        }
-
-        if (is_dir($dirname)) {
-            $dir_handle = opendir($dirname);
-        }
-
-        if (!$dir_handle) {
-            return false;
-        }
-
-        while ($file = readdir($dir_handle)) {
-            if ($file != "." && $file != "..") {
-                if (!is_dir($dirname . "/" . $file)) {
-                    unlink($dirname . "/" . $file);
-                } else {
-                    self::deleteDir($dirname . '/' . $file);
-                }
-            }
-        }
-        closedir($dir_handle);
-        rmdir($dirname);
-
-        return true;
     }
 }

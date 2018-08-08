@@ -40,11 +40,11 @@ use Espo\Core\DataManager;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\Utils\Util;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
-use Espo\Modules\TreoCore\Services\ComposerModule;
 
 /**
  * ModuleManager service
@@ -53,6 +53,8 @@ use Espo\Modules\TreoCore\Services\ComposerModule;
  */
 class ModuleManager extends Base
 {
+    const INACTIVE_MODULES_PATH = 'data/inactive-modules';
+
     /**
      * @var string
      */
@@ -83,18 +85,18 @@ class ModuleManager extends Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getAllModules() as $module) {
+        foreach ($this->getMetadata()->getModuleList() as $module) {
             if ($module != 'TreoCore') {
                 // prepare item
                 $item = [
                     "id"             => $module,
                     "name"           => $module,
-                    "description"    => '',
-                    "settingVersion" => '*',
-                    "currentVersion" => '*',
-                    "required"       => [],
-                    "isActive"       => $this->getMetadata()->isModuleActive($module),
-                    "isSystem"       => false,
+                    "description"    => '-',
+                    "settingVersion" => '-',
+                    "currentVersion" => '-',
+                    "required"       => $this->getModuleRequireds($module),
+                    "isActive"       => true,
+                    "isSystem"       => !empty($this->getModuleConfigData("{$module}.isSystem")),
                     "isComposer"     => false,
                     "status"         => $this->getModuleStatus($composerDiff, $module)
                 ];
@@ -108,11 +110,11 @@ class ModuleManager extends Base
                     $item['description'] = $this->translateModule($package, 'description');
                     if (!empty($settingVersion = $composerData['require'][$package['name']])) {
                         $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
+                    } else {
+                        $item['settingVersion'] = '*';
                     }
                     $item['currentVersion'] = $this->prepareModuleVersion($package['version']);
                     $item['versions'] = $this->prepareModuleVersions($module);
-                    $item['required'] = $this->getModuleRequireds($module);
-                    $item['isSystem'] = !empty($this->getModuleConfigData("{$module}.isSystem"));
                     $item['isComposer'] = true;
                 }
 
@@ -126,9 +128,9 @@ class ModuleManager extends Base
             $item = [
                 "id"             => $row['id'],
                 "name"           => $row['id'],
-                "description"    => '',
+                "description"    => '-',
                 "settingVersion" => '*',
-                "currentVersion" => '*',
+                "currentVersion" => '-',
                 "required"       => [],
                 "isActive"       => false,
                 "isSystem"       => false,
@@ -237,14 +239,58 @@ class ModuleManager extends Base
         $result = false;
 
         if ($this->isModuleChangeable($moduleId)) {
-            // get config data
-            $config = $this->getModuleConfigData($moduleId);
+            // prepare module front id
+            $moduleFrontId = Util::fromCamelCase($moduleId, '-');
 
-            // write to file
-            $result = $this->updateModuleFile($moduleId, empty($config['disabled']));
+            // is module now is active ?
+            $isModuleActive = in_array($moduleId, $this->getMetadata()->getModuleList());
 
-            // drop cache
-            $this->getDataManager()->clearCache();
+            // prepare dir path
+            $pathBackend = self::INACTIVE_MODULES_PATH . '/backend';
+            $pathFrontend = self::INACTIVE_MODULES_PATH . '/frontend';
+
+            // create dirs if it needs
+            if (!file_exists(self::INACTIVE_MODULES_PATH)) {
+                mkdir(self::INACTIVE_MODULES_PATH);
+            }
+            if (!file_exists($pathBackend)) {
+                mkdir($pathBackend);
+            }
+            if (!file_exists($pathFrontend)) {
+                mkdir($pathFrontend);
+            }
+
+            // prepare pathes
+            $backModulePath = "application/Espo/Modules/$moduleId";
+            $backInactiveModulePath = "$pathBackend/$moduleId";
+            $frontModulePath = "client/modules/$moduleFrontId";
+            $frontInactiveModulePath = "$pathFrontend/$moduleId";
+
+            if ($isModuleActive) {
+                $backSrc = $backModulePath;
+                $backDest = $backInactiveModulePath;
+
+                $frontSrc = $frontModulePath;
+                $frontDest = $frontInactiveModulePath;
+            } else {
+                $backSrc = $backInactiveModulePath;
+                $backDest = $backModulePath;
+
+                $frontSrc = $frontInactiveModulePath;
+                $frontDest = $frontModulePath;
+            }
+
+            // move backend files
+            if (file_exists($backSrc)) {
+                TreoComposer::copyDir($backSrc, $backDest);
+                TreoComposer::deleteDir($backSrc);
+            }
+
+            // move frontend files
+            if (file_exists($frontSrc)) {
+                TreoComposer::copyDir($frontSrc, $frontDest);
+                TreoComposer::deleteDir($frontSrc);
+            }
 
             if ($result) {
                 // get package
@@ -253,7 +299,7 @@ class ModuleManager extends Base
                 // prepare event data
                 $eventData = [
                     'id'       => $moduleId,
-                    'disabled' => empty($config['disabled']),
+                    'disabled' => $isModuleActive,
                     'package'  => $package
                 ];
 
@@ -261,7 +307,7 @@ class ModuleManager extends Base
                 $this->triggeredEvent('updateModuleActivation', $eventData);
 
                 // rebuild DB
-                if (!empty($config['disabled'])) {
+                if (!$isModuleActive) {
                     $this->getDataManager()->rebuild();
                 }
             }
