@@ -49,9 +49,11 @@ class Job extends AbstractListener
      */
     public function beforeUpdate(array $data): array
     {
-        echo '<pre>';
-        print_r($data);
-        die();
+        if (!empty($method = $data['method']) && $method == 'runUpdateJob') {
+            echo '<pre>';
+            print_r($data);
+            die();
+        }
 
         return $data;
     }

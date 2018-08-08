@@ -83,7 +83,7 @@ class Job extends EspoJob
 
         $select
             = "
-            SELECT id, scheduled_job_id, execute_time, target_id, target_type, pid FROM `job`
+            SELECT id, name, service_name, method, data, scheduled_job_id, execute_time, target_id, target_type, pid FROM `job`
             WHERE
             `status` = '" . CronManager::RUNNING . "' AND execute_time < '" . date('Y-m-d H:i:s', $time) . "'
         ";
@@ -114,17 +114,22 @@ class Job extends EspoJob
                 $jobQuotedIdList[] = $pdo->quote($jobId);
             }
 
-            // prepare data for event
-            $eventData = [
-                'status'   => CronManager::FAILED,
-                'attempts' => 0,
-                'ids'      => array_keys($jobData)
-            ];
-
             // triggered event
-            $this
-                ->getEventManager()
-                ->triggered('Job', 'beforeUpdate', $eventData);
+            foreach ($jobData as $jobId => $job) {
+                $eventData = [
+                    'id'          => $jobId,
+                    'status'      => CronManager::FAILED,
+                    'name'        => $job['name'],
+                    'serviceName' => $job['service_name'],
+                    'method'      => $job['method'],
+                    'data'        => $job['data'],
+                    'attempts'    => 0
+                ];
+
+                $this
+                    ->getEventManager()
+                    ->triggered('Job', 'beforeUpdate', $eventData);
+            }
 
             $update
                 = "
