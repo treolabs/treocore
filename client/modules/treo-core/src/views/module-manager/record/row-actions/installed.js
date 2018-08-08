@@ -36,22 +36,33 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
 
         getActionList: function () {
             let list = [];
-            if (this.model.get('isComposer') && !this.model.get('status')) {
-                list.push({
-                    action: 'installModule',
-                    label: 'updateModule',
-                    data: {
-                        id: this.model.id,
-                        mode: 'update'
-                    }
-                });
-                let checkRequire = this.model.collection.every(model => !(model.get('required') || []).includes(this.model.get('id')));
-                if (checkRequire && !this.model.get('isSystem')) {
+            if (this.model.get('isComposer')) {
+                if (!this.model.get('status')) {
                     list.push({
-                        action: 'removeModule',
-                        label: 'removeModule',
+                        action: 'installModule',
+                        label: 'updateModule',
                         data: {
-                            id: this.model.id
+                            id: this.model.id,
+                            mode: 'update'
+                        }
+                    });
+                    let checkRequire = this.model.collection.every(model => !(model.get('required') || []).includes(this.model.get('id')));
+                    if (checkRequire && !this.model.get('isSystem')) {
+                        list.push({
+                            action: 'removeModule',
+                            label: 'removeModule',
+                            data: {
+                                id: this.model.id
+                            }
+                        });
+                    }
+                } else {
+                    list.push({
+                        action: 'cancelModule',
+                        label: 'cancelModule',
+                        data: {
+                            id: this.model.id,
+                            status: this.model.get('status')
                         }
                     });
                 }

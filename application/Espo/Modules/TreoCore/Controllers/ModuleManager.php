@@ -193,6 +193,40 @@ class ModuleManager extends Base
     }
 
     /**
+     * @ApiDescription(description="Cancel module changes")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/ModuleManager/cancel")
+     * @ApiBody(sample="{
+     *     'id': 'Erp'
+     * }")
+     * @ApiReturn(sample="'bool'")
+     *
+     * @return bool
+     * @throws Exceptions\Forbidden
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\NotFound
+     */
+    public function actionCancel($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // prepare data
+        $data = Json::decode(Json::encode($data), true);
+
+        if (!empty($id = $data['id'])) {
+            return $this->getModuleManagerService()->cancel($id);
+        }
+
+        throw new Exceptions\NotFound();
+    }
+
+    /**
      * @ApiDescription(description="Get available modules for install")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/ModuleManager/availableModulesList")

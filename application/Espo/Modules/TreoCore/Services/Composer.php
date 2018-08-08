@@ -351,6 +351,23 @@ class Composer extends Base
     }
 
     /**
+     * Get modules stable-composer.json
+     *
+     * @return array
+     */
+    public function getModuleStableComposerJson(): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($this->moduleStableComposer)) {
+            $result = Json::decode(file_get_contents($this->moduleStableComposer), true);
+        }
+
+        return $result;
+    }
+
+    /**
      * Set modules composer.json
      *
      * @param array $data
