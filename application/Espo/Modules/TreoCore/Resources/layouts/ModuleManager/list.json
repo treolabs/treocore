@@ -18,9 +18,8 @@
     "notSortable": true
   },
   {
-    "name": "required",
+    "name": "requiredTranslates",
     "notSortable": true,
-    "view": "treo-core:views/module-manager/fields/required",
     "width": 15
   }
 ]

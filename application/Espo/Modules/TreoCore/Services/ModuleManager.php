@@ -91,16 +91,17 @@ class ModuleManager extends Base
 
             // push for custom module
             $result['list'][$id] = [
-                'id'             => $id,
-                'name'           => $id,
-                'description'    => '',
-                'settingVersion' => '',
-                'currentVersion' => '',
-                'versions'       => [],
-                'required'       => '',
-                'isSystem'       => !empty($this->getModuleConfigData("{$id}.isSystem")),
-                'isComposer'     => false,
-                'status'         => $this->getModuleStatus($composerDiff, $id),
+                'id'                 => $id,
+                'name'               => $id,
+                'description'        => '',
+                'settingVersion'     => '',
+                'currentVersion'     => '',
+                'versions'           => [],
+                'required'           => [],
+                'requiredTranslates' => [],
+                'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                'isComposer'         => false,
+                'status'             => $this->getModuleStatus($composerDiff, $id),
             ];
 
             // get package
@@ -117,7 +118,16 @@ class ModuleManager extends Base
                 }
                 $result['list'][$id]['currentVersion'] = $this->prepareModuleVersion($package['version']);
                 $result['list'][$id]['versions'] = $this->prepareModuleVersions($id);
-                $result['list'][$id]['required'] = $this->getModuleRequireds($id);
+                if (!empty($requireds = $this->getModuleRequireds($id))) {
+                    $result['list'][$id]['required'] = $requireds;
+                    foreach ($requireds as $required) {
+                        $pRequired = $this
+                            ->getComposerModuleService()
+                            ->getModulePackage($required);
+                        $result['list'][$id]['requiredTranslates'][] = $this
+                            ->translateModule($pRequired, 'name');
+                    }
+                }
                 $result['list'][$id]['isComposer'] = true;
             }
         }
