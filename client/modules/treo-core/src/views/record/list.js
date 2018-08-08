@@ -77,7 +77,11 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (e.target.tagName === 'TD') {
                         let $target = $(e.currentTarget);
                         let id = $target.data('id');
-                        let checked = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0).checked;
+
+                        let checked = false;
+                        if (typeof this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0) != 'undefined') {
+                            checked = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0).checked;
+                        }
 
                         if (!checked) {
                             this.checkRecord(id);
