@@ -131,6 +131,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             if (this.enabledFixedHeader) {
                 this.fixedTableHead()
             }
+
+            this.changeDropDownPosition();
         },
 
         fixedTableHead() {
@@ -187,6 +189,32 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     setWidth();
                 });
             }
+        },
+
+        changeDropDownPosition() {
+            let el = this.$el;
+
+            el.on('show.bs.dropdown', function (e) {
+                let target = e.relatedTarget,
+                    menu = $(target).next('.dropdown-menu'),
+                    menuHeight = menu.height(),
+                    pageHeight = $(document).height(),
+                    positionTop = $(target).offset().top + $(target).outerHeight(true);
+
+                if ((positionTop + menuHeight) > pageHeight) {
+                    menu.css({
+                        'top': `-${menuHeight}px`
+                    })
+                }
+            });
+
+            el.on('hide.bs.dropdown', function (e) {
+                let target = e.relatedTarget,
+                    menu = $(target).next('.dropdown-menu');
+
+                menu.removeAttr('style');
+            });
         }
+
     });
 });
