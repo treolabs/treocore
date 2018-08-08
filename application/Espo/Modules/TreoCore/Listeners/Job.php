@@ -35,6 +35,8 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Core\CronManager;
+
 /**
  * Job listener
  *
@@ -50,9 +52,10 @@ class Job extends AbstractListener
     public function beforeUpdate(array $data): array
     {
         if (!empty($method = $data['method']) && $method == 'runUpdateJob') {
-            echo '<pre>';
-            print_r($data);
-            die();
+            if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
+                $this->getConfig()->set('isNeedToUpdateComposer', false);
+                $this->getConfig()->save();
+            }
         }
 
         return $data;
