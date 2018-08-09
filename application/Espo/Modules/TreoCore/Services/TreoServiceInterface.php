@@ -32,47 +32,23 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Services;
 
-namespace Espo\Modules\TreoCore\Core;
-
-use Espo\Core\CronManager as CoreCronManager;
-use Espo\Modules\TreoCore\Core\Utils\Cron\Job as JobUtil;
+use Espo\Modules\TreoCore\Core\Container;
 
 /**
- * Class of CronManager
+ * TreoServiceInterface interface
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CronManager extends CoreCronManager
+interface TreoServiceInterface
 {
     /**
-     * @var null|JobUtil
+     * Set container
+     *
+     * @param Container $container
+     *
+     * @return $this
      */
-    protected $treoCronJobUtil = null;
-
-    /**
-     * Check scheduled jobs and create related jobs
-     */
-    protected function createJobsFromScheduledJobs()
-    {
-        // get parent data
-        parent::createJobsFromScheduledJobs();
-
-        // get created jobs
-        $this->getServiceFactory()->create('CronJobCreator')->createJobs();
-    }
-
-    /**
-     * @return JobUtil
-     */
-    protected function getCronJobUtil()
-    {
-        if (is_null($this->treoCronJobUtil)) {
-            $this->treoCronJobUtil = new JobUtil($this->getConfig(), $this->getEntityManager());
-            $this->treoCronJobUtil->setEventManager($this->getContainer()->get('eventManager'));
-        }
-
-        return $this->treoCronJobUtil;
-    }
+    public function setContainer(Container $container);
 }

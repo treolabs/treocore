@@ -37,19 +37,15 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
-use Espo\Core\Services\Base;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 
 /**
  * TreoUpgrade service
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class TreoUpgrade extends Base
+class TreoUpgrade extends AbstractTreoService
 {
-    use ContainerTrait;
-
     const TREO_PACKAGES_URL = 'http://treo-packages.zinit1.com/api/v1/Packages/';
     const TREO_PACKAGES_PATH = 'data/upload/upgrades';
 
@@ -161,9 +157,6 @@ class TreoUpgrade extends Base
      */
     public function runUpgradeJob(array $data): void
     {
-        echo '<pre>';
-        print_r('123');
-        die();
         $upgradeManager = new UpgradeManager($this->getContainer());
         $upgradeManager->install(['id' => $data['fileName']]);
 
