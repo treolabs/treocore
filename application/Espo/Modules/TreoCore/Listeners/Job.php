@@ -52,7 +52,8 @@ class Job extends AbstractListener
      */
     public function beforeUpdate(array $data): array
     {
-        if (!empty($method = $data['method']) && $method == 'runUpdateJob') {
+        if (!empty($method = $data['method'])
+            && in_array($method, ['runUpdateJob', 'runUpgradeJob'])) {
             // unblocked rub update button
             if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
                 $this->getConfig()->set('isNeedToUpdateComposer', false);

@@ -71,6 +71,27 @@ class TreoUpgrade extends Base
     }
 
     /**
+     * @ApiDescription(description="Run upgrade TreoCore")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/TreoUpgrade/upgrade")
+     * @ApiReturn(sample="'bool'")
+     *
+     * @return bool
+     */
+    public function actionUpgrade($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getUpgradeService()->createUpgradeJob();
+    }
+
+    /**
      * Get upgrade service
      *
      * @return Service

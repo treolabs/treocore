@@ -37,6 +37,9 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core;
 
 use Espo\Core\CronManager as CoreCronManager;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\NotFound;
+use Espo\Core\Utils\Json;
 use Espo\Modules\TreoCore\Core\Utils\Cron\Job as JobUtil;
 
 /**
@@ -50,6 +53,58 @@ class CronManager extends CoreCronManager
      * @var null|JobUtil
      */
     protected $treoCronJobUtil = null;
+
+    /**
+     * Run Service
+     *
+     * @param  array $job
+     *
+     * @return void
+     */
+    protected function runService($job)
+    {
+        $serviceName = $job->get('serviceName');
+
+        if (!$serviceName) {
+            throw new Error('Job with empty serviceName.');
+        }
+
+        if (!$this->getServiceFactory()->checkExists($serviceName)) {
+            throw new NotFound();
+        }
+
+        $service = $this->getServiceFactory()->create($serviceName);
+
+        $methodNameDeprecated = $job->get('method');
+        $methodName = $job->get('methodName');
+
+        $isDeprecated = false;
+        if (!$methodName) {
+            $isDeprecated = true;
+            $methodName = $methodNameDeprecated;
+        }
+
+        if (!$methodName) {
+            throw new Error('Job with empty methodName.');
+        }
+
+        if (!method_exists($service, $methodName)) {
+            throw new NotFound();
+        }
+
+        $data = $job->get('data');
+
+        if ($isDeprecated) {
+            $data = Json::decode(Json::encode($data), true);
+        }
+
+        // set container to service if it needs
+        if (method_exists($service, 'setContainer')) {
+            $service->setContainer($this->getContainer());
+        }
+
+        $service->$methodName($data, $job->get('targetId'), $job->get('targetType'));
+    }
 
     /**
      * Check scheduled jobs and create related jobs
