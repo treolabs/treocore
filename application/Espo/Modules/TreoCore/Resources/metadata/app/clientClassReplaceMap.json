@@ -127,5 +127,8 @@
   ],
   "views/record/detail-small": [
     "treo-core"
+  ],
+  "views/notification/badge": [
+    "treo-core"
   ]
 }

@@ -69,17 +69,17 @@ Espo.define('treo-core:views/progress-manager/panel', 'view', function (Dep) {
                         {
                             name: 'progress',
                             view: 'treo-core:views/progress-manager/fields/progress',
-                            width: '90px'
+                            width: '10'
                         },
                         {
                             name: 'status',
                             view: 'treo-core:views/progress-manager/fields/status',
-                            width: '90px'
+                            width: '10'
                         },
                         {
                             name: 'actions',
                             view: 'treo-core:views/progress-manager/fields/actions',
-                            width: '240px'
+                            width: '40'
                         }
                     ]
                 }, function (view) {

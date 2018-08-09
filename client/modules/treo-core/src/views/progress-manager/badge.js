@@ -36,6 +36,8 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
 
         interval: null,
 
+        intervalConditions: [],
+
         isPanelShowed: false,
 
         template: 'treo-core:progress-manager/badge',
@@ -50,6 +52,7 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
 
         setup() {
             this.progressCheckInterval = this.getConfig().get('progressCheckInterval') || this.progressCheckInterval;
+            this.intervalConditions = this.options.intervalConditions || this.intervalConditions;
 
             this.listenToOnce(this, 'after:render', () => {
                 this.initProgressShowInterval();
@@ -64,6 +67,10 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
 
         initProgressShowInterval() {
             this.interval = window.setInterval(() => {
+                if (!this.checkIntervalConditions()) {
+                    return;
+                }
+
                 if (!this.isPanelShowed) {
                     this.ajaxGetRequest('ProgressManager/isShowPopup', {"userId": this.getUser().get('id')})
                         .then(response => {
@@ -103,13 +110,25 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
 
             if (this.hasView('panel')) {
                 this.getView('panel').remove();
-            };
+            }
 
             $(document).off('mouseup.progress');
         },
 
         isProgressModalShowed() {
             return $(document).find('.progress-modal').length;
+        },
+
+        checkIntervalConditions() {
+            let check = true;
+
+            (this.intervalConditions || []).forEach(condition => {
+                if (typeof  condition === 'function') {
+                    check = check && condition.call(this);
+                }
+            });
+
+            return check;
         }
 
     })

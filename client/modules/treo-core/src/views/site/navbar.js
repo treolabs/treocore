@@ -58,10 +58,59 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
         },
 
         setup() {
-            Dep.prototype.setup.call(this);
+            this.getRouter().on('routed', function (e) {
+                if (e.controller) {
+                    this.selectTab(e.controller);
+                } else {
+                    this.selectTab(false);
+                }
+            }.bind(this));
+
+            var tabList = this.getTabList();
+
+            var scopes = this.getMetadata().get('scopes') || {};
+
+            this.tabList = tabList.filter(function (scope) {
+                if ((scopes[scope] || {}).disabled) return;
+                if ((scopes[scope] || {}).acl) {
+                    return this.getAcl().check(scope);
+                }
+                return true;
+            }, this);
+
+            this.quickCreateList = this.getQuickCreateList().filter(function (scope) {
+                if ((scopes[scope] || {}).disabled) return;
+                if ((scopes[scope] || {}).acl) {
+                    return this.getAcl().check(scope, 'create');
+                }
+                return true;
+            }, this);
+
+            this.createView('notificationsBadge', 'views/notification/badge', {
+                el: this.options.el + ' .notifications-badge-container',
+                intervalConditions: [
+                    () => {
+                        return $(window).innerWidth() < 768;
+                    }
+                ]
+            });
 
             this.createView('notificationsBadgeRight', 'views/notification/badge', {
-                el: `${'.navbar-right'} .notifications-badge-container`
+                el: `${this.options.el} .navbar-right .notifications-badge-container`,
+                intervalConditions: [
+                    () => {
+                        return $(window).innerWidth() >= 768;
+                    }
+                ]
+            });
+
+            this.setupGlobalSearch();
+
+            this.setupTabDefsList();
+
+            this.once('remove', function () {
+                $(window).off('resize.navbar');
+                $(window).off('scroll.navbar');
             });
 
             this.openMenu();
@@ -78,14 +127,24 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
         initProgressBadge() {
             this.$el.find('.navbar-header').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container"></li>');
             this.createView('progressBadgeHeader', 'treo-core:views/progress-manager/badge', {
-                el: `${'.navbar-header'} .progress-badge-container`
+                el: `${this.options.el} .navbar-header .progress-badge-container`,
+                intervalConditions: [
+                    () => {
+                        return $(window).innerWidth() < 768;
+                    }
+                ]
             }, view => {
                 view.render();
             });
 
             this.$el.find('.navbar-right').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container hidden-xs"></li>');
             this.createView('progressBadgeRight', 'treo-core:views/progress-manager/badge', {
-                el: `${'.navbar-right'} .progress-badge-container`
+                el: `${this.options.el} .navbar-right .progress-badge-container`,
+                intervalConditions: [
+                    () => {
+                        return $(window).innerWidth() >= 768;
+                    }
+                ]
             }, view => {
                 view.render();
             });
