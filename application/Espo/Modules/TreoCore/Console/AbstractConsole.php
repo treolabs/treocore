@@ -104,42 +104,42 @@ abstract class AbstractConsole
      *
      * @return string
      */
-    public static function ArrayToTable(array $data, array $header = []): string
+    public static function arrayToTable(array $data, array $header = []): string
     {
         // prepare data
         $data = array_merge([$header], $data);
-        foreach ($data as $row_key => $row) {
-            $isHeader = (!empty($header) && $row_key == 0);
-            foreach ($row as $cell_key => $cell) {
+        foreach ($data as $rowKey => $row) {
+            $isHeader = (!empty($header) && $rowKey == 0);
+            foreach ($row as $cellKey => $cell) {
                 // prepare color
                 if ($isHeader) {
                     $color = '0;31';
                 } else {
-                    $color = (!empty($cell_key % 2)) ? '0;37' : '0;32';
+                    $color = (!empty($cellKey % 2)) ? '0;37' : '0;32';
                 }
 
                 // inject breaklines and color
-                $data[$row_key][$cell_key] = '| ' . "\033[{$color}m{$cell}\033[0m";
+                $data[$rowKey][$cellKey] = '| ' . "\033[{$color}m{$cell}\033[0m";
             }
-            $data[$row_key][] = '|';
+            $data[$rowKey][] = '|';
         }
 
         // Find longest string in each column
         $columns = [];
-        foreach ($data as $row_key => $row) {
-            foreach ($row as $cell_key => $cell) {
+        foreach ($data as $rowKey => $row) {
+            foreach ($row as $cellKey => $cell) {
                 $length = strlen($cell);
-                if (empty($columns[$cell_key]) || $columns[$cell_key] < $length) {
-                    $columns[$cell_key] = $length;
+                if (empty($columns[$cellKey]) || $columns[$cellKey] < $length) {
+                    $columns[$cellKey] = $length;
                 }
             }
         }
 
         // Output table, padding columns
         $table = '';
-        foreach ($data as $row_key => $row) {
-            foreach ($row as $cell_key => $cell) {
-                $table .= str_pad($cell, $columns[$cell_key]) . '   ';
+        foreach ($data as $rowKey => $row) {
+            foreach ($row as $cellKey => $cell) {
+                $table .= str_pad($cell, $columns[$cellKey]) . '   ';
             }
             $table .= PHP_EOL;
         }

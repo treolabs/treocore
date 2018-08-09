@@ -31,48 +31,43 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core;
+namespace Espo\Modules\TreoCore\Repositories;
 
-use Espo\Core\CronManager as CoreCronManager;
-use Espo\Modules\TreoCore\Core\Utils\Cron\Job as JobUtil;
+use Espo\Core\CronManager;
+use Espo\ORM\Entity;
+use Espo\Repositories\Job as EspoJob;
 
 /**
- * Class of CronManager
+ * Job repository
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CronManager extends CoreCronManager
+class Job extends EspoJob
 {
     /**
-     * @var null|JobUtil
+     * @param Entity $entity
+     * @param array  $options
      */
-    protected $treoCronJobUtil = null;
-
-    /**
-     * Check scheduled jobs and create related jobs
-     */
-    protected function createJobsFromScheduledJobs()
+    public function beforeSave(Entity $entity, array $options = [])
     {
-        // get parent data
-        parent::createJobsFromScheduledJobs();
+        // call parent action
+        parent::beforeSave($entity, $options);
 
-        // get created jobs
-        $this->getServiceFactory()->create('CronJobCreator')->createJobs();
+        // triggered event
+        $this
+            ->getInjection('eventManager')
+            ->triggered('Job', 'beforeUpdate', $entity->toArray());
     }
 
     /**
-     * @return JobUtil
+     * Init
      */
-    protected function getCronJobUtil()
+    protected function init()
     {
-        if (is_null($this->treoCronJobUtil)) {
-            $this->treoCronJobUtil = new JobUtil($this->getConfig(), $this->getEntityManager());
-            $this->treoCronJobUtil->setEventManager($this->getContainer()->get('eventManager'));
-        }
+        parent::init();
 
-        return $this->treoCronJobUtil;
+        $this->addDependency('eventManager');
     }
 }

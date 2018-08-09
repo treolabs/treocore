@@ -31,48 +31,53 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core;
+namespace Espo\Modules\TreoCore\Listeners;
 
-use Espo\Core\CronManager as CoreCronManager;
-use Espo\Modules\TreoCore\Core\Utils\Cron\Job as JobUtil;
+use Espo\Core\CronManager;
+use Espo\Core\Utils\Json;
 
 /**
- * Class of CronManager
+ * Job listener
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CronManager extends CoreCronManager
+class Job extends AbstractListener
 {
     /**
-     * @var null|JobUtil
+     * @param array $data
+     *
+     * @return array
      */
-    protected $treoCronJobUtil = null;
-
-    /**
-     * Check scheduled jobs and create related jobs
-     */
-    protected function createJobsFromScheduledJobs()
+    public function beforeUpdate(array $data): array
     {
-        // get parent data
-        parent::createJobsFromScheduledJobs();
+        if (!empty($method = $data['method']) && $method == 'runUpdateJob') {
+            // unblocked rub update button
+            if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
+                $this->getConfig()->set('isNeedToUpdateComposer', false);
+                $this->getConfig()->save();
+            }
 
-        // get created jobs
-        $this->getServiceFactory()->create('CronJobCreator')->createJobs();
-    }
+            // set to EM log
+            if ($data['status'] == CronManager::FAILED) {
+                // prepare json data
+                $jsonData = Json::decode($data['data'], true);
 
-    /**
-     * @return JobUtil
-     */
-    protected function getCronJobUtil()
-    {
-        if (is_null($this->treoCronJobUtil)) {
-            $this->treoCronJobUtil = new JobUtil($this->getConfig(), $this->getEntityManager());
-            $this->treoCronJobUtil->setEventManager($this->getContainer()->get('eventManager'));
+                // prepare output
+                $output = "Updating failed.";
+                $output .= " We can't create connect to modules server. Please, try again.";
+
+                $note = $this->getEntityManager()->getEntity('Note');
+                $note->set('type', 'composerUpdate');
+                $note->set('parentType', 'ModuleManager');
+                $note->set('data', ['status' => 999, 'output' => $output]);
+                $note->set('createdById', $jsonData['createdById']);
+
+                $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
+            }
         }
 
-        return $this->treoCronJobUtil;
+        return $data;
     }
 }

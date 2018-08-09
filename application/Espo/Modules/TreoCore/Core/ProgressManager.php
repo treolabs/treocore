@@ -77,8 +77,13 @@ class ProgressManager
      *
      * @return bool
      */
-    public function push(string $name, string $type, array $data = [], string $userId = '', bool $isHidden = false): bool
-    {
+    public function push(
+        string $name,
+        string $type,
+        array $data = [],
+        string $userId = '',
+        bool $isHidden = false
+    ): bool {
         // prepare result
         $result = false;
 
