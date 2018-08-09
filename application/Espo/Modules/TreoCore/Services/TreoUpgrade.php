@@ -117,6 +117,9 @@ class TreoUpgrade extends AbstractTreoService
                         $zip->extractTo($extractDir);
                         $zip->close();
 
+                        // delete archive
+                        unlink($zipName);
+
                         // update config
                         $this->getConfig()->set('isNeedToUpdateComposer', true);
                         $this->getConfig()->save();
