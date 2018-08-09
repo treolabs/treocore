@@ -246,6 +246,11 @@ class ModuleManager extends Base
      */
     public function installModule(string $id, string $version = null): bool
     {
+        // is changing blocked?
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            return false;
+        }
+
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
@@ -285,6 +290,11 @@ class ModuleManager extends Base
      */
     public function updateModule(string $id, string $version): bool
     {
+        // is changing blocked?
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            return false;
+        }
+
         // prepare params
         $package = $this->getComposerModuleService()->getModulePackage($id);
         $packages = $this->getComposerModuleService()->getModulePackages($id);
@@ -318,6 +328,11 @@ class ModuleManager extends Base
      */
     public function deleteModule(string $id): bool
     {
+        // is changing blocked?
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            return false;
+        }
+
         // prepare modules
         if ($this->isModuleSystem($id)) {
             throw new Exceptions\Error($this->translateError('isSystem'));
@@ -349,6 +364,11 @@ class ModuleManager extends Base
      */
     public function cancel(string $id): bool
     {
+        // is changing blocked?
+        if ($this->getConfig()->get('isNeedToUpdateComposer')) {
+            return false;
+        }
+
         // prepare result
         $result = false;
 
