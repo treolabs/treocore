@@ -165,11 +165,16 @@ class TreoUpgrade extends AbstractTreoService
             $upgradeManager = new UpgradeManager($this->getContainer());
             $upgradeManager->install(['id' => $fileName]);
 
+            // update config
+            $this->getConfig()->set('isNeedToUpdateComposer', false);
+            $this->getConfig()->save();
+
             // call migration
             $this
                 ->getContainer()
                 ->get('migration')
                 ->run('TreoCore', $data['versionFrom'], $data['versionTo']);
+
         }
     }
 
