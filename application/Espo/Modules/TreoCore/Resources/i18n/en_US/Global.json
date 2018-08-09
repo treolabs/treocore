@@ -84,7 +84,8 @@
     "status": "Status",
     "fail": "Fail",
     "success": "Success",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "showFullList": "Show Full List"
   },
   "links": {
     "ownerUser": "Owner"

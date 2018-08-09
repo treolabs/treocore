@@ -31,8 +31,8 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
-    Dep => Dep.extend({
+Espo.define('treo-core:views/list', ['class-replace!treo-core:views/list', 'search-manager'],
+    (Dep, SearchManager) => Dep.extend({
 
         enabledFixedHeader: true,
 
@@ -40,6 +40,21 @@ Espo.define('treo-core:views/list', 'class-replace!treo-core:views/list',
             Dep.prototype.prepareRecordViewOptions.call(this, options);
 
             options.enabledFixedHeader = this.enabledFixedHeader;
+        },
+
+        setupSearchManager: function () {
+            var collection = this.collection;
+
+            var searchManager = new SearchManager(collection, 'list', this.getStorage(), this.getDateTime(), this.getSearchDefaultData());
+            searchManager.scope = this.scope;
+
+            if (this.options.params.showFullListFilter) {
+                searchManager.set(_.extend(searchManager.get(), {advanced: Espo.Utils.cloneDeep(this.options.params.advanced)}));
+            }
+
+            searchManager.loadStored();
+            collection.where = searchManager.getWhere();
+            this.searchManager = searchManager;
         },
 
         setupSorting() {
