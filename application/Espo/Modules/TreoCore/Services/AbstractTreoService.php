@@ -34,7 +34,6 @@
 
 namespace Espo\Modules\TreoCore\Services;
 
-
 use Espo\Entities\User;
 use Espo\Core\Utils\Config;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
@@ -45,7 +44,7 @@ use Espo\Orm\EntityManager;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-abstract class AbstractTreoService implements TreoServiceInterface
+abstract class AbstractTreoService
 {
     use ContainerTrait;
 
