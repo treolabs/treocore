@@ -83,7 +83,19 @@ class Job extends EspoJob
 
         $select
             = "
-            SELECT id, name, service_name, method, data, scheduled_job_id, execute_time, target_id, target_type, pid FROM `job`
+            SELECT 
+              id, 
+              name, 
+              service_name, 
+              method, 
+              job.data, 
+              scheduled_job_id, 
+              execute_time, 
+              target_id, 
+              target_type, 
+              pid 
+            FROM 
+               job
             WHERE
             `status` = '" . CronManager::RUNNING . "' AND execute_time < '" . date('Y-m-d H:i:s', $time) . "'
         ";
@@ -144,7 +156,13 @@ class Job extends EspoJob
             $cronScheduledJob = $this->getCronScheduledJob();
             foreach ($jobData as $jobId => $job) {
                 if (!empty($job['scheduled_job_id'])) {
-                    $cronScheduledJob->addLogRecord($job['scheduled_job_id'], CronManager::FAILED, $job['execute_time'], $job['target_id'], $job['target_type']);
+                    $cronScheduledJob->addLogRecord(
+                        $job['scheduled_job_id'],
+                        CronManager::FAILED,
+                        $job['execute_time'],
+                        $job['target_id'],
+                        $job['target_type']
+                    );
                 }
             }
         }

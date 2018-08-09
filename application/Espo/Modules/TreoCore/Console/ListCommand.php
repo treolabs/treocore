@@ -75,7 +75,7 @@ class ListCommand extends AbstractConsole
 
         // render
         self::show('Available commands:', 3);
-        echo self::ArrayToTable($data);
+        echo self::arrayToTable($data);
     }
 
     /**
