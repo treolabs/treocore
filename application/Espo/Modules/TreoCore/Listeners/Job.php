@@ -59,7 +59,7 @@ class Job extends AbstractListener
                 $this->getConfig()->save();
             }
 
-            // set message to EM log
+            // set to EM log
             if ($data['status'] == CronManager::FAILED) {
                 // prepare json data
                 $jsonData = Json::decode($data['data'], true);
