@@ -97,15 +97,15 @@ class TreoUpgrade extends AbstractTreoService
             // prepare name
             $name = str_replace(".", "_", "{$currentVersion}_to_{$version}");
 
+            // prepare extract dir
+            $extractDir = self::TREO_PACKAGES_PATH . "/{$name}";
+
             // prepare zip name
             $zipName = self::TREO_PACKAGES_PATH . "/{$name}.zip";
 
-            // download
-            if (!file_exists($zipName)) {
+            if (!file_exists($extractDir)) {
+                // download
                 file_put_contents($zipName, fopen($link, 'r'));
-
-                // prepare extract dir
-                $extractDir = self::TREO_PACKAGES_PATH . "/{$name}";
 
                 // create extract dir
                 if (!file_exists($extractDir)) {
