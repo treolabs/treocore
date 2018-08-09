@@ -157,14 +157,20 @@ class TreoUpgrade extends AbstractTreoService
      */
     public function runUpgradeJob(array $data): void
     {
-        $upgradeManager = new UpgradeManager($this->getContainer());
-        $upgradeManager->install(['id' => $data['fileName']]);
+        if (!empty($versionFrom = $data['versionFrom'])
+            && !empty($versionTo = $data['versionTo'])
+            && !empty($fileName = $data['fileName'])
+            && file_exists(self::TREO_PACKAGES_PATH . "/{$fileName}")) {
+            // upgrade treocore
+            $upgradeManager = new UpgradeManager($this->getContainer());
+            $upgradeManager->install(['id' => $fileName]);
 
-        // call migration
-        $this
-            ->getContainer()
-            ->get('migration')
-            ->run('TreoCore', $data['versionFrom'], $data['versionTo']);
+            // call migration
+            $this
+                ->getContainer()
+                ->get('migration')
+                ->run('TreoCore', $data['versionFrom'], $data['versionTo']);
+        }
     }
 
     /**
