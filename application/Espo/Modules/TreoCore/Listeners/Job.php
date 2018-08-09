@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Listeners;
 
 use Espo\Core\CronManager;
+use Espo\Core\Utils\Json;
 
 /**
  * Job listener
@@ -52,9 +53,33 @@ class Job extends AbstractListener
     public function beforeUpdate(array $data): array
     {
         if (!empty($method = $data['method']) && $method == 'runUpdateJob') {
+            // unblocked rub update button
             if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
                 $this->getConfig()->set('isNeedToUpdateComposer', false);
                 $this->getConfig()->save();
+            }
+
+            // set message to EM log
+            if ($data['status'] == CronManager::FAILED) {
+                // prepare json data
+                $jsonData = Json::decode($data['data'], true);
+
+                // prepare output
+                $output = "Updating failed.";
+                $output .= " We can't create connect to modules server. Please, try again.";
+
+                $note = $this->getEntityManager()->getEntity('Note');
+                $note->set('type', 'composerUpdate');
+                $note->set('parentType', 'ModuleManager');
+                $note->set(
+                    'data', [
+                        'status' => 999,
+                        'output' => $output,
+                    ]
+                );
+                $note->set('createdById', $jsonData['createdById']);
+
+                $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
             }
         }
 
