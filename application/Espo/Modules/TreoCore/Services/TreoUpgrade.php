@@ -174,7 +174,6 @@ class TreoUpgrade extends AbstractTreoService
                 ->getContainer()
                 ->get('migration')
                 ->run('TreoCore', $data['versionFrom'], $data['versionTo']);
-
         }
     }
 
