@@ -12,6 +12,11 @@
                     <span class="glyphicon glyphicon-search"></span>
                 </button>
             {{/if}}
+            <ul class="visible-xs header-right pull-left">
+                <li class="notifications-badge-container ">
+                    {{{notificationsBadge}}}
+                </li>
+            </ul>
             <div class="dropdown menu-container visible-xs pull-left">
                 <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
@@ -26,11 +31,7 @@
                     {{/each}}
                 </ul>
             </div>
-            <ul class="visible-xs header-right pull-left">
-                <li class="notifications-badge-container ">
-                    {{{notificationsBadge}}}
-                </li>
-            </ul>
+
         </div>
     </div>
 
