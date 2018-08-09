@@ -59,7 +59,7 @@ class ProgressManager extends Base
      */
     public function actionIsShowPopup($params, $data, Request $request): bool
     {
-        if (!$request->isGet() || empty($userId = $request->get('userId'))) {
+        if (!$request->isGet()) {
             throw new Exceptions\BadRequest();
         }
 
@@ -68,6 +68,9 @@ class ProgressManager extends Base
             ->getContainer()
             ->get('progressManager')
             ->getPopupData();
+
+        // get user id
+        $userId = $this->getUser()->get('id');
 
         return (!empty($data) && in_array("'$userId'", $data));
     }

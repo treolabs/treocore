@@ -31,54 +31,86 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\CronManager;
-use Espo\Core\Utils\Json;
+use Espo\Entities\User;
+use Espo\Core\Utils\Config;
+use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Espo\Orm\EntityManager;
 
 /**
- * Job listener
+ * AbstractTreoService class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Job extends AbstractListener
+abstract class AbstractTreoService
 {
+    use ContainerTrait;
+
     /**
-     * @param array $data
+     * Reload dependency
+     *
+     * @param string $name
+     */
+    protected function reloadDependency($name)
+    {
+        $this->getContainer()->reload($name);
+    }
+
+    /**
+     * Rebuild
+     */
+    protected function rebuild(): void
+    {
+        $this->reloadDependency('entityManager');
+        $this->getContainer()->get('dataManager')->rebuild();
+    }
+
+    /**
+     * Get EntityManager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->getContainer()->get('entityManager');
+    }
+
+    /**
+     * Get Config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get User
+     *
+     * @return User
+     */
+    protected function getUser(): User
+    {
+        return $this->getContainer()->get('user');
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
      *
      * @return array
      */
-    public function beforeUpdate(array $data): array
+    protected function triggered(string $target, string $action, array $data = []): array
     {
-        if (!empty($method = $data['method'])
-            && in_array($method, ['runUpdateJob', 'runUpgradeJob'])) {
-            // unblocked rub update button
-            if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
-                $this->getConfig()->set('isSystemUpdating', false);
-                $this->getConfig()->save();
-            }
-
-            // set to EM log
-            if ($data['status'] == CronManager::FAILED) {
-                // prepare json data
-                $jsonData = Json::decode($data['data'], true);
-
-                // prepare output
-                $output = "Updating failed.";
-                $output .= " We can't create connect to modules server. Please, try again.";
-
-                $note = $this->getEntityManager()->getEntity('Note');
-                $note->set('type', 'composerUpdate');
-                $note->set('parentType', 'ModuleManager');
-                $note->set('data', ['status' => 999, 'output' => $output]);
-                $note->set('createdById', $jsonData['createdById']);
-
-                $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
-            }
-        }
-
-        return $data;
+        return $this
+            ->getContainer()
+            ->get('eventManager')
+            ->triggered($target, $action, $data);
     }
 }

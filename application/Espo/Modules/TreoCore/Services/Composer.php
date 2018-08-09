@@ -111,9 +111,9 @@ class Composer extends Base
         // prepare result
         $result = false;
 
-        if (empty($this->getConfig()->get('isNeedToUpdateComposer'))) {
+        if (empty($this->getConfig()->get('isSystemUpdating'))) {
             // update config
-            $this->getConfig()->set('isNeedToUpdateComposer', true);
+            $this->getConfig()->set('isSystemUpdating', true);
             $this->getConfig()->save();
 
             // create job
@@ -201,7 +201,7 @@ class Composer extends Base
      */
     public function cancelChanges(): void
     {
-        if (empty($this->getConfig()->get('isNeedToUpdateComposer'))) {
+        if (empty($this->getConfig()->get('isSystemUpdating'))) {
             if (file_exists($this->moduleStableComposer)) {
                 if (file_exists($this->moduleComposer)) {
                     unlink($this->moduleComposer);
