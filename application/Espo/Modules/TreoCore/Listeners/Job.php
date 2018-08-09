@@ -71,12 +71,7 @@ class Job extends AbstractListener
                 $note = $this->getEntityManager()->getEntity('Note');
                 $note->set('type', 'composerUpdate');
                 $note->set('parentType', 'ModuleManager');
-                $note->set(
-                    'data', [
-                        'status' => 999,
-                        'output' => $output,
-                    ]
-                );
+                $note->set('data', ['status' => 999, 'output' => $output]);
                 $note->set('createdById', $jsonData['createdById']);
 
                 $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
