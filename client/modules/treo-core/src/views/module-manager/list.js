@@ -48,7 +48,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         data() {
             return {
-                disabledRunUpdateButton: this.getConfig().get('isNeedToUpdateComposer')
+                disabledRunUpdateButton: this.getConfig().get('isSystemUpdating')
             }
         },
 
@@ -274,8 +274,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     }
                     this.getConfig().fetch({
                         success: function (config) {
-                            this.disableActionButton('runUpdate', !!config.get('isNeedToUpdateComposer'));
-                            this.disableActionButton('cancelUpdate', !!config.get('isNeedToUpdateComposer'));
+                            this.disableActionButton('runUpdate', !!config.get('isSystemUpdating'));
+                            this.disableActionButton('cancelUpdate', !!config.get('isSystemUpdating'));
                         }.bind(this)
                     });
                 }).always(() => {

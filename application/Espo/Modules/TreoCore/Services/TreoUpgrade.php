@@ -121,7 +121,7 @@ class TreoUpgrade extends AbstractTreoService
                         unlink($zipName);
 
                         // update config
-                        $this->getConfig()->set('isNeedToUpdateComposer', true);
+                        $this->getConfig()->set('isSystemUpdating', true);
                         $this->getConfig()->save();
 
                         // create job
@@ -169,7 +169,7 @@ class TreoUpgrade extends AbstractTreoService
             $upgradeManager->install(['id' => $fileName]);
 
             // update config
-            $this->getConfig()->set('isNeedToUpdateComposer', false);
+            $this->getConfig()->set('isSystemUpdating', false);
             $this->getConfig()->save();
 
             // call migration

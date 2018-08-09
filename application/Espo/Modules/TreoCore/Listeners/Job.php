@@ -56,7 +56,7 @@ class Job extends AbstractListener
             && in_array($method, ['runUpdateJob', 'runUpgradeJob'])) {
             // unblocked rub update button
             if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
-                $this->getConfig()->set('isNeedToUpdateComposer', false);
+                $this->getConfig()->set('isSystemUpdating', false);
                 $this->getConfig()->save();
             }
 
