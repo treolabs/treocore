@@ -45,6 +45,13 @@ use Espo\Core\Services\Base;
  */
 class TreoUpgrade extends Base
 {
+    const TREO_PACKAGES_URL = 'http://treo-packages.zinit1.com/api/v1/Packages/';
+
+    /**
+     * @var null|array
+     */
+    protected $versionData = null;
+
     /**
      * Get available version
      *
@@ -55,6 +62,43 @@ class TreoUpgrade extends Base
         // prepare result
         $result = null;
 
+        if (!empty($data = $this->getVersionData($this->getConfig()->get('version')))
+            && !empty($data['version'])) {
+            $result = (string)$data['version'];
+        }
+
         return $result;
+    }
+
+    /**
+     * Get version data
+     *
+     * @param string $version
+     *
+     * @return array
+     */
+    protected function getVersionData(string $version): array
+    {
+        if (is_null($this->versionData)) {
+            // prepare result
+            $this->versionData = [];
+
+            try {
+                $json = file_get_contents(self::TREO_PACKAGES_URL . $version);
+                if (is_string($json)) {
+                    $data = json_decode($json, true);
+                }
+            } catch (\Exception $e) {
+            }
+
+            if (!empty($data) && is_array($data)) {
+                $item = array_pop($data);
+                if (is_array($item)) {
+                    $this->versionData = $item;
+                }
+            }
+        }
+
+        return $this->versionData;
     }
 }
