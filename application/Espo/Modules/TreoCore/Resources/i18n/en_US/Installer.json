@@ -36,5 +36,9 @@
     "youMustAgreeToTheLicenseAgreement": "You must agree to the license agreement",
     "fieldIsRequired": "{field} is required",
     "connectionSuccessful": "Connection successful!"
+  },
+  "requirements": {
+    "phpVersion": "PHP version",
+    "mysqlVersion": "MySQL version"
   }
 }

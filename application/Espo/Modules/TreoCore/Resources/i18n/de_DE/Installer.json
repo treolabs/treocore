@@ -36,5 +36,9 @@
     "youMustAgreeToTheLicenseAgreement": "Sie müssen den Lizenzvertrag akzeptieren",
     "fieldIsRequired": "{field} ist ein Pflichtfeld",
     "connectionSuccessful": "Verbindung ist erfolgreich!"
+  },
+  "requirements": {
+    "phpVersion": "PHP version",
+    "mysqlVersion": "MySQL version"
   }
 }

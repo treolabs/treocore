@@ -321,7 +321,7 @@ class Installer extends Base
     }
 
     /**
-     * @ApiDescription(description="Get requireds")
+     * @ApiDescription(description="Get requireds list")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/Installer/getRequireds")
      * @ApiReturn(sample="'array'")
@@ -330,7 +330,7 @@ class Installer extends Base
      * @throws Exceptions\BadRequest
      * @throws Exceptions\Forbidden
      */
-    public function actionGetRequireds($params, $data, Request $request): array
+    public function actionGetRequiredsList($params, $data, Request $request): array
     {
         // check method
         if (!$request->isGet()) {
@@ -344,7 +344,7 @@ class Installer extends Base
 //            throw new Exceptions\Forbidden();
         }
 
-        return $installer->getRequireds();
+        return $installer->getRequiredsList();
     }
 
     /**

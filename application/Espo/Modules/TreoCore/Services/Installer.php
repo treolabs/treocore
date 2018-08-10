@@ -56,14 +56,49 @@ class Installer extends AbstractTreoService
     protected $passwordHash = null;
 
     /**
-     * Get requireds
+     * @var null|array
+     */
+    protected $installConfig = null;
+
+    /**
+     * Get requireds list
      *
      * @return array
      */
-    public function getRequireds(): array
+    public function getRequiredsList(): array
     {
         // prepare result
         $result = [];
+
+        if (!empty($data = $this->getInstallConfig()['requirements'])) {
+            // for php version
+            $phpVersion = self::prepareVersion(phpversion());
+            $result[] = [
+                'name'    => $this->translate('phpVersion', 'requirements', 'Installer'),
+                'value'   => $phpVersion,
+                'isValid' => version_compare($phpVersion, $data['phpVersion'], '==')
+            ];
+
+            // for php extensions
+            foreach ($data['phpRequires'] as $require) {
+                // is ext valid?
+                $isValid = extension_loaded($require);
+
+                $result[] = [
+                    'name'    => $this->translate($require, 'requirements', 'Installer'),
+                    'value'   => ($isValid) ? $this->translate('On') : $this->translate('Off'),
+                    'isValid' => $isValid
+                ];
+            }
+
+            // for mysql version
+            $mysqlVersion = self::prepareVersion($this->getMysqlVersion(), true);
+            $result[] = [
+                'name'    => $this->translate('mysqlVersion', 'requirements', 'Installer'),
+                'value'   => $mysqlVersion,
+                'isValid' => version_compare($mysqlVersion, $data['mysqlVersion'], '>=')
+            ];
+        }
 
         return $result;
     }
@@ -423,10 +458,7 @@ class Installer extends AbstractTreoService
      */
     protected function translateError(string $error): string
     {
-        return $this
-            ->getContainer()
-            ->get('language')
-            ->translate($error, 'errors', 'Installer');
+        return $this->translate($error, 'errors', 'Installer');
     }
 
     /**
@@ -439,5 +471,64 @@ class Installer extends AbstractTreoService
         $data = Json::decode(file_get_contents(CORE_PATH . '/composer.json'), true);
 
         return $data['version'];
+    }
+
+    /**
+     * Get install config
+     *
+     * @return array
+     */
+    protected function getInstallConfig(): array
+    {
+        if (is_null($this->installConfig)) {
+            // prepare path to file
+            $configFile = CORE_PATH . "/application/Espo/Modules/TreoCore/Configs/Install.php";
+
+            // get data
+            $this->installConfig = include $configFile;
+        }
+
+        return $this->installConfig;
+    }
+
+    /**
+     * Get mysql version
+     *
+     * @return string|null
+     */
+    protected function getMysqlVersion(): ?string
+    {
+        $sth = $this->getEntityManager()->getPDO()->prepare("SHOW VARIABLES LIKE 'version'");
+        $sth->execute();
+        $res = $sth->fetch(\PDO::FETCH_NUM);
+
+        $version = empty($res[1]) ? null : $res[1];
+
+        return $version;
+    }
+
+    /**
+     * Prepare version
+     *
+     * @param string $version
+     * @param bool   $patch
+     *
+     * @return string|null
+     */
+    protected static function prepareVersion(string $version, bool $patch = false): ?string
+    {
+        // prepare result
+        $result = null;
+
+        $data = explode(".", $version);
+        if (!empty($data[0]) && !empty($data[1])) {
+            $result = $data[0] . '.' . $data[1];
+        }
+
+        if ($patch && !empty($data[2])) {
+            $result .= '.' . (int)$data[2];
+        }
+
+        return $result;
     }
 }
