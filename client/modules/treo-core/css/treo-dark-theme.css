@@ -11380,6 +11380,10 @@ ul.dropdown-menu > li.checkbox {
     margin-bottom: 0
 }
 
+.page-header {
+    padding-bottom: 0;
+}
+
 #login {
     background: #fff;
     color: #424242;
