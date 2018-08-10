@@ -50,21 +50,33 @@ class Hook extends BaseHook
     /**
      * @param Entity $entity
      * @param array  $options
+     */
+    public function beforeSave(Entity $entity, $options = [])
+    {
+        if (empty($entity->get('url'))) {
+            // default url
+            $url = $this->getConfig()->get('siteUrl') . '/portal/' . $entity->get('id');
+
+            $entity->set('url', $url);
+        }
+    }
+
+    /**
+     * @param Entity $entity
+     * @param array  $options
      *
      * @throws BadRequest
      */
     public function afterSave(Entity $entity, $options = [])
     {
-        if (!empty($url = $entity->get('url'))) {
-            // get urls
-            $urls = PortalApp::getUrlFileData();
+        // get urls
+        $urls = PortalApp::getUrlFileData();
 
-            // push
-            $urls[$entity->get('id')] = $entity->get('url');
+        // push
+        $urls[$entity->get('id')] = $entity->get('url');
 
-            // save
-            PortalApp::saveUrlFile($urls);
-        }
+        // save
+        PortalApp::saveUrlFile($urls);
     }
 
     /**

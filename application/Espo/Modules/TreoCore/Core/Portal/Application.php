@@ -76,7 +76,7 @@ class Application extends EspoApplication
     public static function saveUrlFile(array $data): void
     {
         $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data));
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         fclose($file);
     }
 
