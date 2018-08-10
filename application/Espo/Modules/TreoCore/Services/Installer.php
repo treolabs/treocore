@@ -74,9 +74,10 @@ class Installer extends AbstractTreoService
             // for php version
             $phpVersion = self::prepareVersion(phpversion());
             $result[] = [
-                'name'    => $this->translate('phpVersion', 'requirements', 'Installer'),
-                'value'   => $phpVersion,
-                'isValid' => version_compare($phpVersion, $data['phpVersion'], '==')
+                'name'       => $this->translate('phpVersion', 'requirements', 'Installer'),
+                'validValue' => $data['phpVersion'],
+                'value'      => $phpVersion,
+                'isValid'    => version_compare($phpVersion, $data['phpVersion'], '==')
             ];
 
             // for php extensions
@@ -85,18 +86,41 @@ class Installer extends AbstractTreoService
                 $isValid = extension_loaded($require);
 
                 $result[] = [
-                    'name'    => $this->translate($require, 'requirements', 'Installer'),
-                    'value'   => ($isValid) ? $this->translate('On') : $this->translate('Off'),
-                    'isValid' => $isValid
+                    'name'       => $this->translate($require, 'requirements', 'Installer'),
+                    'validValue' => $this->translate('On'),
+                    'value'      => ($isValid) ? $this->translate('On') : $this->translate('Off'),
+                    'isValid'    => $isValid
+                ];
+            }
+
+            // for php settings
+            foreach ($data['phpSettings'] as $setting => $value) {
+                // get system value
+                $systemValue = ini_get($setting);
+
+                // prepare value
+                $preparedSystemValue = $systemValue;
+                $preparedValue = $value;
+                if (!in_array($setting, ['max_execution_time', 'max_input_time'])) {
+                    $preparedSystemValue = $this->convertToBytes($systemValue);
+                    $preparedValue = $this->convertToBytes($value);
+                }
+
+                $result[] = [
+                    'name'       => $this->translate($setting, 'requirements', 'Installer'),
+                    'validValue' => '>= ' . $value,
+                    'value'      => $systemValue,
+                    'isValid'    => ($preparedSystemValue >= $preparedValue)
                 ];
             }
 
             // for mysql version
             $mysqlVersion = self::prepareVersion($this->getMysqlVersion(), true);
             $result[] = [
-                'name'    => $this->translate('mysqlVersion', 'requirements', 'Installer'),
-                'value'   => $mysqlVersion,
-                'isValid' => version_compare($mysqlVersion, $data['mysqlVersion'], '>=')
+                'name'       => $this->translate('mysqlVersion', 'requirements', 'Installer'),
+                'validValue' => '>= ' . $data['mysqlVersion'],
+                'value'      => $mysqlVersion,
+                'isValid'    => version_compare($mysqlVersion, $data['mysqlVersion'], '>=')
             ];
         }
 
@@ -505,6 +529,30 @@ class Installer extends AbstractTreoService
         $version = empty($res[1]) ? null : $res[1];
 
         return $version;
+    }
+
+    /**
+     * Convert to bytes
+     *
+     * @param string $value
+     *
+     * @return int
+     */
+    protected function convertToBytes(string $value): int
+    {
+        $value = trim($value);
+        $last = strtoupper(substr($value, -1));
+
+        switch ($last) {
+            case 'G':
+                $value = (int)$value * 1024;
+            case 'M':
+                $value = (int)$value * 1024;
+            case 'K':
+                $value = (int)$value * 1024;
+        }
+
+        return $value;
     }
 
     /**
