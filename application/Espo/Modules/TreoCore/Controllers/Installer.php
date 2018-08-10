@@ -323,7 +323,7 @@ class Installer extends Base
     /**
      * @ApiDescription(description="Get requireds list")
      * @ApiMethod(type="GET")
-     * @ApiRoute(name="/Installer/getRequireds")
+     * @ApiRoute(name="/Installer/getRequiredsList")
      * @ApiReturn(sample="'array'")
      *
      * @return array
