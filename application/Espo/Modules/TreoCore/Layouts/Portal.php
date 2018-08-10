@@ -34,66 +34,52 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Portal;
-
-use Espo\Core\Utils\Json;
-use Espo\Core\Portal\Application as EspoApplication;
+namespace Espo\Modules\TreoCore\Layouts;
 
 /**
- * Portal Application class
+ * Portal layout
  *
+ * @author r.ratsun@zinitsolutions.com
  */
-class Application extends EspoApplication
+class Portal extends AbstractLayout
 {
-    const CONFIG_PATH = 'data/portals.json';
-
     /**
-     * Get url config file data
+     * Layout detail
+     *
+     * @param array $data
      *
      * @return array
      */
-    public static function getUrlFileData(): array
+    public function layoutDetail(array $data): array
     {
-        // prepare result
-        $result = [];
+        $generalPanel = [
+            'label' => 'General',
+            'rows'  => [
+                [
+                    [
+                        'name' => 'name'
+                    ],
+                    [
+                        'name' => 'isActive'
+                    ]
+                ],
+                [
+                    [
+                        'name' => 'url'
+                    ],
+                    [
+                        'name' => 'portalRoles'
+                    ]
+                ]
+            ]
+        ];
 
-        if (file_exists(self::CONFIG_PATH)) {
-            $json = file_get_contents(self::CONFIG_PATH);
-            if (!empty($json)) {
-                $result = Json::decode($json, true);
+        foreach ($data as $k => $panel) {
+            if (!empty($panel['label']) && $panel['label'] == 'General') {
+                $data[$k] = $generalPanel;
             }
         }
 
-        return $result;
-    }
-
-
-    /**
-     * Set data to url config file
-     *
-     * @param array $data
-     */
-    public static function saveUrlFile(array $data): void
-    {
-        $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data));
-        fclose($file);
-    }
-
-    /**
-     * Run client
-     */
-    public function runClient()
-    {
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-portal.html',
-            [
-                'portalId'        => $this->getPortal()->id,
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $this->getContainer()->get('config')->get('version')
-            ]
-        );
+        return $data;
     }
 }

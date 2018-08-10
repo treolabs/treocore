@@ -34,66 +34,59 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Portal;
+namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\Utils\Json;
-use Espo\Core\Portal\Application as EspoApplication;
+use Espo\ORM\Entity;
+use Espo\Services\Record;
+use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
 
 /**
- * Portal Application class
+ * Portal service
  *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Application extends EspoApplication
+class Portal extends Record
 {
-    const CONFIG_PATH = 'data/portals.json';
+    /**
+     * @var null|array
+     */
+    protected $urls = null;
 
     /**
-     * Get url config file data
+     * @param Entity $entity
+     */
+    public function loadAdditionalFields(Entity $entity)
+    {
+        parent::loadAdditionalFields($entity);
+
+        if (!empty($url = $this->getUrls()[$entity->get('id')])) {
+            $entity->set('url', $url);
+        }
+    }
+
+    /**
+     * @param Entity $entity
+     */
+    public function loadAdditionalFieldsForList(Entity $entity)
+    {
+        parent::loadAdditionalFieldsForList($entity);
+
+        if (!empty($url = $this->getUrls()[$entity->get('id')])) {
+            $entity->set('url', $url);
+        }
+    }
+
+    /**
+     * Get urls
      *
      * @return array
      */
-    public static function getUrlFileData(): array
+    protected function getUrls(): array
     {
-        // prepare result
-        $result = [];
-
-        if (file_exists(self::CONFIG_PATH)) {
-            $json = file_get_contents(self::CONFIG_PATH);
-            if (!empty($json)) {
-                $result = Json::decode($json, true);
-            }
+        if (is_null($this->urls)) {
+            $this->urls = PortalApp::getUrlFileData();
         }
 
-        return $result;
-    }
-
-
-    /**
-     * Set data to url config file
-     *
-     * @param array $data
-     */
-    public static function saveUrlFile(array $data): void
-    {
-        $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data));
-        fclose($file);
-    }
-
-    /**
-     * Run client
-     */
-    public function runClient()
-    {
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-portal.html',
-            [
-                'portalId'        => $this->getPortal()->id,
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $this->getContainer()->get('config')->get('version')
-            ]
-        );
+        return $this->urls;
     }
 }

@@ -34,66 +34,54 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Portal;
+namespace Espo\Modules\TreoCore\Hooks\Portal;
 
-use Espo\Core\Utils\Json;
-use Espo\Core\Portal\Application as EspoApplication;
+use Espo\Core\Hooks\Base as BaseHook;
+use Espo\ORM\Entity;
+use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
 
 /**
- * Portal Application class
+ * Portal hook
  *
+ * @author r.ratsun@zinitsolutions.com
  */
-class Application extends EspoApplication
+class Hook extends BaseHook
 {
-    const CONFIG_PATH = 'data/portals.json';
-
     /**
-     * Get url config file data
+     * @param Entity $entity
+     * @param array  $options
      *
-     * @return array
+     * @throws BadRequest
      */
-    public static function getUrlFileData(): array
+    public function afterSave(Entity $entity, $options = [])
     {
-        // prepare result
-        $result = [];
+        if (!empty($url = $entity->get('url'))) {
+            // get urls
+            $urls = PortalApp::getUrlFileData();
 
-        if (file_exists(self::CONFIG_PATH)) {
-            $json = file_get_contents(self::CONFIG_PATH);
-            if (!empty($json)) {
-                $result = Json::decode($json, true);
-            }
+            // push
+            $urls[$entity->get('id')] = $entity->get('url');
+
+            // save
+            PortalApp::saveUrlFile($urls);
         }
-
-        return $result;
-    }
-
-
-    /**
-     * Set data to url config file
-     *
-     * @param array $data
-     */
-    public static function saveUrlFile(array $data): void
-    {
-        $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data));
-        fclose($file);
     }
 
     /**
-     * Run client
+     * @param Entity $entity
+     * @param array  $options
      */
-    public function runClient()
+    public function afterRemove(Entity $entity, $options = [])
     {
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-portal.html',
-            [
-                'portalId'        => $this->getPortal()->id,
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $this->getContainer()->get('config')->get('version')
-            ]
-        );
+        // get urls
+        $urls = PortalApp::getUrlFileData();
+
+        if (isset($urls[$entity->get('id')])) {
+            // delete
+            unset($urls[$entity->get('id')]);
+
+            // save
+            PortalApp::saveUrlFile($urls);
+        }
     }
 }
