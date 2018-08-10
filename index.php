@@ -65,7 +65,7 @@ $urls = PortalApp::getUrlFileData();
 if (in_array($url, $urls)) {
     // create portal app
     $app = new PortalApp(array_search($url, $urls));
-} elseif ($_SERVER['REQUEST_URI'] != '/') {
+} elseif (!empty($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] != '/') {
     // show 404
     header("HTTP/1.0 404 Not Found");
     exit();
