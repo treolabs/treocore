@@ -32,12 +32,16 @@
  * and "TreoPIM" word.
  */
 
+use Espo\Modules\TreoCore\Core\Application as App;
+use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
+
 include "bootstrap.php";
 
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
+// create app
+$app = new App();
 
 if (!$app->isInstalled()) {
     $app->runInstaller();
@@ -47,6 +51,24 @@ if (!$app->isInstalled()) {
 if (!empty($_GET['entryPoint'])) {
     $app->runEntryPoint($_GET['entryPoint']);
     exit;
+}
+
+// prepare protocol
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+// prepare url
+$url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+// get urls
+$urls = PortalApp::getUrlFileData();
+
+if (in_array($url, $urls)) {
+    // create portal app
+    $app = new PortalApp(array_search($url, $urls));
+} elseif ($_SERVER['REQUEST_URI'] != '/') {
+    // show 404
+    header("HTTP/1.0 404 Not Found");
+    exit();
 }
 
 $app->runClient();
