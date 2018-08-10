@@ -56,7 +56,7 @@ class Hook extends BaseHook
         $data = $entity->toArray();
         if (isset($data['url']) && empty($data['url'])) {
             // default url
-            $url = $this->getConfig()->get('siteUrl') . '/portal/' . $entity->get('id');
+            $url = $this->getConfig()->get('siteUrl') . '/portal-' . $entity->get('id');
 
             $entity->set('url', $url);
         }
