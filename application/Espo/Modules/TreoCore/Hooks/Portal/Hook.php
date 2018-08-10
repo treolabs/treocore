@@ -53,7 +53,8 @@ class Hook extends BaseHook
      */
     public function beforeSave(Entity $entity, $options = [])
     {
-        if (empty($entity->get('url'))) {
+        $data = $entity->toArray();
+        if (isset($data['url']) && empty($data['url'])) {
             // default url
             $url = $this->getConfig()->get('siteUrl') . '/portal/' . $entity->get('id');
 
@@ -69,14 +70,16 @@ class Hook extends BaseHook
      */
     public function afterSave(Entity $entity, $options = [])
     {
-        // get urls
-        $urls = PortalApp::getUrlFileData();
+        if (!empty($url = $entity->get('url'))) {
+            // get urls
+            $urls = PortalApp::getUrlFileData();
 
-        // push
-        $urls[$entity->get('id')] = $entity->get('url');
+            // push
+            $urls[$entity->get('id')] = $url;
 
-        // save
-        PortalApp::saveUrlFile($urls);
+            // save
+            PortalApp::saveUrlFile($urls);
+        }
     }
 
     /**
