@@ -341,7 +341,7 @@ class Installer extends Base
 
         // check if is install
         if ($installer->isInstalled()) {
-//            throw new Exceptions\Forbidden();
+            throw new Exceptions\Forbidden();
         }
 
         return $installer->getRequiredsList();
