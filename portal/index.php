@@ -32,38 +32,37 @@
  * and "TreoPIM" word.
  */
 
+use Espo\Modules\TreoCore\Core\Portal\Application;
+
 include "../bootstrap.php";
 
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
-if (!$app->isInstalled()) {
-    exit;
-}
+// prepare protocol
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
 
-$url = $_SERVER['REQUEST_URI'];
-$portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
+// prepare url
+$url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-if (!isset($portalId)) {
-    $url = $_SERVER['REDIRECT_URL'];
-    $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-}
+// get urls
+$urls = Application::getUrlFileData();
 
-$a = explode('?', $url);
-if (substr($a[0], -1) !== '/') {
-    $url = $a[0] . '/';
-    if (count($a) > 1) {
-        $url .= '?' . $a[1];
-    }
-    header("Location: " . $url);
+if (!in_array($url, $urls)) {
+    header("HTTP/1.0 404 Not Found");
     exit();
 }
 
-if ($portalId) {
-    $app->setBasePath('../../');
-} else {
-    $app->setBasePath('../');
+// get portalId
+$portalId = array_search($url, $urls);
+
+// create app
+$app = new \Espo\Modules\TreoCore\Core\Portal\Application($portalId);
+
+$app->setBasePath('../../');
+if (!$app->isInstalled()) {
+    $app->runInstaller();
+    exit;
 }
 
 if (!empty($_GET['entryPoint'])) {
@@ -71,4 +70,4 @@ if (!empty($_GET['entryPoint'])) {
     exit;
 }
 
-$app->runEntryPoint('portal');
+$app->runClient();
