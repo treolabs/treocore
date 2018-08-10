@@ -113,4 +113,26 @@ abstract class AbstractTreoService
             ->get('eventManager')
             ->triggered($target, $action, $data);
     }
+
+    /**
+     * Translate
+     *
+     * @param string     $label
+     * @param string     $category
+     * @param string     $scope
+     * @param array|null $requiredOptions
+     *
+     * @return string
+     */
+    protected function translate(
+        string $label,
+        string $category = 'labels',
+        string $scope = 'Global',
+        array $requiredOptions = null
+    ): string {
+        return $this
+            ->getContainer()
+            ->get('language')
+            ->translate($label, $category, $scope, $requiredOptions);
+    }
 }

@@ -84,7 +84,9 @@
     "fail": "Fehlgeschlagen",
     "success": "Erfolg",
     "viewDetails": "Details anzeigen",
-    "showFullList": "Vollständige Liste anzeigen"
+    "showFullList": "Vollständige Liste anzeigen",
+    "On": "Auf",
+    "Off": "Aus"
   },
   "links": {
     "ownerUser": "Besitzer"

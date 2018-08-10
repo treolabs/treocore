@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
@@ -318,6 +318,33 @@ class Installer extends Base
         }
 
         return $installer->getLicenseAndLanguages();
+    }
+
+    /**
+     * @ApiDescription(description="Get requireds list")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/Installer/getRequireds")
+     * @ApiReturn(sample="'array'")
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetRequiredsList($params, $data, Request $request): array
+    {
+        // check method
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        $installer = $this->getService('Installer');
+
+        // check if is install
+        if ($installer->isInstalled()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $installer->getRequiredsList();
     }
 
     /**
