@@ -53,12 +53,23 @@ class Hook extends BaseHook
      */
     public function beforeSave(Entity $entity, $options = [])
     {
+        // get site url
+        $siteUrl = $this->getConfig()->get('siteUrl');
+
+        // get domain
+        $domain = str_replace(['http://', 'https://'], ['', ''], $siteUrl);
+
         $data = $entity->toArray();
         if (isset($data['url']) && empty($data['url'])) {
-            // default url
-            $url = $this->getConfig()->get('siteUrl') . '/portal-' . $entity->get('id');
-
-            $entity->set('url', $url);
+            $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
+        } else {
+            $url = str_replace(['http://', 'https://'], ['', ''], $data['url']);
+            if (preg_match_all("/^{$domain}(.*)$/", $url, $matches)) {
+                $parts = explode('/', $matches[1][0]);
+                if (count($parts) > 2) {
+                    $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
+                }
+            }
         }
     }
 
