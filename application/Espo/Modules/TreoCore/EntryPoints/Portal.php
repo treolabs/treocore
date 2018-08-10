@@ -31,22 +31,55 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-include "../bootstrap.php";
+namespace Espo\Modules\TreoCore\EntryPoints;
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
+use Espo\Core\EntryPoints\Base;
+use Espo\Core\Exceptions;
+use Espo\Modules\TreoCore\Core\Portal\Application as App;
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
+class Portal extends Base
+{
+    /**
+     * @var bool
+     */
+    public static $authRequired = false;
 
-if (!$app->isInstalled()) {
-    $app->runInstaller();
-    exit;
+    /**
+     * Run
+     *
+     * @param array $data
+     *
+     * @throws Exceptions\NotFound
+     * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
+     */
+    public function run($data = [])
+    {
+        // prepare protocol
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+        // prepare url
+        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        // get urls
+        $urls = App::getUrlFileData();
+
+        if (!in_array($url, $urls)) {
+            throw new Exceptions\NotFound();
+        }
+
+        // get portalId
+        $portalId = array_search($url, $urls);
+
+        // create app
+        $app = new App($portalId);
+
+        // set base path
+        $app->setBasePath('../../');
+
+        // run
+        $app->runClient();
+    }
 }
-
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
-
-$app->runEntryPoint('portal');
