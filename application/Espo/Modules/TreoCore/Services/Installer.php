@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\Services\Base;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Core\Exceptions;
@@ -48,7 +47,7 @@ use Espo\Core\Utils\Json;
  *
  * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class Installer extends Base
+class Installer extends AbstractTreoService
 {
 
     /**
@@ -57,23 +56,16 @@ class Installer extends Base
     protected $passwordHash = null;
 
     /**
-     * Init
+     * Get requireds
+     *
+     * @return array
      */
-    protected function init()
+    public function getRequireds(): array
     {
-        parent::init();
+        // prepare result
+        $result = [];
 
-        /**
-         * Add dependencies
-         */
-        $this->addDependencyList(
-            [
-                'fileManager',
-                'dataManager',
-                'crypt',
-                'language'
-            ]
-        );
+        return $result;
     }
 
     /**
@@ -112,7 +104,7 @@ class Installer extends Base
         }
 
         $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
-        $defaultConfig['cryptKey'] = $this->getInjection('crypt')->generateKey();
+        $defaultConfig['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
 
         // create config if not exists
         if (!file_exists($pathToConfig)) {
@@ -129,7 +121,7 @@ class Installer extends Base
      */
     public function getTranslations(): array
     {
-        $language = $this->getInjection('language');
+        $language = $this->getContainer()->get('language');
 
         $result = $language->get('Installer');
 
@@ -248,7 +240,7 @@ class Installer extends Base
         } else {
             try {
                 // rebuild database
-                $result['status'] = $this->getInjection('dataManager')->rebuild();
+                $result['status'] = $this->getContainer()->get('dataManager')->rebuild();
 
                 // create user
                 $user = $this->getEntityManager()->getEntity('User');
@@ -404,7 +396,7 @@ class Installer extends Base
      */
     protected function getFileManager(): FileManager
     {
-        return $this->getInjection('fileManager');
+        return $this->getContainer()->get('fileManager');
     }
 
     /**
@@ -431,7 +423,10 @@ class Installer extends Base
      */
     protected function translateError(string $error): string
     {
-        return $this->getInjection('language')->translate($error, 'errors', 'Installer');
+        return $this
+            ->getContainer()
+            ->get('language')
+            ->translate($error, 'errors', 'Installer');
     }
 
     /**
