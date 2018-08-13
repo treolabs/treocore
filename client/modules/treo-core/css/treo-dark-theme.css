@@ -11553,6 +11553,10 @@ ul.dropdown-menu > li.checkbox {
     width: 100px;
 }
 
+#content .table .completeness.red .progress-value{
+    color: #000;
+}
+
 #content .completeness .progress-value {
     position: absolute;
     left: 5px;
