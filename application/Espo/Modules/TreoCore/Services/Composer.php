@@ -87,6 +87,11 @@ class Composer extends Base
     protected $moduleComposer = 'data/composer.json';
 
     /**
+     * @var string
+     */
+    protected $git = 'gitlab.zinit1.com';
+
+    /**
      * Construct
      */
     public function __construct(...$args)
@@ -289,12 +294,18 @@ class Composer extends Base
     public function getAuthData(): array
     {
         // prepare result
-        $result = [];
+        $result = [
+            'username' => '',
+            'password' => ''
+        ];
 
         // prepare path
         $path = $this->extractDir . '/auth.json';
         if (file_exists($path)) {
-            $result = Json::decode(file_get_contents($path), true);
+            $jsonData = Json::decode(file_get_contents($path), true);
+            if (!empty($data = $jsonData['http-basic'][$this->git])) {
+                $result = $data;
+            }
         }
 
         return $result;
@@ -303,24 +314,18 @@ class Composer extends Base
     /**
      * Set composer user data
      *
-     * @param array $authData
+     * @param string $username
+     * @param string $password
      *
      * @return bool
      */
-    public function setAuthData(array $authData): bool
+    public function setAuthData(string $username, string $password): bool
     {
-        // prepare path
-        $path = $this->extractDir . '/auth.json';
+        // prepare git repo
+        $git = $this->git;
 
-        // delete old
-        if (file_exists($path)) {
-            unlink($path);
-        }
-
-        // create file
-        $fp = fopen($path, "w");
-        fwrite($fp, Json::encode($authData));
-        fclose($fp);
+        // run command
+        $this->run("config -a -g http-basic.{$git} {$username} {$password}");
 
         return true;
     }

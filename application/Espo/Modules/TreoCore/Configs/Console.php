@@ -44,5 +44,6 @@ return [
     "rebuild"                      => Console\Rebuild::class,
     "cron"                         => Console\Cron::class,
     "events"                       => Console\Events::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class
+    "migrate <module> <from> <to>" => Console\Migrate::class,
+    "composer <command>"           => Console\Composer::class
 ];
