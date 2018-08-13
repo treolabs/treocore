@@ -69,16 +69,8 @@ class Hook extends AbstractHook
      */
     public function afterSave(Entity $entity, $options = [])
     {
-        if (!empty($url = $entity->get('url'))) {
-            // get urls
-            $urls = PortalApp::getUrlFileData();
-
-            // push
-            $urls[$entity->get('id')] = $url;
-
-            // save
-            PortalApp::saveUrlFile($urls);
-        }
+        // set url
+        $this->setUrl($entity);
     }
 
     /**
@@ -87,16 +79,8 @@ class Hook extends AbstractHook
      */
     public function afterRemove(Entity $entity, $options = [])
     {
-        // get urls
-        $urls = PortalApp::getUrlFileData();
-
-        if (isset($urls[$entity->get('id')])) {
-            // delete
-            unset($urls[$entity->get('id')]);
-
-            // save
-            PortalApp::saveUrlFile($urls);
-        }
+        // unsetUrl
+        $this->unsetUrl($entity);
     }
 
     /**
@@ -154,6 +138,46 @@ class Hook extends AbstractHook
             if (array_search($entity->get('url'), $urls) != $entity->get('id')) {
                 throw new BadRequest($this->translate('Such URL is already exists', 'exceptions'));
             }
+        }
+
+        return;
+    }
+
+    /**
+     * Set url
+     *
+     * @param Entity $entity
+     */
+    protected function setUrl(Entity $entity): void
+    {
+        if (!empty($url = $entity->get('url'))) {
+            // get urls
+            $urls = PortalApp::getUrlFileData();
+
+            // push
+            $urls[$entity->get('id')] = $url;
+
+            // save
+            PortalApp::saveUrlFile($urls);
+        }
+    }
+
+    /**
+     * Unset url
+     *
+     * @param Entity $entity
+     */
+    protected function unsetUrl(Entity $entity): void
+    {
+        // get urls
+        $urls = PortalApp::getUrlFileData();
+
+        if (isset($urls[$entity->get('id')])) {
+            // delete
+            unset($urls[$entity->get('id')]);
+
+            // save
+            PortalApp::saveUrlFile($urls);
         }
     }
 }
