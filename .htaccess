@@ -4,6 +4,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 
 # Prevent direct access to certain files
-<FilesMatch ^(composer\.json$|phpci\.yml)$>
-Deny from all
-</FilesMatch> 
+<FilesMatch ^(phpci\.yml)$>
+  Deny from all
+</FilesMatch>
