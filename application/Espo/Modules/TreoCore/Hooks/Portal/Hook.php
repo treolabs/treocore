@@ -36,8 +36,9 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Hooks\Portal;
 
-use Espo\Core\Hooks\Base as BaseHook;
+use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
+use Espo\Modules\TreoCore\Core\Hooks\AbstractHook;
 use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
 
 /**
@@ -45,7 +46,7 @@ use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Hook extends BaseHook
+class Hook extends AbstractHook
 {
     /**
      * @param Entity $entity
@@ -53,24 +54,8 @@ class Hook extends BaseHook
      */
     public function beforeSave(Entity $entity, $options = [])
     {
-        // get site url
-        $siteUrl = $this->getConfig()->get('siteUrl');
-
-        // get domain
-        $domain = str_replace(['http://', 'https://'], ['', ''], $siteUrl);
-
-        $data = $entity->toArray();
-        if (isset($data['url']) && empty($data['url'])) {
-            $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
-        } else {
-            $url = str_replace(['http://', 'https://'], ['', ''], $data['url']);
-            if (preg_match_all("/^{$domain}(.*)$/", $url, $matches)) {
-                $parts = explode('/', $matches[1][0]);
-                if (count($parts) > 2) {
-                    $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
-                }
-            }
-        }
+        // prepare url
+        $this->preparePortalUrl($entity);
     }
 
     /**
@@ -108,6 +93,41 @@ class Hook extends BaseHook
 
             // save
             PortalApp::saveUrlFile($urls);
+        }
+    }
+
+    /**
+     * Prepare portal url
+     *
+     * @param Entity $entity
+     */
+    protected function preparePortalUrl(Entity $entity): void
+    {
+        // get site url
+        $siteUrl = $this->getConfig()->get('siteUrl');
+
+        // get domain
+        $domain = str_replace(['http://', 'https://'], ['', ''], $siteUrl);
+
+        // get entity data
+        $data = $entity->toArray();
+
+        // prepare url
+        if (isset($data['url']) && empty($data['url'])) {
+            $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
+        } else {
+            $url = str_replace(['http://', 'https://'], ['', ''], $data['url']);
+            if (preg_match_all("/^{$domain}(.*)$/", $url, $matches)) {
+                $parts = explode('/', $matches[1][0]);
+                if (count($parts) > 2) {
+                    $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
+                }
+            }
+        }
+
+        // validate url
+        if (!filter_var($entity->get('url'), FILTER_VALIDATE_URL)) {
+            throw new BadRequest($this->translate('URL is invalid', 'exceptions'));
         }
     }
 }

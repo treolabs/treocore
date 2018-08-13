@@ -102,6 +102,9 @@
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
     "massUpdateResult": "{count} Einträge werden aktualisiert"
   },
+  "exceptions": {
+    "URL is invalid": "Die URL ist ungültig"
+  },
   "streamMessages": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",
     "installModuleThis": "{user} hat das Modul installiert",
