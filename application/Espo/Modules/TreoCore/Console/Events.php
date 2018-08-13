@@ -96,7 +96,7 @@ class Events extends AbstractConsole
         }
 
         // render
-        self::show('Triggered events:', 3);
+        self::show('Triggered events:', self::INFO);
         echo self::arrayToTable($result, ['CLASS NAME', 'TARGET', 'ACTION', 'DATA']);
     }
 

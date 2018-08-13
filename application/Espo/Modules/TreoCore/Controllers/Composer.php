@@ -49,16 +49,6 @@ use Slim\Http\Request;
 class Composer extends Base
 {
     /**
-     * @var string
-     */
-    protected $gitHost = 'gitlab.zinit1.com';
-
-    /**
-     * @var string
-     */
-    protected $authType = 'http-basic';
-
-    /**
      * @var ComposerService
      */
     protected $composerService = null;
@@ -87,18 +77,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        // prepare result
-        $result = [];
-
-        // get auth data
-        $authData = $this->getComposerService()->getAuthData();
-
-        // prepare result
-        if (!empty($authData[$this->authType][$this->gitHost])) {
-            $result = $authData[$this->authType][$this->gitHost];
-        }
-
-        return $result;
+        return $this->getComposerService()->getAuthData();
     }
 
     /**
@@ -129,12 +108,9 @@ class Composer extends Base
         $data = Json::decode(Json::encode($data), true);
 
         if (!empty($data['username']) && !empty($data['password'])) {
-            // get auth data
-            $authData = $this->getComposerService()->getAuthData();
-            $authData[$this->authType][$this->gitHost]['username'] = $data['username'];
-            $authData[$this->authType][$this->gitHost]['password'] = $data['password'];
-
-            return $this->getComposerService()->setAuthData($authData);
+            return $this
+                ->getComposerService()
+                ->setAuthData($data['username'], $data['password']);
         }
 
         throw new Exceptions\NotFound();

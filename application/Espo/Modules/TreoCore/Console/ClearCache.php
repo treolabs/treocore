@@ -66,9 +66,9 @@ class ClearCache extends AbstractConsole
             ->clearCache();
 
         if (!empty($result)) {
-            self::show('Cache successfully cleared', 1);
+            self::show('Cache successfully cleared', self::SUCCESS);
         } else {
-            self::show('Cache clearing failed', 2);
+            self::show('Cache clearing failed', self::ERROR);
         }
     }
 }

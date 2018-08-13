@@ -66,6 +66,6 @@ class Migrate extends AbstractConsole
             ->run($data['module'], $data['from'], $data['to']);
 
         // render
-        self::show('Migration successfully finished', 1);
+        self::show('Migration successfully finished', self::SUCCESS);
     }
 }
