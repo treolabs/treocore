@@ -103,7 +103,8 @@
     "massUpdateResult": "{count} Einträge werden aktualisiert"
   },
   "exceptions": {
-    "URL is invalid": "Die URL ist ungültig"
+    "URL is invalid": "Die URL ist ungültig",
+    "Such URL is already exists": "Eine solche URL ist bereits vorhanden"
   },
   "streamMessages": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",

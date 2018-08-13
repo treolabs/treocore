@@ -56,6 +56,9 @@ class Hook extends AbstractHook
     {
         // prepare url
         $this->preparePortalUrl($entity);
+
+        // validate url
+        $this->validateUrl($entity);
     }
 
     /**
@@ -124,10 +127,33 @@ class Hook extends AbstractHook
                 }
             }
         }
+    }
+
+    /**
+     * Validate URL
+     *
+     * @return null
+     * @throws BadRequest
+     */
+    protected function validateUrl(Entity $entity)
+    {
+        if (empty($entity->get('url'))) {
+            return;
+        }
 
         // validate url
         if (!filter_var($entity->get('url'), FILTER_VALIDATE_URL)) {
             throw new BadRequest($this->translate('URL is invalid', 'exceptions'));
+        }
+
+        // get all urls
+        $urls = PortalApp::getUrlFileData();
+
+        // validate by unique
+        if (in_array($entity->get('url'), $urls)) {
+            if (array_search($entity->get('url'), $urls) != $entity->get('id')) {
+                throw new BadRequest($this->translate('Such URL is already exists', 'exceptions'));
+            }
         }
     }
 }
