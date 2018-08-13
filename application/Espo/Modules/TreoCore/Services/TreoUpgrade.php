@@ -88,7 +88,6 @@ class TreoUpgrade extends AbstractTreoService
         if (!empty($data = $this->getVersionData($currentVersion))
             && !empty($link = $data['link'])
             && !empty($version = $data['version'])) {
-
             // create dir
             if (!file_exists(self::TREO_PACKAGES_PATH)) {
                 mkdir(self::TREO_PACKAGES_PATH, 0777, true);

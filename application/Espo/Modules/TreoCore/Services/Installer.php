@@ -546,10 +546,13 @@ class Installer extends AbstractTreoService
         switch ($last) {
             case 'G':
                 $value = (int)$value * 1024;
+                break;
             case 'M':
                 $value = (int)$value * 1024;
+                break;
             case 'K':
                 $value = (int)$value * 1024;
+                break;
         }
 
         return $value;
