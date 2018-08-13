@@ -103,13 +103,12 @@ class Hook extends AbstractHook
         if (isset($data['url']) && empty($data['url'])) {
             $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
         } else {
-            $url = str_replace(['http://', 'https://'], ['', ''], $data['url']);
-            if (preg_match_all("/^{$domain}\/(.*)$/", $url, $matches)) {
-                $parts = explode('/', $matches[1][0]);
+            if (preg_match_all("/^(http|https)\:\/\/{$domain}\/(.*)$/", $data['url'], $matches)) {
+                $parts = explode('/', $matches[2][0]);
                 if (count($parts) > 1) {
                     $path = implode('-', $parts);
                 } else {
-                    $path = $matches[1][0];
+                    $path = $matches[2][0];
                 }
 
                 $entity->set('url', $siteUrl . '/' . $path);
@@ -125,21 +124,30 @@ class Hook extends AbstractHook
      */
     protected function validateUrl(Entity $entity)
     {
-        if (empty($entity->get('url'))) {
+        if (empty($url = $entity->get('url'))) {
             return;
         }
 
         // validate url
-        if (!filter_var($entity->get('url'), FILTER_VALIDATE_URL)) {
+        if (!filter_var($url, FILTER_VALIDATE_URL)
+        ) {
             throw new BadRequest($this->translate('URL is invalid', 'exceptions'));
+        }
+
+        if (preg_match_all('/^(http|https)\:\/\/(.*)\/(.*)$/', $url, $matches)) {
+            if (!empty($path = $matches[3][0])) {
+                if (!preg_match('/^[a-z0-9\-]*$/', $path)) {
+                    throw new BadRequest($this->translate('URL is invalid', 'exceptions'));
+                }
+            }
         }
 
         // get all urls
         $urls = PortalApp::getUrlFileData();
 
         // validate by unique
-        if (in_array($entity->get('url'), $urls)) {
-            if (array_search($entity->get('url'), $urls) != $entity->get('id')) {
+        if (in_array($url, $urls)) {
+            if (array_search($url, $urls) != $entity->get('id')) {
                 throw new BadRequest($this->translate('Such URL is already exists', 'exceptions'));
             }
         }
