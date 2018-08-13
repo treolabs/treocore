@@ -48,23 +48,53 @@ class Application extends EspoApplication
     const CONFIG_PATH = 'data/portals.json';
 
     /**
+     * @var null|array
+     */
+    protected static $urls = null;
+
+    /**
+     * Is portal calling now
+     *
+     * @return string
+     */
+    public static function getPortalCallingId(): string
+    {
+        // prepare result
+        $result = '';
+
+        // prepare protocol
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+        // prepare url
+        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        if (in_array($url, self::getUrlFileData())) {
+            $result = array_search($url, self::getUrlFileData());
+        }
+
+        return $result;
+    }
+
+    /**
      * Get url config file data
      *
      * @return array
      */
     public static function getUrlFileData(): array
     {
-        // prepare result
-        $result = [];
+        if (is_null(self::$urls)) {
+            // prepare result
+            self::$urls = [];
 
-        if (file_exists(self::CONFIG_PATH)) {
-            $json = file_get_contents(self::CONFIG_PATH);
-            if (!empty($json)) {
-                $result = Json::decode($json, true);
+            if (file_exists(self::CONFIG_PATH)) {
+                $json = file_get_contents(self::CONFIG_PATH);
+                if (!empty($json)) {
+                    self::$urls = Json::decode($json, true);
+                }
             }
         }
 
-        return $result;
+        return self::$urls;
     }
 
 

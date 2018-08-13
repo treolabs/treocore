@@ -53,18 +53,9 @@ if (!empty($_GET['entryPoint'])) {
     exit;
 }
 
-// prepare protocol
-$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
-
-// prepare url
-$url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-// get urls
-$urls = PortalApp::getUrlFileData();
-
-if (in_array($url, $urls)) {
+if (!empty($id = PortalApp::getPortalCallingId())) {
     // create portal app
-    $app = new PortalApp(array_search($url, $urls));
+    $app = new PortalApp($id);
 } elseif (!empty($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] != '/') {
     // show 404
     header("HTTP/1.0 404 Not Found");
