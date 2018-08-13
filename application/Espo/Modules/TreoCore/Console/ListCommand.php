@@ -66,16 +66,22 @@ class ListCommand extends AbstractConsole
         $config = $this->getConsoleConfig();
 
         // prepare data
-        $data = [];
         foreach ($config as $command => $class) {
             if (method_exists($class, 'getDescription')) {
-                $data[] = [$command, $class::getDescription()];
+                $data[$command] = [$command, $class::getDescription()];
             }
+        }
+
+        // sorting
+        $sorted = array_keys($data);
+        natsort($sorted);
+        foreach ($sorted as $command) {
+            $result[] = $data[$command];
         }
 
         // render
         self::show('Available commands:', 3);
-        echo self::arrayToTable($data);
+        echo self::arrayToTable($result);
     }
 
     /**

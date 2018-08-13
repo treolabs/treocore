@@ -111,7 +111,7 @@ class ConsoleManager
                 // prepare pattern
                 $pattern = "/^{$route}$/";
                 foreach ($parameters as $parameter) {
-                    $pattern = str_replace("<$parameter>", "([a-zA-Z0-9]+)", $pattern);
+                    $pattern = str_replace("<$parameter>", "(.*)", $pattern);
                 }
 
                 if (preg_match_all($pattern, $command, $matches)) {

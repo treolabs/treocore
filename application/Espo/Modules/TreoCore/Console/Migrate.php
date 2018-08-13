@@ -34,15 +34,40 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Console;
 
-use Espo\Modules\TreoCore\Console;
+use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
 
-return [
-    "list"                         => Console\ListCommand::class,
-    "clear cache"                  => Console\ClearCache::class,
-    "rebuild"                      => Console\Rebuild::class,
-    "cron"                         => Console\Cron::class,
-    "events"                       => Console\Events::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class
-];
+/**
+ * Migrate console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Migrate extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Run migration';
+    }
+
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        $this
+            ->getContainer()
+            ->get('migration')
+            ->run($data['module'], $data['from'], $data['to']);
+
+        // render
+        self::show('Migration successfully finished', 1);
+    }
+}
