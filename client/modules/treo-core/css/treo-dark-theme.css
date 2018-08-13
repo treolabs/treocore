@@ -11645,6 +11645,11 @@ ul.dropdown-menu > li.checkbox {
         padding-right: 0;
     }
 
+    body.minimized #header .navbar-right {
+        width: calc(100% - 40px);
+        padding-right: 0;
+    }
+
     #header .navbar-right .global-search-container {
         border-right: 1px solid #dedede;
         border-left: 1px solid #dedede
