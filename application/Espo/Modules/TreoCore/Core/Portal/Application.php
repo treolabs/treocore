@@ -53,11 +53,11 @@ class Application extends EspoApplication
     protected static $urls = null;
 
     /**
-     * Is portal calling now
+     * Is calling portal id
      *
      * @return string
      */
-    public static function getPortalCallingId(): string
+    public static function getCallingPortalId(): string
     {
         // prepare result
         $result = '';

@@ -53,7 +53,7 @@ if (!empty($_GET['entryPoint'])) {
     exit;
 }
 
-if (!empty($id = PortalApp::getPortalCallingId())) {
+if (!empty($id = PortalApp::getCallingPortalId())) {
     // create portal app
     $app = new PortalApp($id);
 } elseif (!empty($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] != '/') {
