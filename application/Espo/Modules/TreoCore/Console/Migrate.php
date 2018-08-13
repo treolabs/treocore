@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
-
 /**
  * Migrate console
  *
@@ -52,7 +50,7 @@ class Migrate extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run migration';
+        return 'Run migration.';
     }
 
     /**
