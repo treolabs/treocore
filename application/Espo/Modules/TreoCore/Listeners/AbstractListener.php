@@ -41,6 +41,7 @@ use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Language;
 use Espo\Modules\TreoCore\Core\Container;
 use Espo\Modules\TreoCore\Core\Utils\Config;
+use Espo\Modules\TreoCore\Services\AbstractTreoService;
 
 /**
  * AbstractListener class
@@ -101,9 +102,9 @@ abstract class AbstractListener
      *
      * @param string $name
      *
-     * @return BaseService
+     * @return BaseService|AbstractTreoService
      */
-    protected function getService(string $name): BaseService
+    protected function getService(string $name)
     {
         if (!isset($this->services[$name])) {
             $this->services[$name] = $this

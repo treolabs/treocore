@@ -38,7 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
+use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 
 /**
  * ComposerModule service
@@ -315,7 +315,7 @@ class ComposerModule extends Base
         $composerLock = 'composer.lock';
 
         // prepare dir
-        $vendorTreoDir = 'vendor/' . TreoComposer::TREODIR . '/';
+        $vendorTreoDir = 'vendor/' . ModuleMover::TREODIR . '/';
 
         if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
             // prepare data

@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Json;
+use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
 
 /**
  * Composer service
@@ -137,7 +138,7 @@ class Composer extends AbstractTreoService
         $this->triggered('Composer', 'beforeComposerUpdate', []);
 
         // call composer
-        $composer = $this->run('update');
+        $composer = (new ComposerUtil())->run('update');
 
         // rebuild
         $this->rebuild();
