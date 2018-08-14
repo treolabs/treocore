@@ -100,7 +100,7 @@ class Composer extends AbstractListener
                         $this->clearModuleData($row['id']);
 
                         // delete dir
-                        ModuleMover::deleteTreoModule([$row['id'] => $row['package']]);
+                        ModuleMover::delete([$row['id'] => $row['package']]);
 
                         // notify
                         $this->notifyDelete($row['id'], $data['createdById']);

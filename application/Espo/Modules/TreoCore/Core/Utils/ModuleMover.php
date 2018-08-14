@@ -59,7 +59,7 @@ class ModuleMover
      *
      * @return array
      */
-    public static function getTreoModules(): array
+    public static function getModules(): array
     {
         // prepare result
         $result = [];
@@ -88,9 +88,9 @@ class ModuleMover
     /**
      * Update treo modules
      */
-    public static function updateTreoModules(): void
+    public static function update(): void
     {
-        foreach (self::getTreoModules() as $moduleId => $key) {
+        foreach (self::getModules() as $moduleId => $key) {
             // update frontend files
             self::updateFrontend($moduleId);
 
@@ -104,7 +104,7 @@ class ModuleMover
      *
      * @param array $modules
      */
-    public static function deleteTreoModule(array $modules): void
+    public static function delete(array $modules): void
     {
         foreach ($modules as $moduleId => $key) {
             // delete dir from frontend
@@ -122,9 +122,9 @@ class ModuleMover
      */
     protected static function updateFrontend(string $moduleId): void
     {
-        if (array_key_exists($moduleId, self::getTreoModules())) {
+        if (array_key_exists($moduleId, self::getModules())) {
             // prepare params
-            $moduleKey = self::getTreoModules()[$moduleId];
+            $moduleKey = self::getModules()[$moduleId];
             $module = Util::fromCamelCase($moduleId, '-');
             $source = "vendor/" . self::TREODIR . "/{$moduleKey}/client/modules/{$module}/";
             $dest = "client/modules/{$module}/";
@@ -145,9 +145,9 @@ class ModuleMover
      */
     protected static function updateBackend(string $moduleId): void
     {
-        if (array_key_exists($moduleId, self::getTreoModules())) {
+        if (array_key_exists($moduleId, self::getModules())) {
             // prepare params
-            $moduleKey = self::getTreoModules()[$moduleId];
+            $moduleKey = self::getModules()[$moduleId];
             $source = "vendor/" . self::TREODIR . "/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
             $dest = "application/Espo/Modules/{$moduleId}/";
 

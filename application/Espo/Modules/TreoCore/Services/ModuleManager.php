@@ -603,7 +603,7 @@ class ModuleManager extends Base
             if (!empty($package = $this->getComposerModuleService()->getModulePackage($moduleId))) {
                 if (!empty($composerRequire = $package['require']) && is_array($composerRequire)) {
                     // get treo modules
-                    $treoModule = TreoComposer::getTreoModules();
+                    $treoModule = TreoComposer::getModules();
 
                     foreach ($composerRequire as $key => $version) {
                         if (preg_match_all("/^(" . TreoComposer::TREODIR . "\/)(.*)$/", $key, $matches)) {
