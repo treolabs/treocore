@@ -1,6 +1,6 @@
 <div class="header page-header">
     <h3>
-        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> &rsaquo; {{translate 'Git Authentication' scope='Admin' category='labels'}}
+        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> &rsaquo; {{translate 'Git User' scope='Admin' category='labels'}}
     </h3>
 </div>
 <div class="record">
@@ -10,7 +10,7 @@
                 <div class="middle">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">{{translate 'Git Authentication' scope='Admin' category='labels'}}</h4>
+                            <h4 class="panel-title">{{translate 'Git User' scope='Admin' category='labels'}}</h4>
                         </div>
                         <div class="panel-body">
                             <div class="row">

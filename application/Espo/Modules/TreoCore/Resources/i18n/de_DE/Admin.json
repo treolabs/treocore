@@ -1,6 +1,7 @@
 {
   "labels": {
-    "moduleManager": "Module Manager"
+    "moduleManager": "Modulmanager",
+    "Git User": "Git Benutzer"
   },
   "descriptions": {
     "upgrade": "Treo System aktualisieren.",
