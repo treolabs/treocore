@@ -36,6 +36,7 @@
             #general-container .main-template .msg-box {
                 height: auto;
                 max-height: 90px;
+                margin-bottom: 0;
             }
             #general-container .main-template .modal-body {
                 min-height: 620px;
@@ -142,6 +143,37 @@
                 </footer>
             </div>
         </script>
+        <script type="text/template" id="required-settings">
+            <div class="msg-box alert hidden"></div>
+            <div class="stepTitle text-center"><%= translate.labels.requiredSettings %></div>
+            <div class="col-sm-12 modal-body" style="margin: 10px 0">
+            <table class="table table-stripped">
+                <thead></thead>
+                <tbody>
+                <% _.each(requiredSettings.list, function(item){ %>
+                    <tr>
+                        <td><span><%= item.name %></span></td>
+                        <td><span><%= item.validValue %></span></td>
+                        <td><span><%= item.value %></span></td>
+                        <td><% if (item.isValid) { %>
+                            <span class="glyphicon glyphicon-ok" style="color: green;"></span>
+                            <% } else { %>
+                            <span class="glyphicon glyphicon-remove"  style="color: red;"></span>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+                </tbody>
+            </table>
+            </div>
+            <div class="col-sm-12">
+                <footer class="modal-footer">
+                    <button class="btn btn-primary back-step" type="button"><%= translate.labels.back %></button>
+                    <button type="button" class="btn btn-warning re-check-settings"><%= translate.labels.reCheck %></button>
+                    <button class="btn btn-primary next-step" type="button"><%= translate.labels.next %></button>
+                </footer>
+            </div>
+        </script>/
         <script type="text/template" id="admin-creation">
             <div class="msg-box alert hidden"></div>
             <div class="stepTitle text-center"><%= translate.labels.administratorSetup %></div>
