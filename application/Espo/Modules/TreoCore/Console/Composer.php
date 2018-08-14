@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+use Espo\Modules\TreoCore\Core\Utils\Composer as Util;
 
 /**
  * Composer console
@@ -62,13 +62,7 @@ class Composer extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // create service
-        $service = $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Composer');
-
         // render
-        self::show($service->run($data['command'])['output']);
+        self::show((new Util())->run($data['command'])['output']);
     }
 }
