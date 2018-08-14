@@ -67,11 +67,6 @@ class Composer extends AbstractTreoService
     protected $moduleComposer = 'data/composer.json';
 
     /**
-     * @var string
-     */
-    protected $git = 'gitlab.zinit1.com';
-
-    /**
      * Create cron job for update composer
      *
      * @return bool
@@ -218,50 +213,6 @@ class Composer extends AbstractTreoService
 
         // set composer.json data
         $this->setModuleComposerJson($data);
-    }
-
-    /**
-     * Get auth data
-     *
-     * @return array
-     */
-    public function getAuthData(): array
-    {
-        // prepare result
-        $result = [
-            'username' => '',
-            'password' => ''
-        ];
-
-        // prepare path
-        $path = $this->extractDir . '/auth.json';
-        if (file_exists($path)) {
-            $jsonData = Json::decode(file_get_contents($path), true);
-            if (!empty($data = $jsonData['http-basic'][$this->git])) {
-                $result = $data;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Set composer user data
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @return bool
-     */
-    public function setAuthData(string $username, string $password): bool
-    {
-        // prepare git repo
-        $git = $this->git;
-
-        // run command
-        $this->run("config -a -g http-basic.{$git} {$username} {$password}");
-
-        return true;
     }
 
     /**

@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
+use Espo\Core\Utils\Json;
 use Composer\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -47,6 +48,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 class Composer
 {
     const EXTRACT_DIR = CORE_PATH . "/vendor/composer/composer-extract";
+    const AUTH_PATH = self::EXTRACT_DIR . '/auth.json';
+    const GITLAB = 'gitlab.zinit1.com';
 
     /**
      * Construct
@@ -59,6 +62,57 @@ class Composer
         if (!file_exists(self::EXTRACT_DIR . "/vendor/autoload.php") == true) {
             (new \Phar(CORE_PATH . "/composer.phar"))->extractTo(self::EXTRACT_DIR);
         }
+    }
+
+    /**
+     * Get auth data
+     *
+     * @return array
+     */
+    public function getAuthData(): array
+    {
+        // prepare result
+        $result = [
+            'username' => '',
+            'password' => ''
+        ];
+
+        if (file_exists(self::AUTH_PATH)) {
+            $jsonData = Json::decode(file_get_contents(self::AUTH_PATH), true);
+            if (!empty($data = $jsonData['http-basic'][self::GITLAB])) {
+                $result = $data;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set composer user data
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function setAuthData(string $username, string $password): bool
+    {
+        // get data
+        $jsonData = [];
+        if (file_exists(self::AUTH_PATH)) {
+            $jsonData = Json::decode(file_get_contents(self::AUTH_PATH), true);
+        }
+
+        // set username & password
+        $jsonData['http-basic'][self::GITLAB]['username'] = $username;
+        $jsonData['http-basic'][self::GITLAB]['password'] = $password;
+
+        // set to file
+        $file = fopen(self::AUTH_PATH, "w");
+        fwrite($file, Json::encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        fclose($file);
+
+        return true;
     }
 
     /**

@@ -42,7 +42,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
-use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
+use Espo\Modules\TreoCore\Core\Utils\ModuleMover as TreoComposer;
 
 /**
  * ModuleManager service
@@ -51,8 +51,6 @@ use Espo\Modules\TreoCore\Services\Composer as TreoComposer;
  */
 class ModuleManager extends Base
 {
-    const INACTIVE_MODULES_PATH = 'data/inactive-modules';
-
     /**
      * @var string
      */

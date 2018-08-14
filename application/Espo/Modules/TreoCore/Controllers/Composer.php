@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Controllers;
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\Json;
+use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Slim\Http\Request;
 
@@ -48,11 +49,6 @@ use Slim\Http\Request;
  */
 class Composer extends Base
 {
-    /**
-     * @var ComposerService
-     */
-    protected $composerService = null;
-
     /**
      * @ApiDescription(description="Get git auth data")
      * @ApiMethod(type="GET")
@@ -77,7 +73,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getComposerService()->getAuthData();
+        return $this->getComposerUtil()->getAuthData();
     }
 
     /**
@@ -109,7 +105,7 @@ class Composer extends Base
 
         if (!empty($data['username']) && !empty($data['password'])) {
             return $this
-                ->getComposerService()
+                ->getComposerUtil()
                 ->setAuthData($data['username'], $data['password']);
         }
 
@@ -172,10 +168,16 @@ class Composer extends Base
      */
     protected function getComposerService(): ComposerService
     {
-        if (is_null($this->composerService)) {
-            $this->composerService = $this->getService('Composer');
-        }
+        return $this->getService('Composer');
+    }
 
-        return $this->composerService;
+    /**
+     * Get composer util
+     *
+     * @return ComposerUtil
+     */
+    protected function getComposerUtil(): ComposerUtil
+    {
+        return new ComposerUtil();
     }
 }
