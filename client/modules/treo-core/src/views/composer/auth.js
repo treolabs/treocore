@@ -122,7 +122,7 @@ Espo.define('treo-core:views/composer/auth', 'view',
         },
 
         updatePageTitle() {
-            this.setPageTitle(this.getLanguage().translate('Git Authentication', 'labels', 'Admin'));
+            this.setPageTitle(this.getLanguage().translate('Git User', 'labels', 'Admin'));
         },
 
     })
