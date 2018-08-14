@@ -323,8 +323,14 @@ class Installer extends AbstractTreoService
                 // save config
                 $this->getConfig()->save();
 
-                //@todo treoinject
-                $this->triggered('Installer', 'afterInstallSystem', []);
+                $this->triggered(
+                    'Installer',
+                    'afterInstallSystem',
+                    [
+                        'user'    => $user->toArray(),
+                        'version' => $this->getComposerVersion(),
+                    ]
+                );
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();

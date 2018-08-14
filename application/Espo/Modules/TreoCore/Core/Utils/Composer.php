@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core\Utils;
 
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 use Composer\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -113,6 +114,19 @@ class Composer
         fclose($file);
 
         return true;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
+    public function generateAuthData(string $key): array
+    {
+        return [
+            'username' => "treo-{$key}-" . time(),
+            'password' => Util::generateId()
+        ];
     }
 
     /**

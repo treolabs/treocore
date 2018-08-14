@@ -33,78 +33,45 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
+namespace Espo\Modules\TreoCore\Listeners;
 
-use Espo\Core\Utils\Util;
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
 use Espo\Modules\TreoCore\Core\Utils\Composer;
 
 /**
- * Version 1.13.2
+ * Installer listener
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1Dot13Dot2 extends AbstractMigration
+class Installer extends AbstractListener
 {
-    /**
-     * Up to current
-     */
-    public function up(): void
-    {
-        // update portal urls
-        $this->updatePortalUrl();
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterInstallSystem(array $data): array
+    {
         // generate gitlab user
-        $this->generateGitlabUser();
+        $this->generateGitlabUser($data['user']['userName']);
+
+        return $data;
     }
 
     /**
-     * Update portal urls
+     * Generate gitlab user
+     *
+     * @param string $key
      */
-    protected function updatePortalUrl(): void
-    {
-        // get all portals
-        $portals = $this
-            ->getEntityManager()
-            ->getRepository('Portal')
-            ->find();
-
-        if (!empty($portals)) {
-            $siteUrl = $this->getConfig()->get('siteUrl');
-            foreach ($portals as $portal) {
-                $portal->set('url', $siteUrl . '/portal-' . $portal->get('id'));
-                $this->getEntityManager()->saveEntity($portal);
-            }
-        }
-    }
-
-    /**
-     * Generate gitlab user if it needs
-     */
-    protected function generateGitlabUser(): void
+    protected function generateGitlabUser(string $key): void
     {
         // create composer
         $composer = new Composer();
 
-        if (empty($composer->getAuthData()['username'])) {
-            // prepare key
-            $key = Util::generateId();
+        // generate auth data
+        $authData = $composer->generateAuthData($key);
 
-            $users = $this
-                ->getEntityManager()
-                ->getRepository('User')
-                ->where(['isAdmin' => 1])
-                ->find();
-
-            if (!empty($users)) {
-                $key = $users->toArray()[0]['userName'];
-            }
-
-            // generate auth data
-            $authData = $composer->generateAuthData($key);
-
-            // set auth data
-            $composer->setAuthData($authData['username'], $authData['password']);
-        }
+        // set auth data
+        $composer->setAuthData($authData['username'], $authData['password']);
     }
 }
