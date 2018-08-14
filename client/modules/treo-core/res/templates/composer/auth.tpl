@@ -5,12 +5,6 @@
 </div>
 <div class="record">
     <div class="edit">
-        <div class="detail-button-container button-container clearfix">
-            <div class="btn-group" role="group">
-                <button class="btn btn-primary action" data-action="save" type="button">{{translate 'Save'}}</button>
-                <button class="btn btn-default action" data-action="cancelEdit" type="button">{{translate 'Cancel'}}</button>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-8">
                 <div class="middle">
