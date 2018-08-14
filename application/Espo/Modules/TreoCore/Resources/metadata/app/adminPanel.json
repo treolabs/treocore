@@ -19,7 +19,7 @@
       },
       {
         "url": "#Composer/auth",
-        "label": "Git Authentication",
+        "label": "Git User",
         "description": "gitAuth"
       },
       {

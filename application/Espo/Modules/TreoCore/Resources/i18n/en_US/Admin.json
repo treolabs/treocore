@@ -5,7 +5,7 @@
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
-    "gitAuth": "Git authentication settings.",
+    "gitAuth": "Read git authentication settings.",
     "moduleManager": "Mechanisms for managing modules",
     "representationSettings": "Representation settings."
   },
