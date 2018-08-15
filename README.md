@@ -18,7 +18,7 @@ TreoPIM is a single page application (SPA) with an API-centric architecture and 
 - Modern software architecture it good code quality
 - Role-based permissions, even on field level
 - Flexible Data Modell
-- CRM functions included! 
+- CRM functions included!
 - REST API
 
 ## Functions
