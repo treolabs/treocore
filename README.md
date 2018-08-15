@@ -4,7 +4,7 @@
 
 ![anne](docs/_assets/zs_ft_19_01_2018_employee_eng2.png)
 
-TreoPIM is a single page application (SPA) with an API-centric architecture and flexible data model based on entities, entity attributes and relations of all kinds among them. TreoPIM allows you to gather and store all your product content in one place, enrich it and spread it to several channels like own online shop, amazon, eBay, online shops of your distributors, on a tablet or mobile application. TreoPIM will help you to structure and organize all your flexible data and get rid of excel mess. You can use TreoPIM together with EspoCRM as a single instance, so if you need both - a PIM and a CRM, TreoPIM is the best solution for you!
+TreoPIM is a single page application (SPA) with an API-centric architecture and flexible data model based on entities, entity attributes and relations of all kinds among them. TreoPIM allows you to gather and store all your product content in one place, enrich it and spread it to several channels like own online shop, amazon, eBay, online shops of your distributors, on a tablet or mobile application. TreoPIM will help you to structure and organize all your flexible data and get rid of excel mess. You can use TreoPIM together with EspoCRM as a single instance, so if you need both - a PIM and a CRM, TreoPIM is the best solution for you! 
 
 ##Why TreoPIM?
 
