@@ -1,4 +1,8 @@
 ---
+engines:
+ phpcs:
+   enabled: true
+   php_version: 7.1
 exclude_paths:
   - "api/**"
   - "application/Espo/Acl/**"
