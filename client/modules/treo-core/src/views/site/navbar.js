@@ -71,6 +71,7 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             var scopes = this.getMetadata().get('scopes') || {};
 
             this.tabList = tabList.filter(function (scope) {
+                if (typeof scopes[scope] === 'undefined') return;
                 if ((scopes[scope] || {}).disabled) return;
                 if ((scopes[scope] || {}).acl) {
                     return this.getAcl().check(scope);
