@@ -34,18 +34,115 @@
 Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:views/admin/upgrade/index', function (Dep) {
 
     return Dep.extend({
-        data: function () {
-            // prepare download message
-            var downloadMsg = 'downloadUpgradePackage';
-            if (this.getConfig().get('allowUnstable')) {
-                downloadMsg = 'downloadUpgradePackageDev';
-            }
 
+        template: 'treo-core:admin/upgrade/index',
+
+        latestVersion: null,
+
+        data: function () {
             return {
-                versionMsg: this.translate('Current version') + ': ' + this.getConfig().get('version'),
-                backupsMsg: this.translate('upgradeBackup', 'messages', 'Admin'),
-                downloadMsg: this.translate(downloadMsg, 'messages', 'Admin')
+                disableUpgrade: this.upgradingInProgress || !this.latestVersion,
+                latestVersion: this.latestVersion,
+                systemVersion: this.systemVersion
             };
-        }
+        },
+
+        events: {
+            'click button[data-action="upgradeSystem"]': function () {
+                this.upgradeSystem();
+            }
+        },
+
+        setup: function () {
+            Dep.prototype.setup.call(this);
+
+            this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
+            this.systemVersion = this.getConfig().get('version');
+            this.wait(true);
+            this.ajaxGetRequest('/TreoUpgrade/availableVersion')
+                .then(response => {
+                    this.latestVersion = response.version;
+                })
+                .always(() => {
+                    this.wait(false)
+                });
+
+            this.listenToOnce(this, 'remove', () => {
+                if (this.configCheckInterval) {
+                    window.clearInterval(this.configCheckInterval);
+                    this.configCheckInterval = null;
+                }
+            });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.upgradingInProgress) {
+                this.initConfigCheck(true);
+            }
+            this.showCurrentStatus();
+        },
+
+        upgradeSystem() {
+            this.disableUpgrade(true);
+            this.ajaxPostRequest('/TreoUpgrade/upgrade').then(response => {
+                if (response) {
+                    this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
+                    this.initConfigCheck();
+                } else {
+                    this.notify(this.translate('upgradeInProgress', 'messages', 'Admin'), 'danger');
+                }
+            });
+        },
+
+        showCurrentStatus() {
+            let el = this.$el.find('.current-status');
+            let type, text;
+            if (this.upgradingInProgress) {
+                type = 'text-success';
+                text = this.translate('upgradeInProgress', 'messages', 'Admin');
+            } else if (this.latestVersion) {
+                type = 'text-danger';
+                text = this.translate('Current version', 'labels', 'Global') + ': ' + this.systemVersion;
+            } else {
+                type = 'text-success';
+                text = this.translate('systemAlreadyUpgraded', 'messages', 'Admin');
+            }
+            el.removeClass();
+            el.addClass('current-status ' + type);
+            el.text(text);
+        },
+
+        disableUpgrade(property) {
+            let button = this.$el.find('button[data-action="upgradeSystem"]');
+            button.prop('disabled', property);
+            if (!property) {
+                button.removeClass('hidden');
+            }
+        },
+
+        initConfigCheck(skipInitRun) {
+            let configCheck = () => {
+                this.getConfig().fetch({
+                    success: function (config) {
+                        let isSystemUpgrading = this.upgradingInProgress = !!config.get('isSystemUpdating');
+                        if (!isSystemUpgrading) {
+                            window.clearInterval(this.configCheckInterval);
+                            this.configCheckInterval = null;
+                            this.showCurrentStatus();
+                            this.disableUpgrade(false);
+                            this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
+                        }
+                    }.bind(this)
+                });
+            };
+            window.clearInterval(this.configCheckInterval);
+            this.configCheckInterval = window.setInterval(configCheck, 10000);
+            if (!skipInitRun) {
+                configCheck();
+            }
+        },
+
     });
 });
