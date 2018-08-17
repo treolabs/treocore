@@ -89,10 +89,10 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             this.ajaxPostRequest('/TreoUpgrade/upgrade').then(response => {
                 if (response) {
                     this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
-                    this.initConfigCheck();
                 } else {
                     this.notify(this.translate('upgradeInProgress', 'messages', 'Admin'), 'danger');
                 }
+                this.initConfigCheck();
             });
         },
 
