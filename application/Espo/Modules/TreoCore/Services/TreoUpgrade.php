@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
+use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 
 /**
  * TreoUpgrade service
@@ -102,23 +103,26 @@ class TreoUpgrade extends AbstractTreoService
             // prepare zip name
             $zipName = self::TREO_PACKAGES_PATH . "/{$name}.zip";
 
+            // delete dir if already exists
             if (!file_exists($extractDir)) {
-                // download
-                file_put_contents($zipName, fopen($link, 'r'));
+                ModuleMover::deleteDir($extractDir);
+            }
 
-                // create extract dir
-                if (!file_exists($extractDir)) {
-                    mkdir($extractDir, 0777, true);
+            // download
+            file_put_contents($zipName, fopen($link, 'r'));
 
-                    $zip = new \ZipArchive();
-                    $res = $zip->open($zipName);
-                    if ($res === true) {
-                        $zip->extractTo($extractDir);
-                        $zip->close();
+            // create extract dir
+            if (!file_exists($extractDir)) {
+                mkdir($extractDir, 0777, true);
 
-                        // delete archive
-                        unlink($zipName);
-                    }
+                $zip = new \ZipArchive();
+                $res = $zip->open($zipName);
+                if ($res === true) {
+                    $zip->extractTo($extractDir);
+                    $zip->close();
+
+                    // delete archive
+                    unlink($zipName);
                 }
             }
 
