@@ -153,7 +153,7 @@ class TreoUpgrade extends AbstractTreoService
     }
 
     /**
-     * Run upgrade job
+     * Run upgrade core job
      *
      * @param array $data
      */
