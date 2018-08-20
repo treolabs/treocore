@@ -192,8 +192,15 @@ class TreoUpgrade extends AbstractTreoService
             // prepare result
             $this->versionData = [];
 
+            // prepare path
+            $path = self::TREO_PACKAGES_URL . $version;
+
+            if ($this->getConfig()->get('allowUnstable')) {
+                $path .= '?dev=1';
+            }
+
             try {
-                $json = file_get_contents(self::TREO_PACKAGES_URL . $version);
+                $json = file_get_contents($path);
                 if (is_string($json)) {
                     $data = json_decode($json, true);
                 }
