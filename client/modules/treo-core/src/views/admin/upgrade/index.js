@@ -56,16 +56,20 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
         setup: function () {
             Dep.prototype.setup.call(this);
 
-            this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
-            this.systemVersion = this.getConfig().get('version');
             this.wait(true);
-            this.ajaxGetRequest('/TreoUpgrade/availableVersion')
-                .then(response => {
-                    this.latestVersion = response.version;
-                })
-                .always(() => {
-                    this.wait(false)
-                });
+            this.getConfig().fetch({
+                success: () => {
+                    this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
+                    this.systemVersion = this.getConfig().get('version');
+                    this.ajaxGetRequest('/TreoUpgrade/availableVersion')
+                    .then(response => {
+                        this.latestVersion = response.version;
+                    })
+                    .always(() => {
+                        this.wait(false)
+                    });
+                }
+            });
 
             this.listenToOnce(this, 'remove', () => {
                 if (this.configCheckInterval) {
@@ -126,8 +130,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             let configCheck = () => {
                 this.getConfig().fetch({
                     success: function (config) {
-                        let isSystemUpgrading = this.upgradingInProgress = !!config.get('isSystemUpdating');
-                        if (!isSystemUpgrading) {
+                        this.upgradingInProgress = !!config.get('isSystemUpdating');
+                        if (!this.upgradingInProgress) {
                             window.clearInterval(this.configCheckInterval);
                             this.configCheckInterval = null;
                             this.showCurrentStatus();
