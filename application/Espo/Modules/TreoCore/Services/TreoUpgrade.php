@@ -89,10 +89,13 @@ class TreoUpgrade extends AbstractTreoService
         if (!empty($data = $this->getVersionData($currentVersion))
             && !empty($link = $data['link'])
             && !empty($version = $data['version'])) {
-            // create dir
-            if (!file_exists(self::TREO_PACKAGES_PATH)) {
-                mkdir(self::TREO_PACKAGES_PATH, 0777, true);
+            // clearing cache
+            if (file_exists(self::TREO_PACKAGES_PATH)) {
+                ModuleMover::deleteDir(self::TREO_PACKAGES_PATH);
             }
+
+            // create upgrade dir
+            mkdir(self::TREO_PACKAGES_PATH, 0777, true);
 
             // prepare name
             $name = str_replace(".", "_", "{$currentVersion}_to_{$version}");
@@ -103,27 +106,20 @@ class TreoUpgrade extends AbstractTreoService
             // prepare zip name
             $zipName = self::TREO_PACKAGES_PATH . "/{$name}.zip";
 
-            // delete dir if already exists
-            if (!file_exists($extractDir)) {
-                ModuleMover::deleteDir($extractDir);
-            }
-
             // download
             file_put_contents($zipName, fopen($link, 'r'));
 
             // create extract dir
-            if (!file_exists($extractDir)) {
-                mkdir($extractDir, 0777, true);
+            mkdir($extractDir, 0777, true);
 
-                $zip = new \ZipArchive();
-                $res = $zip->open($zipName);
-                if ($res === true) {
-                    $zip->extractTo($extractDir);
-                    $zip->close();
+            $zip = new \ZipArchive();
+            $res = $zip->open($zipName);
+            if ($res === true) {
+                $zip->extractTo($extractDir);
+                $zip->close();
 
-                    // delete archive
-                    unlink($zipName);
-                }
+                // delete archive
+                unlink($zipName);
             }
 
             // update config
@@ -141,7 +137,7 @@ class TreoUpgrade extends AbstractTreoService
                     'method'      => 'runUpgradeJob',
                     'data'        => [
                         'versionFrom' => $currentVersion,
-                        'versionto'   => $version,
+                        'versionTo'   => $version,
                         'fileName'    => $name,
                         'createdById' => $this->getUser()->get('id')
                     ]
@@ -165,15 +161,10 @@ class TreoUpgrade extends AbstractTreoService
     {
         if (!empty($versionFrom = $data['versionFrom'])
             && !empty($versionTo = $data['versionTo'])
-            && !empty($fileName = $data['fileName'])
-            && file_exists(self::TREO_PACKAGES_PATH . "/{$fileName}")) {
+            && !empty($fileName = $data['fileName'])) {
             // upgrade treocore
             $upgradeManager = new UpgradeManager($this->getContainer());
             $upgradeManager->install(['id' => $fileName]);
-
-            // update config
-            $this->getConfig()->set('isSystemUpdating', false);
-            $this->getConfig()->save();
 
             // call migration
             $this
