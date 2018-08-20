@@ -118,35 +118,35 @@ class TreoUpgrade extends AbstractTreoService
 
                         // delete archive
                         unlink($zipName);
-
-                        // update config
-                        $this->getConfig()->set('isSystemUpdating', true);
-                        $this->getConfig()->save();
-
-                        // create job
-                        $jobEntity = $this->getEntityManager()->getEntity('Job');
-                        $jobEntity->set(
-                            [
-                                'name'        => 'Run TreoCore upgrade',
-                                'status'      => CronManager::PENDING,
-                                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                                'serviceName' => 'TreoUpgrade',
-                                'method'      => 'runUpgradeJob',
-                                'data'        => [
-                                    'versionFrom' => $currentVersion,
-                                    'versionto'   => $version,
-                                    'fileName'    => $name,
-                                    'createdById' => $this->getUser()->get('id')
-                                ]
-                            ]
-                        );
-                        $this->getEntityManager()->saveEntity($jobEntity);
-
-                        // prepare result
-                        $result = true;
                     }
                 }
             }
+
+            // update config
+            $this->getConfig()->set('isSystemUpdating', true);
+            $this->getConfig()->save();
+
+            // create job
+            $jobEntity = $this->getEntityManager()->getEntity('Job');
+            $jobEntity->set(
+                [
+                    'name'        => 'Run TreoCore upgrade',
+                    'status'      => CronManager::PENDING,
+                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'serviceName' => 'TreoUpgrade',
+                    'method'      => 'runUpgradeJob',
+                    'data'        => [
+                        'versionFrom' => $currentVersion,
+                        'versionto'   => $version,
+                        'fileName'    => $name,
+                        'createdById' => $this->getUser()->get('id')
+                    ]
+                ]
+            );
+            $this->getEntityManager()->saveEntity($jobEntity);
+
+            // prepare result
+            $result = true;
         }
 
         return $result;
