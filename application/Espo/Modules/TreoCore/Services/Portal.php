@@ -34,41 +34,59 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Services;
+
+use Espo\ORM\Entity;
+use Espo\Services\Record;
+use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
 
 /**
- * Rebuild console
+ * Portal service
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Rebuild extends AbstractConsole
+class Portal extends Record
 {
     /**
-     * Get console command description
-     *
-     * @return string
+     * @var null|array
      */
-    public static function getDescription(): string
+    protected $urls = null;
+
+    /**
+     * @param Entity $entity
+     */
+    public function loadAdditionalFields(Entity $entity)
     {
-        return 'Run database rebuild.';
+        parent::loadAdditionalFields($entity);
+
+        if (!empty($url = $this->getUrls()[$entity->get('id')])) {
+            $entity->set('url', $url);
+        }
     }
 
     /**
-     * Run action
-     *
-     * @param array $data
+     * @param Entity $entity
      */
-    public function run(array $data): void
+    public function loadAdditionalFieldsForList(Entity $entity)
     {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
+        parent::loadAdditionalFieldsForList($entity);
 
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
+        if (!empty($url = $this->getUrls()[$entity->get('id')])) {
+            $entity->set('url', $url);
         }
+    }
+
+    /**
+     * Get urls
+     *
+     * @return array
+     */
+    protected function getUrls(): array
+    {
+        if (is_null($this->urls)) {
+            $this->urls = PortalApp::getUrlFileData();
+        }
+
+        return $this->urls;
     }
 }

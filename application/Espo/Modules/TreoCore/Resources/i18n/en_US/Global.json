@@ -85,13 +85,19 @@
     "fail": "Fail",
     "success": "Success",
     "viewDetails": "View Details",
-    "showFullList": "Show Full List"
+    "showFullList": "Show Full List",
+    "On": "On",
+    "Off": "Off"
   },
   "links": {
     "ownerUser": "Owner"
   },
   "themes": {
     "TreoDarkTheme": "Treo Dark Theme"
+  },
+  "exceptions": {
+    "URL is invalid": "URL is invalid",
+    "Such URL is already exists": "Such URL is already exists"
   },
   "messages": {
     "allowUnstableParamBlocked": "Param cannot be modified. You should deactivate 'ModuleAutoUpdate' cron job first.",

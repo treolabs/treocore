@@ -36,12 +36,14 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Console;
 
+use Espo\Modules\TreoCore\Core\Utils\Composer as Util;
+
 /**
- * Rebuild console
+ * Composer console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Rebuild extends AbstractConsole
+class Composer extends AbstractConsole
 {
     /**
      * Get console command description
@@ -50,7 +52,7 @@ class Rebuild extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run database rebuild.';
+        return 'Run composer commands by extractor.';
     }
 
     /**
@@ -60,15 +62,7 @@ class Rebuild extends AbstractConsole
      */
     public function run(array $data): void
     {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
-
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
-        }
+        // render
+        self::show((new Util())->run($data['command'])['output']);
     }
 }

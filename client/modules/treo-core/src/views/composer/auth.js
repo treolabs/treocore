@@ -78,7 +78,7 @@ Espo.define('treo-core:views/composer/auth', 'view',
                 el: `${this.options.el} .field[data-name="username"]`,
                 model: this.model,
                 mode: this.mode,
-                inlineEditDisabled: true,
+                readOnly: true,
                 defs: {
                     name: 'username',
                     params: {
@@ -87,11 +87,11 @@ Espo.define('treo-core:views/composer/auth', 'view',
                 }
             });
 
-            this.createView('password', 'views/fields/password', {
+            this.createView('password', 'views/fields/varchar', {
                 el: `${this.options.el} .field[data-name="password"]`,
                 model: this.model,
                 mode: this.mode,
-                inlineEditDisabled: true,
+                readOnly: true,
                 defs: {
                     name: 'password',
                     params: {
@@ -121,49 +121,8 @@ Espo.define('treo-core:views/composer/auth', 'view',
             return data;
         },
 
-        validate() {
-            let notValid = false;
-            let fieldViews = this.getFieldViews();
-            for (let key in fieldViews) {
-                notValid = fieldViews[key].validate() || notValid;
-            }
-            return notValid;
-        },
-
-        actionSave() {
-            let data = this.fetch();
-            let isDataChanged = false;
-            for (let key in data) {
-                if (isDataChanged = !_.isEqual(data[key], this.attributes[key])) {
-                    break;
-                }
-            }
-            if (!isDataChanged) {
-                this.notify(this.translate('notModified', 'messages'), 'warning', 2000);
-                return;
-            }
-            if (this.validate()) {
-                return;
-            }
-
-            this.model.set(data, {silent: true});
-            this.attributes = this.model.getClonedAttributes();
-            this.notify('Saving...');
-            this.ajaxPutRequest('Composer/gitAuth', data).then(response => {
-                if (response) {
-                    this.trigger('after:save');
-                    this.notify('Saved', 'success');
-                }
-            });
-        },
-
-        actionCancelEdit() {
-            this.model.set(this.attributes, {silent: true});
-            this.getRouter().navigate('#Admin', {trigger: true});
-        },
-
         updatePageTitle() {
-            this.setPageTitle(this.getLanguage().translate('Git Authentication', 'labels', 'Admin'));
+            this.setPageTitle(this.getLanguage().translate('Git User', 'labels', 'Admin'));
         },
 
     })

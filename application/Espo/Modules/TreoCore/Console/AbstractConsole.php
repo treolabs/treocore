@@ -49,6 +49,10 @@ abstract class AbstractConsole
 {
     use ContainerTrait;
 
+    const SUCCESS = 1;
+    const ERROR = 2;
+    const INFO = 3;
+
     /**
      * Run action
      *
@@ -74,15 +78,15 @@ abstract class AbstractConsole
     {
         switch ($status) {
             // success
-            case 1:
+            case self::SUCCESS:
                 echo "\033[0;32m{$message}\033[0m" . PHP_EOL;
                 break;
             // error
-            case 2:
+            case self::ERROR:
                 echo "\033[1;31m{$message}\033[0m" . PHP_EOL;
                 break;
             // info
-            case 3:
+            case self::INFO:
                 echo "\033[0;36m{$message}\033[0m" . PHP_EOL;
                 break;
             // default

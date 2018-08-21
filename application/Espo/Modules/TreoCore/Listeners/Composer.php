@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Espo\Modules\TreoCore\Services\ComposerModule as ComposerModuleService;
 
@@ -99,7 +100,7 @@ class Composer extends AbstractListener
                         $this->clearModuleData($row['id']);
 
                         // delete dir
-                        ComposerService::deleteTreoModule([$row['id'] => $row['package']]);
+                        ModuleMover::delete([$row['id'] => $row['package']]);
 
                         // notify
                         $this->notifyDelete($row['id'], $data['createdById']);

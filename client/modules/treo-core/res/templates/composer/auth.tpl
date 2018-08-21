@@ -1,22 +1,16 @@
 <div class="header page-header">
     <h3>
-        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> &rsaquo; {{translate 'Git Authentication' scope='Admin' category='labels'}}
+        <a href="#Admin">{{translate 'Administration' scope='Global' category='labels'}}</a> &rsaquo; {{translate 'Git User' scope='Admin' category='labels'}}
     </h3>
 </div>
 <div class="record">
     <div class="edit">
-        <div class="detail-button-container button-container clearfix">
-            <div class="btn-group" role="group">
-                <button class="btn btn-primary action" data-action="save" type="button">{{translate 'Save'}}</button>
-                <button class="btn btn-default action" data-action="cancelEdit" type="button">{{translate 'Cancel'}}</button>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-8">
                 <div class="middle">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">{{translate 'Git Authentication' scope='Admin' category='labels'}}</h4>
+                            <h4 class="panel-title">{{translate 'Git User' scope='Admin' category='labels'}}</h4>
                         </div>
                         <div class="panel-body">
                             <div class="row">

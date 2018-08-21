@@ -32,43 +32,31 @@
  * and "TreoPIM" word.
  */
 
-include "../bootstrap.php";
+declare(strict_types=1);
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
+namespace Espo\Modules\TreoCore\Configs;
 
-$app = new \Espo\Modules\TreoCore\Core\Application();
-if (!$app->isInstalled()) {
-    exit;
-}
-
-$url = $_SERVER['REQUEST_URI'];
-$portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-
-if (!isset($portalId)) {
-    $url = $_SERVER['REDIRECT_URL'];
-    $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-}
-
-$a = explode('?', $url);
-if (substr($a[0], -1) !== '/') {
-    $url = $a[0] . '/';
-    if (count($a) > 1) {
-        $url .= '?' . $a[1];
-    }
-    header("Location: " . $url);
-    exit();
-}
-
-if ($portalId) {
-    $app->setBasePath('../../');
-} else {
-    $app->setBasePath('../');
-}
-
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
-
-$app->runEntryPoint('portal');
+return [
+    'requirements' => [
+        'phpVersion'   => '7.1',
+        'phpRequires'  => [
+            'json',
+            'openssl',
+            'pdo_mysql',
+            'mbstring',
+            'zip',
+            'gd',
+            'curl',
+            'xml',
+            'exif'
+        ],
+        'phpSettings'  => [
+            'max_execution_time'  => 180,
+            'max_input_time'      => 180,
+            'memory_limit'        => '256M',
+            'post_max_size'       => '20M',
+            'upload_max_filesize' => '20M'
+        ],
+        'mysqlVersion' => '5.5.3'
+    ]
+];

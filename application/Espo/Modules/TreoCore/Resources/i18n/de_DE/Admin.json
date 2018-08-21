@@ -1,6 +1,8 @@
 {
   "labels": {
-    "moduleManager": "Module Manager"
+    "moduleManager": "Modulmanager",
+    "Git User": "Git Benutzer",
+    "upgradeTo": "Upgraden auf"
   },
   "descriptions": {
     "upgrade": "Treo System aktualisieren.",
@@ -14,7 +16,11 @@
     "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die Treo System Dateien sowie die Datenbank zu sichern.",
     "newVersionIsAvailable": "Neue Treo System Version {latestVersion} ist verfügbar.",
     "downloadUpgradePackage": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/\" target=\"_blank\">hier</a>",
-    "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/?dev=1\" target=\"_blank\">hier</a>"
+    "downloadUpgradePackageDev": "Zip-Pakete für Treo-Upgrade finden Sie <a href=\"http://treo-packages.zinit1.com/?dev=1\" target=\"_blank\">hier</a>",
+    "systemAlreadyUpgraded": "TreoCore ist schon aktualisiert.",
+    "upgradeStarted": "Upgrade wurde gestartet",
+    "upgradeInProgress": "Das Upgrade wird bereits durchgeführt",
+    "upgradeFailed": "Upgrade fehlgeschlagen. Bitte versuche es erneut"
   },
   "layouts": {
     "relationships": "Unterer Paneele"

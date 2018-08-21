@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Portal;
 
+use Espo\Core\Utils\Json;
 use Espo\Core\Portal\Application as EspoApplication;
 
 /**
@@ -44,22 +45,84 @@ use Espo\Core\Portal\Application as EspoApplication;
  */
 class Application extends EspoApplication
 {
+    const CONFIG_PATH = 'data/portals.json';
+
+    /**
+     * @var null|array
+     */
+    protected static $urls = null;
+
+    /**
+     * Is calling portal id
+     *
+     * @return string
+     */
+    public static function getCallingPortalId(): string
+    {
+        // prepare result
+        $result = '';
+
+        // prepare protocol
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+        // prepare url
+        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        if (in_array($url, self::getUrlFileData())) {
+            $result = array_search($url, self::getUrlFileData());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get url config file data
+     *
+     * @return array
+     */
+    public static function getUrlFileData(): array
+    {
+        if (is_null(self::$urls)) {
+            // prepare result
+            self::$urls = [];
+
+            if (file_exists(self::CONFIG_PATH)) {
+                $json = file_get_contents(self::CONFIG_PATH);
+                if (!empty($json)) {
+                    self::$urls = Json::decode($json, true);
+                }
+            }
+        }
+
+        return self::$urls;
+    }
+
+
+    /**
+     * Set data to url config file
+     *
+     * @param array $data
+     */
+    public static function saveUrlFile(array $data): void
+    {
+        $file = fopen(self::CONFIG_PATH, "w");
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        fclose($file);
+    }
+
     /**
      * Run client
      */
     public function runClient()
     {
-        $modules = $this->getContainer()->get('config')->get('modules');
-        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
-
         $this->getContainer()->get('clientManager')->display(
             null,
             'html/treo-portal.html',
             [
-                'portalId' => $this->getPortal()->id,
+                'portalId'        => $this->getPortal()->id,
                 'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year' => date('Y'),
-                'version' => $version
+                'year'            => date('Y'),
+                'version'         => $this->getContainer()->get('config')->get('version')
             ]
         );
     }

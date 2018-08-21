@@ -11,6 +11,7 @@
     "licenseAgreement": "Lizenzvereinbarung",
     "databaseConfiguration": "Datenbank-Konfiguration",
     "administratorSetup": "Administration",
+    "requiredSettings": "Required Settings",
     "chooseYourLanguage": "Wählen Sie bitte die Sprache",
     "acceptTheAgreement": "Ich akzeptiere den Vertrag",
     "hostName": "Hostname",
@@ -19,6 +20,7 @@
     "databaseUserPassword": "Datenbank-Benutzerpasswort",
     "port": "Port",
     "testConnection": "Test-Verbindung",
+    "reCheck": "Re-Check",
     "userName": "Banutzername",
     "password": "Passwort",
     "confirmYourPassword": "Bestätigen Sie bitte Ihr Passwort",
@@ -35,6 +37,11 @@
   "messages": {
     "youMustAgreeToTheLicenseAgreement": "Sie müssen den Lizenzvertrag akzeptieren",
     "fieldIsRequired": "{field} ist ein Pflichtfeld",
-    "connectionSuccessful": "Verbindung ist erfolgreich!"
+    "connectionSuccessful": "Verbindung ist erfolgreich!",
+    "pleaseConfigureYourSystemToStart": "Bitte konfigurieren Sie Ihr System zu starten"
+  },
+  "requirements": {
+    "phpVersion": "PHP version",
+    "mysqlVersion": "MySQL version"
   }
 }

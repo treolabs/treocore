@@ -34,41 +34,52 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Layouts;
 
 /**
- * Rebuild console
+ * Portal layout
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Rebuild extends AbstractConsole
+class Portal extends AbstractLayout
 {
     /**
-     * Get console command description
-     *
-     * @return string
-     */
-    public static function getDescription(): string
-    {
-        return 'Run database rebuild.';
-    }
-
-    /**
-     * Run action
+     * Layout detail
      *
      * @param array $data
+     *
+     * @return array
      */
-    public function run(array $data): void
+    public function layoutDetail(array $data): array
     {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
+        $generalPanel = [
+            'label' => 'General',
+            'rows'  => [
+                [
+                    [
+                        'name' => 'name'
+                    ],
+                    [
+                        'name' => 'isActive'
+                    ]
+                ],
+                [
+                    [
+                        'name' => 'url'
+                    ],
+                    [
+                        'name' => 'portalRoles'
+                    ]
+                ]
+            ]
+        ];
 
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
+        foreach ($data as $k => $panel) {
+            if (!empty($panel['label']) && $panel['label'] == 'General') {
+                $data[$k] = $generalPanel;
+            }
         }
+
+        return $data;
     }
 }

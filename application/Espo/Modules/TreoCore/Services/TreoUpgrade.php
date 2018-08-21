@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
+use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 
 /**
  * TreoUpgrade service
@@ -88,11 +89,13 @@ class TreoUpgrade extends AbstractTreoService
         if (!empty($data = $this->getVersionData($currentVersion))
             && !empty($link = $data['link'])
             && !empty($version = $data['version'])) {
-
-            // create dir
-            if (!file_exists(self::TREO_PACKAGES_PATH)) {
-                mkdir(self::TREO_PACKAGES_PATH, 0777, true);
+            // clearing cache
+            if (file_exists(self::TREO_PACKAGES_PATH)) {
+                ModuleMover::deleteDir(self::TREO_PACKAGES_PATH);
             }
+
+            // create upgrade dir
+            mkdir(self::TREO_PACKAGES_PATH, 0777, true);
 
             // prepare name
             $name = str_replace(".", "_", "{$currentVersion}_to_{$version}");
@@ -103,58 +106,54 @@ class TreoUpgrade extends AbstractTreoService
             // prepare zip name
             $zipName = self::TREO_PACKAGES_PATH . "/{$name}.zip";
 
-            if (!file_exists($extractDir)) {
-                // download
-                file_put_contents($zipName, fopen($link, 'r'));
+            // download
+            file_put_contents($zipName, fopen($link, 'r'));
 
-                // create extract dir
-                if (!file_exists($extractDir)) {
-                    mkdir($extractDir, 0777, true);
+            // create extract dir
+            mkdir($extractDir, 0777, true);
 
-                    $zip = new \ZipArchive();
-                    $res = $zip->open($zipName);
-                    if ($res === true) {
-                        $zip->extractTo($extractDir);
-                        $zip->close();
+            $zip = new \ZipArchive();
+            $res = $zip->open($zipName);
+            if ($res === true) {
+                $zip->extractTo($extractDir);
+                $zip->close();
 
-                        // delete archive
-                        unlink($zipName);
-
-                        // update config
-                        $this->getConfig()->set('isSystemUpdating', true);
-                        $this->getConfig()->save();
-
-                        // create job
-                        $jobEntity = $this->getEntityManager()->getEntity('Job');
-                        $jobEntity->set(
-                            [
-                                'name'        => 'Run TreoCore upgrade',
-                                'status'      => CronManager::PENDING,
-                                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                                'serviceName' => 'TreoUpgrade',
-                                'method'      => 'runUpgradeJob',
-                                'data'        => [
-                                    'versionFrom' => $currentVersion,
-                                    'versionto'   => $version,
-                                    'fileName'    => $name,
-                                    'createdById' => $this->getUser()->get('id')
-                                ]
-                            ]
-                        );
-                        $this->getEntityManager()->saveEntity($jobEntity);
-
-                        // prepare result
-                        $result = true;
-                    }
-                }
+                // delete archive
+                unlink($zipName);
             }
+
+            // update config
+            $this->getConfig()->set('isSystemUpdating', true);
+            $this->getConfig()->save();
+
+            // create job
+            $jobEntity = $this->getEntityManager()->getEntity('Job');
+            $jobEntity->set(
+                [
+                    'name'        => 'Run TreoCore upgrade',
+                    'status'      => CronManager::PENDING,
+                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'serviceName' => 'TreoUpgrade',
+                    'method'      => 'runUpgradeJob',
+                    'data'        => [
+                        'versionFrom' => $currentVersion,
+                        'versionTo'   => $version,
+                        'fileName'    => $name,
+                        'createdById' => $this->getUser()->get('id')
+                    ]
+                ]
+            );
+            $this->getEntityManager()->saveEntity($jobEntity);
+
+            // prepare result
+            $result = true;
         }
 
         return $result;
     }
 
     /**
-     * Run upgrade job
+     * Run upgrade core job
      *
      * @param array $data
      */
@@ -162,15 +161,10 @@ class TreoUpgrade extends AbstractTreoService
     {
         if (!empty($versionFrom = $data['versionFrom'])
             && !empty($versionTo = $data['versionTo'])
-            && !empty($fileName = $data['fileName'])
-            && file_exists(self::TREO_PACKAGES_PATH . "/{$fileName}")) {
+            && !empty($fileName = $data['fileName'])) {
             // upgrade treocore
             $upgradeManager = new UpgradeManager($this->getContainer());
             $upgradeManager->install(['id' => $fileName]);
-
-            // update config
-            $this->getConfig()->set('isSystemUpdating', false);
-            $this->getConfig()->save();
 
             // call migration
             $this
@@ -193,8 +187,15 @@ class TreoUpgrade extends AbstractTreoService
             // prepare result
             $this->versionData = [];
 
+            // prepare path
+            $path = self::TREO_PACKAGES_URL . $version;
+
+            if ($this->getConfig()->get('allowUnstable')) {
+                $path .= '?dev=1';
+            }
+
             try {
-                $json = file_get_contents(self::TREO_PACKAGES_URL . $version);
+                $json = file_get_contents($path);
                 if (is_string($json)) {
                     $data = json_decode($json, true);
                 }

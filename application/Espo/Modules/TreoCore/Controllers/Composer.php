@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Controllers;
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\Json;
+use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Slim\Http\Request;
 
@@ -48,21 +49,6 @@ use Slim\Http\Request;
  */
 class Composer extends Base
 {
-    /**
-     * @var string
-     */
-    protected $gitHost = 'gitlab.zinit1.com';
-
-    /**
-     * @var string
-     */
-    protected $authType = 'http-basic';
-
-    /**
-     * @var ComposerService
-     */
-    protected $composerService = null;
-
     /**
      * @ApiDescription(description="Get git auth data")
      * @ApiMethod(type="GET")
@@ -87,18 +73,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        // prepare result
-        $result = [];
-
-        // get auth data
-        $authData = $this->getComposerService()->getAuthData();
-
-        // prepare result
-        if (!empty($authData[$this->authType][$this->gitHost])) {
-            $result = $authData[$this->authType][$this->gitHost];
-        }
-
-        return $result;
+        return $this->getComposerUtil()->getAuthData();
     }
 
     /**
@@ -129,12 +104,9 @@ class Composer extends Base
         $data = Json::decode(Json::encode($data), true);
 
         if (!empty($data['username']) && !empty($data['password'])) {
-            // get auth data
-            $authData = $this->getComposerService()->getAuthData();
-            $authData[$this->authType][$this->gitHost]['username'] = $data['username'];
-            $authData[$this->authType][$this->gitHost]['password'] = $data['password'];
-
-            return $this->getComposerService()->setAuthData($authData);
+            return $this
+                ->getComposerUtil()
+                ->setAuthData($data['username'], $data['password']);
         }
 
         throw new Exceptions\NotFound();
@@ -196,10 +168,16 @@ class Composer extends Base
      */
     protected function getComposerService(): ComposerService
     {
-        if (is_null($this->composerService)) {
-            $this->composerService = $this->getService('Composer');
-        }
+        return $this->getService('Composer');
+    }
 
-        return $this->composerService;
+    /**
+     * Get composer util
+     *
+     * @return ComposerUtil
+     */
+    protected function getComposerUtil(): ComposerUtil
+    {
+        return new ComposerUtil();
     }
 }

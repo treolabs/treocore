@@ -84,7 +84,9 @@
     "fail": "Fehlgeschlagen",
     "success": "Erfolg",
     "viewDetails": "Details anzeigen",
-    "showFullList": "Vollständige Liste anzeigen"
+    "showFullList": "Vollständige Liste anzeigen",
+    "On": "Auf",
+    "Off": "Aus"
   },
   "links": {
     "ownerUser": "Besitzer"
@@ -99,6 +101,10 @@
     "allowUnstableParamBlocked": "Param kann nicht geändert werden. Sie sollten den Cron-Job 'ModuleAutoUpdate' zuerst deaktivieren.",
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
     "massUpdateResult": "{count} Einträge werden aktualisiert"
+  },
+  "exceptions": {
+    "URL is invalid": "Die URL ist ungültig",
+    "Such URL is already exists": "Eine solche URL ist bereits vorhanden"
   },
   "streamMessages": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",

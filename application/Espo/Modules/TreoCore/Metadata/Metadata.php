@@ -228,7 +228,7 @@ class Metadata extends AbstractMetadata
     protected function deleteActivities(array $data): array
     {
         foreach ($data['entityDefs'] as $entity => $row) {
-            if (isset($data['scopes'][$entity]['hasActivities']) && empty($data['scopes'][$entity]['hasActivities'])) {
+            if (empty($data['scopes'][$entity]['hasActivities'])) {
                 // remove from entityList
                 $entityList = [];
                 if (!empty($data['entityDefs']['Meeting']['fields']['parent']['entityList'])) {

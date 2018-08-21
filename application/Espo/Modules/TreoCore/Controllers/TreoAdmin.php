@@ -38,7 +38,6 @@ namespace Espo\Modules\TreoCore\Controllers;
 
 use Espo\Controllers\Admin;
 use Espo\Core\Exceptions;
-use Espo\Modules\TreoCore\Core\UpgradeManager;
 
 /**
  * TreoAdmin controller
@@ -54,32 +53,11 @@ class TreoAdmin extends Admin
      * @param mixed $params
      * @param mixed $data
      *
-     * @return bool
+     * @throws Exceptions\NotFound
      */
     public function actionTreoRunUpgrade($params, $data)
     {
-        if ($this->getConfig()->get('restrictedMode')) {
-            if (!$this->getUser()->get('isSuperAdmin')) {
-                throw new Exceptions\Forbidden();
-            }
-        }
-
-        // prepare current version
-        $currentVersion = $this->getContainer()->get('config')->get('version');
-
-        $upgradeManager = new UpgradeManager($this->getContainer());
-        $upgradeManager->install(get_object_vars($data));
-
-        // prepare current version
-        $newVersion = $this->getContainer()->get('config')->get('version');
-
-        // call migration
-        $this
-            ->getContainer()
-            ->get('migration')
-            ->run('TreoCore', $currentVersion, $newVersion);
-
-        return true;
+        throw new Exceptions\NotFound();
     }
 
     /**
@@ -88,23 +66,10 @@ class TreoAdmin extends Admin
      * @param array $params
      * @param array $data
      *
-     * @return array
-     * @throws Exceptions\Forbidden
+     * @throws Exceptions\NotFound
      */
     public function postActionUploadUpgradePackage($params, $data)
     {
-        if ($this->getConfig()->get('restrictedMode') && !$this->getUser()->get('isSuperAdmin')) {
-            throw new Exceptions\Forbidden();
-        }
-
-        $upgradeManager = new UpgradeManager($this->getContainer());
-
-        $upgradeId = $upgradeManager->upload($data);
-        $manifest = $upgradeManager->getManifest();
-
-        return [
-            'id'      => $upgradeId,
-            'version' => $manifest['version'],
-        ];
+        throw new Exceptions\NotFound();
     }
 }

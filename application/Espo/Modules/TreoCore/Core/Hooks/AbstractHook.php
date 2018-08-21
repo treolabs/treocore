@@ -31,44 +31,40 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Core\Hooks;
+
+use Espo\Core\Hooks\Base;
 
 /**
- * Rebuild console
+ * AbstractHook class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Rebuild extends AbstractConsole
+abstract class AbstractHook extends Base
 {
+
+
     /**
-     * Get console command description
+     * Translate
+     *
+     * @param string     $label
+     * @param string     $category
+     * @param string     $scope
+     * @param array|null $requiredOptions
      *
      * @return string
      */
-    public static function getDescription(): string
-    {
-        return 'Run database rebuild.';
-    }
-
-    /**
-     * Run action
-     *
-     * @param array $data
-     */
-    public function run(array $data): void
-    {
-        $result = $this
+    protected function translate(
+        string $label,
+        string $category = 'labels',
+        string $scope = 'Global',
+        array $requiredOptions = null
+    ): string {
+        return $this
             ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
-
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
-        }
+            ->get('language')
+            ->translate($label, $category, $scope, $requiredOptions);
     }
 }

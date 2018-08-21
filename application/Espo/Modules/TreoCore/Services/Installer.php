@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\Services\Base;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Core\Exceptions;
@@ -48,7 +47,7 @@ use Espo\Core\Utils\Json;
  *
  * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class Installer extends Base
+class Installer extends AbstractTreoService
 {
 
     /**
@@ -57,23 +56,75 @@ class Installer extends Base
     protected $passwordHash = null;
 
     /**
-     * Init
+     * @var null|array
      */
-    protected function init()
-    {
-        parent::init();
+    protected $installConfig = null;
 
-        /**
-         * Add dependencies
-         */
-        $this->addDependencyList(
-            [
-                'fileManager',
-                'dataManager',
-                'crypt',
-                'language'
-            ]
-        );
+    /**
+     * Get requireds list
+     *
+     * @return array
+     */
+    public function getRequiredsList(): array
+    {
+        // prepare result
+        $result = [];
+
+        if (!empty($data = $this->getInstallConfig()['requirements'])) {
+            // for php version
+            $phpVersion = self::prepareVersion(phpversion());
+            $result[] = [
+                'name'       => $this->translate('phpVersion', 'requirements', 'Installer'),
+                'validValue' => $data['phpVersion'],
+                'value'      => $phpVersion,
+                'isValid'    => version_compare($phpVersion, $data['phpVersion'], '==')
+            ];
+
+            // for php extensions
+            foreach ($data['phpRequires'] as $require) {
+                // is ext valid?
+                $isValid = extension_loaded($require);
+
+                $result[] = [
+                    'name'       => $this->translate($require, 'requirements', 'Installer'),
+                    'validValue' => $this->translate('On'),
+                    'value'      => ($isValid) ? $this->translate('On') : $this->translate('Off'),
+                    'isValid'    => $isValid
+                ];
+            }
+
+            // for php settings
+            foreach ($data['phpSettings'] as $setting => $value) {
+                // get system value
+                $systemValue = ini_get($setting);
+
+                // prepare value
+                $preparedSystemValue = $systemValue;
+                $preparedValue = $value;
+                if (!in_array($setting, ['max_execution_time', 'max_input_time'])) {
+                    $preparedSystemValue = $this->convertToBytes($systemValue);
+                    $preparedValue = $this->convertToBytes($value);
+                }
+
+                $result[] = [
+                    'name'       => $this->translate($setting, 'requirements', 'Installer'),
+                    'validValue' => '>= ' . $value,
+                    'value'      => $systemValue,
+                    'isValid'    => ($preparedSystemValue >= $preparedValue)
+                ];
+            }
+
+            // for mysql version
+            $mysqlVersion = self::prepareVersion($this->getMysqlVersion(), true);
+            $result[] = [
+                'name'       => $this->translate('mysqlVersion', 'requirements', 'Installer'),
+                'validValue' => '>= ' . $data['mysqlVersion'],
+                'value'      => $mysqlVersion,
+                'isValid'    => version_compare($mysqlVersion, $data['mysqlVersion'], '>=')
+            ];
+        }
+
+        return $result;
     }
 
     /**
@@ -112,7 +163,7 @@ class Installer extends Base
         }
 
         $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
-        $defaultConfig['cryptKey'] = $this->getInjection('crypt')->generateKey();
+        $defaultConfig['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
 
         // create config if not exists
         if (!file_exists($pathToConfig)) {
@@ -129,7 +180,7 @@ class Installer extends Base
      */
     public function getTranslations(): array
     {
-        $language = $this->getInjection('language');
+        $language = $this->getContainer()->get('language');
 
         $result = $language->get('Installer');
 
@@ -248,7 +299,7 @@ class Installer extends Base
         } else {
             try {
                 // rebuild database
-                $result['status'] = $this->getInjection('dataManager')->rebuild();
+                $result['status'] = $this->getContainer()->get('dataManager')->rebuild();
 
                 // create user
                 $user = $this->getEntityManager()->getEntity('User');
@@ -272,8 +323,14 @@ class Installer extends Base
                 // save config
                 $this->getConfig()->save();
 
-                //@todo treoinject
-                $this->triggered('Installer', 'afterInstallSystem', []);
+                $this->triggered(
+                    'Installer',
+                    'afterInstallSystem',
+                    [
+                        'user'    => $user->toArray(),
+                        'version' => $this->getComposerVersion(),
+                    ]
+                );
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] = $e->getMessage();
@@ -404,7 +461,7 @@ class Installer extends Base
      */
     protected function getFileManager(): FileManager
     {
-        return $this->getInjection('fileManager');
+        return $this->getContainer()->get('fileManager');
     }
 
     /**
@@ -431,7 +488,7 @@ class Installer extends Base
      */
     protected function translateError(string $error): string
     {
-        return $this->getInjection('language')->translate($error, 'errors', 'Installer');
+        return $this->translate($error, 'errors', 'Installer');
     }
 
     /**
@@ -444,5 +501,91 @@ class Installer extends Base
         $data = Json::decode(file_get_contents(CORE_PATH . '/composer.json'), true);
 
         return $data['version'];
+    }
+
+    /**
+     * Get install config
+     *
+     * @return array
+     */
+    protected function getInstallConfig(): array
+    {
+        if (is_null($this->installConfig)) {
+            // prepare path to file
+            $configFile = CORE_PATH . "/application/Espo/Modules/TreoCore/Configs/Install.php";
+
+            // get data
+            $this->installConfig = include $configFile;
+        }
+
+        return $this->installConfig;
+    }
+
+    /**
+     * Get mysql version
+     *
+     * @return string|null
+     */
+    protected function getMysqlVersion(): ?string
+    {
+        $sth = $this->getEntityManager()->getPDO()->prepare("SHOW VARIABLES LIKE 'version'");
+        $sth->execute();
+        $res = $sth->fetch(\PDO::FETCH_NUM);
+
+        $version = empty($res[1]) ? null : $res[1];
+
+        return $version;
+    }
+
+    /**
+     * Convert to bytes
+     *
+     * @param string $value
+     *
+     * @return int
+     */
+    protected function convertToBytes(string $value): int
+    {
+        $value = trim($value);
+        $last = strtoupper(substr($value, -1));
+
+        switch ($last) {
+            case 'G':
+                $value = (int)$value * 1024;
+                break;
+            case 'M':
+                $value = (int)$value * 1024;
+                break;
+            case 'K':
+                $value = (int)$value * 1024;
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Prepare version
+     *
+     * @param string $version
+     * @param bool   $patch
+     *
+     * @return string|null
+     */
+    protected static function prepareVersion(string $version, bool $patch = false): ?string
+    {
+        // prepare result
+        $result = null;
+
+        $data = explode(".", $version);
+        if (!empty($data[0]) && !empty($data[1])) {
+            $result = $data[0] . '.' . $data[1];
+        }
+
+        if ($patch && !empty($data[2])) {
+            $result .= '.' . (int)$data[2];
+        }
+
+        return $result;
     }
 }

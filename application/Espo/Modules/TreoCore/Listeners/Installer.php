@@ -31,44 +31,47 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Espo\Modules\TreoCore\Listeners;
+
+use Espo\Modules\TreoCore\Core\Utils\Composer;
 
 /**
- * Rebuild console
+ * Installer listener
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Rebuild extends AbstractConsole
+class Installer extends AbstractListener
 {
+
     /**
-     * Get console command description
+     * @param array $data
      *
-     * @return string
+     * @return array
      */
-    public static function getDescription(): string
+    public function afterInstallSystem(array $data): array
     {
-        return 'Run database rebuild.';
+        // generate gitlab user
+        $this->generateGitlabUser($data['user']['userName']);
+
+        return $data;
     }
 
     /**
-     * Run action
+     * Generate gitlab user
      *
-     * @param array $data
+     * @param string $key
      */
-    public function run(array $data): void
+    protected function generateGitlabUser(string $key): void
     {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
+        // create composer
+        $composer = new Composer();
 
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
-        }
+        // generate auth data
+        $authData = $composer->generateAuthData($key);
+
+        // set auth data
+        $composer->setAuthData($authData['username'], $authData['password']);
     }
 }

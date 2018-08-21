@@ -39,9 +39,11 @@ namespace Espo\Modules\TreoCore\Configs;
 use Espo\Modules\TreoCore\Console;
 
 return [
-    "list"           => Console\ListCommand::class,
-    "clear cache"    => Console\ClearCache::class,
-    "rebuild"        => Console\Rebuild::class,
-    "cron"           => Console\Cron::class,
-    "events"         => Console\Events::class
+    "list"                         => Console\ListCommand::class,
+    "clear cache"                  => Console\ClearCache::class,
+    "rebuild"                      => Console\Rebuild::class,
+    "cron"                         => Console\Cron::class,
+    "events"                       => Console\Events::class,
+    "migrate <module> <from> <to>" => Console\Migrate::class,
+    "composer <command>"           => Console\Composer::class
 ];

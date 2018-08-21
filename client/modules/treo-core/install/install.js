@@ -95,7 +95,34 @@ $(function () {
                     $el.parent().removeClass('has-error')
                 }
             });
-        }
+        },
+
+        showMessageBoxText(type, text) {
+            if (this._timeout) {
+                mainView.hideBox();
+                clearTimeout(this._timeout);
+            }
+
+            mainView.showBox(type, text);
+
+            this._timeout = setTimeout(function () {
+                mainView.hideBox();
+            }, 3000);
+        },
+
+        showBox(type, text) {
+            let msgBox = this.$el.find('.msg-box');
+            msgBox.text(text);
+            msgBox.addClass(type);
+            msgBox.removeClass('hidden');
+        },
+
+        hideBox() {
+            let msgBox = this.$el.find('.msg-box');
+            msgBox.removeClass();
+            msgBox.addClass('msg-box alert hidden');
+            msgBox.text('');
+        },
     });
 
     let LanguageAndLicenseStep = Backbone.View.extend({
@@ -130,17 +157,11 @@ $(function () {
         },
 
         nextStep() {
-            let msgBox = this.$el.find('.msg-box');
             if (this.$el.find('#license-agree').is(':checked')) {
-                if (!msgBox.hasClass('hidden')) {
-                    msgBox.addClass('hidden');
-                }
                 this.remove();
                 let dbConnectSettings = new DbConnectSettings({model: generalModel, parentEl: this.parentEl});
             } else {
-                msgBox.text(this.model.get('translate').messages.youMustAgreeToTheLicenseAgreement);
-                msgBox.addClass('alert-danger');
-                msgBox.removeClass('hidden');
+                mainView.showMessageBoxText.call(this, 'alert-danger', this.model.get('translate').messages.youMustAgreeToTheLicenseAgreement);
             }
         },
 
@@ -163,11 +184,7 @@ $(function () {
                         this.render();
                     }.bind(this));
                 } else {
-                    let msgBox = this.$el.find('.msg-box');
-                    msgBox.text(data.message);
-                    msgBox.removeClass('alert-success');
-                    msgBox.addClass('alert-danger');
-                    msgBox.removeClass('hidden');
+                    mainView.showMessageBoxText.call(this, 'alert-danger', data.message);
                 }
             }.bind(this));
         },
@@ -224,17 +241,10 @@ $(function () {
         testDbConnection() {
             if (mainView.validate.call(this, 'dbSettings')) {
                 this.checkDbConnect().done(function (data) {
-                    let msgBox = this.$el.find('.msg-box');
                     if (data.status) {
-                        msgBox.text(this.model.get('translate').messages.connectionSuccessful);
-                        msgBox.removeClass('alert-danger');
-                        msgBox.addClass('alert-success');
-                        msgBox.removeClass('hidden');
+                        mainView.showMessageBoxText.call(this, 'alert-success', this.model.get('translate').messages.connectionSuccessful);
                     } else {
-                        msgBox.text(data.message);
-                        msgBox.removeClass('alert-success');
-                        msgBox.addClass('alert-danger');
-                        msgBox.removeClass('hidden');
+                        mainView.showMessageBoxText.call(this, 'alert-danger', data.message);
                     }
                 }.bind(this));
             }
@@ -267,13 +277,9 @@ $(function () {
                 this.setDbSettings().done(function (data) {
                     if (data.status) {
                         this.remove();
-                        let adminCreation = new AdminCreation({model: generalModel, parentEl: this.parentEl});
+                        let requiredSettings = new RequiredSettings({model: generalModel, parentEl: this.parentEl});
                     } else {
-                        let msgBox = this.$el.find('.msg-box');
-                        msgBox.text(data.message);
-                        msgBox.removeClass('alert-success');
-                        msgBox.addClass('alert-danger');
-                        msgBox.removeClass('hidden');
+                        mainView.showMessageBoxText.call(this, 'alert-danger', data.message);
                     }
                 }.bind(this));
             }
@@ -295,6 +301,63 @@ $(function () {
             });
         },
 
+    });
+
+    let RequiredSettings = Backbone.View.extend({
+
+        className: 'main-template container',
+
+        template: _.template($('#required-settings').html()),
+
+        requiresChecked: false,
+
+        events: {
+            'click .re-check-settings': 'checkSettings',
+            'click .back-step': 'backStep',
+            'click .next-step': 'nextStep'
+        },
+
+        initialize(options) {
+            this.parentEl = options.parentEl;
+            this.checkSettings();
+        },
+
+        render() {
+            this.$el.html(this.template(this.model.toJSON()));
+            this.parentEl.append(this.$el);
+        },
+
+        backStep() {
+            this.trigger('destroy');
+            this.remove();
+            let dbConnectSettings = new DbConnectSettings({model: generalModel, parentEl: this.parentEl});
+        },
+
+        nextStep() {
+            if (this.requiresChecked) {
+                this.remove();
+                let adminCreation = new AdminCreation({model: generalModel, parentEl: this.parentEl});
+            } else {
+                mainView.showMessageBoxText.call(this, 'alert-danger', this.model.get('translate').messages.pleaseConfigureYourSystemToStart);
+            }
+        },
+
+        checkSettings() {
+            this.$el.find('button.re-check-settings').addClass('disabled').attr('disabled', 'disabled');
+            this.getRequiredsList().done(function (data) {
+                let requiredSettings = data || [];
+                this.requiresChecked = requiredSettings.every(item => item.isValid);
+                this.model.set({requiredSettings: {list: requiredSettings, requiresChecked: this.requiresChecked}});
+                this.render();
+            }.bind(this));
+        },
+
+        getRequiredsList() {
+            return $.ajax({
+                url: 'api/v1/Installer/getRequiredsList',
+                type: 'GET'
+            });
+        }
     });
 
     let AdminCreation = Backbone.View.extend({
@@ -342,7 +405,7 @@ $(function () {
         backStep() {
             this.trigger('destroy');
             this.remove();
-            let dbConnectSettings = new DbConnectSettings({model: generalModel, parentEl: this.parentEl});
+            let requiredSettings = new RequiredSettings({model: generalModel, parentEl: this.parentEl});
         },
 
         nextStep() {
@@ -355,11 +418,9 @@ $(function () {
                     if (data.status) {
                         window.location.reload();
                     } else {
-                        let msgBox = this.$el.find('.msg-box');
-                        msgBox.text(data.message);
-                        msgBox.removeClass('alert-success');
-                        msgBox.addClass('alert-danger');
-                        msgBox.removeClass('hidden');
+                        $('.back-step').show();
+                        $('.next-step').show();
+                        mainView.showMessageBoxText.call(this, 'alert-danger', data.message);
                     }
                 }.bind(this));
             }
