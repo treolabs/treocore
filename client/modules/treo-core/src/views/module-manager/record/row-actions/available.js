@@ -34,16 +34,29 @@
 Espo.define('treo-core:views/module-manager/record/row-actions/available', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
+        disableActions: false,
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.listenTo(this.model.collection, 'disableActions', (disableActions) => {
+                this.disableActions = disableActions;
+                this.reRender();
+            });
+        },
+
         getActionList: function () {
             let list = [];
-            list.push({
-                action: 'installModule',
-                label: 'installModule',
-                data: {
-                    id: this.model.id,
-                    mode: 'install'
-                }
-            });
+            if (!this.disableActions) {
+                list.push({
+                    action: 'installModule',
+                    label: 'installModule',
+                    data: {
+                        id: this.model.id,
+                        mode: 'install'
+                    }
+                });
+            }
             return list;
         },
 

@@ -129,6 +129,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             });
                             this.toggleActionButton('cancelUpdate', showCancelAction);
                         });
+                        this.listenToOnce(view, 'after:render', () => {
+                            this.installedCollection.trigger('disableActions', this.getConfig().get('isSystemUpdating'));
+                        });
                         view.render();
                     });
                 });
@@ -160,6 +163,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: false,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
                     }, view => {
+                        this.listenToOnce(view, 'after:render', () => {
+                            this.availableCollection.trigger('disableActions', this.getConfig().get('isSystemUpdating'));
+                        });
                         view.render();
                     });
                 });
@@ -377,6 +383,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         }
                         this.disableActionButton('runUpdate', isSystemUpdating);
                         this.disableActionButton('cancelUpdate', isSystemUpdating);
+
+                        this.installedCollection.trigger('disableActions', isSystemUpdating);
+                        this.availableCollection.trigger('disableActions', isSystemUpdating);
                     }.bind(this)
                 });
             };
