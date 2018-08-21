@@ -103,7 +103,8 @@ class Hook extends AbstractHook
         if (isset($data['url']) && empty($data['url'])) {
             $entity->set('url', $siteUrl . '/portal-' . $entity->get('id'));
         } else {
-            if (preg_match_all("/^(http|https)\:\/\/{$domain}\/(.*)$/", $data['url'], $matches)) {
+            if (!empty($data['url'])
+                && preg_match_all("/^(http|https)\:\/\/{$domain}\/(.*)$/", $data['url'], $matches)) {
                 $parts = explode('/', $matches[2][0]);
                 if (count($parts) > 1) {
                     $path = implode('-', $parts);
