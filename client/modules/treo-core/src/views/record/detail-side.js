@@ -74,9 +74,9 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
             }
             if (streamAllowed !== false) {
                 this.panelList.push({
-                    "name":"stream",
-                    "label":"Stream",
-                    "view":"views/stream/panel",
+                    "name": "stream",
+                    "label": "Stream",
+                    "view": "views/stream/panel",
                     "hidden": !streamAllowed
                 });
             }
@@ -139,6 +139,29 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
         },
 
         setupDefaultPanel() {
+            // prepare vars
+            let metadata = this.getMetadata();
+            let scope = this.scope;
+
+            // prepare field list
+            let fieldList = [];
+            $.each(this.defaultPanelDefs.options.fieldList, function (k, row) {
+                if (typeof row.name != 'undefined') {
+                    if (metadata.get('scopes.' + scope + '.hasOwner') && row.name == 'ownerUser') {
+                        fieldList.push(row);
+                    }
+                    if (metadata.get('scopes.' + scope + '.hasAssignedUser') && row.name == 'assignedUser') {
+                        fieldList.push(row);
+                    }
+                    if (metadata.get('scopes.' + scope + '.hasTeam') && row.name == 'teams') {
+                        fieldList.push(row);
+                    }
+                }
+            });
+
+            // set new field list
+            this.defaultPanelDefs.options.fieldList = fieldList;
+
             let hasAnyField = (this.defaultPanelDefs.options.fieldList || []).some(fieldDefs => this.model.hasLink(fieldDefs.name));
             if (this.mode === 'detail' || hasAnyField) {
                 Dep.prototype.setupDefaultPanel.call(this);
