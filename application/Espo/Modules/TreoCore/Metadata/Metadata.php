@@ -46,11 +46,6 @@ class Metadata extends AbstractMetadata
     /**
      * @var array
      */
-    private $systemEntity = ['User'];
-
-    /**
-     * @var array
-     */
     protected $allowedTheme = ['TreoDarkTheme'];
 
     /**
@@ -62,9 +57,6 @@ class Metadata extends AbstractMetadata
      */
     public function modify(array $data): array
     {
-        // prepare entity defs for entity owners
-        $data = $this->prepareOwners($data);
-
         // delete activities
         $data = $this->deleteActivities($data);
 
@@ -73,124 +65,6 @@ class Metadata extends AbstractMetadata
 
         // set allowed themes
         $data = $this->setAllowedTheme($data);
-
-        return $data;
-    }
-
-    /**
-     * Prepare entity defs
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function prepareOwners(array $data): array
-    {
-        foreach ($data['entityDefs'] as $ent => $row) {
-            // prepare ownerUser
-            if (empty($data['scopes'][$ent]['hasOwner'])) {
-                if (isset($data['entityDefs'][$ent]['fields']['ownerUser'])) {
-                    unset($data['entityDefs'][$ent]['fields']['ownerUser']);
-                }
-                if (isset($data['entityDefs'][$ent]['links']['ownerUser'])) {
-                    unset($data['entityDefs'][$ent]['links']['ownerUser']);
-                }
-                if (isset($data['entityDefs'][$ent]['indexes']['ownerUser'])) {
-                    unset($data['entityDefs'][$ent]['indexes']['ownerUser']);
-                }
-                // remove field for other index
-                if (isset($data['entityDefs'][$ent]['indexes'])) {
-                    $data['entityDefs'][$ent]['indexes'] = $this
-                        ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'ownerUserId');
-                }
-            } else {
-                if (empty($data['entityDefs'][$ent]['fields']['ownerUser'])) {
-                    $data['entityDefs'][$ent]['fields']['ownerUser'] = [
-                        'type'     => 'link',
-                        'required' => true,
-                        'view'     => 'views/fields/owner-user'
-                    ];
-                }
-                if (empty($data['entityDefs'][$ent]['links']['ownerUser'])) {
-                    $data['entityDefs'][$ent]['links']['ownerUser'] = [
-                        'type'   => 'belongsTo',
-                        'entity' => 'User'
-                    ];
-                }
-                if (empty($data['entityDefs'][$ent]['indexes']['ownerUser'])) {
-                    $data['entityDefs'][$ent]['indexes']['ownerUser'] = [
-                        'columns' => [
-                            'ownerUserId',
-                            'deleted'
-                        ]
-                    ];
-                }
-            }
-
-            // prepare assignedUser
-            if (empty($data['scopes'][$ent]['hasAssignedUser'])) {
-                if (isset($data['entityDefs'][$ent]['fields']['assignedUser'])) {
-                    unset($data['entityDefs'][$ent]['fields']['assignedUser']);
-                }
-                if (isset($data['entityDefs'][$ent]['links']['assignedUser'])) {
-                    unset($data['entityDefs'][$ent]['links']['assignedUser']);
-                }
-                if (isset($data['entityDefs'][$ent]['indexes']['assignedUser'])) {
-                    unset($data['entityDefs'][$ent]['indexes']['assignedUser']);
-                }
-                // remove field for other index
-                if (isset($data['entityDefs'][$ent]['indexes'])) {
-                    $data['entityDefs'][$ent]['indexes'] = $this
-                        ->removeFieldFromIndex($data['entityDefs'][$ent]['indexes'], 'assignedUserId');
-                }
-            } else {
-                if (empty($data['entityDefs'][$ent]['fields']['assignedUser'])) {
-                    $data['entityDefs'][$ent]['fields']['assignedUser'] = [
-                        'type'     => 'link',
-                        'required' => true,
-                        'view'     => 'views/fields/assigned-user'
-                    ];
-                }
-                if (empty($data['entityDefs'][$ent]['links']['assignedUser'])) {
-                    $data['entityDefs'][$ent]['links']['assignedUser'] = [
-                        'type'   => 'belongsTo',
-                        'entity' => 'User'
-                    ];
-                }
-                if (empty($data['entityDefs'][$ent]['indexes']['assignedUser'])) {
-                    $data['entityDefs'][$ent]['indexes']['assignedUser'] = [
-                        'columns' => [
-                            'assignedUserId',
-                            'deleted'
-                        ]
-                    ];
-                }
-            }
-
-            // prepare team
-            if (empty($data['scopes'][$ent]['hasTeam'])) {
-                if (isset($data['entityDefs'][$ent]['fields']['teams'])) {
-                    unset($data['entityDefs'][$ent]['fields']['teams']);
-                }
-                if (isset($data['entityDefs'][$ent]['links']['teams'])) {
-                    unset($data['entityDefs'][$ent]['links']['teams']);
-                }
-            } else {
-                if (empty($data['entityDefs'][$ent]['fields']['teams'])) {
-                    $data['entityDefs'][$ent]['fields']['teams'] = [
-                        'type'                        => 'hasMany',
-                        'entity'                      => 'Team',
-                        'relationName'                => 'EntityTeam',
-                        'layoutRelationshipsDisabled' => true
-                    ];
-                }
-                if (empty($data['entityDefs'][$ent]['links']['teams'])) {
-                    $data['entityDefs'][$ent]['links']['teams'] = [
-                        'type' => 'linkMultiple'
-                    ];
-                }
-            }
-        }
 
         return $data;
     }
@@ -255,7 +129,7 @@ class Metadata extends AbstractMetadata
 
                 // delete link
                 if (isset($data['entityDefs'][$entity]['links']['meetings'])
-                    && !in_array($entity, $this->systemEntity)) {
+                    && !in_array($entity, ['User'])) {
                     unset($data['entityDefs'][$entity]['links']['meetings']);
                 }
             }
