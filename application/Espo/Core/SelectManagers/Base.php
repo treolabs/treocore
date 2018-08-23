@@ -485,6 +485,11 @@ class Base
         );
     }
 
+    /**
+     * @param $result
+     *
+     * @todo treoinject
+     */
     protected function accessOnlyOwn(&$result)
     {
         if ($this->hasAssignedUsersField()) {
@@ -496,20 +501,26 @@ class Base
             return;
         }
 
+        if ($this->hasOwnerUserField()) {
+            $d['ownerUserId'] = $this->getUser()->id;
+        }
         if ($this->hasAssignedUserField()) {
-            $result['whereClause'][] = array(
-                'assignedUserId' => $this->getUser()->id
-            );
-            return;
+            $d['assignedUserId'] = $this->getUser()->id;
+        }
+        if ($this->hasCreatedByField() && !$this->hasAssignedUserField() && !$this->hasOwnerUserField()) {
+            $d['createdById'] = $this->getUser()->id;
         }
 
-        if ($this->hasCreatedByField()) {
-            $result['whereClause'][] = array(
-                'createdById' => $this->getUser()->id
-            );
-        }
+        $result['whereClause'][] = array(
+            'OR' => $d
+        );
     }
 
+    /**
+     * @param $result
+     *
+     * @todo treoinject
+     */
     protected function accessOnlyTeam(&$result)
     {
         if (!$this->hasTeamsField()) {
@@ -533,11 +544,19 @@ class Base
         $d = array(
             'teamsAccess.id' => $this->getUser()->getLinkMultipleIdList('teams')
         );
+
+        if ($this->hasOwnerUserField()) {
+            $d['ownerUserId'] = $this->getUser()->id;
+        }
+
         if ($this->hasAssignedUserField()) {
             $d['assignedUserId'] = $this->getUser()->id;
-        } else if ($this->hasCreatedByField()) {
+        }
+
+        if ($this->hasCreatedByField() && !$this->hasAssignedUserField() && !$this->hasOwnerUserField()) {
             $d['createdById'] = $this->getUser()->id;
         }
+
         $result['whereClause'][] = array(
             'OR' => $d
         );
@@ -651,6 +670,17 @@ class Base
             $result['whereClause'][] = array(
                 'id' => null
             );
+        }
+    }
+
+    /**
+     * @return bool
+     * @todo treoinject
+     */
+    protected function hasOwnerUserField()
+    {
+        if ($this->getSeed()->hasAttribute('ownerUserId')) {
+            return true;
         }
     }
 
