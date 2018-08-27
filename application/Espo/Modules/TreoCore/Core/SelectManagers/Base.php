@@ -46,29 +46,4 @@ use Espo\Modules\TreoCore\Core\Utils\EventManager;
  */
 class Base extends EspoBase
 {
-
-    /**
-     * Where
-     *
-     * @param $where
-     * @param $result
-     */
-    protected function where($where, &$result)
-    {
-        $listener = $this->getEntityType() . 'SelectManager';
-
-        $where = $this->getEventManager()->triggered($listener, 'modifyWhere', $where);
-
-        parent::where($where, $result);
-    }
-
-    /**
-     * Get event manager
-     *
-     * @return EventManager
-     */
-    protected function getEventManager(): EventManager
-    {
-        return $this->getEntityManager()->getContainer()->get('eventManager');
-    }
 }
