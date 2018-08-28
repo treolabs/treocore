@@ -59,5 +59,8 @@ return [
         'massUpdate' => [
             'service' => 'MassUpdateProgressManager'
         ],
+        'massRemove' => [
+            'service' => 'MassRemoveProgressManager'
+        ]
     ]
 ];
