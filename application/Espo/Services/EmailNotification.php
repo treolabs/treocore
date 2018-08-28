@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Services;
 
@@ -126,43 +121,48 @@ class EmailNotification extends \Espo\Core\Services\Base
         $assignerUser = $this->getEntityManager()->getEntity('User', $assignerUserId);
         $entity = $this->getEntityManager()->getEntity($entityType, $entityId);
 
-        if ($entity && $assignerUser && $entity->get('assignedUserId') == $userId) {
-            $emailAddress = $user->get('emailAddress');
-            if (!empty($emailAddress)) {
-                $email = $this->getEntityManager()->getEntity('Email');
+        if (!$entity) return true;
+        if (!$assignerUser) return true;
 
-                $subjectTpl = $this->getTemplateFileManager()->getTemplate('assignment', 'subject', $entity->getEntityType());
-                $bodyTpl = $this->getTemplateFileManager()->getTemplate('assignment', 'body', $entity->getEntityType());
+        if (!$entity->hasLinkMultipleField('assignedUsers')) {
+            if ($entity->get('assignedUserId') !== $userId) return true;
+        }
 
-                $subjectTpl = str_replace(array("\n", "\r"), '', $subjectTpl);
+        $emailAddress = $user->get('emailAddress');
+        if (!empty($emailAddress)) {
+            $email = $this->getEntityManager()->getEntity('Email');
 
-                $recordUrl = rtrim($this->getConfig()->get('siteUrl'), '/') . '/#' . $entity->getEntityType() . '/view/' . $entity->id;
+            $subjectTpl = $this->getTemplateFileManager()->getTemplate('assignment', 'subject', $entity->getEntityType());
+            $bodyTpl = $this->getTemplateFileManager()->getTemplate('assignment', 'body', $entity->getEntityType());
 
-                $data = array(
-                    'userName' => $user->get('name'),
-                    'assignerUserName' => $assignerUser->get('name'),
-                    'recordUrl' => $recordUrl,
-                    'entityType' => $this->getLanguage()->translate($entity->getEntityType(), 'scopeNames')
-                );
-                $data['entityTypeLowerFirst'] = lcfirst($data['entityType']);
+            $subjectTpl = str_replace(array("\n", "\r"), '', $subjectTpl);
 
-                $subject = $this->getHtmlizer()->render($entity, $subjectTpl, 'assignment-email-subject-' . $entity->getEntityType(), $data, true);
-                $body = $this->getHtmlizer()->render($entity, $bodyTpl, 'assignment-email-body-' . $entity->getEntityType(), $data, true);
+            $recordUrl = rtrim($this->getConfig()->get('siteUrl'), '/') . '/#' . $entity->getEntityType() . '/view/' . $entity->id;
 
-                $email->set(array(
-                    'subject' => $subject,
-                    'body' => $body,
-                    'isHtml' => true,
-                    'to' => $emailAddress,
-                    'isSystem' => true,
-                    'parentId' => $entity->id,
-                    'parentType' => $entity->getEntityType()
-                ));
-                try {
-                    $this->getMailSender()->send($email);
-                } catch (\Exception $e) {
-                    $GLOBALS['log']->error('EmailNotification: [' . $e->getCode() . '] ' .$e->getMessage());
-                }
+            $data = array(
+                'userName' => $user->get('name'),
+                'assignerUserName' => $assignerUser->get('name'),
+                'recordUrl' => $recordUrl,
+                'entityType' => $this->getLanguage()->translate($entity->getEntityType(), 'scopeNames')
+            );
+            $data['entityTypeLowerFirst'] = lcfirst($data['entityType']);
+
+            $subject = $this->getHtmlizer()->render($entity, $subjectTpl, 'assignment-email-subject-' . $entity->getEntityType(), $data, true);
+            $body = $this->getHtmlizer()->render($entity, $bodyTpl, 'assignment-email-body-' . $entity->getEntityType(), $data, true);
+
+            $email->set(array(
+                'subject' => $subject,
+                'body' => $body,
+                'isHtml' => true,
+                'to' => $emailAddress,
+                'isSystem' => true,
+                'parentId' => $entity->id,
+                'parentType' => $entity->getEntityType()
+            ));
+            try {
+                $this->getMailSender()->send($email);
+            } catch (\Exception $e) {
+                $GLOBALS['log']->error('EmailNotification: [' . $e->getCode() . '] ' .$e->getMessage());
             }
         }
 

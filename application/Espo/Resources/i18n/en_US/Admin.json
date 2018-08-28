@@ -75,7 +75,8 @@
         "sidePanelsDetail": "Side Panels (Detail)",
         "sidePanelsEdit": "Side Panels (Edit)",
         "sidePanelsDetailSmall": "Side Panels (Detail Small)",
-        "sidePanelsEditSmall": "Side Panels (Edit Small)"
+        "sidePanelsEditSmall": "Side Panels (Edit Small)",
+        "kanban": "Kanban"
     },
     "fieldTypes": {
         "address": "Address",
@@ -89,8 +90,8 @@
         "currency": "Currency",
         "currencyConverted": "Currency (Converted)",
         "date": "Date",
-        "datetime": "DateTime",
-        "datetimeOptional": "Date/DateTime",
+        "datetime": "Date-Time",
+        "datetimeOptional": "Date/Date-Time",
         "email": "Email",
         "enum": "Enum",
         "enumInt": "Enum Integer",
@@ -114,7 +115,9 @@
         "wysiwyg": "Wysiwyg",
         "map": "Map",
         "number": "Number (auto-increment)",
-        "colorpicker": "Color Picker"
+        "colorpicker": "Color Picker",
+        "jsonArray": "Json Array",
+        "jsonObject": "Json Object"
     },
     "fields": {
         "type": "Type",
@@ -157,7 +160,9 @@
         "dynamicLogicOptions": "Conditional options",
         "probabilityMap": "Stage Probabilities (%)",
         "readOnly": "Read-only",
-        "maxFileSize": "Max File Size (Mb)"
+        "maxFileSize": "Max File Size (Mb)",
+        "isPersonalData": "Is Personal Data",
+        "useIframe": "Use Iframe"
     },
     "messages": {
         "upgradeVersion": "EspoCRM will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",

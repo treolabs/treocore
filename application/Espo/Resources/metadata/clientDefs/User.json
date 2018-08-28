@@ -76,7 +76,7 @@
          {
             "name":"tasks",
             "label":"Tasks",
-            "view":"crm:views/record/panels/tasks",
+            "view":"crm:views/user/record/panels/tasks",
             "aclScope": "Task"
          }
       ],
@@ -96,16 +96,25 @@
          {
             "name":"tasks",
             "label":"Tasks",
-            "view":"crm:views/record/panels/tasks",
+            "view":"crm:views/user/record/panels/tasks",
             "aclScope": "Task"
          }
       ]
    },
+    "relationshipPanels":{
+        "targetLists":{
+            "create": false,
+            "rowActionsView": "crm:views/record/row-actions/relationship-target",
+            "layout": "listForTarget",
+            "view": "crm:views/record/panels/target-lists"
+        }
+    },
    "filterList": [
       "active"
    ],
    "boolFilterList": ["onlyMyTeam"],
     "selectDefaultFilters": {
         "filter": "active"
-    }
+    },
+    "iconClass": "fas fa-user-circle"
 }

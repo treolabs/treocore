@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\DBAL\Platforms;
 use Doctrine\DBAL\Schema\TableDiff;
@@ -96,6 +91,7 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
                 $diff->changedColumns[$columnName] = new ColumnDiff($columnName, $changedColumn, $changedProperties, $column);
             }
             //END espo
+
             //$queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
         }
 
@@ -110,7 +106,7 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             $columnArray['comment'] = $this->getColumnComment($column);
 
             $queryParts[] =  'CHANGE ' . $this->espoQuote($columnDiff->oldColumnName) . ' '
-                    . $this->getColumnDeclarationSQL($column->getQuotedName($this), $columnArray);
+                . $this->getColumnDeclarationSQL($column->getQuotedName($this), $columnArray);
         }
 
         foreach ($diff->addedColumns as $column) {
@@ -244,8 +240,8 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         }
 
         return $this->getCreateIndexSQLFlags($index) . 'INDEX ' . $this->espoQuote($name) . ' ('
-             . $this->getIndexFieldDeclarationListSQL($columns)
-             . ')';
+            . $this->getIndexFieldDeclarationListSQL($columns)
+            . ')';
     }
 
     public function getCreateIndexSQL(Index $index, $table)
@@ -319,12 +315,121 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             $options['collate'] = 'utf8mb4_unicode_ci';
         }
 
-        return parent::_getCreateTableSQL($tableName, $columns, $options);
+        $queryFields = $this->getColumnDeclarationListSQL($columns);
+
+        if (isset($options['uniqueConstraints']) && ! empty($options['uniqueConstraints'])) {
+            foreach ($options['uniqueConstraints'] as $index => $definition) {
+                $queryFields .= ', ' . $this->getUniqueConstraintDeclarationSQL($index, $definition);
+            }
+        }
+
+        // add all indexes
+        if (isset($options['indexes']) && ! empty($options['indexes'])) {
+            foreach($options['indexes'] as $index => $definition) {
+                $queryFields .= ', ' . $this->getIndexDeclarationSQL($index, $definition);
+            }
+        }
+
+        // attach all primary keys
+        if (isset($options['primary']) && ! empty($options['primary'])) {
+            $keyColumns = array_unique(array_values($options['primary']));
+            $queryFields .= ', PRIMARY KEY(' . implode(', ', $keyColumns) . ')';
+        }
+
+        $query = 'CREATE ';
+
+        if (!empty($options['temporary'])) {
+            $query .= 'TEMPORARY ';
+        }
+
+        $query .= 'TABLE ' . $this->espoQuote($tableName) . ' (' . $queryFields . ') ';
+        $query .= $this->buildTableOptions($options);
+        $query .= $this->buildPartitionOptions($options);
+
+        $sql[] = $query;
+
+        if (isset($options['foreignKeys'])) {
+            foreach ((array) $options['foreignKeys'] as $definition) {
+                $sql[] = $this->getCreateForeignKeySQL($definition, $tableName);
+            }
+        }
+
+        return $sql;
     }
 
     public function getColumnCollationDeclarationSQL($collation)
     {
         return $this->getCollationFieldDeclaration($collation);
+    }
+
+    /**
+     * Build SQL for table options
+     *
+     * @param array $options
+     *
+     * @return string
+     */
+    private function buildTableOptions(array $options)
+    {
+        if (isset($options['table_options'])) {
+            return $options['table_options'];
+        }
+
+        $tableOptions = array();
+
+        // Charset
+        if ( ! isset($options['charset'])) {
+            $options['charset'] = 'utf8';
+        }
+
+        $tableOptions[] = sprintf('DEFAULT CHARACTER SET %s', $options['charset']);
+
+        // Collate
+        if ( ! isset($options['collate'])) {
+            $options['collate'] = 'utf8_unicode_ci';
+        }
+
+        $tableOptions[] = sprintf('COLLATE %s', $options['collate']);
+
+        // Engine
+        if ( ! isset($options['engine'])) {
+            $options['engine'] = 'InnoDB';
+        }
+
+        $tableOptions[] = sprintf('ENGINE = %s', $options['engine']);
+
+        // Auto increment
+        if (isset($options['auto_increment'])) {
+            $tableOptions[] = sprintf('AUTO_INCREMENT = %s', $options['auto_increment']);
+        }
+
+        // Comment
+        if (isset($options['comment'])) {
+            $comment = trim($options['comment'], " '");
+
+            $tableOptions[] = sprintf("COMMENT = '%s' ", str_replace("'", "''", $comment));
+        }
+
+        // Row format
+        if (isset($options['row_format'])) {
+            $tableOptions[] = sprintf('ROW_FORMAT = %s', $options['row_format']);
+        }
+
+        return implode(' ', $tableOptions);
+    }
+
+    /**
+     * Build SQL for partition options.
+     *
+     * @param array $options
+     *
+     * @return string
+     */
+    private function buildPartitionOptions(array $options)
+    {
+        return (isset($options['partition_options']))
+            ? ' ' . $options['partition_options']
+            : '';
     }
     //end: ESPO
 }

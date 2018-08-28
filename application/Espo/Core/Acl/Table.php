@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Acl;
 
@@ -174,7 +169,7 @@ class Table
         if (isset($this->data->$permission)) {
             return $this->data->$permission;
         }
-        return null;
+        return 'no';
     }
 
     public function getLevel($scope, $action)
@@ -285,16 +280,13 @@ class Table
         }
 
         $teamList = $this->getUser()->get('teams');
-        //@todo treoinject
-        if (!empty($teamList)) {
-            if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
-                throw new Error();
-            }
-            foreach ($teamList as $team) {
-                $teamRoleList = $team->get('roles');
-                foreach ($teamRoleList as $role) {
-                    $roleList[] = $role;
-                }
+        if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
+            throw new Error();
+        }
+        foreach ($teamList as $team) {
+            $teamRoleList = $team->get('roles');
+            foreach ($teamRoleList as $role) {
+                $roleList[] = $role;
             }
         }
 
@@ -598,8 +590,8 @@ class Table
         $scopeList = [];
         $scopes = $this->metadata->get('scopes');
         foreach ($scopes as $scope => $d) {
-        	if (empty($d['acl'])) continue;
-        	$scopeList[] = $scope;
+            if (empty($d['acl'])) continue;
+            $scopeList[] = $scope;
         }
         return $scopeList;
     }
@@ -621,9 +613,9 @@ class Table
 
         foreach ($tableList as $table) {
             foreach ($scopeList as $scope) {
-            	if (!isset($table->$scope)) continue;
+                if (!isset($table->$scope)) continue;
 
-            	$row = $table->$scope;
+                $row = $table->$scope;
 
                 if ($row == false) {
                     if (!isset($data->$scope)) {

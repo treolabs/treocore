@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Services;
 
@@ -455,11 +450,10 @@ class Stream extends \Espo\Core\Services\Base
 
         $teamIdList = $user->getTeamIdList();
         $teamIdQuotedList = [];
+        foreach ($teamIdList as $teamId) {
+            $teamIdQuotedList[] = $pdo->quote($teamId);
+        }
         if (!empty($teamIdList)) {
-            foreach ($teamIdList as $teamId) {
-                $teamIdQuotedList[] = $pdo->quote($teamId);
-            }
-
             $selectParamsList[] = array(
                 'select' => $select,
                 'leftJoins' => ['teams', 'createdBy'],
@@ -484,7 +478,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $whereClause[]['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $whereClause[]['type'] = ['Update', 'Status'];
                     break;
             }
@@ -537,16 +531,10 @@ class Stream extends \Espo\Core\Services\Base
 
         foreach ($collection as $e) {
             if ($e->get('parentId') && $e->get('parentType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('parentType'), $e->get('parentId'));
-                if ($entity) {
-                    $e->set('parentName', $entity->get('name'));
-                }
+                $e->loadParentNameField('parent');
             }
             if ($e->get('relatedId') && $e->get('relatedType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('relatedType'), $e->get('relatedId'));
-                if ($entity) {
-                    $e->set('relatedName', $entity->get('name'));
-                }
+                $e->loadParentNameField('related');
             }
             if ($e->get('type') == 'Post' && $e->get('parentId') === null && !$e->get('isGlobal')) {
                 $targetType = $e->get('targetType');
@@ -616,7 +604,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $where['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
@@ -668,17 +656,11 @@ class Stream extends \Espo\Core\Services\Base
                     ($e->get('parentId') != $id) ||
                     ($e->get('parentType') != $scope)
                 ) {
-                    $parent = $this->getEntityManager()->getEntity($e->get('parentType'), $e->get('parentId'));
-                    if ($parent) {
-                        $e->set('parentName', $parent->get('name'));
-                    }
+                    $e->loadParentNameField('parent');
                 }
             }
             if ($e->get('relatedId') && $e->get('relatedType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('relatedType'), $e->get('relatedId'));
-                if ($entity) {
-                    $e->set('relatedName', $entity->get('name'));
-                }
+                $e->loadParentNameField('related');
             }
 
         }
@@ -1013,9 +995,11 @@ class Stream extends \Espo\Core\Services\Base
                     $wasParentType = $was[$field . 'Type'];
                     $wasParentId = $was[$field . 'Id'];
                     if ($wasParentType && $wasParentId) {
-                        $wasParent = $this->getEntityManager()->getEntity($wasParentType, $wasParentId);
-                        if ($wasParent) {
-                            $was[$field . 'Name'] = $wasParent->get('name');
+                        if ($this->getEntityManager()->hasRepository($wasParentType)) {
+                            $wasParent = $this->getEntityManager()->getEntity($wasParentType, $wasParentId);
+                            if ($wasParent) {
+                                $was[$field . 'Name'] = $wasParent->get('name');
+                            }
                         }
                     }
                 }
@@ -1033,7 +1017,7 @@ class Stream extends \Espo\Core\Services\Base
                 'fields' => $updatedFieldList,
                 'attributes' => array(
                     'was' => $was,
-                    'became' => $became,
+                    'became' => $became
                 )
             ));
 
@@ -1137,6 +1121,9 @@ class Stream extends \Espo\Core\Services\Base
         if (empty($data->entityId) || empty($data->entityType)) {
             return;
         }
+
+        if (!$this->getEntityManager()->hasRepository($data->entityType)) return;
+
         $entity = $this->getEntityManager()->getEntity($data->entityType, $data->entityId);
         if (!$entity) return;
 

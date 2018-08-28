@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 return array (
     'database' => array (
@@ -46,7 +41,7 @@ return array (
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'EspoCRM',
-    'version' => '5.1.2',
+    'version' => '5.2.5',
     'timeZone' => 'UTC',
     'dateFormat' => 'MM/DD/YYYY',
     'timeFormat' => 'hh:mm a',
@@ -68,25 +63,48 @@ return array (
     'smtpUsername' => '',
     'smtpPassword' => '',
     'languageList' => [
+        'en_GB',
         'en_US',
-        'de_DE'
+        'es_MX',
+        'cs_CZ',
+        'da_DK',
+        'de_DE',
+        'es_ES',
+        'hr_HR',
+        'hu_HU',
+        'fr_FR',
+        'id_ID',
+        'it_IT',
+        'lt_LT',
+        'nb_NO',
+        'nl_NL',
+        'tr_TR',
+        'sk_SK',
+        'sr_RS',
+        'ro_RO',
+        'ru_RU',
+        'pl_PL',
+        'pt_BR',
+        'uk_UA',
+        'vi_VN',
+        'zh_CN'
     ],
     'language' => 'en_US',
     'logger' =>
-    array (
-        'path' => 'data/logs/espo.log',
-        'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
-        'rotation' => true,
-        'maxFileNumber' => 30,
-    ),
+        array (
+            'path' => 'data/logs/espo.log',
+            'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
+            'rotation' => true,
+            'maxFileNumber' => 30,
+        ),
     'authenticationMethod' => 'Espo',
     'globalSearchEntityList' =>
-    array (
-        'Account',
-        'Contact',
-        'Lead',
-        'Opportunity',
-    ),
+        array (
+            'Account',
+            'Contact',
+            'Lead',
+            'Opportunity',
+        ),
     'tabList' => ["Account", "Contact", "Lead", "Opportunity", "Case", "Email", "Calendar", "Meeting", "Call", "Task", "_delimiter_", "Document", "Campaign", "KnowledgeBaseArticle", "Stream", "User"],
     'quickCreateList' => ["Account", "Contact", "Lead", "Opportunity", "Meeting", "Call", "Task", "Case", "Email"],
     'exportDisabled' => false,
@@ -151,6 +169,7 @@ return array (
     'aclAllowDeleteCreated' => false,
     'inlineAttachmentUploadMaxSize' => 20,
     'textFilterUseContainsForVarchar' => false,
+    'tabColorsDisabled' => false,
     'isInstalled' => false
 );
 

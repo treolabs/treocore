@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Entities;
 
@@ -77,11 +72,20 @@ class Email extends \Espo\Core\ORM\Entity
         }
     }
 
+    protected function _getBodyPlain()
+    {
+        return $this->getBodyPlain();
+    }
+
+    public function hasBodyPlain()
+    {
+        return !empty($this->valuesContainer['bodyPlain']);
+    }
+
     public function getBodyPlain()
     {
-        $bodyPlain = $this->get('bodyPlain');
-        if (!empty($bodyPlain)) {
-            return $bodyPlain;
+        if (!empty($this->valuesContainer['bodyPlain'])) {
+            return $this->valuesContainer['bodyPlain'];
         }
 
         $body = $this->get('body');
@@ -89,7 +93,33 @@ class Email extends \Espo\Core\ORM\Entity
         $breaks = array("<br />","<br>","<br/>","<br />","&lt;br /&gt;","&lt;br/&gt;","&lt;br&gt;");
         $body = str_ireplace($breaks, "\r\n", $body);
         $body = strip_tags($body);
-        $body = str_ireplace('&nbsp;', ' ', $body);
+
+        $reList = [
+            '/&(quot|#34);/i',
+            '/&(amp|#38);/i',
+            '/&(lt|#60);/i',
+            '/&(gt|#62);/i',
+            '/&(nbsp|#160);/i',
+            '/&(iexcl|#161);/i',
+            '/&(cent|#162);/i',
+            '/&(pound|#163);/i',
+            '/&(copy|#169);/i',
+            '/&(reg|#174);/i'
+        ];
+        $replaceList = [
+            '',
+            '&',
+            '<',
+            '>',
+            ' ',
+            chr(161),
+            chr(162),
+            chr(163),
+            chr(169),
+            chr(174)
+        ];
+
+        $body = preg_replace($reList, $replaceList, $body);
 
         return $body;
     }

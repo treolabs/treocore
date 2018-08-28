@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Hooks\Common;
 
@@ -54,8 +49,6 @@ class Stream extends \Espo\Core\Hooks\Base
     {
         parent::init();
         $this->addDependency('serviceFactory');
-        //@todo treoinject
-        $this->addDependency('preferences');
     }
 
     protected function getServiceFactory()
@@ -65,8 +58,7 @@ class Stream extends \Espo\Core\Hooks\Base
 
     protected function getPreferences()
     {
-        //@todo treoinject
-        return $this->getInjection('preferences');
+        return $this->getInjection('container')->get('preferences');
     }
 
     protected function checkHasStream(Entity $entity)
@@ -191,11 +183,22 @@ class Stream extends \Espo\Core\Hooks\Base
         $entityType = $entity->getEntityType();
 
         if ($this->checkHasStream($entity)) {
+
+            $hasAssignedUsersField = false;
+            if ($entity->hasLinkMultipleField('assignedUsers')) {
+                $hasAssignedUsersField = true;
+            }
+
             if ($entity->isNew()) {
                 $userIdList = [];
 
                 $assignedUserId = $entity->get('assignedUserId');
                 $createdById = $entity->get('createdById');
+
+                $assignedUserIdList = [];
+                if ($hasAssignedUsersField) {
+                    $assignedUserIdList = $entity->getLinkMultipleIdList('assignedUsers');
+                }
 
                 if (
                     !$this->getUser()->isSystem()
@@ -218,6 +221,15 @@ class Stream extends \Espo\Core\Hooks\Base
                 ) {
                     $userIdList[] = $createdById;
                 }
+
+                if ($hasAssignedUsersField) {
+                    foreach ($assignedUserIdList as $userId) {
+                        if (!empty($userId) && !in_array($userId, $userIdList)) {
+                            $userIdList[] = $userId;
+                        }
+                    }
+                }
+
                 if (!empty($assignedUserId) && !in_array($assignedUserId, $userIdList)) {
                     $userIdList[] = $assignedUserId;
                 }
@@ -231,7 +243,7 @@ class Stream extends \Espo\Core\Hooks\Base
                 }
 
                 if (in_array($this->getUser()->id, $userIdList)) {
-                	$entity->set('isFollowed', true);
+                    $entity->set('isFollowed', true);
                 }
 
                 $autofollowUserIdList = $this->getAutofollowUserIdList($entity, $userIdList);
@@ -263,9 +275,9 @@ class Stream extends \Espo\Core\Hooks\Base
                             $this->getStreamService()->followEntity($entity, $assignedUserId);
                             $this->getStreamService()->noteAssign($entity);
 
-			                if ($this->getUser()->id === $assignedUserId) {
-			                	$entity->set('isFollowed', true);
-			                }
+                            if ($this->getUser()->id === $assignedUserId) {
+                                $entity->set('isFollowed', true);
+                            }
                         } else {
                             $this->getStreamService()->noteAssign($entity);
                         }
@@ -279,6 +291,27 @@ class Stream extends \Espo\Core\Hooks\Base
                         $value = $entity->get($field);
                         if (!empty($value) && $value != $entity->getFetched($field)) {
                             $this->getStreamService()->noteStatus($entity, $field);
+                        }
+                    }
+
+                    $assignedUserIdList = [];
+                    if ($hasAssignedUsersField) {
+                        $assignedUserIdList = $entity->getLinkMultipleIdList('assignedUsers');
+                    }
+
+                    if ($hasAssignedUsersField) {
+                        $fetchedAssignedUserIdList = $entity->getFetched('assignedUsersIds');
+                        if (!is_array($fetchedAssignedUserIdList)) {
+                            $fetchedAssignedUserIdList = [];
+                        }
+                        foreach ($assignedUserIdList as $userId) {
+                            if (in_array($userId, $fetchedAssignedUserIdList)) {
+                                continue;
+                            }
+                            $this->getStreamService()->followEntity($entity, $userId);
+                            if ($this->getUser()->id === $userId) {
+                                $entity->set('isFollowed', true);
+                            }
                         }
                     }
                 }
@@ -334,7 +367,7 @@ class Stream extends \Espo\Core\Hooks\Base
             $foreignEntity = $data['foreignEntity'];
 
             if (
-                $this->getMetadata()->get(['entityDefs', $entityType, 'links', $link, 'audited'])
+            $this->getMetadata()->get(['entityDefs', $entityType, 'links', $link, 'audited'])
 
             ) {
                 $n = $this->getEntityManager()->getRepository('Note')->where(array(

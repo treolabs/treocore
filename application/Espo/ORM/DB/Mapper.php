@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\ORM\DB;
 use Espo\ORM\Entity;
@@ -79,6 +74,7 @@ abstract class Mapper implements IMapper
         if ($ps) {
             foreach ($ps as $row) {
                 $entity = $this->fromRow($entity, $row);
+                $entity->setAsFetched();
                 return true;
             }
         }
@@ -123,8 +119,9 @@ abstract class Mapper implements IMapper
 
         if ($this->returnCollection) {
             $collectionClass = $this->collectionClass;
-            $entityArr = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
-            return $entityArr;
+            $collection = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
+            $collection->setAsFetched();
+            return $collection;
         } else {
             return $dataArr;
         }
@@ -202,6 +199,7 @@ abstract class Mapper implements IMapper
                     foreach ($ps as $row) {
                         if (!$totalCount) {
                             $relEntity = $this->fromRow($relEntity, $row);
+                            $relEntity->setAsFetched();
                             return $relEntity;
                         } else {
                             return $row['AggregateValue'];
@@ -242,13 +240,17 @@ abstract class Mapper implements IMapper
 
                 if ($relType == IEntity::HAS_ONE) {
                     if (count($resultArr)) {
-                        return $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity = $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity->setAsFetched();
+                        return $relEntity;
                     }
                     return null;
                 } else {
                     if ($this->returnCollection) {
                         $collectionClass = $this->collectionClass;
-                        return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection->setAsFetched();
+                        return $collection;
                     } else {
                         return $resultArr;
                     }
@@ -287,7 +289,9 @@ abstract class Mapper implements IMapper
                 }
                 if ($this->returnCollection) {
                     $collectionClass = $this->collectionClass;
-                    return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection->setAsFetched();
+                    return $collection;
                 } else {
                     return $resultArr;
                 }
@@ -439,7 +443,7 @@ abstract class Mapper implements IMapper
 
                 $params['select'] = [];
                 foreach ($valueList as $value) {
-                   $params['select'][] = ['VALUE:' . $value, $value];
+                    $params['select'][] = ['VALUE:' . $value, $value];
                 }
 
                 $params['select'][] = 'id';
@@ -490,7 +494,7 @@ abstract class Mapper implements IMapper
             case IEntity::BELONGS_TO:
             case IEntity::HAS_ONE:
                 return false;
-            break;
+                break;
 
             case IEntity::HAS_CHILDREN:
             case IEntity::HAS_MANY:
@@ -515,7 +519,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-            break;
+                break;
 
             case IEntity::MANY_MANY:
                 $key = $keySet['key'];
@@ -592,7 +596,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-            break;
+                break;
         }
     }
 
@@ -904,5 +908,3 @@ abstract class Mapper implements IMapper
         $this->collectionClass = $collectionClass;
     }
 }
-
-

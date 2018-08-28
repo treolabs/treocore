@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Controllers;
 
@@ -87,6 +82,17 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
         if (isset($data['textFilterFields']) && is_array($data['textFilterFields'])) {
             $params['textFilterFields'] = $data['textFilterFields'];
+        }
+        if (!empty($data['color'])) {
+            $params['color'] = $data['color'];
+        }
+        if (!empty($data['iconClass'])) {
+            $params['iconClass'] = $data['iconClass'];
+        }
+
+        $params['kanbanViewMode'] = !empty($data['kanbanViewMode']);
+        if (!empty($data['kanbanStatusIgnoreList'])) {
+            $params['kanbanStatusIgnoreList'] = $data['kanbanStatusIgnoreList'];
         }
 
         $result = $this->getContainer()->get('entityManagerUtil')->create($name, $type, $params);
@@ -178,13 +184,13 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'entityForeign',
-        	'link',
-        	'linkForeign',
-        	'label',
-        	'labelForeign',
-        	'linkType'
+            'entity',
+            'entityForeign',
+            'link',
+            'linkForeign',
+            'label',
+            'labelForeign',
+            'linkType'
         ];
 
         $additionalParamList = [
@@ -194,10 +200,10 @@ class EntityManager extends \Espo\Core\Controllers\Base
         $params = array();
 
         foreach ($paramList as $item) {
-        	if (empty($data[$item])) {
-        		throw new BadRequest();
-        	}
-        	$params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+            if (empty($data[$item])) {
+                throw new BadRequest();
+            }
+            $params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         foreach ($additionalParamList as $item) {
@@ -238,12 +244,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'entityForeign',
-        	'link',
-        	'linkForeign',
-        	'label',
-        	'labelForeign'
+            'entity',
+            'entityForeign',
+            'link',
+            'linkForeign',
+            'label',
+            'labelForeign'
         ];
 
         $additionalParamList = [];
@@ -293,12 +299,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'link',
+            'entity',
+            'link',
         ];
         $d = array();
         foreach ($paramList as $item) {
-        	$d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+            $d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         $result = $this->getContainer()->get('entityManagerUtil')->deleteLink($d);
@@ -325,6 +331,18 @@ class EntityManager extends \Espo\Core\Controllers\Base
 
         $this->getContainer()->get('entityManagerUtil')->setFormulaData($data->scope, $formulaData);
 
+        $this->getContainer()->get('dataManager')->clearCache();
+
+        return true;
+    }
+
+    public function postActionResetToDefault($params, $data, $request)
+    {
+        if (empty($data->scope)) {
+            throw new BadRequest();
+        }
+
+        $this->getContainer()->get('entityManagerUtil')->resetToDefaults($data->scope);
         $this->getContainer()->get('dataManager')->clearCache();
 
         return true;

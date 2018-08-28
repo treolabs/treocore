@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\ORM\Repositories;
 
@@ -122,7 +117,6 @@ class RDB extends \Espo\ORM\Repository
         $params = array();
         $this->handleSelectParams($params);
         if ($this->getMapper()->selectById($entity, $id, $params)) {
-            $entity->setAsFetched();
             return $entity;
         }
 
@@ -206,6 +200,8 @@ class RDB extends \Espo\ORM\Repository
         $dataArr = $this->getMapper()->select($this->seed, $params);
 
         $collection = new EntityCollection($dataArr, $this->entityType, $this->entityFactory);
+        $collection->setAsFetched();
+
         $this->reset();
 
         return $collection;
@@ -249,11 +245,17 @@ class RDB extends \Espo\ORM\Repository
         }
 
         $result = $this->getMapper()->selectRelated($entity, $relationName, $params);
+
         if (is_array($result)) {
-
             $collection = new EntityCollection($result, $entityType, $this->entityFactory);
-
+            $collection->setAsFetched();
             return $collection;
+        } else if ($result instanceof EntityCollection) {
+            $collection = $result;
+            return $collection;
+        } else if ($result instanceof Entity) {
+            $entity = $result;
+            return $entity;
         } else {
             return $result;
         }
@@ -584,19 +586,39 @@ class RDB extends \Espo\ORM\Repository
     protected function getSelectParams(array $params = array())
     {
         if (isset($params['whereClause'])) {
-            $params['whereClause'] = $params['whereClause'] + $this->whereClause;
+            $params['whereClause'] = $params['whereClause'];
+            if (!empty($this->whereClause)) {
+                $params['whereClause'][] = $this->whereClause;
+            }
         } else {
             $params['whereClause'] = $this->whereClause;
         }
         if (!empty($params['havingClause'])) {
-            $params['havingClause'] = $params['havingClause'] + $this->havingClause;
+            $params['havingClause'] = $params['havingClause'];
+            if (!empty($this->havingClause)) {
+                $params['havingClause'][] = $this->havingClause;
+            }
         } else {
             $params['havingClause'] = $this->havingClause;
         }
-        $params = $params + $this->listParams;
+
+        if (!empty($params['leftJoins']) && !empty($this->listParams['leftJoins'])) {
+            foreach ($this->listParams['leftJoins'] as $j) {
+                $params['leftJoins'][] = $j;
+            }
+        }
+
+        if (!empty($params['joins']) && !empty($this->listParams['joins'])) {
+            foreach ($this->listParams['joins'] as $j) {
+                $params['joins'][] = $j;
+            }
+        }
+
+        $params = array_replace_recursive($this->listParams, $params);
 
         return $params;
     }
+
 
     protected function getPDO()
     {

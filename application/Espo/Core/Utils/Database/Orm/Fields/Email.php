@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\Orm\Fields;
 
@@ -44,8 +39,8 @@ class Email extends Base
                     $fieldName => array(
                         'select' => 'emailAddresses.name',
                         'where' =>
-                        array (
-                            'LIKE' => \Espo\Core\Utils\Util::toUnderScore($entityName) . ".id IN (
+                            array (
+                                'LIKE' => \Espo\Core\Utils\Util::toUnderScore($entityName) . ".id IN (
                                 SELECT entity_id
                                 FROM entity_email_address
                                 JOIN email_address ON email_address.id = entity_email_address.email_address_id
@@ -53,43 +48,48 @@ class Email extends Base
                                     entity_email_address.deleted = 0 AND entity_email_address.entity_type = '{$entityName}' AND
                                     email_address.deleted = 0 AND email_address.name LIKE {value}
                             )",
-                            '=' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name = {value}',
-                                'distinct' => true
+                                '=' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name = {value}',
+                                    'distinct' => true
+                                ),
+                                '<>' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name <> {value}',
+                                    'distinct' => true
+                                ),
+                                'IN' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name IN {value}',
+                                    'distinct' => true
+                                ),
+                                'NOT IN' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name NOT IN {value}',
+                                    'distinct' => true
+                                ),
+                                'IS NULL' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name IS NULL',
+                                    'distinct' => true
+                                ),
+                                'IS NOT NULL' => array(
+                                    'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
+                                    'sql' => 'emailAddressesMultiple.name IS NOT NULL',
+                                    'distinct' => true
+                                )
                             ),
-                            '<>' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name <> {value}',
-                                'distinct' => true
-                            ),
-                            'IN' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name IN {value}',
-                                'distinct' => true
-                            ),
-                            'NOT IN' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name NOT IN {value}',
-                                'distinct' => true
-                            ),
-                            'IS NULL' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name IS NULL',
-                                'distinct' => true
-                            ),
-                            'IS NOT NULL' => array(
-                                'leftJoins' => [['emailAddresses', 'emailAddressesMultiple']],
-                                'sql' => 'emailAddressesMultiple.name IS NOT NULL',
-                                'distinct' => true
-                            )
-                        ),
                         'orderBy' => 'emailAddresses.name {direction}',
                     ),
                     $fieldName .'Data' => array(
                         'type' => 'text',
                         'notStorable' => true
                     ),
+                    $fieldName .'IsOptedOut' => array(
+                        'type' => 'bool',
+                        'notStorable' => true,
+                        'select' => 'emailAddresses.opt_out'
+                    )
                 ),
                 'relations' => array(
                     'emailAddresses' => array(

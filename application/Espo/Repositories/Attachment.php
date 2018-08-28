@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,13 +24,14 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Repositories;
 
 use Espo\ORM\Entity;
+
+use Espo\Core\Utils\Util;
 
 class Attachment extends \Espo\Core\ORM\Repositories\RDB
 {
@@ -76,9 +73,10 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     public function save(Entity $entity, array $options = array())
     {
         $isNew = $entity->isNew();
-        $result = parent::save($entity, $options);
 
         if ($isNew) {
+            $entity->id = Util::generateId();
+
             if (!empty($entity->id) && $entity->has('contents')) {
                 $contents = $entity->get('contents');
                 $storeResult = $this->getFileStorageManager()->putContents($entity, $contents);
@@ -88,13 +86,29 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
             }
         }
 
+        $result = parent::save($entity, $options);
+
         return $result;
     }
 
     protected function afterRemove(Entity $entity, array $options = array())
     {
         parent::afterRemove($entity, $options);
-        $this->getFileStorageManager()->unlink($entity);
+
+        $duplicateCount = $this->where([
+            'OR' => [
+                [
+                    'sourceId' => $entity->getSourceId()
+                ],
+                [
+                    'id' => $entity->getSourceId()
+                ]
+            ],
+        ])->count();
+
+        if ($duplicateCount === 0) {
+            $this->getFileStorageManager()->unlink($entity);
+        }
     }
 
     public function getCopiedAttachment(Entity $entity, $role = null)

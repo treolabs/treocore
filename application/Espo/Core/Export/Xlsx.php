@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Export;
 
@@ -171,13 +166,13 @@ class Xlsx extends \Espo\Core\Injectable
 
         $titleStyle = array(
             'font' => array(
-               'bold' => true,
-               'size' => 12
+                'bold' => true,
+                'size' => 12
             )
         );
         $dateStyle = array(
             'font'  => array(
-               'size' => 12
+                'size' => 12
             )
         );
 
@@ -191,7 +186,7 @@ class Xlsx extends \Espo\Core\Injectable
         $sheet->getStyle('B1')->applyFromArray($dateStyle);
 
         $sheet->getStyle('B1')->getNumberFormat()
-                            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
+            ->setFormatCode($this->getInjection('dateTime')->getDateTimeFormat());
 
         $azRange = range('A', 'Z');
         $azRangeCopied = $azRange;
@@ -296,6 +291,8 @@ class Xlsx extends \Espo\Core\Injectable
                         $sheet->setCellValue("$col$rowNumber", $row[$name.'Name']);
                     }
                 } else if ($type == 'int') {
+                    $sheet->setCellValue("$col$rowNumber", $row[$name] ?: 0);
+                } else if ($type == 'float') {
                     $sheet->setCellValue("$col$rowNumber", $row[$name] ?: 0);
                 } else if ($type == 'currency') {
                     if (array_key_exists($name.'Currency', $row) && array_key_exists($name, $row)) {
@@ -472,7 +469,7 @@ class Xlsx extends \Espo\Core\Injectable
 
                 } else {
                     if (array_key_exists($name, $row)) {
-                        $sheet->setCellValue("$col$rowNumber", $row[$name]);
+                        $sheet->setCellValueExplicit("$col$rowNumber", $row[$name], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     }
                 }
 
@@ -553,6 +550,11 @@ class Xlsx extends \Espo\Core\Injectable
                     $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)
                         ->getNumberFormat()
                         ->setFormatCode('0');
+                } break;
+                case 'float': {
+                    $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)
+                        ->getNumberFormat()
+                        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
                 } break;
                 case 'date': {
                     $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)
