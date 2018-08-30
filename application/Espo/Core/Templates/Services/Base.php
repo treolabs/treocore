@@ -35,6 +35,8 @@
 namespace Espo\Core\Templates\Services;
 
 
+use Espo\ORM\EntityCollection;
+
 class Base extends \Espo\Services\Record
 {
     /**
@@ -49,40 +51,8 @@ class Base extends \Espo\Services\Record
      */
     public function massUpdate($data, array $params)
     {
-        // prepare where
-        $where = [];
-        if (array_key_exists('ids', $params) && is_array($params['ids'])) {
-            $values = [];
-            foreach ($params['ids'] as $id) {
-                $values[] = [
-                    'type'      => 'equals',
-                    'attribute' => 'id',
-                    'value'     => $id
-                ];
-            }
-            $where[] = [
-                'type'  => 'or',
-                'value' => $values
-            ];
-        } elseif (array_key_exists('where', $params)) {
-            $where = $params['where'];
-        }
-
-
-        // filter input
-        $this->filterInput($data);
-
-        // prepare select params
-        $p['where'] = $where;
-        if (!empty($params['selectData']) && is_array($params['selectData'])) {
-            foreach ($params['selectData'] as $k => $v) {
-                $p[$k] = $v;
-            }
-        }
-        $selectParams = $this->getSelectParams($p);
-
         // get collection
-        $collection = $this->getRepository()->find($selectParams);
+        $collection = $this->getCollection($params, $data);
 
         // prepare count
         $count = count($collection);
@@ -117,11 +87,100 @@ class Base extends \Espo\Services\Record
     }
 
     /**
+     * Mass remove action
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function massRemove(array $params): array
+    {
+        $collection = $this->getCollection($params);
+
+        $count = count($collection);
+
+        if ($count > 0) {
+            // prepare max
+            $max = $this->getConfig()->get('modules.massRemoveMax.default');
+            if (!empty($this->getConfig()->get('modules.massRemoveMax.' . $this->entityType))) {
+                $max = $this->getConfig()->get('modules.massRemoveMax.' . $this->entityType);
+            }
+
+            if ($count < $max) {
+                $this->massRemoveIteration($collection);
+            } else {
+                $this
+                    ->getServiceFactory()
+                    ->create('MassRemoveProgressManager')
+                    ->push(
+                        [
+                            'entityType' => $this->entityType,
+                            'collection' => $collection,
+                            'total'      => $count,
+                            'data'       => ['deleted' => true]
+                        ]
+                    );
+            }
+        }
+
+        return [
+            'count' => $count
+        ];
+    }
+
+    /**
+     * Get entities
+     *
+     * @param $params
+     * @param array $data
+     *
+     * @return EntityCollection
+     */
+    protected function getCollection($params, $data = []): EntityCollection
+    {
+        // prepare where
+        $where = [];
+        if (array_key_exists('ids', $params) && is_array($params['ids'])) {
+            $values = [];
+            foreach ($params['ids'] as $id) {
+                $values[] = [
+                    'type'      => 'equals',
+                    'attribute' => 'id',
+                    'value'     => $id
+                ];
+            }
+            $where[] = [
+                'type'  => 'or',
+                'value' => $values
+            ];
+        } elseif (array_key_exists('where', $params)) {
+            $where = $params['where'];
+        }
+
+
+        if (!empty($data)) {
+            // filter input
+            $this->filterInput($data);
+        }
+
+        // prepare select params
+        $p['where'] = $where;
+        if (!empty($params['selectData']) && is_array($params['selectData'])) {
+            foreach ($params['selectData'] as $k => $v) {
+                $p[$k] = $v;
+            }
+        }
+        $selectParams = $this->getSelectParams($p);
+
+        return $this->getRepository()->find($selectParams);
+    }
+
+    /**
      * @todo treoinject
      *
      * MassUpdate iteration
      *
-     * @param array $collection
+     * @param EntityCollection $collection
      * @param array $data
      */
     public function massUpdateIteration($collection, $data): void
@@ -142,6 +201,27 @@ class Base extends \Espo\Services\Record
 
         // call after mass update action
         $this->afterMassUpdate($idsUpdated, $data);
+    }
+
+    /**
+     * MassRemove iterator
+     *
+     * @param $collection
+     */
+    public function massRemoveIteration($collection): void
+    {
+        $idsRemoved = [];
+        foreach ($collection as $entity) {
+            if ($this->getAcl()->check($entity, 'delete') && $this->checkEntityForMassRemove($entity)) {
+                if ($this->getRepository()->remove($entity)) {
+                    $idsRemoved[] = $entity->id;
+
+                    $this->processActionHistoryRecord('delete', $entity);
+                }
+            }
+        }
+
+        $this->afterMassRemove($idsRemoved);
     }
 }
 

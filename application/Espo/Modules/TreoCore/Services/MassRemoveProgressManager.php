@@ -37,8 +37,12 @@ namespace Espo\Modules\TreoCore\Services;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Core\ServiceFactory;
+use Espo\ORM\EntityCollection;
 
-class MassRemoveProgressManager extends AbstractProgressManager implements ProgressJobInterface
+/**
+ * Class MassRemoveProgressManager
+ */
+class MassRemoveProgressManager extends MassUpdateProgressManager
 {
     /**
      * Cache file path
@@ -48,192 +52,37 @@ class MassRemoveProgressManager extends AbstractProgressManager implements Progr
     protected $filePath = 'data/mass_remove_%s.json';
 
     /**
-     * Push
+     * Config field name
      *
+     * @var string
+     */
+    protected $configName = 'massRemoveMax';
+
+    /**
+     * Translate field name
+     *
+     * @var string
+     */
+    protected $translateField = 'remove';
+
+    /**
+     * Action name
+     *
+     * @var string
+     */
+    protected $action = 'massRemove';
+
+    /**
+     * Execute mass action
+     *
+     * @param EntityCollection $collection
      * @param array $data
+     * @param string $entityType
      */
-    public function push(array $data): void
+    protected function massActionIteration(EntityCollection $collection, array $data, string $entityType): void
     {
-        // prepare name
-        $name = $this
-            ->getInjection('language')
-            ->translate('remove', 'massActions', 'Global');
-
-        // create id
-        $data['fileId'] = Util::generateId();
-
-        // prepare ids
-        $ids = [];
-        foreach ($data['collection'] as $entity) {
-            $ids[] = $entity->get('id');
-        }
-        unset($data['collection']);
-
-        // set ids to file
-        $this->setToFile($data['fileId'], $ids);
-
-        // push job
-        $this
-            ->getInjection('progressManager')
-            ->push($data['entityType'] . '. ' . $name, 'massRemove', $data);
-    }
-
-    /**
-     * Execute progress job
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function executeProgressJob(array $data): bool
-    {
-        // set offset
-        $this->setOffset($data['progressOffset']);
-
-        // prepare data
-        $data = Json::decode($data['data'], true);
-        $this->setData($data);
-
-        // prepare file id
-        $fileId = $data['fileId'];
-
-        // set status
-        $this->setStatus('in_progress');
-
-        // get file data
-        $ids = $this->getDataFromFile($fileId);
-
-        // prepare entityType
-        $entityType = $data['entityType'];
-
-        if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
-            // prepare max
-            $max = $this->getConfig()->get('modules.massRemoveMax.default');
-            if (!empty($this->getConfig()->get("modules.massRemoveMax.{$entityType}"))) {
-                $max = $this->getConfig()->get("modules.massRemoveMax.{$entityType}");
-            }
-
-            $records = [];
-            while (count($records) < $max) {
-                // prepare key
-                $key = $this->getOffset() + count($records);
-
-                // exit
-                if (!isset($ids[$key])) {
-                    break;
-                }
-
-                $records[] = $ids[$key];
-            }
-
-            // get collection
-            $collection = $this
-                ->getEntityManager()
-                ->getRepository($entityType)
-                ->where(['id' => $records])
-                ->find();
-
-            // update
-            $this->getServiceFactory()
-                ->create($entityType)
-                ->massUpdateIteration($collection, $data['data']);
-
-            // set offset
-            $this->setOffset($this->getOffset() + count($records));
-
-            // set progress
-            $this->setProgress(($key + 1) / $data['total'] * 100);
-
-            if ($this->getOffset() == $data['total']) {
-                // set status
-                $this->setStatus('success');
-
-                // set progress
-                $this->setProgress(100);
-            }
-        }
-
-        if (in_array($this->getStatus(), ['success', 'error'])) {
-            // delete file
-            $this->deleteFile($fileId);
-        }
-
-        return true;
-    }
-
-    /**
-     * Init
-     */
-    protected function init()
-    {
-        parent::init();
-
-        $this->addDependency('progressManager');
-        $this->addDependency('language');
-        $this->addDependency('serviceFactory');
-    }
-
-    /**
-     * Set to file
-     *
-     * @param string $id
-     * @param array  $data
-     */
-    protected function setToFile(string $id, array $data): void
-    {
-        // prepare path
-        $path = sprintf($this->filePath, $id);
-
-        // set to file
-        $file = fopen($path, "w");
-        fwrite($file, Json::encode($data));
-        fclose($file);
-    }
-
-    /**
-     * Get data from file
-     *
-     * @param string $id
-     *
-     * @return array
-     */
-    protected function getDataFromFile(string $id): array
-    {
-        // prepare result
-        $result = [];
-
-        // prepare path
-        $path = sprintf($this->filePath, $id);
-
-        if (file_exists($path)) {
-            $result = Json::decode(file_get_contents($path), true);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Delete file
-     *
-     * @param string $id
-     */
-    protected function deleteFile(string $id): void
-    {
-        // prepare path
-        $path = sprintf($this->filePath, $id);
-
-        if (file_exists($path)) {
-            unlink($path);
-        }
-    }
-
-    /**
-     * Get ServiceFactory
-     *
-     * @return ServiceFactory
-     */
-    protected function getServiceFactory(): ServiceFactory
-    {
-        return $this->getInjection('serviceFactory');
+        $this->getServiceFactory()
+            ->create($entityType)
+            ->massRemoveIteration($collection);
     }
 }

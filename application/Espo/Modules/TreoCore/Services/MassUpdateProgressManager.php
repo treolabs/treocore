@@ -37,6 +37,7 @@ namespace Espo\Modules\TreoCore\Services;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Core\ServiceFactory;
+use Espo\ORM\EntityCollection;
 
 /**
  * Class MassUpdateProgressManager
@@ -54,6 +55,27 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
     protected $filePath = 'data/mass_update_%s.json';
 
     /**
+     * Config field name
+     *
+     * @var string
+     */
+    protected $configName = 'massUpdateMax';
+
+    /**
+     * Translate field name
+     *
+     * @var string
+     */
+    protected $translateField = 'massUpdate';
+
+    /**
+     * Action name
+     *
+     * @var string
+     */
+    protected $action = 'massUpdate';
+
+    /**
      * Push
      *
      * @param array $data
@@ -63,7 +85,7 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
         // prepare name
         $name = $this
             ->getInjection('language')
-            ->translate('massUpdate', 'massActions', 'Global');
+            ->translate($this->translateField, 'massActions', 'Global');
 
         // create id
         $data['fileId'] = Util::generateId();
@@ -81,7 +103,7 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
         // push job
         $this
             ->getInjection('progressManager')
-            ->push($data['entityType'] . '. ' . $name, 'massUpdate', $data);
+            ->push($data['entityType'] . '. ' . $name, $this->action, $data);
     }
 
     /**
@@ -114,9 +136,9 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
 
         if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
             // prepare max
-            $max = $this->getConfig()->get('modules.massUpdateMax.default');
-            if (!empty($this->getConfig()->get("modules.massUpdateMax.{$entityType}"))) {
-                $max = $this->getConfig()->get("modules.massUpdateMax.{$entityType}");
+            $max = $this->getConfig()->get("modules.{$this->configName}.default");
+            if (!empty($this->getConfig()->get("modules.{$this->configName}.{$entityType}"))) {
+                $max = $this->getConfig()->get("modules.{$this->configName}.{$entityType}");
             }
 
             $records = [];
@@ -140,9 +162,7 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
                 ->find();
 
             // update
-            $this->getServiceFactory()
-                ->create($entityType)
-                ->massUpdateIteration($collection, $data['data']);
+            $this->massActionIteration($collection, $data, $entityType);
 
             // set offset
             $this->setOffset($this->getOffset() + count($records));
@@ -165,6 +185,20 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
         }
 
         return true;
+    }
+
+    /**
+     * Execute mass action
+     *
+     * @param EntityCollection $collection
+     * @param array $data
+     * @param string $entityType
+     */
+    protected function massActionIteration(EntityCollection $collection, array $data, string $entityType): void
+    {
+        $this->getServiceFactory()
+            ->create($entityType)
+            ->massUpdateIteration($collection, $data['data']);
     }
 
     /**
