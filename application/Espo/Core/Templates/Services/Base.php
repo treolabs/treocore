@@ -34,9 +34,6 @@
 
 namespace Espo\Core\Templates\Services;
 
-
-use Espo\ORM\EntityCollection;
-
 class Base extends \Espo\Services\Record
 {
     /**
@@ -51,7 +48,7 @@ class Base extends \Espo\Services\Record
     public function massUpdate($data, array $params)
     {
         // get prepared select params
-        $selectParams = $this->prepareSelectParams($params, $data);
+        $selectParams = $this->prepareSelectParams($params);
 
         // get count
         $count = $this->getRepository()->count($selectParams);
@@ -124,11 +121,10 @@ class Base extends \Espo\Services\Record
      * Get prepared select params
      *
      * @param array $params
-     * @param array $data
      *
-     * @return EntityCollection
+     * @return array
      */
-    protected function prepareSelectParams($params, $data = []): array
+    protected function prepareSelectParams($params): array
     {
         // prepare where
         $where = [];
@@ -147,12 +143,6 @@ class Base extends \Espo\Services\Record
             ];
         } elseif (array_key_exists('where', $params)) {
             $where = $params['where'];
-        }
-
-
-        if (!empty($data)) {
-            // filter input
-            $this->filterInput($data);
         }
 
         // prepare select params
