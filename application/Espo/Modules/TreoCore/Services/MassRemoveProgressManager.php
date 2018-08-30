@@ -32,35 +32,58 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
+namespace Espo\Modules\TreoCore\Services;
 
-namespace Espo\Modules\TreoCore\Configs;
+use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Json;
+use Espo\Core\ServiceFactory;
+use Espo\ORM\EntityCollection;
 
-return [
-    'actionService' => [
-        'cancel' => 'CancelStatusAction',
-        'close'  => 'CloseStatusAction'
-    ],
-    'statusAction'  => [
-        'new'         => [
-            'cancel'
-        ],
-        'in_progress' => [
-            'cancel'
-        ],
-        'error'       => [
-            'close'
-        ],
-        'success'     => [
-            'close'
-        ],
-    ],
-    'type'          => [
-        'massUpdate' => [
-            'service' => 'MassUpdateProgressManager'
-        ],
-        'massRemove' => [
-            'service' => 'MassRemoveProgressManager'
-        ]
-    ]
-];
+/**
+ * Class MassRemoveProgressManager
+ */
+class MassRemoveProgressManager extends MassUpdateProgressManager
+{
+    /**
+     * Cache file path
+     *
+     * @var string
+     */
+    protected $filePath = 'data/mass_remove_%s.json';
+
+    /**
+     * Config field name
+     *
+     * @var string
+     */
+    protected $configName = 'massRemoveMax';
+
+    /**
+     * Translate field name
+     *
+     * @var string
+     */
+    protected $translateField = 'remove';
+
+    /**
+     * Action name
+     *
+     * @var string
+     */
+    protected $action = 'massRemove';
+
+    /**
+     * Execute mass action
+     *
+     * @param EntityCollection $collection
+     * @param array $data
+     * @param string $entityType
+     */
+    protected function massActionIteration(EntityCollection $collection, array $data, string $entityType): void
+    {
+        $this->getServiceFactory()
+            ->create($entityType)
+            ->massRemoveIteration($collection);
+    }
+}
+
