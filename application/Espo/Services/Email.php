@@ -48,12 +48,13 @@ class Email extends Record
     {
         parent::init();
         $this->addDependencyList([
-            'container',
             'preferences',
             'fileManager',
             'crypt',
             'serviceFactory',
-            'fileStorageManager'
+            'fileStorageManager',
+            // @todo treoinject
+            'mailSender'
         ]);
     }
 
@@ -100,7 +101,8 @@ class Email extends Record
 
     protected function getMailSender()
     {
-        return $this->getInjection('container')->get('mailSender');
+        // @todo treoinject
+        return $this->getInjection('mailSender');
     }
 
     protected function getPreferences()
