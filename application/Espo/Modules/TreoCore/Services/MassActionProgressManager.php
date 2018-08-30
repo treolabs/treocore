@@ -113,14 +113,8 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
         $entityType = $data['entityType'];
 
         if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
-            // prepare max
-            $max = (int)$this->getConfig()->get('massUpdateMax');
-            if (empty($max)) {
-                $max = 200;
-            }
-
             $records = [];
-            while (count($records) < $max) {
+            while (count($records) < $this->getConfig()->get('massUpdateMax')) {
                 // prepare key
                 $key = $this->getOffset() + count($records);
 
