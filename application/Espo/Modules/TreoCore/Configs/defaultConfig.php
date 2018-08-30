@@ -179,5 +179,6 @@ return [
     'aclAllowDeleteCreated' => false,
     'inlineAttachmentUploadMaxSize' => 20,
     'pmLimit' => 5,
+    'massUpdateMax' => 200,
     'isInstalled' => false
 ];

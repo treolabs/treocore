@@ -40,50 +40,44 @@ use Espo\ORM\EntityCollection;
 class Base extends \Espo\Services\Record
 {
     /**
-     * @todo treoinject
-     *
      * Mass update action
      *
      * @param       $data
      * @param array $params
      *
      * @return array
+     * @todo treoinject
      */
     public function massUpdate($data, array $params)
     {
-        // get collection
-        $collection = $this->getCollection($params, $data);
+        // get prepared select params
+        $selectParams = $this->prepareSelectParams($params, $data);
 
-        // prepare count
-        $count = count($collection);
+        // get count
+        $count = $this->getRepository()->count($selectParams);
 
-        if ($count > 0) {
-            // prepare max
-            $max = $this->getConfig()->get('modules.massUpdateMax.default');
-            if (!empty($this->getConfig()->get('modules.massUpdateMax.' . $this->entityType))) {
-                $max = $this->getConfig()->get('modules.massUpdateMax.' . $this->entityType);
-            }
+        // send to progress manager
+        if ($count > $this->getMassUpdateMax()) {
+            // get collection
+            $collection = $this->getRepository()->select(['id'])->find($selectParams);
 
-            if ($count < $max) {
-                $this->massUpdateIteration($collection, $data);
-            } else {
-                $this
-                    ->getServiceFactory()
-                    ->create('MassUpdateProgressManager')
-                    ->push(
-                        [
-                            'entityType' => $this->entityType,
-                            'collection' => $collection,
-                            'total'      => $count,
-                            'data'       => $data
-                        ]
-                    );
-            }
+            $this
+                ->getServiceFactory()
+                ->create('MassUpdateProgressManager')
+                ->push(
+                    [
+                        'entityType' => $this->entityType,
+                        'ids'        => array_column($collection->toArray(), 'id'),
+                        'total'      => $count,
+                        'data'       => $data,
+                        'action'     => 'update'
+                    ]
+                );
+
+            return ['count' => $count];
         }
 
-        return [
-            'count' => $count
-        ];
+        return parent::massUpdate($data, $params);
     }
 
     /**
@@ -92,51 +86,49 @@ class Base extends \Espo\Services\Record
      * @param array $params
      *
      * @return array
+     * @todo treoinject
      */
     public function massRemove(array $params): array
     {
-        $collection = $this->getCollection($params);
+        // get prepared select params
+        $selectParams = $this->prepareSelectParams($params);
 
-        $count = count($collection);
+        // get count
+        $count = $this->getRepository()->count($selectParams);
 
-        if ($count > 0) {
-            // prepare max
-            $max = $this->getConfig()->get('modules.massRemoveMax.default');
-            if (!empty($this->getConfig()->get('modules.massRemoveMax.' . $this->entityType))) {
-                $max = $this->getConfig()->get('modules.massRemoveMax.' . $this->entityType);
-            }
+        // send to progress manager
+        if ($count > $this->getMassUpdateMax()) {
+            // get collection
+            $collection = $this->getRepository()->select(['id'])->find($selectParams);
 
-            if ($count < $max) {
-                $this->massRemoveIteration($collection);
-            } else {
-                $this
-                    ->getServiceFactory()
-                    ->create('MassRemoveProgressManager')
-                    ->push(
-                        [
-                            'entityType' => $this->entityType,
-                            'collection' => $collection,
-                            'total'      => $count,
-                            'data'       => ['deleted' => true]
-                        ]
-                    );
-            }
+            $this
+                ->getServiceFactory()
+                ->create('MassUpdateProgressManager')
+                ->push(
+                    [
+                        'entityType' => $this->entityType,
+                        'ids'        => array_column($collection->toArray(), 'id'),
+                        'total'      => $count,
+                        'data'       => [],
+                        'action'     => 'delete'
+                    ]
+                );
+
+            return ['count' => $count];
         }
 
-        return [
-            'count' => $count
-        ];
+        return parent::massRemove($params);
     }
 
     /**
-     * Get entities
+     * Get prepared select params
      *
-     * @param $params
+     * @param array $params
      * @param array $data
      *
      * @return EntityCollection
      */
-    protected function getCollection($params, $data = []): EntityCollection
+    protected function prepareSelectParams($params, $data = []): array
     {
         // prepare where
         $where = [];
@@ -170,58 +162,21 @@ class Base extends \Espo\Services\Record
                 $p[$k] = $v;
             }
         }
-        $selectParams = $this->getSelectParams($p);
 
-        return $this->getRepository()->find($selectParams);
+        return $this->getSelectParams($p);
     }
 
     /**
-     * @todo treoinject
+     * Get massupdate max
      *
-     * MassUpdate iteration
-     *
-     * @param EntityCollection $collection
-     * @param array $data
+     * @return int
      */
-    public function massUpdateIteration($collection, $data): void
+    protected function getMassUpdateMax(): int
     {
-        $idsUpdated = [];
-        foreach ($collection as $entity) {
-            if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
-                $entity->set($data);
-                if ($this->checkAssignment($entity)) {
-                    if ($this->getRepository()->save($entity)) {
-                        $idsUpdated[] = $entity->id;
+        // get from config
+        $max = (int)$this->getConfig()->get('massUpdateMax');
 
-                        $this->processActionHistoryRecord('update', $entity);
-                    }
-                }
-            }
-        }
-
-        // call after mass update action
-        $this->afterMassUpdate($idsUpdated, $data);
-    }
-
-    /**
-     * MassRemove iterator
-     *
-     * @param $collection
-     */
-    public function massRemoveIteration($collection): void
-    {
-        $idsRemoved = [];
-        foreach ($collection as $entity) {
-            if ($this->getAcl()->check($entity, 'delete') && $this->checkEntityForMassRemove($entity)) {
-                if ($this->getRepository()->remove($entity)) {
-                    $idsRemoved[] = $entity->id;
-
-                    $this->processActionHistoryRecord('delete', $entity);
-                }
-            }
-        }
-
-        $this->afterMassRemove($idsRemoved);
+        return (empty($max)) ? 200 : $max;
     }
 }
 

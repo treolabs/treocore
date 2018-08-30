@@ -31,59 +31,29 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Espo\Modules\TreoCore\Migration;
 
 use Espo\Core\Utils\Util;
-use Espo\Core\Utils\Json;
-use Espo\Core\ServiceFactory;
-use Espo\ORM\EntityCollection;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+use Espo\Modules\TreoCore\Core\Utils\Composer;
 
 /**
- * Class MassRemoveProgressManager
+ * Version 1.14.0
+ *
+ * @author r.ratsun@zinitsolutions.com
  */
-class MassRemoveProgressManager extends MassUpdateProgressManager
+class V1Dot14Dot0 extends AbstractMigration
 {
     /**
-     * Cache file path
-     *
-     * @var string
+     * Up to current
      */
-    protected $filePath = 'data/mass_remove_%s.json';
-
-    /**
-     * Config field name
-     *
-     * @var string
-     */
-    protected $configName = 'massRemoveMax';
-
-    /**
-     * Translate field name
-     *
-     * @var string
-     */
-    protected $translateField = 'remove';
-
-    /**
-     * Action name
-     *
-     * @var string
-     */
-    protected $action = 'massRemove';
-
-    /**
-     * Execute mass action
-     *
-     * @param EntityCollection $collection
-     * @param array $data
-     * @param string $entityType
-     */
-    protected function massActionIteration(EntityCollection $collection, array $data, string $entityType): void
+    public function up(): void
     {
-        $this->getServiceFactory()
-            ->create($entityType)
-            ->massRemoveIteration($collection);
+        if (empty($this->getConfig()->get('massUpdateMax'))) {
+            $this->getConfig()->set('massUpdateMax', 200);
+            $this->getConfig()->save();
+        }
     }
 }
-

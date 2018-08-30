@@ -55,55 +55,33 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
     protected $filePath = 'data/mass_update_%s.json';
 
     /**
-     * Config field name
-     *
-     * @var string
-     */
-    protected $configName = 'massUpdateMax';
-
-    /**
-     * Translate field name
-     *
-     * @var string
-     */
-    protected $translateField = 'massUpdate';
-
-    /**
-     * Action name
-     *
-     * @var string
-     */
-    protected $action = 'massUpdate';
-
-    /**
      * Push
      *
      * @param array $data
      */
     public function push(array $data): void
     {
+        // prepare key
+        $key = ($data['action'] == 'update') ? 'massUpdate' : 'remove';
+
         // prepare name
         $name = $this
             ->getInjection('language')
-            ->translate($this->translateField, 'massActions', 'Global');
+            ->translate($key, 'massActions', 'Global');
 
         // create id
         $data['fileId'] = Util::generateId();
 
-        // prepare ids
-        $ids = [];
-        foreach ($data['collection'] as $entity) {
-            $ids[] = $entity->get('id');
-        }
-        unset($data['collection']);
-
         // set ids to file
-        $this->setToFile($data['fileId'], $ids);
+        $this->setToFile($data['fileId'], $data['ids']);
+
+        // delete cache
+        unset($data['ids']);
 
         // push job
         $this
             ->getInjection('progressManager')
-            ->push($data['entityType'] . '. ' . $name, $this->action, $data);
+            ->push($data['entityType'] . '. ' . $name, 'massUpdate', $data);
     }
 
     /**
@@ -136,9 +114,9 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
 
         if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
             // prepare max
-            $max = $this->getConfig()->get("modules.{$this->configName}.default");
-            if (!empty($this->getConfig()->get("modules.{$this->configName}.{$entityType}"))) {
-                $max = $this->getConfig()->get("modules.{$this->configName}.{$entityType}");
+            $max = (int)$this->getConfig()->get('massUpdateMax');
+            if (empty($max)) {
+                $max = 200;
             }
 
             $records = [];
@@ -154,15 +132,14 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
                 $records[] = $ids[$key];
             }
 
-            // get collection
-            $collection = $this
-                ->getEntityManager()
-                ->getRepository($entityType)
-                ->where(['id' => $records])
-                ->find();
+            // call mass action
+            $service = $this->getServiceFactory()->create($entityType);
 
-            // update
-            $this->massActionIteration($collection, $data, $entityType);
+            if ($data['action'] == 'update') {
+                $service->massUpdate($data['data'], ['ids' => $records]);
+            } elseif ($data['action'] == 'delete') {
+                $service->massRemove(['ids' => $records]);
+            }
 
             // set offset
             $this->setOffset($this->getOffset() + count($records));
@@ -185,20 +162,6 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
         }
 
         return true;
-    }
-
-    /**
-     * Execute mass action
-     *
-     * @param EntityCollection $collection
-     * @param array $data
-     * @param string $entityType
-     */
-    protected function massActionIteration(EntityCollection $collection, array $data, string $entityType): void
-    {
-        $this->getServiceFactory()
-            ->create($entityType)
-            ->massUpdateIteration($collection, $data['data']);
     }
 
     /**
