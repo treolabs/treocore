@@ -63,7 +63,7 @@ class Base extends \Espo\Services\Record
 
             $this
                 ->getServiceFactory()
-                ->create('MassUpdateProgressManager')
+                ->create('MassActionProgressManager')
                 ->push(
                     [
                         'entityType' => $this->entityType,
@@ -103,7 +103,7 @@ class Base extends \Espo\Services\Record
 
             $this
                 ->getServiceFactory()
-                ->create('MassUpdateProgressManager')
+                ->create('MassActionProgressManager')
                 ->push(
                     [
                         'entityType' => $this->entityType,

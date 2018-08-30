@@ -57,7 +57,7 @@ return [
     ],
     'type'          => [
         'massUpdate' => [
-            'service' => 'MassUpdateProgressManager'
+            'service' => 'MassActionProgressManager'
         ]
     ]
 ];

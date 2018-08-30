@@ -40,11 +40,11 @@ use Espo\Core\ServiceFactory;
 use Espo\ORM\EntityCollection;
 
 /**
- * Class MassUpdateProgressManager
+ * MassAction ProgressManager class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class MassUpdateProgressManager extends AbstractProgressManager implements ProgressJobInterface
+class MassActionProgressManager extends AbstractProgressManager implements ProgressJobInterface
 {
 
     /**
@@ -52,7 +52,7 @@ class MassUpdateProgressManager extends AbstractProgressManager implements Progr
      *
      * @var string
      */
-    protected $filePath = 'data/mass_update_%s.json';
+    protected $filePath = 'data/mass_action_%s.json';
 
     /**
      * Push
