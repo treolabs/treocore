@@ -86,3 +86,4 @@ class MassRemoveProgressManager extends MassUpdateProgressManager
             ->massRemoveIteration($collection);
     }
 }
+
