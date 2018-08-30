@@ -54,7 +54,7 @@ class Base extends \Espo\Services\Record
         $count = $this->getRepository()->count($selectParams);
 
         // send to progress manager
-        if ($count > $this->getConfig()->get('massUpdateMax')) {
+        if ($count > $this->getConfig()->get('massUpdateMax', 200)) {
             // get collection
             $collection = $this->getRepository()->select(['id'])->find($selectParams);
 
@@ -94,7 +94,7 @@ class Base extends \Espo\Services\Record
         $count = $this->getRepository()->count($selectParams);
 
         // send to progress manager
-        if ($count > $this->getConfig()->get('massUpdateMax')) {
+        if ($count > $this->getConfig()->get('massUpdateMax', 200)) {
             // get collection
             $collection = $this->getRepository()->select(['id'])->find($selectParams);
 
