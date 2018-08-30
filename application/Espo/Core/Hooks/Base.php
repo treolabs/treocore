@@ -37,6 +37,7 @@ namespace Espo\Core\Hooks;
 use Espo\Core\Acl;
 use Espo\Core\AclManager;
 use Espo\Core\Container;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Interfaces\Injectable;
 use Espo\Core\ORM\Repositories\RDB as Repository;
 use Espo\Core\Utils\Config;
