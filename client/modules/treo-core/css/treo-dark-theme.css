@@ -11155,6 +11155,11 @@ a:hover, a:focus {
     margin: 0
 }
 
+input#sn-checkbox-open-in-new-window {
+    margin-left: -20px;
+    margin-top: 4px;
+}
+
 .detail .record-buttons ~ .edit-buttons.hidden ~ .row .panel-body .form-group .field {
     border-bottom: 1px solid #efefef
 }
