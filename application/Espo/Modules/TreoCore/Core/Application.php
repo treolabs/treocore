@@ -63,10 +63,15 @@ class Application extends EspoApplication
      */
     public function runConsole(array $argv)
     {
+        // unset file path
+        if (isset($argv[0])) {
+            unset($argv[0]);
+        }
+
         $this
             ->getContainer()
             ->get('consoleManager')
-            ->run(str_replace('console.php ', '', implode(' ', $argv)));
+            ->run(implode(' ', $argv));
     }
 
     /**
