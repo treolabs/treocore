@@ -40,6 +40,7 @@ use Espo\Core\Interfaces\Injectable;
 use Espo\Core\Utils\Config;
 use Espo\Entities\User;
 use Espo\Orm\EntityManager;
+use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
 
 /**
  * Abstract service Base
@@ -49,6 +50,8 @@ use Espo\Orm\EntityManager;
  */
 abstract class Base implements Injectable
 {
+    use EventTriggeredTrait;
+
     /**
      * @var array
      */
@@ -195,19 +198,4 @@ abstract class Base implements Injectable
     {
         return $this->getInjection('user');
     }
-
-    /**
-     * Triggered event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function triggered(string $target, string $action, array $data = []): array
-    {
-        return $this->getInjection('eventManager')->triggered($target, $action, $data);
-    }
 }
-

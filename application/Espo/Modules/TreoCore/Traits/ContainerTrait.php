@@ -32,14 +32,14 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Traits;
 
 use Espo\Modules\TreoCore\Core\Container;
 
 /**
- * Class of ContainerTrait
+ * Class ContainerTrait
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */

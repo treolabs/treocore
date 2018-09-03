@@ -34,40 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
-
-use Espo\Controllers\Settings as ParentSettings;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
-use Slim\Http\Request;
+namespace Espo\Modules\TreoCore\Traits;
 
 /**
- * Settings controller
+ * Class EventTriggeredTrait
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Settings extends ParentSettings
+trait EventTriggeredTrait
 {
-    use EventTriggeredTrait;
-
     /**
-     * Patch action
+     * Triggered event
      *
-     * @param array   $params
-     * @param array   $data
-     * @param Request $request
+     * @param string $target
+     * @param string $action
+     * @param array  $data
      *
      * @return array
-     * @throws \Espo\Core\Exceptions\BadRequest
-     * @throws \Espo\Core\Exceptions\Error
-     * @throws \Espo\Core\Exceptions\Forbidden
      */
-    public function actionPatch($params, $data, $request)
+    protected function triggered(string $target, string $action, array $data = []): array
     {
-        $result = parent::actionPatch($params, $data, $request);
-        // triggered event
-        $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
-        $this->triggered('SettingsController', 'afterUpdate', $eventData);
+        if (method_exists($this, 'getContainer')) {
+            return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
+        }
 
-        return $result;
+        return $this->getInjection('eventManager')->triggered($target, $action, $data);
     }
 }

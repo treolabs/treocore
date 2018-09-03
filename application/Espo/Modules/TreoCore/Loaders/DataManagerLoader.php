@@ -31,43 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Espo\Modules\TreoCore\Loaders;
 
-use Espo\Controllers\Settings as ParentSettings;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
-use Slim\Http\Request;
+use Espo\Core\Loaders\Base;
+use Espo\Modules\TreoCore\Core\DataManager;
 
 /**
- * Settings controller
+ * DataManager loader
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Settings extends ParentSettings
+class DataManagerLoader extends Base
 {
-    use EventTriggeredTrait;
-
     /**
-     * Patch action
+     * Load
      *
-     * @param array   $params
-     * @param array   $data
-     * @param Request $request
-     *
-     * @return array
-     * @throws \Espo\Core\Exceptions\BadRequest
-     * @throws \Espo\Core\Exceptions\Error
-     * @throws \Espo\Core\Exceptions\Forbidden
+     * @return DataManager
      */
-    public function actionPatch($params, $data, $request)
+    public function load()
     {
-        $result = parent::actionPatch($params, $data, $request);
-        // triggered event
-        $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
-        $this->triggered('SettingsController', 'afterUpdate', $eventData);
-
-        return $result;
+        return new DataManager($this->getContainer());
     }
 }

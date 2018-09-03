@@ -31,42 +31,31 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Espo\Modules\TreoCore\Core;
 
-use Espo\Controllers\Settings as ParentSettings;
+use Espo\Core\DataManager as EspoDataManager;
 use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
-use Slim\Http\Request;
 
 /**
- * Settings controller
+ * Class DataManager
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Settings extends ParentSettings
+class DataManager extends EspoDataManager
 {
     use EventTriggeredTrait;
 
     /**
-     * Patch action
+     * Rebuild the system with metadata, database and cache clearing
      *
-     * @param array   $params
-     * @param array   $data
-     * @param Request $request
-     *
-     * @return array
-     * @throws \Espo\Core\Exceptions\BadRequest
-     * @throws \Espo\Core\Exceptions\Error
-     * @throws \Espo\Core\Exceptions\Forbidden
+     * @return bool
      */
-    public function actionPatch($params, $data, $request)
+    public function rebuild($entityList = null)
     {
-        $result = parent::actionPatch($params, $data, $request);
-        // triggered event
-        $eventData = ['params' => $params, 'data' => $data, 'request' => $request];
-        $this->triggered('SettingsController', 'afterUpdate', $eventData);
+        // call parent
+        $result = parent::rebuild($entityList);
 
         return $result;
     }

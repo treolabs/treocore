@@ -43,6 +43,7 @@ use Espo\Core\Utils\Json;
 use Espo\Entities\User;
 use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
 use Espo\Modules\TreoCore\Services\AbstractProgressManager;
 use Espo\Modules\TreoCore\Services\ProgressJobInterface as PMInterface;
 
@@ -58,6 +59,7 @@ class ProgressManager
      * Traits
      */
     use ContainerTrait;
+    use EventTriggeredTrait;
 
     const CACHE_PATH = 'data/pm-show-popup.json';
 
@@ -512,20 +514,6 @@ class ProgressManager
     protected function getServiceFactory(): ServiceFactory
     {
         return $this->getContainer()->get('serviceFactory');
-    }
-
-    /**
-     * Triggered event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function triggered(string $target, string $action, array $data = []): array
-    {
-        return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
     }
 
     /**
