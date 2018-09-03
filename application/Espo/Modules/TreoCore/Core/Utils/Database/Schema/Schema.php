@@ -67,8 +67,15 @@ class Schema extends EspoSchema
         // get current schema
         $currentSchema = $this->getCurrentSchema();
 
+        // get entityDefs
+        $entityDefs = $this->triggered(
+            'Schema',
+            'prepareEntityDefsBeforeRebuild',
+            ['data' => $this->ormMetadata->getData()]
+        )['data'];
+
         // get metadata schema
-        $metadataSchema = $this->schemaConverter->process($this->ormMetadata->getData(), $entityList);
+        $metadataSchema = $this->schemaConverter->process($entityDefs, $entityList);
 
         // init rebuild actions
         $this->initRebuildActions($currentSchema, $metadataSchema);
