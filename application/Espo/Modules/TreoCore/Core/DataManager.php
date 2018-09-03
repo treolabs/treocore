@@ -50,12 +50,20 @@ class DataManager extends EspoDataManager
     /**
      * Rebuild the system with metadata, database and cache clearing
      *
+     * @param array $entityList
+     *
      * @return bool
      */
     public function rebuild($entityList = null)
     {
+        // berore rebuild action
+        $entityList = $this->triggered('DataManager', 'beforeRebuild', ['entityList' => $entityList])['entityList'];
+
         // call parent
         $result = parent::rebuild($entityList);
+
+        // after rebuild action
+        $this->triggered('DataManager', 'afterRebuild', ['entityList' => $entityList]);
 
         return $result;
     }
