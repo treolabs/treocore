@@ -62,7 +62,7 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
 
                 fields.forEach(function (field) {
                     let type = model.getFieldType(field) || 'base';
-                    if (model.getFieldParam(field, 'isMultilang')) {
+                    if (model.getFieldParam(field, 'isMultilang') && this.getConfig().get('isMultilangActive')) {
                         type = this.getMetadata().get(['fields', type, 'defaultFieldType']);
                     }
                     let viewName = this.getMetadata().get('entityDefs.' + model.name + '.fields.' + field + '.view') || this.getFieldManager().getViewName(type);
