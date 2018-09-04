@@ -38,7 +38,6 @@ Espo.define('treo-core:views/record/base', 'class-replace!treo-core:views/record
         populateDefaults: function () {
             Dep.prototype.populateDefaults.call(this);
 
-            this.model.populateDefaults();
             let defaultHash = {};
 
             if (!this.getUser().get('portalId')) {
