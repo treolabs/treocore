@@ -155,5 +155,61 @@ class Base extends \Espo\Services\Record
 
         return $this->getSelectParams($p);
     }
+
+    /**
+     * Action to relate or unrelate elements to entities
+     *
+     * @param $ids
+     * @param $foreignIds
+     * @param $link
+     * @param $action
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     */
+    public function relationAction($ids, $foreignIds, $link, $action)
+    {
+        $result = false;
+        $countRelations = 0;
+        $foreignEntities = [];
+
+        if (empty($ids) || empty($foreignIds) || empty($link)) {
+            throw new BadRequest();
+        }
+
+        $foreignEntityType = $this->getEntityManager()
+            ->getEntity($this->entityType)
+            ->getRelationParam($link, 'entity');
+
+        foreach ($foreignIds as $id) {
+            $foreignEntities[] = $this->getEntityManager()->getEntity($foreignEntityType, $id);
+        }
+
+        foreach ($ids as $id) {
+            $entity = $this->getRepository()->get($id);
+
+            if ($entity && $this->getAcl()->check($entity, 'edit')) {
+                foreach ($foreignEntities as $foreignEntity) {
+                    switch ($action) {
+                        case "add":
+                            $this->getRepository()->relate($entity, $link, $foreignEntity);
+                            $countRelations++;
+                            break;
+                        case "remove":
+                            $this->getRepository()->unrelate($entity, $link, $foreignEntity);
+                            $countRelations++;
+                            break;
+                    }
+                }
+            }
+        }
+
+        if ($countRelations) {
+            $result = true;
+        }
+
+        return $result;
+    }
 }
 

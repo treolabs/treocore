@@ -422,6 +422,82 @@ class Record extends Base
         throw new Error();
     }
 
+    public function actionCreateRelation($params, $data, $request)
+    {
+        if (!$request->isPost()) {
+            throw new BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'edit')) {
+            throw new Forbidden();
+        }
+
+        if (empty($params['link'])) {
+            throw new BadRequest();
+        }
+
+        $link = $params['link'];
+        $action = "add";
+        $ids = $foreignIds = [];
+
+        if (isset($data->ids) && is_array($data->ids)) {
+            foreach ($data->ids as $entityId) {
+                $ids[] = $entityId;
+            }
+        }
+
+        if (isset($data->foreignIds) && is_array($data->ids)) {
+            foreach ($data->foreignIds as $foreignId) {
+                $foreignIds[] = $foreignId;
+            }
+        }
+
+        $result = false;
+        if ($this->getRecordService()->relationAction($ids, $foreignIds, $link, $action)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    public function actionRemoveRelation($params, $data, $request)
+    {
+        if (!$request->isDelete()) {
+            throw new BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'edit')) {
+            throw new Forbidden();
+        }
+
+        if (empty($params['link'])) {
+            throw new BadRequest();
+        }
+
+        $link = $params['link'];
+        $action = "remove";
+        $ids = $foreignIds = [];
+
+        if (isset($data->ids) && is_array($data->ids)) {
+            foreach ($data->ids as $entityId) {
+                $ids[] = $entityId;
+            }
+        }
+
+        if (isset($data->foreignIds) && is_array($data->ids)) {
+            foreach ($data->foreignIds as $foreignId) {
+                $foreignIds[] = $foreignId;
+            }
+        }
+
+        $result = false;
+        if ($this->getRecordService()->relationAction($ids, $foreignIds, $link, $action)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
     public function actionFollow($params, $data, $request)
     {
         if (!$request->isPut()) {

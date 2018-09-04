@@ -287,6 +287,24 @@
         }
     },
     {
+        "route":"/:controller/:link/relation",
+        "method":"post",
+        "params":{
+            "controller":":controller",
+            "action":"createRelation",
+            "link":":link"
+        }
+    },
+    {
+        "route":"/:controller/:link/relation",
+        "method":"delete",
+        "params":{
+            "controller":":controller",
+            "action":"removeRelation",
+            "link":":link"
+        }
+    },
+    {
         "route":"/:controller/:id/:link",
         "method":"get",
         "params":{
