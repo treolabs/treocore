@@ -46,6 +46,10 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.enabledFixedHeader = this.options.enabledFixedHeader || this.enabledFixedHeader;
 
+            this.listenTo(this, 'after:save', () => {
+                this.collection.fetch();
+            });
+
             _.extend(this.events, {
                 'click a.link': function (e) {
                     e.stopPropagation();
