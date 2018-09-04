@@ -383,6 +383,10 @@ class Converter
             case 'jsonArray':
             case 'text':
             case 'longtext':
+                // @todo treoinject
+                if (!empty($default = $dbFieldParams['default'])) {
+                    $dbFieldParams['comment'] = "default={{$default}}";
+                }
                 unset($dbFieldParams['default']); //for db type TEXT can't be defined a default value
                 break;
 

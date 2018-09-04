@@ -10,5 +10,6 @@
   "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader",
   "ServiceFactory": "Espo\\Modules\\TreoCore\\Loaders\\ServiceFactoryLoader",
   "HookManager": "Espo\\Modules\\TreoCore\\Loaders\\HookManagerLoader",
-  "DataManager": "Espo\\Modules\\TreoCore\\Loaders\\DataManagerLoader"
+  "DataManager": "Espo\\Modules\\TreoCore\\Loaders\\DataManagerLoader",
+  "Schema": "Espo\\Modules\\TreoCore\\Loaders\\SchemaLoader"
 }

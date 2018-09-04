@@ -36,22 +36,35 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\DataManager;
+use Espo\Modules\TreoCore\Core\Utils\Database\Schema\Schema;
 
 /**
- * DataManager loader
+ * Schema loader
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class DataManagerLoader extends Base
+class SchemaLoader extends Base
 {
     /**
      * Load
      *
-     * @return DataManager
+     * @return Schema
      */
     public function load()
     {
-        return new DataManager($this->getContainer());
+        // create
+        $schema = new Schema(
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('entityManager'),
+            $this->getContainer()->get('classParser'),
+            $this->getContainer()->get('ormMetadata')
+        );
+
+        // set container
+        $schema->setContainer($this->getContainer());
+
+        return $schema;
     }
 }
