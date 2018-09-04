@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Utils\Util;
 
 /**
@@ -44,6 +45,51 @@ use Espo\Core\Utils\Util;
  */
 class FieldManager extends AbstractListener
 {
+    /**
+     * Before create
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function beforePostActionCreate(array $data): array
+    {
+        // is default value valid ?
+        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
+
+        return $data;
+    }
+
+    /**
+     * Before update
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function beforePatchActionUpdate(array $data): array
+    {
+        // is default value valid ?
+        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
+
+        return $data;
+    }
+
+    /**
+     * Before update
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function beforePutActionUpdate(array $data): array
+    {
+        // is default value valid ?
+        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
+
+        return $data;
+    }
+
     /**
      * Before entity field delete by EntityManager
      *
@@ -100,5 +146,28 @@ class FieldManager extends AbstractListener
                 }
             }
         }
+    }
+
+    /**
+     * Is default value valid
+     *
+     * @param string $type
+     * @param mixed  $default
+     *
+     * @return bool
+     * @throws BadRequest
+     */
+    protected function isDefaultValueValid(string $type, $default): bool
+    {
+        if (is_string($default) && strpos($default, "'") !== false) {
+            // prepare message
+            $message = $this
+                ->getLanguage()
+                ->translate('defaultValidationFailed', 'messages', 'FieldManager');
+
+            throw new BadRequest($message);
+        }
+
+        return true;
     }
 }

@@ -1,0 +1,5 @@
+{
+  "messages": {
+    "defaultValidationFailed": "The default value can not contain special characters"
+  }
+}
