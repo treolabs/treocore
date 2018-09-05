@@ -157,51 +157,85 @@ class Base extends \Espo\Services\Record
     }
 
     /**
-     * Action to relate or unrelate elements to entities
+     * Add relation to entities
      *
-     * @param $ids
-     * @param $foreignIds
-     * @param $link
-     * @param $action
+     * @param array $ids
+     * @param array $foreignIds
+     * @param string $link
      *
      * @return bool
      *
      * @throws BadRequest
      */
-    public function relationAction($ids, $foreignIds, $link, $action)
+    public function addRelation(array $ids, array $foreignIds, string $link): bool
     {
-        $result = false;
-        $countRelations = 0;
-        $foreignEntities = [];
-
         if (empty($ids) || empty($foreignIds) || empty($link)) {
             throw new BadRequest();
         }
+
+        $result = false;
+        $countRelations = 0;
 
         $foreignEntityType = $this->getEntityManager()
             ->getEntity($this->entityType)
             ->getRelationParam($link, 'entity');
 
-        foreach ($foreignIds as $id) {
-            $foreignEntities[] = $this->getEntityManager()->getEntity($foreignEntityType, $id);
+        $foreignEntities = $this->getEntityManager()
+            ->getRepository($foreignEntityType)
+            ->where(['id' => $foreignIds])->find();
+
+        $entities = $this->getRepository()
+            ->where(['id' => $ids])->find();
+
+        foreach ($entities as $entity) {
+            foreach ($foreignEntities as $foreignEntity) {
+                $this->getRepository()->relate($entity, $link, $foreignEntity);
+                $countRelations++;
+            }
         }
 
-        foreach ($ids as $id) {
-            $entity = $this->getRepository()->get($id);
+        if ($countRelations) {
+            $result = true;
+        }
 
-            if ($entity && $this->getAcl()->check($entity, 'edit')) {
-                foreach ($foreignEntities as $foreignEntity) {
-                    switch ($action) {
-                        case "add":
-                            $this->getRepository()->relate($entity, $link, $foreignEntity);
-                            $countRelations++;
-                            break;
-                        case "remove":
-                            $this->getRepository()->unrelate($entity, $link, $foreignEntity);
-                            $countRelations++;
-                            break;
-                    }
-                }
+        return $result;
+    }
+
+    /**
+     * Remove relation from entities
+     *
+     * @param array $ids
+     * @param array $foreignIds
+     * @param string $link
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     */
+    public function removeRelation(array $ids, array $foreignIds, string $link): bool
+    {
+        if (empty($ids) || empty($foreignIds) || empty($link)) {
+            throw new BadRequest();
+        }
+
+        $result = false;
+        $countRelations = 0;
+
+        $foreignEntityType = $this->getEntityManager()
+            ->getEntity($this->entityType)
+            ->getRelationParam($link, 'entity');
+
+        $foreignEntities = $this->getEntityManager()
+            ->getRepository($foreignEntityType)
+            ->where(['id' => $foreignIds])->find();
+
+        $entities = $this->getRepository()
+            ->where(['id' => $ids])->find();
+
+        foreach ($entities as $entity) {
+            foreach ($foreignEntities as $foreignEntity) {
+                $this->getRepository()->unrelate($entity, $link, $foreignEntity);
+                $countRelations++;
             }
         }
 

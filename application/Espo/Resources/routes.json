@@ -291,8 +291,7 @@
         "method":"post",
         "params":{
             "controller":":controller",
-            "action":"createRelation",
-            "link":":link"
+            "action":"addRelation"
         }
     },
     {
@@ -300,8 +299,7 @@
         "method":"delete",
         "params":{
             "controller":":controller",
-            "action":"removeRelation",
-            "link":":link"
+            "action":"removeRelation"
         }
     },
     {

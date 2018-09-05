@@ -422,7 +422,19 @@ class Record extends Base
         throw new Error();
     }
 
-    public function actionCreateRelation($params, $data, $request)
+    /**
+     * Action add relation
+     *
+     * @param array $params
+     * @param \stdClass $data
+     * @param Request $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
     {
         if (!$request->isPost()) {
             throw new BadRequest();
@@ -432,35 +444,22 @@ class Record extends Base
             throw new Forbidden();
         }
 
-        if (empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        $link = $params['link'];
-        $action = "add";
-        $ids = $foreignIds = [];
-
-        if (isset($data->ids) && is_array($data->ids)) {
-            foreach ($data->ids as $entityId) {
-                $ids[] = $entityId;
-            }
-        }
-
-        if (isset($data->foreignIds) && is_array($data->ids)) {
-            foreach ($data->foreignIds as $foreignId) {
-                $foreignIds[] = $foreignId;
-            }
-        }
-
-        $result = false;
-        if ($this->getRecordService()->relationAction($ids, $foreignIds, $link, $action)) {
-            $result = true;
-        }
-
-        return $result;
+        return $this->getRecordService()->addRelation($data->ids, $data->foreignIds, $params['link']);
     }
 
-    public function actionRemoveRelation($params, $data, $request)
+    /**
+     * Action remove relation
+     *
+     * @param array $params
+     * @param \stdClass $data
+     * @param Request $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
     {
         if (!$request->isDelete()) {
             throw new BadRequest();
@@ -470,32 +469,7 @@ class Record extends Base
             throw new Forbidden();
         }
 
-        if (empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        $link = $params['link'];
-        $action = "remove";
-        $ids = $foreignIds = [];
-
-        if (isset($data->ids) && is_array($data->ids)) {
-            foreach ($data->ids as $entityId) {
-                $ids[] = $entityId;
-            }
-        }
-
-        if (isset($data->foreignIds) && is_array($data->ids)) {
-            foreach ($data->foreignIds as $foreignId) {
-                $foreignIds[] = $foreignId;
-            }
-        }
-
-        $result = false;
-        if ($this->getRecordService()->relationAction($ids, $foreignIds, $link, $action)) {
-            $result = true;
-        }
-
-        return $result;
+        return $this->getRecordService()->removeRelation($data->ids, $data->foreignIds, $params['link']);
     }
 
     public function actionFollow($params, $data, $request)
