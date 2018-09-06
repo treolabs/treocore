@@ -100,30 +100,20 @@ class Packagist extends AbstractTreoService
     public function getPackages(): array
     {
         if (is_null($this->packages)) {
-            $this->packages = $this->getCachedPackages();
+            // caching
+            if (!file_exists($this->cacheFile)) {
+                $data = file_get_contents($this->url . "package");
+
+                $file = fopen($this->cacheFile, "w");
+                fwrite($file, $data);
+                fclose($file);
+            } else {
+                $data = file_get_contents($this->cacheFile);
+            }
+
+            $this->packages = Json::decode($data, true);
         }
 
         return $this->packages;
-    }
-
-    /**
-     * Get cached packages
-     *
-     * @return array
-     */
-    protected function getCachedPackages(): array
-    {
-        // caching
-        if (!file_exists($this->cacheFile)) {
-            $data = file_get_contents($this->url . "package");
-
-            $file = fopen($this->cacheFile, "w");
-            fwrite($file, $data);
-            fclose($file);
-        } else {
-            $data = file_get_contents($this->cacheFile);
-        }
-
-        return Json::decode($data, true);
     }
 }
