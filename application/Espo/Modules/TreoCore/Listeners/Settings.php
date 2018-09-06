@@ -62,6 +62,9 @@ class Settings extends AbstractListener
 
             $this->setMinimumStability((!empty($data['data']->allowUnstable)) ? 'RC' : 'stable');
 
+            // clear cache
+            $this->getContainer()->get('serviceFactory')->create('Packagist')->clearCache();
+
             $data['result']['allowUnstable'] = !empty($data['data']->allowUnstable);
         }
 

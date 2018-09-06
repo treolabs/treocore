@@ -118,8 +118,12 @@ class Packagist extends AbstractTreoService
         if (is_null($this->packages)) {
             // caching
             if (!file_exists($this->cacheFile)) {
-                $data = file_get_contents($this->url . "package");
+                // prepare params
+                $params = [
+                    'allowUnstable' => $this->getConfig()->get('allowUnstable'),
+                ];
 
+                $data = file_get_contents($this->url . "package?" . http_build_query($params));
                 $file = fopen($this->cacheFile, "w");
                 fwrite($file, $data);
                 fclose($file);
