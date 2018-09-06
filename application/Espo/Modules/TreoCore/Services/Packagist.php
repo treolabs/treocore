@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
+use Espo\Core\Utils\Json;
+
 /**
  * Packagist service
  *
@@ -52,6 +54,11 @@ class Packagist extends AbstractTreoService
      * @var string
      */
     private $url;
+
+    /**
+     * @var string
+     */
+    private $cacheFile = 'data/cache/packages.json';
 
     /**
      * Package constructor
@@ -93,14 +100,30 @@ class Packagist extends AbstractTreoService
     public function getPackages(): array
     {
         if (is_null($this->packages)) {
-            $this->packages = [];
-
-            try {
-                $this->packages = json_decode(file_get_contents($this->url . "package"), true);
-            } catch (\Exception $e) {
-            }
+            $this->packages = $this->getCachedPackages();
         }
 
         return $this->packages;
+    }
+
+    /**
+     * Get cached packages
+     *
+     * @return array
+     */
+    protected function getCachedPackages(): array
+    {
+        // caching
+        if (!file_exists($this->cacheFile)) {
+            $data = file_get_contents($this->url . "package");
+
+            $file = fopen($this->cacheFile, "w");
+            fwrite($file, $data);
+            fclose($file);
+        } else {
+            $data = file_get_contents($this->cacheFile);
+        }
+
+        return Json::decode($data, true);
     }
 }
