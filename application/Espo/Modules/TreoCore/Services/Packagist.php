@@ -76,7 +76,7 @@ class Packagist extends AbstractTreoService
      *
      * @return bool
      */
-    public function clearCache(array $data): bool
+    public function clearCache(array $data = []): bool
     {
         if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
