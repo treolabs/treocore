@@ -58,6 +58,13 @@ return [
             'method'     => 'refresh',
             'name'       => 'Refresh cache for module packages',
             'data'       => []
+        ],
+        [
+            'scheduling' => '0 */3 * * *',
+            'service'    => 'Packagist',
+            'method'     => 'notify',
+            'name'       => 'Notify admin users about new version of module, or about new module',
+            'data'       => []
         ]
     ],
     'scheduledJobsServices' => [

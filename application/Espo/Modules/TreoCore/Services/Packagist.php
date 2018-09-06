@@ -61,6 +61,11 @@ class Packagist extends AbstractTreoService
     private $cacheFile = 'data/cache/packages.json';
 
     /**
+     * @var string
+     */
+    private $notificationsFile = 'data/notifications.json';
+
+    /**
      * Package constructor
      */
     public function __construct()
@@ -147,5 +152,132 @@ class Packagist extends AbstractTreoService
         }
 
         return true;
+    }
+
+    /**
+     * Notify admin users about new version of module, or about new module
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function notify(array $data = []): bool
+    {
+        // prepare file data
+        $fileData = [];
+        if (file_exists($this->notificationsFile)) {
+            $fileData = Json::decode(file_get_contents($this->notificationsFile), true);
+        }
+
+        // get metadata
+        $metadata = $this->getContainer()->get('metadata');
+
+        // get modules
+        $modules = $metadata->getModuleList();
+
+        // checking new versions of modules
+        foreach ($modules as $id) {
+            if (!empty($module = $metadata->getModule($id))) {
+                // get version
+                $package = $this->getPackage($id);
+                $version = $package['versions'][0]['version'];
+
+                if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
+                    $this->sendNotification(
+                        [
+                            'id'              => $id,
+                            'messageTemplate' => 'newModuleVersion',
+                            'messageVars'     => [
+                                'moduleName'    => $this->getModuleTranslateName($package),
+                                'moduleVersion' => $version,
+                            ]
+                        ]
+                    );
+                    $fileData[$id]['version'][$version] = 1;
+                }
+            }
+        }
+
+        // checking if new modules exists
+        foreach ($this->getPackages() as $module) {
+            if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
+                $this->sendNotification(
+                    [
+                        'id'              => $id,
+                        'messageTemplate' => 'newModule',
+                        'messageVars'     => [
+                            'moduleName' => $this->getModuleTranslateName($module)
+                        ]
+                    ]
+                );
+                $fileData[$id] = 1;
+            }
+        }
+
+        // set to file
+        if (!empty($fileData)) {
+            $file = fopen($this->notificationsFile, "w");
+            fwrite($file, Json::encode($fileData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            fclose($file);
+        }
+
+        return true;
+    }
+
+    /**
+     * Send notification(s)
+     *
+     * @param array $data
+     */
+    protected function sendNotification($data): bool
+    {
+        // get users
+        $users = $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->where(['isAdmin' => true])
+            ->find();
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                // create notification
+                $notification = $this->getEntityManager()->getEntity('Notification');
+                $notification->set(
+                    [
+                        'type'   => 'TreoMessage',
+                        'userId' => $user->get('id'),
+                        'data'   => $data
+                    ]
+                );
+                $this->getEntityManager()->saveEntity($notification);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get module name
+     *
+     * @param array $package
+     *
+     * @return string
+     */
+    protected function getModuleTranslateName(array $package): string
+    {
+        // get current language
+        $currentLang = $this
+            ->getContainer()
+            ->get('language')
+            ->getLanguage();
+
+        // prepare result
+        $result = $package['treoId'];
+        if (!empty($package['name'][$currentLang])) {
+            $result = $package['name'][$currentLang];
+        } elseif ($package['name']['default']) {
+            $result = $package['name']['default'];
+        }
+
+        return $result;
     }
 }
