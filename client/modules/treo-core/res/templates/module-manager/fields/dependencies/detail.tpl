@@ -11,7 +11,7 @@
         <td>{{version}}</td>
         <td>
             {{#each require}}
-            <div>{{name}}: {{version}}</div>
+            <div>{{@key}}: {{this}}</div>
             {{/each}}
         </td>
     </tr>

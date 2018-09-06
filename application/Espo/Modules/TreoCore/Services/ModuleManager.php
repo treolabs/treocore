@@ -108,22 +108,23 @@ class ModuleManager extends Base
                 ->getModulePackage($id);
 
             if (!empty($package)) {
-                $result['list'][$id]['name'] = $this->translateModule($package, 'name');
-                $result['list'][$id]['description'] = $this->translateModule($package, 'description');
+                $result['list'][$id]['name'] = $this->packageTranslate($package['extra']['name'], $id);
+                $result['list'][$id]['description'] = $this->packageTranslate($package['extra']['description'], '-');
                 $result['list'][$id]['settingVersion'] = '*';
                 if ($settingVersion = $composerData['require'][$package['name']]) {
                     $result['list'][$id]['settingVersion'] = $this->prepareModuleVersion($settingVersion);
                 }
                 $result['list'][$id]['currentVersion'] = $this->prepareModuleVersion($package['version']);
-                $result['list'][$id]['versions'] = $this->prepareModuleVersions($id);
+                $result['list'][$id]['versions'] = $this->getPackagistPackage($id)['versions'];
                 if (!empty($requireds = $this->getModuleRequireds($id))) {
                     $result['list'][$id]['required'] = $requireds;
                     foreach ($requireds as $required) {
                         $pRequired = $this
                             ->getComposerModuleService()
                             ->getModulePackage($required);
+
                         $result['list'][$id]['requiredTranslates'][] = $this
-                            ->translateModule($pRequired, 'name');
+                            ->packageTranslate($pRequired['extra']['name']);
                     }
                 }
                 $result['list'][$id]['isComposer'] = true;
@@ -144,12 +145,9 @@ class ModuleManager extends Base
                 "status"         => 'install'
             ];
 
-            // get module packages
-            $packages = $this->getComposerModuleService()->getModulePackages($row['id']);
-
-            if (!empty($package = $packages['max'])) {
-                $item['name'] = $this->translateModule($package, 'name');
-                $item['description'] = $this->translateModule($package, 'description');
+            if (!empty($package = $this->getPackagistPackage($row['id']))) {
+                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
+                $item['description'] = $this->packageTranslate($package['description'], "-");
                 if (!empty($settingVersion = $composerData['require'][$package['name']])) {
                     $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
                 }
@@ -182,48 +180,24 @@ class ModuleManager extends Base
             'list'  => []
         ];
 
-        if (!empty($modules = $this->getComposerModuleService()->getModulePackages())) {
-            // get current language
-            $currentLang = $this->getLanguage()->getLanguage();
-
+        if (!empty($packages = $this->getPackagistPackages())) {
             // get diff
             $diff = $this->getComposerService()->getComposerDiff();
 
-            // prepare toInstall
-            $toInstall = array_column($diff['install'], 'id');
+            // get installed modules
+            $installed = array_merge($this->getMetadata()->getModuleList(), array_column($diff['install'], 'id'));
 
-            foreach ($modules as $moduleId => $versions) {
-                $package = $this
-                    ->getComposerModuleService()
-                    ->getModulePackage($moduleId);
-
-                if (empty($package) && !in_array($moduleId, $toInstall)) {
-                    // prepare max
-                    $max = $versions['max'];
-
-                    // prepare name
-                    $name = $moduleId;
-                    if (!empty($max['extra']['name'][$currentLang])) {
-                        $name = $max['extra']['name'][$currentLang];
-                    } elseif ($max['extra']['name']['default']) {
-                        $name = $max['extra']['name']['default'];
-                    }
-
-                    // prepare description
-                    $description = '-';
-                    if (!empty($max['extra']['description'][$currentLang])) {
-                        $description = $max['extra']['description'][$currentLang];
-                    } elseif ($max['extra']['description']['default']) {
-                        $description = $max['extra']['description']['default'];
-                    }
-
+            foreach ($packages as $package) {
+                if (!in_array($package['treoId'], $installed)) {
                     $result['list'][] = [
-                        'id'          => $moduleId,
-                        'versions'    => $this->prepareModuleVersions($moduleId),
-                        'name'        => $name,
-                        'description' => $description
+                        'id'          => $package['treoId'],
+                        'name'        => $this->packageTranslate($package['name'], $package['treoId']),
+                        'description' => $this->packageTranslate($package['description'], '-'),
+                        'status'      => $package['status'],
+                        'versions'    => $package['versions']
                     ];
                 }
+
             }
 
             // prepare total
@@ -650,31 +624,6 @@ class ModuleManager extends Base
     }
 
     /**
-     * Translate field
-     *
-     * @param array  $package
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function translateModule(array $package, string $key): string
-    {
-        // prepare result
-        $result = '';
-
-        // get language
-        $lang = $this->getLanguage()->getLanguage();
-
-        if (!empty($translate = $package['extra'][$key][$lang])) {
-            $result = $translate;
-        } elseif (!empty($translate = $package['extra'][$key]['default'])) {
-            $result = $translate;
-        }
-
-        return $result;
-    }
-
-    /**
      * Translate error
      *
      * @param string $key
@@ -696,103 +645,6 @@ class ModuleManager extends Base
     protected function prepareModuleVersion(string $version): string
     {
         return ComposerModule::prepareVersion($version);
-    }
-
-    /**
-     * Prepare module versions
-     *
-     * @param string $id
-     *
-     * @return array
-     */
-    protected function prepareModuleVersions(string $id): array
-    {
-        // prepare result
-        $result = [];
-
-        // get packages
-        $packages = $this->getComposerModuleService()->getModulePackages();
-
-        if (!empty($packages) && !empty($data = $packages[$id])) {
-            // get current language
-            $currentLang = $this->getLanguage()->getLanguage();
-
-            foreach ($data as $version => $row) {
-                if ($version != 'max') {
-                    // prepare require
-                    $require = [];
-
-                    foreach ($row['require'] as $k => $v) {
-                        // for system
-                        if ($k == 'treo/treopim') {
-                            $require[$k] = [
-                                'id'       => $k,
-                                'name'     => 'Treo System',
-                                'version'  => $v,
-                                'isModule' => false
-                            ];
-                        }
-
-                        // for modules
-                        foreach ($packages as $pac) {
-                            if ($pac['max']['name'] == $k) {
-                                // prepare name
-                                $name = $pac['max']['extra']['name']['default'];
-                                if (isset($pac['max']['extra']['name'][$currentLang])) {
-                                    $name = $pac['max']['extra']['name'][$currentLang];
-                                }
-
-                                $require[$k] = [
-                                    'id'       => $k,
-                                    'name'     => $name,
-                                    'version'  => $v,
-                                    'isModule' => true
-                                ];
-                            }
-                        }
-
-                        // for else
-                        if (!isset($require[$k])) {
-                            $require[$k] = [
-                                'id'       => $k,
-                                'name'     => $k,
-                                'version'  => $v,
-                                'isModule' => false
-                            ];
-                        }
-                    }
-
-                    // push
-                    $result[$version] = [
-                        'version' => $version,
-                        'require' => array_values($require)
-                    ];
-                }
-            }
-
-            // for unstable version
-            if (!$this->getConfig()->get('allowUnstable')) {
-                foreach ($result as $version => $row) {
-                    $version = strtolower($version);
-                    if (preg_match('/^\d.\d.\d-rc\d$/', $version)) {
-                        unset($result[$version]);
-                    }
-                }
-            }
-
-            // sorting result
-            $sortOrder = array_keys($result);
-            natsort($sortOrder);
-            $sortData = [];
-            foreach (array_reverse($sortOrder) as $v) {
-                $sortData[] = $result[$v];
-            }
-
-            // prepare result
-            $result = $sortData;
-        }
-
-        return $result;
     }
 
     /**
@@ -895,6 +747,52 @@ class ModuleManager extends Base
     protected function getComposerService(): Composer
     {
         return $this->getInjection('serviceFactory')->create('Composer');
+    }
+
+    /**
+     * @param array  $field
+     * @param string $default
+     *
+     * @return string
+     */
+    protected function packageTranslate(array $field, string $default = ''): string
+    {
+        // get current language
+        $currentLang = $this->getLanguage()->getLanguage();
+
+        $result = $default;
+        if (!empty($field[$currentLang])) {
+            $result = $field[$currentLang];
+        } elseif ($field['default']) {
+            $result = $field['default'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get packages
+     *
+     * @param string $id
+     *
+     * @return array
+     * @throws Exceptions\Error
+     */
+    protected function getPackagistPackage(string $id): array
+    {
+        return $this->getInjection('serviceFactory')->create('Packagist')->getPackage($id);
+    }
+
+
+    /**
+     * Get packages
+     *
+     * @return array
+     * @throws Exceptions\Error
+     */
+    protected function getPackagistPackages(): array
+    {
+        return $this->getInjection('serviceFactory')->create('Packagist')->getPackages();
     }
 
     /**
