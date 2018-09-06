@@ -38,6 +38,7 @@ namespace Espo\Modules\TreoCore\Listeners;
 use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Espo\Modules\TreoCore\Services\ComposerModule as ComposerModuleService;
+use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
 
 /**
  * Composer listener
@@ -46,6 +47,8 @@ use Espo\Modules\TreoCore\Services\ComposerModule as ComposerModuleService;
  */
 class Composer extends AbstractListener
 {
+    use EventTriggeredTrait;
+
     /**
      * @param array $data
      *
@@ -80,16 +83,22 @@ class Composer extends AbstractListener
                 // for install module
                 if (!empty($composerDiff['install'])) {
                     foreach ($composerDiff['install'] as $row) {
-                        // notify
-                        $this->notifyInstall($row['id'], $data['createdById']);
+                        // set createdById
+                        $row['createdById'] = $data['createdById'];
+
+                        // triggered event
+                        $this->triggered('Composer', 'afterInstallModule', $row);
                     }
                 }
 
                 // for updated modules
                 if (!empty($composerDiff['update'])) {
                     foreach ($composerDiff['update'] as $row) {
-                        // notify
-                        $this->notifyUpdate($row['id'], $row['from'], $data['createdById']);
+                        // set createdById
+                        $row['createdById'] = $data['createdById'];
+
+                        // triggered event
+                        $this->triggered('Composer', 'afterUpdateModule', $row);
                     }
                 }
 
@@ -102,8 +111,11 @@ class Composer extends AbstractListener
                         // delete dir
                         ModuleMover::delete([$row['id'] => $row['package']]);
 
-                        // notify
-                        $this->notifyDelete($row['id'], $data['createdById']);
+                        // set createdById
+                        $row['createdById'] = $data['createdById'];
+
+                        // triggered event
+                        $this->triggered('Composer', 'afterDeleteModule', $row);
                     }
                 }
 
@@ -114,6 +126,49 @@ class Composer extends AbstractListener
 
         return $data;
     }
+
+    /**
+     * After install module event
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterInstallModule(array $data): array
+    {
+        $this->notifyInstall($data['id'], $data['createdById']);
+
+        return $data;
+    }
+
+    /**
+     * After update module event
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterUpdateModule(array $data): array
+    {
+        $this->notifyUpdate($data['id'], $data['from'], $data['createdById']);
+
+        return $data;
+    }
+
+    /**
+     * After delete module event
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function afterDeleteModule(array $data): array
+    {
+        $this->notifyDelete($data['id'], $data['createdById']);
+
+        return $data;
+    }
+
 
     /**
      * Notify about install
