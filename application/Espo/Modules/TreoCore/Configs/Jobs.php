@@ -55,8 +55,8 @@ return [
         [
             'scheduling' => '0 */2 * * *',
             'service'    => 'Packagist',
-            'method'     => 'clearCache',
-            'name'       => 'Clear cached module packages',
+            'method'     => 'refresh',
+            'name'       => 'Refresh cache for module packages',
             'data'       => []
         ]
     ],

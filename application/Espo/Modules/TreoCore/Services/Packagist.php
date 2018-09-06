@@ -70,13 +70,34 @@ class Packagist extends AbstractTreoService
     }
 
     /**
-     * Clear cached module packages
+     * Refresh cache for module packages
      *
      * @param array $data
      *
      * @return bool
      */
-    public function clearCache(array $data = []): bool
+    public function refresh(array $data = []): bool
+    {
+        // prepare params
+        $params = [
+            'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
+            'token'         => $this->getConfig()->get('gitlabToken', null),
+        ];
+
+        $data = file_get_contents($this->url . "package?" . http_build_query($params));
+        $file = fopen($this->cacheFile, "w");
+        fwrite($file, $data);
+        fclose($file);
+
+        return true;
+    }
+
+    /**
+     * Clear cache file for module packages
+     *
+     * @return bool
+     */
+    public function clearCache(): bool
     {
         if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
@@ -118,21 +139,10 @@ class Packagist extends AbstractTreoService
         if (is_null($this->packages)) {
             // caching
             if (!file_exists($this->cacheFile)) {
-                // prepare params
-                $params = [
-                    'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
-                    'token'         => $this->getConfig()->get('gitlabToken', null),
-                ];
-
-                $data = file_get_contents($this->url . "package?" . http_build_query($params));
-                $file = fopen($this->cacheFile, "w");
-                fwrite($file, $data);
-                fclose($file);
-            } else {
-                $data = file_get_contents($this->cacheFile);
+                $this->refresh();
             }
 
-            $this->packages = Json::decode($data, true);
+            $this->packages = Json::decode(file_get_contents($this->cacheFile), true);
         }
 
         return $this->packages;
