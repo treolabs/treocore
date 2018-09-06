@@ -107,9 +107,9 @@ class ModuleManager extends Base
                 $result['list'][$id]['description'] = $this->packageTranslate($package['extra']['description'], '-');
                 $result['list'][$id]['settingVersion'] = '*';
                 if ($settingVersion = $composerData['require'][$package['name']]) {
-                    $result['list'][$id]['settingVersion'] = $this->prepareModuleVersion($settingVersion);
+                    $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
-                $result['list'][$id]['currentVersion'] = $this->prepareModuleVersion($package['version']);
+                $result['list'][$id]['currentVersion'] = $package['version'];
                 $result['list'][$id]['versions'] = $this->getPackagistPackage($id)['versions'];
                 if (!empty($requireds = $this->getModuleRequireds($id))) {
                     $result['list'][$id]['required'] = $requireds;
@@ -144,7 +144,7 @@ class ModuleManager extends Base
                 $item['name'] = $this->packageTranslate($package['name'], $row['id']);
                 $item['description'] = $this->packageTranslate($package['description'], "-");
                 if (!empty($settingVersion = $composerData['require'][$package['name']])) {
-                    $item['settingVersion'] = $this->prepareModuleVersion($settingVersion);
+                    $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
             }
 
@@ -623,18 +623,6 @@ class ModuleManager extends Base
     protected function translateError(string $key): string
     {
         return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
-    }
-
-    /**
-     * Prepare module version
-     *
-     * @param string $version
-     *
-     * @return string
-     */
-    protected function prepareModuleVersion(string $version): string
-    {
-        return Metadata::prepareVersion($version);
     }
 
     /**
