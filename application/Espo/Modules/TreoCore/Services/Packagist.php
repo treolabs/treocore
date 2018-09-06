@@ -66,45 +66,9 @@ class Packagist extends AbstractTreoService
     public function __construct()
     {
         // set repository
-        $this->url = json_decode(file_get_contents('composer.json'), true)['repositories'][0]['url'] . '/api/v1/';
+        $this->url = Json::decode(file_get_contents('composer.json'), true)['repositories'][0]['url'] . '/api/v1/';
     }
 
-    /**
-     * Refresh cache for module packages
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function refresh(array $data = []): bool
-    {
-        // prepare params
-        $params = [
-            'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
-            'token'         => $this->getConfig()->get('gitlabToken', null),
-        ];
-
-        $data = file_get_contents($this->url . "package?" . http_build_query($params));
-        $file = fopen($this->cacheFile, "w");
-        fwrite($file, $data);
-        fclose($file);
-
-        return true;
-    }
-
-    /**
-     * Clear cache file for module packages
-     *
-     * @return bool
-     */
-    public function clearCache(): bool
-    {
-        if (file_exists($this->cacheFile)) {
-            unlink($this->cacheFile);
-        }
-
-        return true;
-    }
 
     /**
      * Get current module package
@@ -146,5 +110,42 @@ class Packagist extends AbstractTreoService
         }
 
         return $this->packages;
+    }
+
+    /**
+     * Refresh cache for module packages
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function refresh(array $data = []): bool
+    {
+        // prepare params
+        $params = [
+            'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
+            'token'         => $this->getConfig()->get('gitlabToken', null),
+        ];
+
+        $data = file_get_contents($this->url . "package?" . http_build_query($params));
+        $file = fopen($this->cacheFile, "w");
+        fwrite($file, $data);
+        fclose($file);
+
+        return true;
+    }
+
+    /**
+     * Clear cache file for module packages
+     *
+     * @return bool
+     */
+    public function clearCache(): bool
+    {
+        if (file_exists($this->cacheFile)) {
+            unlink($this->cacheFile);
+        }
+
+        return true;
     }
 }
