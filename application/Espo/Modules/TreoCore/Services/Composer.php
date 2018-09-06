@@ -359,12 +359,6 @@ class Composer extends AbstractTreoService
             $composerData = $this->getModuleComposerJson();
             $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
 
-            // create service
-            $composerModule = $this
-                ->getContainer()
-                ->get('serviceFactory')
-                ->create('ComposerModule');
-
             foreach ($composerData['require'] as $package => $version) {
                 if (!isset($composerStableData['require'][$package])) {
                     $result['install'][] = [
@@ -374,7 +368,7 @@ class Composer extends AbstractTreoService
                 } elseif ($version != $composerStableData['require'][$package]) {
                     // prepare data
                     $id = $this->getModuleId($package);
-                    $from = $composerModule->getModulePackage($id)['version'];
+                    $from = $this->getContainer()->get('metadata')->getModule($id)['version'];
 
                     $result['update'][] = [
                         'id'      => $id,
@@ -400,25 +394,25 @@ class Composer extends AbstractTreoService
     /**
      * Get module ID
      *
-     * @param string $package
+     * @param string $packageId
      *
      * @return string
      */
-    protected function getModuleId(string $package): string
+    protected function getModuleId(string $packageId): string
     {
         // prepare result
-        $result = $package;
+        $result = $packageId;
 
         // get packages
         $packages = $this
             ->getContainer()
             ->get('serviceFactory')
-            ->create('ComposerModule')
-            ->getModulePackages();
+            ->create('Packagist')
+            ->getPackages();
 
-        foreach ($packages as $id => $versions) {
-            if ($versions['max']['name'] == $package) {
-                $result = $id;
+        foreach ($packages as $package) {
+            if ($package['packageId'] == $packageId) {
+                $result = $package['treoId'];
             }
         }
 

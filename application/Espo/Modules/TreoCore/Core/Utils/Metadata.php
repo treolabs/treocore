@@ -90,6 +90,23 @@ class Metadata extends EspoMetadata
     protected $moduleMetadataClass = 'Espo\Modules\%s\Metadata\Metadata';
 
     /**
+     * @var array|null
+     */
+    protected $composerLockData = null;
+
+    /**
+     * Prepare version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    public static function prepareVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
+    }
+
+    /**
      * Get module config data
      *
      * @param string $module
@@ -99,6 +116,40 @@ class Metadata extends EspoMetadata
     public function getModuleConfigData(string $module)
     {
         return $this->getModuleConfig()->get($module);
+    }
+
+    /**
+     * Get module data (from composer.lock)
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function getModule(string $id): array
+    {
+        // prepare result
+        $result = [];
+
+        if (is_null($this->composerLockData)) {
+            // load composer lock
+            $this->loadComposerLock();
+        }
+
+        if (!empty($packages = $this->composerLockData['packages'])) {
+            foreach ($packages as $package) {
+                if (!empty($package['extra']['treoId']) && $id == $package['extra']['treoId']) {
+                    // prepare version
+                    $package['version'] = self::prepareVersion($package['version']);
+
+                    // prepare result
+                    $result = $package;
+
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -223,5 +274,26 @@ class Metadata extends EspoMetadata
         }
 
         return $this->moduleConfig;
+    }
+
+
+    /**
+     * Load composer lock data
+     */
+    protected function loadComposerLock(): void
+    {
+        // prepare data
+        $this->composerLockData = [];
+
+        // prepare composerLock
+        $composerLock = 'composer.lock';
+
+        // prepare dir
+        $vendorTreoDir = 'vendor/' . ModuleMover::TREODIR . '/';
+
+        if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
+            // prepare data
+            $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
+        }
     }
 }

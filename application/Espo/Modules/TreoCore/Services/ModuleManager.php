@@ -102,12 +102,7 @@ class ModuleManager extends Base
                 'status'             => $this->getModuleStatus($composerDiff, $id),
             ];
 
-            // get package
-            $package = $this
-                ->getComposerModuleService()
-                ->getModulePackage($id);
-
-            if (!empty($package)) {
+            if (!empty($package = $this->getMetadata()->getModule($id))) {
                 $result['list'][$id]['name'] = $this->packageTranslate($package['extra']['name'], $id);
                 $result['list'][$id]['description'] = $this->packageTranslate($package['extra']['description'], '-');
                 $result['list'][$id]['settingVersion'] = '*';
@@ -120,8 +115,8 @@ class ModuleManager extends Base
                     $result['list'][$id]['required'] = $requireds;
                     foreach ($requireds as $required) {
                         $pRequired = $this
-                            ->getComposerModuleService()
-                            ->getModulePackage($required);
+                            ->getMetadata()
+                            ->getModule($required);
 
                         $result['list'][$id]['requiredTranslates'][] = $this
                             ->packageTranslate($pRequired['extra']['name']);
@@ -224,8 +219,7 @@ class ModuleManager extends Base
         }
 
         // prepare params
-        $package = $this->getComposerModuleService()->getModulePackage($id);
-        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        $packagistPackage = $this->getPackagistPackage($id);
 
         // prepare version
         if (empty($version)) {
@@ -233,10 +227,10 @@ class ModuleManager extends Base
         }
 
         // validation
-        if (empty($packages) || empty($packages)) {
+        if (empty($packagistPackage)) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
-        if (!empty($package)) {
+        if (!empty($this->getMetadata()->getModule($id))) {
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
         if (!$this->isVersionValid($version)) {
@@ -246,7 +240,7 @@ class ModuleManager extends Base
         // update composer.json
         $this
             ->getComposerService()
-            ->update(array_pop($packages)['name'], $version);
+            ->update($packagistPackage['packageId'], $version);
 
         return true;
     }
@@ -268,11 +262,10 @@ class ModuleManager extends Base
         }
 
         // prepare params
-        $package = $this->getComposerModuleService()->getModulePackage($id);
-        $packages = $this->getComposerModuleService()->getModulePackages($id);
+        $package = $this->getMetadata()->getModule($id);
 
         // validation
-        if (empty($packages)) {
+        if (empty($this->getPackagistPackage($id))) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (empty($package)) {
@@ -311,7 +304,7 @@ class ModuleManager extends Base
         }
 
         // prepare params
-        $package = $this->getComposerModuleService()->getModulePackage($id);
+        $package = $this->getMetadata()->getModule($id);
 
         // validation
         if (empty($package)) {
@@ -345,12 +338,9 @@ class ModuleManager extends Base
         $result = false;
 
         // get package
-        $packages = $this->getComposerModuleService()->getModulePackages($id);
-        if (!empty($packages)) {
-            $package = array_pop($packages);
-        }
+        $package = $this->getPackagistPackage($id);
 
-        if (!empty($name = $package['name'])) {
+        if (!empty($name = $package['packageId'])) {
             // get data
             $composerData = $this->getComposerService()->getModuleComposerJson();
             $composerStableData = $this->getComposerService()->getModuleStableComposerJson();
@@ -574,7 +564,7 @@ class ModuleManager extends Base
             // prepare result
             $this->moduleRequireds[$moduleId] = [];
 
-            if (!empty($package = $this->getComposerModuleService()->getModulePackage($moduleId))) {
+            if (!empty($package = $this->getMetadata()->getModule($moduleId))) {
                 if (!empty($composerRequire = $package['require']) && is_array($composerRequire)) {
                     // get treo modules
                     $treoModule = TreoComposer::getModules();
@@ -644,7 +634,7 @@ class ModuleManager extends Base
      */
     protected function prepareModuleVersion(string $version): string
     {
-        return ComposerModule::prepareVersion($version);
+        return Metadata::prepareVersion($version);
     }
 
     /**
@@ -697,16 +687,6 @@ class ModuleManager extends Base
     protected function getModuleConfigData(string $key)
     {
         return $this->getMetadata()->getModuleConfigData($key);
-    }
-
-    /**
-     * Get ComposerModule service
-     *
-     * @return ComposerModule
-     */
-    protected function getComposerModuleService(): ComposerModule
-    {
-        return $this->getInjection('serviceFactory')->create('ComposerModule');
     }
 
     /**

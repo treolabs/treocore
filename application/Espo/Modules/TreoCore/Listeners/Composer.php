@@ -35,9 +35,9 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
+use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
-use Espo\Modules\TreoCore\Services\ComposerModule as ComposerModuleService;
 use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
 
 /**
@@ -180,20 +180,18 @@ class Composer extends AbstractListener
     {
         // get package
         $package = $this
-            ->getComposerModuleService()
-            ->getModulePackage($id);
+            ->getContainer()
+            ->get('metadata')
+            ->getModule($id);
 
         if (!empty($package)) {
             // get module name
             $moduleName = $this->getModuleName($package);
 
-            // prepare data
-            $version = ComposerModuleService::prepareVersion($package['version']);
-
             // prepare message
             $message = "Module '<strong>%s</strong>' (%s) installed successfully.";
             $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-            $message = sprintf($this->translate($message), $moduleName, $version);
+            $message = sprintf($this->translate($message), $moduleName, $package['version']);
 
             /**
              * Notify users
@@ -217,13 +215,14 @@ class Composer extends AbstractListener
     {
         // get package
         $package = $this
-            ->getComposerModuleService()
-            ->getModulePackage($id);
+            ->getContainer()
+            ->get('metadata')
+            ->getModule($id);
 
         if (!empty($package)) {
             // prepare data
-            $from = ComposerModuleService::prepareVersion($from);
-            $to = ComposerModuleService::prepareVersion($package['version']);
+            $from = Metadata::prepareVersion($from);
+            $to = Metadata::prepareVersion($package['version']);
 
             if ($from != $to) {
                 // get module name
@@ -260,32 +259,38 @@ class Composer extends AbstractListener
     protected function notifyDelete(string $id, string $createdById)
     {
         // get package
-        $packages = $this
-            ->getComposerModuleService()
-            ->getModulePackages($id);
+        $package = $this->getService('Packagist')->getPackage($id);
 
-        if (!empty($packages) && is_array($packages)) {
-            // prepare package
-            $package = array_pop($packages);
-
-            // get module name
-            $moduleName = $this->getModuleName($package);
-
-            // prepare message
-            $message = "Module '<strong>%s</strong>' deleted successfully.";
-            $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
-            $message = sprintf($this->translate($message), $moduleName);
-
-            /**
-             * Notify users
-             */
-            $this->notify($message);
-
-            /**
-             * Stream push
-             */
-            $this->pushToStream('deleteModule', ['package' => $package], $createdById);
+        if (empty($package)) {
+            return;
         }
+
+        // get current language
+        $currentLang = $this
+            ->getLanguage()
+            ->getLanguage();
+
+        $moduleName = $id;
+        if (!empty($package['name'][$currentLang])) {
+            $moduleName = $package['name'][$currentLang];
+        } elseif ($package['name']['default']) {
+            $moduleName = $package['name']['default'];
+        }
+
+        // prepare message
+        $message = "Module '<strong>%s</strong>' deleted successfully.";
+        $message .= " <a href=\"/#ModuleManager/list\">Details</a>";
+        $message = sprintf($this->translate($message), $moduleName);
+
+        /**
+         * Notify users
+         */
+        $this->notify($message);
+
+        /**
+         * Stream push
+         */
+        $this->pushToStream('deleteModule', ['package' => $package], $createdById);
     }
 
     /**
@@ -393,16 +398,6 @@ class Composer extends AbstractListener
         return $this
             ->getLanguage()
             ->translate($key, 'messages', 'ModuleManager');
-    }
-
-    /**
-     * Get ComposerModule service
-     *
-     * @return ComposerModuleService
-     */
-    protected function getComposerModuleService(): ComposerModuleService
-    {
-        return $this->getService('ComposerModule');
     }
 
     /**

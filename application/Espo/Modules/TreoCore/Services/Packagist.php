@@ -93,7 +93,12 @@ class Packagist extends AbstractTreoService
     public function getPackages(): array
     {
         if (is_null($this->packages)) {
-            $this->packages = json_decode(file_get_contents($this->url . "package"), true);
+            $this->packages = [];
+
+            try {
+                $this->packages = json_decode(file_get_contents($this->url . "package"), true);
+            } catch (\Exception $e) {
+            }
         }
 
         return $this->packages;

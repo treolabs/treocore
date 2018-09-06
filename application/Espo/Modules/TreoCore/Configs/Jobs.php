@@ -47,13 +47,6 @@ return [
         ],
         [
             'scheduling' => '0 */2 * * *',
-            'service'    => 'ComposerModule',
-            'method'     => 'cachingPackages',
-            'name'       => 'Caching module packages',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '0 */2 * * *',
             'service'    => 'CoreUpgrade',
             'method'     => 'checkingNewVersion',
             'name'       => 'Checking if new version of TreoCore exists',

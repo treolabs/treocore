@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core\Migration;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
-use Espo\Modules\TreoCore\Services\ComposerModule;
 
 /**
  * Migration
@@ -143,7 +142,7 @@ class Migration
     protected function prepareVersion(string $version)
     {
         // prepare version
-        $version = ComposerModule::prepareVersion($version);
+        $version = str_replace('v', '', $version);
 
         if (preg_match_all('/^(.*)\.(.*)\.(.*)$/', $version, $matches)) {
             // prepare data
