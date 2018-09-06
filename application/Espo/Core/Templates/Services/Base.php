@@ -169,12 +169,7 @@ class Base extends \Espo\Services\Record
      */
     public function addRelation(array $ids, array $foreignIds, string $link): bool
     {
-        if (empty($ids) || empty($foreignIds) || empty($link)) {
-            throw new BadRequest();
-        }
-
         $result = false;
-        $countRelations = 0;
 
         $foreignEntityType = $this->getEntityManager()
             ->getEntity($this->entityType)
@@ -189,13 +184,10 @@ class Base extends \Espo\Services\Record
 
         foreach ($entities as $entity) {
             foreach ($foreignEntities as $foreignEntity) {
-                $this->getRepository()->relate($entity, $link, $foreignEntity);
-                $countRelations++;
+                if ($this->getRepository()->relate($entity, $link, $foreignEntity) && !$result) {
+                    $result = true;
+                }
             }
-        }
-
-        if ($countRelations) {
-            $result = true;
         }
 
         return $result;
@@ -214,12 +206,7 @@ class Base extends \Espo\Services\Record
      */
     public function removeRelation(array $ids, array $foreignIds, string $link): bool
     {
-        if (empty($ids) || empty($foreignIds) || empty($link)) {
-            throw new BadRequest();
-        }
-
         $result = false;
-        $countRelations = 0;
 
         $foreignEntityType = $this->getEntityManager()
             ->getEntity($this->entityType)
@@ -234,13 +221,10 @@ class Base extends \Espo\Services\Record
 
         foreach ($entities as $entity) {
             foreach ($foreignEntities as $foreignEntity) {
-                $this->getRepository()->unrelate($entity, $link, $foreignEntity);
-                $countRelations++;
+                if ($this->getRepository()->unrelate($entity, $link, $foreignEntity) && !$result) {
+                    $result = true;
+                }
             }
-        }
-
-        if ($countRelations) {
-            $result = true;
         }
 
         return $result;

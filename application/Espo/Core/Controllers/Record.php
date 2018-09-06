@@ -440,6 +440,10 @@ class Record extends Base
             throw new BadRequest();
         }
 
+        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
+            throw new BadRequest();
+        }
+
         if (!$this->getAcl()->check($this->name, 'edit')) {
             throw new Forbidden();
         }
@@ -462,6 +466,10 @@ class Record extends Base
     public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
     {
         if (!$request->isDelete()) {
+            throw new BadRequest();
+        }
+
+        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
             throw new BadRequest();
         }
 
