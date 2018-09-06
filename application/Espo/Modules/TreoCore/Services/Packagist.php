@@ -121,6 +121,7 @@ class Packagist extends AbstractTreoService
                 // prepare params
                 $params = [
                     'allowUnstable' => $this->getConfig()->get('allowUnstable'),
+                    'token'         => $this->getConfig()->get('gitlabToken'),
                 ];
 
                 $data = file_get_contents($this->url . "package?" . http_build_query($params));
