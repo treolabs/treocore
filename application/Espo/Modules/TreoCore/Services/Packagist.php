@@ -70,6 +70,22 @@ class Packagist extends AbstractTreoService
     }
 
     /**
+     * Clear cached module packages
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function clearCache(array $data): bool
+    {
+        if (file_exists($this->cacheFile)) {
+            unlink($this->cacheFile);
+        }
+
+        return true;
+    }
+
+    /**
      * Get current module package
      *
      * @param string $module

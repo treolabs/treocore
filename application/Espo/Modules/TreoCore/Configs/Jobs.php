@@ -51,6 +51,13 @@ return [
             'method'     => 'checkingNewVersion',
             'name'       => 'Checking if new version of TreoCore exists',
             'data'       => []
+        ],
+        [
+            'scheduling' => '0 */2 * * *',
+            'service'    => 'Packagist',
+            'method'     => 'clearCache',
+            'name'       => 'Clear cached module packages',
+            'data'       => []
         ]
     ],
     'scheduledJobsServices' => [
