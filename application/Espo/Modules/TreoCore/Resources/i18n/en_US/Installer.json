@@ -26,7 +26,10 @@
     "confirmYourPassword": "Confirm Your Password",
     "back": "Back",
     "next": "Next",
-    "finish": "Finish"
+    "finish": "Finish",
+    "required": "Required",
+    "currentVersion": "Current Version",
+    "status": "Status"
   },
   "errors": {
     "alreadyInstalled": "TreoCore already installed",
