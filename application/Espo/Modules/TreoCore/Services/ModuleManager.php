@@ -143,7 +143,7 @@ class ModuleManager extends Base
             if (!empty($package = $this->getPackagistPackage($row['id']))) {
                 $item['name'] = $this->packageTranslate($package['name'], $row['id']);
                 $item['description'] = $this->packageTranslate($package['description'], "-");
-                if (!empty($settingVersion = $composerData['require'][$package['name']])) {
+                if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
                     $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
             }

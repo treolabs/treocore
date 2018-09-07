@@ -287,10 +287,21 @@ class Composer extends AbstractListener
          */
         $this->notify($message);
 
+        // prepare stream data
+        $streamData = [
+            'package' => [
+                'extra' => [
+                    'treoId'      => $package['treoId'],
+                    'name'        => $package['name'],
+                    'description' => $package['description'],
+                ]
+            ]
+        ];
+
         /**
          * Stream push
          */
-        $this->pushToStream('deleteModule', ['package' => $package], $createdById);
+        $this->pushToStream('deleteModule', $streamData, $createdById);
     }
 
     /**
