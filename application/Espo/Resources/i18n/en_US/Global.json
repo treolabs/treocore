@@ -298,7 +298,9 @@
         "massUpdate": "Mass Update",
         "export": "Export",
         "follow": "Follow",
-        "unfollow": "Unfollow"
+        "unfollow": "Unfollow",
+        "addRelation": "Add relation",
+        "removeRelation": "Remove relation"
     },
     "fields": {
         "name": "Name",

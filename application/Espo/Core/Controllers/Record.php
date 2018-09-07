@@ -422,6 +422,64 @@ class Record extends Base
         throw new Error();
     }
 
+    /**
+     * Action add relation
+     *
+     * @param array $params
+     * @param \stdClass $data
+     * @param Request $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
+    {
+        if (!$request->isPost()) {
+            throw new BadRequest();
+        }
+
+        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
+            throw new BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'edit')) {
+            throw new Forbidden();
+        }
+
+        return $this->getRecordService()->addRelation($data->ids, $data->foreignIds, $params['link']);
+    }
+
+    /**
+     * Action remove relation
+     *
+     * @param array $params
+     * @param \stdClass $data
+     * @param Request $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
+    {
+        if (!$request->isDelete()) {
+            throw new BadRequest();
+        }
+
+        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
+            throw new BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'edit')) {
+            throw new Forbidden();
+        }
+
+        return $this->getRecordService()->removeRelation($data->ids, $data->foreignIds, $params['link']);
+    }
+
     public function actionFollow($params, $data, $request)
     {
         if (!$request->isPut()) {

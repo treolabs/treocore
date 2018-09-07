@@ -155,5 +155,79 @@ class Base extends \Espo\Services\Record
 
         return $this->getSelectParams($p);
     }
+
+    /**
+     * Add relation to entities
+     *
+     * @param array $ids
+     * @param array $foreignIds
+     * @param string $link
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     */
+    public function addRelation(array $ids, array $foreignIds, string $link): bool
+    {
+        $result = false;
+
+        $foreignEntityType = $this->getEntityManager()
+            ->getEntity($this->entityType)
+            ->getRelationParam($link, 'entity');
+
+        $foreignEntities = $this->getEntityManager()
+            ->getRepository($foreignEntityType)
+            ->where(['id' => $foreignIds])->find();
+
+        $entities = $this->getRepository()
+            ->where(['id' => $ids])->find();
+
+        foreach ($entities as $entity) {
+            foreach ($foreignEntities as $foreignEntity) {
+                if ($this->getRepository()->relate($entity, $link, $foreignEntity) && !$result) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Remove relation from entities
+     *
+     * @param array $ids
+     * @param array $foreignIds
+     * @param string $link
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     */
+    public function removeRelation(array $ids, array $foreignIds, string $link): bool
+    {
+        $result = false;
+
+        $foreignEntityType = $this->getEntityManager()
+            ->getEntity($this->entityType)
+            ->getRelationParam($link, 'entity');
+
+        $foreignEntities = $this->getEntityManager()
+            ->getRepository($foreignEntityType)
+            ->where(['id' => $foreignIds])->find();
+
+        $entities = $this->getRepository()
+            ->where(['id' => $ids])->find();
+
+        foreach ($entities as $entity) {
+            foreach ($foreignEntities as $foreignEntity) {
+                if ($this->getRepository()->unrelate($entity, $link, $foreignEntity) && !$result) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
 }
 

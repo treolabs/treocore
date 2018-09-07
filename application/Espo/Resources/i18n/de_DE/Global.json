@@ -257,7 +257,9 @@
     "massUpdate": "Massenänderung",
     "export": "Exportieren",
     "follow": "Abonnieren",
-    "unfollow": "nicht gefolgt"
+    "unfollow": "nicht gefolgt",
+    "addRelation": "Beziehung hinzufügen",
+    "removeRelation": "Beziehung entfernen"
   },
   "fields": {
     "name": "Name",
