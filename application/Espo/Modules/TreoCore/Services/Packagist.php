@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\Utils\Json;
+use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
 
 /**
  * Packagist service
@@ -129,7 +130,7 @@ class Packagist extends AbstractTreoService
         // prepare params
         $params = [
             'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
-            'token'         => $this->getConfig()->get('gitlabToken', null),
+            'token'         => $this->getToken(),
         ];
 
         $data = file_get_contents($this->url . "package?" . http_build_query($params));
@@ -279,5 +280,31 @@ class Packagist extends AbstractTreoService
         }
 
         return $result;
+    }
+
+    /**
+     * Get gitlab token
+     *
+     * @return null|string
+     */
+    protected function getToken(): ?string
+    {
+        // prepare token
+        $token = $this->getConfig()->get('gitlabToken');
+
+        // get token
+        if (empty($token)) {
+            $token = null;
+            $authData = (new ComposerUtil())->getAuthData();
+            if (!empty($username = $authData['username'])) {
+                $token = Json::decode(file_get_contents($this->url . "gitlab-token?username=$username"), true)['token'];
+
+                // save
+                $this->getConfig()->set('gitlabToken', $token);
+                $this->getConfig()->save();
+            }
+        }
+
+        return $token;
     }
 }
