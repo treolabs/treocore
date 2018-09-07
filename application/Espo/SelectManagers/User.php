@@ -62,7 +62,8 @@ class User extends \Espo\Core\SelectManagers\Base
     {
         $result['whereClause'][] = array(
             'isActive' => true,
-            'isPortalUser' => false
+           //@todo treoinject
+           //'isPortalUser' => false
         );
     }
 
