@@ -39,7 +39,7 @@
         "wikimedia/composer-merge-plugin": "1.4.1",
         "treo-module/pim": "*"
     },
-    "minimum-stability": "RC",
+    "minimum-stability": "stable",
     "extra": {
         "espoVersion": "5.1.2",
         "merge-plugin": {
