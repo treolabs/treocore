@@ -54,17 +54,28 @@ Espo.define('views/record/panels/relationship', ['views/record/panels/bottom', '
         setup: function () {
             Dep.prototype.setup.call(this);
 
-            this.link = this.defs.link || this.panelName;
+            this.link = this.link || this.defs.link || this.panelName;
 
             if (!this.scope && !(this.link in this.model.defs.links)) {
                 throw new Error('Link \'' + this.link + '\' is not defined in model \'' + this.model.name + '\'');
             }
-            this.title = this.translate(this.link, 'links', this.model.name);
+            this.title = this.title || this.translate(this.link, 'links', this.model.name);
             this.scope = this.scope || this.model.defs.links[this.link].entity;
+
+            if (!this.getConfig().get('scopeColorsDisabled')) {
+                var iconHtml = this.getHelper().getScopeColorIconHtml(this.scope);
+                if (iconHtml) {
+                    if (this.defs.label) {
+                        this.titleHtml = iconHtml + this.translate(this.defs.label, 'labels', this.scope);
+                    } else {
+                        this.titleHtml = iconHtml + this.title;
+                    }
+                }
+            }
 
             var url = this.url || this.model.name + '/' + this.model.id + '/' + this.link;
 
-            if (!this.readOlny && !this.defs.readOnly) {
+            if (!this.readOnly && !this.defs.readOnly) {
                 if (!('create' in this.defs)) {
                     this.defs.create = true;
                 }

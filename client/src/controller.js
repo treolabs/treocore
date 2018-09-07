@@ -37,11 +37,14 @@
 Espo.define('controller', [], function () {
 
     var Controller = function (params, injections) {
-        this.initialize();
         this.params = params || {};
+
+        this.baseController = injections.baseController;
         this.viewFactory = injections.viewFactory;
         this.modelFactory = injections.modelFactory;
         this.collectionFactory = injections.collectionFactory;
+
+        this.initialize();
 
         this._settings = injections.settings || null;
         this._user = injections.user || null;
@@ -247,13 +250,22 @@ Espo.define('controller', [], function () {
          * @return {view}
          */
         main: function (view, options, callback, useStored, storedKey) {
+            var isCanceled = false;
+            this.listenToOnce(this.baseController, 'action', function () {
+                isCanceled = true;
+            }, this);
+
             var view = view || 'views/base';
             var master = this.master(function (master) {
+                if (isCanceled) return;
+
                 master.showLoadingNotification();
                 options = options || {};
                 options.el = '#main';
 
                 var process = function (main) {
+                    if (isCanceled) return;
+
                     if (storedKey) {
                         this.storeMainView(storedKey, main);
                     }
@@ -261,6 +273,11 @@ Espo.define('controller', [], function () {
                         main.updatePageTitle();
                         master.hideLoadingNotification();
                     });
+
+                    main.listenToOnce(this.baseController, 'action', function () {
+                        main.cancelRender();
+                        isCanceled = true;
+                    }, this);
 
                     if (master.currentViewKey) {
                         this.set('storedScrollTop-' + master.currentViewKey, $(window).scrollTop());
@@ -278,6 +295,8 @@ Espo.define('controller', [], function () {
                             $(window).scrollTop(0);
                         }
                     }.bind(this));
+
+                    if (isCanceled) return;
 
                     if (callback) {
                         callback.call(this, main);

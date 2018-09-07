@@ -76,6 +76,10 @@ Espo.define('controllers/record', 'controller', function (Dep) {
             }
 
             this.getCollection(function (collection) {
+                this.listenToOnce(this.baseController, 'action', function () {
+                    collection.abortLastFetch();
+                }, this);
+
                 this.main(this.getViewName('list'), {
                     scope: this.name,
                     collection: collection,
@@ -117,6 +121,10 @@ Espo.define('controllers/record', 'controller', function (Dep) {
                 }, this);
                 this.showLoadingNotification();
                 model.fetch();
+
+                this.listenToOnce(this.baseController, 'action', function () {
+                    model.abortLastFetch();
+                }, this);
             } else {
                 this.getModel(function (model) {
                     model.id = id;
@@ -126,6 +134,10 @@ Espo.define('controllers/record', 'controller', function (Dep) {
                         createView(model);
                     }, this);
                     model.fetch({main: true});
+
+                    this.listenToOnce(this.baseController, 'action', function () {
+                        model.abortLastFetch();
+                    }, this);
                 });
             }
         },
@@ -221,6 +233,10 @@ Espo.define('controllers/record', 'controller', function (Dep) {
                     this.main(this.getViewName('edit'), o);
                 }, this);
                 model.fetch({main: true});
+
+                this.listenToOnce(this.baseController, 'action', function () {
+                    model.abortLastFetch();
+                }, this);
             });
         },
 

@@ -85,4 +85,3 @@ Espo.define('views/import/record/detail', 'views/record/detail', function (Dep) 
     });
 
 });
-

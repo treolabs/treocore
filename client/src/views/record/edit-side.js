@@ -45,8 +45,7 @@ Espo.define('views/record/edit-side', 'views/record/detail-side', function (Dep)
             options: {
                 fieldList: [
                     {
-                        name: 'assignedUser',
-                        view: 'views/fields/assigned-user'
+                        name: ':assignedUser'
                     },
                     {
                         name: 'teams',

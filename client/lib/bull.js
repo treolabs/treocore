@@ -249,6 +249,8 @@ var Bull = Bull || {};
 
 		_isRemoved: false,
 
+        _isRenderCanceled: false,
+
 		initialize: function (options) {
 			this.options = options || {};
 
@@ -402,11 +404,26 @@ var Bull = Bull || {};
 			this._getHtml(callback);
 		},
 
+        cancelRender: function () {
+            if (this.isBeingRendered()) {
+                this._isRenderCanceled = true;
+            }
+        },
+
+        uncancelRender: function () {
+            this._isRenderCanceled = false;
+        },
+
 		/**
 		 * Render view.
 		 */
 		render: function (callback) {
 			this._getHtml(function (html) {
+                if (this._isRenderCanceled) {
+                    this._isRenderCanceled = false;
+                    this._isBeingRendered = false;
+                    return;
+                }
 				if (this.$el.size()) {
 					this.$el.html(html);
 				} else {
@@ -644,6 +661,8 @@ var Bull = Bull || {};
 			}, this);
 		},
 
+        handleDataBeforeRender: function (data) {},
+
 		_getHtml: function (callback) {
 			this._isBeingRendered = true;
 			this.trigger("render", this);
@@ -655,6 +674,7 @@ var Bull = Bull || {};
 				if (this.model || null) {
 					data.model = this.model;
 				}
+                this.handleDataBeforeRender(data);
 				this._getTemplate(function (template) {
 					var html = this._renderer.render(template, data);
 					callback(html);

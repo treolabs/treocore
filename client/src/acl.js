@@ -175,14 +175,24 @@ Espo.define('acl', [], function () {
         },
 
         checkIsOwner: function (model) {
+            var result = false;
+
             if (model.hasField('assignedUser')) {
                 if (this.getUser().id === model.get('assignedUserId')) {
                     return true;
+                } else {
+                    if (!model.has('assignedUserId')) {
+                        result = null;
+                    }
                 }
             } else {
                 if (model.hasField('createdBy')) {
                     if (this.getUser().id === model.get('createdById')) {
                         return true;
+                    } else {
+                        if (!model.has('createdById')) {
+                            result = null;
+                        }
                     }
                 }
             }
@@ -194,10 +204,12 @@ Espo.define('acl', [], function () {
 
                 if (~(model.get('assignedUsersIds') || []).indexOf(this.getUser().id)) {
                     return true;
+                } else {
+                    result = false;
                 }
             }
 
-            return false;
+            return result;
         },
 
         checkInTeam: function (model) {
@@ -225,4 +237,3 @@ Espo.define('acl', [], function () {
 
     return Acl;
 });
-

@@ -129,7 +129,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
         validateRequired: function () {
             if (this.isRequired()) {
                 if (this.model.get(this.idName) == null) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     var $target;
                     if (this.isUploading) {
                         $target = this.$el.find('.gray-box');
@@ -146,7 +146,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
         validateReady: function () {
             if (this.isUploading) {
                 var $target = this.$el.find('.gray-box');
-                var msg = this.translate('fieldIsUploading', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                var msg = this.translate('fieldIsUploading', 'messages').replace('{field}', this.getLabelText());
                 this.showValidationMessage(msg, $target);
                 return true;
             }
@@ -338,7 +338,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
             }
             if (exceedsMaxFileSize) {
                 var msg = this.translate('fieldMaxFileSizeError', 'messages')
-                          .replace('{field}', this.translate(this.name, 'fields', this.model.name))
+                          .replace('{field}', this.getLabelText())
                           .replace('{max}', maxFileSize);
                 this.showValidationMessage(msg, '.attachment-button label');
                 return;
@@ -368,7 +368,7 @@ Espo.define('views/fields/file', 'views/fields/link', function (Dep) {
                         attachment.set('file', result);
                         attachment.set('field', this.name);
 
-                        attachment.save().then(function () {
+                        attachment.save({}, {timeout: 0}).then(function () {
                             this.isUploading = false;
                             if (!isCanceled) {
                                 $attachmentBox.trigger('ready');

@@ -47,6 +47,8 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
 
         recordView: 'views/record/list',
 
+        recordKanbanView: 'views/record/kanban',
+
         searchPanel: true,
 
         searchManager: null,
@@ -63,8 +65,21 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
 
         keepCurrentRootUrl: false,
 
+        viewMode: null,
+
+        viewModeList: null,
+
+        defaultViewMode: 'list',
+
         setup: function () {
             this.collection.maxSize = this.getConfig().get('recordsPerPage') || this.collection.maxSize;
+
+            this.collectionUrl = this.collection.url;
+            this.collectionMaxSize = this.collection.maxSize;
+
+            this.setupModes();
+
+            this.setViewMode(this.viewMode);
 
             if (this.getMetadata().get('clientDefs.' + this.scope + '.searchPanelDisabled')) {
                 this.searchPanel = false;
@@ -86,6 +101,9 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
                 this.setupSearchManager();
             }
 
+            this.defaultSortBy = this.collection.sortBy;
+            this.defaultAsc = this.collection.asc;
+
             this.setupSorting();
 
             if (this.searchPanel) {
@@ -94,6 +112,45 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
 
             if (this.createButton) {
                 this.setupCreateButton();
+            }
+        },
+
+        setupModes: function () {
+            this.defaultViewMode = this.options.defaultViewMode ||
+                this.getMetadata().get(['clientDefs', this.scope, 'listDefaultViewMode']) ||
+                this.defaultViewMode;
+
+            this.viewMode = this.viewMode || this.defaultViewMode;
+
+            var viewModeList = this.options.viewModeList ||
+                this.viewModeList ||
+                this.getMetadata().get(['clientDefs', this.scope, 'listViewModeList']);
+
+            if (viewModeList) {
+                this.viewModeList = viewModeList;
+            } else {
+                this.viewModeList = ['list'];
+                if (this.getMetadata().get(['clientDefs', this.scope, 'kanbanViewMode'])) {
+                    if (!~this.viewModeList.indexOf('kanban')) {
+                        this.viewModeList.push('kanban');
+                    }
+                }
+            }
+
+            if (this.viewModeList.length > 1) {
+                this.viewMode = null;
+                var modeKey = 'listViewMode' + this.scope;
+                if (this.getStorage().has('state', modeKey)) {
+                    var storedViewMode = this.getStorage().get('state', modeKey);
+                    if (storedViewMode) {
+                        if (~this.viewModeList.indexOf(storedViewMode)) {
+                            this.viewMode = storedViewMode;
+                        }
+                    }
+                }
+                if (!this.viewMode) {
+                    this.viewMode = this.defaultViewMode;
+                }
             }
         },
 
@@ -132,14 +189,63 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
                 collection: this.collection,
                 el: '#main > .search-container',
                 searchManager: this.searchManager,
-                scope: this.scope
+                scope: this.scope,
+                viewMode: this.viewMode,
+                viewModeList: this.viewModeList
             }, function (view) {
                 this.listenTo(view, 'reset', function () {
-                    this.collection.sortBy = this.defaultSortBy;
-                    this.collection.asc = this.defaultAsc;
-                    this.getStorage().clear('listSorting', this.collection.name);
+                    this.resetSorting();
                 }, this);
-            }.bind(this));
+
+                if (this.viewModeList.length > 1) {
+                    this.listenTo(view, 'change-view-mode', this.switchViewMode, this);
+                }
+            });
+        },
+
+        switchViewMode: function (mode) {
+            this.clearView('list');
+            this.collection.isFetched = false;
+            this.collection.reset();
+            this.applyStoredSorting();
+            this.setViewMode(mode, true);
+            this.loadList();
+        },
+
+        setViewMode: function (mode, toStore) {
+            this.viewMode = mode;
+
+            this.collection.url = this.collectionUrl;
+            this.collection.maxSize = this.collectionMaxSize;
+
+            if (toStore) {
+                var modeKey = 'listViewMode' + this.scope;
+                this.getStorage().set('state', modeKey, mode);
+            }
+
+            if (this.searchView && this.getView('search')) {
+                this.getView('search').setViewMode(mode);
+            }
+
+            var methodName = 'setViewMode' + Espo.Utils.upperCaseFirst(this.viewMode);
+            if (this[methodName]) {
+                this[methodName]();
+                return;
+            }
+        },
+
+        setViewModeKanban: function () {
+            this.collection.url = this.scope + '/action/listKanban';
+            this.collection.maxSize = this.getConfig().get('recordsPerPageSmall');
+
+            this.collection.sortBy = this.collection.defaultSortBy;
+            this.collection.asc = this.collection.defaultAsc;
+        },
+
+        resetSorting: function () {
+            this.collection.sortBy = this.defaultSortBy;
+            this.collection.asc = this.defaultAsc;
+            this.getStorage().clear('listSorting', this.collection.name);
         },
 
         getSearchDefaultData: function () {
@@ -160,23 +266,26 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
         setupSorting: function () {
             if (!this.searchPanel) return;
 
-            var collection = this.collection;
+            this.applyStoredSorting();
+        },
 
-            var sortingParams = this.getStorage().get('listSorting', collection.name) || {};
-
-            this.defaultSortBy = collection.sortBy;
-            this.defaultAsc = collection.asc;
-
+        applyStoredSorting: function () {
+            var sortingParams = this.getStorage().get('listSorting', this.collection.name) || {};
             if ('sortBy' in sortingParams) {
-                collection.sortBy = sortingParams.sortBy;
+                this.collection.sortBy = sortingParams.sortBy;
             }
             if ('asc' in sortingParams) {
-                collection.asc = sortingParams.asc;
+                this.collection.asc = sortingParams.asc;
             }
         },
 
         getRecordViewName: function () {
-            return this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.list') || this.recordView;
+            if (this.viewMode === 'list') {
+                return this.getMetadata().get(['clientDefs', this.scope, 'recordViews', 'list']) || this.recordView;
+            }
+
+            var propertyName = 'record' + Espo.Utils.upperCaseFirst(this.viewMode) + 'View';
+            return this.getMetadata().get(['clientDefs', this.scope, 'recordViews', this.viewMode]) || this[propertyName];
         },
 
         afterRender: function () {
@@ -186,14 +295,19 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
         },
 
         loadList: function () {
-            this.notify('Loading...');
+            var methodName = 'loadList' + Espo.Utils.upperCaseFirst(this.viewMode);
+            if (this[methodName]) {
+                this[methodName]();
+                return;
+            }
+
             if (this.collection.isFetched) {
                 this.createListRecordView(false);
             } else {
-                this.listenToOnce(this.collection, 'sync', function () {
+                Espo.Ui.notify(this.translate('loading', 'messages'));
+                this.collection.fetch().then(function () {
                     this.createListRecordView();
-                }, this);
-                this.collection.fetch();
+                }.bind(this));
             }
         },
 
@@ -243,8 +357,10 @@ Espo.define('views/list', ['views/main', 'search-manager'], function (Dep, Searc
         },
 
         getHeader: function () {
+            var headerIconHtml = this.getHeaderIconHtml();
+
             return this.buildHeaderHtml([
-                this.getLanguage().translate(this.scope, 'scopeNamesPlural')
+                headerIconHtml + this.getLanguage().translate(this.scope, 'scopeNamesPlural')
             ]);
         },
 
