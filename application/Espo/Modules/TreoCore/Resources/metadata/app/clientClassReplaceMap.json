@@ -86,6 +86,9 @@
   "views/fields/base": [
     "treo-core"
   ],
+  "views/fields/currency": [
+    "treo-core"
+  ],
   "views/fields/link-parent": [
     "treo-core"
   ],
