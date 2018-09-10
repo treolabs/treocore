@@ -1,24 +1,25 @@
 {
     "fields": {
         "name": "Name",
-        "progress": "Progress",
-        "status": "Status"
+        "status": "Status",
+        "progress": "Arbeit"
     },
     "progressStatus": {
-        "new": "Neu",
-        "in_progress": "In progress",
         "error": "Fehler",
-        "success": "Erfolgreich"
+        "success": "erfolgreich",
+        "new": "neu",
+        "in_progress": "in Arbeit"
     },
     "notificationMessages": {
-        "success": "%s was successfully completed",
-        "error": "%s failed"
+        "error": "%  ist fehlgeschlagen",
+        "success": "%  wurde erfolgreich abgeschlossen"
     },
     "labels": {
         "showMessage": "Meldung anzeigen",
         "message": "Meldung",
-        "cancel": "Abbrechen",
-        "close": "Schließen",
-        "progressManager": "Progress Manager"
+        "cancel": "abbrechen",
+        "close": "schließen",
+        "download": "herunterladen",
+        "progressManager": "Fortschrittsmanager"
     }
 }

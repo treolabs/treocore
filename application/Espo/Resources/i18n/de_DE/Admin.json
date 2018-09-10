@@ -54,7 +54,9 @@
     "Notifications": "Benachrichtigungen",
     "Jobs": "Jobs",
     "Reset to Default": "Zurücksetzen auf Standard",
-    "Email Filters": "E-Mail Filter"
+    "Email Filters": "E-Mail Filter",
+    "Label Manager": "Label Manager",
+    "Git Authentication": "Git Authentication"
   },
   "layouts": {
     "list": "Liste",
@@ -67,7 +69,10 @@
     "sidePanelsDetail": "Seitenleisten (Detail)",
     "sidePanelsEdit": "Seitenleisten (Bearbeiten)",
     "sidePanelsDetailSmall": "Seitenleisten (Detail klein)",
-    "sidePanelsEditSmall": "Seitenleisten (Bearbeiten klein)"
+    "sidePanelsEditSmall": "Seitenleisten (Bearbeiten klein)",
+    "detailSmallPortal": "Detail (Klein, Portal)",
+    "listForContact": "List (für Contact)",
+    "listSmallPortal": "List (Klein, Portal)"
   },
   "fieldTypes": {
     "address": "Adresse",
@@ -148,7 +153,8 @@
     "dynamicLogicRequired": "Bedingungen die ein Feld erforderlich machen",
     "dynamicLogicOptions": "Bedingungsoptionen",
     "probabilityMap": "Stufenwahrscheinlichkeiten (%)",
-    "readOnly": "nur lesen"
+    "readOnly": "nur lesen",
+    "dataUrl": "Daten Url"
   },
   "messages": {
     "upgradeVersion": "Ihr EspoCRM wird nun auf Version <strong>{version}</strong> aktualisiert. Dies kann einige Zeit dauern.",
@@ -203,8 +209,8 @@
     }
   },
   "logicalOperators": {
-    "and": "AND",
-    "or": "OR",
-    "not": "NOT"
+    "and": "UND",
+    "not": "NIHT",
+    "or": "ODER"
   }
 }

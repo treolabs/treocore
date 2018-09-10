@@ -1,6 +1,7 @@
 {
   "labels": {
-    "Dynamic Logic": "Dynamische Logik"
+    "Dynamic Logic": "Dynamische Logik",
+    "Type": "Typ"
   },
   "options": {
     "dateTimeDefault": {
@@ -71,5 +72,15 @@
     "before": "Der Datumswert sollte vor dem Datumswert des angegebenen Feldes liegen.",
     "after": "Der Datumswert sollte nach dem Datumswert des angegebenen Feldes liegen.",
     "readOnly": "Feldwert kann nicht vom Benutzer angegebe, aber durch Formel berechnet werden."
+  },
+  "fieldParts": {
+    "address": {
+      "street": "Street",
+      "city": "Stadt",
+      "state": "State",
+      "country": "Country",
+      "postalCode": "Postal Code",
+      "map": "Map"
+    }
   }
 }

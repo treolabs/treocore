@@ -25,7 +25,8 @@
     "sendAccessInfo": "E-Mail mit Zugangsinformationen an Benutzer senden",
     "portal": "Portal",
     "gender": "Geschlecht",
-    "position": "Position im Team"
+    "position": "Position im Team",
+    "acceptanceStatus": "Acceptance Status"
   },
   "links": {
     "teams": "Teams",
@@ -35,8 +36,8 @@
     "portalRoles": "Portal Rollen",
     "contact": "Kontakt",
     "accounts": "Firmen",
-    "account": "Benutzerkonto (Primär)",
-    "tasks": "Aufgaben"
+    "tasks": "Aufgaben",
+    "account": "Benutzerkonto (Primär)"
   },
   "labels": {
     "Create User": "Benutzer erstellen",

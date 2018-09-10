@@ -9,8 +9,8 @@
     "emailFolder": "Ordner"
   },
   "labels": {
-    "Create EmailFilter": "E.Mail Filter erstellen",
-    "Emails": "E-Mails"
+    "Emails": "E-Mails",
+    "Create EmailFilter": "E-Mail Filter erstellen"
   },
   "options": {
     "action": {
@@ -25,5 +25,8 @@
     "from": "Die E-Mails werden von der angegebenen Adresse gesendet. Bitte leer lassen wenn nicht benötigt. Sie können den Platzhalter * verwenden.",
     "to": "Die E-Mails werden an die angegebenen Adressen gesendet. Bitte leer lassen wenn nicht benötigt. Sie können den Platzhalter * verwenden.",
     "isGlobal": "Wendet diesen Filter auf alle eingehenden E-Mails im System an."
+  },
+  "links": {
+    "emailFolder": "Ordner"
   }
 }

@@ -3,6 +3,16 @@
     "user": "Benutzer",
     "ipAddress": "IP Adresse",
     "lastAccess": "Letztes Zugriffsdatum",
-    "createdAt": "Login Datum"
+    "createdAt": "Login Datum",
+    "isActive": "Ist aktiv"
+  },
+  "links": {
+    "user": "Benutzer"
+  },
+  "presetFilters": {
+    "active": "Active"
+  },
+  "massActions": {
+    "setInactive": "Set Inactive"
   }
 }

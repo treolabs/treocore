@@ -2,5 +2,9 @@
   "labels": {
     "Connect": "Verbinden",
     "Connected": "Verbunden"
+  },
+  "fields": {
+    "data": "Daten",
+    "enabled": "Aktiv"
   }
 }
