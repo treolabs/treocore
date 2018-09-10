@@ -71,6 +71,14 @@ class User extends Record
         'accountsIds'
     ];
 
+    protected $linkSelectParams = array(
+        'targetLists' => array(
+            'additionalColumns' => array(
+                'optedOut' => 'isOptedOut'
+            )
+        )
+    );
+
     protected function getMailSender()
     {
         //@todo treoinject

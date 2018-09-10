@@ -114,8 +114,5 @@ class ClientManager
         }
 
         echo $html;
-        exit;
     }
 }
-
-

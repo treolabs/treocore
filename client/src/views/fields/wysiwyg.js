@@ -58,6 +58,8 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
                 this.minHeight = this.params.minHeight;
             }
 
+            this.useIframe = this.params.useIframe || this.useIframe;
+
             this.toolbar = this.params.toolbar || [
                 ['style', ['style']],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -68,6 +70,29 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
                 ['table', ['table', 'link', 'picture', 'hr']],
                 ['misc',['codeview', 'fullscreen']]
             ];
+
+            this.buttons = {};
+
+            if (!this.params.toolbar) {
+                if (this.params.attachmentField) {
+                    this.toolbar.push([
+                        'attachment',
+                        ['attachment']
+                    ]);
+                    var AttachmentButton = function (context) {
+                        var ui = $.summernote.ui;
+                        var button = ui.button({
+                            contents: '<i class="glyphicon glyphicon-paperclip"></i>',
+                            tooltip: this.translate('Attach File'),
+                            click: function () {
+                                this.attachFile();
+                            }.bind(this)
+                        });
+                        return button.render();
+                    }.bind(this);
+                    this.buttons['attachment'] = AttachmentButton;
+                }
+            }
 
             this.listenTo(this.model, 'change:isHtml', function (model) {
                 if (this.mode == 'edit') {
@@ -104,6 +129,9 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
 
             this.once('remove', function () {
                 $(window).off('resize.' + this.cid);
+                if (this.$scrollable) {
+                    this.$scrollable.off('scroll.' + this.cid + '-edit');
+                }
             }.bind(this));
         },
 
@@ -188,19 +216,27 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
                         var $document = $(documentElement);
 
                         var increaseHeightStep = 10;
-                        var processIncreaseHeight = function (iteration) {
+                        var processIncreaseHeight = function (iteration, previousDiff) {
                             iteration = iteration || 0;
 
-                            if (iteration > 20) {
+                            if (iteration > 200) {
                                 return;
                             }
 
                             iteration ++;
 
-                            if (iframeElement.scrollHeight < $document.height()) {
+                            var diff = $document.height() - iframeElement.scrollHeight;
+
+                            if (typeof previousDiff !== 'undefined') {
+                                if (diff === previousDiff) {
+                                    return;
+                                }
+                            }
+
+                            if (diff) {
                                 var height = iframeElement.scrollHeight + increaseHeightStep;
                                 iframeElement.style.height = height + 'px';
-                                processIncreaseHeight(iteration);
+                                processIncreaseHeight(iteration, diff);
                             }
                         };
 
@@ -310,11 +346,22 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
                         this.trigger('change')
                     }.bind(this),
                 },
-                toolbar: this.toolbar
+                toolbar: this.toolbar,
+                buttons: this.buttons
             };
 
             if (this.height) {
                 options.height = this.height;
+            } else {
+                var $scrollable = this.$el.closest('.modal-body');
+                if (!$scrollable.size()) {
+                    $scrollable = $(window);
+                }
+                this.$scrollable = $scrollable;
+                $scrollable.off('scroll.' + this.cid + '-edit');
+                $scrollable.on('scroll.' + this.cid + '-edit', function (e) {
+                    this.onScrollEdit(e);
+                }.bind(this));
             }
 
             if (this.minHeight) {
@@ -322,6 +369,9 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
             }
 
             this.$summernote.summernote(options);
+
+            this.$toolbar = this.$el.find('.note-toolbar');
+            this.$area = this.$el.find('.note-editing-area');
         },
 
         plainToHtml: function (html) {
@@ -351,6 +401,10 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
                 this.$summernote.addClass('hidden');
             }
             this.$element.removeClass('hidden');
+
+            if (this.$scrollable) {
+                this.$scrollable.off('scroll.' + this.cid + '-edit');
+            }
         },
 
         fetch: function () {
@@ -369,7 +423,58 @@ Espo.define('views/fields/wysiwyg', ['views/fields/text', 'lib!Summernote'], fun
             	}
             }
             return data;
+        },
+
+        onScrollEdit: function (e) {
+            var $target = $(e.target);
+            var toolbarHeight = this.$toolbar.height();
+            var top;
+            if ($target.get(0) === window.document) {
+                var $buttonContainer = $target.find('.detail-button-container:not(.hidden)');
+                var offset = $buttonContainer.offset();
+                if (offset) {
+                    var edgeTop = offset.top + $buttonContainer.height();
+                    var edgeTopAbsolute = edgeTop - $(window).scrollTop();
+                }
+            } else {
+                var offset = $target.offset();
+                if (offset) {
+                    var edgeTop = offset.top;
+                    var edgeTopAbsolute = edgeTop;
+                }
+            }
+
+            var top = this.$el.offset().top;
+            var bottom = top + this.$el.height() - toolbarHeight;
+
+            var toStick = false;
+            if (edgeTop > top && bottom > edgeTop) {
+                toStick = true;
+            }
+
+            if (toStick) {
+                this.$toolbar.css({
+                    top: edgeTopAbsolute + 'px'
+                });
+                this.$toolbar.addClass('sticked');
+                this.$area.css({
+                    marginTop: toolbarHeight + 'px',
+                    backgroundColor: ''
+                });
+            } else {
+                this.$toolbar.css({
+                    top: ''
+                });
+                this.$toolbar.removeClass('sticked');
+                this.$area.css({
+                    marginTop: ''
+                });
+            }
+        },
+
+        attachFile: function () {
+            var $form = this.$el.closest('.record');
+            $form.find('.field[data-name="'+this.params.attachmentField+'"] input.file').click();
         }
     });
 });
-

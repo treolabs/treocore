@@ -53,7 +53,7 @@ class Email extends Record
             'crypt',
             'serviceFactory',
             'fileStorageManager',
-            //@todo treoinject
+            // @todo treoinject
             'mailSender'
         ]);
     }
@@ -101,26 +101,23 @@ class Email extends Record
 
     protected function getMailSender()
     {
-        //@todo treoinject
+        // @todo treoinject
         return $this->getInjection('mailSender');
     }
 
     protected function getPreferences()
     {
-        //@todo treoinject
-        return $this->getInjection('preferences');
+        return $this->injections['preferences'];
     }
 
     protected function getCrypt()
     {
-        //@todo treoinject
-        return $this->getInjection('crypt');
+        return $this->injections['crypt'];
     }
 
     protected function getServiceFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('serviceFactory');
+        return $this->injections['serviceFactory'];
     }
 
     protected function send(Entities\Email $entity)
@@ -309,6 +306,11 @@ class Email extends Record
         $this->getEntityManager()->getRepository('Email')->loadBccField($entity);
     }
 
+    public function loadReplyToField(Entity $entity)
+    {
+        $this->getEntityManager()->getRepository('Email')->loadReplyToField($entity);
+    }
+
     public function getEntity($id = null)
     {
         $entity = $this->getRepository()->get($id);
@@ -337,6 +339,7 @@ class Email extends Record
         $this->loadToField($entity);
         $this->loadCcField($entity);
         $this->loadBccField($entity);
+        $this->loadReplyToField($entity);
 
         $this->loadNameHash($entity);
 
@@ -648,7 +651,7 @@ class Email extends Record
         }
     }
 
-    public function loadNameHash(Entity $entity, array $fieldList = ['from', 'to', 'cc', 'bcc'])
+    public function loadNameHash(Entity $entity, array $fieldList = ['from', 'to', 'cc', 'bcc', 'replyTo'])
     {
         $this->getEntityManager()->getRepository('Email')->loadNameHash($entity, $fieldList);
     }
@@ -822,5 +825,10 @@ class Email extends Record
         }
 
         return $data;
+    }
+
+    public function isPermittedAssignedUsers(Entity $entity)
+    {
+        return true;
     }
 }

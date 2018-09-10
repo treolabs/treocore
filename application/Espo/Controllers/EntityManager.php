@@ -88,6 +88,17 @@ class EntityManager extends \Espo\Core\Controllers\Base
         if (isset($data['textFilterFields']) && is_array($data['textFilterFields'])) {
             $params['textFilterFields'] = $data['textFilterFields'];
         }
+        if (!empty($data['color'])) {
+            $params['color'] = $data['color'];
+        }
+        if (!empty($data['iconClass'])) {
+            $params['iconClass'] = $data['iconClass'];
+        }
+
+        $params['kanbanViewMode'] = !empty($data['kanbanViewMode']);
+        if (!empty($data['kanbanStatusIgnoreList'])) {
+            $params['kanbanStatusIgnoreList'] = $data['kanbanStatusIgnoreList'];
+        }
 
         $result = $this->getContainer()->get('entityManagerUtil')->create($name, $type, $params);
 
@@ -178,13 +189,13 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'entityForeign',
-        	'link',
-        	'linkForeign',
-        	'label',
-        	'labelForeign',
-        	'linkType'
+            'entity',
+            'entityForeign',
+            'link',
+            'linkForeign',
+            'label',
+            'labelForeign',
+            'linkType'
         ];
 
         $additionalParamList = [
@@ -194,10 +205,10 @@ class EntityManager extends \Espo\Core\Controllers\Base
         $params = array();
 
         foreach ($paramList as $item) {
-        	if (empty($data[$item])) {
-        		throw new BadRequest();
-        	}
-        	$params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+            if (empty($data[$item])) {
+                throw new BadRequest();
+            }
+            $params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         foreach ($additionalParamList as $item) {
@@ -238,12 +249,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'entityForeign',
-        	'link',
-        	'linkForeign',
-        	'label',
-        	'labelForeign'
+            'entity',
+            'entityForeign',
+            'link',
+            'linkForeign',
+            'label',
+            'labelForeign'
         ];
 
         $additionalParamList = [];
@@ -293,12 +304,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-        	'entity',
-        	'link',
+            'entity',
+            'link',
         ];
         $d = array();
         foreach ($paramList as $item) {
-        	$d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+            $d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         $result = $this->getContainer()->get('entityManagerUtil')->deleteLink($d);
@@ -325,6 +336,18 @@ class EntityManager extends \Espo\Core\Controllers\Base
 
         $this->getContainer()->get('entityManagerUtil')->setFormulaData($data->scope, $formulaData);
 
+        $this->getContainer()->get('dataManager')->clearCache();
+
+        return true;
+    }
+
+    public function postActionResetToDefault($params, $data, $request)
+    {
+        if (empty($data->scope)) {
+            throw new BadRequest();
+        }
+
+        $this->getContainer()->get('entityManagerUtil')->resetToDefaults($data->scope);
         $this->getContainer()->get('dataManager')->clearCache();
 
         return true;

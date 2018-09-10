@@ -288,6 +288,10 @@ class EntityManager
             $scopesData['isNotRemovable'] = true;
         }
 
+        if (!empty($params['kanbanStatusIgnoreList'])) {
+            $scopesData['kanbanStatusIgnoreList'] = $params['kanbanStatusIgnoreList'];
+        }
+
         $this->getMetadata()->set('scopes', $name, $scopesData);
 
         $filePath = $templatePath . "/Metadata/{$type}/entityDefs.json";
@@ -307,6 +311,18 @@ class EntityManager
             $clientDefsContents = str_replace('{'.$key.'}', $value, $clientDefsContents);
         }
         $clientDefsData = Json::decode($clientDefsContents, true);
+
+        if (array_key_exists('color', $params)) {
+            $clientDefsData['color'] = $params['color'];
+        }
+
+        if (array_key_exists('iconClass', $params)) {
+            $clientDefsData['iconClass'] = $params['iconClass'];
+        }
+
+        if (!empty($params['kanbanViewMode'])) {
+            $clientDefsData['kanbanViewMode'] = true;
+        }
         $this->getMetadata()->set('clientDefs', $name, $clientDefsData);
 
         $this->getBaseLanguage()->set('Global', 'scopeNames', $name, $labelSingular);
@@ -390,6 +406,32 @@ class EntityManager
                 )
             );
             $this->getMetadata()->set('entityDefs', $name, $entityDefsData);
+        }
+
+        if (array_key_exists('kanbanStatusIgnoreList', $data)) {
+            $scopeData['kanbanStatusIgnoreList'] = $data['kanbanStatusIgnoreList'];
+            $this->getMetadata()->set('scopes', $name, $scopeData);
+        }
+
+        if (array_key_exists('kanbanViewMode', $data)) {
+            $clientDefsData = [
+                'kanbanViewMode' => $data['kanbanViewMode']
+            ];
+            $this->getMetadata()->set('clientDefs', $name, $clientDefsData);
+        }
+
+        if (array_key_exists('color', $data)) {
+            $clientDefsData = [
+                'color' => $data['color']
+            ];
+            $this->getMetadata()->set('clientDefs', $name, $clientDefsData);
+        }
+
+        if (array_key_exists('iconClass', $data)) {
+            $clientDefsData = [
+                'iconClass' => $data['iconClass']
+            ];
+            $this->getMetadata()->set('clientDefs', $name, $clientDefsData);
         }
 
         $this->getMetadata()->save();
@@ -808,7 +850,7 @@ class EntityManager
         }
 
         if (
-            in_array($this->getMetadata()->get("entityDefs.{$entity}.links.{$link}.type"), ['hasMany', 'hasChildren'])
+        in_array($this->getMetadata()->get("entityDefs.{$entity}.links.{$link}.type"), ['hasMany', 'hasChildren'])
         ) {
             if (array_key_exists('audited', $params)) {
                 $audited = $params['audited'];
@@ -825,7 +867,7 @@ class EntityManager
         }
 
         if (
-            in_array($this->getMetadata()->get("entityDefs.{$entityForeign}.links.{$linkForeign}.type"), ['hasMany', 'hasChildren'])
+        in_array($this->getMetadata()->get("entityDefs.{$entityForeign}.links.{$linkForeign}.type"), ['hasMany', 'hasChildren'])
         ) {
             if (array_key_exists('auditedForeign', $params)) {
                 $auditedForeign = $params['auditedForeign'];
@@ -952,5 +994,34 @@ class EntityManager
             return $hook;
         }
         return;
+    }
+
+    public function resetToDefaults($scope)
+    {
+        if ($this->isCustom($scope)) {
+            throw new Error("Can't reset to defaults custom entity type '{$scope}.'");
+        }
+
+        $this->getMetadata()->delete('scopes', $scope, [
+            'disabled',
+            'stream',
+            'statusField',
+            'kanbanStatusIgnoreList'
+        ]);
+        $this->getMetadata()->delete('clientDefs', $scope, [
+            'iconClass',
+            'statusField',
+            'kanbanViewMode'
+        ]);
+        $this->getMetadata()->delete('entityDefs', $scope, [
+            'collection.sortBy',
+            'collection.asc',
+            'collection.textFilterFields'
+        ]);
+        $this->getMetadata()->save();
+
+        $this->getLanguage()->delete('Global', 'scopeNames', $scope);
+        $this->getLanguage()->delete('Global', 'scopeNamesPlural', $scope);
+        $this->getLanguage()->save();
     }
 }

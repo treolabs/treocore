@@ -47,8 +47,7 @@ Espo.define('treo-core:views/record/edit-side', 'class-replace!treo-core:views/r
                         view: 'views/fields/user-with-avatar'
                     },
                     {
-                        name: 'assignedUser',
-                        view: 'views/fields/assigned-user'
+                        name: ':assignedUser'
                     },
                     {
                         name: 'teams',

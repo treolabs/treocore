@@ -37,6 +37,8 @@ Espo.define('email-helper', [], function () {
         this.language = language;
         this.user = user;
         this.dateTime = dateTime;
+
+        this.erasedPlaceholder = 'ERASED:';
     }
 
     _.extend(EmailHelper.prototype, {
@@ -72,25 +74,32 @@ Espo.define('email-helper', [], function () {
 
             var isReplyOnSent = false;
 
-            if (model.get('replyToString')) {
-                var str = model.get('replyToString');
+            var replyToAddressString = model.get('replyTo') || null;
 
-                var a = [];
-                str.split(';').forEach(function (item) {
-                    var part = item.trim();
-                    var address = this.parseAddressFromStringAddress(item);
+            if (replyToAddressString) {
+                var replyToAddressList = replyToAddressString.split(';');
+                to = replyToAddressList.join(';');
+            } else {
+                if (model.get('replyToString')) {
+                    var str = model.get('replyToString');
 
-                    if (address) {
-                        a.push(address);
-                        var name = this.parseNameFromStringAddress(part);
-                        if (name && name !== address) {
-                            nameHash[address] = name;
+                    var a = [];
+                    str.split(';').forEach(function (item) {
+                        var part = item.trim();
+                        var address = this.parseAddressFromStringAddress(item);
+
+                        if (address) {
+                            a.push(address);
+                            var name = this.parseNameFromStringAddress(part);
+                            if (name && name !== address) {
+                                nameHash[address] = name;
+                            }
                         }
-
-                    }
-                }, this);
-                to = a.join('; ');
+                    }, this);
+                    to = a.join(';');
+                }
             }
+
             if (!to || !~to.indexOf('@')) {
                 if (model.get('from')) {
                     if (model.get('from') != this.getUser().get('emailAddress')) {
@@ -118,13 +127,37 @@ Espo.define('email-helper', [], function () {
                     item = item.trim();
                     if (item != this.getUser().get('emailAddress')) {
                         if (isReplyOnSent) {
-                            attributes.to += ';' + item;
+                            if (attributes.to) {
+                                attributes.to += ';'
+                            }
+                            attributes.to += item;
                         } else {
-                            attributes.cc += ';' + item;
+                            if (attributes.cc) {
+                                attributes.cc += ';'
+                            }
+                            attributes.cc += item;
                         }
                     }
                 }, this);
                 attributes.cc = attributes.cc.replace(/^(\; )/,"");
+            }
+
+            if (attributes.to) {
+                var toList = attributes.to.split(';');
+                toList = toList.filter(function (item) {
+                    if (item.indexOf(this.erasedPlaceholder) === 0) return false;
+                    return true;
+                }, this);
+                attributes.to = toList.join(';');
+            }
+
+            if (attributes.cc) {
+                var ccList = attributes.cc.split(';');
+                ccList = ccList.filter(function (item) {
+                    if (item.indexOf(this.erasedPlaceholder) === 0) return false;
+                    return true;
+                }, this);
+                attributes.cc = ccList.join(';');
             }
 
             if (model.get('parentId')) {
@@ -224,7 +257,7 @@ Espo.define('email-helper', [], function () {
                     partList.push(line);
 
                 }, this);
-                line += partList.join('; ');
+                line += partList.join(';');
                 list.push(line);
             }
 

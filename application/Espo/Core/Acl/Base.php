@@ -41,11 +41,12 @@ use \Espo\ORM\Entity;
 
 class Base implements Injectable
 {
-    protected $dependencies = array(
-        'config',
-        'entityManager',
-        'aclManager'
-    );
+    protected $dependencies
+        = array(
+            'config',
+            'entityManager',
+            'aclManager'
+        );
 
     protected $scope;
 
@@ -284,8 +285,8 @@ class Base implements Injectable
             if ($data->edit !== 'no' || $data->create !== 'no') {
                 if (
                     $this->getConfig()->get('aclAllowDeleteCreated')
-                    &&
-                    $entity->has('createdById') && $entity->get('createdById') == $user->id
+                    && $entity->has('createdById')
+                    && $entity->get('createdById') == $user->id
                 ) {
                     if (!$entity->has('assignedUserId')) {
                         return true;
@@ -304,4 +305,3 @@ class Base implements Injectable
         return false;
     }
 }
-

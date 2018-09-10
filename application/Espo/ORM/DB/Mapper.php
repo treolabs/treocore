@@ -79,6 +79,7 @@ abstract class Mapper implements IMapper
         if ($ps) {
             foreach ($ps as $row) {
                 $entity = $this->fromRow($entity, $row);
+                $entity->setAsFetched();
                 return true;
             }
         }
@@ -123,8 +124,9 @@ abstract class Mapper implements IMapper
 
         if ($this->returnCollection) {
             $collectionClass = $this->collectionClass;
-            $entityArr = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
-            return $entityArr;
+            $collection = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
+            $collection->setAsFetched();
+            return $collection;
         } else {
             return $dataArr;
         }
@@ -202,6 +204,7 @@ abstract class Mapper implements IMapper
                     foreach ($ps as $row) {
                         if (!$totalCount) {
                             $relEntity = $this->fromRow($relEntity, $row);
+                            $relEntity->setAsFetched();
                             return $relEntity;
                         } else {
                             return $row['AggregateValue'];
@@ -242,13 +245,17 @@ abstract class Mapper implements IMapper
 
                 if ($relType == IEntity::HAS_ONE) {
                     if (count($resultArr)) {
-                        return $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity = $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity->setAsFetched();
+                        return $relEntity;
                     }
                     return null;
                 } else {
                     if ($this->returnCollection) {
                         $collectionClass = $this->collectionClass;
-                        return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection->setAsFetched();
+                        return $collection;
                     } else {
                         return $resultArr;
                     }
@@ -287,7 +294,9 @@ abstract class Mapper implements IMapper
                 }
                 if ($this->returnCollection) {
                     $collectionClass = $this->collectionClass;
-                    return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection->setAsFetched();
+                    return $collection;
                 } else {
                     return $resultArr;
                 }
@@ -439,7 +448,7 @@ abstract class Mapper implements IMapper
 
                 $params['select'] = [];
                 foreach ($valueList as $value) {
-                   $params['select'][] = ['VALUE:' . $value, $value];
+                    $params['select'][] = ['VALUE:' . $value, $value];
                 }
 
                 $params['select'][] = 'id';
@@ -490,7 +499,7 @@ abstract class Mapper implements IMapper
             case IEntity::BELONGS_TO:
             case IEntity::HAS_ONE:
                 return false;
-            break;
+                break;
 
             case IEntity::HAS_CHILDREN:
             case IEntity::HAS_MANY:
@@ -515,7 +524,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-            break;
+                break;
 
             case IEntity::MANY_MANY:
                 $key = $keySet['key'];
@@ -592,7 +601,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-            break;
+                break;
         }
     }
 
@@ -904,5 +913,3 @@ abstract class Mapper implements IMapper
         $this->collectionClass = $collectionClass;
     }
 }
-
-

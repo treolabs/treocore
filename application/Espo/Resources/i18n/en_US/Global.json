@@ -5,6 +5,7 @@
         "Team": "Team",
         "Role": "Role",
         "EmailTemplate": "Email Template",
+        "EmailTemplateCategory": "Email Template Categories",
         "EmailAccount": "Personal Email Account",
         "EmailAccountScope": "Personal Email Account",
         "OutboundEmail": "Outbound Email",
@@ -51,6 +52,7 @@
         "Team": "Teams",
         "Role": "Roles",
         "EmailTemplate": "Email Templates",
+        "EmailTemplateCategory": "Email Template Categories",
         "EmailAccount": "Personal Email Accounts",
         "EmailAccountScope": "Personal Email Accounts",
         "OutboundEmail": "Outbound Emails",
@@ -226,7 +228,11 @@
         "Collapse": "Collapse",
         "New notifications": "New notifications",
         "Manage Categories": "Manage Categories",
-        "Manage Folders": "Manage Folders"
+        "Manage Folders": "Manage Folders",
+        "Convert to": "Convert to",
+        "View Personal Data": "View Personal Data",
+        "Personal Data": "Personal Data",
+        "Erase": "Erase"
     },
     "messages": {
         "pleaseWait": "Please wait...",
@@ -282,7 +288,8 @@
         "massFollowResultSingle": "{count} record now is followed",
         "massUnfollowResultSingle": "{count} record now is not followed",
         "massFollowZeroResult": "Nothing got followed",
-        "massUnfollowZeroResult": "Nothing got unfollowed"
+        "massUnfollowZeroResult": "Nothing got unfollowed",
+        "erasePersonalDataConfirmation": "Checked fields will be erased permanently. Are you sure?"
     },
     "boolFilters": {
         "onlyMy": "Only My",
@@ -299,8 +306,7 @@
         "export": "Export",
         "follow": "Follow",
         "unfollow": "Unfollow",
-        "addRelation": "Add relation",
-        "removeRelation": "Remove relation"
+        "convertCurrency": "Convert Currency"
     },
     "fields": {
         "name": "Name",
@@ -311,6 +317,7 @@
         "assignedUsers": "Assigned Users",
         "emailAddress": "Email",
         "emailAddressData": "Email Address Data",
+        "emailAddressIsOptedOut": "Email Address is Opted-Out",
         "assignedUserName": "Assigned User Name",
         "teams": "Teams",
         "createdAt": "Created At",
@@ -331,7 +338,8 @@
         "children": "Children",
         "id": "ID",
         "ids": "IDs",
-        "names": "Names"
+        "names": "Names",
+        "targetListIsOptedOut": "Is Opted Out (Target List)"
     },
     "links": {
         "assignedUser": "Assigned User",
@@ -711,15 +719,19 @@
             }
         }
     },
+    "listViewModes": {
+        "list": "List",
+        "kanban": "Kanban"
+    },
     "themes": {
-        "Espo": "Espo",
+        "Espo": "Classic Espo",
         "EspoRtl": "RTL Espo",
-        "Sakura": "Sakura",
-        "EspoVertical": "Espo w/ sidebar",
-        "SakuraVertical": "Sakura w/ sidebar",
-        "Violet": "Violet",
-        "VioletVertical": "Violet w/ sidebar",
-        "Hazyblue": "Hazyblue",
-        "HazyblueVertical": "Hazyblue w/ sidebar"
+        "Sakura": "Classic Sakura",
+        "EspoVertical": "Vertical Espo",
+        "SakuraVertical": "Vertical Sakura",
+        "Violet": "Classic Violet",
+        "VioletVertical": "Vertical Violet",
+        "Hazyblue": "Classic Hazyblue",
+        "HazyblueVertical": "Vertical Hazyblue"
     }
 }

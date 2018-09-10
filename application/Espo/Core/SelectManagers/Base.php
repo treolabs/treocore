@@ -988,7 +988,7 @@ class Base
 
                     $where['value'] = [$from, $to];
                 }
-               break;
+                break;
             default:
                 $where['type'] = $type;
         }
@@ -1042,7 +1042,7 @@ class Base
                         foreach ($item['value'] as $i) {
                             $a = $this->getWherePart($i, $result);
                             foreach ($a as $left => $right) {
-                                if (!empty($right) || is_null($right) || $right === '') {
+                                if (!empty($right) || is_null($right) || $right === '' || $right === 0 || $right === false) {
                                     $arr[] = array($left => $right);
                                 }
                             }
@@ -1593,19 +1593,25 @@ class Base
     protected function boolFilterOnlyMy(&$result)
     {
         if (!$this->checkIsPortal()) {
-            if ($this->hasAssignedUserField()) {
-                $result['whereClause'][] = array(
+            if ($this->hasAssignedUsersField()) {
+                $this->setDistinct(true, $result);
+                $this->addLeftJoin(['assignedUsers', 'assignedUsersAccess'], $result);
+                $result['whereClause'][] = [
+                    'assignedUsersAccess.id' => $this->getUser()->id
+                ];
+            } else if ($this->hasAssignedUserField()) {
+                $result['whereClause'][] = [
                     'assignedUserId' => $this->getUser()->id
-                );
+                ];
             } else {
-                $result['whereClause'][] = array(
+                $result['whereClause'][] = [
                     'createdById' => $this->getUser()->id
-                );
+                ];
             }
         } else {
-            $result['whereClause'][] = array(
+            $result['whereClause'][] = [
                 'createdById' => $this->getUser()->id
-            );
+            ];
         }
     }
 

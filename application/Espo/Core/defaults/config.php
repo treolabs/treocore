@@ -46,7 +46,7 @@ return array (
     'recordsPerPage' => 20,
     'recordsPerPageSmall' => 5,
     'applicationName' => 'EspoCRM',
-    'version' => '5.1.2',
+    'version' => '5.2.5',
     'timeZone' => 'UTC',
     'dateFormat' => 'MM/DD/YYYY',
     'timeFormat' => 'hh:mm a',
@@ -68,25 +68,48 @@ return array (
     'smtpUsername' => '',
     'smtpPassword' => '',
     'languageList' => [
+        'en_GB',
         'en_US',
-        'de_DE'
+        'es_MX',
+        'cs_CZ',
+        'da_DK',
+        'de_DE',
+        'es_ES',
+        'hr_HR',
+        'hu_HU',
+        'fr_FR',
+        'id_ID',
+        'it_IT',
+        'lt_LT',
+        'nb_NO',
+        'nl_NL',
+        'tr_TR',
+        'sk_SK',
+        'sr_RS',
+        'ro_RO',
+        'ru_RU',
+        'pl_PL',
+        'pt_BR',
+        'uk_UA',
+        'vi_VN',
+        'zh_CN'
     ],
     'language' => 'en_US',
     'logger' =>
-    array (
-        'path' => 'data/logs/espo.log',
-        'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
-        'rotation' => true,
-        'maxFileNumber' => 30,
-    ),
+        array (
+            'path' => 'data/logs/espo.log',
+            'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
+            'rotation' => true,
+            'maxFileNumber' => 30,
+        ),
     'authenticationMethod' => 'Espo',
     'globalSearchEntityList' =>
-    array (
-        'Account',
-        'Contact',
-        'Lead',
-        'Opportunity',
-    ),
+        array (
+            'Account',
+            'Contact',
+            'Lead',
+            'Opportunity',
+        ),
     'tabList' => ["Account", "Contact", "Lead", "Opportunity", "Case", "Email", "Calendar", "Meeting", "Call", "Task", "_delimiter_", "Document", "Campaign", "KnowledgeBaseArticle", "Stream", "User"],
     'quickCreateList' => ["Account", "Contact", "Lead", "Opportunity", "Meeting", "Call", "Task", "Case", "Email"],
     'exportDisabled' => false,
@@ -151,6 +174,7 @@ return array (
     'aclAllowDeleteCreated' => false,
     'inlineAttachmentUploadMaxSize' => 20,
     'textFilterUseContainsForVarchar' => false,
+    'tabColorsDisabled' => false,
     'isInstalled' => false
 );
 

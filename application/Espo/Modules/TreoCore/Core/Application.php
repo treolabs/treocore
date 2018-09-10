@@ -91,6 +91,7 @@ class Application extends EspoApplication
                 'version'         => $version
             ]
         );
+        exit;
     }
 
     /**

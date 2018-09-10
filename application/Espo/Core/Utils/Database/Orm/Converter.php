@@ -67,6 +67,7 @@ class Converter
         'maxLength' => 'len',
         'len' => 'len',
         'notNull' => 'notNull',
+        'exportDisabled' => 'notExportable',
         'autoincrement' => 'autoincrement',
         'entity' => 'entity',
         'notStorable' => 'notStorable',
@@ -77,11 +78,11 @@ class Converter
         /*'conditions' => 'conditions',
         'additionalColumns' => 'additionalColumns',    */
         'default' => array(
-           'condition' => '^javascript:',
-           'conditionEquals' => false,
-           'value' => array(
+            'condition' => '^javascript:',
+            'conditionEquals' => false,
+            'value' => array(
                 'default' => '{0}',
-           ),
+            ),
         ),
         'select' => 'select',
         'orderBy' => 'orderBy',

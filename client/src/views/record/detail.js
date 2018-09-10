@@ -250,6 +250,15 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                     });
                 }
             }
+
+            if (this.type === 'detail' && this.getMetadata().get(['scopes', this.scope, 'hasPersonalData'])) {
+                if (this.getAcl().get('dataPrivacyPermission') !== 'no') {
+                    this.dropdownItemList.push({
+                        'label': 'View Personal Data',
+                        'name': 'viewPersonalData'
+                    });
+                }
+            }
         },
 
         hideActionItem: function (name) {
@@ -565,6 +574,9 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
             return view || null;
         },
 
+        // TODO remove
+        handleDataBeforeRender: function (data) {},
+
         data: function () {
             var navigateButtonsEnabled = !this.navigateButtonsDisabled && !!this.model.collection;
 
@@ -876,6 +888,19 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
             }
         },
 
+        actionViewPersonalData: function () {
+            this.createView('viewPersonalData', 'views/personal-data/modals/personal-data', {
+                model: this.model
+            }, function (view) {
+                view.render();
+
+                this.listenToOnce(view, 'erase', function () {
+                    this.clearView('viewPersonalData');
+                    this.model.fetch();
+                }, this);
+            });
+        },
+
         actionPrintPdf: function () {
             this.createView('pdfTemplate', 'views/modals/select-template', {
                 entityType: this.model.name
@@ -952,13 +977,12 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 sideView.setReadOnly();
             }
 
-            var fieldViews = this.getFieldViews();
-            for (var i in fieldViews) {
-                fieldViews[i].setReadOnly();
-            }
+            this.getFieldList().forEach(function (field) {
+                this.setFieldReadOnly(field);
+            }, this);
         },
 
-        setNotReadOnly: function () {
+        setNotReadOnly: function (onlyNotSetAsReadOnly) {
             if (!this.readOnlyLocked) {
                 this.readOnly = false;
             }
@@ -973,12 +997,12 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 sideView.setNotReadOnly();
             }
 
-            var fieldViews = this.getFieldViews();
-
-            for (var i in fieldViews) {
-                var fieldView = fieldViews[i];
-                fieldView.setNotReadOnly();
-            }
+            this.getFieldList().forEach(function (field) {
+                if (onlyNotSetAsReadOnly) {
+                    if (this.recordHelper.getFieldStateParam(field, 'readOnly')) return;
+                }
+                this.setFieldNotReadOnly(field);
+            }, this);
         },
 
         manageAccessEdit: function (second) {
@@ -1010,7 +1034,7 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                 }
                 if (!this.readOnlyLocked) {
                     if (this.readOnly && second) {
-                        this.setNotReadOnly();
+                        this.setNotReadOnly(true);
                     }
                     this.readOnly = false;
                 }
@@ -1160,8 +1184,9 @@ Espo.define('views/record/detail', ['views/record/base', 'view-record-helper'], 
                         }
 
                         var cell = {
-                            name: name,
+                            name: name + 'Field',
                             view: viewName,
+                            field: name,
                             el: el + ' .middle .field[data-name="' + name + '"]',
                             fullWidth: fullWidth,
                             options: o

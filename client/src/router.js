@@ -105,14 +105,16 @@ Espo.define('router', [], function () {
             return '#' + Backbone.history.fragment;
         },
 
-        checkConfirmLeaveOut: function (callback, context) {
+        checkConfirmLeaveOut: function (callback, context, navigateBack) {
             context = context || this;
             if (this.confirmLeaveOut) {
                 Espo.Ui.confirm(this.confirmLeaveOutMessage, {
                     confirmText: this.confirmLeaveOutConfirmText,
                     cancelText: this.confirmLeaveOutCancelText,
                     cancelCallback: function () {
-                        this.navigateBack({trigger: false});
+                        if (navigateBack) {
+                            this.navigateBack({trigger: false});
+                        }
                     }.bind(this)
                 }, function () {
                     this.confirmLeaveOut = false;
@@ -126,7 +128,7 @@ Espo.define('router', [], function () {
         execute: function (callback, args, name) {
             this.checkConfirmLeaveOut(function () {
                 Backbone.Router.prototype.execute.call(this, callback, args, name);
-            });
+            }, null, true);
         },
 
         navigate: function (fragment, options) {
@@ -137,7 +139,7 @@ Espo.define('router', [], function () {
         navigateBack: function (options) {
             var url;
             if (this.history.length > 1) {
-                url = this.history[this.history.length - 1];
+                url = this.history[this.history.length - 2];
             } else {
                 url = this.history[0];
             }

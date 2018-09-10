@@ -48,5 +48,3 @@ Espo.define('views/fields/teams', 'views/fields/link-multiple', function (Dep) {
 
     });
 });
-
-

@@ -133,7 +133,7 @@ Espo.define('views/dashlets/options/base', ['views/modal', 'views/record/detail'
         fetchAttributes: function () {
             var attributes = {};
             this.fieldList.forEach(function (field) {
-                var fieldView = this.getView('record').getView(field);
+                var fieldView = this.getView('record').getFieldView(field);
                 _.extend(attributes, fieldView.fetch());
             }, this);
 
@@ -141,7 +141,7 @@ Espo.define('views/dashlets/options/base', ['views/modal', 'views/record/detail'
 
             var valid = true;
             this.fieldList.forEach(function (field) {
-                var fieldView = this.getView('record').getView(field);
+                var fieldView = this.getView('record').getFieldView(field);
                 valid = !fieldView.validate() && valid;
             }, this);
 

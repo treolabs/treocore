@@ -96,6 +96,7 @@ class Application
     public function runClient()
     {
         $this->getContainer()->get('clientManager')->display();
+        exit;
     }
 
     public function runEntryPoint($entryPoint, $data = array(), $final = false)
@@ -141,7 +142,7 @@ class Application
         $auth = $this->createAuth();
         $auth->useNoAuth();
 
-        $cronManager = $this->getContainer()->get('cronManager');
+        $cronManager = new \Espo\Core\CronManager($this->container);
         $cronManager->run();
     }
 

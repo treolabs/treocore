@@ -36,6 +36,8 @@ namespace Espo\Repositories;
 
 use Espo\ORM\Entity;
 
+use Espo\Core\Utils\Util;
+
 class Attachment extends \Espo\Core\ORM\Repositories\RDB
 {
     protected function init()
@@ -76,9 +78,10 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     public function save(Entity $entity, array $options = array())
     {
         $isNew = $entity->isNew();
-        $result = parent::save($entity, $options);
 
         if ($isNew) {
+            $entity->id = Util::generateId();
+
             if (!empty($entity->id) && $entity->has('contents')) {
                 $contents = $entity->get('contents');
                 $storeResult = $this->getFileStorageManager()->putContents($entity, $contents);
@@ -88,13 +91,29 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
             }
         }
 
+        $result = parent::save($entity, $options);
+
         return $result;
     }
 
     protected function afterRemove(Entity $entity, array $options = array())
     {
         parent::afterRemove($entity, $options);
-        $this->getFileStorageManager()->unlink($entity);
+
+        $duplicateCount = $this->where([
+            'OR' => [
+                [
+                    'sourceId' => $entity->getSourceId()
+                ],
+                [
+                    'id' => $entity->getSourceId()
+                ]
+            ],
+        ])->count();
+
+        if ($duplicateCount === 0) {
+            $this->getFileStorageManager()->unlink($entity);
+        }
     }
 
     public function getCopiedAttachment(Entity $entity, $role = null)

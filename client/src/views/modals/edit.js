@@ -111,6 +111,9 @@ Espo.define('views/modals/edit', 'views/modal', function (Dep) {
                 }
             }
 
+            var iconHtml = this.getHelper().getScopeColorIconHtml(this.scope);
+            this.header = iconHtml + this.header;
+
             this.sourceModel = this.model;
 
             this.waitForView('edit');

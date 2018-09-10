@@ -63,7 +63,8 @@ Espo.define('views/stream/message', 'view', function (Dep) {
                     name: name,
                     params: params || {}
                 },
-                mode: 'list'
+                mode: 'detail',
+                readOnly: true
             });
         }
 

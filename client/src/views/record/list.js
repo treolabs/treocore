@@ -369,7 +369,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
                         data.fieldList = dialogData.fieldList;
                     }
                     data.format = dialogData.format;
-                    this.ajaxPostRequest(url, data).then(function (data) {
+                    this.ajaxPostRequest(url, data, {timeout: 0}).then(function (data) {
                         if ('id' in data) {
                             window.location = this.getBasePath() + '?entryPoint=download&id=' + data.id;
                         }
@@ -603,7 +603,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
                 return false;
             }
 
-            this.notify('Loading...');
+            Espo.Ui.notify(this.translate('loading', 'messages'));
             var ids = false;
             var allResultIsChecked = this.allResultIsChecked;
             if (!allResultIsChecked) {
@@ -657,8 +657,11 @@ Espo.define('views/record/list', 'view', function (Dep) {
 			}
         },
 
-        addMassAction: function (item) {
+        addMassAction: function (item, allResult) {
             this.massActionList.push(item);
+            if (allResult) {
+                this.checkAllResultMassActionList.push(item);
+            }
         },
 
         setup: function () {
@@ -915,7 +918,8 @@ Espo.define('views/record/list', 'view', function (Dep) {
 
             if (this.checkboxes) {
                 layout.push({
-                    name: 'r-checkbox',
+                    name: 'r-checkboxField',
+                    columnName: 'r-checkbox',
                     template: 'record.list-checkbox'
                 });
             }
@@ -928,7 +932,8 @@ Espo.define('views/record/list', 'view', function (Dep) {
                 }
 
                 var item = {
-                    name: col.name,
+                    columnName: col.name,
+                    name: col.name + 'Field',
                     view: col.view || model.getFieldParam(col.name, 'view') || this.getFieldManager().getViewName(type),
                     options: {
                         defs: {
@@ -1006,14 +1011,15 @@ Espo.define('views/record/list', 'view', function (Dep) {
 
         getRowActionsDefs: function () {
             return {
-                name: 'buttons',
+                columnName: 'buttons',
+                name: 'buttonsField',
                 view: this.rowActionsView,
                 options: {
                     defs: {
                         params: {
                         }
-                    },
-                },
+                    }
+                }
             };
         },
 
@@ -1070,7 +1076,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
         },
 
         getItemEl: function (model, item) {
-            return this.options.el + ' tr[data-id="' + model.id + '"] td.cell[data-name="' + item.name + '"]';
+            return this.options.el + ' tr[data-id="' + model.id + '"] td.cell[data-name="' + item.columnName + '"]';
         },
 
         prepareInternalLayout: function (internalLayout, model) {
@@ -1151,14 +1157,15 @@ Espo.define('views/record/list', 'view', function (Dep) {
             }
         },
 
-        showMoreRecords: function () {
-            var collection = this.collection;
+        showMoreRecords: function (collection, $list, $showMore, callback) {
+            collection = collection || this.collection;
 
-            var $showMore = this.$el.find('.show-more');
-            var $list = this.$el.find(this.listContainerEl);
+            $showMore =  $showMore || this.$el.find('.show-more');
+            $list = $list || this.$el.find(this.listContainerEl);
 
             $showMore.children('a').addClass('disabled');
-            this.notify('Loading...');
+
+            Espo.Ui.notify(this.translate('loading', 'messages'));
 
             var final = function () {
                 $showMore.parent().append($showMore);
@@ -1174,13 +1181,17 @@ Espo.define('views/record/list', 'view', function (Dep) {
                     this.$el.find('input.record-checkbox').attr('disabled', 'disabled').prop('checked', true);
                 }
 
-                this.notify(false);
+                Espo.Ui.notify(false);
+
+                if (callback) {
+                    callback.call(this);
+                }
             }.bind(this);
 
             var initialCount = collection.length;
 
             var success = function () {
-                this.notify(false);
+                Espo.Ui.notify(false);
                 $showMore.addClass('hidden');
 
                 var rowCount = collection.length - initialCount;
@@ -1245,7 +1256,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
             var viewName = this.getMetadata().get('clientDefs.' + scope + '.modalViews.detail') || 'views/modals/detail';
 
             if (!this.quickDetailDisabled) {
-                this.notify('Loading...');
+                Espo.Ui.notify(this.translate('loading', 'messages'));
 
                 var options = {
                     scope: scope,
@@ -1296,7 +1307,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
             var viewName = this.getMetadata().get('clientDefs.' + scope + '.modalViews.edit') || 'views/modals/edit';
 
             if (!this.quickEditDisabled) {
-                this.notify('Loading...');
+                Espo.Ui.notify(this.translate('loading', 'messages'));
                 var options = {
                     scope: scope,
                     id: id,
@@ -1394,6 +1405,7 @@ Espo.define('views/record/list', 'view', function (Dep) {
             if (this.collection.total > 0) {
                 this.collection.total--;
             }
+            this.$el.find('.total-count-span').text(this.collection.total.toString());
 
             var index = this.checkedList.indexOf(id);
             if (index != -1) {
