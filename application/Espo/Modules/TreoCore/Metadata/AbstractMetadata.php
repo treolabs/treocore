@@ -36,7 +36,7 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCore\Metadata;
 
-use Espo\Modules\TreoCore\Core\Container;
+use Espo\Core\Container;
 
 /**
  * AbstractMetadata class

@@ -40,7 +40,7 @@ namespace Espo\Core\Portal;
  * @author r.ratsun@zinitsolutions.com
  * @todo treoinject
  */
-class Container extends \Espo\Modules\TreoCore\Core\Container
+class Container extends \Espo\Core\Container
 {
     protected function getServiceClassName($name, $default)
     {

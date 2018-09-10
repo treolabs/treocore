@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Core;
 
 use Espo\Core\Application as EspoApplication;
+use Espo\Core\Container;
 use Espo\Modules\TreoCore\Core\Utils\Auth;
 use Espo\Modules\TreoCore\Services\Installer;
 

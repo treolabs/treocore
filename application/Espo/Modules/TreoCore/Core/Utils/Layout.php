@@ -32,10 +32,11 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Core\Utils;
 
+use Espo\Core\Container;
 use Espo\Core\Utils\Layout as EspoLayout;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Metadata;
@@ -43,7 +44,6 @@ use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
 use Espo\Modules\TreoCore\Layouts\AbstractLayout;
-use Espo\Modules\TreoCore\Core\Container;
 
 /**
  * Class of Layout
@@ -76,9 +76,9 @@ class Layout extends EspoLayout
     public function get($scope, $name)
     {
         // prepare params
-        $data  = [];
+        $data = [];
         $scope = $this->sanitizeInput($scope);
-        $name  = $this->sanitizeInput($name);
+        $name = $this->sanitizeInput($name);
 
         // cache
         if (isset($this->changedData[$scope][$name])) {
@@ -86,7 +86,7 @@ class Layout extends EspoLayout
         }
 
         // from custom data
-        $fileFullPath = Util::concatPath($this->getLayoutPath($scope, true), $name.'.json');
+        $fileFullPath = Util::concatPath($this->getLayoutPath($scope, true), $name . '.json');
         if (file_exists($fileFullPath)) {
             $fileData = $this->getFileManager()->getContents($fileFullPath);
 
@@ -98,8 +98,8 @@ class Layout extends EspoLayout
         if (empty($data)) {
             foreach ($this->getMetadata()->getModuleList() as $module) {
                 // prepare file path
-                $filePath     = Util::concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
-                $fileFullPath = Util::concatPath($filePath, $name.'.json');
+                $filePath = Util::concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
+                $fileFullPath = Util::concatPath($filePath, $name . '.json');
                 if (file_exists($fileFullPath)) {
                     // get file data
                     $fileData = $this->getFileManager()->getContents($fileFullPath);
@@ -113,8 +113,8 @@ class Layout extends EspoLayout
         // from core data
         if (empty($data)) {
             // prepare file path
-            $filePath     = Util::concatPath($this->paths['corePath'], $scope);
-            $fileFullPath = Util::concatPath($filePath, $name.'.json');
+            $filePath = Util::concatPath($this->paths['corePath'], $scope);
+            $fileFullPath = Util::concatPath($filePath, $name . '.json');
             if (file_exists($fileFullPath)) {
                 // get file data
                 $fileData = $this->getFileManager()->getContents($fileFullPath);
@@ -127,7 +127,7 @@ class Layout extends EspoLayout
         // default
         if (empty($data)) {
             // prepare file path
-            $fileFullPath = Util::concatPath(Util::concatPath($this->params['defaultsPath'], 'layouts'), $name.'.json');
+            $fileFullPath = Util::concatPath(Util::concatPath($this->params['defaultsPath'], 'layouts'), $name . '.json');
 
             if (file_exists($fileFullPath)) {
                 // get file data
@@ -154,7 +154,7 @@ class Layout extends EspoLayout
                 }
 
                 // call method
-                $method = 'layout'.ucfirst($name);
+                $method = 'layout' . ucfirst($name);
                 if (method_exists($layout, $method)) {
                     $data = $layout->{$method}($data);
                 }

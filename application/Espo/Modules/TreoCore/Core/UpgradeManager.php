@@ -36,7 +36,7 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCore\Core;
 
-use Espo\Modules\TreoCore\Core\Container;
+use Espo\Core\Container;
 use Espo\Core\UpgradeManager as EspoUpgradeManager;
 use Espo\Modules\TreoCore\Core\Upgrades\ActionManager;
 
