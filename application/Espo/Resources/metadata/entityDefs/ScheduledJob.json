@@ -77,6 +77,16 @@
         "Dummy": {
             "isSystem": true,
             "scheduling": "1 */12 * * *"
+        },
+        "CheckNewVersion": {
+            "name": "Check for New Version",
+            "isSystem": true,
+            "scheduling": "15 5 * * *"
+        },
+        "CheckNewExtensionVersion": {
+            "name": "Check for New Versions of Installed Extensions",
+            "isSystem": true,
+            "scheduling": "25 5 * * *"
         }
     }
 }

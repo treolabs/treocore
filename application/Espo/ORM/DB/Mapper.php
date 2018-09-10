@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,11 +24,11 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\ORM\DB;
+
 use Espo\ORM\Entity;
 use Espo\ORM\IEntity;
 use Espo\ORM\EntityFactory;
@@ -448,7 +444,7 @@ abstract class Mapper implements IMapper
 
                 $params['select'] = [];
                 foreach ($valueList as $value) {
-                    $params['select'][] = ['VALUE:' . $value, $value];
+                   $params['select'][] = ['VALUE:' . $value, $value];
                 }
 
                 $params['select'][] = 'id';
@@ -499,7 +495,7 @@ abstract class Mapper implements IMapper
             case IEntity::BELONGS_TO:
             case IEntity::HAS_ONE:
                 return false;
-                break;
+            break;
 
             case IEntity::HAS_CHILDREN:
             case IEntity::HAS_MANY:
@@ -524,7 +520,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-                break;
+            break;
 
             case IEntity::MANY_MANY:
                 $key = $keySet['key'];
@@ -601,7 +597,7 @@ abstract class Mapper implements IMapper
                 } else {
                     return false;
                 }
-                break;
+            break;
         }
     }
 
@@ -722,7 +718,7 @@ abstract class Mapper implements IMapper
 
     public function insert(IEntity $entity)
     {
-        $dataArr = $this->toArray($entity);
+        $dataArr = $this->toValueMap($entity);
 
         $fieldArr = array();
         $valArr = array();
@@ -749,33 +745,35 @@ abstract class Mapper implements IMapper
 
     public function update(IEntity $entity)
     {
-        $dataArr = $this->toArray($entity);
+        $valueMap = $this->toValueMap($entity);
 
-        $setArr = array();
-        foreach ($dataArr as $field => $value) {
-            if ($field == 'id') {
+        $setArr = [];
+
+        foreach ($valueMap as $attribute => $value) {
+            if ($attribute == 'id') {
                 continue;
             }
-            $type = $entity->fields[$field]['type'];
+            $type = $entity->getAttributeType($attribute);
 
             if ($type == IEntity::FOREIGN) {
                 continue;
             }
 
-            if ($entity->getFetched($field) === $value && $type != IEntity::JSON_ARRAY && $type != IEntity::JSON_OBJECT) {
+            if (!$entity->isAttributeChanged($attribute) && $type !== IEntity::JSON_OBJECT) {
                 continue;
             }
 
             $value = $this->prepareValueForInsert($type, $value);
 
-            $setArr[] = "`" . $this->toDb($field) . "` = " . $this->quote($value);
+            $setArr[] = "`" . $this->toDb($attribute) . "` = " . $this->quote($value);
         }
+
         if (count($setArr) == 0) {
             return $entity->id;
         }
 
         $setPart = implode(', ', $setArr);
-        $wherePart = $this->query->getWhere($entity, array('id' => $entity->id, 'deleted' => 0));
+        $wherePart = $this->query->getWhere($entity, ['id' => $entity->id, 'deleted' => 0]);
 
         $sql = $this->composeUpdateQuery($this->toDb($entity->getEntityType()), $setPart, $wherePart);
 
@@ -819,21 +817,25 @@ abstract class Mapper implements IMapper
         return $this->update($entity);
     }
 
-    protected function toArray(IEntity $entity, $onlyStorable = true)
+    protected function toValueMap(IEntity $entity, $onlyStorable = true)
     {
-        $arr = array();
-        foreach ($entity->fields as $field => $fieldDefs) {
-            if ($entity->has($field)) {
+        $data = [];
+        foreach ($entity->getAttributes() as $attribute => $defs) {
+            if ($entity->has($attribute)) {
                 if ($onlyStorable) {
-                    if (!empty($fieldDefs['notStorable']) || !empty($fieldDefs['autoincrement']) || isset($fieldDefs['source']) && $fieldDefs['source'] != 'db')
-                        continue;
-                    if ($fieldDefs['type'] == IEntity::FOREIGN)
-                        continue;
+                    if (
+                        !empty($defs['notStorable'])
+                        ||
+                        !empty($defs['autoincrement'])
+                        ||
+                        isset($defs['source']) && $defs['source'] != 'db'
+                    ) continue;
+                    if ($defs['type'] == IEntity::FOREIGN) continue;
                 }
-                $arr[$field] = $entity->get($field);
+                $data[$attribute] = $entity->get($attribute);
             }
         }
-        return $arr;
+        return $data;
     }
 
     protected function fromRow(IEntity $entity, $data)

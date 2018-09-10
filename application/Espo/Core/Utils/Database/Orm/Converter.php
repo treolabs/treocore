@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,25 +24,32 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\Orm;
-use Espo\Core\Utils\Util,
-    Espo\ORM\Entity;
+
+use Espo\Core\Utils\Util;
+use Espo\ORM\Entity;
 
 class Converter
 {
     private $metadata;
+
     private $fileManager;
+
+    private $config;
+
     private $metadataHelper;
+
+    private $databaseHelper;
 
     private $relationManager;
 
     private $entityDefs;
 
     protected $defaultFieldType = 'varchar';
+
     protected $defaultNaming = 'postfix';
 
     protected $defaultLength = array(
@@ -104,19 +107,26 @@ class Converter
         'additionalTables',
     );
 
-    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager)
+    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Config $config = null)
     {
         $this->metadata = $metadata;
         $this->fileManager = $fileManager; //need to featue with ormHooks. Ex. isFollowed field
+        $this->config = $config;
 
         $this->relationManager = new RelationManager($this->metadata);
 
         $this->metadataHelper = new \Espo\Core\Utils\Metadata\Helper($this->metadata);
+        $this->databaseHelper = new \Espo\Core\Utils\Database\Helper($this->config);
     }
 
     protected function getMetadata()
     {
         return $this->metadata;
+    }
+
+    protected function getConfig()
+    {
+        return $this->config;
     }
 
     protected function getEntityDefs($reload = false)
@@ -141,6 +151,11 @@ class Converter
     protected function getMetadataHelper()
     {
         return $this->metadataHelper;
+    }
+
+    protected function getDatabaseHelper()
+    {
+        return $this->databaseHelper;
     }
 
     /**
@@ -190,6 +205,8 @@ class Converter
         $convertedLinks = $this->convertLinks($entityName, $entityMetadata, $ormMetadata);
 
         $ormMetadata = Util::merge($ormMetadata, $convertedLinks);
+
+        $this->applyFullTextSearch($ormMetadata, $entityName);
 
         if (!empty($entityMetadata['collection']) && is_array($entityMetadata['collection'])) {
             $collectionDefs = $entityMetadata['collection'];
@@ -479,4 +496,47 @@ class Converter
         return $values;
     }
 
+    protected function applyFullTextSearch(&$ormMetadata, $entityType)
+    {
+        if (!$this->getDatabaseHelper()->isTableSupportsFulltext(Util::toUnderScore($entityType))) return;
+        if (!$this->getMetadata()->get(['entityDefs', $entityType, 'collection', 'fullTextSearch'])) return;
+
+        $fieldList = $this->getMetadata()->get(['entityDefs', $entityType, 'collection', 'textFilterFields'], ['name']);
+
+        $fullTextSearchColumnList = [];
+
+        foreach ($fieldList as $field) {
+            $defs = $this->getMetadata()->get(['entityDefs', $entityType, 'fields', $field], []);
+            if (empty($defs['type'])) continue;
+            $fieldType = $defs['type'];
+            if (!empty($defs['notStorable'])) continue;
+            if (!$this->getMetadata()->get(['fields', $fieldType, 'fullTextSearch'])) continue;
+
+            $partList = $this->getMetadata()->get(['fields', $fieldType, 'fullTextSearchColumnList']);
+            if ($partList) {
+                if ($this->getMetadata()->get(['fields', $fieldType, 'naming']) === 'prefix') {
+                    foreach ($partList as $part) {
+                        $fullTextSearchColumnList[] = $part . ucfirst($field);
+                    }
+                } else {
+                    foreach ($partList as $part) {
+                        $fullTextSearchColumnList[] = $field . ucfirst($part);
+                    }
+                }
+            } else {
+                $fullTextSearchColumnList[] = $field;
+            }
+        }
+
+        if (!empty($fullTextSearchColumnList)) {
+            $ormMetadata[$entityType]['fullTextSearchColumnList'] = $fullTextSearchColumnList;
+            if (!array_key_exists('indexes', $ormMetadata[$entityType])) {
+                $ormMetadata[$entityType]['indexes'] = [];
+            }
+            $ormMetadata[$entityType]['indexes']['system_fullTextSearch'] = [
+                'columns' => $fullTextSearchColumnList,
+                'flags' => ['fulltext']
+            ];
+        }
+    }
 }

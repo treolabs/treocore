@@ -44,6 +44,8 @@ class PortalRole extends Record
         $this->addDependency('fileManager');
     }
 
+    protected $forceSelectAllAttributes = true;
+
     public function afterCreate(Entity $entity, array $data = array())
     {
         parent::afterCreate($entity, $data);

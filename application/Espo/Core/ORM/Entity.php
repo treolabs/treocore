@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\ORM;
 
@@ -58,11 +53,6 @@ class Entity extends \Espo\ORM\Entity
             $repository = $this->entityManager->getRepository($parentType);
 
             $select = ['id', 'name'];
-            if ($parentType === 'Lead') {
-                $select[] = 'accountName';
-                $select[] = 'emailAddress';
-                $select[] = 'phoneNumber';
-            }
             $foreignEntity = $repository->select($select)->where(['id' => $parentId])->findOne();
             if ($foreignEntity) {
                 $this->set($field . 'Name', $foreignEntity->get('name'));
@@ -114,11 +104,6 @@ class Entity extends \Espo\ORM\Entity
         }
 
         $defs['select'] = ['id', 'name'];
-        if ($foreignEntityType === 'Lead') {
-            $defs['select'][] = 'accountName';
-            $defs['select'][] = 'emailAddress';
-            $defs['select'][] = 'phoneNumber';
-        }
 
         $hasType = false;
         if ($this->hasField($field . 'Types')) {
@@ -152,7 +137,7 @@ class Entity extends \Espo\ORM\Entity
         }
 
         $this->set($idsAttribute, $ids);
-        if (!$this->hasFetched($idsAttribute)) {
+        if (!$this->isNew() && !$this->hasFetched($idsAttribute)) {
             $this->setFetched($idsAttribute, $ids);
         }
 
@@ -170,7 +155,13 @@ class Entity extends \Espo\ORM\Entity
         if (!$this->hasRelation($field) || !$this->hasAttribute($field . 'Id')) return;
         if ($this->getRelationType($field) !== 'hasOne' && $this->getRelationType($field) !== 'belongsTo') return;
 
-        $entity = $this->get($field);
+        $relatedEntityType = $this->getRelationParam($field, 'entity');
+
+        $select = ['id', 'name'];
+
+        $entity = $this->get($field, [
+            'select' => $select
+        ]);
 
         $entityId = null;
         $entityName = null;
@@ -179,7 +170,13 @@ class Entity extends \Espo\ORM\Entity
             $entityName = $entity->get('name');
         }
 
-        $this->set($field . 'Id', $entityId);
+        $idAttribute = $field . 'Id';
+
+        if (!$this->isNew() && !$this->hasFetched($idAttribute)) {
+            $this->setFetched($idAttribute, $entityId);
+        }
+
+        $this->set($idAttribute, $entityId);
         $this->set($field . 'Name', $entityName);
     }
 
@@ -304,3 +301,4 @@ class Entity extends \Espo\ORM\Entity
         return false;
     }
 }
+

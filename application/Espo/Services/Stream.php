@@ -483,7 +483,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $whereClause[]['type'] = 'Post';
                     break;
-                case 'updates':
+                  case 'updates':
                     $whereClause[]['type'] = ['Update', 'Status'];
                     break;
             }
@@ -609,7 +609,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $where['type'] = 'Post';
                     break;
-                case 'updates':
+                  case 'updates':
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
@@ -981,7 +981,7 @@ class Stream extends \Espo\Core\Services\Base
         foreach ($auditedFields as $field => $item) {
             $updated = false;
             foreach ($item['actualList'] as $attribute) {
-                if ($entity->get($attribute) !== $entity->getFetched($attribute)) {
+                if ($entity->hasFetched($attribute) && $entity->isAttributeChanged($attribute)) {
                     $updated = true;
                 }
             }

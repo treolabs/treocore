@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Formula;
 
@@ -181,6 +176,8 @@ class Parser
 
         $this->processStrings($expression, $modifiedExpression, $splitterIndexList, true);
 
+        $expressionOutOfBraceList = [];
+
         for ($i = 0; $i < strlen($modifiedExpression); $i++) {
             if ($modifiedExpression[$i] === '(') {
                 $braceCounter++;
@@ -190,6 +187,11 @@ class Parser
             }
             if ($braceCounter === 0 && $i < strlen($modifiedExpression) - 1) {
                 $hasExcessBraces = false;
+            }
+            if ($braceCounter === 0) {
+                $expressionOutOfBraceList[] = true;
+            } else {
+                $expressionOutOfBraceList[] = false;
             }
         }
         if ($braceCounter !== 0) {
@@ -231,7 +233,13 @@ class Parser
 
         foreach ($this->priorityList as $operationList) {
             foreach ($operationList as $operator) {
-                $index = strpos($expression, $operator, 1);
+                $startFrom = 1;
+                while (true) {
+                    $index = strpos($expression, $operator, $startFrom);
+                    if ($index === false) break;
+                    if ($expressionOutOfBraceList[$index]) break;
+                    $startFrom = $index + 1;
+                }
                 if ($index !== false) {
                     $possibleRightOperator = null;
                     if (strlen($operator) === 1) {

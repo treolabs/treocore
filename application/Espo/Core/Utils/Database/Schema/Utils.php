@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\Schema;
 
@@ -38,7 +33,7 @@ use Espo\Core\Utils\Util;
 
 class Utils
 {
-    public static function getIndexList(array $ormMeta)
+    public static function getIndexList(array $ormMeta, array $ignoreFlags = [])
     {
         $indexList = array();
 
@@ -58,19 +53,37 @@ class Utils
 
                     if ($keyValue === true) {
                         $tableIndexName = static::generateIndexName($columnName);
-                        $indexList[$entityName][$tableIndexName] = array($columnName);
+                        $indexList[$entityName][$tableIndexName]['columns'] = array($columnName);
                     } else if (is_string($keyValue)) {
                         $tableIndexName = static::generateIndexName($keyValue);
-                        $indexList[$entityName][$tableIndexName][] = $columnName;
+                        $indexList[$entityName][$tableIndexName]['columns'][] = $columnName;
                     }
                 }
             }
 
             if (isset($entityParams['indexes']) && is_array($entityParams['indexes'])) {
                 foreach ($entityParams['indexes'] as $indexName => $indexParams) {
+                    $tableIndexName = static::generateIndexName($indexName);
+
+                    if (isset($indexParams['flags']) && is_array($indexParams['flags'])) {
+
+                        $skipIndex = false;
+                        foreach ($ignoreFlags as $ignoreFlag) {
+                            if (($flagKey = array_search($ignoreFlag, $indexParams['flags'])) !== false) {
+                                unset($indexParams['flags'][$flagKey]);
+                                $skipIndex = true;
+                            }
+                        }
+
+                        if ($skipIndex && empty($indexParams['flags'])) {
+                            continue;
+                        }
+
+                        $indexList[$entityName][$tableIndexName]['flags'] = $indexParams['flags'];
+                    }
+
                     if (is_array($indexParams['columns'])) {
-                        $tableIndexName = static::generateIndexName($indexName);
-                        $indexList[$entityName][$tableIndexName] = Util::toUnderScore($indexParams['columns']);
+                        $indexList[$entityName][$tableIndexName]['columns'] = Util::toUnderScore($indexParams['columns']);
                     }
                 }
             }
@@ -88,7 +101,7 @@ class Utils
         return substr(implode('_', $nameList), 0, $maxLength);
     }
 
-    public static function getFieldListExceededIndexMaxLength(array $ormMeta, $indexMaxLength = 1000, $characterLength = 4)
+    public static function getFieldListExceededIndexMaxLength(array $ormMeta, $indexMaxLength = 1000, array $indexList = null, $characterLength = 4)
     {
         $permittedFieldTypeList = [
             'varchar',
@@ -96,10 +109,14 @@ class Utils
 
         $fields = array();
 
-        $indexList = static::getIndexList($ormMeta);
+        if (!isset($indexList)) {
+            $indexList = static::getIndexList($ormMeta, ['fulltext']);
+        }
 
         foreach ($indexList as $entityName => $indexes) {
-            foreach ($indexes as $indexName => $columnList) {
+            foreach ($indexes as $indexName => $indexParams) {
+                $columnList = $indexParams['columns'];
+
                 $indexLength = 0;
                 foreach ($columnList as $columnName) {
                     $fieldName = Util::toCamelCase($columnName);

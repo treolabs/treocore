@@ -41,7 +41,7 @@
     },
     "minimum-stability": "stable",
     "extra": {
-        "espoVersion": "5.2.5",
+        "espoVersion": "5.3.6",
         "merge-plugin": {
             "include": [
                 "data/composer.json"

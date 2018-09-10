@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\Schema;
 
@@ -86,11 +81,12 @@ class Converter
 
     protected $maxIndexLength;
 
-    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Database\Schema\Schema $databaseSchema)
+    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Database\Schema\Schema $databaseSchema, \Espo\Core\Utils\Config $config = null)
     {
         $this->metadata = $metadata;
         $this->fileManager = $fileManager;
         $this->databaseSchema = $databaseSchema;
+        $this->config = $config;
 
         $this->typeList = array_keys(\Doctrine\DBAL\Types\Type::getTypesMap());
     }
@@ -103,6 +99,11 @@ class Converter
     protected function getFileManager()
     {
         return $this->fileManager;
+    }
+
+    protected function getConfig()
+    {
+        return $this->config;
     }
 
     /**
@@ -129,7 +130,7 @@ class Converter
     protected function getMaxIndexLength()
     {
         if (!isset($this->maxIndexLength)) {
-            $this->maxIndexLength = $this->getDatabaseSchema()->getMaxIndexLength();
+            $this->maxIndexLength = $this->getDatabaseSchema()->getDatabaseHelper()->getMaxIndexLength();
         }
 
         return $this->maxIndexLength;
@@ -243,8 +244,10 @@ class Converter
             $tables[$entityName]->setPrimaryKey($primaryColumns);
 
             if (!empty($indexList[$entityName])) {
-                foreach($indexList[$entityName] as $indexName => $indexColumnList) {
-                    $tables[$entityName]->addIndex($indexColumnList, $indexName);
+                foreach($indexList[$entityName] as $indexName => $indexParams) {
+                    $indexColumnList = $indexParams['columns'];
+                    $indexFlagList = isset($indexParams['flags']) ? $indexParams['flags'] : array();
+                    $tables[$entityName]->addIndex($indexColumnList, $indexName, $indexFlagList);
                 }
             }
 
@@ -264,7 +267,7 @@ class Converter
 
             foreach ($entityParams['relations'] as $relationName => $relationParams) {
 
-                 switch ($relationParams['type']) {
+                switch ($relationParams['type']) {
                     case 'manyMany':
                         $tableName = $relationParams['relationName'];
 

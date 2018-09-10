@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\DBAL\Platforms;
 use Doctrine\DBAL\Schema\TableDiff;
@@ -111,7 +106,7 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             $columnArray['comment'] = $this->getColumnComment($column);
 
             $queryParts[] =  'CHANGE ' . $this->espoQuote($columnDiff->oldColumnName) . ' '
-                . $this->getColumnDeclarationSQL($column->getQuotedName($this), $columnArray);
+                    . $this->getColumnDeclarationSQL($column->getQuotedName($this), $columnArray);
         }
 
         foreach ($diff->addedColumns as $column) {
@@ -245,8 +240,8 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         }
 
         return $this->getCreateIndexSQLFlags($index) . 'INDEX ' . $this->espoQuote($name) . ' ('
-            . $this->getIndexFieldDeclarationListSQL($columns)
-            . ')';
+             . $this->getIndexFieldDeclarationListSQL($columns)
+             . ')';
     }
 
     public function getCreateIndexSQL(Index $index, $table)
@@ -435,6 +430,39 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         return (isset($options['partition_options']))
             ? ' ' . $options['partition_options']
             : '';
+    }
+
+    public function getClobTypeDeclarationSQL(array $field)
+    {
+        if ( ! empty($field['length']) && is_numeric($field['length'])) {
+            $length = $field['length'];
+
+            if ($length <= static::LENGTH_LIMIT_TINYTEXT) {
+                return 'TINYTEXT';
+            }
+
+            if ($length <= static::LENGTH_LIMIT_TEXT) {
+                return 'TEXT';
+            }
+
+            if ($length > static::LENGTH_LIMIT_MEDIUMTEXT) {
+                return 'LONGTEXT';
+            }
+        }
+
+        return 'MEDIUMTEXT';
+    }
+
+    public function getColumnDeclarationListSQL(array $fields)
+    {
+        $queryFields = array();
+
+        foreach ($fields as $fieldName => $field) {
+            $quotedFieldName = $this->espoQuote($fieldName);
+            $queryFields[] = $this->getColumnDeclarationSQL($quotedFieldName, $field);
+        }
+
+        return implode(', ', $queryFields);
     }
     //end: ESPO
 }

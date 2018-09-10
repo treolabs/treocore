@@ -4,6 +4,9 @@
         "first",
         "last"
     ],
+    "notActualFields": [
+        ""
+    ],
     "params":[
         {
             "name":"required",
@@ -29,5 +32,11 @@
     "notCreatable":true,
     "filter":true,
     "skipOrmDefs": true,
-    "personalData": true
+    "personalData": true,
+    "textFilter": true,
+    "fullTextSearch": true,
+    "fullTextSearchColumnList": [
+        "first",
+        "last"
+    ]
 }

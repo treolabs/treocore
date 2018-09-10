@@ -31,36 +31,31 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Espo\Services;
+namespace Espo\Modules\TreoCore\Migration;
 
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\Error;
-use \Espo\Core\Exceptions\NotFound;
+use Espo\Core\Utils\Util;
+use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+use Espo\Modules\TreoCore\Core\Utils\Composer;
 
-class ActionHistoryRecord extends Record
+/**
+ * Version 1.14.1
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class V1Dot14Dot1 extends AbstractMigration
 {
-    protected $actionHistoryDisabled = true;
-
-    protected $listCountQueryDisabled = true;
-
-    protected $forceSelectAllAttributes = true;
-
-    public function loadParentNameFields(\Espo\ORM\Entity $entity)
+    /**
+     * Up to current
+     */
+    public function up(): void
     {
-        if ($entity->get('targetId') && $entity->get('targetType')) {
-            $repository = $this->getEntityManager()->getRepository($entity->get('targetType'));
-            if ($repository) {
-                $target = $repository->where(array(
-                    'id' => $entity->get('targetId')
-                ))->findOne(array(
-                    'withDeleted' => true
-                ));
-                if ($target && $target->get('name')) {
-                    $entity->set('targetName', $target->get('name'));
-                }
-            }
-        }
+        $this->getConfig()->set('massPrintPdfMaxCount', 50);
+        $this->getConfig()->set('emailKeepParentTeamsEntityList', ['Case']);
+        $this->getConfig()->set('adminNotificationsNewExtensionVersion', true);
+        $this->getConfig()->set('recordListMaxSizeLimit', 200);
+
+        $this->getConfig()->save();
     }
 }
-

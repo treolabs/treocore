@@ -27,32 +27,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Formula\Functions\StringGroup;
+namespace Espo\Controllers;
 
+use \Espo\Core\Exceptions\Forbidden;
+use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Error;
 
-class UpperCaseType extends \Espo\Core\Formula\Functions\Base
+class Pdf extends \Espo\Core\Controllers\Base
 {
-    public function process(\StdClass $item)
+    public function postActionMassPrint($params, $data)
     {
-        if (!property_exists($item, 'value')) {
-            return '';
+        if (empty($data->idList) || !is_array($data->idList)) {
+            throw new BadRequest();
+        }
+        if (empty($data->entityType)) {
+            throw new BadRequest();
+        }
+        if (empty($data->templateId)) {
+            throw new BadRequest();
+        }
+        if (!$this->getAcl()->checkScope('Template')) {
+            throw new Forbidden();
+        }
+        if (!$this->getAcl()->checkScope($data->entityType)) {
+            throw new Forbidden();
         }
 
-        if (!is_array($item->value)) {
-            throw new Error();
-        }
-
-        if (count($item->value) < 1) {
-            throw new Error();
-        }
-
-        $value = $this->evaluate($item->value[0]);
-
-        if (!is_string($value)) {
-            $value = strval($value);
-        }
-
-        return mb_strtoupper($value);
+        return [
+            'id' => $this->getServiceFactory()->create('Pdf')->massGenerate($data->entityType, $data->idList, $data->templateId, true)
+        ];
     }
 }

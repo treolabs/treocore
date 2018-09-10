@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\ORM\Repositories;
 
@@ -470,17 +465,21 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
                                         $data->$columnName = $foreignEntity->get($columnField);
                                     }
                                     $existingColumnsData->$foreignId = $data;
-                                    $entity->setFetched($columnsFieldsName, $existingColumnsData);
+                                    if (!$entity->isNew()) {
+                                        $entity->setFetched($columnsFieldsName, $existingColumnsData);
+                                    }
                                 }
 
                             }
                         }
 
-                        if ($entity->has($fieldName)) {
-                            $entity->setFetched($fieldName, $existingIds);
-                        }
-                        if ($entity->has($columnsFieldsName) && !empty($columns)) {
-                            $entity->setFetched($columnsFieldsName, $existingColumnsData);
+                        if (!$entity->isNew()) {
+                            if ($entity->has($fieldName)) {
+                                $entity->setFetched($fieldName, $existingIds);
+                            }
+                            if ($entity->has($columnsFieldsName) && !empty($columns)) {
+                                $entity->setFetched($columnsFieldsName, $existingColumnsData);
+                            }
                         }
 
                         foreach ($existingIds as $id) {
@@ -545,13 +544,17 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
                 $where[$foreignKey] = $entity->id;
                 $previousForeignEntity = $this->getEntityManager()->getRepository($foreignEntityType)->where($where)->findOne();
                 if ($previousForeignEntity) {
-                    $entity->setFetched($idFieldName, $previousForeignEntity->id);
+                    if (!$entity->isNew()) {
+                        $entity->setFetched($idFieldName, $previousForeignEntity->id);
+                    }
                     if ($previousForeignEntity->id !== $entity->get($idFieldName)) {
                         $previousForeignEntity->set($foreignKey, null);
                         $this->getEntityManager()->saveEntity($previousForeignEntity);
                     }
                 } else {
-                    $entity->setFetched($idFieldName, null);
+                    if (!$entity->isNew()) {
+                        $entity->setFetched($idFieldName, null);
+                    }
                 }
 
                 if ($entity->get($idFieldName)) {

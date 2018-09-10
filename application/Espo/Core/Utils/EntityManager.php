@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils;
 
@@ -133,6 +128,28 @@ class EntityManager
         return false;
     }
 
+    protected function checkRelationshipExists($name)
+    {
+        $name = ucfirst($name);
+
+        $scopeList = array_keys($this->getMetadata()->get(['scopes'], []));
+
+        foreach ($scopeList as $entityType) {
+            $relationsDefs = $this->getEntityManager()->getMetadata()->get($entityType, 'relations');
+            if (empty($relationsDefs)) continue;
+            foreach ($relationsDefs as $link => $item) {
+                if (empty($item['type'])) continue;
+                if (empty($item['relationName'])) continue;
+                if ($item['type'] === 'manyMany') {
+                    if (ucfirst($item['relationName']) === $name) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public function create($name, $type, $params = [], $replaceData = [])
     {
         $name = ucfirst($name);
@@ -175,6 +192,10 @@ class EntityManager
 
         if (in_array(strtolower($name), $this->reservedWordList)) {
             throw new Conflict('Entity name \''.$name.'\' is not allowed.');
+        }
+
+        if ($this->checkRelationshipExists($name)) {
+            throw new Conflict('Relationship with the same name \''.$name.'\' exists.');
         }
 
         $normalizedName = Util::normilizeClassName($name);
@@ -408,6 +429,16 @@ class EntityManager
             $this->getMetadata()->set('entityDefs', $name, $entityDefsData);
         }
 
+
+        if (isset($data['fullTextSearch'])) {
+            $entityDefsData = [
+                'collection' => [
+                    'fullTextSearch' => !!$data['fullTextSearch']
+                ]
+            ];
+            $this->getMetadata()->set('entityDefs', $name, $entityDefsData);
+        }
+
         if (array_key_exists('kanbanStatusIgnoreList', $data)) {
             $scopeData['kanbanStatusIgnoreList'] = $data['kanbanStatusIgnoreList'];
             $this->getMetadata()->set('scopes', $name, $scopeData);
@@ -551,6 +582,12 @@ class EntityManager
             } else {
                 $relationName = lcfirst($entity) . $entityForeign;
             }
+            if ($this->getMetadata()->get(['scopes', ucfirst($relationName)])) {
+                throw new Conflict("Entity with the same name '{$relationName}' exists.");
+            }
+            if ($this->checkRelationshipExists($relationName)) {
+                throw new Conflict("Relationship with the same name '{$relationName}' exists.");
+            }
         }
 
         if (empty($link) || empty($linkForeign)) {
@@ -625,7 +662,6 @@ class EntityManager
                         $link => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleField,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleField,
                             "noLoad"  => !$linkMultipleField,
                             "importDisabled" => !$linkMultipleField,
@@ -690,7 +726,6 @@ class EntityManager
                         $linkForeign => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleFieldForeign,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleFieldForeign,
                             "noLoad"  => !$linkMultipleFieldForeign,
                             "importDisabled" => !$linkMultipleFieldForeign,
@@ -714,7 +749,6 @@ class EntityManager
                         $link => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleField,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleField,
                             "importDisabled" => !$linkMultipleField,
                             "noLoad"  => !$linkMultipleField,
@@ -737,7 +771,6 @@ class EntityManager
                         $linkForeign => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleFieldForeign,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleFieldForeign,
                             "importDisabled" => !$linkMultipleFieldForeign,
                             "noLoad"  => !$linkMultipleFieldForeign,
@@ -811,7 +844,6 @@ class EntityManager
                         $link => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleField,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleField,
                             "noLoad"  => !$linkMultipleField,
                             "importDisabled" => !$linkMultipleField,
@@ -836,7 +868,6 @@ class EntityManager
                         $linkForeign => array(
                             "type" => "linkMultiple",
                             "layoutDetailDisabled"  => !$linkMultipleFieldForeign,
-                            "layoutListDisabled"  => true,
                             "layoutMassUpdateDisabled"  => !$linkMultipleFieldForeign,
                             "noLoad"  => !$linkMultipleFieldForeign,
                             "importDisabled" => !$linkMultipleFieldForeign,
@@ -850,7 +881,7 @@ class EntityManager
         }
 
         if (
-        in_array($this->getMetadata()->get("entityDefs.{$entity}.links.{$link}.type"), ['hasMany', 'hasChildren'])
+            in_array($this->getMetadata()->get("entityDefs.{$entity}.links.{$link}.type"), ['hasMany', 'hasChildren'])
         ) {
             if (array_key_exists('audited', $params)) {
                 $audited = $params['audited'];
@@ -867,7 +898,7 @@ class EntityManager
         }
 
         if (
-        in_array($this->getMetadata()->get("entityDefs.{$entityForeign}.links.{$linkForeign}.type"), ['hasMany', 'hasChildren'])
+            in_array($this->getMetadata()->get("entityDefs.{$entityForeign}.links.{$linkForeign}.type"), ['hasMany', 'hasChildren'])
         ) {
             if (array_key_exists('auditedForeign', $params)) {
                 $auditedForeign = $params['auditedForeign'];

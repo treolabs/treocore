@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Controllers;
 
@@ -138,12 +133,13 @@ class Record extends Base
         $q = $request->get('q');
         $textFilter = $request->get('textFilter');
 
-        if (empty($maxSize)) {
-            $maxSize = self::MAX_SIZE_LIMIT;
-        }
         // @todo treoinject
-//        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-//            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
+//        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
+//        if (empty($maxSize)) {
+//            $maxSize = $maxSizeLimit;
+//        }
+//        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+//            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
 //        }
 
         $params = array(
@@ -180,11 +176,12 @@ class Record extends Base
         $q = $request->get('q');
         $textFilter = $request->get('textFilter');
 
+        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
         if (empty($maxSize)) {
-            $maxSize = self::MAX_SIZE_LIMIT;
+            $maxSize = $maxSizeLimit;
         }
-        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
+        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
         }
 
         $params = array(
@@ -219,6 +216,10 @@ class Record extends Base
         if ($request->get('filterList')) {
             $params['filterList'] = $request->get('filterList');
         }
+
+        if ($request->get('select')) {
+            $params['select'] = explode(',', $request->get('select'));
+        }
     }
 
     public function actionListLinked($params, $data, $request)
@@ -234,11 +235,12 @@ class Record extends Base
         $q = $request->get('q');
         $textFilter = $request->get('textFilter');
 
+        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
         if (empty($maxSize)) {
-            $maxSize = self::MAX_SIZE_LIMIT;
+            $maxSize = $maxSizeLimit;
         }
-        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-            throw new Forbidden();
+        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
         }
 
         $params = array(
@@ -461,64 +463,6 @@ class Record extends Base
         }
 
         throw new Error();
-    }
-
-    /**
-     * Action add relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
-    {
-        if (!$request->isPost()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->addRelation($data->ids, $data->foreignIds, $params['link']);
-    }
-
-    /**
-     * Action remove relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
-    {
-        if (!$request->isDelete()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->removeRelation($data->ids, $data->foreignIds, $params['link']);
     }
 
     public function actionFollow($params, $data, $request)

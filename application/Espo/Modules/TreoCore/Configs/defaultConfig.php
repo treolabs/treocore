@@ -113,6 +113,7 @@ return [
     'exportDisabled' => false,
     'adminNotifications' => true,
     'adminNotificationsNewVersion' => true,
+    'adminNotificationsNewExtensionVersion' => true,
     'adminNotificationsCronIsNotConfigured' => true,
     'assignmentEmailNotifications' => false,
     'assignmentEmailNotificationsEntityList' => ['Lead', 'Opportunity', 'Task', 'Case'],
@@ -180,5 +181,8 @@ return [
     'inlineAttachmentUploadMaxSize' => 20,
     'pmLimit' => 5,
     'massUpdateMax' => 200,
+    'massPrintPdfMaxCount' => 50,
+    'emailKeepParentTeamsEntityList' => ['Case'],
+    'recordListMaxSizeLimit' => 200,
     'isInstalled' => false
 ];

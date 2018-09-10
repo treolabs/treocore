@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Utils\Database\Schema;
 
@@ -53,12 +48,7 @@ class Schema
 
     private $converter;
 
-    private $connection;
-
-    protected $drivers = array(
-        'mysqli' => '\Espo\Core\Utils\Database\DBAL\Driver\Mysqli\Driver',
-        'pdo_mysql' => '\Espo\Core\Utils\Database\DBAL\Driver\PDOMySql\Driver',
-    );
+    private $databaseHelper;
 
     protected $fieldTypePaths = array(
         'application/Espo/Core/Utils/Database/DBAL/FieldTypes',
@@ -84,8 +74,6 @@ class Schema
      */
     protected $rebuildActionClasses = null;
 
-
-
     public function __construct(\Espo\Core\Utils\Config $config, \Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\ORM\EntityManager $entityManager, \Espo\Core\Utils\File\ClassParser $classParser, \Espo\Core\Utils\Metadata\OrmMetadata $ormMetadata)
     {
         $this->config = $config;
@@ -94,16 +82,16 @@ class Schema
         $this->entityManager = $entityManager;
         $this->classParser = $classParser;
 
+        $this->databaseHelper = new \Espo\Core\Utils\Database\Helper($this->config);
+
         $this->comparator = new \Espo\Core\Utils\Database\DBAL\Schema\Comparator();
         $this->initFieldTypes();
 
-        $this->converter = new \Espo\Core\Utils\Database\Converter($this->metadata, $this->fileManager);
-
-        $this->schemaConverter = new Converter($this->metadata, $this->fileManager, $this);
+        $this->converter = new \Espo\Core\Utils\Database\Converter($this->metadata, $this->fileManager, $this->config);
+        $this->schemaConverter = new Converter($this->metadata, $this->fileManager, $this, $this->config);
 
         $this->ormMetadata = $ormMetadata;
     }
-
 
     protected function getConfig()
     {
@@ -145,25 +133,15 @@ class Schema
         return $this->getConnection()->getDatabasePlatform();
     }
 
+    public function getDatabaseHelper()
+    {
+        return $this->databaseHelper;
+    }
 
     public function getConnection()
     {
-        if (isset($this->connection)) {
-            return $this->connection;
-        }
-
-        $dbalConfig = new \Doctrine\DBAL\Configuration();
-
-        $connectionParams = $this->getConfig()->get('database');
-
-        $connectionParams['driverClass'] = $this->drivers[ $connectionParams['driver'] ];
-        unset($connectionParams['driver']);
-
-        $this->connection = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $dbalConfig);
-
-        return $this->connection;
+        return $this->getDatabaseHelper()->getDbalConnection();
     }
-
 
     protected function initFieldTypes()
     {
@@ -191,8 +169,6 @@ class Schema
             }
         }
     }
-
-
 
     /*
      * Rebuild database schema
@@ -229,7 +205,6 @@ class Schema
         return (bool) $result;
     }
 
-
     /*
     * Get current database schema
     *
@@ -253,7 +228,6 @@ class Schema
         //return $schema->toSql($this->getPlatform()); //it can return with DROP TABLE
     }
 
-
     /*
     * Get SQL queries to get from one to another schema
     *
@@ -265,8 +239,6 @@ class Schema
 
         return $this->toSql($schemaDiff); //$schemaDiff->toSql($this->getPlatform());
     }
-
-
 
     /**
      * Init Rebuild Actions, get all classes and create them
@@ -315,47 +287,5 @@ class Schema
                 $rebuildActionClass->$action();
             }
         }
-    }
-
-    public function getMaxIndexLength()
-    {
-        $connection = $this->getConnection();
-        $mysqlEngine = $this->getMysqlEngine();
-
-        switch ($mysqlEngine) {
-            case 'InnoDB':
-                $mysqlVersion = $this->getMysqlVersion();
-
-                if (version_compare($mysqlVersion, '10.0.0') >= 0) {
-                    return 767; //InnoDB, MariaDB
-                }
-
-                if (version_compare($mysqlVersion, '5.7.0') >= 0) {
-                    return 3072; //InnoDB, MySQL 5.7+
-                }
-
-                return 767; //InnoDB
-                break;
-        }
-
-        return 1000; //MyISAM
-    }
-
-    protected function getMysqlVersion()
-    {
-        $connection = $this->getConnection();
-        return $connection->fetchColumn("select version()");
-    }
-
-    protected function getMysqlEngine()
-    {
-        $connection = $this->getConnection();
-        $result = $connection->fetchColumn("SHOW TABLE STATUS WHERE Engine = 'MyISAM'");
-
-        if (!empty($result)) {
-            return 'MyISAM';
-        }
-
-        return 'InnoDB';
     }
 }

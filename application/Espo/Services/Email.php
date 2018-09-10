@@ -68,8 +68,7 @@ class Email extends Record
         'parentType', 'parentId', 'parentName', 'teamsIds', 'teamsNames', 'assignedUserId', 'assignedUserName'
     ];
 
-    protected $selectAttributeList = [
-        'id',
+    protected $mandatorySelectAttributeList = [
         'name',
         'createdById',
         'dateSent',
@@ -80,6 +79,7 @@ class Email extends Record
         'parentId',
         'parentType',
         'isHtml',
+        'isReplied',
         'status',
         'accountId',
         'folderId',
@@ -180,14 +180,26 @@ class Email extends Record
 
         if (!$smtpParams && $fromAddress === strtolower($this->getConfig()->get('outboundEmailFromAddress'))) {
             if (!$this->getConfig()->get('outboundEmailIsShared')) {
-                throw new Error('Can not use system smtp. System SMTP is not shared.');
+                throw new Error('Can not use system SMTP. System account is not shared.');
             }
-            $emailSender->setParams(array(
+            $emailSender->setParams([
                 'fromName' => $this->getConfig()->get('outboundEmailFromName')
-            ));
+            ]);
         }
 
-        $params = array();
+        if (!$smtpParams && !$this->getConfig()->get('outboundEmailIsShared')) {
+            throw new Error('No SMTP params found for '.$fromAddress.'.');
+        }
+
+        if (!$smtpParams) {
+            if (in_array($fromAddress, $userAddressList)) {
+                $emailSender->setParams([
+                    'fromName' => $this->getUser()->get('name')
+                ]);
+            }
+        }
+
+        $params = [];
 
         $parent = null;
         if ($entity->get('parentType') && $entity->get('parentId')) {

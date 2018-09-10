@@ -104,6 +104,10 @@ class Record extends \Espo\Core\Services\Base
 
     protected $selectAttributeList = null;
 
+    protected $mandatorySelectAttributeList = [];
+
+    protected $forceSelectAllAttributes = false;
+
     const MAX_SELECT_TEXT_ATTRIBUTE_LENGTH = 5000;
 
     const FOLLOWERS_LIMIT = 4;
@@ -266,12 +270,13 @@ class Record extends \Espo\Core\Services\Base
 
     protected function loadFollowers(Entity $entity)
     {
-        if ($this->getMetadata()->get("scopes.".$entity->getEntityType().".stream")) {
-            $data = $this->getStreamService()->getEntityFollowers($entity, 0, self::FOLLOWERS_LIMIT);
-            if ($data) {
-                $entity->set('followersIds', $data['idList']);
-                $entity->set('followersNames', $data['nameMap']);
-            }
+        if ($this->getUser()->isPortal()) return;
+        if (!$this->getMetadata()->get(['scopes', $entity->getEntityType(), 'stream'])) return;
+
+        $data = $this->getStreamService()->getEntityFollowers($entity, 0, self::FOLLOWERS_LIMIT);
+        if ($data) {
+            $entity->set('followersIds', $data['idList']);
+            $entity->set('followersNames', $data['nameMap']);
         }
     }
 
@@ -285,6 +290,18 @@ class Record extends \Espo\Core\Services\Base
                     $columns = $defs['columns'];
                 }
                 $entity->loadLinkMultipleField($field, $columns);
+            }
+        }
+    }
+
+    protected function loadLinkMultipleFieldsForList(Entity $entity, $selectAttributeList)
+    {
+        foreach ($selectAttributeList as $attribute) {
+            if ($entity->getAttributeParam($attribute, 'isLinkMultipleIdList')) {
+                $field = $entity->getAttributeParam($attribute, 'relation');
+                if (!$field) continue;
+                if ($entity->has($attribute)) continue;
+                $entity->loadLinkMultipleField($field);
             }
         }
     }
@@ -926,17 +943,17 @@ class Record extends \Espo\Core\Services\Base
 
         $maxSize = 0;
         if ($disableCount) {
-            if (!empty($params['maxSize'])) {
-                $maxSize = $params['maxSize'];
-                $params['maxSize'] = $params['maxSize'] + 1;
-            }
+           if (!empty($params['maxSize'])) {
+               $maxSize = $params['maxSize'];
+               $params['maxSize'] = $params['maxSize'] + 1;
+           }
         }
 
         $selectParams = $this->getSelectParams($params);
 
         $selectParams['maxTextColumnsLength'] = $this->getMaxSelectTextAttributeLength();
 
-        $selectAttributeList = $this->getSelectAttributeList();
+        $selectAttributeList = $this->getSelectAttributeList($params);
         if ($selectAttributeList) {
             $selectParams['select'] = $selectAttributeList;
         } else {
@@ -949,6 +966,9 @@ class Record extends \Espo\Core\Services\Base
             $this->loadAdditionalFieldsForList($e);
             if (!empty($params['loadAdditionalFields'])) {
                 $this->loadAdditionalFields($e);
+            }
+            if (!empty($selectAttributeList)) {
+                $this->loadLinkMultipleFieldsForList($e, $selectAttributeList);
             }
             $this->prepareEntityForOutput($e);
         }
@@ -983,17 +1003,17 @@ class Record extends \Espo\Core\Services\Base
 
         $maxSize = 0;
         if ($disableCount) {
-            if (!empty($params['maxSize'])) {
-                $maxSize = $params['maxSize'];
-                $params['maxSize'] = $params['maxSize'] + 1;
-            }
+           if (!empty($params['maxSize'])) {
+               $maxSize = $params['maxSize'];
+               $params['maxSize'] = $params['maxSize'] + 1;
+           }
         }
 
         $selectParams = $this->getSelectParams($params);
 
         $selectParams['maxTextColumnsLength'] = $this->getMaxSelectTextAttributeLength();
 
-        $selectAttributeList = $this->getSelectAttributeList();
+        $selectAttributeList = $this->getSelectAttributeList($params);
         if ($selectAttributeList) {
             $selectParams['select'] = $selectAttributeList;
         } else {
@@ -1048,6 +1068,9 @@ class Record extends \Espo\Core\Services\Base
                 $this->loadAdditionalFieldsForList($e);
                 if (!empty($params['loadAdditionalFields'])) {
                     $this->loadAdditionalFields($e);
+                }
+                if (!empty($selectAttributeList)) {
+                    $this->loadLinkMultipleFieldsForList($e, $selectAttributeList);
                 }
                 $this->prepareEntityForOutput($e);
 
@@ -1123,7 +1146,7 @@ class Record extends \Espo\Core\Services\Base
 
         $disableCount = false;
         if (
-        in_array($this->entityType, $this->getConfig()->get('disabledCountQueryEntityList', []))
+            in_array($this->entityType, $this->getConfig()->get('disabledCountQueryEntityList', []))
         ) {
             $disableCount = true;
         }
@@ -1144,7 +1167,7 @@ class Record extends \Espo\Core\Services\Base
 
         $selectParams['maxTextColumnsLength'] = $recordService->getMaxSelectTextAttributeLength();
 
-        $selectAttributeList = $recordService->getSelectAttributeList();
+        $selectAttributeList = $recordService->getSelectAttributeList($params);
         if ($selectAttributeList) {
             $selectParams['select'] = $selectAttributeList;
         } else {
@@ -1157,6 +1180,9 @@ class Record extends \Espo\Core\Services\Base
             $recordService->loadAdditionalFieldsForList($e);
             if (!empty($params['loadAdditionalFields'])) {
                 $recordService->loadAdditionalFields($e);
+            }
+            if (!empty($selectAttributeList)) {
+                $this->loadLinkMultipleFieldsForList($e, $selectAttributeList);
             }
             $recordService->prepareEntityForOutput($e);
         }
@@ -1360,9 +1386,17 @@ class Record extends \Espo\Core\Services\Base
 
             $selectParams = $this->getSelectParams($p);
 
-            $collection = $repository->find($selectParams);
+            $this->getEntityManager()->getRepository($this->getEntityType())->handleSelectParams($selectParams);
 
-            foreach ($collection as $entity) {
+            $sql = $this->getEntityManager()->getQuery()->createSelectQuery($this->getEntityType(), $selectParams);
+            $sth = $this->getEntityManager()->getPdo()->prepare($sql);
+            $sth->execute();
+
+            while ($dataRow = $sth->fetch(\PDO::FETCH_ASSOC)) {
+                $entity = $this->getEntityManager()->getEntityFactory()->create($this->getEntityType());
+                $entity->set($dataRow);
+                $entity->setAsFetched();
+
                 if ($this->getAcl()->check($entity, 'edit') && $this->checkEntityForMassUpdate($entity, $data)) {
                     $entity->set($data);
                     if ($this->checkAssignment($entity)) {
@@ -1435,10 +1469,19 @@ class Record extends \Espo\Core\Services\Base
             }
 
             $selectParams = $this->getSelectParams($p);
-            $skipTextColumns['skipTextColumns'] = true;
-            $collection = $repository->find($selectParams);
+            $selectParams['skipTextColumns'] = true;
 
-            foreach ($collection as $entity) {
+            $this->getEntityManager()->getRepository($this->getEntityType())->handleSelectParams($selectParams);
+
+            $sql = $this->getEntityManager()->getQuery()->createSelectQuery($this->getEntityType(), $selectParams);
+            $sth = $this->getEntityManager()->getPdo()->prepare($sql);
+            $sth->execute();
+
+            while ($dataRow = $sth->fetch(\PDO::FETCH_ASSOC)) {
+                $entity = $this->getEntityManager()->getEntityFactory()->create($this->getEntityType());
+                $entity->set($dataRow);
+                $entity->setAsFetched();
+
                 if ($this->getAcl()->check($entity, 'delete') && $this->checkEntityForMassRemove($entity)) {
                     if ($repository->remove($entity)) {
                         $idsRemoved[] = $entity->id;
@@ -1624,6 +1667,8 @@ class Record extends \Espo\Core\Services\Base
         }
         $exportObj = $this->getInjection('injectableFactory')->createByClassName($className);
 
+        $collection = null;
+
         if (array_key_exists('collection', $params)) {
             $collection = $params['collection'];
         } else {
@@ -1659,12 +1704,14 @@ class Record extends \Espo\Core\Services\Base
                 $selectManager->applyOrder($orderBy, $desc, $selectParams);
             }
 
-            $collection = $this->getRepository()->find($selectParams);
+            $this->getEntityManager()->getRepository($this->getEntityType())->handleSelectParams($selectParams);
+
+            $sql = $this->getEntityManager()->getQuery()->createSelectQuery($this->getEntityType(), $selectParams);
+            $sth = $this->getEntityManager()->getPdo()->prepare($sql);
+            $sth->execute();
         }
 
         $arr = array();
-
-        $collection->toArray();
 
         $attributeListToSkip = [
             'deleted'
@@ -1733,17 +1780,36 @@ class Record extends \Espo\Core\Services\Base
             $exportObj->addAdditionalAttributes($this->entityType, $attributeList, $fieldList);
         }
 
-        foreach ($collection as $entity) {
-            $this->loadAdditionalFieldsForExport($entity);
-            if (method_exists($exportObj, 'loadAdditionalFields')) {
-                $exportObj->loadAdditionalFields($entity, $fieldList);
+        if ($collection) {
+            foreach ($collection as $entity) {
+                $this->loadAdditionalFieldsForExport($entity);
+                if (method_exists($exportObj, 'loadAdditionalFields')) {
+                    $exportObj->loadAdditionalFields($entity, $fieldList);
+                }
+                $row = array();
+                foreach ($attributeList as $attribute) {
+                    $value = $this->getAttributeFromEntityForExport($entity, $attribute);
+                    $row[$attribute] = $value;
+                }
+                $arr[] = $row;
             }
-            $row = array();
-            foreach ($attributeList as $attribute) {
-                $value = $this->getAttributeFromEntityForExport($entity, $attribute);
-                $row[$attribute] = $value;
+        } else {
+            while ($dataRow = $sth->fetch(\PDO::FETCH_ASSOC)) {
+                $entity = $this->getEntityManager()->getEntityFactory()->create($this->getEntityType());
+                $entity->set($dataRow);
+                $entity->setAsFetched();
+
+                $this->loadAdditionalFieldsForExport($entity);
+                if (method_exists($exportObj, 'loadAdditionalFields')) {
+                    $exportObj->loadAdditionalFields($entity, $fieldList);
+                }
+                $row = array();
+                foreach ($attributeList as $attribute) {
+                    $value = $this->getAttributeFromEntityForExport($entity, $attribute);
+                    $row[$attribute] = $value;
+                }
+                $arr[] = $row;
             }
-            $arr[] = $row;
         }
 
         if (is_null($attributeList)) {
@@ -2148,9 +2214,80 @@ class Record extends \Espo\Core\Services\Base
         return $this->getFieldManagerUtil()->getFieldByTypeList($this->entityType, $type);
     }
 
-    public function getSelectAttributeList()
+    public function getSelectAttributeList($params)
     {
-        return $this->selectAttributeList;
+        if ($this->forceSelectAllAttributes) {
+            return null;
+        }
+
+        if ($this->selectAttributeList) {
+            return $this->selectAttributeList;
+        }
+
+        // TODO remove in 5.5.0
+        if (in_array($this->getEntityType(), ['Report', 'Workflow', 'ReportPanel'])) {
+            return null;
+        }
+
+        $seed = $this->getEntityManager()->getEntity($this->getEntityType());
+
+        if (array_key_exists('select', $params)) {
+            $passedAttributeList = $params['select'];
+        } else {
+            $passedAttributeList = null;
+        }
+
+        if ($passedAttributeList) {
+            $attributeList = [];
+            if (!in_array('id', $passedAttributeList)) {
+                $attributeList[] = 'id';
+            }
+            $aclAttributeList = ['assignedUserId', 'createdById'];
+
+            if ($this->getUser()->isPortal()) {
+                $aclAttributeList[] = 'accountId';
+                $aclAttributeList[] = 'contactId';
+            }
+
+            foreach ($aclAttributeList as $attribute) {
+                if (!in_array($attribute, $passedAttributeList) && $seed->hasAttribute($attribute)) {
+                    $attributeList[] = $attribute;
+                }
+            }
+
+            foreach ($passedAttributeList as $attribute) {
+                if (!in_array($attribute, $attributeList) && $seed->hasAttribute($attribute)) {
+                    $attributeList[] = $attribute;
+                }
+            }
+
+            if (!empty($params['sortBy'])) {
+                $sortByField = $params['sortBy'];
+                $sortByFieldType = $this->getMetadata()->get(['entityDefs', $this->getEntityType(), 'fields', $sortByField, 'type']);
+
+                if ($sortByFieldType === 'currency') {
+                    if (!in_array($sortByField . 'Converted', $attributeList)) {
+                        $attributeList[] = $sortByField . 'Converted';
+                    }
+                }
+
+                $sortByAttributeList = $this->getFieldManagerUtil()->getAttributeList($this->getEntityType(), $sortByField);
+                foreach ($sortByAttributeList as $attribute) {
+                    if (!in_array($attribute, $attributeList) && $seed->hasAttribute($attribute)) {
+                        $attributeList[] = $attribute;
+                    }
+                }
+            }
+
+            foreach ($this->mandatorySelectAttributeList as $attribute) {
+                if (!in_array($attribute, $attributeList) && $seed->hasAttribute($attribute)) {
+                    $attributeList[] = $attribute;
+                }
+            }
+
+            return $attributeList;
+        }
+
+        return null;
     }
 }
-

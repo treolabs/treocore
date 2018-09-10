@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoPIM.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
- * Website: http://www.treopim.com
- *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,9 +24,8 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 namespace Espo\Core\Pdf;
 
@@ -44,6 +39,13 @@ class Tcpdf extends \TCPDF
     protected $footerHtml = '';
 
     protected $footerPosition = 15;
+
+    protected $useGroupNumbers = false;
+
+    public function setUseGroupNumbers($value)
+    {
+        $this->useGroupNumbers = $value;
+    }
 
     public function setFooterHtml($html)
     {
@@ -63,7 +65,16 @@ class Tcpdf extends \TCPDF
 
         $this->SetY((-1) * $this->footerPosition);
 
-        $html = str_replace('{pageNumber}', '{:pnp:}', $this->footerHtml);
+        $html = $this->footerHtml;
+
+        if ($this->useGroupNumbers) {
+            $html = str_replace('{pageNumber}', '{:png:}', $html);
+            $html = str_replace('{pageAbsoluteNumber}', '{:pnp:}', $html);
+        } else {
+            $html = str_replace('{pageNumber}', '{:pnp:}', $html);
+            $html = str_replace('{pageAbsoluteNumber}', '{:pnp:}', $html);
+        }
+
         $this->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, '', 0, false, 'T');
 
         $this->SetAutoPageBreak($autoPageBreak, $breakMargin);
@@ -103,6 +114,9 @@ class Tcpdf extends \TCPDF
                 ++$pagegroupnum;
                 $pnga = TCPDF_STATIC::formatPageNumber($pagegroupnum);
                 $pngu = TCPDF_FONTS::UTF8ToUTF16BE($pnga, false, $this->isunicode, $this->CurrentFont);
+
+                $pnga = $pngu;
+
                 $png_num_chars = $this->GetNumChars($pnga);
                 // replace page numbers
                 $replace = array();

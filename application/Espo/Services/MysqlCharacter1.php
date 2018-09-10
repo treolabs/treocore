@@ -34,8 +34,6 @@
 
 namespace Espo\Services;
 
-use Espo\Core\Utils\Database\Schema\Utils as SchemaUtils;
-
 /**
  * Class MysqlCharacter
  *
@@ -78,14 +76,14 @@ class MysqlCharacter extends \Espo\Core\Services\Base
             $sth->execute();
         }
 
-        $fieldListExceededIndexMaxLength = SchemaUtils::getFieldListExceededIndexMaxLength($ormMeta, $maxIndexLength);
+        $fieldListExceededIndexMaxLength = \Espo\Core\Utils\Database\Schema\Utils::getFieldListExceededIndexMaxLength($ormMeta, $maxIndexLength);
 
         foreach ($ormMeta as $entityName => $entityParams) {
 
             $tableName = \Espo\Core\Utils\Util::toUnderScore($entityName);
 
             //Get table columns params
-            $query = "SHOW FULL COLUMNS FROM `". $tableName ."` WHERE `Collation` <> 'utf8mb4_unicode_ci'";
+            $query = "SHOW FULL COLUMNS FROM `" . $tableName . "` WHERE `Collation` <> 'utf8mb4_unicode_ci'";
 
             try {
                 $sth = $pdo->prepare($query);
@@ -98,7 +96,7 @@ class MysqlCharacter extends \Espo\Core\Services\Base
             $columnParams = array();
             $rowList = $sth->fetchAll(\PDO::FETCH_ASSOC);
             foreach ($rowList as $row) {
-                $columnParams[ $row['Field'] ] = $row;
+                $columnParams[$row['Field']] = $row;
             }
             //END: get table columns params
 
@@ -125,8 +123,8 @@ class MysqlCharacter extends \Espo\Core\Services\Base
                     case 'text':
                     case 'jsonObject':
                     case 'jsonArray':
-                        $query = "ALTER TABLE `".$tableName."`
-                            CHANGE COLUMN `". $columnName ."` `". $columnName ."` ". $columnParams[$columnName]['Type'] ."
+                        $query = "ALTER TABLE `" . $tableName . "`
+                            CHANGE COLUMN `" . $columnName . "` `" . $columnName . "` " . $columnParams[$columnName]['Type'] . "
                             CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
                         ";
                         break;
@@ -139,7 +137,7 @@ class MysqlCharacter extends \Espo\Core\Services\Base
                         $sth = $pdo->prepare($query);
                         $sth->execute();
                     } catch (\Exception $e) {
-                        $GLOBALS['log']->warning('Utf8mb4: FAILED executing the query - [' . $query . '], details: '. $e->getMessage() .'.');
+                        $GLOBALS['log']->warning('Utf8mb4: FAILED executing the query - [' . $query . '], details: ' . $e->getMessage() . '.');
                     }
                 }
             }
