@@ -36,7 +36,7 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\TreoCore\Layouts;
 
-use Espo\Modules\TreoCore\Core\Container;
+use Espo\Core\Container;
 
 /**
  * AbstractLayout class

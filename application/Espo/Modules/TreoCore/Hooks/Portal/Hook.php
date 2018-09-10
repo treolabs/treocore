@@ -37,9 +37,9 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Hooks\Portal;
 
 use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Portal\Application as PortalApp;
 use Espo\ORM\Entity;
 use Espo\Modules\TreoCore\Core\Hooks\AbstractHook;
-use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
 
 /**
  * Portal hook

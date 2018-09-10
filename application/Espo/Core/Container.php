@@ -32,8 +32,20 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Espo\Core;
 
+use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Modules\TreoCore\Core\Utils\Config;
+use Espo\Modules\TreoCore\Core\Utils\Metadata;
+
+/**
+ * Class Container
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo   treoinject
+ */
 class Container
 {
     /**
@@ -80,10 +92,30 @@ class Container
     }
 
     /**
+     * Reload object
+     *
+     * @param string $name
+     *
+     * @return Container
+     */
+    public function reload(string $name): Container
+    {
+        // unset
+        if (isset($this->data[$name])) {
+            unset($this->data[$name]);
+        }
+
+        // load
+        $this->load($name);
+
+        return $this;
+    }
+
+    /**
      * Push object
      *
      * @param string $name
-     * @param mixed $obj
+     * @param mixed  $obj
      *
      * return void
      */
@@ -101,21 +133,19 @@ class Container
      */
     protected function load($name)
     {
-        $loadMethod = 'load'.ucfirst($name);
+        $loadMethod = 'load' . ucfirst($name);
         if (method_exists($this, $loadMethod)) {
             $this->set($name, $this->$loadMethod());
         } else {
-
             try {
-                $className = $this->get('metadata')->get('app.loaders.'.ucfirst($name));
+                $className = $this->get('metadata')->get('app.loaders.' . ucfirst($name));
             } catch (\Exception $e) {
-
             }
 
             if (!isset($className) || !class_exists($className)) {
-                $className = '\Espo\Custom\Core\Loaders\\'.ucfirst($name);
+                $className = '\Espo\Custom\Core\Loaders\\' . ucfirst($name);
                 if (!class_exists($className)) {
-                    $className = '\Espo\Core\Loaders\\'.ucfirst($name);
+                    $className = '\Espo\Core\Loaders\\' . ucfirst($name);
                 }
             }
 
@@ -140,21 +170,27 @@ class Container
     /**
      * Load config
      *
-     * @return \Espo\Core\Utils\Config
+     * @return Config
      */
     protected function loadConfig()
     {
-        return new \Espo\Core\Utils\Config(new \Espo\Core\Utils\File\Manager());
+        return new Config(new FileManager());
     }
 
     /**
      * Load metadata
      *
-     * @return \Espo\Core\Utils\Metadata
+     * @return Metadata
      */
-    protected function loadMetadata()
+    protected function loadMetadata(): Metadata
     {
-        return new \Espo\Core\Utils\Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
+        // create metadata
+        $metadata = new Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
+
+        // set container
+        $metadata->setContainer($this);
+
+        return $metadata;
     }
 
     /**
@@ -166,10 +202,10 @@ class Container
     {
         $config = $this->get('config');
 
-        $path     = $config->get('logger.path', 'data/logs/espo.log');
+        $path = $config->get('logger.path', 'data/logs/espo.log');
         $rotation = $config->get('logger.rotation', true);
 
-        $log       = new \Espo\Core\Utils\Log('Espo');
+        $log = new \Espo\Core\Utils\Log('Espo');
         $levelCode = $log->getLevelCode($config->get('logger.level', 'WARNING'));
 
         if ($rotation) {
