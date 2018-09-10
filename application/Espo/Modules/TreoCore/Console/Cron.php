@@ -76,6 +76,11 @@ class Cron extends AbstractConsole
      */
     protected function runCronJobs(): void
     {
+        if ($this->getConfig()->get('cronDisabled')) {
+            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
+            return;
+        }
+
         $auth = new Auth($this->getContainer());
         $auth->useNoAuth();
 
