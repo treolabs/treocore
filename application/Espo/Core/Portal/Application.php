@@ -32,78 +32,99 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Espo\Core\Portal;
 
-use \Espo\Core\Exceptions\Error;
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
+use Espo\Core\Utils\Json;
 
-class Application extends \Espo\Core\Application
+/**
+ * Class Application
+ *
+ * @author r.ratsun@zinitsolutions.com
+ * @todo   treoinject
+ */
+class Application extends ApplicationEspo
 {
-    public function __construct($portalId)
+    const CONFIG_PATH = 'data/portals.json';
+
+    /**
+     * @var null|array
+     */
+    protected static $urls = null;
+
+    /**
+     * Is calling portal id
+     *
+     * @return string
+     */
+    public static function getCallingPortalId(): string
     {
-        date_default_timezone_set('UTC');
+        // prepare result
+        $result = '';
 
-        $this->initContainer();
+        // prepare protocol
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
 
-        if (empty($portalId)) {
-            throw new Error("Portal id was not passed to ApplicationPortal.");
+        // prepare url
+        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        if (in_array($url, self::getUrlFileData())) {
+            $result = array_search($url, self::getUrlFileData());
         }
 
-        $GLOBALS['log'] = $this->getContainer()->get('log');
-
-        $portal = $this->getContainer()->get('entityManager')->getEntity('Portal', $portalId);
-
-        if (!$portal) {
-            $portal = $this->getContainer()->get('entityManager')->getRepository('Portal')->where(array(
-                'customId' => $portalId
-            ))->findOne();
-        }
-
-        if (!$portal) {
-            throw new NotFound();
-        }
-        if (!$portal->get('isActive')) {
-            throw new Forbidden("Portal is not active.");
-        }
-
-        $this->portal = $portal;
-
-        $this->getContainer()->setPortal($portal);
-
-        $this->initAutoloads();
+        return $result;
     }
 
-    protected function getPortal()
+    /**
+     * Get url config file data
+     *
+     * @return array
+     */
+    public static function getUrlFileData(): array
     {
-        return $this->portal;
-    }
+        if (is_null(self::$urls)) {
+            // prepare result
+            self::$urls = [];
 
-    protected function initContainer()
-    {
-        $this->container = new Container();
-    }
-
-    protected function getRouteList()
-    {
-        $routeList = parent::getRouteList();
-        foreach ($routeList as $i => $route) {
-            if (isset($route['route'])) {
-                if ($route['route']{0} !== '/') {
-                    $route['route'] = '/' . $route['route'];
+            if (file_exists(self::CONFIG_PATH)) {
+                $json = file_get_contents(self::CONFIG_PATH);
+                if (!empty($json)) {
+                    self::$urls = Json::decode($json, true);
                 }
-                $route['route'] = '/:portalId' . $route['route'];
             }
-            $routeList[$i] = $route;
         }
-        return $routeList;
+
+        return self::$urls;
     }
 
+
+    /**
+     * Set data to url config file
+     *
+     * @param array $data
+     */
+    public static function saveUrlFile(array $data): void
+    {
+        $file = fopen(self::CONFIG_PATH, "w");
+        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        fclose($file);
+    }
+
+    /**
+     * Run client
+     */
     public function runClient()
     {
-        $this->getContainer()->get('clientManager')->display(null, 'html/portal.html', array(
-            'portalId' => $this->getPortal()->id
-        ));
-        exit;
+        $this->getContainer()->get('clientManager')->display(
+            null,
+            'html/treo-portal.html',
+            [
+                'portalId'        => $this->getPortal()->id,
+                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+                'year'            => date('Y'),
+                'version'         => $this->getContainer()->get('config')->get('version')
+            ]
+        );
     }
 }
