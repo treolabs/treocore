@@ -34,7 +34,7 @@
 
 namespace Espo\Core;
 
-class EspoContainer
+class ContainerEspo
 {
 
     private $data = array();
