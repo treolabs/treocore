@@ -4,7 +4,8 @@
     "clientId": "Client ID",
     "clientSecret": "Client Geheimnis",
     "redirectUri": "Weiterleitungs URI",
-    "apiKey": "API Key"
+    "apiKey": "API Key",
+    "data": "Daten"
   },
   "titles": {
     "GoogleMaps": "Google Maps"

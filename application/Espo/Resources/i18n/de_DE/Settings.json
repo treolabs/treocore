@@ -84,7 +84,9 @@
     "mentionEmailNotifications": "E-Mail Benachrichtigungen für Erwähnungen in Beträgen",
     "massEmailDisableMandatoryOptOutLink": "Verpflichtenden Opt-out Link deaktivieren",
     "activitiesEntityList": "Aktivitätenentitätsliste",
-    "historyEntityList": "Verlaufsentitätenliste"
+    "historyEntityList": "Verlaufsentitätenliste",
+    "aclAllowDeleteCreated": "Allow to remove created records",
+    "isMultilangActive": "Ist aktiv"
   },
   "options": {
     "weekStart": {
@@ -122,7 +124,8 @@
     "ldapAccountDomainNameShort": "Kurzform der Domäne, die für die Anmeldung am LDAP Verzeichnis verwendet wird.",
     "ldapUserTeams": "Teams für den erstellen Benutzer. Weitere Informationen siehe Benutzerprofil.",
     "ldapUserDefaultTeam": "Standard-Team für erstellten Benutzer. Weitere Informationen siehe Benutzerprofil.",
-    "b2cMode": "Standardmäßig ist EspoCRM für B2B angepasst. Sie können es auf B2C umschalten."
+    "b2cMode": "Standardmäßig ist EspoCRM für B2B angepasst. Sie können es auf B2C umschalten.",
+    "aclAllowDeleteCreated": "Users will be able to remove records they created even if they don't have a delete access."
   },
   "labels": {
     "System": "System",
@@ -136,7 +139,8 @@
     "Mass Email": "Massen E-Mails",
     "Test Connection": "Verbindung prüfen",
     "Connecting": "Verbinde...",
-    "Activities": "Aktivitäten"
+    "Activities": "Aktivitäten",
+    "Admin Notifications": "Admin Notifications"
   },
   "messages": {
     "ldapTestConnection": "Die Verbindung wurde erfolgreich hergestellt."

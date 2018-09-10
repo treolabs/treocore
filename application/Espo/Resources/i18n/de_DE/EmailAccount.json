@@ -20,11 +20,13 @@
     "smtpAuth": "SMTP Auth",
     "smtpSecurity": "SMTP Transportsicherheit",
     "smtpUsername": "SMTP Benutzername",
-    "smtpPassword": "SMTP Passwort"
+    "smtpPassword": "SMTP Passwort",
+    "fetchData": "Holen Daten"
   },
   "links": {
     "filters": "Filter",
-    "emails": "E-Mails"
+    "emails": "E-Mails",
+    "emailFolder": "In Ordner ablegen"
   },
   "options": {
     "status": {

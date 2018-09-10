@@ -40,7 +40,8 @@
     "replied": "Beantwortet",
     "replies": "Antworten",
     "inboundEmails": "Gruppenkonten",
-    "emailAccounts": "Persönliche Konten"
+    "emailAccounts": "Persönliche Konten",
+    "sentBy": "Gesendet von"
   },
   "options": {
     "status": {

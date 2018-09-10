@@ -48,6 +48,7 @@
     "Locale": "Lokalisierungs-Einstellungen"
   },
   "tooltips": {
-    "autoFollowEntityTypeList": "Der Benutzer abonniert automatisch alle neuen Einträge der gewählten Entitätstypen, sieht Neuigkeiten in den Aktivitäten und erhält Benachrichtigungen."
+    "autoFollowEntityTypeList": "Der Benutzer abonniert automatisch alle neuen Einträge der gewählten Entitätstypen, sieht Neuigkeiten in den Aktivitäten und erhält Benachrichtigungen.",
+    "doNotFillAssignedUserIfNotRequired": "When create record assigned user won't be filled with own user unless the field is required."
   }
 }

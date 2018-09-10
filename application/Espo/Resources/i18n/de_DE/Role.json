@@ -4,7 +4,8 @@
     "roles": "Rollen",
     "assignmentPermission": "Zuweisungsberechtigung",
     "userPermission": "Benutzerberechtigung",
-    "portalPermission": "Portal Berechtigungen"
+    "portalPermission": "Portal Berechtigungen",
+    "data": "Daten"
   },
   "links": {
     "users": "Benutzer",
