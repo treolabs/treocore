@@ -32,6 +32,8 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Espo\Core;
 
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -135,11 +137,9 @@ class Container
         if (method_exists($this, $loadMethod)) {
             $this->set($name, $this->$loadMethod());
         } else {
-
             try {
                 $className = $this->get('metadata')->get('app.loaders.' . ucfirst($name));
             } catch (\Exception $e) {
-
             }
 
             if (!isset($className) || !class_exists($className)) {
