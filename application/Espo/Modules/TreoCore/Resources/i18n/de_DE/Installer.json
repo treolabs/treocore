@@ -11,7 +11,7 @@
     "licenseAgreement": "Lizenzvereinbarung",
     "databaseConfiguration": "Datenbank-Konfiguration",
     "administratorSetup": "Administration",
-    "requiredSettings": "Required Settings",
+    "requiredSettings": "Erforderliche Einstellungen",
     "chooseYourLanguage": "Wählen Sie bitte die Sprache",
     "acceptTheAgreement": "Ich akzeptiere den Vertrag",
     "hostName": "Hostname",
@@ -20,13 +20,16 @@
     "databaseUserPassword": "Datenbank-Benutzerpasswort",
     "port": "Port",
     "testConnection": "Test-Verbindung",
-    "reCheck": "Re-Check",
+    "reCheck": "Überprüfen Sie erneut",
     "userName": "Banutzername",
     "password": "Passwort",
     "confirmYourPassword": "Bestätigen Sie bitte Ihr Passwort",
     "back": "Zurück",
     "next": "Weiter",
-    "finish": "Beenden"
+    "finish": "Beenden",
+    "required": "Erforderlich",
+    "currentVersion": "Aktuelle Version",
+    "status": "Status"
   },
   "errors": {
     "alreadyInstalled": "TreoCore ist schon installiert",
