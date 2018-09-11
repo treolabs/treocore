@@ -110,7 +110,7 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                      var a = [];
                      var value = defs.value || {};
                      for (var n in value) {
-                         a.push(this.getWherePart(n, _.extend(value[n], {isAttribute: defs.isAttribute, isImport: defs.isImport})));
+                         a.push(this.getWherePart(n, _.extend({}, value[n], {isAttribute: defs.isAttribute, isImport: defs.isImport})));
                      }
                      return {
                          type: type,
