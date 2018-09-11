@@ -45,7 +45,7 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
             });
         },
 
-        getActionList: function () {
+        getActionList() {
             let list = [];
             if (!this.disableActions) {
                 if (this.model.get('isComposer')) {

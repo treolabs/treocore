@@ -45,8 +45,8 @@ Espo.define('treo-core:views/module-manager/record/row-actions/available', 'view
             });
         },
 
-        getActionList: function () {
-            let list = []
+        getActionList() {
+            let list = [];
             let versions = this.model.get('versions');
             if (!this.disableActions && versions && versions.length) {
                 list.push({
