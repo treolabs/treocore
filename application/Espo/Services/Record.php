@@ -59,7 +59,9 @@ class Record extends \Espo\Core\Services\Base
         'selectManagerFactory',
         'fileStorageManager',
         'injectableFactory',
-        'fieldManagerUtil'
+        'fieldManagerUtil',
+        // @todo treoinject
+        'eventManager'
     );
 
     protected $getEntityBeforeUpdate = false;
