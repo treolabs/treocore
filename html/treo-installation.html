@@ -15,7 +15,7 @@
             }
             #general-container {
                 padding: 0;
-                border: 2px solid #c0c0c0;
+                border: 1px solid #c0c0c0;
             }
             #general-container header#header {
                 width: 100%;
@@ -34,6 +34,8 @@
                 padding: 0;
             }
             #general-container .main-template .msg-box {
+                position: absolute;
+                width: 100%;
                 height: auto;
                 max-height: 90px;
                 margin-bottom: 0;
@@ -148,7 +150,14 @@
             <div class="stepTitle text-center"><%= translate.labels.requiredSettings %></div>
             <div class="col-sm-12 modal-body" style="margin: 10px 0">
             <table class="table table-stripped">
-                <thead></thead>
+                <thead>
+                <tr>
+                    <td></td>
+                    <td><%= translate.labels.required %></td>
+                    <td><%= translate.labels.currentVersion %></td>
+                    <td><%= translate.labels.status %></td>
+                </tr>
+                </thead>
                 <tbody>
                 <% _.each(requiredSettings.list, function(item){ %>
                     <tr>
