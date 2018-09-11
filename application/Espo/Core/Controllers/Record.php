@@ -427,14 +427,14 @@ class Record extends Base
      *
      * @param array $params
      * @param \stdClass $data
-     * @param Request $request
+     * @param \Slim\Http\Request $request
      *
      * @return bool
      *
      * @throws BadRequest
      * @throws Forbidden
      */
-    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
+    public function actionAddRelation(array $params, \stdClass $data, \Slim\Http\Request $request): bool
     {
         if (!$request->isPost()) {
             throw new BadRequest();
@@ -456,14 +456,14 @@ class Record extends Base
      *
      * @param array $params
      * @param \stdClass $data
-     * @param Request $request
+     * @param \Slim\Http\Request $request
      *
      * @return bool
      *
      * @throws BadRequest
      * @throws Forbidden
      */
-    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
+    public function actionRemoveRelation(array $params, \stdClass $data, \Slim\Http\Request $request): bool
     {
         if (!$request->isDelete()) {
             throw new BadRequest();
