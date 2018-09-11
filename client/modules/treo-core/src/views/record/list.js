@@ -222,7 +222,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             } else if (type === 'removeRelation') {
                 data = JSON.stringify(data);
                 this.ajaxRequest(url, 'DELETE', data).then(response => {
-                    this.notify('Linked', 'success');
+                    this.notify('Unlinked', 'success');
                 });
             }
         },
