@@ -72,7 +72,7 @@ Espo.define('treo-core:views/record/base', 'class-replace!treo-core:views/record
             var self = this;
             var model = this.model;
 
-            var initialAttributes = this.attributes;
+            var initialAttributes = Espo.Utils.cloneDeep(this.attributes);
 
             var beforeSaveAttributes = this.model.getClonedAttributes();
 
