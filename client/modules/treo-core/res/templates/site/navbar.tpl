@@ -54,8 +54,9 @@
             </li>
             {{/unless}}
             {{/each}}
+            {{#if isMoreFields}}
             <li class="dropdown more">
-                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon glyphicon-option-horizontal more-icon"></span></a>
+                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                     {{#each tabDefsList}}
                     {{#if isInMore}}
@@ -78,6 +79,7 @@
                     {{/each}}
                 </ul>
             </li>
+            {{/if}}
         </ul>
     </div>
 
