@@ -86,7 +86,9 @@
     "viewDetails": "Details anzeigen",
     "showFullList": "Vollständige Liste anzeigen",
     "On": "Auf",
-    "Off": "Aus"
+    "Off": "Aus",
+    "entitySelect": "Wählen Sie Entität",
+    "applyRelation": "Beziehung anwenden"
   },
   "links": {
     "ownerUser": "Besitzer"

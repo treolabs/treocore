@@ -87,7 +87,9 @@
     "viewDetails": "View Details",
     "showFullList": "Show Full List",
     "On": "On",
-    "Off": "Off"
+    "Off": "Off",
+    "entitySelect": "Select Entity",
+    "applyRelation": "Apply Relation"
   },
   "links": {
     "ownerUser": "Owner"

@@ -130,6 +130,111 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             });
         },
 
+        setupMassActionItems() {
+            Dep.prototype.setupMassActionItems.call(this);
+
+            let foreignEntities = this.getForeignEntities(this.scope);
+            if (foreignEntities.length) {
+                this.massActionList = Espo.Utils.clone(this.massActionList);
+                this.massActionList.push('addRelation');
+                this.massActionList.push('removeRelation');
+            }
+        },
+
+        getForeignEntities(mainEntity) {
+            let foreignEntities = [];
+
+            if (this.getAcl().check(this.scope, 'edit')) {
+                let links = this.getMetadata().get(['entityDefs', mainEntity, 'links']) || {};
+                let linkList = Object.keys(links).sort(function (v1, v2) {
+                    return v1.localeCompare(v2);
+                }.bind(this));
+
+                linkList.forEach(link => {
+                    let defs = links[link];
+
+                    if (defs.foreign && defs.entity && this.getAcl().check(defs.entity, 'edit')) {
+                        let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
+                        if (this.checkRelationshipType(defs.type, foreignType) && this.getMetadata().get(['scopes', defs.entity, 'entity'])) {
+                            foreignEntities.push(links[link].entity);
+                        }
+                    }
+                });
+            }
+
+            return foreignEntities;
+        },
+
+        checkRelationshipType: function (type, foreignType) {
+            if (type === 'hasMany') {
+                if (foreignType === 'hasMany') {
+                    return 'manyToMany';
+                } else if (foreignType === 'belongsTo') {
+                    return 'oneToMany';
+                }
+            }
+        },
+
+        massActionUpdateRelation(type) {
+            let foreignEntities = this.getForeignEntities(this.scope);
+            if (!foreignEntities.length) {
+                return;
+            }
+
+            this.notify('Loading...');
+            this.getModelFactory().create(null, model => {
+                model.set({
+                    entitySelect: foreignEntities[0],
+                    foreignEntities: foreignEntities
+                });
+
+                this.createView('dialog', 'treo-core:views/modals/select-entity-and-records', {
+                    model: model,
+                    multiple: true,
+                    createButton: false,
+                    scope: foreignEntities[0],
+                    headerLabel: type
+                }, view => {
+                    view.render(() => {
+                        this.notify(false);
+                    });
+                    view.listenTo(view, 'select', params => {
+                        let foreignIds = [];
+                        params.forEach(model => foreignIds.push(model.id));
+                        let data = {
+                            ids: this.checkedList,
+                            foreignIds: foreignIds
+                        };
+                        let links = this.getMetadata().get(['entityDefs', this.scope, 'links']) || {};
+                        let foreignEntity = Object.keys(links).find(link => links[link].entity === view.model.get('entitySelect'));
+                        let url = `${this.scope}/${foreignEntity}/relation`;
+                        this.sendDataForUpdateRelation(type, url, data);
+                    });
+                });
+            });
+        },
+
+        sendDataForUpdateRelation(type, url, data) {
+            if (type === 'addRelation') {
+                this.ajaxPostRequest(url, data).then(response => {
+                    this.notify('Linked', 'success');
+                });
+            } else if (type === 'removeRelation') {
+                data = JSON.stringify(data);
+                this.ajaxRequest(url, 'DELETE', data).then(response => {
+                    this.notify('Linked', 'success');
+                });
+            }
+        },
+
+        massActionAddRelation() {
+            this.massActionUpdateRelation('addRelation');
+        },
+
+        massActionRemoveRelation() {
+            this.massActionUpdateRelation('removeRelation');
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
