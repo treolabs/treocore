@@ -10338,10 +10338,6 @@ body > footer > p, body > footer > p a, body > footer > p a:hover, body > footer
     margin-right: -2px !important
 }
 
-.navbar-collapse {
-    overflow-x: hidden !important
-}
-
 .navbar-form.global-search-container {
     padding-left: 0;
     padding-right: 0
@@ -10754,7 +10750,7 @@ pre > code {
     #global-search-panel {
         position: fixed;
         width: 100%;
-        top: 0;
+        top: 77px;
         right: none;
         left: 0;
         margin-right: 10px
