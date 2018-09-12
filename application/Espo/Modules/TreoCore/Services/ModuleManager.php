@@ -82,35 +82,25 @@ class ModuleManager extends Base
 
         // for installed modules
         foreach ($this->getMetadata()->getModuleList() as $id) {
-            // skip core module
-            if ($id == 'TreoCore') {
-                continue;
-            }
-
-            // push for custom module
-            $result['list'][$id] = [
-                'id'                 => $id,
-                'name'               => $id,
-                'description'        => '',
-                'settingVersion'     => '',
-                'currentVersion'     => '',
-                'versions'           => [],
-                'required'           => [],
-                'requiredTranslates' => [],
-                'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
-                'isComposer'         => false,
-                'status'             => $this->getModuleStatus($composerDiff, $id),
-            ];
-
             if (!empty($package = $this->getMetadata()->getModule($id))) {
-                $result['list'][$id]['name'] = $this->packageTranslate($package['extra']['name'], $id);
-                $result['list'][$id]['description'] = $this->packageTranslate($package['extra']['description'], '-');
-                $result['list'][$id]['settingVersion'] = '*';
+                // push for custom module
+                $result['list'][$id] = [
+                    'id'                 => $id,
+                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
+                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
+                    'settingVersion'     => '*',
+                    'currentVersion'     => $package['version'],
+                    'versions'           => $this->getPackagistPackage($id)['versions'],
+                    'required'           => [],
+                    'requiredTranslates' => [],
+                    'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                    'isComposer'         => true,
+                    'status'             => $this->getModuleStatus($composerDiff, $id),
+                ];
+
                 if ($settingVersion = $composerData['require'][$package['name']]) {
                     $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
-                $result['list'][$id]['currentVersion'] = $package['version'];
-                $result['list'][$id]['versions'] = $this->getPackagistPackage($id)['versions'];
                 if (!empty($requireds = $this->getModuleRequireds($id))) {
                     $result['list'][$id]['required'] = $requireds;
                     foreach ($requireds as $required) {
@@ -122,7 +112,6 @@ class ModuleManager extends Base
                             ->packageTranslate($pRequired['extra']['name']);
                     }
                 }
-                $result['list'][$id]['isComposer'] = true;
             }
         }
 
