@@ -118,6 +118,11 @@
         "url": "#Admin/labelManager",
         "label": "Label Manager",
         "description": "labelManager"
+      },
+      {
+        "url":"#Admin/extensions",
+        "label":"Extensions",
+        "description":"extensions"
       }
     ],
     "order": 20
