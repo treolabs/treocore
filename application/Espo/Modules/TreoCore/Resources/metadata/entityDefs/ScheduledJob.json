@@ -2,7 +2,7 @@
   "jobs": {
     "Cleanup": {
       "isSystem": true,
-      "scheduling": "1 1 * * 0"
+      "scheduling": "0 0 * * *"
     }
   },
   "jobSchedulingMap": {
