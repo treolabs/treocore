@@ -34,33 +34,24 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Espo\Modules\TreoCore\Jobs;
 
-return [
-    'scheduledJobs'         => [
-        [
-            'scheduling' => '0 */2 * * *',
-            'service'    => 'CoreUpgrade',
-            'method'     => 'checkingNewVersion',
-            'name'       => 'Checking if new version of TreoCore exists',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '0 */2 * * *',
-            'service'    => 'Packagist',
-            'method'     => 'refresh',
-            'name'       => 'Refresh cache for module packages',
-            'data'       => []
-        ],
-        [
-            'scheduling' => '0 */3 * * *',
-            'service'    => 'Packagist',
-            'method'     => 'notify',
-            'name'       => 'Notify admin users about new version of module, or about new module',
-            'data'       => []
-        ]
-    ],
-    'scheduledJobsServices' => [
-        // array of services
-    ]
-];
+use Espo\Core\Jobs\Base;
+
+/**
+ * RestApiDocs job
+ *
+ * @author r.ratsun r.ratsun@zinitsolutions.com
+ */
+class RestApiDocs extends Base
+{
+    /**
+     * Run cron job
+     *
+     * @return bool
+     */
+    public function run(): bool
+    {
+        return $this->getServiceFactory()->create('RestApiDocs')->generateDocumentation();
+    }
+}

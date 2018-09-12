@@ -3,9 +3,14 @@
     "Cleanup": {
       "isSystem": true,
       "scheduling": "0 0 * * *"
+    },
+    "RestApiDocs": {
+      "isSystem": true,
+      "scheduling": "0 0 * * *"
     }
   },
   "jobSchedulingMap": {
-    "ModuleAutoUpdate": "0 0 * * *"
+    "ModuleAutoUpdate": "0 0 * * *",
+    "RestApiDocs": "0 0 * * *"
   }
 }
