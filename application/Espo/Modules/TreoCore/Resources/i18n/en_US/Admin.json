@@ -1,13 +1,16 @@
 {
   "labels": {
-    "Module Manager": "Module Manager",
+    "Extras": "Extras",
+    "Module Manager": "Modules Manager",
+    "Modules": "Modules",
     "Git User": "Git User",
     "upgradeTo": "Upgrade to"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
     "gitAuth": "Read git authentication settings.",
-    "moduleManager": "Mechanisms for managing modules",
+    "modules": "Modules Manager. Here you can install/uninstall modules from remote storage. The dependencies between the modules and the Treo system are supported.",
+    "extensions": "Extensions Manager. Here you can install/uninstall extension by zip archive.",
     "representationSettings": "Representation settings."
   },
   "messages": {
