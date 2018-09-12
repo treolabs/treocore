@@ -83,7 +83,6 @@ class ModuleManager extends Base
         // for installed modules
         foreach ($this->getMetadata()->getModuleList() as $id) {
             if (!empty($package = $this->getMetadata()->getModule($id))) {
-                // push for custom module
                 $result['list'][$id] = [
                     'id'                 => $id,
                     'name'               => $this->packageTranslate($package['extra']['name'], $id),
