@@ -12017,3 +12017,33 @@ ul.dropdown-menu > li.checkbox {
 .dashlets.grid-stack .grid-stack-item .dashlet .dashlet-body {
     width: 100%;
 }
+
+.list-nested-categories {
+    margin-bottom: 10px
+}
+
+.list-nested-categories .category-item {
+    padding: 10px
+}
+
+.list-nested-categories .category-item .folder-icon {
+    margin-right: 3px;
+    position: relative;
+    top: -1px
+}
+
+.categories-container a.manage-categories-link {
+    margin-left: 8px;
+}
+
+.categories-container a.category-expanded-toggle-link {
+    margin-left: 8px
+}
+
+.folders-container > .list-group-side > .list-group-item,
+.categories-container > .list-expanded,
+.categories-container .list-group-tree > .list-group-item > .cell {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
+}
