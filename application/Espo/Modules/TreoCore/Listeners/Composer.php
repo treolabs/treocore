@@ -340,7 +340,7 @@ class Composer extends AbstractListener
         $note->set('type', $type);
         $note->set('parentType', 'ModuleManager');
         $note->set('data', $data);
-        $note->set('createdById', $createdById);
+        $note->set('createdById', (empty($createdById)) ? 'system' : $createdById);
 
         $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
     }
