@@ -36,6 +36,23 @@ namespace Espo\Core\Upgrades\Actions\Extension;
 
 class Upload extends \Espo\Core\Upgrades\Actions\Base\Upload
 {
+    /**
+     * Upload constructor
+     *
+     * @todo treoinject
+     */
+    public function __construct(...$args)
+    {
+        // call parent
+        parent::__construct(...$args);
+
+        // prepare espo version
+        $version = json_decode(file_get_contents(CORE_PATH."/composer.json"), true)['extra']['espoVersion'];
+
+        // set espo version
+        $this->getConfig()->set('version', $version);
+    }
+
     protected function checkDependencies($dependencyList)
     {
         return $this->getHelper()->checkDependencies($dependencyList);
