@@ -54,6 +54,9 @@
     "psr-0": {
       "": "application/",
       "Espo\\Custom": "custom/"
+    },
+    "psr-4": {
+      "TreoPHPUnit\\": "tests/phpunit/TreoPHPUnit/"
     }
   },
   "scripts": {
