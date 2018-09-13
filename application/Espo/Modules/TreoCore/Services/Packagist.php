@@ -71,8 +71,11 @@ class Packagist extends AbstractTreoService
      */
     public function __construct()
     {
+        // get composer.json
+        $json = file_get_contents(CORE_PATH . '/composer.json');
+
         // set repository
-        $this->url = Json::decode(file_get_contents('composer.json'), true)['repositories'][0]['url'] . '/api/v1/';
+        $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
     }
 
 
