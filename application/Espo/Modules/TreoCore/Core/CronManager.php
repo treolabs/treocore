@@ -52,18 +52,6 @@ class CronManager extends CoreCronManager
     protected $treoCronJobUtil = null;
 
     /**
-     * Check scheduled jobs and create related jobs
-     */
-    protected function createJobsFromScheduledJobs()
-    {
-        // get parent data
-        parent::createJobsFromScheduledJobs();
-
-        // get created jobs
-        $this->getServiceFactory()->create('CronJobCreator')->createJobs();
-    }
-
-    /**
      * @return JobUtil
      */
     protected function getCronJobUtil()
