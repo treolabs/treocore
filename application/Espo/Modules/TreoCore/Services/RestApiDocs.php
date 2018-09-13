@@ -82,11 +82,9 @@ class RestApiDocs extends Base
     /**
      * Generate documentation
      *
-     * @param array $data
-     *
      * @return bool
      */
-    public function generateDocumentation(array $data = []): bool
+    public function generateDocumentation(): bool
     {
         // prepare result
         $result = false;

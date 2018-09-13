@@ -50,11 +50,9 @@ class CoreUpgrade extends Base
     /**
      * Checking if new version of TreoCore exists
      *
-     * @param array $data
-     *
      * @return bool
      */
-    public function checkingNewVersion(array $data): bool
+    public function checkingNewVersion(): bool
     {
         // get notified version
         $notifiedVersion = $this->getConfig()->get('notifiedVersion');

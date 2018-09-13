@@ -121,11 +121,9 @@ class Packagist extends AbstractTreoService
     /**
      * Refresh cache for module packages
      *
-     * @param array $data
-     *
      * @return bool
      */
-    public function refresh(array $data = []): bool
+    public function refresh(): bool
     {
         // prepare params
         $params = [
@@ -158,11 +156,9 @@ class Packagist extends AbstractTreoService
     /**
      * Notify admin users about new version of module, or about new module
      *
-     * @param array $data
-     *
      * @return bool
      */
-    public function notify(array $data = []): bool
+    public function notify(): bool
     {
         // prepare file data
         $fileData = [];
