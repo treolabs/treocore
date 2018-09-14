@@ -32,22 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class AclManager extends Base
+class Crypt extends Base
 {
 
     /**
-     * Load AclManager
+     * Load Crypt
      *
-     * @return mixed
+     * @return \Espo\Core\Utils\Crypt
      */
     public function load()
     {
-        // prepare classname
-        $className = $this
-            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
-
-        return new $className($this->getContainer());
+        return new \Espo\Core\Utils\Crypt($this->getContainer()->get('config'));
     }
 }

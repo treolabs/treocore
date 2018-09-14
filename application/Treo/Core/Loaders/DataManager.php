@@ -32,18 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class InjectableFactory extends Base
+class DataManager extends Base
 {
 
     /**
-     * Load InjectableFactory
+     * Load DataManager
      *
-     * @return \Espo\Core\InjectableFactory
+     * @return \Espo\Core\DataManager
      */
     public function load()
     {
-        return new \Espo\Core\InjectableFactory($this->getContainer());
+        return new \Espo\Core\DataManager($this->getContainer());
     }
 }

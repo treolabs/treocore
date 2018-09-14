@@ -32,18 +32,21 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class ServiceFactory extends Base
+class ClientManager extends Base
 {
 
     /**
-     * Load ServiceFactory
+     * Load ClientManager
      *
-     * @return \Espo\Core\ServiceFactory
+     * @return \Espo\Core\Utils\ClientManager
      */
     public function load()
     {
-        return new \Espo\Core\ServiceFactory($this->getContainer());
+        return new \Espo\Core\Utils\ClientManager(
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('themeManager')
+        );
     }
 }

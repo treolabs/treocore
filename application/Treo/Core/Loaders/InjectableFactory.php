@@ -32,18 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class Crypt extends Base
+class InjectableFactory extends Base
 {
 
     /**
-     * Load Crypt
+     * Load InjectableFactory
      *
-     * @return \Espo\Core\Utils\Crypt
+     * @return \Espo\Core\InjectableFactory
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Crypt($this->getContainer()->get('config'));
+        return new \Espo\Core\InjectableFactory($this->getContainer());
     }
 }

@@ -32,18 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class Slim extends Base
+class CronManager extends Base
 {
 
     /**
-     * Load Slim
+     * Load CronManager
      *
-     * @return \Espo\Core\Utils\Api\Slim
+     * @return \Espo\Core\CronManager
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Api\Slim();
+        return new \Espo\Core\CronManager($this->getContainer());
     }
 }

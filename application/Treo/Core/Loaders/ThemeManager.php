@@ -32,21 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class Number extends Base
+class ThemeManager extends Base
 {
 
     /**
-     * Load Number
+     * Load ThemeManager
      *
-     * @return \Espo\Core\Utils\NumberUtil
+     * @return \Espo\Core\Utils\ThemeManager
      */
     public function load()
     {
-        return new \Espo\Core\Utils\NumberUtil(
-            $this->getContainer()->get('config')->get('decimalMark'),
-            $this->getContainer()->get('config')->get('thousandSeparator')
-        );
+        return new \Espo\Core\Utils\ThemeManager($this->getContainer()->get('config'), $this->getContainer()->get('metadata'));
     }
 }

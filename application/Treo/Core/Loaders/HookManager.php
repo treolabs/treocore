@@ -32,22 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class ClassParser extends Base
+class HookManager extends Base
 {
 
     /**
-     * Load ClassParser
+     * Load HookManager
      *
-     * @return \Espo\Core\Utils\File\ClassParser
+     * @return \Espo\Core\HookManager
      */
     public function load()
     {
-        return new \Espo\Core\Utils\File\ClassParser(
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('metadata')
-        );
+        return new \Espo\Core\HookManager($this->getContainer());
     }
 }

@@ -32,18 +32,21 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class CronManager extends Base
+class Preferences extends Base
 {
 
     /**
-     * Load CronManager
+     * Load Preferences
      *
-     * @return \Espo\Core\CronManager
+     * @return mixed
      */
     public function load()
     {
-        return new \Espo\Core\CronManager($this->getContainer());
+        return $this
+                ->getContainer()
+                ->get('entityManager')
+                ->getEntity('Preferences', $this->getContainer()->get('user')->id);
     }
 }

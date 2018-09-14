@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
 class ScheduledJob extends Base
 {

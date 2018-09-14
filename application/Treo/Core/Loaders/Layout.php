@@ -32,18 +32,22 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class DataManager extends Base
+class Layout extends Base
 {
 
     /**
-     * Load DataManager
+     * Load Layout
      *
-     * @return \Espo\Core\DataManager
+     * @return \Espo\Core\Utils\Layout
      */
     public function load()
     {
-        return new \Espo\Core\DataManager($this->getContainer());
+        return new \Espo\Core\Utils\Layout(
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('user')
+        );
     }
 }

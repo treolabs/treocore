@@ -32,26 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class SelectManagerFactory extends Base
+class ControllerManager extends Base
 {
+
     /**
-     * Load class
+     * Load ControllerManager
      *
-     * @return \Espo\Core\SelectManagerFactory
+     * @return \Espo\Core\ControllerManager
      */
     public function load()
     {
-        return new \Espo\Core\SelectManagerFactory(
-            $this->getContainer()->get('entityManager'),
-            $this->getContainer()->get('user'),
-            $this->getContainer()->get('acl'),
-            $this->getContainer()->get('aclManager'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('injectableFactory')
-        );
+        return new \Espo\Core\ControllerManager($this->getContainer());
     }
 }
-

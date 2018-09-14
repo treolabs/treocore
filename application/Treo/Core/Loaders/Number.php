@@ -32,20 +32,21 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class Acl extends Base
+class Number extends Base
 {
 
     /**
-     * Load Acl
+     * Load Number
      *
-     * @return mixed
+     * @return \Espo\Core\Utils\NumberUtil
      */
     public function load()
     {
-        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Acl');
-
-        return new $className($this->getContainer()->get('aclManager'), $this->getContainer()->get('user'));
+        return new \Espo\Core\Utils\NumberUtil(
+            $this->getContainer()->get('config')->get('decimalMark'),
+            $this->getContainer()->get('config')->get('thousandSeparator')
+        );
     }
 }

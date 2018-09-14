@@ -32,19 +32,24 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-abstract class Base implements \Espo\Core\Interfaces\Loader
+class FieldManager extends Base
 {
-    private $container;
 
-    public function __construct(\Espo\Core\Container $container)
+    /**
+     * Load FieldManager
+     *
+     * @return \Espo\Core\Utils\FieldManager
+     */
+    public function load()
     {
-        $this->container = $container;
-    }
+        $container = $this->getContainer();
 
-    protected function getContainer()
-    {
-        return $this->container;
+        return new \Espo\Core\Utils\FieldManager(
+            $container->get('metadata'),
+            $container->get('language'),
+            $container
+        );
     }
 }

@@ -32,18 +32,23 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class ThemeManager extends Base
+class DefaultLanguage extends Base
 {
 
     /**
-     * Load ThemeManager
+     * Load DefaultLanguage
      *
-     * @return \Espo\Core\Utils\ThemeManager
+     * @return \Espo\Core\Utils\Language
      */
     public function load()
     {
-        return new \Espo\Core\Utils\ThemeManager($this->getContainer()->get('config'), $this->getContainer()->get('metadata'));
+        return new \Espo\Core\Utils\Language(
+            null,
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('useCache')
+        );
     }
 }

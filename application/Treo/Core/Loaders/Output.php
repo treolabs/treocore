@@ -32,22 +32,18 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class MailSender extends Base
+class Output extends Base
 {
 
     /**
-     * Load MailSender
+     * Load Output
      *
-     * @return mixed
+     * @return \Espo\Core\Utils\Api\Output
      */
     public function load()
     {
-        $className = $this->getServiceClassName('mailSernder', '\\Espo\\Core\\Mail\\Sender');
-        return new $className(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('entityManager')
-        );
+        return new \Espo\Core\Utils\Api\Output($this->getContainer()->get('slim'));
     }
 }

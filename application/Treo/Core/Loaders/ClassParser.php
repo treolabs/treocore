@@ -32,22 +32,22 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class DateTime extends Base
+class ClassParser extends Base
 {
 
     /**
-     * Load DateTime
+     * Load ClassParser
      *
-     * @return \Espo\Core\Utils\DateTime
+     * @return \Espo\Core\Utils\File\ClassParser
      */
     public function load()
     {
-        return new \Espo\Core\Utils\DateTime(
-            $this->getContainer()->get('config')->get('dateFormat'),
-            $this->getContainer()->get('config')->get('timeFormat'),
-            $this->getContainer()->get('config')->get('timeZone')
+        return new \Espo\Core\Utils\File\ClassParser(
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('metadata')
         );
     }
 }

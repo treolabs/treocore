@@ -32,18 +32,21 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class Output extends Base
+class FileStorageManager extends Base
 {
 
     /**
-     * Load Output
+     * Load FileStorageManager
      *
-     * @return \Espo\Core\Utils\Api\Output
+     * @return \Espo\Core\FileStorage\Manager
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Api\Output($this->getContainer()->get('slim'));
+        return new \Espo\Core\FileStorage\Manager(
+            $this->getContainer()->get('metadata')->get(['app', 'fileStorage', 'implementationClassNameMap']),
+            $this->getContainer()
+        );
     }
 }

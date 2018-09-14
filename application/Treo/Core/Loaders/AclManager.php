@@ -32,18 +32,22 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Loaders;
+namespace Treo\Core\Loaders;
 
-class ClientManager extends Base
+class AclManager extends Base
 {
 
     /**
-     * Load ClientManager
+     * Load AclManager
      *
-     * @return \Espo\Core\Utils\ClientManager
+     * @return mixed
      */
     public function load()
     {
-        return new \Espo\Core\Utils\ClientManager($this->getContainer()->get('config'), $this->getContainer()->get('themeManager'));
+        // prepare classname
+        $className = $this
+            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+
+        return new $className($this->getContainer());
     }
 }
