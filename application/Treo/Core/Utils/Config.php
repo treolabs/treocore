@@ -57,12 +57,12 @@ class Config extends EspoConfig
     /**
      * @var string
      */
-    protected $defaultConfigPath = 'application/Espo/Modules/TreoCore/Configs/defaultConfig.php';
+    protected $defaultConfigPath = 'application/Treo/Configs/defaultConfig.php';
 
     /**
      * @var string
      */
-    protected $systemConfigPath = 'application/Espo/Modules/TreoCore/Configs/SystemConfig.php';
+    protected $systemConfigPath = 'application/Treo/Configs/SystemConfig.php';
 
     /**
      * @var string
