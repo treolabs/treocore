@@ -31,19 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\CronManager as Instance;
+
+/**
+ * CronManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class CronManager extends Base
 {
 
     /**
      * Load CronManager
      *
-     * @return \Espo\Core\CronManager
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\CronManager($this->getContainer());
+        return new Instance($this->getContainer());
     }
 }

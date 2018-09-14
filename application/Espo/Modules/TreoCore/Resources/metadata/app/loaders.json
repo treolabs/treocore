@@ -1,5 +1,4 @@
 {
-  "CronManager": "Espo\\Modules\\TreoCore\\Loaders\\CronManager",
   "ProgressManager": "Espo\\Modules\\TreoCore\\Loaders\\ProgressManagerLoader",
   "Migration": "Espo\\Modules\\TreoCore\\Loaders\\MigrationLoader",
   "ServiceFactory": "Espo\\Modules\\TreoCore\\Loaders\\ServiceFactoryLoader",
