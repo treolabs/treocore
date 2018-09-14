@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+use Treo\Core\ConsoleManager;
 
 /**
  * ListCommand console

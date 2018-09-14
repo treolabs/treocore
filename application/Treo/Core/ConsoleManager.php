@@ -34,10 +34,11 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Modules\TreoCore\Console\AbstractConsole;
+use Espo\Modules\TreoCore\Core\Utils\Metadata;
 
 /**
  * ConsoleManager

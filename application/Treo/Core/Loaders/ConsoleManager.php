@@ -34,26 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\ConsoleManager;
+use Treo\Core\ConsoleManager as Instance;
 
 /**
  * ConsoleManager loader
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ConsoleManagerLoader extends Base
+class ConsoleManager extends Base
 {
 
     /**
      * Load ConsoleManager
      *
-     * @return ConsoleManager
+     * @return Instance
      */
     public function load()
     {
-        return (new ConsoleManager())->setContainer($this->getContainer());
+        return (new Instance())->setContainer($this->getContainer());
     }
 }
