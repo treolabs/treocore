@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core\Utils;
 
 use Espo\Core\Container;
 use Espo\Core\Utils\Layout as EspoLayout;
@@ -127,7 +127,10 @@ class Layout extends EspoLayout
         // default
         if (empty($data)) {
             // prepare file path
-            $fileFullPath = Util::concatPath(Util::concatPath($this->params['defaultsPath'], 'layouts'), $name . '.json');
+            $fileFullPath = Util::concatPath(
+                Util::concatPath($this->params['defaultsPath'], 'layouts'),
+                $name . '.json'
+            );
 
             if (file_exists($fileFullPath)) {
                 // get file data

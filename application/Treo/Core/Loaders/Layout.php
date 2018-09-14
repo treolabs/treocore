@@ -31,23 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Layout as LayoutUtil;
+
+/**
+ * Layout loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class Layout extends Base
 {
 
     /**
      * Load Layout
      *
-     * @return \Espo\Core\Utils\Layout
+     * @return LayoutUtil
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Layout(
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('user')
-        );
+        return (new LayoutUtil())->setContainer($this->getContainer());
     }
 }
