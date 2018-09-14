@@ -33,7 +33,7 @@
  */
 
 use Treo\Core\Application as App;
-use Espo\Core\Portal\Application as PortalApp;
+use Treo\Core\Portal\Application as PortalApp;
 
 include "bootstrap.php";
 

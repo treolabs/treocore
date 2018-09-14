@@ -38,7 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\ORM\Entity;
 use Espo\Services\Record;
-use Espo\Core\Portal\Application as PortalApp;
+use Treo\Core\Portal\Application as PortalApp;
 
 /**
  * Portal service

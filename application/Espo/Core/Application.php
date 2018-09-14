@@ -122,7 +122,7 @@ class Application
             $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
             if ($authRequired && !$authNotStrict) {
                 if (!$final && $portalId = $this->detectedPortalId()) {
-                    $app = new \Espo\Core\Portal\Application($portalId);
+                    $app = new \Treo\Core\Portal\Application($portalId);
                     $app->setBasePath($this->getBasePath());
                     $app->runEntryPoint($entryPoint, $data, true);
                     exit;

@@ -32,99 +32,78 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Espo\Core\Portal;
 
-use Espo\Core\Utils\Json;
+use \Espo\Core\Exceptions\Error;
+use \Espo\Core\Exceptions\NotFound;
+use \Espo\Core\Exceptions\Forbidden;
 
-/**
- * Class Application
- *
- * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
- */
-class Application extends ApplicationEspo
+class Application extends \Espo\Core\Application
 {
-    const CONFIG_PATH = 'data/portals.json';
-
-    /**
-     * @var null|array
-     */
-    protected static $urls = null;
-
-    /**
-     * Is calling portal id
-     *
-     * @return string
-     */
-    public static function getCallingPortalId(): string
+    public function __construct($portalId)
     {
-        // prepare result
-        $result = '';
+        date_default_timezone_set('UTC');
 
-        // prepare protocol
-        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+        $this->initContainer();
 
-        // prepare url
-        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-        if (in_array($url, self::getUrlFileData())) {
-            $result = array_search($url, self::getUrlFileData());
+        if (empty($portalId)) {
+            throw new Error("Portal id was not passed to ApplicationPortal.");
         }
 
-        return $result;
+        $GLOBALS['log'] = $this->getContainer()->get('log');
+
+        $portal = $this->getContainer()->get('entityManager')->getEntity('Portal', $portalId);
+
+        if (!$portal) {
+            $portal = $this->getContainer()->get('entityManager')->getRepository('Portal')->where(array(
+                'customId' => $portalId
+            ))->findOne();
+        }
+
+        if (!$portal) {
+            throw new NotFound();
+        }
+        if (!$portal->get('isActive')) {
+            throw new Forbidden("Portal is not active.");
+        }
+
+        $this->portal = $portal;
+
+        $this->getContainer()->setPortal($portal);
+
+        $this->initAutoloads();
     }
 
-    /**
-     * Get url config file data
-     *
-     * @return array
-     */
-    public static function getUrlFileData(): array
+    protected function getPortal()
     {
-        if (is_null(self::$urls)) {
-            // prepare result
-            self::$urls = [];
+        return $this->portal;
+    }
 
-            if (file_exists(self::CONFIG_PATH)) {
-                $json = file_get_contents(self::CONFIG_PATH);
-                if (!empty($json)) {
-                    self::$urls = Json::decode($json, true);
+    protected function initContainer()
+    {
+        $this->container = new Container();
+    }
+
+    protected function getRouteList()
+    {
+        $routeList = parent::getRouteList();
+        foreach ($routeList as $i => $route) {
+            if (isset($route['route'])) {
+                if ($route['route']{0} !== '/') {
+                    $route['route'] = '/' . $route['route'];
                 }
+                $route['route'] = '/:portalId' . $route['route'];
             }
+            $routeList[$i] = $route;
         }
-
-        return self::$urls;
+        return $routeList;
     }
 
-
-    /**
-     * Set data to url config file
-     *
-     * @param array $data
-     */
-    public static function saveUrlFile(array $data): void
-    {
-        $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        fclose($file);
-    }
-
-    /**
-     * Run client
-     */
     public function runClient()
     {
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-portal.html',
-            [
-                'portalId'        => $this->getPortal()->id,
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $this->getContainer()->get('config')->get('version')
-            ]
-        );
+        $this->getContainer()->get('clientManager')->display(null, 'html/portal.html', array(
+            'portalId' => $this->getPortal()->id
+        ));
+        exit;
     }
 }
