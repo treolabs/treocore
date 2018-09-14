@@ -36,9 +36,9 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Listeners;
 
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
-use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
 use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
+use Treo\Core\Utils\ModuleMover;
 
 /**
  * Composer listener

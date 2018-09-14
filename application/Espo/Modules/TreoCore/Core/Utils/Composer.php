@@ -153,7 +153,7 @@ class Composer
         // prepare response
         $status = $application->run($input, $output);
         $output = str_replace(
-            'Espo\\Modules\\TreoCore\\Core\\Utils\\ModuleMover::update',
+            'Treo\\Core\\Utils\\ModuleMover::update',
             '',
             $output->fetch()
         );

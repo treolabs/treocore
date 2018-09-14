@@ -56,8 +56,8 @@
     }
   },
   "scripts": {
-    "post-install-cmd": "Espo\\Modules\\TreoCore\\Core\\Utils\\ModuleMover::update",
-    "post-update-cmd": "Espo\\Modules\\TreoCore\\Core\\Utils\\ModuleMover::update"
+    "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",
+    "post-update-cmd": "Treo\\Core\\Utils\\ModuleMover::update"
   },
   "repositories": [
     {

@@ -41,6 +41,7 @@ use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
+use Treo\Core\Utils\ModuleMover;
 
 /**
  * Metadata class

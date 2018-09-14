@@ -42,7 +42,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
-use Espo\Modules\TreoCore\Core\Utils\ModuleMover as TreoComposer;
+use Treo\Core\Utils\ModuleMover as TreoComposer;
 
 /**
  * ModuleManager service

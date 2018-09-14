@@ -33,7 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Util;
 

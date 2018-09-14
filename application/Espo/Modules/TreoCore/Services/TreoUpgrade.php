@@ -38,7 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
 use Espo\Modules\TreoCore\Core\UpgradeManager;
-use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
+use Treo\Core\Utils\ModuleMover;
 
 /**
  * TreoUpgrade service
