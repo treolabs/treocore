@@ -37,7 +37,6 @@ declare(strict_types = 1);
 namespace Espo\Modules\TreoCore\Core\SelectManagers;
 
 use Espo\Core\SelectManagers\Base as EspoBase;
-use Espo\Modules\TreoCore\Core\Utils\EventManager;
 
 /**
  * Class Base

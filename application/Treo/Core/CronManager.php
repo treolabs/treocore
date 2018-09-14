@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\CronManager as CoreCronManager;
-use Espo\Modules\TreoCore\Core\Utils\Cron\Job as JobUtil;
+use Treo\Core\Utils\Cron\Job as JobUtil;
 
 /**
  * Class of CronManager

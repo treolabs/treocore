@@ -33,11 +33,11 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils\Cron;
+namespace Treo\Core\Utils\Cron;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Cron\Job as EspoJob;
-use Espo\Modules\TreoCore\Core\Utils\EventManager;
+use Treo\Core\EventManager;
 use PDO;
 
 /**
