@@ -32,28 +32,28 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\EventManager;
+use Treo\Core\EventManager as Instance;
 
 /**
  * EventManager loader
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class EventManagerLoader extends Base
+class EventManager extends Base
 {
 
     /**
      * Load EventManager
      *
-     * @return EventManager
+     * @return Instance
      */
     public function load()
     {
-        return (new EventManager())->setContainer($this->getContainer());
+        return (new Instance())->setContainer($this->getContainer());
     }
 }

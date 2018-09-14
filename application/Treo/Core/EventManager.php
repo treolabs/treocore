@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core;
 
 use Espo\Modules\TreoCore\Listeners\AbstractListener;
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
