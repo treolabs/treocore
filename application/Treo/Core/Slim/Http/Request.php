@@ -34,29 +34,36 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils\Api;
+namespace Treo\Core\Slim\Http;
 
-use Espo\Core\Utils\Api\Slim as EspoSlim;
-use Espo\Modules\TreoCore\Core\Slim\Http\Request;
+use Slim\Http\Request as SlimRequest;
 
 /**
- * Slim class
+ * Request class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Slim extends EspoSlim
+class Request extends SlimRequest
 {
     /**
-     * Slim construct
+     * Set data to query
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return Request
      */
-    public function __construct(...$args)
+    public function setQuery(string $key, $value): Request
     {
-        // call parent
-        parent::__construct(...$args);
+        // get query
+        $query = $this->env['slim.request.query_hash'];
 
-        // set request
-        $this->container->singleton('request', function ($c) {
-            return new Request($c['environment']);
-        });
+        // prepare query
+        $query[$key] = $value;
+
+        // set to query
+        $this->env['slim.request.query_hash'] = $query;
+
+        return $this;
     }
 }

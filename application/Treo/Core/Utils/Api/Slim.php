@@ -34,25 +34,29 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core\Utils\Api;
 
-use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Utils\Api\Slim;
+use Espo\Core\Utils\Api\Slim as EspoSlim;
+use Treo\Core\Slim\Http\Request;
 
 /**
- * Slim loader
+ * Slim class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class SlimLoader extends Base
+class Slim extends EspoSlim
 {
     /**
-     * Load Slim
-     *
-     * @return Slim
+     * Slim construct
      */
-    public function load()
+    public function __construct(...$args)
     {
-        return new Slim();
+        // call parent
+        parent::__construct(...$args);
+
+        // set request
+        $this->container->singleton('request', function ($c) {
+            return new Request($c['environment']);
+        });
     }
 }

@@ -1,5 +1,4 @@
 {
-  "Slim": "Espo\\Modules\\TreoCore\\Loaders\\SlimLoader",
   "EventManager": "Espo\\Modules\\TreoCore\\Loaders\\EventManagerLoader",
   "Layout": "Espo\\Modules\\TreoCore\\Loaders\\Layout",
   "FieldManager": "Espo\\Modules\\TreoCore\\Loaders\\FieldManagerLoader",
