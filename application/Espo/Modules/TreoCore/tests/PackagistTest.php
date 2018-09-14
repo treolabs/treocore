@@ -31,29 +31,47 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace TreoPHPUnit\Framework;
+namespace Espo\Modules\TreoCore\Services;
 
-use PHPUnit\Framework\TestCase as NativeTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class TestCase
+ * Class PackagistTest
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@zinitsolutions.com
  */
-class TestCase extends NativeTestCase
+class PackagistTest extends TestCase
 {
     /**
-     * Constructor
+     * @var Packagist
      */
-    public function __construct(...$args)
-    {
-        // call parent constructor
-        parent::__construct(...$args);
+    protected $self;
 
-        // define global variables
-        define('CORE_PATH', dirname(dirname(dirname(dirname(__DIR__)))));
+    protected function setUp()
+    {
+//        $this->self = $this->getMockBuilder(Packagist::class)
+////            ->setMethods(['getConfig'])
+////            ->setMethodsExcept(['refresh'])
+//            ->getMock();
+    }
+
+    /**
+     * Test refresh
+     */
+    public function testRefresh()
+    {
+//        // Create a stub for the Calculator class.
+//        $calculator = $this->getMockBuilder('Calculator')
+//            ->getMock();
+//
+//        // Configure the stub.
+//        $calculator->expects($this->any())
+//            ->method('add')
+//            ->will($this->returnValue(6));
+
+
+        $this->assertTrue(true);
     }
 }

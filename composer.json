@@ -38,7 +38,6 @@
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.1.0",
     "wikimedia/composer-merge-plugin": "1.4.1",
-    "phpunit/phpunit": "^7",
     "treo-module/pim": "*"
   },
   "minimum-stability": "stable",
@@ -68,5 +67,9 @@
       "type": "composer",
       "url": "https://packagist.treopim.com"
     }
-  ]
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^7",
+    "mockery/mockery": "^1.1"
+  }
 }
