@@ -34,16 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
-
-use Treo\Core\ConsoleManager;
+namespace Treo\Console;
 
 /**
- * ListCommand console
+ * ClearCache console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class ListCommand extends AbstractConsole
+class ClearCache extends AbstractConsole
 {
     /**
      * Get console command description
@@ -52,7 +50,7 @@ class ListCommand extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Show all existiong command and them descriptions.';
+        return 'Cache clearing.';
     }
 
     /**
@@ -62,45 +60,15 @@ class ListCommand extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // get console config
-        $config = $this->getConsoleConfig();
+        $result = $this
+            ->getContainer()
+            ->get('dataManager')
+            ->clearCache();
 
-        // prepare data
-        foreach ($config as $command => $class) {
-            if (method_exists($class, 'getDescription')) {
-                $data[$command] = [$command, $class::getDescription()];
-            }
+        if (!empty($result)) {
+            self::show('Cache successfully cleared', self::SUCCESS);
+        } else {
+            self::show('Cache clearing failed', self::ERROR);
         }
-
-        // sorting
-        $sorted = array_keys($data);
-        natsort($sorted);
-        foreach ($sorted as $command) {
-            $result[] = $data[$command];
-        }
-
-        // render
-        self::show('Available commands:', self::INFO);
-        echo self::arrayToTable($result);
-    }
-
-    /**
-     * Get console config
-     *
-     * @return array
-     */
-    protected function getConsoleConfig(): array
-    {
-        // prepare result
-        $result = [];
-
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $path = sprintf(ConsoleManager::$configPath, $module);
-            if (file_exists($path)) {
-                $result = array_merge($result, include $path);
-            }
-        }
-
-        return $result;
     }
 }

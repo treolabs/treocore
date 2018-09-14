@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
-use Espo\Modules\TreoCore\Console\AbstractConsole;
+use Treo\Console\AbstractConsole;
 use Treo\Core\Utils\Metadata;
 
 /**
@@ -140,7 +140,7 @@ class ConsoleManager
     protected function loadRoutes(): array
     {
         // prepare result
-        $result = [];
+        $result = include 'application/Treo/Configs/Console.php';
 
         foreach ($this->getMetadata()->getModuleList() as $module) {
             $path = sprintf(self::$configPath, $module);

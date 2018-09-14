@@ -34,14 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
 
 /**
- * Migrate console
+ * Rebuild console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Migrate extends AbstractConsole
+class Rebuild extends AbstractConsole
 {
     /**
      * Get console command description
@@ -50,7 +50,7 @@ class Migrate extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run migration.';
+        return 'Run database rebuild.';
     }
 
     /**
@@ -60,12 +60,15 @@ class Migrate extends AbstractConsole
      */
     public function run(array $data): void
     {
-        $this
+        $result = $this
             ->getContainer()
-            ->get('migration')
-            ->run($data['module'], $data['from'], $data['to']);
+            ->get('dataManager')
+            ->rebuild();
 
-        // render
-        self::show('Migration successfully finished', self::SUCCESS);
+        if (!empty($result)) {
+            self::show('Rebuild successfully finished', self::SUCCESS);
+        } else {
+            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
+        }
     }
 }

@@ -34,14 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
 
 /**
- * ClearCache console
+ * Migrate console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class ClearCache extends AbstractConsole
+class Migrate extends AbstractConsole
 {
     /**
      * Get console command description
@@ -50,7 +50,7 @@ class ClearCache extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Cache clearing.';
+        return 'Run migration.';
     }
 
     /**
@@ -60,15 +60,12 @@ class ClearCache extends AbstractConsole
      */
     public function run(array $data): void
     {
-        $result = $this
+        $this
             ->getContainer()
-            ->get('dataManager')
-            ->clearCache();
+            ->get('migration')
+            ->run($data['module'], $data['from'], $data['to']);
 
-        if (!empty($result)) {
-            self::show('Cache successfully cleared', self::SUCCESS);
-        } else {
-            self::show('Cache clearing failed', self::ERROR);
-        }
+        // render
+        self::show('Migration successfully finished', self::SUCCESS);
     }
 }

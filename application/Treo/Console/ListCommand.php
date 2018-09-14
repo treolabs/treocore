@@ -34,16 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\Auth;
+use Treo\Core\ConsoleManager;
 
 /**
- * Cron console
+ * ListCommand console
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Cron extends AbstractConsole
+class ListCommand extends AbstractConsole
 {
     /**
      * Get console command description
@@ -52,7 +52,7 @@ class Cron extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run CRON jobs.';
+        return 'Show all existiong command and them descriptions.';
     }
 
     /**
@@ -62,31 +62,45 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // run cron jobs
-        $this->runCronJobs();
+        // get console config
+        $config = $this->getConsoleConfig();
 
-        // run ProgressManager jobs
-        $this->getContainer()->get('progressManager')->run();
+        // prepare data
+        foreach ($config as $command => $class) {
+            if (method_exists($class, 'getDescription')) {
+                $data[$command] = [$command, $class::getDescription()];
+            }
+        }
+
+        // sorting
+        $sorted = array_keys($data);
+        natsort($sorted);
+        foreach ($sorted as $command) {
+            $result[] = $data[$command];
+        }
+
+        // render
+        self::show('Available commands:', self::INFO);
+        echo self::arrayToTable($result);
     }
 
     /**
-     * Run cron jobs
+     * Get console config
      *
-     * @throws \Espo\Core\Exceptions\Error
+     * @return array
      */
-    protected function runCronJobs(): void
+    protected function getConsoleConfig(): array
     {
-        if ($this->getConfig()->get('cronDisabled')) {
-            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
-            return;
+        // prepare result
+        $result = include 'application/Treo/Configs/Console.php';
+
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            $path = sprintf(ConsoleManager::$configPath, $module);
+            if (file_exists($path)) {
+                $result = array_merge($result, include $path);
+            }
         }
 
-        $auth = new Auth($this->getContainer());
-        $auth->useNoAuth();
-
-        $this
-            ->getContainer()
-            ->get('cronManager')
-            ->run();
+        return $result;
     }
 }

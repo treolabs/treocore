@@ -34,16 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
-
-use Espo\Modules\TreoCore\Core\Utils\Composer as Util;
+namespace Treo\Console;
 
 /**
- * Composer console
+ * Class GenerateApidocs
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Composer extends AbstractConsole
+class GenerateApidocs extends AbstractConsole
 {
     /**
      * Get console command description
@@ -52,7 +50,7 @@ class Composer extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run composer commands by extractor.';
+        return 'Generate REST API documentation.';
     }
 
     /**
@@ -62,7 +60,16 @@ class Composer extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // render
-        self::show((new Util())->run($data['command'])['output']);
+        // generate
+        $result = $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('RestApiDocs')
+            ->generateDocumentation();
+        if (!empty($result)) {
+            self::show('REST API documentation generated successfully', self::SUCCESS);
+        } else {
+            self::show('Something wrong. REST API documentation generated failed. Check log for details', self::ERROR);
+        }
     }
 }

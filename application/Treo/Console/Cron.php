@@ -34,14 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
+
+use Espo\Modules\TreoCore\Core\Utils\Auth;
 
 /**
- * Class GenerateApidocs
+ * Cron console
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@zinitsolutions.com
  */
-class GenerateApidocs extends AbstractConsole
+class Cron extends AbstractConsole
 {
     /**
      * Get console command description
@@ -50,7 +52,7 @@ class GenerateApidocs extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Generate REST API documentation.';
+        return 'Run CRON jobs.';
     }
 
     /**
@@ -60,16 +62,31 @@ class GenerateApidocs extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // generate
-        $result = $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('RestApiDocs')
-            ->generateDocumentation();
-        if (!empty($result)) {
-            self::show('REST API documentation generated successfully', self::SUCCESS);
-        } else {
-            self::show('Something wrong. REST API documentation generated failed. Check log for details', self::ERROR);
+        // run cron jobs
+        $this->runCronJobs();
+
+        // run ProgressManager jobs
+        $this->getContainer()->get('progressManager')->run();
+    }
+
+    /**
+     * Run cron jobs
+     *
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function runCronJobs(): void
+    {
+        if ($this->getConfig()->get('cronDisabled')) {
+            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
+            return;
         }
+
+        $auth = new Auth($this->getContainer());
+        $auth->useNoAuth();
+
+        $this
+            ->getContainer()
+            ->get('cronManager')
+            ->run();
     }
 }

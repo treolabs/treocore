@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
 
 /**
  * Events console
@@ -143,14 +143,16 @@ class Events extends AbstractConsole
      */
     protected function getDirFiles(string $dir, &$results = []): array
     {
-        $files = scandir($dir);
-        foreach ($files as $key => $value) {
-            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
-            if (!is_dir($path) && preg_match('/^.*.php$/', $path)) {
-                $results[] = $path;
-            } else {
-                if ($value != "." && $value != "..") {
-                    $this->getDirFiles($path, $results);
+        if (is_dir($dir)) {
+            $files = scandir($dir);
+            foreach ($files as $key => $value) {
+                $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+                if (!is_dir($path) && preg_match('/^.*.php$/', $path)) {
+                    $results[] = $path;
+                } else {
+                    if ($value != "." && $value != "..") {
+                        $this->getDirFiles($path, $results);
+                    }
                 }
             }
         }

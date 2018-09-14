@@ -34,17 +34,35 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Configs;
+namespace Treo\Console;
 
-use Espo\Modules\TreoCore\Console;
+use Espo\Modules\TreoCore\Core\Utils\Composer as Util;
 
-return [
-    "list"                         => Console\ListCommand::class,
-    "clear cache"                  => Console\ClearCache::class,
-    "rebuild"                      => Console\Rebuild::class,
-    "cron"                         => Console\Cron::class,
-    "events"                       => Console\Events::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class,
-    "composer <command>"           => Console\Composer::class,
-    "generate apidocs"             => Console\GenerateApidocs::class
-];
+/**
+ * Composer console
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
+class Composer extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Run composer commands by extractor.';
+    }
+
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        // render
+        self::show((new Util())->run($data['command'])['output']);
+    }
+}

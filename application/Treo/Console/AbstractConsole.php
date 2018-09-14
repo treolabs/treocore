@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Console;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Treo\Core\Utils\Metadata;

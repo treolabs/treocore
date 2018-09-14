@@ -34,41 +34,17 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Console;
+namespace Treo\Configs;
 
-/**
- * Rebuild console
- *
- * @author r.ratsun@zinitsolutions.com
- */
-class Rebuild extends AbstractConsole
-{
-    /**
-     * Get console command description
-     *
-     * @return string
-     */
-    public static function getDescription(): string
-    {
-        return 'Run database rebuild.';
-    }
+use Treo\Console;
 
-    /**
-     * Run action
-     *
-     * @param array $data
-     */
-    public function run(array $data): void
-    {
-        $result = $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
-
-        if (!empty($result)) {
-            self::show('Rebuild successfully finished', self::SUCCESS);
-        } else {
-            self::show('Something wrong. Rebuild failed. Check log for details', self::ERROR);
-        }
-    }
-}
+return [
+    "list"                         => Console\ListCommand::class,
+    "clear cache"                  => Console\ClearCache::class,
+    "rebuild"                      => Console\Rebuild::class,
+    "cron"                         => Console\Cron::class,
+    "events"                       => Console\Events::class,
+    "migrate <module> <from> <to>" => Console\Migrate::class,
+    "composer <command>"           => Console\Composer::class,
+    "generate apidocs"             => Console\GenerateApidocs::class
+];
