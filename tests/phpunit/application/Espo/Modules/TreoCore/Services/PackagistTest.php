@@ -33,9 +33,8 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Tests\Services;
+namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Modules\TreoCore\Services\Packagist;
 use Treo\PHPUnit\Framework\TestCase;
 
 /**
