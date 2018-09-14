@@ -32,9 +32,9 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core\Utils;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
@@ -77,13 +77,13 @@ class FieldManager extends EspoFieldManager
      */
     protected function getAttributeListByType(string $scope, string $name, string $type): array
     {
-        $fieldType = $this->getMetadata()->get('entityDefs.'.$scope.'.fields.'.$name.'.type');
+        $fieldType = $this->getMetadata()->get('entityDefs.' . $scope . '.fields.' . $name . '.type');
 
         if (!$fieldType) {
             return [];
         }
 
-        $defs = $this->getMetadata()->get('fields.'.$fieldType);
+        $defs = $this->getMetadata()->get('fields.' . $fieldType);
         if (!$defs) {
             return [];
         }
@@ -93,19 +93,19 @@ class FieldManager extends EspoFieldManager
         }
 
         $fieldList = [];
-        if (isset($defs[$type.'Fields'])) {
-            $list   = $defs[$type.'Fields'];
+        if (isset($defs[$type . 'Fields'])) {
+            $list = $defs[$type . 'Fields'];
             $naming = 'suffix';
             if (isset($defs['naming'])) {
                 $naming = $defs['naming'];
             }
             if ($naming == 'prefix') {
                 foreach ($list as $f) {
-                    $fieldList[] = $f.ucfirst($name);
+                    $fieldList[] = $f . ucfirst($name);
                 }
             } else {
                 foreach ($list as $f) {
-                    $fieldList[] = $name.ucfirst($f);
+                    $fieldList[] = $name . ucfirst($f);
                 }
             }
         } else {
@@ -154,7 +154,7 @@ class FieldManager extends EspoFieldManager
     public function getAttributeList($scope, $name)
     {
         // prepare data
-        $actualAttributeList    = $this->getActualAttributeList($scope, $name);
+        $actualAttributeList = $this->getActualAttributeList($scope, $name);
         $notActualAttributeList = $this->getNotActualAttributeList($scope, $name);
 
         return array_merge($actualAttributeList, $notActualAttributeList);

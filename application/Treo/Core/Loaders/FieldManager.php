@@ -31,25 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\FieldManager as Instance;
+
+/**
+ * FieldManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class FieldManager extends Base
 {
 
     /**
      * Load FieldManager
      *
-     * @return \Espo\Core\Utils\FieldManager
+     * @return Instance
      */
     public function load()
     {
-        $container = $this->getContainer();
-
-        return new \Espo\Core\Utils\FieldManager(
-            $container->get('metadata'),
-            $container->get('language'),
-            $container
-        );
+        return (new Instance())->setContainer($this->getContainer());
     }
 }
