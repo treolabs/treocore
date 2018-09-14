@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-use Espo\Core\Application as App;
+use Treo\Core\Application as App;
 use Espo\Core\Portal\Application as PortalApp;
 
 include "bootstrap.php";
