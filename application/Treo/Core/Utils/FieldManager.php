@@ -37,11 +37,11 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Core\Utils\FieldManager as EspoFieldManager;
 use Espo\Core\Utils\Metadata\Helper as MetadataHelper;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\FieldManager\Hooks\Base as BaseHook;
+use Treo\Core\Utils\Metadata;
 
 /**
  * FieldManager util

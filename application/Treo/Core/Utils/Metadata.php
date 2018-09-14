@@ -34,21 +34,19 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core\Utils;
 
-use Espo\Core\Utils\Metadata as EspoMetadata;
-use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
-use Treo\Core\Utils\ModuleMover;
+use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
+use Espo\Modules\TreoCore\Traits\ContainerTrait;
 
 /**
  * Metadata class
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Metadata extends EspoMetadata
+class Metadata extends \Espo\Core\Utils\Metadata
 {
 
     /**

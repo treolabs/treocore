@@ -38,7 +38,7 @@ namespace Treo\Core;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Modules\TreoCore\Console\AbstractConsole;
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
+use Treo\Core\Utils\Metadata;
 
 /**
  * ConsoleManager

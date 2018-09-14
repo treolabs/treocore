@@ -39,8 +39,8 @@ namespace Espo\Modules\TreoCore\Services;
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
 use Espo\Modules\TreoCore\Documentator\Extractor;
+use Treo\Core\Utils\Metadata;
 
 /**
  * RestApiDocs service
