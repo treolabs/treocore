@@ -32,18 +32,27 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Core\Loaders;
 
+use Treo\Core\ControllerManager as Instance;
+
+/**
+ * ControllerManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class ControllerManager extends Base
 {
 
     /**
      * Load ControllerManager
      *
-     * @return \Espo\Core\ControllerManager
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\ControllerManager($this->getContainer());
+        return (new Instance())->setContainer($this->getContainer());
     }
 }

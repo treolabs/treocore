@@ -33,7 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core;
+namespace Treo\Core;
 
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
