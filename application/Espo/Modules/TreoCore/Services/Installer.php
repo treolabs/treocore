@@ -512,7 +512,7 @@ class Installer extends AbstractTreoService
     {
         if (is_null($this->installConfig)) {
             // prepare path to file
-            $configFile = CORE_PATH . "/application/Espo/Modules/TreoCore/Configs/Install.php";
+            $configFile = CORE_PATH . "/application/Treo/Configs/Install.php";
 
             // get data
             $this->installConfig = include $configFile;
