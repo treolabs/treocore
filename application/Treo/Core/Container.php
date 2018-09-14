@@ -38,8 +38,8 @@ namespace Treo\Core;
 
 use Espo\Core\Container as EspoContainer;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Modules\TreoCore\Core\Utils\Metadata;
+use Treo\Core\Utils\Config;
 
 /**
  * Class Container

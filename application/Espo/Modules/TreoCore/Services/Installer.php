@@ -37,10 +37,10 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Modules\TreoCore\Core\Utils\Config;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Json;
+use Treo\Core\Utils\Config;
 
 /**
  * Class Installer
