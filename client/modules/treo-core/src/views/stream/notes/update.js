@@ -103,7 +103,7 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
 
         addMultilangFields(model, fields) {
             let additionalFields = [];
-            let inputLanguageList = this.getConfig().get('languageList') || [];
+            let inputLanguageList = this.getConfig().get('inputLanguageList') || [];
             (fields || []).forEach(field => {
                 if (model.getFieldParam(field, 'isMultilang')) {
                     let langFieldNameList = inputLanguageList.map(lang => this.getInputLangName(lang, field)) || [];
