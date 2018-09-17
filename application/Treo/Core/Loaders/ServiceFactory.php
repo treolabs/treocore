@@ -31,19 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\ServiceFactory as Instance;
+
+/**
+ * ServiceFactory loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class ServiceFactory extends Base
 {
 
     /**
      * Load ServiceFactory
      *
-     * @return \Espo\Core\ServiceFactory
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\ServiceFactory($this->getContainer());
+        return new Instance($this->getContainer());
     }
 }

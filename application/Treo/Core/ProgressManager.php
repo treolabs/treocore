@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core;
+namespace Treo\Core;
 
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\ServiceFactory;

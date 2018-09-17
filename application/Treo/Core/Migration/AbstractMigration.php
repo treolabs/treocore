@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Core\Migration;
+namespace Treo\Core\Migration;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Core\ORM\EntityManager;

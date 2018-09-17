@@ -34,26 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\Migration\Migration;
+use Treo\Core\ProgressManager as Instance;
 
 /**
- * Migration Loader
+ * ProgressManager Loader
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class MigrationLoader extends Base
+class ProgressManager extends Base
 {
 
     /**
-     * Load Migration
+     * Load ProgressManager
      *
-     * @return Migration
+     * @return Instance
      */
     public function load()
     {
-        return (new Migration())->setContainer($this->getContainer());
+        return (new Instance())->setContainer($this->getContainer());
     }
 }

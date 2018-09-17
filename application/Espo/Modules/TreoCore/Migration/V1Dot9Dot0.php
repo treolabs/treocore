@@ -34,7 +34,7 @@
 
 namespace Espo\Modules\TreoCore\Migration;
 
-use Espo\Modules\TreoCore\Core\Migration\AbstractMigration;
+use Treo\Core\Migration\AbstractMigration;
 
 /**
  * Version 1.9.0

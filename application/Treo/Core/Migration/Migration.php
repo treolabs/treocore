@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Migration;
+namespace Treo\Core\Migration;
 
 use Espo\Modules\TreoCore\Traits\ContainerTrait;
 

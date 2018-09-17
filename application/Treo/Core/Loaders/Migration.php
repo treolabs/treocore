@@ -32,28 +32,28 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core\Loaders;
 
 use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\ProgressManager;
+use Treo\Core\Migration\Migration as Instance;
 
 /**
- * ProgressManager Loader
+ * Migration Loader
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ProgressManagerLoader extends Base
+class Migration extends Base
 {
 
     /**
-     * Load ProgressManager
+     * Load Migration
      *
-     * @return ProgressManager
+     * @return Instance
      */
     public function load()
     {
-        return (new ProgressManager())->setContainer($this->getContainer());
+        return (new Instance())->setContainer($this->getContainer());
     }
 }
