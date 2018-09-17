@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
-use Espo\Modules\TreoCore\Core\UpgradeManager;
+use Treo\Core\UpgradeManager;
 use Treo\Core\Utils\ModuleMover;
 
 /**

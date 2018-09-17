@@ -33,7 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Hooks;
+namespace Treo\Core\Hooks;
 
 use Espo\Core\Hooks\Base;
 

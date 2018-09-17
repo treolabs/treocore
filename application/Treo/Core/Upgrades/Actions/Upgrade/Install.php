@@ -32,43 +32,29 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+namespace Treo\Core\Upgrades\Actions\Upgrade;
 
-namespace Espo\Modules\TreoCore\Core;
+use Espo\Core\Upgrades\Actions\Upgrade\Install as EspoInstall;
 
-use Espo\Core\Container;
-use Espo\Core\UpgradeManager as EspoUpgradeManager;
-use Espo\Modules\TreoCore\Core\Upgrades\ActionManager;
-
-/**
- * Class of UpgradeManager
- *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
- */
-class UpgradeManager extends EspoUpgradeManager
+class Install extends EspoInstall
 {
     /**
-     * @var Container
+     * After run action
      */
-    protected $container;
-
-    /**
-     * Construct
-     */
-    public function __construct($container)
+    protected function afterRunAction()
     {
-        $this->container = $container;
+        // call parent
+        parent::afterRunAction();
 
-        $this->actionManager = new ActionManager($this->name, $container, $this->params);
-    }
+        // call composer
+        $composerData = $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->runUpdate();
 
-    /**
-     * Get Container
-     *
-     * @return Container
-     */
-    protected function getContainer()
-    {
-        return $this->container;
+        if ($composerData['status'] != 0) {
+            $this->throwErrorAndRemovePackage('Composer requirements error! Log:' . $composerData['output']);
+        }
     }
 }

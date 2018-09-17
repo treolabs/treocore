@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
-use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Core\ProgressManager as PM;
 use Slim\Http\Request;
 
 /**

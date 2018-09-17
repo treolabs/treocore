@@ -32,51 +32,43 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Upgrades;
+namespace Treo\Core;
 
-use Espo\Core\Upgrades\ActionManager as EspoActionManager;
-use Espo\Core\Exceptions\Error;
+use Espo\Core\Container;
+use Espo\Core\UpgradeManager as EspoUpgradeManager;
+use Treo\Core\Upgrades\ActionManager;
 
 /**
- * Class of ActionManager
+ * Class of UpgradeManager
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ActionManager extends EspoActionManager
+class UpgradeManager extends EspoUpgradeManager
 {
     /**
-     * @var array
+     * @var Container
      */
-    protected $objects;
+    protected $container;
 
     /**
-     * Get object
-     *
-     * @return mixed
-     * @throws Error
+     * Construct
      */
-    protected function getObject()
+    public function __construct($container)
     {
-        // prepare params
-        $managerName = $this->getManagerName();
-        $actionName  = $this->getAction();
+        $this->container = $container;
 
-        if (!isset($this->objects[$managerName][$actionName])) {
-            $class = '\Espo\Modules\TreoCore\Core\Upgrades\Actions\\'.ucfirst($managerName).'\\'.ucfirst($actionName);
+        $this->actionManager = new ActionManager($this->name, $container, $this->params);
+    }
 
-            if (!class_exists($class)) {
-                $class = '\Espo\Core\Upgrades\Actions\\'.ucfirst($managerName).'\\'.ucfirst($actionName);
-            }
-
-            if (!class_exists($class)) {
-                throw new Error('Could not find an action ['.ucfirst($actionName).'], class ['.$class.'].');
-            }
-
-            $this->objects[$managerName][$actionName] = new $class($this->getContainer(), $this);
-        }
-
-        return $this->objects[$managerName][$actionName];
+    /**
+     * Get Container
+     *
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        return $this->container;
     }
 }

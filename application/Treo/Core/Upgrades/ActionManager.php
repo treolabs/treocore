@@ -32,29 +32,51 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Core\Upgrades\Actions\Upgrade;
+declare(strict_types = 1);
 
-use Espo\Core\Upgrades\Actions\Upgrade\Install as EspoInstall;
+namespace Treo\Core\Upgrades;
 
-class Install extends EspoInstall
+use Espo\Core\Upgrades\ActionManager as EspoActionManager;
+use Espo\Core\Exceptions\Error;
+
+/**
+ * Class of ActionManager
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ActionManager extends EspoActionManager
 {
     /**
-     * After run action
+     * @var array
      */
-    protected function afterRunAction()
+    protected $objects;
+
+    /**
+     * Get object
+     *
+     * @return mixed
+     * @throws Error
+     */
+    protected function getObject()
     {
-        // call parent
-        parent::afterRunAction();
+        // prepare params
+        $managerName = $this->getManagerName();
+        $actionName  = $this->getAction();
 
-        // call composer
-        $composerData = $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Composer')
-            ->runUpdate();
+        if (!isset($this->objects[$managerName][$actionName])) {
+            $class = '\Treo\Core\Upgrades\Actions\\'.ucfirst($managerName).'\\'.ucfirst($actionName);
 
-        if ($composerData['status'] != 0) {
-            $this->throwErrorAndRemovePackage('Composer requirements error! Log:' . $composerData['output']);
+            if (!class_exists($class)) {
+                $class = '\Espo\Core\Upgrades\Actions\\'.ucfirst($managerName).'\\'.ucfirst($actionName);
+            }
+
+            if (!class_exists($class)) {
+                throw new Error('Could not find an action ['.ucfirst($actionName).'], class ['.$class.'].');
+            }
+
+            $this->objects[$managerName][$actionName] = new $class($this->getContainer(), $this);
         }
+
+        return $this->objects[$managerName][$actionName];
     }
 }
