@@ -36,8 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Acl\Base as EspoBase;
-use Treo\Core\Acl\Base as TreoBase;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Utils\Util;
 
 /**
  * Class AclManager
@@ -46,7 +46,10 @@ use Treo\Core\Acl\Base as TreoBase;
  */
 class AclManager extends \Espo\Core\AclManager
 {
-    protected $treoImplementationHashMap = [];
+    /**
+     * @var array
+     */
+    protected $implementationHashMap = [];
 
     /**
      * Get implementation
@@ -57,19 +60,41 @@ class AclManager extends \Espo\Core\AclManager
      */
     public function getImplementation($scope)
     {
-        if (empty($this->treoImplementationHashMap[$scope])) {
-            $implement = parent::getImplementation($scope);
-            if (get_class($implement) == EspoBase::class) {
-                $acl = new TreoBase($scope);
+        if (empty($this->implementationHashMap[$scope])) {
+            $normalizedName = Util::normilizeClassName($scope);
+
+            $className = '\\Espo\\Custom\\Acl\\' . $normalizedName;
+            if (!class_exists($className)) {
+                $moduleName = $this->getMetadata()->getScopeModuleName($scope);
+                if ($moduleName) {
+                    $className = '\\Espo\\Modules\\' . $moduleName . '\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Treo\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Espo\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Treo\\Core\\Acl\\Base';
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Espo\\Core\\Acl\\Base';
+                }
+            }
+
+            if (class_exists($className)) {
+                $acl = new $className($scope);
                 $dependencies = $acl->getDependencyList();
                 foreach ($dependencies as $name) {
                     $acl->inject($name, $this->getContainer()->get($name));
                 }
-                $implement = $acl;
+                $this->implementationHashMap[$scope] = $acl;
+            } else {
+                throw new Error();
             }
-            $this->treoImplementationHashMap[$scope] = $implement;
         }
 
-        return $this->treoImplementationHashMap[$scope];
+        return $this->implementationHashMap[$scope];
     }
 }
