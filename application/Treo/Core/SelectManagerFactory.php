@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Utils\Util;
-use Espo\Core\InjectableFactory;
 use Treo\Core\Container;
 
 /**
