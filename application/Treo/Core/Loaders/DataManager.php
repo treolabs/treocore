@@ -31,19 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\DataManager as Instance;
+
+/**
+ * DataManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class DataManager extends Base
 {
 
     /**
      * Load DataManager
      *
-     * @return \Espo\Core\DataManager
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\DataManager($this->getContainer());
+        return new Instance($this->getContainer());
     }
 }

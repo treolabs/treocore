@@ -1,4 +1,3 @@
 {
-  "DataManager": "Espo\\Modules\\TreoCore\\Loaders\\DataManagerLoader",
   "Schema": "Espo\\Modules\\TreoCore\\Loaders\\SchemaLoader"
 }
