@@ -160,5 +160,4 @@ class Composer
 
         return ['status' => $status, 'output' => $output];
     }
-
 }
