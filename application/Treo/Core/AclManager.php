@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Acl\Base as EspoBase;
-use Espo\Core\AclManager as EspoAclManager;
 use Treo\Core\Acl\Base as TreoBase;
 
 /**
@@ -45,7 +44,7 @@ use Treo\Core\Acl\Base as TreoBase;
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class AclManager extends EspoAclManager
+class AclManager extends \Espo\Core\AclManager
 {
     protected $treoImplementationHashMap = [];
 
