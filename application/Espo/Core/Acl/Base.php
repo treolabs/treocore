@@ -45,7 +45,9 @@ class Base implements Injectable
         = array(
             'config',
             'entityManager',
-            'aclManager'
+            'aclManager',
+            // @todo treoinject
+            'metadata'
         );
 
     protected $scope;
@@ -216,7 +218,15 @@ class Base implements Injectable
      */
     public function checkIsOwner(User $user, Entity $entity)
     {
-        if ($entity->hasAttribute('ownerUserId')) {
+        // prepare data
+        $hasOwnerUser = $this
+            ->getInjection('metadata')
+            ->get('scopes.' . $entity->getEntityType() . '.hasOwnerUser');
+        $hasAssignedUser = $this
+            ->getInjection('metadata')
+            ->get('scopes.' . $entity->getEntityType() . '.hasAssignedUser');
+
+        if ($hasOwnerUser) {
             if ($entity->has('ownerUserId')) {
                 if ($user->id === $entity->get('ownerUserId')) {
                     return true;
@@ -224,7 +234,7 @@ class Base implements Injectable
             }
         }
 
-        if ($entity->hasAttribute('assignedUserId')) {
+        if ($hasAssignedUser) {
             if ($entity->has('assignedUserId')) {
                 if ($user->id === $entity->get('assignedUserId')) {
                     return true;
@@ -232,7 +242,7 @@ class Base implements Injectable
             }
         }
 
-        if ($entity->hasAttribute('createdById') && !$entity->hasAttribute('ownerUserId') && !$entity->hasAttribute('assignedUserId')) {
+        if ($entity->hasAttribute('createdById') && !$hasOwnerUser && !$hasAssignedUser) {
             if ($entity->has('createdById')) {
                 if ($user->id === $entity->get('createdById')) {
                     return true;

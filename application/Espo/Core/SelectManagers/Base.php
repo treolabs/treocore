@@ -679,21 +679,31 @@ class Base
      */
     protected function hasOwnerUserField()
     {
-        if ($this->getSeed()->hasAttribute('ownerUserId')) {
+        if ($this->getMetadata()->get('scopes.' . $this->getEntityType() . '.hasOwner')) {
             return true;
         }
     }
 
+    /**
+     * @return bool
+     * @todo treoinject
+     */
     protected function hasAssignedUsersField()
     {
-        if ($this->getSeed()->hasRelation('assignedUsers') && $this->getSeed()->hasAttribute('assignedUsersIds')) {
+        if ($this->getMetadata()->get('scopes.' . $this->getEntityType() . '.hasAssignedUser')
+            && $this->getSeed()->hasRelation('assignedUsers')
+            && $this->getSeed()->hasAttribute('assignedUsersIds')) {
             return true;
         }
     }
 
+    /**
+     * @return bool
+     * @todo treoinject
+     */
     protected function hasAssignedUserField()
     {
-        if ($this->getSeed()->hasAttribute('assignedUserId')) {
+        if ($this->getMetadata()->get('scopes.' . $this->getEntityType() . '.hasAssignedUser')) {
             return true;
         }
     }
