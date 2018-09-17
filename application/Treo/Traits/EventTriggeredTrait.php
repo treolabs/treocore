@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Traits;
+namespace Treo\Traits;
 
 /**
  * Class EventTriggeredTrait

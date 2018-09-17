@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Modules\TreoCore\Listeners\AbstractListener;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Treo\Traits\ContainerTrait;
 
 /**
  * EventManager class

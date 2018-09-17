@@ -36,9 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Treo\Console\AbstractConsole;
 use Treo\Core\Utils\Metadata;
+use Treo\Traits\ContainerTrait;
 
 /**
  * ConsoleManager

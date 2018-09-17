@@ -39,7 +39,7 @@ namespace Treo\Core\Utils;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
 use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
+use Treo\Traits\ContainerTrait;
 
 /**
  * Metadata class

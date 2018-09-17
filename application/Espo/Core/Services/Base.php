@@ -40,7 +40,7 @@ use Espo\Core\Interfaces\Injectable;
 use Espo\Core\Utils\Config;
 use Espo\Entities\User;
 use Espo\Orm\EntityManager;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
+use Treo\Traits\EventTriggeredTrait;
 
 /**
  * Abstract service Base

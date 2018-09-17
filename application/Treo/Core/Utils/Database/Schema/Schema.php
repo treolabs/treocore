@@ -37,8 +37,8 @@ namespace Treo\Core\Utils\Database\Schema;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Database\Schema\Schema as EspoSchema;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
+use Treo\Traits\ContainerTrait;
+use Treo\Traits\EventTriggeredTrait;
 
 /**
  * Class Schema

@@ -34,9 +34,9 @@
 
 namespace Treo\Core\Migration;
 
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Config;
+use Treo\Traits\ContainerTrait;
 
 /**
  * AbstractMigration class

@@ -38,9 +38,9 @@ namespace Treo\Core;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Core\Exceptions\NotFound;
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Slim\Http\Request;
 use StdClass;
+use Treo\Traits\ContainerTrait;
 
 /**
  * ControllerManager class

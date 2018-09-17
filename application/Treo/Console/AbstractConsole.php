@@ -36,9 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Modules\TreoCore\Traits\ContainerTrait;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
+use Treo\Traits\ContainerTrait;
 
 /**
  * AbtractConsole class
