@@ -61,4 +61,3 @@ class SelectManagerFactory extends Base
         );
     }
 }
-
