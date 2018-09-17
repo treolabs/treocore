@@ -31,19 +31,28 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\HookManager as Instance;
+
+/**
+ * HookManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class HookManager extends Base
 {
 
     /**
      * Load HookManager
      *
-     * @return \Espo\Core\HookManager
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\HookManager($this->getContainer());
+        return (new Instance($this->getContainer()))
+            ->setProtectedContainer($this->getContainer());
     }
 }

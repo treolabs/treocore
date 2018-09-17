@@ -33,26 +33,48 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Loaders;
+namespace Treo\Core;
 
-use Espo\Core\Loaders\Base;
-use Espo\Modules\TreoCore\Core\HookManager;
+use Espo\Core\Container;
+use Espo\Core\HookManager as EspoHookManager;
 
 /**
- * HookManager loader
+ * HookManager class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class HookManagerLoader extends Base
+class HookManager extends EspoHookManager
 {
     /**
-     * Load HookManager
+     * @var Container
+     */
+    protected $protectedContainer;
+
+    /**
+     * Create hoo by classname
+     *
+     * @param string $className
+     *
+     * @return mixed
+     */
+    public function createHookByClassName($className)
+    {
+        if (class_exists($className)) {
+            return (new $className())->setContainer($this->protectedContainer);
+        }
+
+        $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
+    }
+
+    /**
+     * @param Container $container
      *
      * @return HookManager
      */
-    public function load()
+    public function setProtectedContainer(Container $container): HookManager
     {
-        return (new HookManager($this->getContainer()))
-            ->setProtectedContainer($this->getContainer());
+        $this->protectedContainer = $container;
+
+        return $this;
     }
 }
