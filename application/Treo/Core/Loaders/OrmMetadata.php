@@ -31,9 +31,15 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+/**
+ * OrmMetadata loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class OrmMetadata extends Base
 {
 

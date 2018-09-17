@@ -31,9 +31,15 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+/**
+ * ThemeManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class ThemeManager extends Base
 {
 
@@ -44,6 +50,9 @@ class ThemeManager extends Base
      */
     public function load()
     {
-        return new \Espo\Core\Utils\ThemeManager($this->getContainer()->get('config'), $this->getContainer()->get('metadata'));
+        return new \Espo\Core\Utils\ThemeManager(
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('metadata')
+        );
     }
 }

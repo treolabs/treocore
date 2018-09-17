@@ -32,8 +32,15 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Core\Loaders;
 
+/**
+ * FileStorageManager loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class FileStorageManager extends Base
 {
 

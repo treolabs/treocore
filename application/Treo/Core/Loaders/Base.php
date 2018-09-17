@@ -31,11 +31,17 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
 use Espo\Core\Loaders\Base as EspoBase;
 
+/**
+ * Base loader class
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 abstract class Base extends EspoBase
 {
     /**

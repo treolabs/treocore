@@ -31,9 +31,15 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+/**
+ * Number loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class Number extends Base
 {
 
