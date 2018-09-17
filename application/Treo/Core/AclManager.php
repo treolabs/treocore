@@ -31,29 +31,46 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core;
+
+use Espo\Core\Acl\Base as EspoBase;
+use Espo\Core\AclManager as EspoAclManager;
+use Treo\Core\Acl\Base as TreoBase;
 
 /**
- * AclManager loader
+ * Class AclManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class AclManager extends Base
+class AclManager extends EspoAclManager
 {
+    protected $treoImplementationHashMap = [];
 
     /**
-     * Load AclManager
+     * Get implementation
+     *
+     * @param string $scope
      *
      * @return mixed
      */
-    public function load()
+    public function getImplementation($scope)
     {
-        // prepare classname
-        $className = $this
-            ->getServiceClassName('acl', '\\Treo\\Core\\AclManager');
+        if (empty($this->treoImplementationHashMap[$scope])) {
+            $implement = parent::getImplementation($scope);
+            if (get_class($implement) == EspoBase::class) {
+                $acl = new TreoBase($scope);
+                $dependencies = $acl->getDependencyList();
+                foreach ($dependencies as $name) {
+                    $acl->inject($name, $this->getContainer()->get($name));
+                }
+                $implement = $acl;
+            }
+            $this->treoImplementationHashMap[$scope] = $implement;
+        }
 
-        return new $className($this->getContainer());
+        return $this->treoImplementationHashMap[$scope];
     }
 }
