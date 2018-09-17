@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\Auth;
+use Treo\Core\Utils\Auth;
 
 /**
  * Cron console

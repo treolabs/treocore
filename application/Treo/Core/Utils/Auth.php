@@ -32,9 +32,9 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils;
+namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Auth as EspoAuth;
 use Espo\Core\Exceptions\Error;

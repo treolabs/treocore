@@ -37,8 +37,8 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Application as EspoApplication;
-use Espo\Modules\TreoCore\Core\Utils\Auth;
 use Espo\Modules\TreoCore\Services\Installer;
+use Treo\Core\Utils\Auth;
 
 /**
  * Class Application
