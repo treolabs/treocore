@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Modules\TreoCore\Core\Utils\Composer as Util;
+use Treo\Core\Utils\Composer as Util;
 
 /**
  * Composer console

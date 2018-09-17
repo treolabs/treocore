@@ -38,7 +38,7 @@ namespace Espo\Modules\TreoCore\Services;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
+use Treo\Core\Utils\Composer as ComposerUtil;
 
 /**
  * Composer service

@@ -37,7 +37,7 @@ namespace Espo\Modules\TreoCore\Migration;
 
 use Espo\Core\Utils\Util;
 use Treo\Core\Migration\AbstractMigration;
-use Espo\Modules\TreoCore\Core\Utils\Composer;
+use Treo\Core\Utils\Composer;
 
 /**
  * Version 1.13.2
