@@ -52,7 +52,7 @@ class AclManager extends Base
     {
         // prepare classname
         $className = $this
-            ->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+            ->getServiceClassName('acl', '\\Treo\\Core\\AclManager');
 
         return new $className($this->getContainer());
     }

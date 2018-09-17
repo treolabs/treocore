@@ -35,7 +35,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\ServiceFactory as EspoServiceFactory;
 use Espo\Core\Exceptions\Error;
 
 /**
@@ -43,7 +42,7 @@ use Espo\Core\Exceptions\Error;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class ServiceFactory extends EspoServiceFactory
+class ServiceFactory extends \Espo\Core\ServiceFactory
 {
     /**
      * Create by classname
