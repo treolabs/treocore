@@ -31,20 +31,29 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Database\Schema\Schema as Instance;
+
+/**
+ * Schema loader
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class Schema extends Base
 {
 
     /**
      * Load Schema
      *
-     * @return \Espo\Core\Utils\Database\Schema\Schema
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Database\Schema\Schema(
+        // create
+        $schema = new Instance(
             $this->getContainer()->get('config'),
             $this->getContainer()->get('metadata'),
             $this->getContainer()->get('fileManager'),
@@ -52,5 +61,10 @@ class Schema extends Base
             $this->getContainer()->get('classParser'),
             $this->getContainer()->get('ormMetadata')
         );
+
+        // set container
+        $schema->setContainer($this->getContainer());
+
+        return $schema;
     }
 }

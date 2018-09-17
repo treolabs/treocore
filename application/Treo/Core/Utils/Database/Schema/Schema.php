@@ -33,7 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Core\Utils\Database\Schema;
+namespace Treo\Core\Utils\Database\Schema;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Database\Schema\Schema as EspoSchema;
