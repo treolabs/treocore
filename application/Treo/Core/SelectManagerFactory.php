@@ -85,9 +85,6 @@ class SelectManagerFactory
             if (!class_exists($className)) {
                 $className = '\\Treo\\Core\\SelectManagers\\Base';
             }
-            if (!class_exists($className)) {
-                $className = '\\Espo\\Core\\SelectManagers\\Base';
-            }
         }
 
         if ($user) {
