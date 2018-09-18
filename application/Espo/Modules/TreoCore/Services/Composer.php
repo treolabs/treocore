@@ -359,7 +359,10 @@ class Composer extends AbstractTreoService
                 'require' => []
             ];
 
-            file_put_contents($this->moduleStableComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            file_put_contents(
+                $this->moduleStableComposer,
+                Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            );
         }
 
         // prepare data
