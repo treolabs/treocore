@@ -133,7 +133,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         setupMassActionItems() {
             Dep.prototype.setupMassActionItems.call(this);
 
-            let foreignEntities = this.getForeignEntities(this.scope);
+            let foreignEntities = this.getForeignEntities();
             if (foreignEntities.length) {
                 this.massActionList = Espo.Utils.clone(this.massActionList);
                 this.massActionList.push('addRelation');
@@ -141,11 +141,10 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             }
         },
 
-        getForeignEntities(mainEntity) {
+        getForeignEntities() {
             let foreignEntities = [];
-
-            if (this.getAcl().check(this.scope, 'edit')) {
-                let links = this.getMetadata().get(['entityDefs', mainEntity, 'links']) || {};
+            if (this.scope && this.getAcl().check(this.scope, 'edit')) {
+                let links = this.getMetadata().get(['entityDefs', this.scope, 'links']) || {};
                 let linkList = Object.keys(links).sort(function (v1, v2) {
                     return v1.localeCompare(v2);
                 }.bind(this));
@@ -156,12 +155,11 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (defs.foreign && defs.entity && this.getAcl().check(defs.entity, 'edit')) {
                         let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
                         if (this.checkRelationshipType(defs.type, foreignType) && this.getMetadata().get(['scopes', defs.entity, 'entity'])) {
-                            foreignEntities.push(links[link].entity);
+                            foreignEntities.push({link: link, entity: links[link].entity});
                         }
                     }
                 });
             }
-
             return foreignEntities;
         },
 
@@ -176,7 +174,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         massActionUpdateRelation(type) {
-            let foreignEntities = this.getForeignEntities(this.scope);
+            let foreignEntities = this.getForeignEntities();
             if (!foreignEntities.length) {
                 return;
             }
@@ -184,7 +182,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             this.notify('Loading...');
             this.getModelFactory().create(null, model => {
                 model.set({
-                    entitySelect: foreignEntities[0],
+                    mainEntity: this.scope,
+                    entitySelect: foreignEntities[0].entity,
                     foreignEntities: foreignEntities
                 });
 
@@ -192,7 +191,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     model: model,
                     multiple: true,
                     createButton: false,
-                    scope: foreignEntities[0],
+                    scope: foreignEntities[0].entity,
                     headerLabel: type
                 }, view => {
                     view.render(() => {

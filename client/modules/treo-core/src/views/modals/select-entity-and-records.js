@@ -47,14 +47,21 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
         },
 
         createEntitySelectView() {
+            let options = [];
+            let translatedOptions = {};
+            this.model.get('foreignEntities').forEach(entityDefs => {
+                options.push(entityDefs.entity);
+                translatedOptions[entityDefs.entity] = this.translate(entityDefs.link, 'links', this.model.get('mainEntity'));
+            });
+
             this.createView('entitySelect', 'views/fields/enum', {
                 model: this.model,
                 el: `${this.options.el} .entity-container .field[data-name="entitySelect"]`,
                 defs: {
                     name: 'entitySelect',
                     params: {
-                        options: this.model.get('foreignEntities'),
-                        translatedOptions: this.model.get('foreignEntities').map(entity => this.translate(entity, 'scopeNames'))
+                        options: options,
+                        translatedOptions: translatedOptions
                     }
                 },
                 mode: 'edit'
@@ -71,7 +78,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                 return;
             }
             this.collection.name = this.collection.urlRoot = this.collection.url = entity;
-            this.collection.fetch().then();
+            this.collection.fetch();
         }
     })
 );
