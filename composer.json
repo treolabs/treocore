@@ -45,6 +45,7 @@
         "espoVersion": "5.2.5",
         "merge-plugin": {
             "include": [
+                "data/composer-autoload.json",
                 "data/composer.json"
             ]
         }
