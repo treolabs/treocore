@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Utils\Util;
 use Espo\Core\Exceptions\Error;
 
 /**
@@ -45,14 +46,44 @@ use Espo\Core\Exceptions\Error;
 class ServiceFactory extends \Espo\Core\ServiceFactory
 {
     /**
+     * @var array
+     */
+    protected $services = [];
+
+    /**
      * @inheritdoc
      */
-    public function __construct(...$args)
+    public function create($name)
     {
-        // call parent
-        parent::__construct(...$args);
+        if (empty($this->services[$name])) {
+            // prepare name
+            $name = Util::normilizeClassName($name);
 
-        $this->paths['treoCorePath'] = 'application/Treo/Services';
+            // find classname
+            $className = "\\Espo\\Custom\\Services\\$name";
+            if (!class_exists($className)) {
+                foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+                    $moduleClassName = "\\Espo\\Modules\\$module\\Services\\$name";
+                    if (class_exists($moduleClassName)) {
+                        $className = $moduleClassName;
+                        break;
+                    }
+                }
+            }
+            if (!class_exists($className)) {
+                $className = "\\Treo\\Services\\$name";
+            }
+            if (!class_exists($className)) {
+                $className = "\\Espo\\Services\\$name";
+            }
+            if (!class_exists($className)) {
+                throw new Error("Service '{$name}' was not found.");
+            }
+
+            $this->services[$name] = $className;
+        }
+
+        return $this->createByClassName($this->services[$name]);
     }
 
     /**
