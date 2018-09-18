@@ -45,6 +45,17 @@ use Espo\Core\Exceptions\Error;
 class ServiceFactory extends \Espo\Core\ServiceFactory
 {
     /**
+     * @inheritdoc
+     */
+    public function __construct(...$args)
+    {
+        // call parent
+        parent::__construct(...$args);
+
+        $this->paths['treoCorePath'] = 'application/Treo/Services';
+    }
+
+    /**
      * Create by classname
      *
      * @param $className
