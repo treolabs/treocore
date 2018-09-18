@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Application as EspoApplication;
 use Espo\Modules\TreoCore\Services\Installer;
 use Treo\Core\Utils\Auth;
 
@@ -45,7 +44,7 @@ use Treo\Core\Utils\Auth;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Application extends EspoApplication
+class Application extends \Espo\Core\Application
 {
 
     /**
@@ -159,5 +158,19 @@ class Application extends EspoApplication
     protected function createAuth()
     {
         return new Auth($this->container);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getRouteList()
+    {
+        $routes = new \Treo\Core\Utils\Route(
+            $this->getConfig(),
+            $this->getMetadata(),
+            $this->getContainer()->get('fileManager')
+        );
+
+        return $routes->getAll();
     }
 }
