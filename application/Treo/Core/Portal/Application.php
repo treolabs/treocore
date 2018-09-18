@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core\Portal;
 
-use Espo\Core\Portal\Application as EspoApplication;
 use Espo\Core\Utils\Json;
 
 /**
@@ -44,7 +43,7 @@ use Espo\Core\Utils\Json;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Application extends EspoApplication
+class Application extends \Espo\Core\Portal\Application
 {
     const CONFIG_PATH = 'data/portals.json';
 
