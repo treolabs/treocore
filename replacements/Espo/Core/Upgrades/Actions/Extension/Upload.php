@@ -31,13 +31,59 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
 namespace Espo\Core\Upgrades\Actions\Extension;
 
+/**
+ * Class Upload
+ *
+ * @author r.ratsun@zinitsolutions.com
+ */
 class Upload extends \Espo\Core\Upgrades\Actions\Base\Upload
 {
+    /**
+     * @param array $dependencyList
+     *
+     * @return bool
+     */
     protected function checkDependencies($dependencyList)
     {
         return $this->getHelper()->checkDependencies($dependencyList);
+    }
+
+    /**
+     * Check if version of upgrade/extension is acceptable to current version of EspoCRM
+     *
+     * @param  string $version
+     *
+     * @return boolean
+     */
+    protected function isAcceptable()
+    {
+        // get manifest
+        $manifest = $this->getManifest();
+
+        if ($manifest['author'] == 'EspoCRM') {
+            // prepare espo version
+            $version = json_decode(file_get_contents(CORE_PATH . "/composer.json"), true)['extra']['espoVersion'];
+
+            // set espo version
+            $this->getConfig()->set('version', $version);
+        }
+
+        return parent::isAcceptable();
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    protected function throwErrorAndRemovePackage($errorMessage = '')
+    {
+        // prepare message
+        $errorMessage = str_replace("EspoCRM", "System", $errorMessage);
+
+        // call parent
+        parent::throwErrorAndRemovePackage($errorMessage);
     }
 }
