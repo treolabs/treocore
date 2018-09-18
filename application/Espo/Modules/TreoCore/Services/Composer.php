@@ -354,37 +354,43 @@ class Composer extends AbstractTreoService
             'delete'  => [],
         ];
 
-        if (file_exists($this->moduleStableComposer)) {
-            // prepare data
-            $composerData = $this->getModuleComposerJson();
-            $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+        if (!file_exists($this->moduleStableComposer)) {
+            $data = [
+                'require' => []
+            ];
 
-            foreach ($composerData['require'] as $package => $version) {
-                if (!isset($composerStableData['require'][$package])) {
-                    $result['install'][] = [
-                        'id'      => $this->getModuleId($package),
-                        'package' => $package
-                    ];
-                } elseif ($version != $composerStableData['require'][$package]) {
-                    // prepare data
-                    $id = $this->getModuleId($package);
-                    $from = $this->getContainer()->get('metadata')->getModule($id)['version'];
+            file_put_contents($this->moduleStableComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
 
-                    $result['update'][] = [
-                        'id'      => $id,
-                        'package' => $package,
-                        'from'    => $from
-                    ];
-                }
+        // prepare data
+        $composerData = $this->getModuleComposerJson();
+        $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+
+        foreach ($composerData['require'] as $package => $version) {
+            if (!isset($composerStableData['require'][$package])) {
+                $result['install'][] = [
+                    'id'      => $this->getModuleId($package),
+                    'package' => $package
+                ];
+            } elseif ($version != $composerStableData['require'][$package]) {
+                // prepare data
+                $id = $this->getModuleId($package);
+                $from = $this->getContainer()->get('metadata')->getModule($id)['version'];
+
+                $result['update'][] = [
+                    'id'      => $id,
+                    'package' => $package,
+                    'from'    => $from
+                ];
             }
+        }
 
-            foreach ($composerStableData['require'] as $package => $version) {
-                if (!isset($composerData['require'][$package])) {
-                    $result['delete'][] = [
-                        'id'      => $this->getModuleId($package),
-                        'package' => $package
-                    ];
-                }
+        foreach ($composerStableData['require'] as $package => $version) {
+            if (!isset($composerData['require'][$package])) {
+                $result['delete'][] = [
+                    'id'      => $this->getModuleId($package),
+                    'package' => $package
+                ];
             }
         }
 
