@@ -34,23 +34,17 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Utils;
 
 /**
- * ScheduledJob loader
+ * Class ScheduledJob
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class ScheduledJob extends Base
+class ScheduledJob extends \Espo\Core\Utils\ScheduledJob
 {
-
     /**
-     * Load ScheduledJob
-     *
-     * @return \Treo\Core\Utils\ScheduledJob
+     * @var string
      */
-    public function load()
-    {
-        return new \Treo\Core\Utils\ScheduledJob($this->getContainer());
-    }
+    protected $cronFile = 'console.php cron';
 }
