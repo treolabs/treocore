@@ -46,7 +46,6 @@ use Treo\Traits\EventTriggeredTrait;
  * Abstract service Base
  *
  * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
  */
 abstract class Base implements Injectable
 {
