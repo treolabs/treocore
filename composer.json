@@ -45,7 +45,6 @@
         "espoVersion": "5.2.5",
         "merge-plugin": {
             "include": [
-                "data/composer-autoload.json",
                 "data/composer.json"
             ]
         }
@@ -54,7 +53,8 @@
         "psr-0": {
             "": "application/",
             "Espo\\Custom": "custom/"
-        }
+        },
+        "classmap": ["replacements/"]
     },
     "scripts": {
         "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",
