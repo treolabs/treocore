@@ -68,13 +68,6 @@ class User extends Record
         'accountsIds'
     ];
 
-    protected $mandatorySelectAttributeList = [
-        'isPortalUser',
-        'isActive',
-        'userName',
-        'isAdmin'
-    ];
-
     protected $linkSelectParams = array(
         'targetLists' => array(
             'additionalColumns' => array(
