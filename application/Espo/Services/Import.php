@@ -79,37 +79,32 @@ class Import extends \Espo\Services\Record
 
     protected function getSelectManagerFactory()
     {
-        // @todo treoinject
-        return $this->getInjection('selectManagerFactory');
+        return $this->injections['selectManagerFactory'];
     }
 
     protected function getFileStorageManager()
     {
-        // @todo treoinject
-        return $this->getInjection('fileStorageManager');
+        return $this->injections['fileStorageManager'];
     }
 
     protected function getFileManager()
     {
-        // @todo treoinject
-        return $this->getInjection('fileManager');
+        return $this->injections['fileManager'];
     }
 
     protected function getAcl()
     {
-        // @todo treoinject
-        return $this->getInjection('acl');
+        return $this->injections['acl'];
     }
 
     protected function getMetadata()
     {
-        // @todo treoinject
-        return $this->getInjection('metadata');
+        return $this->injections['metadata'];
     }
 
     protected function getServiceFactory()
     {
-        return $this->getInjection('serviceFactory');
+        return $this->injections['serviceFactory'];
     }
 
     public function loadAdditionalFields(Entity $entity)

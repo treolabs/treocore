@@ -35,46 +35,62 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Container;
-use Espo\Core\HookManager as EspoHookManager;
-
 /**
  * HookManager class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class HookManager extends EspoHookManager
+class HookManager extends \Espo\Core\HookManager
 {
     /**
      * @var Container
      */
-    protected $protectedContainer;
+    protected $container;
 
     /**
-     * Create hoo by classname
-     *
-     * @param string $className
-     *
-     * @return mixed
+     * @var array
+     */
+    protected $data;
+
+    /**
+     * @inheritdoc
      */
     public function createHookByClassName($className)
     {
         if (class_exists($className)) {
-            return (new $className())->setContainer($this->protectedContainer);
+            return (new $className())->setContainer($this->container);
         }
 
         $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
     }
 
     /**
-     * @param Container $container
-     *
-     * @return HookManager
+     * @inheritdoc
      */
-    public function setProtectedContainer(Container $container): HookManager
+    protected function loadHooks()
     {
-        $this->protectedContainer = $container;
+        if ($this->getConfig()->get('useCache') && file_exists($this->cacheFile)) {
+            $this->data = $this->getFileManager()->getPhpContents($this->cacheFile);
+            return;
+        }
 
-        return $this;
+        $metadata = $this->container->get('metadata');
+
+        $data = $this->getHookData($this->paths['customPath']);
+
+        foreach ($metadata->getModuleList() as $moduleName) {
+            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
+            $data = $this->getHookData($modulePath, $data);
+        }
+
+        $data = $this->getHookData('application/Treo/Hooks', $data);
+
+        $data = $this->getHookData($this->paths['corePath'], $data);
+
+        $this->data = $this->sortHooks($data);
+
+        if ($this->getConfig()->get('useCache')) {
+            $this->getFileManager()->putPhpContents($this->cacheFile, $this->data);
+        }
     }
 }

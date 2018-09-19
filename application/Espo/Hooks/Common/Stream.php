@@ -54,8 +54,6 @@ class Stream extends \Espo\Core\Hooks\Base
     {
         parent::init();
         $this->addDependency('serviceFactory');
-        // @todo treoinject
-        $this->addDependency('preferences');
     }
 
     protected function getServiceFactory()
@@ -65,8 +63,7 @@ class Stream extends \Espo\Core\Hooks\Base
 
     protected function getPreferences()
     {
-        // @todo treoinject
-        return $this->getInjection('preferences');
+        return $this->getInjection('container')->get('preferences');
     }
 
     protected function checkHasStream(Entity $entity)
@@ -251,7 +248,7 @@ class Stream extends \Espo\Core\Hooks\Base
                 }
 
                 if (in_array($this->getUser()->id, $userIdList)) {
-                    $entity->set('isFollowed', true);
+                	$entity->set('isFollowed', true);
                 }
 
                 $autofollowUserIdList = $this->getAutofollowUserIdList($entity, $userIdList);
@@ -283,9 +280,9 @@ class Stream extends \Espo\Core\Hooks\Base
                             $this->getStreamService()->followEntity($entity, $assignedUserId);
                             $this->getStreamService()->noteAssign($entity);
 
-                            if ($this->getUser()->id === $assignedUserId) {
-                                $entity->set('isFollowed', true);
-                            }
+			                if ($this->getUser()->id === $assignedUserId) {
+			                	$entity->set('isFollowed', true);
+			                }
                         } else {
                             $this->getStreamService()->noteAssign($entity);
                         }
@@ -375,7 +372,7 @@ class Stream extends \Espo\Core\Hooks\Base
             $foreignEntity = $data['foreignEntity'];
 
             if (
-            $this->getMetadata()->get(['entityDefs', $entityType, 'links', $link, 'audited'])
+                $this->getMetadata()->get(['entityDefs', $entityType, 'links', $link, 'audited'])
 
             ) {
                 $n = $this->getEntityManager()->getRepository('Note')->where(array(

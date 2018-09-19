@@ -47,10 +47,10 @@ class ScheduledJob extends Base
     /**
      * Load ScheduledJob
      *
-     * @return \Espo\Core\Utils\ScheduledJob
+     * @return \Treo\Core\Utils\ScheduledJob
      */
     public function load()
     {
-        return new \Espo\Core\Utils\ScheduledJob($this->getContainer());
+        return new \Treo\Core\Utils\ScheduledJob($this->getContainer());
     }
 }

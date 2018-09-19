@@ -281,13 +281,6 @@ class Converter
             )
         );
 
-        /**
-         * @todo treoinject bug fix
-         */
-        if (!is_array($entityMetadata['fields'])){
-            return $outputMeta;
-        }
-
         foreach ($entityMetadata['fields'] as $fieldName => $fieldParams) {
             if (empty($fieldParams['type'])) continue;
 

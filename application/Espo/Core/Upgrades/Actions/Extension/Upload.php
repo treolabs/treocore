@@ -36,47 +36,8 @@ namespace Espo\Core\Upgrades\Actions\Extension;
 
 class Upload extends \Espo\Core\Upgrades\Actions\Base\Upload
 {
-
     protected function checkDependencies($dependencyList)
     {
         return $this->getHelper()->checkDependencies($dependencyList);
-    }
-
-    /**
-     * Check if version of upgrade/extension is acceptable to current version of EspoCRM
-     *
-     * @param  string $version
-     *
-     * @return boolean
-     * @todo treoinject
-     */
-    protected function isAcceptable()
-    {
-        // get manifest
-        $manifest = $this->getManifest();
-
-        if ($manifest['author'] == 'EspoCRM') {
-            // prepare espo version
-            $version = json_decode(file_get_contents(CORE_PATH . "/composer.json"), true)['extra']['espoVersion'];
-
-            // set espo version
-            $this->getConfig()->set('version', $version);
-        }
-
-        return parent::isAcceptable();
-    }
-
-    /**
-     * @param string $errorMessage
-     *
-     * @todo treoinject
-     */
-    protected function throwErrorAndRemovePackage($errorMessage = '')
-    {
-        // prepare message
-        $errorMessage = str_replace("EspoCRM", "System", $errorMessage);
-
-        // call parent
-        parent::throwErrorAndRemovePackage($errorMessage);
     }
 }

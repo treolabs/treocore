@@ -65,11 +65,12 @@ class ControllerManager
      */
     public function process($controllerName, $actionName, $params, $data, $request)
     {
-        $customClassName = '\\Espo\\Custom\\Controllers\\' .
-            Util::normilizeClassName($controllerName);
-        if (class_exists($customClassName)) {
-            $controllerClassName = $customClassName;
-        } else {
+        // normilizeClassName
+        $className = Util::normilizeClassName($controllerName);
+
+        // find controller classname
+        $controllerClassName = "\\Espo\\Custom\\Controllers\\$className";
+        if (!class_exists($controllerClassName)) {
             // get module name
             $moduleName = $this
                 ->getContainer()
@@ -77,20 +78,21 @@ class ControllerManager
                 ->getScopeModuleName($controllerName);
 
             if ($moduleName) {
-                $controllerClassName = '\\Espo\\Modules\\' . $moduleName .
-                    '\\Controllers\\' . Util::normilizeClassName($controllerName);
-            } else {
-                $controllerClassName = '\\Espo\\Controllers\\' .
-                    Util::normilizeClassName($controllerName);
+                $controllerClassName = "\\Espo\\Modules\\$moduleName\\Controllers\\$className";
             }
+        }
+        if (!class_exists($controllerClassName)) {
+            $controllerClassName = "\\Treo\\Controllers\\$className";
+        }
+        if (!class_exists($controllerClassName)) {
+            $controllerClassName = "\\Espo\\Controllers\\$className";
+        }
+        if (!class_exists($controllerClassName)) {
+            throw new NotFound("Controller '$controllerName' is not found");
         }
 
         if ($data && stristr($request->getContentType(), 'application/json')) {
             $data = json_decode($data);
-        }
-
-        if (!class_exists($controllerClassName)) {
-            throw new NotFound("Controller '$controllerName' is not found");
         }
 
         $controller = new $controllerClassName($this->getContainer(), $request->getMethod());

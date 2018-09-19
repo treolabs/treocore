@@ -55,19 +55,16 @@ class EmailTemplate extends Record
 
     protected function getFileStorageManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fileStorageManager');
+        return $this->injections['fileStorageManager'];
     }
 
     protected function getDateTime()
     {
-        //@todo treoinject
-        return $this->getInjection('dateTime');
+        return $this->injections['dateTime'];
     }
 
     protected function getLanguage()
     {
-        //@todo treoinject
         return $this->getInjection('language');
     }
 

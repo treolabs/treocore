@@ -141,10 +141,9 @@ class Record extends Base
         if (empty($maxSize)) {
             $maxSize = self::MAX_SIZE_LIMIT;
         }
-        // @todo treoinject
-//        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-//            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
-//        }
+        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
+            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
+        }
 
         $params = array(
             'where' => $where,
@@ -461,64 +460,6 @@ class Record extends Base
         }
 
         throw new Error();
-    }
-
-    /**
-     * Action add relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param \Slim\Http\Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionAddRelation(array $params, \stdClass $data, \Slim\Http\Request $request): bool
-    {
-        if (!$request->isPost()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->addRelation($data->ids, $data->foreignIds, $params['link']);
-    }
-
-    /**
-     * Action remove relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param \Slim\Http\Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionRemoveRelation(array $params, \stdClass $data, \Slim\Http\Request $request): bool
-    {
-        if (!$request->isDelete()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->removeRelation($data->ids, $data->foreignIds, $params['link']);
     }
 
     public function actionFollow($params, $data, $request)

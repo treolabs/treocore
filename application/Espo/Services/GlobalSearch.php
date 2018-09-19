@@ -56,26 +56,22 @@ class GlobalSearch extends \Espo\Core\Services\Base
 
     protected function getSelectManagerFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('selectManagerFactory');
+        return $this->injections['selectManagerFactory'];
     }
 
     protected function getEntityManager()
     {
-        //@todo treoinject
-        return $this->getInjection('entityManager');
+        return $this->injections['entityManager'];
     }
 
     protected function getAcl()
     {
-        //@todo treoinject
-        return $this->getInjection('acl');
+        return $this->injections['acl'];
     }
 
     protected function getMetadata()
     {
-        //@todo treoinject
-        return $this->getInjection('metadata');
+        return $this->injections['metadata'];
     }
 
     public function find($query, $offset, $maxSize)
