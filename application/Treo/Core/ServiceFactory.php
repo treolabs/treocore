@@ -130,7 +130,7 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
     }
 
     /**
-     * GEt services from DIR
+     * Get services from DIR
      *
      * @return array
      */
