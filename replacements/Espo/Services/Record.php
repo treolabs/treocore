@@ -135,17 +135,11 @@ class Record extends \Espo\Core\Services\Base
         return $this->entityType;
     }
 
-    /**
-     * @return \Espo\Core\ServiceFactory
-     */
     protected function getServiceFactory()
     {
         return $this->getInjection('serviceFactory');
     }
 
-    /**
-     * @return \Espo\Core\SelectManagerFactory
-     */
     protected function getSelectManagerFactory()
     {
         return $this->getInjection('selectManagerFactory');
@@ -2144,3 +2138,4 @@ class Record extends \Espo\Core\Services\Base
         return $this->selectAttributeList;
     }
 }
+
