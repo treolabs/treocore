@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 /**
- * Class Import
+ * Import service
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
