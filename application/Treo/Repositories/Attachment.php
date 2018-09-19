@@ -31,66 +31,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core;
+namespace Treo\Repositories;
 
 /**
- * HookManager class
+ * Attachment repository
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class HookManager extends \Espo\Core\HookManager
+class Attachment extends \Espo\Repositories\Attachment
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $data;
-
     /**
      * @inheritdoc
      */
-    public function createHookByClassName($className)
+    protected function init()
     {
-        if (class_exists($className)) {
-            return (new $className())->setContainer($this->container);
-        }
+        // call parent
+        parent::init();
 
-        $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
+        $this->addDependency('fileStorageManager');
     }
 
     /**
      * @inheritdoc
      */
-    protected function loadHooks()
+    protected function getFileStorageManager()
     {
-        if ($this->getConfig()->get('useCache') && file_exists($this->cacheFile)) {
-            $this->data = $this->getFileManager()->getPhpContents($this->cacheFile);
-            return;
-        }
-
-        $metadata = $this->container->get('metadata');
-
-        $data = $this->getHookData($this->paths['customPath']);
-
-        foreach ($metadata->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            $data = $this->getHookData($modulePath, $data);
-        }
-
-        $data = $this->getHookData('application/Treo/Hooks', $data);
-
-        $data = $this->getHookData($this->paths['corePath'], $data);
-
-        $this->data = $this->sortHooks($data);
-
-        if ($this->getConfig()->get('useCache')) {
-            $this->getFileManager()->putPhpContents($this->cacheFile, $this->data);
-        }
+        return $this->getInjection('fileStorageManager');
     }
 }

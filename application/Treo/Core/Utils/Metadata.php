@@ -38,6 +38,7 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
+use Espo\Core\Utils\Util;
 use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
 use Treo\Traits\ContainerTrait;
 
@@ -224,6 +225,22 @@ class Metadata extends \Espo\Core\Utils\Metadata
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $entityName
+     * @param string $delim
+     *
+     * @return string
+     */
+    public function getRepositoryPath($entityName, $delim = '\\')
+    {
+        $path = implode($delim, ['Treo', 'Repositories', Util::normilizeClassName(ucfirst($entityName))]);
+        if (!class_exists($path)) {
+            $path = parent::getRepositoryPath($entityName, $delim);
+        }
+
+        return $path;
     }
 
     /**

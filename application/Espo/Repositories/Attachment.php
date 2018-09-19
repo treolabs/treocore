@@ -43,15 +43,13 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     protected function init()
     {
         parent::init();
+        $this->addDependency('container');
         $this->addDependency('config');
-        //@todo treoinject
-        $this->addDependency('fileStorageManager');
     }
 
     protected function getFileStorageManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fileStorageManager');
+        return $this->getInjection('container')->get('fileStorageManager');
     }
 
     protected function getConfig()
@@ -100,16 +98,18 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     {
         parent::afterRemove($entity, $options);
 
-        $duplicateCount = $this->where([
-            'OR' => [
-                [
-                    'sourceId' => $entity->getSourceId()
+        $duplicateCount = $this->where(
+            [
+                'OR' => [
+                    [
+                        'sourceId' => $entity->getSourceId()
+                    ],
+                    [
+                        'id' => $entity->getSourceId()
+                    ]
                 ],
-                [
-                    'id' => $entity->getSourceId()
-                ]
-            ],
-        ])->count();
+            ]
+        )->count();
 
         if ($duplicateCount === 0) {
             $this->getFileStorageManager()->unlink($entity);
@@ -120,13 +120,15 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
     {
         $attachment = $this->get();
 
-        $attachment->set(array(
-            'sourceId' => $entity->getSourceId(),
-            'name' => $entity->get('name'),
-            'type' => $entity->get('type'),
-            'size' => $entity->get('size'),
-            'role' => $entity->get('role')
-        ));
+        $attachment->set(
+            array(
+                'sourceId' => $entity->getSourceId(),
+                'name'     => $entity->get('name'),
+                'type'     => $entity->get('type'),
+                'size'     => $entity->get('size'),
+                'role'     => $entity->get('role')
+            )
+        );
 
         if ($role) {
             $attachment->set('role', $role);
