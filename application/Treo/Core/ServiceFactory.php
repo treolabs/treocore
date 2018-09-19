@@ -53,33 +53,25 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
     /**
      * @inheritdoc
      */
+    public function __construct(...$args)
+    {
+        // call parent
+        parent::__construct(...$args);
+
+        // load all services
+        $this->load();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function create($name)
     {
+        // prepare name
+        $name = Util::normilizeClassName($name);
+
         if (empty($this->services[$name])) {
-            // prepare name
-            $name = Util::normilizeClassName($name);
-
-            // find classname
-            $className = "\\Espo\\Custom\\Services\\$name";
-            if (!class_exists($className)) {
-                foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-                    $moduleClassName = "\\Espo\\Modules\\$module\\Services\\$name";
-                    if (class_exists($moduleClassName)) {
-                        $className = $moduleClassName;
-                    }
-                }
-            }
-            if (!class_exists($className)) {
-                $className = "\\Treo\\Services\\$name";
-            }
-            if (!class_exists($className)) {
-                $className = "\\Espo\\Services\\$name";
-            }
-            if (!class_exists($className)) {
-                throw new Error("Service '{$name}' was not found.");
-            }
-
-            $this->services[$name] = $className;
+            throw new Error("Service '{$name}' was not found.");
         }
 
         return $this->createByClassName($this->services[$name]);
@@ -99,5 +91,62 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
         }
 
         throw new Error("Class '$className' does not exist.");
+    }
+
+    /**
+     * Load all services
+     */
+    protected function load(): void
+    {
+        // load Espo
+        if (!empty($data = $this->getDirServices('application/Espo/Services'))) {
+            foreach ($data as $name) {
+                $this->services[$name] = "\\Espo\\Services\\$name";
+            }
+        }
+
+        // load Treo
+        if (!empty($data = $this->getDirServices('application/Treo/Services'))) {
+            foreach ($data as $name) {
+                $this->services[$name] = "\\Treo\\Services\\$name";
+            }
+        }
+
+        // load Modules
+        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+            if (!empty($data = $this->getDirServices("application/Espo/Modules/$module/Services"))) {
+                foreach ($data as $name) {
+                    $this->services[$name] = "\\Espo\\Modules\\$module\\Services\\$name";
+                }
+            }
+        }
+
+        // load Custom
+        if (!empty($data = $this->getDirServices('custom/Espo/Custom/Services'))) {
+            foreach ($data as $name) {
+                $this->services[$name] = "\\Espo\\Custom\\Services\\$name";
+            }
+        }
+    }
+
+    /**
+     * GEt services from DIR
+     *
+     * @return array
+     */
+    protected function getDirServices(string $path): array
+    {
+        // prepare result
+        $result = [];
+
+        if (is_dir($path)) {
+            foreach (scandir($path) as $item) {
+                if (preg_match_all('/^(.*)\.php$/', $item, $matches)) {
+                    $result[] = $matches[1][0];
+                }
+            }
+        }
+
+        return $result;
     }
 }
