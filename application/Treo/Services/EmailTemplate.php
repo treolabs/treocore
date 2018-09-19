@@ -44,7 +44,7 @@ namespace Treo\Services;
 class EmailTemplate extends \Espo\Services\EmailTemplate
 {
     /**
-     * @return mixed
+     * @inheritdoc
      */
     protected function getFileStorageManager()
     {
@@ -52,7 +52,7 @@ class EmailTemplate extends \Espo\Services\EmailTemplate
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     protected function getDateTime()
     {
