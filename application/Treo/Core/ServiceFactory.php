@@ -66,7 +66,6 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
                     $moduleClassName = "\\Espo\\Modules\\$module\\Services\\$name";
                     if (class_exists($moduleClassName)) {
                         $className = $moduleClassName;
-                        break;
                     }
                 }
             }
