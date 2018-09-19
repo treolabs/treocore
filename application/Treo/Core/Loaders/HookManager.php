@@ -52,7 +52,6 @@ class HookManager extends Base
      */
     public function load()
     {
-        return (new Instance($this->getContainer()))
-            ->setProtectedContainer($this->getContainer());
+        return (new Instance($this->getContainer()));
     }
 }
