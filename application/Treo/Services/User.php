@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 /**
- * Class User
+ * User service
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
