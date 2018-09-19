@@ -36,14 +36,13 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Container;
-use Espo\Core\HookManager as EspoHookManager;
 
 /**
  * HookManager class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class HookManager extends EspoHookManager
+class HookManager extends \Espo\Core\HookManager
 {
     /**
      * @var Container
