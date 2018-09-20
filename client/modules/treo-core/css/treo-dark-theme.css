@@ -16560,10 +16560,6 @@ ul.dropdown-menu > li.checkbox {
     position: absolute;
 }
 
-.filter-menu > .dropdown-submenu:hover > ul.show-list {
-    display: block;
-}
-
 .filter-menu .dropdown-submenu .attribute-filter-list > li > a {
     padding: 10px 0 10px 40px;
     width: 100%;
@@ -16571,8 +16567,8 @@ ul.dropdown-menu > li.checkbox {
     overflow: hidden;
 }
 
-.autocomplete-suggestions:hover + ul.show-list {
-    display: block;
+.filter-menu .dropdown-submenu .form-control-feedback {
+    line-height: 33px;
 }
 
 .dashlets.grid-stack .grid-stack-item .dashlet .dashlet-body {
