@@ -114,6 +114,13 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                     this.search();
                 }
             },
+            'click .dropdown-submenu > a.add-filter-button': function (e) {
+                let a = $(e.currentTarget);
+                a.parents('.dropdown-menu').find('> .dropdown-submenu > a:not(.add-filter-button)').next('ul').toggle(false);
+                a.next('ul').toggle();
+                e.stopPropagation();
+                e.preventDefault();
+            }
         },
 
         updateAddFilterButton: function () {
