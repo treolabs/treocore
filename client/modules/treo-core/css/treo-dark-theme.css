@@ -16206,6 +16206,10 @@ ul.dropdown-menu > li.checkbox {
         position: static;
     }
 
+    #header .nav > li.more > .dropdown-menu {
+        left: 220px;
+    }
+
     #header .navbar-right {
         width: calc(100% - 220px);
         padding-right: 0;
@@ -16233,12 +16237,6 @@ ul.dropdown-menu > li.checkbox {
         max-width: 220px
     }
 
-    #header ul.tabs li > a::before {
-        content: "\203A";
-        left: 10px;
-        position: absolute
-    }
-
     #header ul.tabs li.more-group > a .caret {
         width: 6px;
         height: 6px;
@@ -16247,10 +16245,6 @@ ul.dropdown-menu > li.checkbox {
         border-left: 1px solid transparent;
         transform: rotate(130deg);
         transform-origin: 100%
-    }
-
-    #header ul.tabs li.more-group > ul.dropdown-menu {
-        padding-left: 15px
     }
 
     #header ul.tabs li.more-group > ul.dropdown-menu a::before {
