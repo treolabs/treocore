@@ -175,42 +175,55 @@ class Packagist extends AbstractTreoService
         // get modules
         $modules = $metadata->getModuleList();
 
-        // checking new versions of modules
-        foreach ($modules as $id) {
-            if (!empty($module = $metadata->getModule($id))) {
-                // get version
-                $package = $this->getPackage($id);
-                $version = $package['versions'][0]['version'];
+        // get config
+        $config = $this->getConfig();
 
-                if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
-                    $this->sendNotification(
-                        [
-                            'id'              => $id,
-                            'messageTemplate' => 'newModuleVersion',
-                            'messageVars'     => [
-                                'moduleName'    => $this->getModuleTranslateName($package),
-                                'moduleVersion' => $version,
+        // checking new versions of modules
+        if ($config->get('notificationNewModuleVersionDisabled')) {
+            foreach ($modules as $id) {
+                if (!empty($module = $metadata->getModule($id))) {
+                    // get version
+                    $package = $this->getPackage($id);
+                    $version = $package['versions'][0]['version'];
+
+                    if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
+                        $this->sendNotification(
+                            [
+                                'data' => [
+                                    'id' => $id,
+                                    'messageTemplate' => 'newModuleVersion',
+                                    'messageVars' => [
+                                        'moduleName' => $this->getModuleTranslateName($package),
+                                        'moduleVersion' => $version,
+                                    ]
+                                ],
+                                'preferences' => 'receiveNewModuleVersionNotifications'
                             ]
-                        ]
-                    );
-                    $fileData[$id]['version'][$version] = 1;
+                        );
+                        $fileData[$id]['version'][$version] = 1;
+                    }
                 }
             }
         }
 
         // checking if new modules exists
-        foreach ($this->getPackages() as $module) {
-            if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
-                $this->sendNotification(
-                    [
-                        'id'              => $id,
-                        'messageTemplate' => 'newModule',
-                        'messageVars'     => [
-                            'moduleName' => $this->getModuleTranslateName($module)
+        if ($config->get('notificationNewModuleDisabled')) {
+            foreach ($this->getPackages() as $module) {
+                if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
+                    $this->sendNotification(
+                        [
+                            'data' => [
+                                'id' => $id,
+                                'messageTemplate' => 'newModule',
+                                'messageVars' => [
+                                    'moduleName' => $this->getModuleTranslateName($module)
+                                ]
+                            ],
+                            'preferences' => 'receiveNewModuleNotifications'
                         ]
-                    ]
-                );
-                $fileData[$id] = 1;
+                    );
+                    $fileData[$id] = 1;
+                }
             }
         }
 
@@ -232,23 +245,23 @@ class Packagist extends AbstractTreoService
     protected function sendNotification($data): bool
     {
         // get users
-        $users = $this
-            ->getEntityManager()
-            ->getRepository('User')
-            ->where(['isAdmin' => true])
-            ->find();
+        $users = $this->getEntityManager()->getRepository('User')->getAdminUsers();
+
         if (!empty($users)) {
             foreach ($users as $user) {
-                // create notification
-                $notification = $this->getEntityManager()->getEntity('Notification');
-                $notification->set(
-                    [
-                        'type'   => 'TreoMessage',
-                        'userId' => $user->get('id'),
-                        'data'   => $data
-                    ]
-                );
-                $this->getEntityManager()->saveEntity($notification);
+                $preferences = json_decode($user['data'], true);
+                if ($preferences[$data['preferences']]) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type' => 'TreoMessage',
+                            'userId' => $user['id'],
+                            'data' => $data['data']
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
             }
         }
 

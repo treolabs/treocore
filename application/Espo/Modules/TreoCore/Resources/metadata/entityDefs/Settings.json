@@ -13,6 +13,12 @@
         },
         "notificationNewModuleDisabled": {
             "type": "bool"
+        },
+        "notificationNewSystemVersionDisabled": {
+            "type": "bool"
+        },
+        "notificationInstallDeleteModuleDisabled": {
+            "type": "bool"
         }
     }
 }
