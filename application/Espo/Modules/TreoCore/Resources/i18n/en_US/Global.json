@@ -99,7 +99,8 @@
   },
   "exceptions": {
     "URL is invalid": "URL is invalid",
-    "Such URL is already exists": "Such URL is already exists"
+    "Such URL is already exists": "Such URL is already exists",
+    "Site URL is empty": "Site URL is empty"
   },
   "messages": {
     "allowUnstableParamBlocked": "Param cannot be modified. You should deactivate 'ModuleAutoUpdate' cron job first.",

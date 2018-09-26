@@ -93,6 +93,10 @@ class Hook extends AbstractHook
         // get site url
         $siteUrl = $this->getConfig()->get('siteUrl');
 
+        if (empty($siteUrl)) {
+            throw new BadRequest($this->translate('Site URL is empty', 'exceptions'));
+        }
+
         // get domain
         $domain = str_replace(['http://', 'https://'], ['', ''], $siteUrl);
 
