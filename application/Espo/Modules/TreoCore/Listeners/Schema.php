@@ -70,7 +70,7 @@ class Schema extends AbstractListener
         foreach ($data['queries'] as $key => $query) {
             // prepare fields
             $fields = [];
-            while (preg_match_all("/^.* (.*) LONGTEXT DEFAULT NULL COMMENT 'default={(.*)}'/", $query, $matches)) {
+            while (preg_match_all("/^.* (.*) LONGTEXT DEFAULT NULL COMMENT 'default={(.*)}'/s", $query, $matches)) {
                 // prepare data
                 $field = $matches[1][0];
                 $value = $matches[2][0];
@@ -89,11 +89,28 @@ class Schema extends AbstractListener
 
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
-                    $data['queries'][$key] .= ";UPDATE {$tableName} SET {$field}='{$value}' WHERE {$field} IS NULL";
+                    $data['queries'][$key] .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' 
+                    WHERE {$field} IS NULL";
                 }
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Parse default value
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function parseDefaultValue(string $value): string
+    {
+        if (!empty($value) && preg_match("/(\n)*/", $value)) {
+            $value = str_replace("\n", "\\n", $value);
+        }
+
+        return $value;
     }
 }
