@@ -101,9 +101,7 @@
         "name": "notifications",
         "rows": [
             [{"name": "receiveAssignmentEmailNotifications"}, {"name": "receiveMentionEmailNotifications"}],
-            [{"name": "receiveStreamEmailNotifications"}, false],
-            [{"name": "receiveNewSystemVersionNotifications"}, {"name": "receiveNewModuleVersionNotifications"}],
-            [{"name": "receiveNewModuleNotifications"}, {"name": "receiveInstallDeleteModuleNotifications"}]
+            [{"name": "receiveStreamEmailNotifications"}, false]
         ]
     }
 ]

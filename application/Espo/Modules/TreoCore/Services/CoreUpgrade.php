@@ -113,27 +113,28 @@ class CoreUpgrade extends Base
      */
     protected function notifyAboutNewVersion(string $version): void
     {
-        if ($this->getConfig()->get('notificationNewSystemVersionDisabled')) {
-            if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
-                // prepare message
-                $message = $this
-                    ->getInjection('language')
-                    ->translate('newCoreVersion', 'treoNotifications', 'TreoNotification');
+        $configNotification = $this->getConfig()->get('notificationNewSystemVersionDisabled');
 
-                foreach ($users as $user) {
-                    $data = json_decode($user['data'], true);
-                    if ($data['receiveNewSystemVersionNotifications']) {
-                        // create notification
-                        $notification = $this->getEntityManager()->getEntity('Notification');
-                        $notification->set(
-                            [
-                                'type' => 'Message',
-                                'userId' => $user['id'],
-                                'message' => sprintf($message, $version)
-                            ]
-                        );
-                        $this->getEntityManager()->saveEntity($notification);
-                    }
+        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
+            // prepare message
+            $message = $this
+                ->getInjection('language')
+                ->translate('newCoreVersion', 'treoNotifications', 'TreoNotification');
+
+            foreach ($users as $user) {
+                $data = json_decode($user['data'], true);
+                if ($data['receiveNewSystemVersionNotifications']
+                    || (!isset($data['receiveNewSystemVersionNotifications']) && $configNotification)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type' => 'Message',
+                            'userId' => $user['id'],
+                            'message' => sprintf($message, $version)
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
                 }
             }
         }

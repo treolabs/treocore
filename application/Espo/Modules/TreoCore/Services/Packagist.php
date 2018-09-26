@@ -175,55 +175,50 @@ class Packagist extends AbstractTreoService
         // get modules
         $modules = $metadata->getModuleList();
 
-        // get config
-        $config = $this->getConfig();
-
         // checking new versions of modules
-        if ($config->get('notificationNewModuleVersionDisabled')) {
-            foreach ($modules as $id) {
-                if (!empty($module = $metadata->getModule($id))) {
-                    // get version
-                    $package = $this->getPackage($id);
-                    $version = $package['versions'][0]['version'];
+        foreach ($modules as $id) {
+            if (!empty($module = $metadata->getModule($id))) {
+                // get version
+                $package = $this->getPackage($id);
+                $version = $package['versions'][0]['version'];
 
-                    if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
-                        $this->sendNotification(
-                            [
-                                'data' => [
-                                    'id' => $id,
-                                    'messageTemplate' => 'newModuleVersion',
-                                    'messageVars' => [
-                                        'moduleName' => $this->getModuleTranslateName($package),
-                                        'moduleVersion' => $version,
-                                    ]
-                                ],
-                                'preferences' => 'receiveNewModuleVersionNotifications'
-                            ]
-                        );
-                        $fileData[$id]['version'][$version] = 1;
-                    }
+                if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
+                    $this->sendNotification(
+                        [
+                            'data' => [
+                                'id' => $id,
+                                'messageTemplate' => 'newModuleVersion',
+                                'messageVars' => [
+                                    'moduleName' => $this->getModuleTranslateName($package),
+                                    'moduleVersion' => $version,
+                                ]
+                            ],
+                            'preferencesField' => 'receiveNewModuleVersionNotifications',
+                            'configField' => 'notificationNewModuleVersionDisabled'
+                        ]
+                    );
+                    $fileData[$id]['version'][$version] = 1;
                 }
             }
         }
 
         // checking if new modules exists
-        if ($config->get('notificationNewModuleDisabled')) {
-            foreach ($this->getPackages() as $module) {
-                if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
-                    $this->sendNotification(
-                        [
-                            'data' => [
-                                'id' => $id,
-                                'messageTemplate' => 'newModule',
-                                'messageVars' => [
-                                    'moduleName' => $this->getModuleTranslateName($module)
-                                ]
-                            ],
-                            'preferences' => 'receiveNewModuleNotifications'
-                        ]
-                    );
-                    $fileData[$id] = 1;
-                }
+        foreach ($this->getPackages() as $module) {
+            if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
+                $this->sendNotification(
+                    [
+                        'data' => [
+                            'id' => $id,
+                            'messageTemplate' => 'newModule',
+                            'messageVars' => [
+                                'moduleName' => $this->getModuleTranslateName($module)
+                            ]
+                        ],
+                        'preferencesField' => 'receiveNewModuleNotifications',
+                        'configField' => 'notificationNewModuleDisabled'
+                    ]
+                );
+                $fileData[$id] = 1;
             }
         }
 
@@ -247,10 +242,14 @@ class Packagist extends AbstractTreoService
         // get users
         $users = $this->getEntityManager()->getRepository('User')->getAdminUsers();
 
+        //get config
+        $configNotification = $this->getConfig()->get($data['configField']);
+
         if (!empty($users)) {
             foreach ($users as $user) {
                 $preferences = json_decode($user['data'], true);
-                if ($preferences[$data['preferences']]) {
+                if ($preferences[$data['preferencesField']]
+                    || (!isset($preferences[$data['preferencesField']]) && $configNotification)) {
                     // create notification
                     $notification = $this->getEntityManager()->getEntity('Notification');
                     $notification->set(
