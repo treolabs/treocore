@@ -123,15 +123,12 @@ class Application extends \Espo\Core\Application
             $this->show404();
         }
 
-        // get file type
-        $fileType = $attachment->get('type');
-
-        if (!in_array($fileType, ['image/jpeg', 'image/png', 'image/gif'])) {
+        if (!in_array($attachment->get('type'), ['image/jpeg', 'image/png', 'image/gif'])) {
             $this->show404();
         }
 
         header('Content-Disposition:inline;filename="' . $id . '.jpg"');
-        header('Content-Type: ' . $fileType);
+        header('Content-Type: image/jpeg');
         header('Pragma: public');
         header('Cache-Control: max-age=360000, must-revalidate');
         header('Content-Length: ' . filesize($filePath));
