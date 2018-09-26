@@ -107,7 +107,7 @@ class Schema extends AbstractListener
      */
     protected function parseDefaultValue(string $value): string
     {
-        if (!empty($value) && preg_match("/(\n)*/", $value)) {
+        if (!empty($value) && preg_match("/(\n)+/", $value)) {
             $value = str_replace("\n", "\\n", $value);
         }
 
