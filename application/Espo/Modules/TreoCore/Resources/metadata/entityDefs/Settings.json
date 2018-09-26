@@ -9,16 +9,20 @@
             "tooltip": true
         },
         "notificationNewModuleVersionDisabled": {
-            "type": "bool"
+            "type": "bool",
+            "default": true
         },
         "notificationNewModuleDisabled": {
-            "type": "bool"
+            "type": "bool",
+            "default": true
         },
         "notificationNewSystemVersionDisabled": {
-            "type": "bool"
+            "type": "bool",
+            "default": true
         },
         "notificationInstallDeleteModuleDisabled": {
-            "type": "bool"
+            "type": "bool",
+            "default": true
         }
     }
 }
