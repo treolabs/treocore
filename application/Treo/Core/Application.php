@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Exceptions\NotFound;
 use Espo\Modules\TreoCore\Services\Installer;
 use Treo\Core\Utils\Auth;
 
@@ -90,6 +91,51 @@ class Application extends \Espo\Core\Application
                 'version'         => $version
             ]
         );
+        exit;
+    }
+
+    /**
+     * Show image
+     *
+     * @param string $id
+     */
+    public function showImage(string $id)
+    {
+        // get attachment
+        $attachment = $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getEntity('Attachment', $id);
+
+        // show 404
+        if (!$attachment) {
+            $this->show404();
+        }
+
+        // get file path
+        $filePath = $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getRepository('Attachment')
+            ->getFilePath($attachment);
+
+        if (!file_exists($filePath)) {
+            $this->show404();
+        }
+
+        // get file type
+        $fileType = $attachment->get('type');
+
+        if (!in_array($fileType, ['image/jpeg', 'image/png', 'image/gif'])) {
+            $this->show404();
+        }
+
+        header('Content-Disposition:inline;filename="' . $id . '.jpg"');
+        header('Content-Type: ' . $fileType);
+        header('Pragma: public');
+        header('Cache-Control: max-age=360000, must-revalidate');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
         exit;
     }
 
@@ -172,5 +218,14 @@ class Application extends \Espo\Core\Application
         );
 
         return $routes->getAll();
+    }
+
+    /**
+     * Show 404
+     */
+    private function show404()
+    {
+        header("HTTP/1.0 404 Not Found");
+        exit;
     }
 }
