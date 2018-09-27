@@ -185,12 +185,16 @@ class Packagist extends AbstractTreoService
                 if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
                     $this->sendNotification(
                         [
-                            'id'              => $id,
-                            'messageTemplate' => 'newModuleVersion',
-                            'messageVars'     => [
-                                'moduleName'    => $this->getModuleTranslateName($package),
-                                'moduleVersion' => $version,
-                            ]
+                            'data' => [
+                                'id' => $id,
+                                'messageTemplate' => 'newModuleVersion',
+                                'messageVars' => [
+                                    'moduleName' => $this->getModuleTranslateName($package),
+                                    'moduleVersion' => $version,
+                                ]
+                            ],
+                            'preferencesField' => 'receiveNewModuleVersionNotifications',
+                            'configField' => 'notificationNewModuleVersionDisabled'
                         ]
                     );
                     $fileData[$id]['version'][$version] = 1;
@@ -203,11 +207,15 @@ class Packagist extends AbstractTreoService
             if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
                 $this->sendNotification(
                     [
-                        'id'              => $id,
-                        'messageTemplate' => 'newModule',
-                        'messageVars'     => [
-                            'moduleName' => $this->getModuleTranslateName($module)
-                        ]
+                        'data' => [
+                            'id' => $id,
+                            'messageTemplate' => 'newModule',
+                            'messageVars' => [
+                                'moduleName' => $this->getModuleTranslateName($module)
+                            ]
+                        ],
+                        'preferencesField' => 'receiveNewModuleNotifications',
+                        'configField' => 'notificationNewModuleDisabled'
                     ]
                 );
                 $fileData[$id] = 1;
@@ -232,23 +240,27 @@ class Packagist extends AbstractTreoService
     protected function sendNotification($data): bool
     {
         // get users
-        $users = $this
-            ->getEntityManager()
-            ->getRepository('User')
-            ->where(['isAdmin' => true])
-            ->find();
+        $users = $this->getEntityManager()->getRepository('User')->getAdminUsers();
+
+        //get config
+        $configNotification = $this->getConfig()->get($data['configField']);
+
         if (!empty($users)) {
             foreach ($users as $user) {
-                // create notification
-                $notification = $this->getEntityManager()->getEntity('Notification');
-                $notification->set(
-                    [
-                        'type'   => 'TreoMessage',
-                        'userId' => $user->get('id'),
-                        'data'   => $data
-                    ]
-                );
-                $this->getEntityManager()->saveEntity($notification);
+                $preferences = json_decode($user['data'], true);
+                if ($preferences[$data['preferencesField']]
+                    || (!isset($preferences[$data['preferencesField']]) && $configNotification)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type' => 'TreoMessage',
+                            'userId' => $user['id'],
+                            'data' => $data['data']
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
             }
         }
 

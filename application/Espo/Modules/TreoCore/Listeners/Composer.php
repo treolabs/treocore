@@ -311,18 +311,24 @@ class Composer extends AbstractListener
      */
     protected function notify(string $message): void
     {
-        if (!empty($users = $this->getAdminUsers())) {
+        $configNotification = $this->getConfig()->get('notificationInstallDeleteModuleDisabled');
+
+        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
             foreach ($users as $user) {
-                // create notification
-                $notification = $this->getEntityManager()->getEntity('Notification');
-                $notification->set(
-                    [
-                        'type'    => 'Message',
-                        'userId'  => $user->get('id'),
-                        'message' => $message
-                    ]
-                );
-                $this->getEntityManager()->saveEntity($notification);
+                $data = json_decode($user['data'], true);
+                if ($data['receiveInstallDeleteModuleNotifications']
+                    || (!isset($data['receiveInstallDeleteModuleNotifications']) && $configNotification)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type' => 'Message',
+                            'userId' => $user['id'],
+                            'message' => $message
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
             }
         }
     }

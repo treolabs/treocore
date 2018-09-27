@@ -81,6 +81,27 @@ class Preferences extends AbstractLayout
             ],
         ];
 
+    protected $notification
+        = [
+
+            [
+                [
+                    'name' => 'receiveNewSystemVersionNotifications'
+                ],
+                [
+                    'name' => 'receiveNewModuleVersionNotifications'
+                ],
+            ],
+            [
+                [
+                    'name' => 'receiveNewModuleNotifications'
+                ],
+                [
+                    'name' => 'receiveInstallDeleteModuleNotifications'
+                ],
+            ]
+        ];
+
     /**
      * Layout detail
      *
@@ -92,6 +113,12 @@ class Preferences extends AbstractLayout
     {
         if (isset($data[0]['rows'])) {
             $data[0]['rows'] = $this->locale;
+        }
+
+        foreach ($data as $panelKey => $panel) {
+            if ($panel['name'] == 'notifications') {
+                $data[$panelKey]['rows'] = array_merge($data[$panelKey]['rows'], $this->notification);
+            }
         }
 
         return $data;
