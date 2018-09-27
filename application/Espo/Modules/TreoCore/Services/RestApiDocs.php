@@ -32,7 +32,7 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Services;
 
@@ -52,12 +52,13 @@ class RestApiDocs extends Base
     /**
      * @var array
      */
-    protected $dependencies = [
-        'config',
-        'entityManager',
-        'user',
-        'metadata'
-    ];
+    protected $dependencies
+        = [
+            'config',
+            'entityManager',
+            'user',
+            'metadata'
+        ];
 
     /**
      * @var array
@@ -67,17 +68,18 @@ class RestApiDocs extends Base
     /**
      * @var array
      */
-    protected $httpCode = [
-        200 => 'OK',
-        201 => 'Created',
-        204 => 'No Content',
-        401 => 'Unauthorized',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        406 => 'Not Acceptable',
-        415 => 'Unsupported Media Type',
-        500 => 'Internal Server Error'
-    ];
+    protected $httpCode
+        = [
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            406 => 'Not Acceptable',
+            415 => 'Unsupported Media Type',
+            500 => 'Internal Server Error'
+        ];
 
     /**
      * Generate documentation
@@ -158,17 +160,21 @@ class RestApiDocs extends Base
      */
     protected function getControllerClassName(string $controller): string
     {
-        $customClassName = '\\Espo\\Custom\\Controllers\\'.Util::normilizeClassName($controller);
-        if (class_exists($customClassName)) {
-            $controllerClassName = $customClassName;
-        } else {
+        $controllerClassName = '\\Espo\\Custom\\Controllers\\' . Util::normilizeClassName($controller);
+        if (!class_exists($controllerClassName)) {
             $moduleName = $this->getMetadata()->getScopeModuleName($controller);
             if ($moduleName) {
-                $controllerClassName = '\\Espo\\Modules\\'.$moduleName.'\\Controllers\\'.
+                $controllerClassName = '\\Espo\\Modules\\' . $moduleName . '\\Controllers\\' .
                     Util::normilizeClassName($controller);
-            } else {
-                $controllerClassName = '\\Espo\\Controllers\\'.Util::normilizeClassName($controller);
             }
+        }
+
+        if (!class_exists($controllerClassName)) {
+            $controllerClassName = '\\Treo\\Controllers\\' . Util::normilizeClassName($controller);
+        }
+
+        if (!class_exists($controllerClassName)) {
+            $controllerClassName = '\\Espo\\Controllers\\' . Util::normilizeClassName($controller);
         }
 
         return $controllerClassName;
@@ -184,7 +190,7 @@ class RestApiDocs extends Base
         $result = '';
 
         foreach ($this->getContentSections() as $key => $value) {
-            array_unshift($value, '<h2>'.$key.'</h2>');
+            array_unshift($value, '<h2>' . $key . '</h2>');
             $result .= implode(PHP_EOL, $value);
         }
 
@@ -199,10 +205,10 @@ class RestApiDocs extends Base
     protected function getContentSections(): array
     {
         // prepare data
-        $result  = [];
+        $result = [];
         $counter = 0;
         $section = null;
-        $config  = $this->getDocumentatorConfig();
+        $config = $this->getDocumentatorConfig();
 
         foreach ($this->extractAnnotations() as $class => $methods) {
             // get section name
@@ -262,7 +268,7 @@ class RestApiDocs extends Base
      * Get response codes
      *
      * @param array $docs
-     * @param int $counter
+     * @param int   $counter
      *
      * @return string
      */
@@ -271,7 +277,7 @@ class RestApiDocs extends Base
         // prepare result
         $result = '';
         $config = $this->getDocumentatorConfig();
-        $codes  = [];
+        $codes = [];
 
         if (!empty($docs['ApiResponseCode'][0]['sample'])) {
             $codes = Json::decode($docs['ApiResponseCode'][0]['sample'], true);
@@ -309,7 +315,7 @@ class RestApiDocs extends Base
         $result = '';
 
         if (isset($this->httpCode[$code])) {
-            $result = $code.' '.$this->httpCode[$code];
+            $result = $code . ' ' . $this->httpCode[$code];
         }
 
         return $result;
@@ -318,8 +324,8 @@ class RestApiDocs extends Base
     /**
      * Get response body
      *
-     * @param array $docs
-     * @param int $counter
+     * @param array  $docs
+     * @param int    $counter
      * @param string $entity
      *
      * @return string
@@ -357,7 +363,7 @@ class RestApiDocs extends Base
     /**
      * Generates the template for headers
      *
-     * @param  array        $st_params
+     * @param  array $st_params
      *
      * @return string
      */
@@ -370,7 +376,7 @@ class RestApiDocs extends Base
             // prepare content
             $body = [];
             foreach ($st_params['ApiHeaders'] as $params) {
-                $tr     = [
+                $tr = [
                     '{{ key }}'   => $params['key'],
                     '{{ value }}' => $params['value']
                 ];
@@ -413,7 +419,7 @@ class RestApiDocs extends Base
                     // get template
                     $template = $this->getTemplateContent('Parts/param-sample-btn');
 
-                    $tr['{{ type }}'] .= ' '.strtr($template, ['{{ sample }}' => $params['sample']]);
+                    $tr['{{ type }}'] .= ' ' . strtr($template, ['{{ sample }}' => $params['sample']]);
                 }
                 $body[] = strtr($this->getTemplateContent('Parts/param-content'), $tr);
             }
@@ -427,9 +433,9 @@ class RestApiDocs extends Base
     /**
      * Generate POST body template
      *
-     * @param  int      $id
-     * @param  array    $docs
-     * @param  string    $entity
+     * @param  int    $id
+     * @param  array  $docs
+     * @param  string $entity
      *
      * @return string
      */
@@ -450,7 +456,7 @@ class RestApiDocs extends Base
                 '{{ elt_id }}' => $id,
                 '{{ body }}'   => $this->getEntityFields($sample, $entity, $route, $method, true)
             ];
-            $result  = strtr($this->getTemplateContent('Parts/sample-post-body'), $content);
+            $result = strtr($this->getTemplateContent('Parts/sample-post-body'), $content);
         }
 
         return $result;
@@ -459,12 +465,13 @@ class RestApiDocs extends Base
     /**
      * Generates a badge for method
      *
-     * @param  array  $data
+     * @param  array $data
+     *
      * @return string
      */
     protected function generateBadgeForMethod($data)
     {
-        $method    = strtoupper($data['ApiMethod'][0]['type']);
+        $method = strtoupper($data['ApiMethod'][0]['type']);
         $st_labels = array(
             'POST'    => 'label-primary',
             'GET'     => 'label-success',
@@ -474,7 +481,7 @@ class RestApiDocs extends Base
             'OPTIONS' => 'label-info'
         );
 
-        return '<span class="label '.$st_labels[$method].'">'.$method.'</span>';
+        return '<span class="label ' . $st_labels[$method] . '">' . $method . '</span>';
     }
 
     /**
@@ -485,7 +492,7 @@ class RestApiDocs extends Base
     protected function getTemplateContent(string $template): string
     {
         // prepare file
-        $file = 'application/Espo/Modules/TreoCore/Documentator/Views/Templates/'.$template.'.html';
+        $file = 'application/Espo/Modules/TreoCore/Documentator/Views/Templates/' . $template . '.html';
 
         return (file_exists($file)) ? file_get_contents($file) : '';
     }
@@ -501,7 +508,7 @@ class RestApiDocs extends Base
             $this->documentatorConfig = include 'application/Espo/Modules/TreoCore/Configs/RestApiDocumentator.php';
         }
 
-        return (array) $this->documentatorConfig;
+        return (array)$this->documentatorConfig;
     }
 
     /**
@@ -522,7 +529,7 @@ class RestApiDocs extends Base
     /**
      * Prepare dynamic DocBlock data
      *
-     * @param array $data
+     * @param array  $data
      * @param string $class
      *
      * @return array
@@ -591,7 +598,7 @@ class RestApiDocs extends Base
         $result = [];
 
         // get entity defs
-        $defs = $this->getMetadata()->get('entityDefs.'.$entity);
+        $defs = $this->getMetadata()->get('entityDefs.' . $entity);
 
         if (isset($defs['fields'])) {
             // get config
@@ -601,11 +608,11 @@ class RestApiDocs extends Base
                 if (isset($row['type'])) {
                     switch ($row['type']) {
                         case 'link':
-                            $result[$name.'Id']   = [
+                            $result[$name . 'Id'] = [
                                 'type'     => 'string',
                                 'required' => !empty($row['required'])
                             ];
-                            $result[$name.'Name'] = [
+                            $result[$name . 'Name'] = [
                                 'type'     => 'string',
                                 'required' => !empty($row['required'])
                             ];
@@ -623,7 +630,7 @@ class RestApiDocs extends Base
                                     // prepare locale
                                     $locale = ucfirst(Util::toCamelCase(strtolower($locale)));
 
-                                    $result[$name.$locale] = [
+                                    $result[$name . $locale] = [
                                         'type'     => 'string',
                                         'required' => !empty($row['required'])
                                     ];
@@ -640,7 +647,7 @@ class RestApiDocs extends Base
                                     // prepare locale
                                     $locale = ucfirst(Util::toCamelCase(strtolower($locale)));
 
-                                    $result[$name.$locale] = [
+                                    $result[$name . $locale] = [
                                         'type'     => 'string',
                                         'required' => !empty($row['required'])
                                     ];
@@ -682,7 +689,7 @@ class RestApiDocs extends Base
     /**
      * Prepare API params
      *
-     * @param array $docs
+     * @param array  $docs
      * @param string $entity
      *
      * @return array

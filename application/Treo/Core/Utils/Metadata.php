@@ -40,7 +40,7 @@ use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
 use Espo\Core\Utils\Util;
 use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
-use Treo\Traits\ContainerTrait;
+use Treo\Core\Utils\File\Unifier;
 
 /**
  * Metadata class
@@ -53,11 +53,17 @@ class Metadata extends \Espo\Core\Utils\Metadata
     /**
      * Traits
      */
-    use ContainerTrait;
+    use \Treo\Traits\ContainerTrait;
+
     /**
-     * @var object
+     * @var Unifier
      */
     protected $unifier;
+
+    /**
+     * @var Unifier
+     */
+    protected $objUnifier;
 
     /**
      * @var object
@@ -93,6 +99,17 @@ class Metadata extends \Espo\Core\Utils\Metadata
      * @var array|null
      */
     protected $composerLockData = null;
+
+    /**
+     * @var array
+     */
+    protected $paths
+        = [
+            'treoCorePath' => 'application/Treo/Resources/metadata',
+            'corePath'     => 'application/Espo/Resources/metadata',
+            'modulePath'   => 'application/Espo/Modules/{*}/Resources/metadata',
+            'customPath'   => 'custom/Espo/Custom/Resources/metadata',
+        ];
 
     /**
      * Prepare version
@@ -311,5 +328,29 @@ class Metadata extends \Espo\Core\Utils\Metadata
             // prepare data
             $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getUnifier()
+    {
+        if (!isset($this->unifier)) {
+            $this->unifier = new Unifier($this->getFileManager(), $this, false);
+        }
+
+        return $this->unifier;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getObjUnifier()
+    {
+        if (!isset($this->objUnifier)) {
+            $this->objUnifier = new Unifier($this->getFileManager(), $this, true);
+        }
+
+        return $this->objUnifier;
     }
 }
