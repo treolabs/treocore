@@ -54,7 +54,9 @@
             "": "application/",
             "Espo\\Custom": "custom/"
         },
-        "classmap": ["replacements/"]
+        "classmap": [
+            "replacements/"
+        ]
     },
     "scripts": {
         "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",
