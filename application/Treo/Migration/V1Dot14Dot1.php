@@ -31,15 +31,39 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-namespace Treo\Core\Migration;
+namespace Treo\Migration;
+
+use Treo\Core\Utils\Composer as ComposerUtil;
 
 /**
- * AbstractMigration class
+ * Version 1.14.1
  *
- * @author     r.ratsun@zinitsolutions.com
- * @deprecated this class is deprecated
+ * @author r.ratsun@zinitsolutions.com
  */
-abstract class AbstractMigration extends \Treo\Migration\AbstractMigration
+class V1Dot14Dot1 extends AbstractMigration
 {
+    /**
+     * Up to current
+     */
+    public function up(): void
+    {
+        $this->deleteOldCrmPackage();
+    }
+
+    /**
+     * Delete treo-module/crm
+     */
+    private function deleteOldCrmPackage()
+    {
+        // create service
+        $service = $this->getContainer()->get('serviceFactory')->create('Composer');
+
+        // delete
+        $service->delete("treo-module/crm");
+
+        // run composer update
+        $composer = (new ComposerUtil())->run('update');
+    }
 }

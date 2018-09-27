@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core\Migration;
 
-use Treo\Traits\ContainerTrait;
+use Treo\Migration\AbstractMigration;
 
 /**
  * Migration
@@ -45,21 +45,9 @@ use Treo\Traits\ContainerTrait;
  */
 class Migration
 {
-    use ContainerTrait;
+    use \Treo\Traits\ContainerTrait;
 
-    /**
-     * Path to migration classes
-     *
-     * @var string
-     */
-    protected $path = 'application/Espo/Modules/%s/Migration/';
-
-    /**
-     * Namespace for migration classes
-     *
-     * @var string
-     */
-    protected $namespace = 'Espo\Modules\%s\Migration\%s';
+    const CORE_NAME = 'TreoCore';
 
     /**
      * Migrate action
@@ -117,7 +105,11 @@ class Migration
 
             if ($from != $className && $isAllowed && in_array($className, $migrations)) {
                 // prepare class name
-                $className = sprintf($this->namespace, $module, $className);
+                if ($module == self::CORE_NAME) {
+                    $className = sprintf('Treo\Migration\%s', $className);
+                } else {
+                    $className = sprintf('Espo\Modules\%s\Migration\%s', $module, $className);
+                }
 
                 $class = new $className();
                 if ($class instanceof AbstractMigration) {
@@ -167,7 +159,11 @@ class Migration
         $result = [];
 
         // prepare path
-        $path = sprintf($this->path, $module);
+        if ($module == self::CORE_NAME) {
+            $path = 'application/Treo/Migration/';
+        } else {
+            $path = sprintf('application/Espo/Modules/%s/Migration/', $module);
+        }
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $file) {

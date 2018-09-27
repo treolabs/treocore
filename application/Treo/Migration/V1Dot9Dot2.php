@@ -32,10 +32,9 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Migration;
+namespace Treo\Migration;
 
 use DateTime;
-use Treo\Core\Migration\AbstractMigration;
 use Espo\Core\Exceptions\Error;
 use PDO;
 

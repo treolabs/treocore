@@ -39,6 +39,7 @@ namespace Treo\Services;
 use Espo\Core\CronManager;
 use Treo\Core\UpgradeManager;
 use Treo\Core\Utils\ModuleMover;
+use Treo\Core\Migration\Migration;
 
 /**
  * Service TreoUpgrade
@@ -171,7 +172,7 @@ class TreoUpgrade extends AbstractService
             $this
                 ->getContainer()
                 ->get('migration')
-                ->run('TreoCore', $data['versionFrom'], $data['versionTo']);
+                ->run(Migration::CORE_NAME, $data['versionFrom'], $data['versionTo']);
         }
     }
 

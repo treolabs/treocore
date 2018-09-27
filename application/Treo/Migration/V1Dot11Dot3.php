@@ -33,38 +33,24 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
-
-use Treo\Core\Migration\AbstractMigration;
-use Treo\Core\Utils\Composer as ComposerUtil;
+namespace Treo\Migration;
 
 /**
- * Version 1.14.1
+ * Version 1.11.3
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1Dot14Dot1 extends AbstractMigration
+class V1Dot11Dot3 extends AbstractMigration
 {
     /**
      * Up to current
      */
     public function up(): void
     {
-        $this->deleteOldCrmPackage();
-    }
-
-    /**
-     * Delete treo-module/crm
-     */
-    private function deleteOldCrmPackage()
-    {
-        // create service
-        $service = $this->getContainer()->get('serviceFactory')->create('Composer');
-
-        // delete
-        $service->delete("treo-module/crm");
-
-        // run composer update
-        $composer = (new ComposerUtil())->run('update');
+        $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->saveComposerJson();
     }
 }

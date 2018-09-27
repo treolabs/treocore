@@ -31,27 +31,58 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
+namespace Treo\Migration;
 
-use Treo\Core\Migration\AbstractMigration;
+use Espo\Core\ORM\EntityManager;
+use Espo\Core\Utils\Config;
 
 /**
- * Version 1.14.0
+ * AbstractMigration class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1Dot14Dot0 extends AbstractMigration
+abstract class AbstractMigration
 {
+    use \Treo\Traits\ContainerTrait;
+
     /**
      * Up to current
      */
-    public function up(): void
+    abstract public function up(): void;
+
+    /**
+     * Down to previous  version
+     */
+    public function down(): void
     {
-        if (empty($this->getConfig()->get('massUpdateMax'))) {
-            $this->getConfig()->set('massUpdateMax', 200);
-            $this->getConfig()->save();
-        }
+    }
+
+    /**
+     * Run rebuild action
+     */
+    protected function runRebuild(): void
+    {
+        $this->getContainer()->get('dataManager')->rebuild();
+    }
+
+    /**
+     * Get entityManager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->getContainer()->get('entityManager');
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
     }
 }

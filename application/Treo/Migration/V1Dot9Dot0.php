@@ -31,28 +31,21 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
-
-use Treo\Core\Migration\AbstractMigration;
+namespace Treo\Migration;
 
 /**
- * Version 1.11.3
+ * Version 1.9.0
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1Dot11Dot3 extends AbstractMigration
+class V1Dot9Dot0 extends AbstractMigration
 {
     /**
      * Up to current
      */
     public function up(): void
     {
-        $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Composer')
-            ->saveComposerJson();
+        $this->runRebuild();
     }
 }

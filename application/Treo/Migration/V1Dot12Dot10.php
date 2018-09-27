@@ -33,9 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
-
-use Treo\Core\Migration\AbstractMigration;
+namespace Treo\Migration;
 
 /**
  * Version 1.12.10

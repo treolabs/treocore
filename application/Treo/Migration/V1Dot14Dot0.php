@@ -33,23 +33,23 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Migration;
-
-use Treo\Core\Migration\AbstractMigration;
+namespace Treo\Migration;
 
 /**
- * Version 1.12.4
+ * Version 1.14.0
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class V1Dot12Dot4 extends AbstractMigration
+class V1Dot14Dot0 extends AbstractMigration
 {
     /**
      * Up to current
      */
     public function up(): void
     {
-        $this->getConfig()->set('pmLimit', 5);
-        $this->getConfig()->save();
+        if (empty($this->getConfig()->get('massUpdateMax'))) {
+            $this->getConfig()->set('massUpdateMax', 200);
+            $this->getConfig()->save();
+        }
     }
 }
