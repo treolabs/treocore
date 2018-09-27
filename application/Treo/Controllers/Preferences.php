@@ -34,17 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
-
-use Espo\Controllers\Preferences;
-use Espo\Core\Exceptions;
+namespace Treo\Controllers;
 
 /**
- * TreoPreferences controller
+ * Controller Preferences
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class TreoPreferences extends Preferences
+class Preferences extends \Espo\Controllers\Preferences
 {
     /**
      * Read action
@@ -52,7 +49,6 @@ class TreoPreferences extends Preferences
      * @param array $params
      *
      * @return array
-     * @throws Exceptions\NotFound
      */
     public function actionRead($params)
     {

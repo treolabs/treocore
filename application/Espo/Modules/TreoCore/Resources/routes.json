@@ -1,31 +1,5 @@
 [
   {
-    "route": "I18n",
-    "method": "get",
-    "params": {
-      "controller": "TreoI18n"
-    },
-    "conditions": {
-      "auth": false
-    }
-  },
-  {
-    "route": "/Preferences/:id",
-    "method": "get",
-    "params": {
-      "controller": "TreoPreferences",
-      "action": "read"
-    }
-  },
-  {
-    "route": "/Admin/action/uploadUpgradePackage",
-    "method": "post",
-    "params": {
-      "controller": "TreoAdmin",
-      "action": "uploadUpgradePackage"
-    }
-  },
-  {
     "route": "/TreoUpgrade/availableVersion",
     "method": "get",
     "params": {
@@ -170,14 +144,6 @@
     "params": {
       "controller": "ProgressManager",
       "action": "close"
-    }
-  },
-  {
-    "route": "/Admin/action/runUpgrade",
-    "method": "post",
-    "params": {
-      "controller": "TreoAdmin",
-      "action": "TreoRunUpgrade"
     }
   },
   {

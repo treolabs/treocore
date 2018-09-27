@@ -34,42 +34,34 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
-
-use Espo\Controllers\Admin;
-use Espo\Core\Exceptions;
+namespace Treo\Controllers;
 
 /**
- * TreoAdmin controller
+ * Controller I18n
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class TreoAdmin extends Admin
+class I18n extends \Espo\Controllers\I18n
 {
-
     /**
-     * Run upgrade action
-     *
-     * @param mixed $params
-     * @param mixed $data
-     *
-     * @throws Exceptions\NotFound
-     */
-    public function actionTreoRunUpgrade($params, $data)
-    {
-        throw new Exceptions\NotFound();
-    }
-
-    /**
-     * UploadUpgradePackage action
+     * Read action
      *
      * @param array $params
      * @param array $data
+     * @param mixed $request
      *
-     * @throws Exceptions\NotFound
+     * @return mixed
      */
-    public function postActionUploadUpgradePackage($params, $data)
+    public function actionRead($params, $data, $request)
     {
-        throw new Exceptions\NotFound();
+        if (!empty($locale = $request->get('locale'))) {
+            // set locale
+            $this
+                ->getContainer()
+                ->get('language')
+                ->setLanguage($locale);
+        }
+
+        return parent::actionRead($params, $data, $request);
     }
 }
