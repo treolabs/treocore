@@ -1,0 +1,18 @@
+[
+  {
+    "route": "/TreoUpgrade/availableVersion",
+    "method": "get",
+    "params": {
+      "controller": "TreoUpgrade",
+      "action": "availableVersion"
+    }
+  },
+  {
+    "route": "/TreoUpgrade/upgrade",
+    "method": "post",
+    "params": {
+      "controller": "TreoUpgrade",
+      "action": "upgrade"
+    }
+  }
+]

@@ -1,21 +1,5 @@
 [
   {
-    "route": "/TreoUpgrade/availableVersion",
-    "method": "get",
-    "params": {
-      "controller": "TreoUpgrade",
-      "action": "availableVersion"
-    }
-  },
-  {
-    "route": "/TreoUpgrade/upgrade",
-    "method": "post",
-    "params": {
-      "controller": "TreoUpgrade",
-      "action": "upgrade"
-    }
-  },
-  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {

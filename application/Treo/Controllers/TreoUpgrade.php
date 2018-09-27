@@ -34,17 +34,17 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Treo\Controllers;
 
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
-use Espo\Modules\TreoCore\Services\TreoUpgrade as Service;
 use Slim\Http\Request;
+use Treo\Services\TreoUpgrade as Service;
 
 /**
- * TreoUpgrade controller
+ * Controller TreoUpgrade
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
 class TreoUpgrade extends Base
 {

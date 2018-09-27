@@ -34,19 +34,20 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Treo\Core\UpgradeManager;
 use Treo\Core\Utils\ModuleMover;
 
 /**
- * TreoUpgrade service
+ * Service TreoUpgrade
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class TreoUpgrade extends AbstractTreoService
+class TreoUpgrade extends AbstractService
 {
+
     const TREO_PACKAGES_URL = 'http://treo-packages.zinit1.com/api/v1/Packages/';
     const TREO_PACKAGES_PATH = 'data/upload/upgrades';
 

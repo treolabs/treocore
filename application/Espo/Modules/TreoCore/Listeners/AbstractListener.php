@@ -40,7 +40,7 @@ use Espo\Core\Container;
 use Espo\Core\Services\Base as BaseService;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Language;
-use Espo\Modules\TreoCore\Services\AbstractTreoService;
+use Espo\Modules\TreoCore\Services\AbstractService;
 use Treo\Core\Utils\Config;
 
 /**
@@ -102,7 +102,7 @@ abstract class AbstractListener
      *
      * @param string $name
      *
-     * @return BaseService|AbstractTreoService
+     * @return BaseService|AbstractService
      */
     protected function getService(string $name)
     {
