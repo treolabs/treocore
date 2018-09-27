@@ -34,12 +34,12 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\Services\Base;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Documentator\Extractor;
+use Treo\Documentator\Extractor;
 use Treo\Core\Utils\Metadata;
 
 /**
@@ -496,7 +496,7 @@ class RestApiDocs extends Base
     protected function getTemplateContent(string $template): string
     {
         // prepare file
-        $file = 'application/Espo/Modules/TreoCore/Documentator/Views/Templates/' . $template . '.html';
+        $file = 'application/Treo/Documentator/Views/Templates/' . $template . '.html';
 
         return (file_exists($file)) ? file_get_contents($file) : '';
     }
@@ -509,7 +509,7 @@ class RestApiDocs extends Base
     protected function getDocumentatorConfig(): array
     {
         if (is_null($this->documentatorConfig)) {
-            $this->documentatorConfig = include 'application/Espo/Modules/TreoCore/Configs/RestApiDocumentator.php';
+            $this->documentatorConfig = include 'application/Treo/Configs/RestApiDocumentator.php';
         }
 
         return (array)$this->documentatorConfig;

@@ -32,9 +32,9 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Documentator;
+namespace Treo\Documentator;
 
 /**
  * Class of Extractor
@@ -45,33 +45,38 @@ class Extractor
 {
     /**
      * Static array to store already parsed annotations
+     *
      * @var array
      */
     private static $annotationCache;
 
     /**
      * Indicates that annotations should has strict behavior, 'false' by default
+     *
      * @var boolean
      */
     private $strict = false;
 
     /**
      * Stores the default namespace for Objects instance, usually used on methods like getMethodAnnotationsObjects()
+     *
      * @var string
      */
     public $defaultNamespace = '';
 
     /**
      * Sets strict variable to true/false
+     *
      * @param bool $value boolean value to indicate that annotations to has strict behavior
      */
     public function setStrict($value)
     {
-        $this->strict = (bool) $value;
+        $this->strict = (bool)$value;
     }
 
     /**
      * Sets default namespace to use in object instantiation
+     *
      * @param string $namespace default namespace
      */
     public function setDefaultNamespace($namespace)
@@ -81,6 +86,7 @@ class Extractor
 
     /**
      * Gets default namespace used in object instantiation
+     *
      * @return string $namespace default namespace
      */
     public function getDefaultAnnotationNamespace()
@@ -92,12 +98,13 @@ class Extractor
      * Gets all anotations with pattern @SomeAnnotation() from a given class
      *
      * @param  string $className class name to get annotations
+     *
      * @return array  self::$annotationCache all annotated elements
      */
     public static function getClassAnnotations($className)
     {
         if (!isset(self::$annotationCache[$className])) {
-            $class                             = new \ReflectionClass($className);
+            $class = new \ReflectionClass($className);
             self::$annotationCache[$className] = self::parseAnnotations($class->getDocComment());
         }
 
@@ -128,23 +135,24 @@ class Extractor
      *
      * @param  string $className  class name
      * @param  string $methodName method name to get annotations
+     *
      * @return array  self::$annotationCache all annotated elements of a method given
      */
     public static function getMethodAnnotations($className, $methodName)
     {
-        if (!isset(self::$annotationCache[$className.'::'.$methodName])) {
+        if (!isset(self::$annotationCache[$className . '::' . $methodName])) {
             try {
-                $method      = new \ReflectionMethod($className, $methodName);
-                $class       = new \ReflectionClass($className);
+                $method = new \ReflectionMethod($className, $methodName);
+                $class = new \ReflectionClass($className);
                 $annotations = self::consolidateAnnotations($method->getDocComment(), $class->getDocComment());
             } catch (\ReflectionException $e) {
                 $annotations = [];
             }
 
-            self::$annotationCache[$className.'::'.$methodName] = $annotations;
+            self::$annotationCache[$className . '::' . $methodName] = $annotations;
         }
 
-        return self::$annotationCache[$className.'::'.$methodName];
+        return self::$annotationCache[$className . '::' . $methodName];
     }
 
     /**
@@ -153,18 +161,19 @@ class Extractor
      *
      * @param  string $className  class name
      * @param  string $methodName method name to get annotations
+     *
      * @return array  self::$annotationCache all annotated objects of a method given
      */
     public function getMethodAnnotationsObjects($className, $methodName)
     {
         $annotations = $this->getMethodAnnotations($className, $methodName);
-        $objects     = [];
+        $objects = [];
 
         $i = 0;
 
         foreach ($annotations as $annotationClass => $listParams) {
             $annotationClass = ucfirst($annotationClass);
-            $class           = $this->defaultNamespace.$annotationClass.'Annotation';
+            $class = $this->defaultNamespace . $annotationClass . 'Annotation';
 
             // verify is the annotation class exists, depending if Annotations::strict is true
             // if not, just skip the annotation instance creation.
@@ -204,7 +213,7 @@ class Extractor
     private static function consolidateAnnotations($docblockMethod, $dockblockClass)
     {
         $methodAnnotations = self::parseAnnotations($docblockMethod);
-        $classAnnotations  = self::parseAnnotations($dockblockClass);
+        $classAnnotations = self::parseAnnotations($dockblockClass);
 
         if (count($methodAnnotations) === 0) {
             return [];
@@ -218,7 +227,7 @@ class Extractor
             if ($name === 'ApiRoute') {
                 if (isset($methodAnnotations[$name])) {
                     foreach ($methodAnnotations[$name] as $key => $valueMethod) {
-                        $methodAnnotations[$name][$key]['name'] = $valueClass[0]['name'].$valueMethod['name'];
+                        $methodAnnotations[$name][$key]['name'] = $valueClass[0]['name'] . $valueMethod['name'];
                     }
                 }
             }
@@ -235,6 +244,7 @@ class Extractor
      * Parse annotations
      *
      * @param  string $docblock
+     *
      * @return array  parsed annotations params
      */
     private static function parseAnnotations($docblock)
@@ -252,8 +262,8 @@ class Extractor
                     // annotations has arguments
                     if (isset($matches['args'][$i])) {
                         $argsParts = trim($matches['args'][$i]);
-                        $name      = $matches['name'][$i];
-                        $value     = self::parseArgs($argsParts);
+                        $name = $matches['name'][$i];
+                        $value = self::parseArgs($argsParts);
                     } else {
                         $value = [];
                     }
@@ -264,7 +274,6 @@ class Extractor
         }
 
 
-
         return $annotations;
     }
 
@@ -272,6 +281,7 @@ class Extractor
      * Parse individual annotation arguments
      *
      * @param  string $content arguments string
+     *
      * @return array  annotated arguments
      */
     private static function parseArgs($content)
@@ -279,21 +289,21 @@ class Extractor
         // Replace initial stars
         $content = preg_replace('/^\s*\*/m', '', $content);
 
-        $data  = [];
-        $len   = strlen($content);
-        $i     = 0;
-        $var   = '';
-        $val   = '';
+        $data = [];
+        $len = strlen($content);
+        $i = 0;
+        $var = '';
+        $val = '';
         $level = 1;
 
         $prevDelimiter = '';
         $nextDelimiter = '';
-        $nextToken     = '';
-        $composing     = false;
-        $type          = 'plain';
-        $delimiter     = null;
-        $quoted        = false;
-        $tokens        = array('"', '"', '{', '}', ',', '=');
+        $nextToken = '';
+        $composing = false;
+        $type = 'plain';
+        $delimiter = null;
+        $quoted = false;
+        $tokens = array('"', '"', '{', '}', ',', '=');
 
         while ($i <= $len) {
             $c = substr($content, $i++, 1);
@@ -304,68 +314,76 @@ class Extractor
                 //open delimiter
                 if (!$composing && empty($prevDelimiter) && empty($nextDelimiter)) {
                     $prevDelimiter = $nextDelimiter = $delimiter;
-                    $val           = '';
-                    $composing     = true;
-                    $quoted        = true;
+                    $val = '';
+                    $composing = true;
+                    $quoted = true;
                 } else {
                     // close delimiter
                     if ($c !== $nextDelimiter) {
-                        throw new \Exception(sprintf(
-                            "Parse Error: enclosing error -> expected: [%s], given: [%s]",
-                            $nextDelimiter,
-                            $c
-                        ));
+                        throw new \Exception(
+                            sprintf(
+                                "Parse Error: enclosing error -> expected: [%s], given: [%s]",
+                                $nextDelimiter,
+                                $c
+                            )
+                        );
                     }
 
                     // validating sintax
                     if ($i < $len) {
                         if (',' !== substr($content, $i, 1)) {
-                            throw new \Exception(sprintf(
-                                "Parse Error: missing comma separator near: ...%s<--",
-                                substr($content, ($i - 10), $i)
-                            ));
+                            throw new \Exception(
+                                sprintf(
+                                    "Parse Error: missing comma separator near: ...%s<--",
+                                    substr($content, ($i - 10), $i)
+                                )
+                            );
                         }
                     }
 
                     $prevDelimiter = $nextDelimiter = '';
-                    $composing     = false;
-                    $delimiter     = null;
+                    $composing = false;
+                    $delimiter = null;
                 }
             } elseif (!$composing && in_array($c, $tokens)) {
                 switch ($c) {
                     case '=':
                         $prevDelimiter = $nextDelimiter = '';
-                        $level         = 2;
-                        $composing     = false;
-                        $type          = 'assoc';
-                        $quoted        = false;
+                        $level = 2;
+                        $composing = false;
+                        $type = 'assoc';
+                        $quoted = false;
                         break;
                     case ',':
-                        $level         = 3;
+                        $level = 3;
 
                         // If composing flag is true yet,
                         // it means that the string was not enclosed, so it is parsing error.
                         if ($composing === true && !empty($prevDelimiter) && !empty($nextDelimiter)) {
-                            throw new \Exception(sprintf(
-                                "Parse Error: enclosing error -> expected: [%s], given: [%s]",
-                                $nextDelimiter,
-                                $c
-                            ));
+                            throw new \Exception(
+                                sprintf(
+                                    "Parse Error: enclosing error -> expected: [%s], given: [%s]",
+                                    $nextDelimiter,
+                                    $c
+                                )
+                            );
                         }
 
                         $prevDelimiter = $nextDelimiter = '';
                         break;
                     case '{':
-                        $subc          = '';
-                        $subComposing  = true;
+                        $subc = '';
+                        $subComposing = true;
 
                         while ($i <= $len) {
                             $c = substr($content, $i++, 1);
 
                             if (isset($delimiter) && $c === $delimiter) {
-                                throw new \Exception(sprintf(
-                                    "Parse Error: Composite variable is not enclosed correctly."
-                                ));
+                                throw new \Exception(
+                                    sprintf(
+                                        "Parse Error: Composite variable is not enclosed correctly."
+                                    )
+                                );
                             }
 
                             if ($c === '}') {
@@ -377,10 +395,12 @@ class Extractor
 
                         // if the string is composing yet means that the structure of var. never was enclosed with '}'
                         if ($subComposing) {
-                            throw new \Exception(sprintf(
-                                "Parse Error: Composite variable is not enclosed correctly. near: ...%s'",
-                                $subc
-                            ));
+                            throw new \Exception(
+                                sprintf(
+                                    "Parse Error: Composite variable is not enclosed correctly. near: ...%s'",
+                                    $subc
+                                )
+                            );
                         }
 
                         $val = self::parseArgs($subc);
@@ -401,10 +421,10 @@ class Extractor
                     $data[trim($var)] = self::castValue($val, !$quoted);
                 }
 
-                $level     = 1;
-                $var       = $val       = '';
+                $level = 1;
+                $var = $val = '';
                 $composing = false;
-                $quoted    = false;
+                $quoted = false;
             }
         }
 
@@ -416,6 +436,7 @@ class Extractor
      *
      * @param  string  $val  string containing possibles variables that can be cast to bool or int
      * @param  boolean $trim indicate if the value passed should be trimmed after to try cast
+     *
      * @return mixed   returns the value converted to original type if was possible
      */
     private static function castValue($val, $trim = false)
