@@ -16364,7 +16364,7 @@ ul.dropdown-menu > li.checkbox {
         position: relative
     }
 
-    .detail .bottom .panel-default > .panel-heading > .btn-group {
+    .detail .bottom .panel-default > .panel-heading > .btn-group:not(.note-btn-group) {
         top: -1px;
         right: 1px;
         position: absolute
