@@ -141,7 +141,11 @@ class RestApiDocs extends Base
         // prepare result
         $result = [];
 
-        foreach ($this->getMetadata()->get('scopes') as $scope => $row) {
+        // get scopes
+        $scopes = array_keys($this->getMetadata()->get('scopes'));
+        sort($scopes);
+
+        foreach ($scopes as $scope) {
             $className = $this->getControllerClassName($scope);
             if (class_exists($className)) {
                 $result[] = $className;
