@@ -92,7 +92,6 @@ Espo.define('views/admin/layouts/modals/edit-attributes', ['views/modal', 'model
 
             var attributes = {};
             attributes = editView.model.attributes;
-            console.log(attributes);
 
             this.trigger('after:save', attributes);
             return true;

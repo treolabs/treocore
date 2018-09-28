@@ -37,7 +37,7 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
 
         type: 'linkMultiple',
 
-        listTemplate: 'fields/link-multiple/detail',
+        listTemplate: 'fields/link-multiple/list',
 
         detailTemplate: 'fields/link-multiple/detail',
 
@@ -131,7 +131,9 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
                         boolFilterList: this.getSelectBoolFilterList(),
                         primaryFilterName: this.getSelectPrimaryFilterName(),
                         multiple: true,
-                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null
+                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null,
+                        mandatorySelectAttributeList: this.mandatorySelectAttributeList,
+                        forceSelectAllAttributes: this.forceSelectAllAttributes
                     }, function (dialog) {
                         dialog.render();
                         self.notify(false);
@@ -364,16 +366,19 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
             var type = this.$el.find('select.search-type').val();
 
             if (type === 'anyOf') {
-                var values = this.ids || [];
+                var idList = this.ids || [];
 
                 var data = {
                     type: 'linkedWith',
-                    value: this.ids || [],
+                    value: idList,
                     nameHash: this.nameHash,
                     data: {
                         type: type
                     }
                 };
+                if (!idList.length) {
+                    data.value = null;
+                }
                 return data;
             } else if (type === 'noneOf') {
                 var values = this.ids || [];

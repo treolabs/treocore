@@ -44,32 +44,6 @@ Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:vi
             Dep.prototype.setup.call(this);
         },
 
-        loadList: function () {
-            var viewName = this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.listSelect') ||
-                           this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.list') ||
-                           'views/record/list';
-            this.listenToOnce(this.collection, 'sync', function () {
-                this.createView('list', viewName, {
-                    collection: this.collection,
-                    el: this.containerSelector + ' .list-container',
-                    selectable: true,
-                    checkboxes: this.multiple,
-                    massActionsDisabled: true,
-                    rowActionsView: false,
-                    layoutName: this.layoutName,
-                    rowActionsDisabled: this.rowActionsDisabled,
-                    searchManager: this.searchManager,
-                    checkAllResultDisabled: !this.massRelateEnabled,
-                    buttonsDisabled: true
-                }, function (list) {
-                    list.once('select', function (model) {
-                        this.trigger('select', model);
-                        this.close();
-                    }.bind(this));
-                }.bind(this));
-
-            }.bind(this));
-        }
     });
 });
 

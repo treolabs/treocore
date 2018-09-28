@@ -131,6 +131,7 @@ Espo.define('views/modals/edit', 'views/modal', function (Dep) {
                     }, this);
                     model.fetch();
                 } else {
+                    this.model = model;
                     if (this.options.relate) {
                         model.setRelate(this.options.relate);
                     }
@@ -160,8 +161,11 @@ Espo.define('views/modals/edit', 'views/modal', function (Dep) {
                 bottomDisabled: this.bottomDisabled,
                 exit: function () {}
             };
+            this.handleRecordViewOptions(options);
             this.createView('edit', viewName, options, callback);
         },
+
+        handleRecordViewOptions: function (options) {},
 
         actionSave: function () {
             var editView = this.getView('edit');

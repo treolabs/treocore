@@ -35,7 +35,9 @@ Espo.define('views/stream/fields/attachment-multiple', 'views/fields/attachment-
 
     return Dep.extend({
 
-        showPreviews: true
+        showPreviews: true,
+
+        showPreviewsInListMode: true,
 
     });
 

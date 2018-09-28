@@ -295,8 +295,8 @@ td, th {
 
 @font-face {
     font-family: 'Glyphicons Halflings';
-    src: url('../fonts/glyphicons-halflings-regular.eot');
-    src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
+    src: url('../../fonts/glyphicons-halflings-regular.eot');
+    src: url('../../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
 }
 
 .glyphicon {
@@ -12893,8 +12893,8 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
     font-family: 'Font Awesome 5 Free';
     font-style: normal;
     font-weight: 400;
-    src: url('../fonts/fa-regular-400.eot');
-    src: url('../fonts/fa-regular-400.eot?#iefix') format('embedded-opentype'), url('../fonts/fa-regular-400.woff2') format('woff2'), url('../fonts/fa-regular-400.woff') format('woff'), url('../fonts/fa-regular-400.ttf') format('truetype'), url('../fonts/fa-regular-400.svg#fontawesome') format('svg')
+    src: url('../../fonts/fa-regular-400.eot');
+    src: url('../../fonts/fa-regular-400.eot?#iefix') format('embedded-opentype'), url('../../fonts/fa-regular-400.woff2') format('woff2'), url('../../fonts/fa-regular-400.woff') format('woff'), url('../../fonts/fa-regular-400.ttf') format('truetype'), url('../../fonts/fa-regular-400.svg#fontawesome') format('svg')
 }
 
 .far {
@@ -12910,8 +12910,8 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
     font-family: 'Font Awesome 5 Free';
     font-style: normal;
     font-weight: 900;
-    src: url('../fonts/fa-solid-900.eot');
-    src: url('../fonts/fa-solid-900.eot?#iefix') format('embedded-opentype'), url('../fonts/fa-solid-900.woff2') format('woff2'), url('../fonts/fa-solid-900.woff') format('woff'), url('../fonts/fa-solid-900.ttf') format('truetype'), url('../fonts/fa-solid-900.svg#fontawesome') format('svg')
+    src: url('../../fonts/fa-solid-900.eot');
+    src: url('../../fonts/fa-solid-900.eot?#iefix') format('embedded-opentype'), url('../../fonts/fa-solid-900.woff2') format('woff2'), url('../../fonts/fa-solid-900.woff') format('woff'), url('../../fonts/fa-solid-900.ttf') format('truetype'), url('../../fonts/fa-solid-900.svg#fontawesome') format('svg')
 }
 
 .fa, .fas {
@@ -13267,7 +13267,7 @@ body > #header .navbar-brand span.home-icon {
 
 @media (min-width: 1200px) {
     .container {
-        max-width: 1580px
+        max-width: 1800px
     }
 }
 
@@ -13430,8 +13430,17 @@ div.list-expanded > ul > li > div.expanded-row > .cell:first-child {
     border-left: 0
 }
 
-.list > table.table td > span.glyphicon.pull-right, .list > ul.list-group > li.list-row .cell > span.glyphicon.pull-right {
+.list > table.table td > span.list-icon-container.pull-right {
     margin-left: 5px
+}
+
+.list > table.table td > span.list-icon-container.pull-left {
+    margin-right: 5px
+}
+
+.list > ul.list-group > li.list-row .cell > span.glyphicon.pull-right {
+    margin-left: 5px;
+    margin-top: 4px
 }
 
 div.list-kanban > table {
@@ -13662,6 +13671,10 @@ ul.dropdown-menu > li.checkbox {
     user-select: none
 }
 
+.dropdown-menu > li > a {
+    line-height: 19px
+}
+
 ul.dropdown-menu > li > a.active {
     background-color: #eee;
     text-decoration: none;
@@ -13831,7 +13844,7 @@ ul.dropdown-menu > li.checkbox:last-child {
     margin-top: 1px
 }
 
-.field .link-container > .list-group-item.link-with-role a {
+.field .link-container > .list-group-item.link-with-role > a, .field .link-container > .list-group-item.link-with-role > div > a {
     margin-top: 6px
 }
 
@@ -14172,7 +14185,22 @@ table.no-margin {
 
 .expanded-row {
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.expanded-row .cell .complex-text {
+    white-space: normal;
     overflow: hidden
+}
+
+.expanded-row .cell {
+    display: inline
+}
+
+.notification-list .expanded-row > .cell[data-name="data"], #notifications-panel .expanded-row > .cell[data-name="data"] {
+    padding-left: 0;
+    padding-right: 0
 }
 
 #notifications-panel .expanded-row {
@@ -14182,10 +14210,6 @@ table.no-margin {
 
 #notifications-panel .right {
     padding-top: 5px
-}
-
-.expanded-row .cell {
-    display: inline-block
 }
 
 .caret-up {
@@ -14220,8 +14244,8 @@ table.no-margin {
 }
 
 .list > table th[data-name="r-checkbox"] .select-all-container {
-    line-height: 1.36;
-    height: 1.36em;
+    line-height: 19px;
+    height: 19px;
     float: left
 }
 
@@ -14233,6 +14257,11 @@ table.no-margin {
 .list .checkbox-dropdown > a {
     padding: 0;
     line-height: 1
+}
+
+.list .record-checkbox-container {
+    height: 19px;
+    display: block
 }
 
 .list > table td > div.field {
@@ -14352,7 +14381,7 @@ table.less-padding td.cell[data-name="buttons"] > .btn-group {
     right: -11px
 }
 
-.list-container + .button-container {
+.list-container + .button-container, .row-list-container + .button-container {
     margin-top: 10px;
     padding-bottom: 0
 }
@@ -14505,7 +14534,7 @@ label.attach-file-label > input.file {
 
 @font-face {
     font-family: Open Sans;
-    src: url('../fonts/open-sans-regular.eot?') format('eot'), url('../fonts/open-sans-regular.woff') format('woff'), url('../fonts/open-sans-regular.ttf') format('truetype'), url('../fonts/open-sans-regular.svg#svgFontName') format('svg')
+    src: url('../../fonts/open-sans-regular.eot?') format('eot'), url('../../fonts/open-sans-regular.woff') format('woff'), url('../../fonts/open-sans-regular.ttf') format('truetype'), url('../../fonts/open-sans-regular.svg#svgFontName') format('svg')
 }
 
 .notifications-badge-container > .notifications-button > .number-badge {
@@ -14563,6 +14592,15 @@ label.attach-file-label > input.file {
     transform: rotate(90deg)
 }
 
+.icon-flip-horizontal {
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: fliph;
+    filter: fliph
+}
+
 .post-container > textarea.note, textarea.auto-height {
     overflow-x: hidden
 }
@@ -14597,14 +14635,14 @@ body > footer > p, body > footer > p a, body > footer > p a:hover, body > footer
 }
 
 #global-search-panel > .panel > .panel-body {
-    max-height: 350px;
+    max-height: 600px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 14px
 }
 
 #notifications-panel > .panel > .panel-body {
-    max-height: 350px;
+    max-height: 600px;
     overflow-y: auto;
     overflow-x: hidden
 }
@@ -14651,13 +14689,16 @@ h4.panel-title span.color-icon {
 }
 
 .record .middle > .panel:first-child {
-    margin-top: 0;
     border-top-width: 0
 }
 
+.record .middle {
+    margin-bottom: 19px
+}
+
 .record .middle > .panel {
-    margin-top: -19px;
-    border-top-width: 0
+    border-top-width: 0;
+    margin-bottom: 0
 }
 
 .record .middle > .panel > .panel-heading .btn-group {
@@ -15614,9 +15655,17 @@ table.table {
     position: fixed
 }
 
+body {
+    --theme-name: HazyblueVertical
+}
+
 /*!
      * Zinit Theme
      *  */
+body {
+    --theme-name: TreoDarkTheme
+}
+
 body {
     background: #fff;
     color: #000

@@ -70,7 +70,9 @@ Espo.define('treo-core:views/fields/link-parent', 'class-replace!treo-core:views
                         filters: this.getSelectFilters(),
                         boolFilterList: this.getSelectBoolFilterList(),
                         primaryFilterName: this.getSelectPrimaryFilterName(),
-                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null
+                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null,
+                        mandatorySelectAttributeList: this.getMandatorySelectAttributeList(),
+                        forceSelectAllAttributes: this.isForceSelectAllAttributes()
                     }, function (dialog) {
                         dialog.render();
                         Espo.Ui.notify(false);

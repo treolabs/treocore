@@ -1,5 +1,5 @@
 {
-    "stylesheet": "client/modules/treo-core/css/treo-dark-theme.css",
+    "stylesheet": "client/modules/treo-core/css/treo/treo-dark-theme.css",
     "navbarIsVertical": true,
     "navbarStaticItemsHeight": 65,
     "recordTopButtonsStickTop": 61,

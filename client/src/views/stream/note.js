@@ -123,9 +123,9 @@ Espo.define('views/stream/note', 'view', function (Dep) {
             return string;
         },
 
-        createField: function (name, type, params, view) {
+        createField: function (name, type, params, view, options) {
             type = type || this.model.getFieldType(name) || 'base';
-            this.createView(name, view || this.getFieldManager().getViewName(type), {
+            var o = {
                 model: this.model,
                 defs: {
                     name: name,
@@ -133,7 +133,13 @@ Espo.define('views/stream/note', 'view', function (Dep) {
                 },
                 el: this.options.el + ' .cell-' + name,
                 mode: 'list'
-            });
+            };
+            if (options) {
+                for (var i in options) {
+                    o[i] = options[i];
+                }
+            }
+            this.createView(name, view || this.getFieldManager().getViewName(type), o);
         },
 
         isMale: function () {

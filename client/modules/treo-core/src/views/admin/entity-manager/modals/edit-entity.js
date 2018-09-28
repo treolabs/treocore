@@ -174,6 +174,7 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
                 stream: this.model.get('stream'),
                 disabled: this.model.get('disabled'),
                 textFilterFields: this.model.get('textFilterFields'),
+                fullTextSearch: this.model.get('fullTextSearch'),
                 statusField: this.model.get('statusField'),
                 iconClass: this.model.get('iconClass')
             };

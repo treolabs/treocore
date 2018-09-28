@@ -37,7 +37,7 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
 
         type: 'array',
 
-        listTemplate: 'fields/array/detail',
+        listTemplate: 'fields/array/list',
 
         detailTemplate: 'fields/array/detail',
 
@@ -56,7 +56,8 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
                 translatedOptions: this.translatedOptions,
                 hasOptions: this.params.options ? true : false,
                 itemHtmlList: itemHtmlList,
-                isEmpty: (this.selected || []).length === 0
+                isEmpty: (this.selected || []).length === 0,
+                valueIsSet: this.model.has(this.name)
             }, Dep.prototype.data.call(this));
         },
 
@@ -114,7 +115,7 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
             }
 
             if (this.options.customOptionList) {
-                this.setOptionList(this.options.customOptionList);
+                this.setOptionList(this.options.customOptionList, true);
             }
         },
 
@@ -151,13 +152,21 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
 
         },
 
-        setOptionList: function (optionList) {
+        setOptionList: function (optionList, silent) {
             if (!this.originalOptionList) {
                 this.originalOptionList = this.params.options;
             }
             this.params.options = Espo.Utils.clone(optionList);
 
-            if (this.mode == 'edit') {
+            if (this.mode == 'edit' && !silent) {
+                var selectedOptionList = [];
+                this.selected.forEach(function (option) {
+                    if (~optionList.indexOf(option)) {
+                        selectedOptionList.push(option);
+                    }
+                }, this);
+                this.selected = selectedOptionList;
+
                 if (this.isRendered()) {
                     this.reRender();
                     this.trigger('change');

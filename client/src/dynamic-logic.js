@@ -70,21 +70,8 @@ Espo.define('dynamic-logic', [], function () {
 
             var panels = this.defs.panels || {};
             Object.keys(panels).forEach(function (panel) {
-                var item = (panels[panel] || {});
                 this.panelTypeList.forEach(function (type) {
-                    if (!(type in item)) return;
-                    var typeItem = (item[type] || {});
-                    var conditionGroup = typeItem.conditionGroup;
-                    var conditionGroup = (item[type] || {}).conditionGroup;
-                    if (!typeItem.conditionGroup) return;
-                    var result = this.checkConditionGroup(typeItem.conditionGroup);
-                    var methodName;
-                    if (result) {
-                        methodName = 'makePanel' + Espo.Utils.upperCaseFirst(type) + 'True';
-                    } else {
-                        methodName = 'makePanel' + Espo.Utils.upperCaseFirst(type) + 'False';
-                    }
-                    this[methodName](panel);
+                    this.processPanel(panel, type);
                 }, this);
             }, this);
 
@@ -104,6 +91,25 @@ Espo.define('dynamic-logic', [], function () {
                     this.resetOptionList(field);
                 }
             }, this);
+        },
+
+        processPanel: function (panel, type) {
+            var panels = this.defs.panels || {};
+            var item = (panels[panel] || {});
+
+            if (!(type in item)) return;
+            var typeItem = (item[type] || {});
+            var conditionGroup = typeItem.conditionGroup;
+            var conditionGroup = (item[type] || {}).conditionGroup;
+            if (!typeItem.conditionGroup) return;
+            var result = this.checkConditionGroup(typeItem.conditionGroup);
+            var methodName;
+            if (result) {
+                methodName = 'makePanel' + Espo.Utils.upperCaseFirst(type) + 'True';
+            } else {
+                methodName = 'makePanel' + Espo.Utils.upperCaseFirst(type) + 'False';
+            }
+            this[methodName](panel);
         },
 
         checkConditionGroup: function (data, type) {
@@ -175,7 +181,7 @@ Espo.define('dynamic-logic', [], function () {
             } else if (type === 'contains' || type === 'has') {
                 if (!setValue) return false;
                 return !!~setValue.indexOf(value);
-            } else if (type === 'notContains' || type === 'hasNot') {
+            } else if (type === 'notContains' || type === 'notHas') {
                 if (!setValue) return true;
                 return !~setValue.indexOf(value);
             } else if (type === 'greaterThan') {

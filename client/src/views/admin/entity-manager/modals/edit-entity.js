@@ -69,7 +69,8 @@ Espo.define('views/admin/entity-manager/modals/edit-entity', ['views/modal', 'mo
                 this.model.set('sortBy', this.getMetadata().get('entityDefs.' + scope + '.collection.sortBy'));
                 this.model.set('sortDirection', this.getMetadata().get('entityDefs.' + scope + '.collection.asc') ? 'asc' : 'desc');
 
-                this.model.set('textFilterFields', this.getMetadata().get('entityDefs.' + scope + '.collection.textFilterFields') || ['name']);
+                this.model.set('textFilterFields', this.getMetadata().get(['entityDefs', scope, 'collection', 'textFilterFields']) || ['name']);
+                this.model.set('fullTextSearch', this.getMetadata().get(['entityDefs', scope, 'collection', 'fullTextSearch']) || false);
 
                 this.model.set('statusField', this.getMetadata().get('scopes.' + scope + '.statusField') || null);
 
@@ -264,6 +265,16 @@ Espo.define('views/admin/entity-manager/modals/edit-entity', ['views/modal', 'mo
                     }
                 });
 
+                this.createView('fullTextSearch', 'views/fields/bool', {
+                    model: model,
+                    mode: 'edit',
+                    el: this.options.el + ' .field[data-name="fullTextSearch"]',
+                    defs: {
+                        name: 'fullTextSearch'
+                    },
+                    tooltip: true
+                });
+
                 this.createView('kanbanViewMode', 'views/fields/bool', {
                     model: model,
                     mode: 'edit',
@@ -274,10 +285,12 @@ Espo.define('views/admin/entity-manager/modals/edit-entity', ['views/modal', 'mo
                 });
 
                 var optionList = Object.keys(fieldDefs).filter(function (item) {
-                    if (!~['varchar', 'wysiwyg', 'text', 'phone', 'email', 'personName', 'number'].indexOf(this.getMetadata().get(['entityDefs', scope, 'fields', item, 'type']))) {
+                    var fieldType = fieldDefs[item].type;
+                    if (!this.getMetadata().get(['fields', fieldType, 'textFilter'])) return false
+                    if (this.getMetadata().get(['entityDefs', scope, 'fields', item, 'disabled'])) {
                         return false;
                     }
-                    if (this.getMetadata().get(['entityDefs', scope, 'fields', item, 'disabled'])) {
+                    if (this.getMetadata().get(['entityDefs', scope, 'fields', item, 'textFilterDisabled'])) {
                         return false;
                     }
                     return true;
@@ -507,6 +520,7 @@ Espo.define('views/admin/entity-manager/modals/edit-entity', ['views/modal', 'mo
                 stream: this.model.get('stream'),
                 disabled: this.model.get('disabled'),
                 textFilterFields: this.model.get('textFilterFields'),
+                fullTextSearch: this.model.get('fullTextSearch'),
                 statusField: this.model.get('statusField'),
                 iconClass: this.model.get('iconClass')
             };
