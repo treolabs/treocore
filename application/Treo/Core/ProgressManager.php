@@ -41,9 +41,9 @@ use Espo\Core\ServiceFactory;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
-use Espo\Modules\TreoCore\Services\AbstractProgressManager;
-use Espo\Modules\TreoCore\Services\ProgressJobInterface as PMInterface;
 use Treo\Core\Utils\Config;
+use Treo\Services\AbstractProgressManager;
+use Treo\Services\ProgressJobInterface as PMInterface;
 use Treo\Traits\ContainerTrait;
 use Treo\Traits\EventTriggeredTrait;
 

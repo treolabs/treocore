@@ -52,7 +52,7 @@ return [
   * service - указывем сервис который буде обрабатывать тип
   
 #### 2. Создать сервис обработчик джоба ####
-Сервис должен быть имплементом от `Espo\Modules\TreoCore\Services\ProgressJobInterface`
+Сервис должен быть имплементом от `Treo\Services\ProgressJobInterface`
 Пример:
 ```
 <?php
@@ -60,8 +60,8 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\Export\Services;
 
-use Espo\Modules\TreoCore\Services\ProgressJobInterface;
-use Espo\Modules\TreoCore\Services\AbstractProgressManager;
+use Treo\Services\ProgressJobInterface;
+use Treo\Services\AbstractProgressManager;
 
 /**
  * ExportProgressManager service
@@ -106,13 +106,13 @@ class ExportProgressManager extends AbstractProgressManager implements ProgressJ
 
 ```
 #### 3. Создать сервис экшенов которые используются (если используются) ####
-Сервис должен быть имплементом от `Espo\Modules\TreoCore\Services\StatusActionInterface`
+Сервис должен быть имплементом от `Treo\Services\StatusActionInterface`
 Пример:
 ```
 <?php
 declare(strict_types = 1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\Services\Base;
 
