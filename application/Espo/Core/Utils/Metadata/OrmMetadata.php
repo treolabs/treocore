@@ -46,19 +46,28 @@ class OrmMetadata
 
     protected $fileManager;
 
+    protected $config;
+
     protected $useCache;
 
-    public function __construct($metadata, $fileManager, $useCache = false)
+    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, $config)
     {
         $this->metadata = $metadata;
         $this->fileManager = $fileManager;
-        $this->useCache = $useCache;
+
+        $this->useCache = false;
+        if ($config instanceof \Espo\Core\Utils\Config) {
+            $this->config = $config;
+            $this->useCache = $this->config->get('useCache', false);
+        } elseif (is_bool($config)) {
+            $this->useCache = $config;
+        }
     }
 
     protected function getConverter()
     {
         if (!isset($this->converter)) {
-            $this->converter = new \Espo\Core\Utils\Database\Converter($this->metadata, $this->fileManager);
+            $this->converter = new \Espo\Core\Utils\Database\Converter($this->metadata, $this->fileManager, $this->config);
         }
 
         return $this->converter;
@@ -67,6 +76,11 @@ class OrmMetadata
     protected function getFileManager()
     {
         return $this->fileManager;
+    }
+
+    protected function getConfig()
+    {
+        return $this->config;
     }
 
     public function clearData()

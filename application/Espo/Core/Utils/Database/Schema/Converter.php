@@ -272,7 +272,7 @@ class Converter
 
             foreach ($entityParams['relations'] as $relationName => $relationParams) {
 
-                switch ($relationParams['type']) {
+                 switch ($relationParams['type']) {
                     case 'manyMany':
                         $tableName = $relationParams['relationName'];
 
