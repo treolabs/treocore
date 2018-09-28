@@ -810,7 +810,7 @@ class Record extends \Espo\Core\Services\Base
 
     protected function beforeUpdateEntity(Entity $entity, $data)
     {
-        $this->beforeUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
+         $this->beforeUpdate($entity, get_object_vars($data)); // TODO remove in 5.1.0
     }
 
     protected function afterUpdateEntity(Entity $entity, $data)
