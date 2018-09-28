@@ -59,6 +59,22 @@ class Schema extends AbstractListener
     }
 
     /**
+     * Prepare comment default value
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function prepareCommentDefaultValue(array $data): array
+    {
+        foreach ($data as $key => $query) {
+            $data[$key] = quotemeta(str_replace("\n", "\\n", $query));
+        }
+
+        return $data;
+    }
+
+    /**
      * Prepare LONGTEXT default value
      *
      * @param array $data
@@ -67,10 +83,12 @@ class Schema extends AbstractListener
      */
     protected function prepareLongTextDefault(array $data): array
     {
+        $data['queries'] = $this->prepareCommentDefaultValue($data['queries']);
+
         foreach ($data['queries'] as $key => $query) {
             // prepare fields
             $fields = [];
-            while (preg_match_all("/^.* (.*) LONGTEXT DEFAULT NULL COMMENT 'default={(.*)}'/s", $query, $matches)) {
+            while (preg_match_all("/^.* (.*) LONGTEXT DEFAULT NULL COMMENT 'default={(.*)}'/", $query, $matches)) {
                 // prepare data
                 $field = $matches[1][0];
                 $value = $matches[2][0];
@@ -89,8 +107,8 @@ class Schema extends AbstractListener
 
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
-                    $data['queries'][$key] .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' 
-                    WHERE {$field} IS NULL";
+                    $data['queries'][$key] .=
+                        ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' WHERE {$field} IS NULL";
                 }
             }
         }
@@ -107,8 +125,10 @@ class Schema extends AbstractListener
      */
     protected function parseDefaultValue(string $value): string
     {
-        if (!empty($value) && preg_match("/(\n)+/", $value)) {
-            $value = str_replace("\n", "\\n", $value);
+        $value = stripcslashes($value);
+
+        if (!empty($value) && preg_match("/(\\n)+/", $value)) {
+            $value = str_replace("\\n", "\n", $value);
         }
 
         return $value;
