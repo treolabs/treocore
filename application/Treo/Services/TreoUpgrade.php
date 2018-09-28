@@ -136,7 +136,7 @@ class TreoUpgrade extends AbstractService
                     'status'      => CronManager::PENDING,
                     'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'serviceName' => 'TreoUpgrade',
-                    'method'      => 'runUpgradeJob',
+                    'methodName'  => 'runUpgradeJob',
                     'data'        => [
                         'versionFrom' => $currentVersion,
                         'versionTo'   => $version,

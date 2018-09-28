@@ -65,6 +65,14 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
     /**
      * @inheritdoc
      */
+    public function checkExists($name)
+    {
+        return !empty($this->services[Util::normilizeClassName($name)]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function create($name)
     {
         // prepare name
