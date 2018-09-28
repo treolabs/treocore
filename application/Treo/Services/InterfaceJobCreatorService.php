@@ -34,27 +34,20 @@
 
 declare(strict_types = 1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Services\Base;
+namespace Treo\Services;
 
 /**
- * AdminNotifications service
+ * Interface of InterfaceJobCreatorService
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class AdminNotifications extends Base
+interface InterfaceJobCreatorService
 {
 
     /**
-     * New version checker
+     * Get scheduled Jobs
      *
-     * @param array $data
-     *
-     * @return bool
+     * @return array
      */
-    public function newVersionChecker($data): bool
-    {
-        return true;
-    }
+    public function getScheduledJobs(): array;
 }

@@ -36,8 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Exceptions\NotFound;
-use Espo\Modules\TreoCore\Services\Installer;
+use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
 
 /**

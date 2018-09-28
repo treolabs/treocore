@@ -35,9 +35,9 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
-use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\ModuleMover;
+use Treo\Services\Composer as ComposerService;
 use Treo\Traits\EventTriggeredTrait;
 
 /**
@@ -322,8 +322,8 @@ class Composer extends AbstractListener
                     $notification = $this->getEntityManager()->getEntity('Notification');
                     $notification->set(
                         [
-                            'type' => 'Message',
-                            'userId' => $user['id'],
+                            'type'    => 'Message',
+                            'userId'  => $user['id'],
                             'message' => $message
                         ]
                     );

@@ -34,20 +34,22 @@
 
 declare(strict_types = 1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 /**
- * Interface of InterfaceJobCreatorService
+ * Interface of StatusActionInterface
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-interface InterfaceJobCreatorService
+interface StatusActionInterface
 {
 
     /**
-     * Get scheduled Jobs
+     * Get progress status action data
+     *
+     * @param array $data
      *
      * @return array
      */
-    public function getScheduledJobs(): array;
+    public function getProgressStatusActionData(array $data): array;
 }

@@ -32,28 +32,27 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Services\Base;
+namespace Treo\Services;
 
 /**
  * Class of AbstractProgressManager
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-abstract class AbstractProgressManager extends Base
+abstract class AbstractProgressManager extends \Espo\Core\Services\Base
 {
     /**
      * @var array
      */
-    public static $progressStatus = [
-        'new'         => '1_new',
-        'in_progress' => '2_in_progress',
-        'error'       => '3_error',
-        'success'     => '4_success'
-    ];
+    public static $progressStatus
+        = [
+            'new'         => '1_new',
+            'in_progress' => '2_in_progress',
+            'error'       => '3_error',
+            'success'     => '4_success'
+        ];
 
     /**
      * @var float

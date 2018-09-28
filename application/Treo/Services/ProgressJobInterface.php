@@ -34,57 +34,50 @@
 
 declare(strict_types = 1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Services\Base;
+namespace Treo\Services;
 
 /**
- * CloseStatusAction service
+ * Interface of ProgressJobInterface
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class CloseStatusAction extends Base implements StatusActionInterface
+interface ProgressJobInterface
 {
 
     /**
-     * Get progress status action data
+     * Execute progress job
      *
      * @param array $data
      *
-     * @return array
-     */
-    public function getProgressStatusActionData(array $data): array
-    {
-        return [];
-    }
-
-    /**
-     * Close action
-     *
-     * @param string $id
-     *
      * @return bool
      */
-    public function close(string $id): bool
-    {
-        // prepare result
-        $result = false;
+    public function executeProgressJob(array $data): bool;
 
-        if (!empty($id)) {
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
-            $sql = sprintf($sql, $id);
+    /**
+     * Get progress
+     *
+     * @return float
+     */
+    public function getProgress(): float;
 
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
+    /**
+     * Get offset
+     *
+     * @return int
+     */
+    public function getOffset(): int;
 
-            // prepare result
-            $result = true;
-        }
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus(): string;
 
-        return $result;
-    }
+    /**
+     * Get data
+     *
+     * @return array
+     */
+    public function getData(): array;
 }

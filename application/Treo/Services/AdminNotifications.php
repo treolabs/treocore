@@ -34,81 +34,25 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Core\Templates\Services\Base;
-use Espo\ORM\Entity;
-use Espo\Core\Exceptions\Error;
-use Cron\CronExpression;
+namespace Treo\Services;
 
 /**
- * ScheduledJob service
+ * AdminNotifications service
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ScheduledJob extends Base
+class AdminNotifications extends \Espo\Core\Services\Base
 {
-    /**
-     * @param Entity $entity
-     * @param        $data
-     *
-     * @throws Error
-     */
-    protected function beforeCreateEntity(Entity $entity, $data)
-    {
-        $this->isScheduledValid($entity);
-
-        parent::beforeCreateEntity($entity, $data);
-    }
 
     /**
-     * @param Entity $entity
-     * @param        $data
+     * New version checker
      *
-     * @throws Error
-     */
-    protected function beforeUpdateEntity(Entity $entity, $data)
-    {
-        $this->isScheduledValid($entity);
-
-        parent::beforeUpdateEntity($entity, $data);
-    }
-
-    /**
-     * Is scheduled valid
-     *
-     * @param Entity $entity
+     * @param array $data
      *
      * @return bool
      */
-    protected function isScheduledValid(Entity $entity): bool
+    public function newVersionChecker($data): bool
     {
-        if (!empty($entity->get('scheduling'))) {
-            try {
-                $cronExpression = CronExpression::factory($entity->get('scheduling'));
-            } catch (\Exception $e) {
-                // prepare key
-                $key = 'Wrong crontab configuration';
-
-                // prepare message
-                $message = $this
-                    ->getInjection('language')
-                    ->translate($key, 'exceptions', 'ScheduledJob');
-
-                throw new Error($message);
-            }
-        }
-
         return true;
-    }
-
-    /**
-     * Init
-     */
-    protected function init()
-    {
-        parent::init();
-
-        $this->addDependency('language');
     }
 }

@@ -34,63 +34,80 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
-use Espo\Core\Services\Base;
+use Espo\ORM\Entity;
+use Espo\Core\Exceptions\Error;
+use Cron\CronExpression;
 
 /**
- * CancelStatusAction service
+ * ScheduledJob service
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class CancelStatusAction extends Base implements StatusActionInterface
+class ScheduledJob extends \Espo\Core\Templates\Services\Base
 {
-
     /**
-     * Get progress status action data
+     * @param Entity $entity
+     * @param        $data
      *
-     * @param array $data
-     *
-     * @return array
+     * @throws Error
      */
-    public function getProgressStatusActionData(array $data): array
+    protected function beforeCreateEntity(Entity $entity, $data)
     {
-        return [];
+        $this->isScheduledValid($entity);
+
+        parent::beforeCreateEntity($entity, $data);
     }
 
     /**
-     * Cancel action
+     * @param Entity $entity
+     * @param        $data
      *
-     * @param string $id
+     * @throws Error
+     */
+    protected function beforeUpdateEntity(Entity $entity, $data)
+    {
+        $this->isScheduledValid($entity);
+
+        parent::beforeUpdateEntity($entity, $data);
+    }
+
+    /**
+     * Is scheduled valid
+     *
+     * @param Entity $entity
      *
      * @return bool
      */
-    public function cancel(string $id): bool
+    protected function isScheduledValid(Entity $entity): bool
     {
-        // prepare result
-        $result = false;
+        if (!empty($entity->get('scheduling'))) {
+            try {
+                $cronExpression = CronExpression::factory($entity->get('scheduling'));
+            } catch (\Exception $e) {
+                // prepare key
+                $key = 'Wrong crontab configuration';
 
-        if (!empty($id)) {
-            // triggered before event
-            $this->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
+                // prepare message
+                $message = $this
+                    ->getInjection('language')
+                    ->translate($key, 'exceptions', 'ScheduledJob');
 
-            // prepare sql
-            $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
-            $sql = sprintf($sql, $id);
-
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-
-            // prepare result
-            $result = true;
-
-            // triggered after event
-            $this->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
+                throw new Error($message);
+            }
         }
 
-        return $result;
+        return true;
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
     }
 }

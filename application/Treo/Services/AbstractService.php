@@ -39,7 +39,7 @@ use Espo\Core\Utils\Config;
 use Espo\Orm\EntityManager;
 
 /**
- * AbstractTreoService class
+ * AbstractService class
  *
  * @author r.ratsun@zinitsolutions.com
  */

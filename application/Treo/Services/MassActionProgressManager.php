@@ -32,12 +32,11 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Core\ServiceFactory;
-use Espo\ORM\EntityCollection;
 
 /**
  * MassAction ProgressManager class

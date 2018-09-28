@@ -32,52 +32,63 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 /**
- * Interface of ProgressJobInterface
+ * CancelStatusAction service
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-interface ProgressJobInterface
+class CancelStatusAction extends \Espo\Core\Services\Base implements StatusActionInterface
 {
 
     /**
-     * Execute progress job
+     * Get progress status action data
      *
      * @param array $data
      *
-     * @return bool
-     */
-    public function executeProgressJob(array $data): bool;
-
-    /**
-     * Get progress
-     *
-     * @return float
-     */
-    public function getProgress(): float;
-
-    /**
-     * Get offset
-     *
-     * @return int
-     */
-    public function getOffset(): int;
-
-    /**
-     * Get status
-     *
-     * @return string
-     */
-    public function getStatus(): string;
-
-    /**
-     * Get data
-     *
      * @return array
      */
-    public function getData(): array;
+    public function getProgressStatusActionData(array $data): array
+    {
+        return [];
+    }
+
+    /**
+     * Cancel action
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function cancel(string $id): bool
+    {
+        // prepare result
+        $result = false;
+
+        if (!empty($id)) {
+            // triggered before event
+            $this->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
+
+            // prepare sql
+            $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
+            $sql = sprintf($sql, $id);
+
+            $sth = $this
+                ->getEntityManager()
+                ->getPDO()
+                ->prepare($sql);
+            $sth->execute();
+
+            // prepare result
+            $result = true;
+
+            // triggered after event
+            $this->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
+        }
+
+        return $result;
+    }
 }
