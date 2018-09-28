@@ -34,14 +34,28 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Metadata;
+namespace Treo\Metadata;
 
 /**
  * AbstractMetadata class
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
- * @deprecated
  */
-abstract class AbstractMetadata extends \Treo\Metadata\AbstractMetadata
+abstract class AbstractMetadata
 {
+    use \Treo\Traits\ContainerTrait;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Modify
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    abstract public function modify(array $data): array;
 }
