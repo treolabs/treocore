@@ -86,11 +86,6 @@ class Application
         return $this->container;
     }
 
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
     public function run($name = 'default')
     {
         $this->routeHooks();
@@ -122,7 +117,7 @@ class Application
             $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
             if ($authRequired && !$authNotStrict) {
                 if (!$final && $portalId = $this->detectedPortalId()) {
-                    $app = new \Treo\Core\Portal\Application($portalId);
+                    $app = new \Espo\Core\Portal\Application($portalId);
                     $app->setBasePath($this->getBasePath());
                     $app->runEntryPoint($entryPoint, $data, true);
                     exit;
@@ -144,11 +139,6 @@ class Application
 
     public function runCron()
     {
-        if ($this->getConfig()->get('cronDisabled')) {
-            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
-            return;
-        }
-
         $auth = $this->createAuth();
         $auth->useNoAuth();
 
@@ -170,7 +160,7 @@ class Application
 
     public function isInstalled()
     {
-        $config = $this->getConfig();
+        $config = $this->getContainer()->get('config');
 
         if (file_exists($config->getConfigPath()) && $config->get('isInstalled')) {
             return true;
@@ -259,7 +249,7 @@ class Application
 
     protected function getRouteList()
     {
-        $routes = new \Espo\Core\Utils\Route($this->getConfig(), $this->getMetadata(), $this->getContainer()->get('fileManager'));
+        $routes = new \Espo\Core\Utils\Route($this->getContainer()->get('config'), $this->getMetadata(), $this->getContainer()->get('fileManager'));
 
 
         return $routes->getAll();
@@ -267,7 +257,7 @@ class Application
 
     protected function initRoutes()
     {
-        $crudList = array_keys($this->getConfig()->get('crud'));
+        $crudList = array_keys($this->getContainer()->get('config')->get('crud'));
 
         foreach ($this->getRouteList() as $route) {
             $method = strtolower($route['method']);
@@ -288,7 +278,7 @@ class Application
 
     protected function initAutoloads()
     {
-        $autoload = new \Espo\Core\Utils\Autoload($this->getConfig(), $this->getMetadata(), $this->getContainer()->get('fileManager'));
+        $autoload = new \Espo\Core\Utils\Autoload($this->getContainer()->get('config'), $this->getMetadata(), $this->getContainer()->get('fileManager'));
 
         try {
             $autoloadList = $autoload->getAll();
