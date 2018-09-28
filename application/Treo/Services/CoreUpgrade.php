@@ -33,9 +33,8 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
-use Espo\Core\Services\Base;
 use Espo\Core\Utils\Json;
 
 /**
@@ -43,7 +42,7 @@ use Espo\Core\Utils\Json;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class CoreUpgrade extends Base
+class CoreUpgrade extends \Espo\Core\Services\Base
 {
     const CORE_PACKAGES = 'http://treo-packages.zinit1.com/api/v1/Packages/%s';
 
@@ -129,8 +128,8 @@ class CoreUpgrade extends Base
                     $notification = $this->getEntityManager()->getEntity('Notification');
                     $notification->set(
                         [
-                            'type' => 'Message',
-                            'userId' => $user['id'],
+                            'type'    => 'Message',
+                            'userId'  => $user['id'],
                             'message' => sprintf($message, $version)
                         ]
                     );

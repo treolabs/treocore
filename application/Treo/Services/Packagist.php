@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\Utils\Json;
 use Treo\Core\Utils\Composer as ComposerUtil;
@@ -44,7 +44,7 @@ use Treo\Core\Utils\Composer as ComposerUtil;
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Packagist extends AbstractTreoService
+class Packagist extends AbstractService
 {
     /**
      * @var null|array
@@ -185,16 +185,16 @@ class Packagist extends AbstractTreoService
                 if ($version != $module['version'] && !isset($fileData[$id]['version'][$version])) {
                     $this->sendNotification(
                         [
-                            'data' => [
-                                'id' => $id,
+                            'data'             => [
+                                'id'              => $id,
                                 'messageTemplate' => 'newModuleVersion',
-                                'messageVars' => [
-                                    'moduleName' => $this->getModuleTranslateName($package),
+                                'messageVars'     => [
+                                    'moduleName'    => $this->getModuleTranslateName($package),
                                     'moduleVersion' => $version,
                                 ]
                             ],
                             'preferencesField' => 'receiveNewModuleVersionNotifications',
-                            'configField' => 'notificationNewModuleVersionDisabled'
+                            'configField'      => 'notificationNewModuleVersionDisabled'
                         ]
                     );
                     $fileData[$id]['version'][$version] = 1;
@@ -207,15 +207,15 @@ class Packagist extends AbstractTreoService
             if (!in_array($module['treoId'], $modules) && !isset($fileData[$id])) {
                 $this->sendNotification(
                     [
-                        'data' => [
-                            'id' => $id,
+                        'data'             => [
+                            'id'              => $id,
                             'messageTemplate' => 'newModule',
-                            'messageVars' => [
+                            'messageVars'     => [
                                 'moduleName' => $this->getModuleTranslateName($module)
                             ]
                         ],
                         'preferencesField' => 'receiveNewModuleNotifications',
-                        'configField' => 'notificationNewModuleDisabled'
+                        'configField'      => 'notificationNewModuleDisabled'
                     ]
                 );
                 $fileData[$id] = 1;
@@ -254,9 +254,9 @@ class Packagist extends AbstractTreoService
                     $notification = $this->getEntityManager()->getEntity('Notification');
                     $notification->set(
                         [
-                            'type' => 'TreoMessage',
+                            'type'   => 'TreoMessage',
                             'userId' => $user['id'],
-                            'data' => $data['data']
+                            'data'   => $data['data']
                         ]
                     );
                     $this->getEntityManager()->saveEntity($notification);

@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Json;
@@ -45,7 +45,7 @@ use Treo\Core\Utils\Composer as ComposerUtil;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Composer extends AbstractTreoService
+class Composer extends AbstractService
 {
     /**
      * @var string

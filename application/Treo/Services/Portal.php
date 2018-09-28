@@ -34,10 +34,9 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\ORM\Entity;
-use Espo\Services\Record;
 use Treo\Core\Portal\Application as PortalApp;
 
 /**
@@ -45,7 +44,7 @@ use Treo\Core\Portal\Application as PortalApp;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Portal extends Record
+class Portal extends \Espo\Services\Record
 {
     /**
      * @var null|array

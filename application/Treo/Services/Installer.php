@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
@@ -47,7 +47,7 @@ use Treo\Core\Utils\Config;
  *
  * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class Installer extends AbstractTreoService
+class Installer extends AbstractService
 {
 
     /**

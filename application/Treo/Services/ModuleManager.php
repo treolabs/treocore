@@ -34,9 +34,8 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
+namespace Treo\Services;
 
-use Espo\Core\Services\Base;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
@@ -49,7 +48,7 @@ use Treo\Core\Utils\ModuleMover as TreoComposer;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ModuleManager extends Base
+class ModuleManager extends \Espo\Core\Services\Base
 {
     /**
      * @var string
