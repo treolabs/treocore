@@ -35,10 +35,10 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
-use Espo\Modules\TreoCore\Core\Utils\ModuleMover;
-use Espo\Modules\TreoCore\Services\Composer as ComposerService;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
+use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\ModuleMover;
+use Treo\Services\Composer as ComposerService;
+use Treo\Traits\EventTriggeredTrait;
 
 /**
  * Composer listener
@@ -311,18 +311,24 @@ class Composer extends AbstractListener
      */
     protected function notify(string $message): void
     {
-        if (!empty($users = $this->getAdminUsers())) {
+        $configNotification = $this->getConfig()->get('notificationInstallDeleteModuleDisabled');
+
+        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
             foreach ($users as $user) {
-                // create notification
-                $notification = $this->getEntityManager()->getEntity('Notification');
-                $notification->set(
-                    [
-                        'type'    => 'Message',
-                        'userId'  => $user->get('id'),
-                        'message' => $message
-                    ]
-                );
-                $this->getEntityManager()->saveEntity($notification);
+                $data = json_decode($user['data'], true);
+                if ($data['receiveInstallDeleteModuleNotifications']
+                    || (!isset($data['receiveInstallDeleteModuleNotifications']) && $configNotification)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type'    => 'Message',
+                            'userId'  => $user['id'],
+                            'message' => $message
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
             }
         }
     }
@@ -340,7 +346,7 @@ class Composer extends AbstractListener
         $note->set('type', $type);
         $note->set('parentType', 'ModuleManager');
         $note->set('data', $data);
-        $note->set('createdById', $createdById);
+        $note->set('createdById', (empty($createdById)) ? 'system' : $createdById);
 
         $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
     }

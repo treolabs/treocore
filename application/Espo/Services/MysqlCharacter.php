@@ -34,36 +34,26 @@
 
 namespace Espo\Services;
 
-use Espo\Core\Utils\Database\Schema\Utils as SchemaUtils;
-
-/**
- * Class MysqlCharacter
- *
- * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
- */
 class MysqlCharacter extends \Espo\Core\Services\Base
 {
     protected function init()
     {
-        $this->addDependencyList(
-            [
-                'entityManager',
-                'ormMetadata',
-                'schema',
-                'config',
-                'database',
-                'dataManager'
-            ]
-        );
+        $this->addDependency('container');
+    }
+
+    protected function getContainer()
+    {
+        return $this->getInjection('container');
     }
 
     public function jobConvertToMb4()
     {
-        $pdo = $this->getInjection('entityManager')->getPDO();
-        $ormMeta = $this->getInjection('ormMetadata')->getData(true);
+        $container = $this->getContainer();
 
-        $databaseSchema = $this->getInjection('schema');
+        $pdo = $container->get('entityManager')->getPDO();
+        $ormMeta = $container->get('ormMetadata')->getData(true);
+
+        $databaseSchema = $container->get('schema');
         $maxIndexLength = $databaseSchema->getMaxIndexLength();
         if ($maxIndexLength > 1000) {
             $maxIndexLength = 1000;
@@ -78,7 +68,7 @@ class MysqlCharacter extends \Espo\Core\Services\Base
             $sth->execute();
         }
 
-        $fieldListExceededIndexMaxLength = SchemaUtils::getFieldListExceededIndexMaxLength($ormMeta, $maxIndexLength);
+        $fieldListExceededIndexMaxLength = \Espo\Core\Utils\Database\Schema\Utils::getFieldListExceededIndexMaxLength($ormMeta, $maxIndexLength);
 
         foreach ($ormMeta as $entityName => $entityParams) {
 
@@ -145,14 +135,14 @@ class MysqlCharacter extends \Espo\Core\Services\Base
             }
         }
 
-        $config = $this->getInjection('config');
-        $database = $this->getInjection('database');
+        $config = $container->get('config');
+        $database = $config->get('database');
         if (!isset($database['charset']) || $database['charset'] != 'utf8mb4') {
             $database['charset'] = 'utf8mb4';
             $config->set('database', $database);
             $config->save();
         }
 
-        $this->getInjection('dataManager')->rebuild();
+        $this->getContainer()->get('dataManager')->rebuild();
     }
 }

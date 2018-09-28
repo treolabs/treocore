@@ -32,42 +32,21 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Espo\Core;
 
-use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Modules\TreoCore\Core\Utils\Config;
-use Espo\Modules\TreoCore\Core\Utils\Metadata;
-
-/**
- * Class Container
- *
- * @author r.ratsun@zinitsolutions.com
- * @todo   treoinject
- */
 class Container
 {
-    /**
-     * @var array
-     */
-    protected $data = [];
+
+    private $data = array();
+
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        // blocked construct
     }
 
-    /**
-     * Get object
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function get($name)
     {
         if (empty($this->data[$name])) {
@@ -79,125 +58,64 @@ class Container
         return null;
     }
 
-    /**
-     * Set user
-     *
-     * @param \Espo\Entities\User $user
-     *
-     * @return void
-     */
-    public function setUser(\Espo\Entities\User $user)
-    {
-        $this->set('user', $user);
-    }
-
-    /**
-     * Reload object
-     *
-     * @param string $name
-     *
-     * @return Container
-     */
-    public function reload(string $name): Container
-    {
-        // unset
-        if (isset($this->data[$name])) {
-            unset($this->data[$name]);
-        }
-
-        // load
-        $this->load($name);
-
-        return $this;
-    }
-
-    /**
-     * Push object
-     *
-     * @param string $name
-     * @param mixed  $obj
-     *
-     * return void
-     */
     protected function set($name, $obj)
     {
         $this->data[$name] = $obj;
     }
 
-    /**
-     * Load object
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    protected function load($name)
+    private function load($name)
     {
         $loadMethod = 'load' . ucfirst($name);
         if (method_exists($this, $loadMethod)) {
-            $this->set($name, $this->$loadMethod());
+            $obj = $this->$loadMethod();
+            $this->data[$name] = $obj;
         } else {
+
             try {
                 $className = $this->get('metadata')->get('app.loaders.' . ucfirst($name));
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) {}
 
             if (!isset($className) || !class_exists($className)) {
-                $className = '\Espo\Custom\Core\Loaders\\' . ucfirst($name);
+                $className = '\Espo\Custom\Core\Loaders\\'.ucfirst($name);
                 if (!class_exists($className)) {
-                    $className = '\Espo\Core\Loaders\\' . ucfirst($name);
+                    $className = '\Espo\Core\Loaders\\'.ucfirst($name);
                 }
             }
 
             if (class_exists($className)) {
-                $this->set($name, (new $className($this))->load());
+                $loadClass = new $className($this);
+                $this->data[$name] = $loadClass->load();
             }
         }
 
         return null;
     }
 
-    /**
-     * Load file manager
-     *
-     * @return \Espo\Core\Utils\File\Manager
-     */
-    protected function loadFileManager()
+    protected function getServiceClassName($name, $default)
     {
-        return new \Espo\Core\Utils\File\Manager($this->get('config'));
+        $metadata = $this->get('metadata');
+        $className = $metadata->get('app.serviceContainer.classNames.' . $name, $default);
+        return $className;
     }
 
-    /**
-     * Load config
-     *
-     * @return Config
-     */
-    protected function loadConfig()
+    protected function loadContainer()
     {
-        return new Config(new FileManager());
+        return $this;
     }
 
-    /**
-     * Load metadata
-     *
-     * @return Metadata
-     */
-    protected function loadMetadata(): Metadata
+    protected function loadSlim()
     {
-        // create metadata
-        $metadata = new Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
+        return new \Espo\Core\Utils\Api\Slim();
     }
 
-    /**
-     * Load Log
-     *
-     * @return \Espo\Core\Utils\Log
-     */
+    protected function loadFileStorageManager()
+    {
+        return new \Espo\Core\FileStorage\Manager(
+            $this->get('metadata')->get(['app', 'fileStorage', 'implementationClassNameMap']),
+            $this
+        );
+    }
+
     protected function loadLog()
     {
         $config = $this->get('config');
@@ -210,7 +128,6 @@ class Container
 
         if ($rotation) {
             $maxFileNumber = $config->get('logger.maxFileNumber', 30);
-
             $handler = new \Espo\Core\Utils\Log\Monolog\Handler\RotatingFileHandler($path, $maxFileNumber, $levelCode);
         } else {
             $handler = new \Espo\Core\Utils\Log\Monolog\Handler\StreamHandler($path, $levelCode);
@@ -223,4 +140,256 @@ class Container
 
         return $log;
     }
+
+    protected function loadFileManager()
+    {
+        return new \Espo\Core\Utils\File\Manager(
+            $this->get('config')
+        );
+    }
+
+    protected function loadControllerManager()
+    {
+        return new \Espo\Core\ControllerManager(
+            $this
+        );
+    }
+
+    protected function loadPreferences()
+    {
+        return $this->get('entityManager')->getEntity('Preferences', $this->get('user')->id);
+    }
+
+    protected function loadConfig()
+    {
+        return new \Espo\Core\Utils\Config(
+            new \Espo\Core\Utils\File\Manager()
+        );
+    }
+
+    protected function loadHookManager()
+    {
+        return new \Espo\Core\HookManager(
+            $this
+        );
+    }
+
+    protected function loadOutput()
+    {
+        return new \Espo\Core\Utils\Api\Output(
+            $this->get('slim')
+        );
+    }
+
+    protected function loadMailSender()
+    {
+        $className = $this->getServiceClassName('mailSender', '\\Espo\\Core\\Mail\\Sender');
+        return new $className(
+            $this->get('config'),
+            $this->get('entityManager')
+        );
+    }
+
+    protected function loadDateTime()
+    {
+        return new \Espo\Core\Utils\DateTime(
+            $this->get('config')->get('dateFormat'),
+            $this->get('config')->get('timeFormat'),
+            $this->get('config')->get('timeZone')
+        );
+    }
+
+    protected function loadNumber()
+    {
+        return new \Espo\Core\Utils\NumberUtil(
+            $this->get('config')->get('decimalMark'),
+            $this->get('config')->get('thousandSeparator')
+        );
+    }
+
+    protected function loadServiceFactory()
+    {
+        return new \Espo\Core\ServiceFactory(
+            $this
+        );
+    }
+
+    protected function loadSelectManagerFactory()
+    {
+        return new \Espo\Core\SelectManagerFactory(
+            $this->get('entityManager'),
+            $this->get('user'),
+            $this->get('acl'),
+            $this->get('aclManager'),
+            $this->get('metadata'),
+            $this->get('config'),
+            $this->get('injectableFactory')
+        );
+    }
+
+    protected function loadMetadata()
+    {
+        return new \Espo\Core\Utils\Metadata(
+            $this->get('fileManager'),
+            $this->get('config')->get('useCache')
+        );
+    }
+
+    protected function loadLayout()
+    {
+        return new \Espo\Core\Utils\Layout(
+            $this->get('fileManager'),
+            $this->get('metadata'),
+            $this->get('user')
+        );
+    }
+
+    protected function loadAclManager()
+    {
+        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+        return new $className(
+            $this->get('container')
+        );
+    }
+
+    protected function loadInternalAclManager()
+    {
+        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\AclManager');
+        return new $className(
+            $this->get('container')
+        );
+    }
+
+    protected function loadAcl()
+    {
+        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Acl');
+        return new $className(
+            $this->get('aclManager'),
+            $this->get('user')
+        );
+    }
+
+    protected function loadSchema()
+    {
+        return new \Espo\Core\Utils\Database\Schema\Schema(
+            $this->get('config'),
+            $this->get('metadata'),
+            $this->get('fileManager'),
+            $this->get('entityManager'),
+            $this->get('classParser'),
+            $this->get('ormMetadata')
+        );
+    }
+
+    protected function loadOrmMetadata()
+    {
+        return new \Espo\Core\Utils\Metadata\OrmMetadata(
+            $this->get('metadata'),
+            $this->get('fileManager'),
+            $this->get('config')
+        );
+    }
+
+    protected function loadClassParser()
+    {
+        return new \Espo\Core\Utils\File\ClassParser(
+            $this->get('fileManager'),
+            $this->get('config'),
+            $this->get('metadata')
+        );
+    }
+
+    protected function loadLanguage()
+    {
+        return new \Espo\Core\Utils\Language(
+            \Espo\Core\Utils\Language::detectLanguage($this->get('config'), $this->get('preferences')),
+            $this->get('fileManager'),
+            $this->get('metadata'),
+            $this->get('config')->get('useCache')
+        );
+    }
+
+    protected function loadBaseLanguage()
+    {
+        return new \Espo\Core\Utils\Language(
+            'en_US',
+            $this->get('fileManager'),
+            $this->get('metadata'),
+            $this->get('useCache')
+        );
+    }
+
+    protected function loadDefaultLanguage()
+    {
+        return new \Espo\Core\Utils\Language(
+            \Espo\Core\Utils\Language::detectLanguage($this->get('config')),
+            $this->get('fileManager'),
+            $this->get('metadata'),
+            $this->get('useCache')
+        );
+    }
+
+    protected function loadCrypt()
+    {
+        return new \Espo\Core\Utils\Crypt(
+            $this->get('config')
+        );
+    }
+
+    protected function loadScheduledJob()
+    {
+        return new \Espo\Core\Utils\ScheduledJob(
+            $this
+        );
+    }
+
+    protected function loadDataManager()
+    {
+        return new \Espo\Core\DataManager(
+            $this
+        );
+    }
+
+    protected function loadFieldManager()
+    {
+        return new \Espo\Core\Utils\FieldManager(
+            $this
+        );
+    }
+
+    protected function loadFieldManagerUtil()
+    {
+        return new \Espo\Core\Utils\FieldManagerUtil(
+            $this->get('metadata')
+        );
+    }
+
+    protected function loadThemeManager()
+    {
+        return new \Espo\Core\Utils\ThemeManager(
+            $this->get('config'),
+            $this->get('metadata')
+        );
+    }
+
+    protected function loadClientManager()
+    {
+        return new \Espo\Core\Utils\ClientManager(
+            $this->get('config'),
+            $this->get('themeManager')
+        );
+    }
+
+    protected function loadInjectableFactory()
+    {
+        return new \Espo\Core\InjectableFactory(
+            $this
+        );
+    }
+
+    public function setUser(\Espo\Entities\User $user)
+    {
+        $this->set('user', $user);
+    }
 }
+

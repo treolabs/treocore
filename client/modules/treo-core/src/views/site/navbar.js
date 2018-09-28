@@ -57,6 +57,12 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             });
         },
 
+        data() {
+            return _.extend({
+                isMoreFields: this.isMoreFields
+            }, Dep.prototype.data.call(this));
+        },
+
         setup() {
             this.getRouter().on('routed', function (e) {
                 if (e.controller) {
@@ -71,7 +77,7 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             var scopes = this.getMetadata().get('scopes') || {};
 
             this.tabList = tabList.filter(function (scope) {
-                if (typeof scopes[scope] === 'undefined') return;
+                if (typeof scopes[scope] === 'undefined' && scope !== '_delimiter_') return;
                 if ((scopes[scope] || {}).disabled) return;
                 if ((scopes[scope] || {}).acl) {
                     return this.getAcl().check(scope);
@@ -169,7 +175,7 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
 
             this.tabList.forEach(function (tab, i) {
                 if (tab === '_delimiter_') {
-                    moreIsMet = true;
+                    this.isMoreFields = moreIsMet = true;
                     return;
                 }
                 if (typeof tab === 'object') {

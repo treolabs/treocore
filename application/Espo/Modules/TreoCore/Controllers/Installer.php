@@ -39,7 +39,7 @@ namespace Espo\Modules\TreoCore\Controllers;
 use Espo\Core\Controllers\Base;
 use Slim\Http\Request;
 use Espo\Core\Exceptions;
-use Espo\Modules\TreoCore\Services\Installer as InstallerService;
+use Treo\Services\Installer as InstallerService;
 
 /**
  * Class Installer

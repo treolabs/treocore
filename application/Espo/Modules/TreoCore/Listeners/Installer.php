@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Listeners;
 
-use Espo\Modules\TreoCore\Core\Utils\Composer;
+use Treo\Core\Utils\Composer;
 
 /**
  * Installer listener

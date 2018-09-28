@@ -11,6 +11,7 @@
 !/apidocs/
 /apidocs/index.html
 /application/Espo/Modules/*
+!/application/Espo/Modules/.gitkeep
 !/application/Espo/Modules/TreoCore/
 /client/modules/*
 !/client/modules/treo-core/

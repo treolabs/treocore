@@ -41,16 +41,17 @@ use \Espo\ORM\Entity;
 
 class Base implements Injectable
 {
-    protected $dependencies
-        = array(
-            'config',
-            'entityManager',
-            'aclManager'
-        );
+    protected $dependencies = array(
+        'config',
+        'entityManager',
+        'aclManager'
+    );
 
     protected $scope;
 
     protected $injections = array();
+
+    protected $ownerUserIdAttribute = null;
 
     public function inject($name, $object)
     {
@@ -207,32 +208,15 @@ class Base implements Injectable
         return false;
     }
 
-    /**
-     * @param User   $user
-     * @param Entity $entity
-     *
-     * @return bool
-     * @todo treoinject
-     */
     public function checkIsOwner(User $user, Entity $entity)
     {
-        if ($entity->hasAttribute('ownerUserId')) {
-            if ($entity->has('ownerUserId')) {
-                if ($user->id === $entity->get('ownerUserId')) {
-                    return true;
-                }
-            }
-        }
-
         if ($entity->hasAttribute('assignedUserId')) {
             if ($entity->has('assignedUserId')) {
                 if ($user->id === $entity->get('assignedUserId')) {
                     return true;
                 }
             }
-        }
-
-        if ($entity->hasAttribute('createdById') && !$entity->hasAttribute('ownerUserId') && !$entity->hasAttribute('assignedUserId')) {
+        } else if ($entity->hasAttribute('createdById')) {
             if ($entity->has('createdById')) {
                 if ($user->id === $entity->get('createdById')) {
                     return true;
@@ -240,7 +224,7 @@ class Base implements Injectable
             }
         }
 
-        if ($entity->hasAttribute('assignedUsersIds') && $entity->hasRelation('assignedUsers')) {
+        if ($entity->hasLinkMultipleField('assignedUsers')) {
             if ($entity->hasLinkMultipleId('assignedUsers', $user->id)) {
                 return true;
             }
@@ -285,8 +269,8 @@ class Base implements Injectable
             if ($data->edit !== 'no' || $data->create !== 'no') {
                 if (
                     $this->getConfig()->get('aclAllowDeleteCreated')
-                    && $entity->has('createdById')
-                    && $entity->get('createdById') == $user->id
+                    &&
+                    $entity->has('createdById') && $entity->get('createdById') == $user->id
                 ) {
                     if (!$entity->has('assignedUserId')) {
                         return true;
@@ -303,5 +287,24 @@ class Base implements Injectable
         }
 
         return false;
+    }
+
+    public function getOwnerUserIdAttribute(Entity $entity)
+    {
+        if ($this->ownerUserIdAttribute) {
+            return $this->ownerUserIdAttribute;
+        }
+
+        if ($entity->hasLinkMultipleField('assignedUsers')) {
+            return 'assignedUsersIds';
+        }
+
+        if ($entity->hasAttribute('assignedUserId')) {
+            return 'assignedUserId';
+        }
+
+        if ($entity->hasAttribute('createdById')) {
+            return 'createdById';
+        }
     }
 }

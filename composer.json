@@ -20,22 +20,23 @@
         "ext-mbstring": "*",
         "ext-xml": "*",
         "ext-curl": "*",
-        "doctrine/dbal": "2.4.5",
+        "ext-exif": "*",
+        "doctrine/dbal": "2.4.2",
         "slim/slim": "2.6.2",
-        "mtdowling/cron-expression": "1.0.4",
-        "zendframework/zend-validator": "2.10.1",
+        "mtdowling/cron-expression": "1.0.3",
+        "zendframework/zend-validator": "2.8.1",
         "zendframework/zend-mail": "2.5.2",
-        "zendframework/zend-ldap": "2.8.0",
+        "zendframework/zend-ldap": "2.7.1",
         "zendframework/zend-servicemanager": "2.6.0",
-        "monolog/monolog": "1.23.0",
-        "yzalis/identicon": "1.2.0",
-        "zordius/lightncandy": "0.95",
-        "composer/semver": "1.4.2",
-        "tecnickcom/tcpdf": "6.2.13 ",
-        "php-mime-mail-parser/php-mime-mail-parser": "2.9.3",
-        "zbateson/mail-mime-parser": "0.4.6",
+        "monolog/monolog": "1.20.0",
+        "yzalis/identicon": "1.1.0",
+        "zordius/lightncandy": "0.21",
+        "composer/semver": "1.4.0",
+        "tecnickcom/tcpdf": "6.2.17 ",
+        "php-mime-mail-parser/php-mime-mail-parser": "2.10.0",
+        "zbateson/mail-mime-parser": "0.4.8",
         "phpoffice/phpexcel": "1.8.1",
-        "phpoffice/phpspreadsheet": "1.2.1",
+        "phpoffice/phpspreadsheet": "1.1.0",
         "wikimedia/composer-merge-plugin": "1.4.1",
         "treo-module/pim": "*"
     },
@@ -52,16 +53,23 @@
         "psr-0": {
             "": "application/",
             "Espo\\Custom": "custom/"
-        }
+        },
+        "classmap": [
+            "replacements/"
+        ]
     },
     "scripts": {
-        "post-install-cmd": "Espo\\Modules\\TreoCore\\Core\\Utils\\ModuleMover::update",
-        "post-update-cmd": "Espo\\Modules\\TreoCore\\Core\\Utils\\ModuleMover::update"
+        "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",
+        "post-update-cmd": "Treo\\Core\\Utils\\ModuleMover::update"
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://packagist.treopim.com"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^7",
+        "mockery/mockery": "^1.1"
+    }
 }

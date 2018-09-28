@@ -86,7 +86,9 @@
     "viewDetails": "Details anzeigen",
     "showFullList": "Vollständige Liste anzeigen",
     "On": "Auf",
-    "Off": "Aus"
+    "Off": "Aus",
+    "entitySelect": "Wählen Sie Entität",
+    "applyRelation": "Beziehung anwenden"
   },
   "links": {
     "ownerUser": "Besitzer"
@@ -104,7 +106,8 @@
   },
   "exceptions": {
     "URL is invalid": "Die URL ist ungültig",
-    "Such URL is already exists": "Eine solche URL ist bereits vorhanden"
+    "Such URL is already exists": "Eine solche URL ist bereits vorhanden",
+    "Site URL is empty": "Die Website-URL ist leer"
   },
   "streamMessages": {
     "updateModuleThis": "{user} hat das Modul aktualisiert",

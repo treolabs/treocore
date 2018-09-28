@@ -38,9 +38,9 @@ namespace Espo\Modules\TreoCore\Controllers;
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\Json;
-use Espo\Modules\TreoCore\Core\Utils\Composer as ComposerUtil;
-use Espo\Modules\TreoCore\Services\Composer as ComposerService;
 use Slim\Http\Request;
+use Treo\Core\Utils\Composer as ComposerUtil;
+use Treo\Services\Composer as ComposerService;
 
 /**
  * Composer controller

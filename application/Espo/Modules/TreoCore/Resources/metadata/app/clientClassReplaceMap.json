@@ -86,7 +86,13 @@
   "views/fields/base": [
     "treo-core"
   ],
+  "views/fields/currency": [
+    "treo-core"
+  ],
   "views/fields/link-parent": [
+    "treo-core"
+  ],
+  "views/fields/multi-enum": [
     "treo-core"
   ],
   "views/fields/owner-user": [

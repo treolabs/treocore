@@ -42,10 +42,6 @@ Espo.define('treo-core:controllers/admin', 'class-replace!treo-core:controllers/
             // blocking page
             this.error404();
         },
-        extensions: function (options) {
-            // blocking page
-            this.error404();
-        },
     });
 
 });

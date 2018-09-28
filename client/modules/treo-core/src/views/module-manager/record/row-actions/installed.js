@@ -45,19 +45,22 @@ Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'view
             });
         },
 
-        getActionList: function () {
+        getActionList() {
             let list = [];
             if (!this.disableActions) {
                 if (this.model.get('isComposer')) {
                     if (!this.model.get('status')) {
-                        list.push({
-                            action: 'installModule',
-                            label: 'updateModule',
-                            data: {
-                                id: this.model.id,
-                                mode: 'update'
-                            }
-                        });
+                        let versions = this.model.get('versions');
+                        if (versions && versions.length) {
+                            list.push({
+                                action: 'installModule',
+                                label: 'updateModule',
+                                data: {
+                                    id: this.model.id,
+                                    mode: 'update'
+                                }
+                            });
+                        }
                         let checkRequire = this.model.collection.every(model => !(model.get('required') || []).includes(this.model.get('id')));
                         if (checkRequire && !this.model.get('isSystem')) {
                             list.push({

@@ -493,42 +493,31 @@ class Base
         );
     }
 
-    /**
-     * @param $result
-     *
-     * @todo treoinject
-     */
     protected function accessOnlyOwn(&$result)
     {
         if ($this->hasAssignedUsersField()) {
             $this->setDistinct(true, $result);
-            $this->addLeftJoin('assignedUsers', $result);
+            $this->addLeftJoin(['assignedUsers', 'assignedUsersAccess'], $result);
             $result['whereClause'][] = array(
-                'assignedUsers.id' => $this->getUser()->id
+                'assignedUsersAccess.id' => $this->getUser()->id
             );
             return;
         }
 
-        if ($this->hasOwnerUserField()) {
-            $d['ownerUserId'] = $this->getUser()->id;
-        }
         if ($this->hasAssignedUserField()) {
-            $d['assignedUserId'] = $this->getUser()->id;
-        }
-        if ($this->hasCreatedByField() && !$this->hasAssignedUserField() && !$this->hasOwnerUserField()) {
-            $d['createdById'] = $this->getUser()->id;
+            $result['whereClause'][] = array(
+                'assignedUserId' => $this->getUser()->id
+            );
+            return;
         }
 
-        $result['whereClause'][] = array(
-            'OR' => $d
-        );
+        if ($this->hasCreatedByField()) {
+            $result['whereClause'][] = array(
+                'createdById' => $this->getUser()->id
+            );
+        }
     }
 
-    /**
-     * @param $result
-     *
-     * @todo treoinject
-     */
     protected function accessOnlyTeam(&$result)
     {
         if (!$this->hasTeamsField()) {
@@ -552,19 +541,11 @@ class Base
         $d = array(
             'teamsAccess.id' => $this->getUser()->getLinkMultipleIdList('teams')
         );
-
-        if ($this->hasOwnerUserField()) {
-            $d['ownerUserId'] = $this->getUser()->id;
-        }
-
         if ($this->hasAssignedUserField()) {
             $d['assignedUserId'] = $this->getUser()->id;
-        }
-
-        if ($this->hasCreatedByField() && !$this->hasAssignedUserField() && !$this->hasOwnerUserField()) {
+        } else if ($this->hasCreatedByField()) {
             $d['createdById'] = $this->getUser()->id;
         }
-
         $result['whereClause'][] = array(
             'OR' => $d
         );
@@ -678,17 +659,6 @@ class Base
             $result['whereClause'][] = array(
                 'id' => null
             );
-        }
-    }
-
-    /**
-     * @return bool
-     * @todo treoinject
-     */
-    protected function hasOwnerUserField()
-    {
-        if ($this->getSeed()->hasAttribute('ownerUserId')) {
-            return true;
         }
     }
 
@@ -996,7 +966,7 @@ class Base
 
                     $where['value'] = [$from, $to];
                 }
-                break;
+               break;
             default:
                 $where['type'] = $type;
         }
@@ -1007,7 +977,7 @@ class Base
 
     protected function getWherePart($item, &$result = null)
     {
-        $part = array();
+        $part = [];
 
         $attribute = null;
         if (!empty($item['field'])) { // for backward compatibility
@@ -1039,165 +1009,199 @@ class Base
         if (!array_key_exists('value', $item)) {
             $item['value'] = null;
         }
+        $value = $item['value'];
 
         if (!empty($item['type'])) {
-            switch ($item['type']) {
+            $type = $item['type'];
+
+            switch ($type) {
                 case 'or':
                 case 'and':
                 case 'not':
-                    if (is_array($item['value'])) {
-                        $arr = array();
-                        foreach ($item['value'] as $i) {
+                    if (is_array($value)) {
+                        $arr = [];
+                        foreach ($value as $i) {
                             $a = $this->getWherePart($i, $result);
                             foreach ($a as $left => $right) {
                                 if (!empty($right) || is_null($right) || $right === '' || $right === 0 || $right === false) {
-                                    $arr[] = array($left => $right);
+                                    $arr[] = [$left => $right];
                                 }
                             }
                         }
-                        $part[strtoupper($item['type'])] = $arr;
+                        $part[strtoupper($type)] = $arr;
                     }
                     break;
+
                 case 'like':
-                    $part[$attribute . '*'] = $item['value'];
+                    $part[$attribute . '*'] = $value;
                     break;
+
                 case 'notLike':
-                    $part[$attribute . '!*'] = $item['value'];
+                    $part[$attribute . '!*'] = $value;
                     break;
+
                 case 'equals':
                 case 'on':
-                    $part[$attribute . '='] = $item['value'];
+                    $part[$attribute . '='] = $value;
                     break;
+
                 case 'startsWith':
-                    $part[$attribute . '*'] = $item['value'] . '%';
+                    $part[$attribute . '*'] = $value . '%';
                     break;
+
                 case 'endsWith':
-                    $part[$attribute . '*'] = '%' . $item['value'];
+                    $part[$attribute . '*'] = '%' . $value;
                     break;
+
                 case 'contains':
-                    $part[$attribute . '*'] = '%' . $item['value'] . '%';
+                    $part[$attribute . '*'] = '%' . $value . '%';
                     break;
+
                 case 'notContains':
-                    $part[$attribute . '!*'] = '%' . $item['value'] . '%';
+                    $part[$attribute . '!*'] = '%' . $value . '%';
                     break;
+
                 case 'notEquals':
                 case 'notOn':
-                    $part[$attribute . '!='] = $item['value'];
+                    $part[$attribute . '!='] = $value;
                     break;
+
                 case 'greaterThan':
                 case 'after':
-                    $part[$attribute . '>'] = $item['value'];
+                    $part[$attribute . '>'] = $value;
                     break;
+
                 case 'lessThan':
                 case 'before':
-                    $part[$attribute . '<'] = $item['value'];
+                    $part[$attribute . '<'] = $value;
                     break;
+
                 case 'greaterThanOrEquals':
-                    $part[$attribute . '>='] = $item['value'];
+                    $part[$attribute . '>='] = $value;
                     break;
+
                 case 'lessThanOrEquals':
-                    $part[$attribute . '<='] = $item['value'];
+                    $part[$attribute . '<='] = $value;
                     break;
+
                 case 'in':
-                    $part[$attribute . '='] = $item['value'];
+                    $part[$attribute . '='] = $value;
                     break;
+
                 case 'notIn':
-                    $part[$attribute . '!='] = $item['value'];
+                    $part[$attribute . '!='] = $value;
                     break;
+
                 case 'isNull':
                     $part[$attribute . '='] = null;
                     break;
+
                 case 'isNotNull':
                 case 'ever':
                     $part[$attribute . '!='] = null;
                     break;
+
                 case 'isTrue':
                     $part[$attribute . '='] = true;
                     break;
+
                 case 'isFalse':
                     $part[$attribute . '='] = false;
                     break;
+
                 case 'today':
                     $part[$attribute . '='] = date('Y-m-d');
                     break;
+
                 case 'past':
                     $part[$attribute . '<'] = date('Y-m-d');
                     break;
+
                 case 'future':
                     $part[$attribute . '>='] = date('Y-m-d');
                     break;
+
                 case 'lastSevenDays':
                     $dt1 = new \DateTime();
                     $dt2 = clone $dt1;
                     $dt2->modify('-7 days');
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt2->format('Y-m-d'),
                         $attribute . '<=' => $dt1->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'lastXDays':
                     $dt1 = new \DateTime();
                     $dt2 = clone $dt1;
-                    $number = strval(intval($item['value']));
+                    $number = strval(intval($value));
 
                     $dt2->modify('-'.$number.' days');
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt2->format('Y-m-d'),
                         $attribute . '<=' => $dt1->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'nextXDays':
                     $dt1 = new \DateTime();
                     $dt2 = clone $dt1;
-                    $number = strval(intval($item['value']));
+                    $number = strval(intval($value));
                     $dt2->modify('+'.$number.' days');
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt1->format('Y-m-d'),
                         $attribute . '<=' => $dt2->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'olderThanXDays':
                     $dt1 = new \DateTime();
-                    $number = strval(intval($item['value']));
+                    $number = strval(intval($value));
                     $dt1->modify('-'.$number.' days');
                     $part[$attribute . '<'] = $dt1->format('Y-m-d');
                     break;
+
                 case 'afterXDays':
                     $dt1 = new \DateTime();
-                    $number = strval(intval($item['value']));
+                    $number = strval(intval($value));
                     $dt1->modify('+'.$number.' days');
                     $part[$attribute . '>'] = $dt1->format('Y-m-d');
                     break;
+
                 case 'currentMonth':
                     $dt = new \DateTime();
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->modify('first day of this month')->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P1M'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'lastMonth':
                     $dt = new \DateTime();
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->modify('first day of last month')->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P1M'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'nextMonth':
                     $dt = new \DateTime();
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->modify('first day of next month')->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P1M'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'currentQuarter':
                     $dt = new \DateTime();
                     $quarter = ceil($dt->format('m') / 3);
                     $dt->modify('first day of January this year');
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->add(new \DateInterval('P'.(($quarter - 1) * 3).'M'))->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P3M'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'lastQuarter':
                     $dt = new \DateTime();
                     $quarter = ceil($dt->format('m') / 3);
@@ -1207,33 +1211,37 @@ class Base
                         $quarter = 4;
                         $dt->modify('-1 year');
                     }
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->add(new \DateInterval('P'.(($quarter - 1) * 3).'M'))->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P3M'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'currentYear':
                     $dt = new \DateTime();
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->modify('first day of January this year')->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P1Y'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'lastYear':
                     $dt = new \DateTime();
-                    $part['AND'] = array(
+                    $part['AND'] = [
                         $attribute . '>=' => $dt->modify('first day of January last year')->format('Y-m-d'),
                         $attribute . '<' => $dt->add(new \DateInterval('P1Y'))->format('Y-m-d'),
-                    );
+                    ];
                     break;
+
                 case 'between':
-                    if (is_array($item['value'])) {
-                        $part['AND'] = array(
-                            $attribute . '>=' => $item['value'][0],
-                            $attribute . '<=' => $item['value'][1],
-                        );
+                    if (is_array($value)) {
+                        $part['AND'] = [
+                            $attribute . '>=' => $value[0],
+                            $attribute . '<=' => $value[1],
+                        ];
                     }
                     break;
+
                 case 'columnLike':
                 case 'columnIn':
                 case 'columnIsNull':
@@ -1243,30 +1251,30 @@ class Base
                     $alias =  $link . 'Filter' . strval(rand(10000, 99999));
                     $this->setDistinct(true, $result);
                     $this->addLeftJoin([$link, $alias], $result);
-                    $value = $item['value'];
                     $columnKey = $alias . 'Middle.' . $column;
-                    if ($item['type'] === 'columnIn') {
+                    if ($type === 'columnIn') {
                         $part[$columnKey] = $value;
-                    } else if ($item['type'] === 'columnNotIn') {
+                    } else if ($type === 'columnNotIn') {
                         $part[$columnKey . '!='] = $value;
-                    } else if ($item['type'] === 'columnIsNull') {
+                    } else if ($type === 'columnIsNull') {
                         $part[$columnKey] = null;
-                    } else if ($item['type'] === 'columnIsNotNull') {
+                    } else if ($type === 'columnIsNotNull') {
                         $part[$columnKey . '!='] = null;
-                    } else if ($item['type'] === 'columnLike') {
+                    } else if ($type === 'columnLike') {
                         $part[$columnKey . '*'] = $value;
-                    } else if ($item['type'] === 'columnStartsWith') {
+                    } else if ($type === 'columnStartsWith') {
                         $part[$columnKey . '*'] = $value . '%';
-                    } else if ($item['type'] === 'columnEndsWith') {
+                    } else if ($type === 'columnEndsWith') {
                         $part[$columnKey . '*'] = '%' . $value;
-                    } else if ($item['type'] === 'columnContains') {
+                    } else if ($type === 'columnContains') {
                         $part[$columnKey . '*'] = '%' . $value . '%';
-                    } else if ($item['type'] === 'columnEquals') {
+                    } else if ($type === 'columnEquals') {
                         $part[$columnKey . '='] = $value;
-                    } else if ($item['type'] === 'columnNotEquals') {
+                    } else if ($type === 'columnNotEquals') {
                         $part[$columnKey . '!='] = $value;
                     }
                     break;
+
                 case 'isNotLinked':
                     if (!$result) break;
                     $alias = $attribute . 'IsNotLinkedFilter' . strval(rand(10000, 99999));
@@ -1274,6 +1282,7 @@ class Base
                     $this->setDistinct(true, $result);
                     $this->addLeftJoin([$attribute, $alias], $result);
                     break;
+
                 case 'isLinked':
                     if (!$result) break;
                     $alias = $attribute . 'IsLinkedFilter' . strval(rand(10000, 99999));
@@ -1281,14 +1290,13 @@ class Base
                     $this->setDistinct(true, $result);
                     $this->addLeftJoin([$attribute, $alias], $result);
                     break;
+
                 case 'linkedWith':
                     $seed = $this->getSeed();
                     $link = $attribute;
                     if (!$seed->hasRelation($link)) break;
 
                     $alias =  $link . 'Filter' . strval(rand(10000, 99999));
-
-                    $value = $item['value'];
 
                     if (is_null($value) || !$value && !is_array($value)) break;
 
@@ -1319,12 +1327,11 @@ class Base
                     }
                     $this->setDistinct(true, $result);
                     break;
+
                 case 'notLinkedWith':
                     $seed = $this->getSeed();
                     $link = $attribute;
                     if (!$seed->hasRelation($link)) break;
-
-                    $value = $item['value'];
 
                     if (is_null($value)) break;
 
@@ -1351,11 +1358,63 @@ class Base
                             $part[$key . '!='] = $value;
                         }
                     } else if ($relationType == 'hasOne') {
-                        $this->addLeftJoin([$link, alias], $result);
+                        $this->addLeftJoin([$link, $alias], $result);
                         $part[$alias . '.id!='] = $value;
                     } else {
                         break;
                     }
+                    $this->setDistinct(true, $result);
+                    break;
+
+                case 'arrayAnyOf':
+                case 'arrayNoneOf':
+                case 'arrayIsEmpty':
+                case 'arrayIsNotEmpty':
+                    $arrayValueAlias = 'arrayFilter' . strval(rand(10000, 99999));
+                    $arrayAttribute = $attribute;
+                    $arrayEntityType = $this->getEntityType();
+                    $idPart = 'id';
+
+                    if (strpos($attribute, '.') > 0) {
+                        list($arrayAttributeLink, $arrayAttribute) = explode('.', $attribute);
+                        $seed = $this->getSeed();
+                        $arrayEntityType = $seed->getRelationParam($arrayAttributeLink, 'entity');
+                        $idPart = $arrayAttributeLink . '.id';
+                    }
+
+                    if ($type === 'arrayAnyOf') {
+                        if (is_null($value) || !$value && !is_array($value)) break;
+                        $this->addLeftJoin(['ArrayValue', $arrayValueAlias, [
+                            $arrayValueAlias . '.entityId:' => $idPart,
+                            $arrayValueAlias . '.entityType' => $arrayEntityType,
+                            $arrayValueAlias . '.attribute' => $arrayAttribute
+                        ]], $result);
+                        $part[$arrayValueAlias . '.value'] = $value;
+                    } else if ($type === 'arrayNoneOf') {
+                        if (is_null($value) || !$value && !is_array($value)) break;
+                        $this->addLeftJoin(['ArrayValue', $arrayValueAlias, [
+                            $arrayValueAlias . '.entityId:' => $idPart,
+                            $arrayValueAlias . '.entityType' => $arrayEntityType,
+                            $arrayValueAlias . '.attribute' => $arrayAttribute,
+                            $arrayValueAlias . '.value=' => $value
+                        ]], $result);
+                        $part[$arrayValueAlias . '.id'] = null;
+                    } else if ($type === 'arrayIsEmpty') {
+                        $this->addLeftJoin(['ArrayValue', $arrayValueAlias, [
+                            $arrayValueAlias . '.entityId:' => $idPart,
+                            $arrayValueAlias . '.entityType' => $arrayEntityType,
+                            $arrayValueAlias . '.attribute' => $arrayAttribute
+                        ]], $result);
+                        $part[$arrayValueAlias . '.id'] = null;
+                    } else if ($type === 'arrayIsNotEmpty') {
+                        $this->addLeftJoin(['ArrayValue', $arrayValueAlias, [
+                            $arrayValueAlias . '.entityId:' => $idPart,
+                            $arrayValueAlias . '.entityType' => $arrayEntityType,
+                            $arrayValueAlias . '.attribute' => $arrayAttribute
+                        ]], $result);
+                        $part[$arrayValueAlias . '.id!='] = null;
+                    }
+
                     $this->setDistinct(true, $result);
             }
         }

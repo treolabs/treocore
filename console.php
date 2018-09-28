@@ -41,5 +41,5 @@ include "bootstrap.php";
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
-$app = new \Espo\Core\Application();
+$app = new \Treo\Core\Application();
 $app->runConsole($argv);
