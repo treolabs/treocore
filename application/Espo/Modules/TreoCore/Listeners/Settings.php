@@ -49,7 +49,7 @@ class Settings extends AbstractListener
      *
      * @return array
      */
-    public function afterActionPatch(array $data): array
+    public function afterActionUpdate(array $data): array
     {
         if (isset($data['data']->allowUnstable)) {
             if (!empty($this->getConfig()->get('allowUnstableBlocked'))) {
