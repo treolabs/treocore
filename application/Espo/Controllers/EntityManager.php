@@ -192,13 +192,13 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-            'entity',
-            'entityForeign',
-            'link',
-            'linkForeign',
-            'label',
-            'labelForeign',
-            'linkType'
+        	'entity',
+        	'entityForeign',
+        	'link',
+        	'linkForeign',
+        	'label',
+        	'labelForeign',
+        	'linkType'
         ];
 
         $additionalParamList = [
@@ -208,10 +208,10 @@ class EntityManager extends \Espo\Core\Controllers\Base
         $params = array();
 
         foreach ($paramList as $item) {
-            if (empty($data[$item])) {
-                throw new BadRequest();
-            }
-            $params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+        	if (empty($data[$item])) {
+        		throw new BadRequest();
+        	}
+        	$params[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         foreach ($additionalParamList as $item) {
@@ -252,12 +252,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-            'entity',
-            'entityForeign',
-            'link',
-            'linkForeign',
-            'label',
-            'labelForeign'
+        	'entity',
+        	'entityForeign',
+        	'link',
+        	'linkForeign',
+        	'label',
+        	'labelForeign'
         ];
 
         $additionalParamList = [];
@@ -307,12 +307,12 @@ class EntityManager extends \Espo\Core\Controllers\Base
         }
 
         $paramList = [
-            'entity',
-            'link',
+        	'entity',
+        	'link',
         ];
         $d = array();
         foreach ($paramList as $item) {
-            $d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
+        	$d[$item] = filter_var($data[$item], \FILTER_SANITIZE_STRING);
         }
 
         $result = $this->getContainer()->get('entityManagerUtil')->deleteLink($d);
