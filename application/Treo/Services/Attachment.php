@@ -32,45 +32,19 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Services;
-
-use Espo\Services\Email as BaseEmail;
+namespace Treo\Services;
 
 /**
- * Class Email
+ * Service Attachment
  *
- * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Email extends BaseEmail
+class Attachment extends \Espo\Services\Attachment
 {
     /**
-     * Send test email
-     *
-     * @param array $data
-     *
-     * @return bool
+     * @var array
      */
-    public function sendTestEmail($data): bool
-    {
-        $email = $this->getEntityManager()->getEntity('Email');
-        // get subject
-        $subject = $this
-            ->getEntityManager()
-            ->getContainer()
-            ->get('language')
-            ->translate('testEmailSubject', 'messages', 'Email');
-
-        $email->set(array(
-            'subject' => $subject,
-            'isHtml' => false,
-            'to' => $data['emailAddress']
-        ));
-
-        $emailSender = $this->getEntityManager()->getContainer()->get('mailSender');
-        $emailSender->useSmtp($data)->send($email);
-
-        return true;
-    }
+    protected $inlineAttachmentFieldTypeList = ['text', 'wysiwyg', 'wysiwygMultiLang'];
 }
