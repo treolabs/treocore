@@ -50,6 +50,21 @@ class V1Dot14Dot1 extends AbstractMigration
     public function up(): void
     {
         $this->deleteOldCrmPackage();
+
+        $this->espoUpdates();
+    }
+
+    /**
+     * Espo modifications
+     */
+    private function espoUpdates()
+    {
+        $this->getConfig()->set('massPrintPdfMaxCount', 50);
+        $this->getConfig()->set('emailKeepParentTeamsEntityList', ['Case']);
+        $this->getConfig()->set('adminNotificationsNewExtensionVersion', true);
+        $this->getConfig()->set('recordListMaxSizeLimit', 200);
+
+        $this->getConfig()->save();
     }
 
     /**
