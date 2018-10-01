@@ -138,14 +138,13 @@ class Record extends Base
         $q = $request->get('q');
         $textFilter = $request->get('textFilter');
 
+        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
         if (empty($maxSize)) {
-            $maxSize = self::MAX_SIZE_LIMIT;
+            $maxSize = $maxSizeLimit;
         }
-
-        // @todo treoinject
-//        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-//            throw new Forbidden("Max should should not exceed " . self::MAX_SIZE_LIMIT . ". Use pagination (offset, limit).");
-//        }
+        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
+        }
 
         $params = array(
             'where' => $where,
@@ -167,6 +166,49 @@ class Record extends Base
         );
     }
 
+    public function getActionListKanban($params, $data, $request)
+    {
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Forbidden();
+        }
+
+        $where = $request->get('where');
+        $offset = $request->get('offset');
+        $maxSize = $request->get('maxSize');
+        $asc = $request->get('asc', 'true') === 'true';
+        $sortBy = $request->get('sortBy');
+        $q = $request->get('q');
+        $textFilter = $request->get('textFilter');
+
+        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
+        if (empty($maxSize)) {
+            $maxSize = $maxSizeLimit;
+        }
+        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
+        }
+
+        $params = array(
+            'where' => $where,
+            'offset' => $offset,
+            'maxSize' => $maxSize,
+            'asc' => $asc,
+            'sortBy' => $sortBy,
+            'q' => $q,
+            'textFilter' => $textFilter
+        );
+
+        $this->fetchListParamsFromRequest($params, $request, $data);
+
+        $result = $this->getRecordService()->getListKanban($params);
+
+        return (object) [
+            'total' => $result->total,
+            'list' => $result->collection->getValueMapList(),
+            'additionalData' => $result->additionalData
+        ];
+    }
+
     protected function fetchListParamsFromRequest(&$params, $request, $data)
     {
         if ($request->get('primaryFilter')) {
@@ -177,6 +219,10 @@ class Record extends Base
         }
         if ($request->get('filterList')) {
             $params['filterList'] = $request->get('filterList');
+        }
+
+        if ($request->get('select')) {
+            $params['select'] = explode(',', $request->get('select'));
         }
     }
 
@@ -193,11 +239,12 @@ class Record extends Base
         $q = $request->get('q');
         $textFilter = $request->get('textFilter');
 
+        $maxSizeLimit = $this->getConfig()->get('recordListMaxSizeLimit', self::MAX_SIZE_LIMIT);
         if (empty($maxSize)) {
-            $maxSize = self::MAX_SIZE_LIMIT;
+            $maxSize = $maxSizeLimit;
         }
-        if (!empty($maxSize) && $maxSize > self::MAX_SIZE_LIMIT) {
-            throw new Forbidden();
+        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
         }
 
         $params = array(
@@ -420,64 +467,6 @@ class Record extends Base
         }
 
         throw new Error();
-    }
-
-    /**
-     * Action add relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
-    {
-        if (!$request->isPost()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->addRelation($data->ids, $data->foreignIds, $params['link']);
-    }
-
-    /**
-     * Action remove relation
-     *
-     * @param array $params
-     * @param \stdClass $data
-     * @param Request $request
-     *
-     * @return bool
-     *
-     * @throws BadRequest
-     * @throws Forbidden
-     */
-    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
-    {
-        if (!$request->isDelete()) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->ids) || empty($data->foreignIds) || empty($params['link'])) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($this->name, 'edit')) {
-            throw new Forbidden();
-        }
-
-        return $this->getRecordService()->removeRelation($data->ids, $data->foreignIds, $params['link']);
     }
 
     public function actionFollow($params, $data, $request)

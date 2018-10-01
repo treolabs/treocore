@@ -33,9 +33,9 @@
  */
 
 namespace Espo\Core\Utils\Database\DBAL\Schema;
+
 class Schema extends \Doctrine\DBAL\Schema\Schema
 {
-
     /**
      * Creates a new table.
      *

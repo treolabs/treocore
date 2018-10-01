@@ -69,13 +69,19 @@ Espo.define('views/fields/link', 'views/fields/base', function (Dep) {
             if (this.mode === 'detail' && !nameValue && this.model.get(this.idName)) {
                 nameValue = this.translate(this.foreignScope, 'scopeNames');
             }
+
+            var iconHtml = null;
+            if (this.mode === 'detail') {
+                iconHtml = this.getHelper().getScopeColorIconHtml(this.foreignScope);
+            }
             return _.extend({
                 idName: this.idName,
                 nameName: this.nameName,
                 idValue: this.model.get(this.idName),
                 nameValue: nameValue,
                 foreignScope: this.foreignScope,
-                valueIsSet: this.model.has(this.idName)
+                valueIsSet: this.model.has(this.idName),
+                iconHtml: iconHtml
             }, Dep.prototype.data.call(this));
         },
 
@@ -115,7 +121,9 @@ Espo.define('views/fields/link', 'views/fields/base', function (Dep) {
                         filters: this.getSelectFilters(),
                         boolFilterList: this.getSelectBoolFilterList(),
                         primaryFilterName: this.getSelectPrimaryFilterName(),
-                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null
+                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null,
+                        mandatorySelectAttributeList: this.mandatorySelectAttributeList,
+                        forceSelectAllAttributes: this.forceSelectAllAttributes
                     }, function (view) {
                         view.render();
                         this.notify(false);
@@ -363,7 +371,7 @@ Espo.define('views/fields/link', 'views/fields/base', function (Dep) {
         validateRequired: function () {
             if (this.isRequired()) {
                 if (this.model.get(this.idName) == null) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     this.showValidationMessage(msg);
                     return true;
                 }

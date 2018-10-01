@@ -93,8 +93,14 @@
         "aclAllowDeleteCreated": "Allow to remove created records",
         "adminNotifications": "System notifications in administration panel",
         "adminNotificationsNewVersion": "Show notification when new EspoCRM version is available",
-        "textFilterUseContainsForVarchar": "Use 'contains' opertor when filtering varchar fields",
-        "authTokenPreventConcurrent": "Only one auth token per user"
+        "adminNotificationsNewExtensionVersion": "Show notification when new versions of extensions are available",
+        "textFilterUseContainsForVarchar": "Use 'contains' operator when filtering varchar fields",
+        "authTokenPreventConcurrent": "Only one auth token per user",
+        "scopeColorsDisabled": "Disable scope colors",
+        "tabColorsDisabled": "Disable tab colors",
+        "tabIconsDisabled": "Disable tab icons",
+        "emailAddressIsOptedOutByDefault": "Mark new email addresses as opted-out",
+        "outboundEmailBccAddress": "BCC address for external clients"
     },
     "options": {
         "weekStart": {
@@ -147,7 +153,8 @@
         "aclAllowDeleteCreated": "Users will be able to remove records they created even if they don't have a delete access.",
         "textFilterUseContainsForVarchar": "If not checked then 'starts with' operator is used. You can use the wildcard '%'.",
         "streamEmailNotificationsEntityList": "Email notifications about stream updates of followed records. Users will receive email notifications only for specified entity types.",
-        "authTokenPreventConcurrent": "Users won't be able to be logged in on multiple devices simultaneously."
+        "authTokenPreventConcurrent": "Users won't be able to be logged in on multiple devices simultaneously.",
+        "emailAddressIsOptedOutByDefault": "When creating new record email addess will be marked as opted-out."
     },
     "labels": {
         "System": "System",

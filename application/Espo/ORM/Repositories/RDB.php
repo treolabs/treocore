@@ -122,7 +122,6 @@ class RDB extends \Espo\ORM\Repository
         $params = array();
         $this->handleSelectParams($params);
         if ($this->getMapper()->selectById($entity, $id, $params)) {
-            $entity->setAsFetched();
             return $entity;
         }
 
@@ -198,14 +197,17 @@ class RDB extends \Espo\ORM\Repository
 
     public function find(array $params = array())
     {
+        $params = $this->getSelectParams($params);
+
         if (empty($params['skipAdditionalSelectParams'])) {
             $this->handleSelectParams($params);
         }
-        $params = $this->getSelectParams($params);
 
         $dataArr = $this->getMapper()->select($this->seed, $params);
 
         $collection = new EntityCollection($dataArr, $this->entityType, $this->entityFactory);
+        $collection->setAsFetched();
+
         $this->reset();
 
         return $collection;
@@ -249,11 +251,17 @@ class RDB extends \Espo\ORM\Repository
         }
 
         $result = $this->getMapper()->selectRelated($entity, $relationName, $params);
+
         if (is_array($result)) {
-
             $collection = new EntityCollection($result, $entityType, $this->entityFactory);
-
+            $collection->setAsFetched();
             return $collection;
+        } else if ($result instanceof EntityCollection) {
+            $collection = $result;
+            return $collection;
+        } else if ($result instanceof Entity) {
+            $entity = $result;
+            return $entity;
         } else {
             return $result;
         }
@@ -584,19 +592,39 @@ class RDB extends \Espo\ORM\Repository
     protected function getSelectParams(array $params = array())
     {
         if (isset($params['whereClause'])) {
-            $params['whereClause'] = $params['whereClause'] + $this->whereClause;
+            $params['whereClause'] = $params['whereClause'];
+            if (!empty($this->whereClause)) {
+                $params['whereClause'][] = $this->whereClause;
+            }
         } else {
             $params['whereClause'] = $this->whereClause;
         }
         if (!empty($params['havingClause'])) {
-            $params['havingClause'] = $params['havingClause'] + $this->havingClause;
+            $params['havingClause'] = $params['havingClause'];
+            if (!empty($this->havingClause)) {
+                $params['havingClause'][] = $this->havingClause;
+            }
         } else {
             $params['havingClause'] = $this->havingClause;
         }
-        $params = $params + $this->listParams;
+
+        if (!empty($params['leftJoins']) && !empty($this->listParams['leftJoins'])) {
+            foreach ($this->listParams['leftJoins'] as $j) {
+                $params['leftJoins'][] = $j;
+            }
+        }
+
+        if (!empty($params['joins']) && !empty($this->listParams['joins'])) {
+            foreach ($this->listParams['joins'] as $j) {
+                $params['joins'][] = $j;
+            }
+        }
+
+        $params = array_replace_recursive($this->listParams, $params);
 
         return $params;
     }
+
 
     protected function getPDO()
     {

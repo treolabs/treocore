@@ -20,14 +20,16 @@
     "replyFromName": "Absendername für Rückantwort",
     "targetUserPosition": "Position Zielbenutzer",
     "fetchSince": "Holen seit",
-    "addAllTeamUsers": "Für alle Teambenutzer"
+    "addAllTeamUsers": "Für alle Teambenutzer",
+    "smtpPassword": "SMTP Passwort"
   },
   "tooltips": {
     "reply": "Benachrichtigt E-Mail Empfänger beim Empfang der Nachrichten.\n\n Nur eine E-Mail pro Empfänger wird zu einer Zeit versendet um eine Endlosschleife zu verhindern.",
     "createCase": "Fall aus eingehender E-Mail automatisch erstellen.",
     "replyToAddress": "Geben Sie die E-Mail Adresse dieser Mailbox an um Antworten hier zu empfangen.",
     "caseDistribution": "Wie Fälle zugewiesen werden. Entweder direkt dem Benutzer oder im Team.",
-    "targetUserPosition": "Bestimmen Sie die Position der Benutzer die Fälle zugewiesen bekommen."
+    "targetUserPosition": "Bestimmen Sie die Position der Benutzer die Fälle zugewiesen bekommen.",
+    "addAllTeamUsers": "Emails will be appearing in Inbox of all users of specified teams."
   },
   "links": {
     "filters": "Filter",

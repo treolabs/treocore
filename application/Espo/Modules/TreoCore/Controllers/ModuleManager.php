@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Controllers;
 
-use Espo\Modules\TreoCore\Services\ModuleManager as ModuleManagerService;
+use Treo\Services\ModuleManager as ModuleManagerService;
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;

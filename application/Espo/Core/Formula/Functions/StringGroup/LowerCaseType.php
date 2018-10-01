@@ -58,6 +58,6 @@ class LowerCaseType extends \Espo\Core\Formula\Functions\Base
             $value = strval($value);
         }
 
-        return strtolower($value);
+        return mb_strtolower($value);
     }
 }

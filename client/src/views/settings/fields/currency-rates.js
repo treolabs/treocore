@@ -56,7 +56,8 @@ Espo.define('views/settings/fields/currency-rates', 'views/fields/base', functio
             }, this);
 
             return {
-                rateValues: rateValues
+                rateValues: rateValues,
+                baseCurrency: baseCurrency
             };
         },
 

@@ -161,7 +161,7 @@ Espo.define('acl-manager', ['acl'], function (Acl) {
         },
 
         checkInTeam: function (model) {
-            return this.getImplementation(model.name).checkIsOwner(model);
+            return this.getImplementation(model.name).checkInTeam(model);
         },
 
         checkAssignmentPermission: function (user) {
@@ -256,6 +256,11 @@ Espo.define('acl-manager', ['acl'], function (Acl) {
             this.forbiddenAttributesCache[key] = attributeList;
 
             return attributeList;
+        },
+
+        checkTeamAssignmentPermission: function (teamId) {
+            if (this.get('assignmentPermission') === 'all') return true;
+            return ~this.getUser().getLinkMultipleIdList('teams').indexOf(teamId);
         }
 
     });

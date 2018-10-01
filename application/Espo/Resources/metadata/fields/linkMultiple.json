@@ -23,8 +23,6 @@
       "names"
    ],
    "notCreatable": true,
-   "filter": true,
-   "fieldDefs": {
-      "layoutListDisabled": true
-   }
+   "notSortable": true,
+   "filter": true
 }

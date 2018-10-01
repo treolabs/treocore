@@ -33,6 +33,7 @@
  */
 
 namespace Espo\ORM\DB;
+
 use Espo\ORM\Entity;
 use Espo\ORM\IEntity;
 use Espo\ORM\EntityFactory;
@@ -79,6 +80,7 @@ abstract class Mapper implements IMapper
         if ($ps) {
             foreach ($ps as $row) {
                 $entity = $this->fromRow($entity, $row);
+                $entity->setAsFetched();
                 return true;
             }
         }
@@ -123,8 +125,9 @@ abstract class Mapper implements IMapper
 
         if ($this->returnCollection) {
             $collectionClass = $this->collectionClass;
-            $entityArr = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
-            return $entityArr;
+            $collection = new $collectionClass($dataArr, $entity->getEntityType(), $this->entityFactory);
+            $collection->setAsFetched();
+            return $collection;
         } else {
             return $dataArr;
         }
@@ -202,6 +205,7 @@ abstract class Mapper implements IMapper
                     foreach ($ps as $row) {
                         if (!$totalCount) {
                             $relEntity = $this->fromRow($relEntity, $row);
+                            $relEntity->setAsFetched();
                             return $relEntity;
                         } else {
                             return $row['AggregateValue'];
@@ -242,13 +246,17 @@ abstract class Mapper implements IMapper
 
                 if ($relType == IEntity::HAS_ONE) {
                     if (count($resultArr)) {
-                        return $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity = $this->fromRow($relEntity, $resultArr[0]);
+                        $relEntity->setAsFetched();
+                        return $relEntity;
                     }
                     return null;
                 } else {
                     if ($this->returnCollection) {
                         $collectionClass = $this->collectionClass;
-                        return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                        $collection->setAsFetched();
+                        return $collection;
                     } else {
                         return $resultArr;
                     }
@@ -287,7 +295,9 @@ abstract class Mapper implements IMapper
                 }
                 if ($this->returnCollection) {
                     $collectionClass = $this->collectionClass;
-                    return new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection = new $collectionClass($resultArr, $relEntity->getEntityType(), $this->entityFactory);
+                    $collection->setAsFetched();
+                    return $collection;
                 } else {
                     return $resultArr;
                 }
@@ -713,7 +723,7 @@ abstract class Mapper implements IMapper
 
     public function insert(IEntity $entity)
     {
-        $dataArr = $this->toArray($entity);
+        $dataArr = $this->toValueMap($entity);
 
         $fieldArr = array();
         $valArr = array();
@@ -740,33 +750,35 @@ abstract class Mapper implements IMapper
 
     public function update(IEntity $entity)
     {
-        $dataArr = $this->toArray($entity);
+        $valueMap = $this->toValueMap($entity);
 
-        $setArr = array();
-        foreach ($dataArr as $field => $value) {
-            if ($field == 'id') {
+        $setArr = [];
+
+        foreach ($valueMap as $attribute => $value) {
+            if ($attribute == 'id') {
                 continue;
             }
-            $type = $entity->fields[$field]['type'];
+            $type = $entity->getAttributeType($attribute);
 
             if ($type == IEntity::FOREIGN) {
                 continue;
             }
 
-            if ($entity->getFetched($field) === $value && $type != IEntity::JSON_ARRAY && $type != IEntity::JSON_OBJECT) {
+            if (!$entity->isAttributeChanged($attribute) && $type !== IEntity::JSON_OBJECT) {
                 continue;
             }
 
             $value = $this->prepareValueForInsert($type, $value);
 
-            $setArr[] = "`" . $this->toDb($field) . "` = " . $this->quote($value);
+            $setArr[] = "`" . $this->toDb($attribute) . "` = " . $this->quote($value);
         }
+
         if (count($setArr) == 0) {
             return $entity->id;
         }
 
         $setPart = implode(', ', $setArr);
-        $wherePart = $this->query->getWhere($entity, array('id' => $entity->id, 'deleted' => 0));
+        $wherePart = $this->query->getWhere($entity, ['id' => $entity->id, 'deleted' => 0]);
 
         $sql = $this->composeUpdateQuery($this->toDb($entity->getEntityType()), $setPart, $wherePart);
 
@@ -810,21 +822,25 @@ abstract class Mapper implements IMapper
         return $this->update($entity);
     }
 
-    protected function toArray(IEntity $entity, $onlyStorable = true)
+    protected function toValueMap(IEntity $entity, $onlyStorable = true)
     {
-        $arr = array();
-        foreach ($entity->fields as $field => $fieldDefs) {
-            if ($entity->has($field)) {
+        $data = [];
+        foreach ($entity->getAttributes() as $attribute => $defs) {
+            if ($entity->has($attribute)) {
                 if ($onlyStorable) {
-                    if (!empty($fieldDefs['notStorable']) || !empty($fieldDefs['autoincrement']) || isset($fieldDefs['source']) && $fieldDefs['source'] != 'db')
-                        continue;
-                    if ($fieldDefs['type'] == IEntity::FOREIGN)
-                        continue;
+                    if (
+                        !empty($defs['notStorable'])
+                        ||
+                        !empty($defs['autoincrement'])
+                        ||
+                        isset($defs['source']) && $defs['source'] != 'db'
+                    ) continue;
+                    if ($defs['type'] == IEntity::FOREIGN) continue;
                 }
-                $arr[$field] = $entity->get($field);
+                $data[$attribute] = $entity->get($attribute);
             }
         }
-        return $arr;
+        return $data;
     }
 
     protected function fromRow(IEntity $entity, $data)
@@ -904,5 +920,3 @@ abstract class Mapper implements IMapper
         $this->collectionClass = $collectionClass;
     }
 }
-
-

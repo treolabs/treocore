@@ -74,14 +74,14 @@ Espo.define('views/fields/date', 'views/fields/base', function (Dep) {
 
         stringifyDateValue: function (value) {
             if (!value) {
-                if (this.mode == 'edit' || this.mode == 'search') {
+                if (this.mode == 'edit' || this.mode == 'search' || this.mode === 'list') {
                     return '';
                 }
                 return this.translate('None');
             }
 
             if (this.mode == 'list' || this.mode == 'detail') {
-                if (this.getConfig().get('readableDateFormatDisabled')) {
+                if (this.getConfig().get('readableDateFormatDisabled') || this.params.useNumericFormat) {
                     return this.getDateTime().toDisplayDate(value);
                 }
 
@@ -275,7 +275,7 @@ Espo.define('views/fields/date', 'views/fields/base', function (Dep) {
         validateRequired: function () {
             if (this.isRequired()) {
                 if (this.model.get(this.name) === null) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     this.showValidationMessage(msg);
                     return true;
                 }
@@ -284,7 +284,7 @@ Espo.define('views/fields/date', 'views/fields/base', function (Dep) {
 
         validateDate: function () {
             if (this.model.get(this.name) === -1) {
-                var msg = this.translate('fieldShouldBeDate', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                var msg = this.translate('fieldShouldBeDate', 'messages').replace('{field}', this.getLabelText());
                 this.showValidationMessage(msg);
                 return true;
             }
@@ -297,7 +297,7 @@ Espo.define('views/fields/date', 'views/fields/base', function (Dep) {
                 var otherValue = this.model.get(field);
                 if (value && otherValue) {
                     if (moment(value).unix() <= moment(otherValue).unix()) {
-                        var msg = this.translate('fieldShouldAfter', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name))
+                        var msg = this.translate('fieldShouldAfter', 'messages').replace('{field}', this.getLabelText())
                                                                                 .replace('{otherField}', this.translate(field, 'fields', this.model.name));
 
                         this.showValidationMessage(msg);
@@ -314,7 +314,7 @@ Espo.define('views/fields/date', 'views/fields/base', function (Dep) {
                 var otherValue = this.model.get(field);
                 if (value && otherValue) {
                     if (moment(value).unix() >= moment(otherValue).unix()) {
-                        var msg = this.translate('fieldShouldBefore', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name))
+                        var msg = this.translate('fieldShouldBefore', 'messages').replace('{field}', this.getLabelText())
                                                                                  .replace('{otherField}', this.translate(field, 'fields', this.model.name));
                         this.showValidationMessage(msg);
                         return true;

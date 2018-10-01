@@ -64,9 +64,13 @@ Espo.define('views/fields/link-parent', 'views/fields/base', function (Dep) {
         searchTypeList: ['is', 'isEmpty', 'isNotEmpty'],
 
         data: function () {
-            var nameValue = this.model.has(this.nameName) ? this.model.get(this.nameName) : this.model.get(this.idName);
+            var nameValue = this.model.get(this.nameName) ? this.model.get(this.nameName) : this.model.get(this.idName);
             if (!nameValue && this.model.get(this.idName) && this.model.get(this.typeName)) {
                 nameValue = this.translate(this.model.get(this.typeName), 'scopeNames');
+            }
+            var iconHtml = null;
+            if (this.mode === 'detail' && this.foreignScope) {
+                iconHtml = this.getHelper().getScopeColorIconHtml(this.foreignScope);
             }
             return _.extend({
                 idName: this.idName,
@@ -77,7 +81,8 @@ Espo.define('views/fields/link-parent', 'views/fields/base', function (Dep) {
                 typeValue: this.model.get(this.typeName),
                 foreignScope: this.foreignScope,
                 foreignScopeList: this.foreignScopeList,
-                valueIsSet: this.model.has(this.idName) || this.model.has(this.typeName)
+                valueIsSet: this.model.has(this.idName) || this.model.has(this.typeName),
+                iconHtml: iconHtml
             }, Dep.prototype.data.call(this));
         },
 
@@ -133,7 +138,9 @@ Espo.define('views/fields/link-parent', 'views/fields/base', function (Dep) {
                         filters: this.getSelectFilters(),
                         boolFilterList: this.getSelectBoolFilterList(),
                         primaryFilterName: this.getSelectPrimaryFilterName(),
-                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null
+                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null,
+                        mandatorySelectAttributeList: this.getMandatorySelectAttributeList(),
+                        forceSelectAllAttributes: this.isForceSelectAllAttributes()
                     }, function (dialog) {
                         dialog.render();
                         Espo.Ui.notify(false);
@@ -179,6 +186,14 @@ Espo.define('views/fields/link-parent', 'views/fields/base', function (Dep) {
             this.$elementName.val(model.get('name'));
             this.$elementId.val(model.get('id'));
             this.trigger('change');
+        },
+
+        getMandatorySelectAttributeList: function () {
+            this.mandatorySelectAttributeList;
+        },
+
+        isForceSelectAllAttributes: function () {
+            this.forceSelectAllAttributes;
         },
 
         getAutocompleteUrl: function () {
@@ -292,7 +307,7 @@ Espo.define('views/fields/link-parent', 'views/fields/base', function (Dep) {
         validateRequired: function () {
             if (this.isRequired()) {
                 if (this.model.get(this.idName) == null || !this.model.get(this.typeName)) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     this.showValidationMessage(msg);
                     return true;
                 }

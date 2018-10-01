@@ -67,18 +67,26 @@ class Xlsx extends \Espo\Core\Injectable
     public function loadAdditionalFields(Entity $entity, $fieldList)
     {
         foreach ($entity->getRelationList() as $link) {
-            if ($entity->getRelationType($link) === 'belongsToParent') {
-                if (in_array($link, $fieldList)) {
-                    $parent = $entity->get($link);
-                    if ($parent instanceof Entity) {
-                        $entity->set($link . 'Name', $parent->get('name'));
+            if (in_array($link, $fieldList)) {
+                if ($entity->getRelationType($link) === 'belongsToParent') {
+                    if (!$entity->get($link . 'Name')) {
+                        $entity->loadParentNameField($link);
                     }
-                }
-            } else if ($entity->getRelationType($link) === 'belongsTo' && $entity->getRelationParam($link, 'noJoin') && $entity->hasField($link . 'Name')) {
-                if (in_array($link, $fieldList)) {
-                    $related = $entity->get($link);
-                    if ($related instanceof Entity) {
-                        $entity->set($link . 'Name', $related->get('name'));
+                } else if (
+                    (
+                        (
+                            $entity->getRelationType($link) === 'belongsTo'
+                            &&
+                            $entity->getRelationParam($link, 'noJoin')
+                        )
+                        ||
+                        $entity->getRelationType($link) === 'hasOne'
+                    )
+                    &&
+                    $entity->hasAttribute($link . 'Name')
+                ) {
+                    if (!$entity->get($link . 'Name') || !$entity->get($link . 'Id')) {
+                        $entity->loadLinkField($link);
                     }
                 }
             }
@@ -297,6 +305,8 @@ class Xlsx extends \Espo\Core\Injectable
                     }
                 } else if ($type == 'int') {
                     $sheet->setCellValue("$col$rowNumber", $row[$name] ?: 0);
+                } else if ($type == 'float') {
+                    $sheet->setCellValue("$col$rowNumber", $row[$name] ?: 0);
                 } else if ($type == 'currency') {
                     if (array_key_exists($name.'Currency', $row) && array_key_exists($name, $row)) {
                         $sheet->setCellValue("$col$rowNumber", $row[$name] ? $row[$name] : '');
@@ -472,7 +482,7 @@ class Xlsx extends \Espo\Core\Injectable
 
                 } else {
                     if (array_key_exists($name, $row)) {
-                        $sheet->setCellValue("$col$rowNumber", $row[$name]);
+                        $sheet->setCellValueExplicit("$col$rowNumber", $row[$name], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     }
                 }
 
@@ -553,6 +563,11 @@ class Xlsx extends \Espo\Core\Injectable
                     $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)
                         ->getNumberFormat()
                         ->setFormatCode('0');
+                } break;
+                case 'float': {
+                    $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)
+                        ->getNumberFormat()
+                        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
                 } break;
                 case 'date': {
                     $sheet->getStyle($col.$startingRowNumber.':'.$col.$rowNumber)

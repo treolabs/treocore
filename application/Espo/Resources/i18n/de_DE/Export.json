@@ -1,6 +1,7 @@
 {
   "fields": {
-    "useCustomFieldList": "Benutzerdefinierte Feldliste",
-    "fieldList": "Feldliste"
+    "fieldList": "Feldliste",
+    "exportAllFields": "Alle Felder exportieren",
+    "useCustomFieldList": "benutzerdefinierte Feldliste"
   }
 }

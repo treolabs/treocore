@@ -32,8 +32,8 @@
  * and "TreoPIM" word.
  */
 
-use Espo\Modules\TreoCore\Core\Application as App;
-use Espo\Modules\TreoCore\Core\Portal\Application as PortalApp;
+use Treo\Core\Application as App;
+use Treo\Core\Portal\Application as PortalApp;
 
 include "bootstrap.php";
 
@@ -56,10 +56,15 @@ if (!empty($_GET['entryPoint'])) {
 if (!empty($id = PortalApp::getCallingPortalId())) {
     // create portal app
     $app = new PortalApp($id);
-} elseif (!empty($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] != '/') {
+} elseif (!empty($uri = $_SERVER['REQUEST_URI']) && $uri != '/') {
+    // if images path than call showImage
+    if (preg_match_all('/^\/images\/(.*)\.jpg$/', $uri, $matches)) {
+        $app->showImage($matches[1][0]);
+    }
+
     // show 404
     header("HTTP/1.0 404 Not Found");
-    exit();
+    exit;
 }
 
 $app->runClient();

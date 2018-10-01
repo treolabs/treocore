@@ -46,6 +46,10 @@
          "type":"varchar"
       },
       {
+         "type": "bool",
+         "name":"useNumericFormat"
+      },
+      {
          "name":"audited",
          "type":"bool"
       },
@@ -70,5 +74,6 @@
       "type":"datetime",
       "notNull":false
    },
-   "view": "views/fields/datetime-optional"
+   "view": "views/fields/datetime-optional",
+   "personalData": true
 }

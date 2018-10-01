@@ -134,7 +134,7 @@ class Image extends \Espo\Core\EntryPoints\Base
         }
 
         if (!empty($size)) {
-            $fileName = $sourceId . '_' . $size . '.jpg';
+            $fileName = $size . '-' . $attachment->get('name');
         } else {
             $fileName = $attachment->get('name');
         }
@@ -202,9 +202,10 @@ class Image extends \Espo\Core\EntryPoints\Base
                 break;
         }
 
-        $targetImage = imagerotate($targetImage, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0], 0);
+        if (function_exists('exif_read_data')) {
+            $targetImage = imagerotate($targetImage, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0], 0);
+        }
 
         return $targetImage;
     }
 }
-

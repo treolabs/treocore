@@ -49,10 +49,7 @@ class User extends Record
     {
         parent::init();
 
-        //@todo treoinject
-        $this->addDependency('mailSender');
-        $this->addDependency('language');
-        $this->addDependency('fileManager');
+        $this->addDependency('container');
     }
 
     protected $internalAttributeList = ['password'];
@@ -71,22 +68,39 @@ class User extends Record
         'accountsIds'
     ];
 
+    protected $mandatorySelectAttributeList = [
+        'isPortalUser',
+        'isActive',
+        'userName',
+        'isAdmin'
+    ];
+
+    protected $linkSelectParams = array(
+        'targetLists' => array(
+            'additionalColumns' => array(
+                'optedOut' => 'isOptedOut'
+            )
+        )
+    );
+
     protected function getMailSender()
     {
-        //@todo treoinject
-        return $this->getInjection('mailSender');
+        return $this->getContainer()->get('mailSender');
     }
 
     protected function getLanguage()
     {
-        //@todo treoinject
-        return $this->getInjection('language');
+        return $this->getContainer()->get('language');
     }
 
     protected function getFileManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fileManager');
+        return $this->getContainer()->get('fileManager');
+    }
+
+    protected function getContainer()
+    {
+        return $this->injections['container'];
     }
 
     public function getEntity($id = null)

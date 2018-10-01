@@ -31,33 +31,39 @@
             "type": "varchar",
             "notStorable": true,
             "required": true,
-            "view": "views/email/fields/from-address-varchar"
+            "view": "views/email/fields/from-address-varchar",
+            "textFilterDisabled": true
         },
         "to": {
             "type": "varchar",
             "notStorable": true,
             "required": true,
-            "view": "views/email/fields/email-address-varchar"
+            "view": "views/email/fields/email-address-varchar",
+            "textFilterDisabled": true
         },
         "cc": {
             "type": "varchar",
             "notStorable": true,
-            "view": "views/email/fields/email-address-varchar"
+            "view": "views/email/fields/email-address-varchar",
+            "textFilterDisabled": true
         },
         "bcc": {
             "type": "varchar",
             "notStorable": true,
-            "view": "views/email/fields/email-address-varchar"
+            "view": "views/email/fields/email-address-varchar",
+            "textFilterDisabled": true
         },
         "replyTo": {
             "type": "varchar",
             "notStorable": true,
-            "view": "views/email/fields/email-address-varchar"
+            "view": "views/email/fields/email-address-varchar",
+            "textFilterDisabled": true
         },
         "personStringData": {
             "type": "varchar",
             "notStorable": true,
-            "disabled": true
+            "disabled": true,
+            "view": "views/email/fields/person-string-data"
         },
         "isRead": {
             "type": "bool",
@@ -98,7 +104,8 @@
         "folderId": {
             "type": "varchar",
             "notStorable": true,
-            "default": false
+            "default": false,
+            "textFilterDisabled": true
         },
         "isUsers": {
             "type": "bool",
@@ -137,7 +144,8 @@
         "messageIdInternal": {
             "type": "varchar",
             "maxLength": 300,
-            "readOnly": true
+            "readOnly": true,
+            "textFilterDisabled": true
         },
         "emailAddress": {
             "type": "base",
@@ -146,12 +154,16 @@
         },
         "fromEmailAddress": {
             "type": "link",
-            "view": "views/email/fields/from-email-address"
+            "view": "views/email/fields/from-email-address",
+            "textFilterDisabled": true
         },
         "toEmailAddresses": {
             "type": "linkMultiple"
         },
         "ccEmailAddresses": {
+            "type": "linkMultiple"
+        },
+        "replyToEmailAddresses": {
             "type": "linkMultiple"
         },
         "bodyPlain": {
@@ -161,8 +173,9 @@
         },
         "body": {
             "type": "wysiwyg",
-            "seeMoreDisabled": true,
-            "view": "views/email/fields/body"
+            "view": "views/email/fields/body",
+            "attachmentField": "attachments",
+            "useIframe": true
         },
         "isHtml": {
             "type": "bool",
@@ -227,7 +240,8 @@
         },
         "replies": {
             "type": "linkMultiple",
-            "readOnly": true
+            "readOnly": true,
+            "orderBy": "dateSent"
         },
         "isSystem": {
             "type": "bool",
@@ -400,6 +414,20 @@
                 }
             }
         },
+        "replyToEmailAddresses": {
+            "type": "hasMany",
+            "entity": "EmailAddress",
+            "relationName": "emailEmailAddress",
+            "conditions": {
+                "addressType": "rto"
+            },
+            "additionalColumns": {
+                "addressType": {
+                    "type": "varchar",
+                    "len": "4"
+                }
+            }
+        },
         "inboundEmails": {
             "type": "hasMany",
             "entity": "InboundEmail",
@@ -414,7 +442,8 @@
     "collection": {
         "sortBy": "dateSent",
         "asc": false,
-        "textFilterFields": ["name", "bodyPlain", "body"]
+        "textFilterFields": ["name", "bodyPlain", "body"],
+        "fullTextSearch": true
     },
     "indexes": {
         "dateSent": {

@@ -107,6 +107,14 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                     this.type = model.getFieldType(this.field);
                 }
 
+                if (
+                    this.getMetadata().get(['scopes', this.scope, 'hasPersonalData'])
+                    &&
+                    this.getMetadata().get(['fields', this.type, 'personalData'])
+                ) {
+                    this.hasPersonalData = true;
+                }
+
                 Promise.race([
                     new Promise(function (resolve) {
                         if (this.isNew) {
@@ -142,6 +150,13 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                         this.paramList.push(o);
                     }, this);
 
+                    if (this.hasPersonalData) {
+                        this.paramList.push({
+                            name: 'isPersonalData',
+                            type: 'bool'
+                        });
+                    }
+
                     this.paramList.forEach(function (o) {
                         this.model.defs.fields[o.name] = o;
                     }, this);
@@ -164,7 +179,14 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                         rows: 1
                     });
 
+                    if (this.hasPersonalData) {
+                        this.createFieldView('bool', 'isPersonalData', null, {});
+                    }
 
+                    this.createFieldView('text', 'tooltipText', null, {
+                        trim: true,
+                        rows: 1
+                    });
 
                     this.hasDynamicLogicPanel = false;
                     if (
@@ -268,7 +290,7 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                 }
                 this.model.set('label', label);
                 if (name) {
-                    name = name.replace(/-/i, '').replace(/_/i, '').replace(/[^\w\s]/gi, '').replace(/ (.)/g, function(match, g) {
+                    name = name.replace(/-/g, '').replace(/_/g, '').replace(/[^\w\s]/gi, '').replace(/ (.)/g, function(match, g) {
                         return g.toUpperCase();
                     }).replace(' ', '');
                     if (name.length) {
@@ -384,12 +406,23 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                 Espo.Ui.notify(false);
                 this.enableButtons();
 
-                this.getMetadata().load(function () {
-                    this.getMetadata().storeToCache();
-                    this.trigger('after:save');
-                }.bind(this), true);
-
                 this.updateLanguage();
+
+                Promise.all([
+                    new Promise(function (resolve) {
+                        this.getMetadata().load(function () {
+                            this.getMetadata().storeToCache();
+                            resolve();
+                        }.bind(this), true);
+                    }.bind(this)),
+                    new Promise(function (resolve) {
+                        this.getLanguage().load(function () {
+                            resolve();
+                        }, true);
+                    }.bind(this))
+                ]).then(function () {
+                    this.trigger('after:save');
+                }.bind(this));
 
                 this.model.fetchedAttributes = this.model.getClonedAttributes();
             }, this);

@@ -88,6 +88,20 @@ class EntityManager extends \Espo\Core\Controllers\Base
         if (isset($data['textFilterFields']) && is_array($data['textFilterFields'])) {
             $params['textFilterFields'] = $data['textFilterFields'];
         }
+        if (!empty($data['color'])) {
+            $params['color'] = $data['color'];
+        }
+        if (!empty($data['iconClass'])) {
+            $params['iconClass'] = $data['iconClass'];
+        }
+        if (isset($data['fullTextSearch'])) {
+            $params['fullTestSearch'] = $data['fullTextSearch'];
+        }
+
+        $params['kanbanViewMode'] = !empty($data['kanbanViewMode']);
+        if (!empty($data['kanbanStatusIgnoreList'])) {
+            $params['kanbanStatusIgnoreList'] = $data['kanbanStatusIgnoreList'];
+        }
 
         $result = $this->getContainer()->get('entityManagerUtil')->create($name, $type, $params);
 
@@ -325,6 +339,18 @@ class EntityManager extends \Espo\Core\Controllers\Base
 
         $this->getContainer()->get('entityManagerUtil')->setFormulaData($data->scope, $formulaData);
 
+        $this->getContainer()->get('dataManager')->clearCache();
+
+        return true;
+    }
+
+    public function postActionResetToDefault($params, $data, $request)
+    {
+        if (empty($data->scope)) {
+            throw new BadRequest();
+        }
+
+        $this->getContainer()->get('entityManagerUtil')->resetToDefaults($data->scope);
         $this->getContainer()->get('dataManager')->clearCache();
 
         return true;

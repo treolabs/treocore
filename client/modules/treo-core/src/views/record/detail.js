@@ -50,6 +50,56 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     this.hotKeySave(e);
                 }
             });
+
+            let dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']) || {};
+            Object.keys(dropDownItems).forEach((item) => {
+                let check = true;
+                if (dropDownItems[item].conditions) {
+                    check = dropDownItems[item].conditions.every((condition) => {
+                        let operator = condition.operator;
+                        let value = condition.value;
+                        let attribute = this.model.get(condition.attribute);
+                        let currentCheck;
+                        switch(operator) {
+                            case ('in'):
+                                currentCheck = value.includes(attribute);
+                                break;
+                            default:
+                                currentCheck = false;
+                        }
+                        return currentCheck;
+                    });
+                }
+                if (check) {
+                    let dropdownItem = {
+                        name: dropDownItems[item].name,
+                        label: dropDownItems[item].label
+                    };
+                    if (dropDownItems[item].iconClass) {
+                        let htmlLogo = `<span class="${dropDownItems[item].iconClass}" style="float: right; top: 3px; color: #333"></span>`;
+                        dropdownItem.html = `${this.translate(dropDownItems[item].label, 'labels', this.scope)} ${htmlLogo}`;
+                    }
+                    this.dropdownItemList.push(dropdownItem);
+
+                    let method = 'action' + Espo.Utils.upperCaseFirst(dropDownItems[item].name);
+                    this[method] = function () {
+                        let path = dropDownItems[item].actionViewPath;
+
+                        let o = {};
+                        (dropDownItems[item].optionsToPass || []).forEach((option) => {
+                            if (option in this) {
+                                o[option] = this[option];
+                            }
+                        });
+
+                        this.createView(item, path, o, (view) => {
+                            if (typeof view[dropDownItems[item].action] === 'function') {
+                                view[dropDownItems[item].action]();
+                            }
+                        });
+                    };
+                }
+            }, this);
         },
 
         hotKeyEdit: function (e) {

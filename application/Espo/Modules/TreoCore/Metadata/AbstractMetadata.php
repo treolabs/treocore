@@ -32,54 +32,16 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Espo\Modules\TreoCore\Metadata;
-
-use Espo\Modules\TreoCore\Core\Container;
 
 /**
  * AbstractMetadata class
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @deprecated
  */
-abstract class AbstractMetadata
+abstract class AbstractMetadata extends \Treo\Metadata\AbstractMetadata
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * Modify
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    abstract public function modify(array $data): array;
-
-    /**
-     * Set container
-     *
-     * @param Container $container
-     *
-     * @return AbstractMetadata
-     */
-    public function setContainer(Container $container): AbstractMetadata
-    {
-        $this->container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container
-     *
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
-    }
 }

@@ -37,7 +37,7 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
 
         type: 'array',
 
-        listTemplate: 'fields/array/detail',
+        listTemplate: 'fields/array/list',
 
         detailTemplate: 'fields/array/detail',
 
@@ -56,7 +56,8 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
                 translatedOptions: this.translatedOptions,
                 hasOptions: this.params.options ? true : false,
                 itemHtmlList: itemHtmlList,
-                isEmpty: (this.selected || []).length === 0
+                isEmpty: (this.selected || []).length === 0,
+                valueIsSet: this.model.has(this.name)
             }, Dep.prototype.data.call(this));
         },
 
@@ -110,36 +111,40 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
             }
 
             if (!this.translatedOptions) {
-                var t = {};
-                if (this.params.translation) {
-                    var data = this.getLanguage().data;
-                    var arr = this.params.translation.split('.');
-                    var pointer = this.getLanguage().data;
-                    arr.forEach(function (key) {
-                        if (key in pointer) {
-                            pointer = pointer[key];
-                            t = pointer;
-                        }
-                    }, this);
-                } else {
-                    t = this.translate(this.name, 'options', this.model.name);
-                }
-                this.translatedOptions = null;
-                var translatedOptions = {};
-                if (this.params.options) {
-                    this.params.options.forEach(function (o) {
-                        if (typeof t === 'object' && o in t) {
-                            translatedOptions[o] = t[o];
-                        } else {
-                            translatedOptions[o] = o;
-                        }
-                    }.bind(this));
-                    this.translatedOptions = translatedOptions;
-                }
+                this.setupTranslation();
             }
 
             if (this.options.customOptionList) {
-                this.setOptionList(this.options.customOptionList);
+                this.setOptionList(this.options.customOptionList, true);
+            }
+        },
+
+        setupTranslation: function () {
+            var t = {};
+            if (this.params.translation) {
+                var data = this.getLanguage().data;
+                var arr = this.params.translation.split('.');
+                var pointer = this.getLanguage().data;
+                arr.forEach(function (key) {
+                    if (key in pointer) {
+                        pointer = pointer[key];
+                        t = pointer;
+                    }
+                }, this);
+            } else {
+                t = this.translate(this.name, 'options', this.model.name);
+            }
+            this.translatedOptions = null;
+            var translatedOptions = {};
+            if (this.params.options) {
+                this.params.options.forEach(function (o) {
+                    if (typeof t === 'object' && o in t) {
+                        translatedOptions[o] = t[o];
+                    } else {
+                        translatedOptions[o] = o;
+                    }
+                }.bind(this));
+                this.translatedOptions = translatedOptions;
             }
         },
 
@@ -147,13 +152,21 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
 
         },
 
-        setOptionList: function (optionList) {
+        setOptionList: function (optionList, silent) {
             if (!this.originalOptionList) {
                 this.originalOptionList = this.params.options;
             }
             this.params.options = Espo.Utils.clone(optionList);
 
-            if (this.mode == 'edit') {
+            if (this.mode == 'edit' && !silent) {
+                var selectedOptionList = [];
+                this.selected.forEach(function (option) {
+                    if (~optionList.indexOf(option)) {
+                        selectedOptionList.push(option);
+                    }
+                }, this);
+                this.selected = selectedOptionList;
+
                 if (this.isRendered()) {
                     this.reRender();
                     this.trigger('change');
@@ -373,7 +386,7 @@ Espo.define('views/fields/array', ['views/fields/base', 'lib!Selectize'], functi
             if (this.isRequired()) {
                 var value = this.model.get(this.name);
                 if (!value || value.length == 0) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     this.showValidationMessage(msg);
                     return true;
                 }

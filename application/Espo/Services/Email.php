@@ -48,13 +48,12 @@ class Email extends Record
     {
         parent::init();
         $this->addDependencyList([
+            'container',
             'preferences',
             'fileManager',
             'crypt',
             'serviceFactory',
-            'fileStorageManager',
-            //@todo treoinject
-            'mailSender'
+            'fileStorageManager'
         ]);
     }
 
@@ -68,8 +67,7 @@ class Email extends Record
         'parentType', 'parentId', 'parentName', 'teamsIds', 'teamsNames', 'assignedUserId', 'assignedUserName'
     ];
 
-    protected $selectAttributeList = [
-        'id',
+    protected $mandatorySelectAttributeList = [
         'name',
         'createdById',
         'dateSent',
@@ -80,6 +78,7 @@ class Email extends Record
         'parentId',
         'parentType',
         'isHtml',
+        'isReplied',
         'status',
         'accountId',
         'folderId',
@@ -101,26 +100,22 @@ class Email extends Record
 
     protected function getMailSender()
     {
-        //@todo treoinject
-        return $this->getInjection('mailSender');
+        return $this->getInjection('container')->get('mailSender');
     }
 
     protected function getPreferences()
     {
-        //@todo treoinject
-        return $this->getInjection('preferences');
+        return $this->injections['preferences'];
     }
 
     protected function getCrypt()
     {
-        //@todo treoinject
-        return $this->getInjection('crypt');
+        return $this->injections['crypt'];
     }
 
     protected function getServiceFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('serviceFactory');
+        return $this->injections['serviceFactory'];
     }
 
     protected function send(Entities\Email $entity)
@@ -183,14 +178,26 @@ class Email extends Record
 
         if (!$smtpParams && $fromAddress === strtolower($this->getConfig()->get('outboundEmailFromAddress'))) {
             if (!$this->getConfig()->get('outboundEmailIsShared')) {
-                throw new Error('Can not use system smtp. System SMTP is not shared.');
+                throw new Error('Can not use system SMTP. System account is not shared.');
             }
-            $emailSender->setParams(array(
+            $emailSender->setParams([
                 'fromName' => $this->getConfig()->get('outboundEmailFromName')
-            ));
+            ]);
         }
 
-        $params = array();
+        if (!$smtpParams && !$this->getConfig()->get('outboundEmailIsShared')) {
+            throw new Error('No SMTP params found for '.$fromAddress.'.');
+        }
+
+        if (!$smtpParams) {
+            if (in_array($fromAddress, $userAddressList)) {
+                $emailSender->setParams([
+                    'fromName' => $this->getUser()->get('name')
+                ]);
+            }
+        }
+
+        $params = [];
 
         $parent = null;
         if ($entity->get('parentType') && $entity->get('parentId')) {
@@ -309,6 +316,11 @@ class Email extends Record
         $this->getEntityManager()->getRepository('Email')->loadBccField($entity);
     }
 
+    public function loadReplyToField(Entity $entity)
+    {
+        $this->getEntityManager()->getRepository('Email')->loadReplyToField($entity);
+    }
+
     public function getEntity($id = null)
     {
         $entity = $this->getRepository()->get($id);
@@ -337,6 +349,7 @@ class Email extends Record
         $this->loadToField($entity);
         $this->loadCcField($entity);
         $this->loadBccField($entity);
+        $this->loadReplyToField($entity);
 
         $this->loadNameHash($entity);
 
@@ -648,7 +661,7 @@ class Email extends Record
         }
     }
 
-    public function loadNameHash(Entity $entity, array $fieldList = ['from', 'to', 'cc', 'bcc'])
+    public function loadNameHash(Entity $entity, array $fieldList = ['from', 'to', 'cc', 'bcc', 'replyTo'])
     {
         $this->getEntityManager()->getRepository('Email')->loadNameHash($entity, $fieldList);
     }
@@ -822,5 +835,10 @@ class Email extends Record
         }
 
         return $data;
+    }
+
+    public function isPermittedAssignedUsers(Entity $entity)
+    {
+        return true;
     }
 }

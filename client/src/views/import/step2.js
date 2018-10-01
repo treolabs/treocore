@@ -111,14 +111,14 @@ Espo.define('views/import/step2', 'view', function (Dep) {
         afterRender: function () {
             $container = $('#mapping-container');
 
-            $table = $('<table>').addClass('table').addClass('table-bordered');
+            $table = $('<table>').addClass('table').addClass('table-bordered').css('table-layout', 'fixed');
 
             $row = $('<tr>');
             if (this.formData.headerRow) {
-                $cell = $('<th>').attr('width', '27%').html(this.translate('Header Row Value', 'labels', 'Import'));
+                $cell = $('<th>').attr('width', '25%').html(this.translate('Header Row Value', 'labels', 'Import'));
                 $row.append($cell);
             }
-            $cell = $('<th>').attr('width', '33%').html(this.translate('Field', 'labels', 'Import'));
+            $cell = $('<th>').attr('width', '25%').html(this.translate('Field', 'labels', 'Import'));
             $row.append($cell);
             $cell = $('<th>').html(this.translate('First Row Value', 'labels', 'Import'));
             $row.append($cell);
@@ -144,7 +144,7 @@ Espo.define('views/import/step2', 'view', function (Dep) {
                     value = value.substr(0, 200) + '...';
                 }
 
-                $cell = $('<td>').html(value);
+                $cell = $('<td>').css('overflow', 'hidden').html(value);
                 $row.append($cell);
 
                 if (~['update', 'createAndUpdate'].indexOf(this.formData.action)) {
@@ -171,7 +171,7 @@ Espo.define('views/import/step2', 'view', function (Dep) {
             for (var field in defs) {
                 var d = defs[field];
 
-                if (!~this.allowedFieldList.indexOf(field) && (d.readOnly || d.disabled || d.importDisabled)) {
+                if (!~this.allowedFieldList.indexOf(field) && (d.disabled || d.importDisabled)) {
                     continue;
                 }
                 fieldList.push(field);
@@ -192,7 +192,7 @@ Espo.define('views/import/step2', 'view', function (Dep) {
 
             for (var field in fields) {
                 var d = fields[field];
-                if (!~this.allowedFieldList.indexOf(field) && (((d.readOnly || d.disabled) && !d.importNotDisabled) || d.importDisabled)) {
+                if (!~this.allowedFieldList.indexOf(field) && (((d.disabled) && !d.importNotDisabled) || d.importDisabled)) {
                     continue;
                 }
 
@@ -244,12 +244,44 @@ Espo.define('views/import/step2', 'view', function (Dep) {
 
             var fieldList = this.getAttributeList();
 
-            $select = $('<select>').addClass('form-control').attr('id', 'column-' + num.toString());
-            $option = $('<option>').val('').html('-' + this.translate('Skip', 'labels', 'Import') + '-');
+            var $select = $('<select>').addClass('form-control').attr('id', 'column-' + num.toString());
+            var $option = $('<option>').val('').html('-' + this.translate('Skip', 'labels', 'Import') + '-');
+
+            var scope = this.formData.entityType;
 
             $select.append($option);
             fieldList.forEach(function (field) {
-                $option = $('<option>').val(field).html(this.translate(field, 'fields', this.formData.entityType));
+                var label = '';
+                if (this.getLanguage().has(field, 'fields', scope) || this.getLanguage().has(field, 'fields', 'Global')) {
+                    label = this.translate(field, 'fields', scope);
+                } else {
+                    if (field.indexOf('Id') === field.length - 2) {
+                        var baseField = field.substr(0, field.length - 2);
+                        if (this.getMetadata().get(['entityDefs', scope, 'fields', baseField])) {
+                            label = this.translate(baseField, 'fields', scope) + ' (' + this.translate('id', 'fields') + ')';
+                        }
+                    } else if (field.indexOf('Name') === field.length - 4) {
+                        var baseField = field.substr(0, field.length - 4);
+                        if (this.getMetadata().get(['entityDefs', scope, 'fields', baseField])) {
+                            label = this.translate(baseField, 'fields', scope) + ' (' + this.translate('name', 'fields') + ')';
+                        }
+                    } else if (field.indexOf('Type') === field.length - 4) {
+                        var baseField = field.substr(0, field.length - 4);
+                        if (this.getMetadata().get(['entityDefs', scope, 'fields', baseField])) {
+                            label = this.translate(baseField, 'fields', scope) + ' (' + this.translate('type', 'fields') + ')';
+                        }
+                    } else if (field.indexOf('phoneNumber') === 0) {
+                        var phoneNumberType = field.substr(11);
+                        var phoneNumberTypeLabel = this.getLanguage().translateOption(phoneNumberType, 'phoneNumber', scope);
+                        label = this.translate('phoneNumber', 'fields', scope) + ' (' + phoneNumberTypeLabel + ')';
+                    }
+                }
+
+                if (!label) {
+                    label = field;
+                }
+
+                $option = $('<option>').val(field).html(label);
 
                 if (name) {
                     if (field == name) {
@@ -278,7 +310,13 @@ Espo.define('views/import/step2', 'view', function (Dep) {
             $('#default-values-container').append(html);
 
             var type = Espo.Utils.upperCaseFirst(this.model.getFieldParam(name, 'type'));
-            this.createView(name, this.getFieldManager().getViewName(type), {
+
+            var viewName =
+                this.getMetadata().get(['entityDefs', this.scope, 'fields', name, 'view'])
+                ||
+                this.getFieldManager().getViewName(type);
+
+            this.createView(name, viewName, {
                 model: this.model,
                 el: this.getSelector() + ' .field[data-name="' + name + '"]',
                 defs: {

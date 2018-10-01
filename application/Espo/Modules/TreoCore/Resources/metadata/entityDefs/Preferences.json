@@ -1,0 +1,20 @@
+{
+    "fields": {
+        "receiveNewSystemVersionNotifications": {
+          "type": "bool",
+          "default": true
+        },
+        "receiveNewModuleVersionNotifications": {
+          "type": "bool",
+          "default": true
+        },
+        "receiveNewModuleNotifications": {
+          "type": "bool",
+          "default": true
+        },
+        "receiveInstallDeleteModuleNotifications": {
+          "type": "bool",
+          "default": true
+        }
+    }
+}

@@ -20,11 +20,9 @@
             <div class="dropdown menu-container visible-xs pull-left">
                 <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
-                    <li><a href="#User/view/{{userId}}" class="nav-link">{{userName}}</a></li>
-                    <li class="divider"></li>
-                    {{#each menu}}
+                    {{#each menuDataList}}
                     {{#unless divider}}
-                    <li><a href="{{#if link}}{{link}}{{else}}javascript:{{/if}}" class="nav-link{{#if action}} action{{/if}}"{{#if action}} data-action="{{action}}"{{/if}}>{{label}}</a></li>
+                    <li><a href="{{#if link}}{{link}}{{else}}javascript:{{/if}}" class="nav-link{{#if action}} action{{/if}}"{{#if action}} data-action="{{action}}"{{/if}}>{{#if html}}{{{html}}}{{else}}{{label}}{{/if}}</a></li>
                     {{else}}
                     <li class="divider"></li>
                     {{/unless}}
@@ -39,19 +37,49 @@
         <ul class="nav navbar-nav tabs">
             {{#each tabDefsList}}
             {{#unless isInMore}}
-            <li data-name="{{name}}" class="not-in-more"><a href="{{link}}" class="nav-link"><span class="full-label">{{label}}</span><span class="short-label" title="{{label}}">{{shortLabel}}</span></a></li>
+            <li data-name="{{name}}" class="not-in-more tab">
+                <a href="{{link}}" class="nav-link"{{#if color}} style="border-color: {{color}}"{{/if}}>
+                    <span class="full-label">{{label}}</span>
+                    <span class="short-label" title="{{label}}"{{#if color}} style="color: {{color}}"{{/if}}>
+                        {{#if iconClass}}
+                        <span class="{{iconClass}}"></span>
+                        {{else}}
+                        {{#if colorIconClass}}
+                        <span class="{{colorIconClass}}" style="color: {{color}}"></span>
+                        {{/if}}
+                        <span class="short-label-text">{{shortLabel}}</span>
+                        {{/if}}
+                    </span>
+                </a>
+            </li>
             {{/unless}}
             {{/each}}
+            {{#if isMoreFields}}
             <li class="dropdown more">
-                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon glyphicon-option-horizontal more-icon"></span></a>
+                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                     {{#each tabDefsList}}
                     {{#if isInMore}}
-                    <li data-name="{{name}}" class="in-more"><a href="{{link}}" class="nav-link"><span class="full-label">{{label}}</span></a></li>
+                        <li data-name="{{name}}" class="in-more tab">
+                            <a href="{{link}}" class="nav-link"{{#if color}} style="border-color: {{color}}"{{/if}}>
+                                <span class="short-label"{{#if color}} style="color: {{color}}"{{/if}}>
+                                    {{#if iconClass}}
+                                    <span class="{{iconClass}}"></span>
+                                    {{else}}
+                                    {{#if colorIconClass}}
+                                    <span class="{{colorIconClass}}" style="color: {{color}}"></span>
+                                    {{/if}}
+                                    <span class="short-label-text">&nbsp;</span>
+                                    {{/if}}
+                                </span>
+                                <span class="full-label">{{label}}</span>
+                            </a>
+                        </li>
                     {{/if}}
                     {{/each}}
                 </ul>
             </li>
+            {{/if}}
         </ul>
     </div>
 
@@ -61,11 +89,9 @@
             <li class="dropdown menu-container hidden-xs">
                 <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
-                    <li><a href="#User/view/{{userId}}" class="nav-link">{{userName}}</a></li>
-                    <li class="divider"></li>
-                    {{#each menu}}
+                    {{#each menuDataList}}
                     {{#unless divider}}
-                    <li><a href="{{#if link}}{{link}}{{else}}javascript:{{/if}}" class="nav-link{{#if action}} action{{/if}}"{{#if action}} data-action="{{action}}"{{/if}}>{{label}}</a></li>
+                    <li><a href="{{#if link}}{{link}}{{else}}javascript:{{/if}}" class="nav-link{{#if action}} action{{/if}}"{{#if action}} data-action="{{action}}"{{/if}}>{{#if html}}{{{html}}}{{else}}{{label}}{{/if}}</a></li>
                     {{else}}
                     <li class="divider"></li>
                     {{/unless}}

@@ -63,7 +63,7 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
             var type = this.$el.find('select.search-type').val();
             this.handleSearchType(type);
 
-            var valueList = this.getSearchParamsData().valueList || this.searchParams.value || [];
+            var valueList = this.searchParams.valueFront || [];
             this.$element.val(valueList.join(':,:'));
 
             var data = [];
@@ -81,6 +81,7 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
             }, this);
 
             this.$element.selectize({
+                create: true,
                 options: data,
                 delimiter: ':,:',
                 labelField: 'label',
@@ -136,7 +137,8 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
                             value: `%"${item}"%`,
                             attribute: this.name
                         }
-                    })
+                    }),
+                    valueFront: list
                 };
             } else if (type === 'noneOf') {
                 if (list.length === 0) {
@@ -164,7 +166,8 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
                                 }
                             })
                         }
-                    ]
+                    ],
+                    valueFront: list
                 };
             } else if (type === 'isEmpty') {
                 return {

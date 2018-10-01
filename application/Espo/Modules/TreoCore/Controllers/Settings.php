@@ -37,8 +37,8 @@ declare(strict_types=1);
 namespace Espo\Modules\TreoCore\Controllers;
 
 use Espo\Controllers\Settings as ParentSettings;
-use Espo\Modules\TreoCore\Traits\EventTriggeredTrait;
 use Slim\Http\Request;
+use Treo\Traits\EventTriggeredTrait;
 
 /**
  * Settings controller

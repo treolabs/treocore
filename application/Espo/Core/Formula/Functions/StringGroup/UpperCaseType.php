@@ -58,6 +58,6 @@ class UpperCaseType extends \Espo\Core\Formula\Functions\Base
             $value = strval($value);
         }
 
-        return strtoupper($value);
+        return mb_strtoupper($value);
     }
 }

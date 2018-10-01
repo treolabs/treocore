@@ -54,8 +54,6 @@ class Stream extends \Espo\Core\Hooks\Base
     {
         parent::init();
         $this->addDependency('serviceFactory');
-        //@todo treoinject
-        $this->addDependency('preferences');
     }
 
     protected function getServiceFactory()
@@ -65,8 +63,7 @@ class Stream extends \Espo\Core\Hooks\Base
 
     protected function getPreferences()
     {
-        //@todo treoinject
-        return $this->getInjection('preferences');
+        return $this->getInjection('container')->get('preferences');
     }
 
     protected function checkHasStream(Entity $entity)
@@ -191,11 +188,22 @@ class Stream extends \Espo\Core\Hooks\Base
         $entityType = $entity->getEntityType();
 
         if ($this->checkHasStream($entity)) {
+
+            $hasAssignedUsersField = false;
+            if ($entity->hasLinkMultipleField('assignedUsers')) {
+                $hasAssignedUsersField = true;
+            }
+
             if ($entity->isNew()) {
                 $userIdList = [];
 
                 $assignedUserId = $entity->get('assignedUserId');
                 $createdById = $entity->get('createdById');
+
+                $assignedUserIdList = [];
+                if ($hasAssignedUsersField) {
+                    $assignedUserIdList = $entity->getLinkMultipleIdList('assignedUsers');
+                }
 
                 if (
                     !$this->getUser()->isSystem()
@@ -218,6 +226,15 @@ class Stream extends \Espo\Core\Hooks\Base
                 ) {
                     $userIdList[] = $createdById;
                 }
+
+                if ($hasAssignedUsersField) {
+                    foreach ($assignedUserIdList as $userId) {
+                        if (!empty($userId) && !in_array($userId, $userIdList)) {
+                            $userIdList[] = $userId;
+                        }
+                    }
+                }
+
                 if (!empty($assignedUserId) && !in_array($assignedUserId, $userIdList)) {
                     $userIdList[] = $assignedUserId;
                 }
@@ -279,6 +296,27 @@ class Stream extends \Espo\Core\Hooks\Base
                         $value = $entity->get($field);
                         if (!empty($value) && $value != $entity->getFetched($field)) {
                             $this->getStreamService()->noteStatus($entity, $field);
+                        }
+                    }
+
+                    $assignedUserIdList = [];
+                    if ($hasAssignedUsersField) {
+                        $assignedUserIdList = $entity->getLinkMultipleIdList('assignedUsers');
+                    }
+
+                    if ($hasAssignedUsersField) {
+                        $fetchedAssignedUserIdList = $entity->getFetched('assignedUsersIds');
+                        if (!is_array($fetchedAssignedUserIdList)) {
+                            $fetchedAssignedUserIdList = [];
+                        }
+                        foreach ($assignedUserIdList as $userId) {
+                            if (in_array($userId, $fetchedAssignedUserIdList)) {
+                                continue;
+                            }
+                            $this->getStreamService()->followEntity($entity, $userId);
+                            if ($this->getUser()->id === $userId) {
+                                $entity->set('isFollowed', true);
+                            }
                         }
                     }
                 }

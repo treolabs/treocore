@@ -18,8 +18,8 @@
     {
         "label": "System Notifications",
         "rows": [
-            [{"name": "notificationNewModuleVersionDisabled"}, false],
-            [{"name": "notificationNewModuleDisabled"}, false]
+            [{"name": "notificationNewSystemVersionDisabled"}, {"name": "notificationNewModuleVersionDisabled"}],
+            [{"name": "notificationNewModuleDisabled"}, {"name": "notificationInstallDeleteModuleDisabled"}]
         ]
     }
 ]

@@ -53,6 +53,6 @@ class ContainsType extends \Espo\Core\Formula\Functions\Base
             return false;
         }
 
-        return strpos($string, $needle) !== false;
+        return mb_strpos($string, $needle) !== false;
     }
 }

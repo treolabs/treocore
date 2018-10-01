@@ -59,9 +59,7 @@ class Stream extends \Espo\Core\Services\Base
             'metadata',
             'acl',
             'aclManager',
-            //@todo treoinject
-            'serviceFactory',
-            'fieldManager'
+            'container'
         ]);
     }
 
@@ -73,8 +71,7 @@ class Stream extends \Espo\Core\Services\Base
 
     protected function getServiceFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('serviceFactory');
+        return $this->getInjection('container')->get('serviceFactory');
     }
 
     protected function getAcl()
@@ -94,8 +91,7 @@ class Stream extends \Espo\Core\Services\Base
 
     protected function getFieldManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fieldManager');
+        return $this->getInjection('container')->get('fieldManager');
     }
 
     protected function getNotificationService()
@@ -455,11 +451,10 @@ class Stream extends \Espo\Core\Services\Base
 
         $teamIdList = $user->getTeamIdList();
         $teamIdQuotedList = [];
+        foreach ($teamIdList as $teamId) {
+            $teamIdQuotedList[] = $pdo->quote($teamId);
+        }
         if (!empty($teamIdList)) {
-            foreach ($teamIdList as $teamId) {
-                $teamIdQuotedList[] = $pdo->quote($teamId);
-            }
-
             $selectParamsList[] = array(
                 'select' => $select,
                 'leftJoins' => ['teams', 'createdBy'],
@@ -537,16 +532,10 @@ class Stream extends \Espo\Core\Services\Base
 
         foreach ($collection as $e) {
             if ($e->get('parentId') && $e->get('parentType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('parentType'), $e->get('parentId'));
-                if ($entity) {
-                    $e->set('parentName', $entity->get('name'));
-                }
+                $e->loadParentNameField('parent');
             }
             if ($e->get('relatedId') && $e->get('relatedType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('relatedType'), $e->get('relatedId'));
-                if ($entity) {
-                    $e->set('relatedName', $entity->get('name'));
-                }
+                $e->loadParentNameField('related');
             }
             if ($e->get('type') == 'Post' && $e->get('parentId') === null && !$e->get('isGlobal')) {
                 $targetType = $e->get('targetType');
@@ -668,17 +657,11 @@ class Stream extends \Espo\Core\Services\Base
                     ($e->get('parentId') != $id) ||
                     ($e->get('parentType') != $scope)
                 ) {
-                    $parent = $this->getEntityManager()->getEntity($e->get('parentType'), $e->get('parentId'));
-                    if ($parent) {
-                        $e->set('parentName', $parent->get('name'));
-                    }
+                    $e->loadParentNameField('parent');
                 }
             }
             if ($e->get('relatedId') && $e->get('relatedType')) {
-                $entity = $this->getEntityManager()->getEntity($e->get('relatedType'), $e->get('relatedId'));
-                if ($entity) {
-                    $e->set('relatedName', $entity->get('name'));
-                }
+                $e->loadParentNameField('related');
             }
 
         }
@@ -994,7 +977,7 @@ class Stream extends \Espo\Core\Services\Base
         foreach ($auditedFields as $field => $item) {
             $updated = false;
             foreach ($item['actualList'] as $attribute) {
-                if ($entity->get($attribute) !== $entity->getFetched($attribute)) {
+                if ($entity->hasFetched($attribute) && $entity->isAttributeChanged($attribute)) {
                     $updated = true;
                 }
             }
@@ -1013,9 +996,11 @@ class Stream extends \Espo\Core\Services\Base
                     $wasParentType = $was[$field . 'Type'];
                     $wasParentId = $was[$field . 'Id'];
                     if ($wasParentType && $wasParentId) {
-                        $wasParent = $this->getEntityManager()->getEntity($wasParentType, $wasParentId);
-                        if ($wasParent) {
-                            $was[$field . 'Name'] = $wasParent->get('name');
+                        if ($this->getEntityManager()->hasRepository($wasParentType)) {
+                            $wasParent = $this->getEntityManager()->getEntity($wasParentType, $wasParentId);
+                            if ($wasParent) {
+                                $was[$field . 'Name'] = $wasParent->get('name');
+                            }
                         }
                     }
                 }
@@ -1033,7 +1018,7 @@ class Stream extends \Espo\Core\Services\Base
                 'fields' => $updatedFieldList,
                 'attributes' => array(
                     'was' => $was,
-                    'became' => $became,
+                    'became' => $became
                 )
             ));
 
@@ -1137,6 +1122,9 @@ class Stream extends \Espo\Core\Services\Base
         if (empty($data->entityId) || empty($data->entityType)) {
             return;
         }
+
+        if (!$this->getEntityManager()->hasRepository($data->entityType)) return;
+
         $entity = $this->getEntityManager()->getEntity($data->entityType, $data->entityId);
         if (!$entity) return;
 

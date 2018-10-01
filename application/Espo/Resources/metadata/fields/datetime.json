@@ -46,6 +46,10 @@
          "type":"varchar"
       },
       {
+         "type": "bool",
+         "name":"useNumericFormat"
+      },
+      {
          "name":"audited",
          "type":"bool"
       },
@@ -57,5 +61,6 @@
    "filter": true,
    "fieldDefs":{
       "notNull":false
-   }
+   },
+   "personalData": true
 }

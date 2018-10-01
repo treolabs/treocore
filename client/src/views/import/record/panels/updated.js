@@ -31,14 +31,18 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('Views.Import.Record.Panels.Updated', 'Views.Import.Record.Panels.Imported', function (Dep) {
+Espo.define('views/import/record/panels/updated', 'views/import/record/panels/imported', function (Dep) {
 
     return Dep.extend({
 
         link: 'updated',
 
-        rowActionsView: 'Record.RowActions.RelationshipViewAndEdit',
+        rowActionsView: 'views/record/row-actions/relationship-view-and-edit',
+
+        setup: function () {
+            this.title = this.title || this.translate('Updated', 'labels', 'Import');
+            Dep.prototype.setup.call(this);
+        },
 
     });
 });
-

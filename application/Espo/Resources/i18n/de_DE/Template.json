@@ -16,6 +16,17 @@
     "Create Template": "Vorlage erstellen"
   },
   "tooltips": {
-    "footer": "Verwenden Sie den Platzhalter  {pageNumber} um eine Seitennummer zu drucken."
+    "footer": "Verwenden Sie den Platzhalter  {pageNumber} um eine Seitennummer zu drucken.",
+    "variables": "Copy-paste needed placeholder to Header, Body or Footer."
+  },
+  "options": {
+    "placeholders": {
+      "today": "Heute (Datum)",
+      "now": "Jetzt (Datum-Uhrzeit)"
+    },
+    "pageOrientation": {
+      "Portrait": "Porträt",
+      "Landscape": "Landschaft"
+    }
   }
 }

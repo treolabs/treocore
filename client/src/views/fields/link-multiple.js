@@ -37,7 +37,7 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
 
         type: 'linkMultiple',
 
-        listTemplate: 'fields/link-multiple/detail',
+        listTemplate: 'fields/link-multiple/list',
 
         detailTemplate: 'fields/link-multiple/detail',
 
@@ -116,6 +116,8 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
 
             this.sortable = this.sortable || this.params.sortable;
 
+            this.iconHtml = this.getHelper().getScopeColorIconHtml(this.foreignScope);
+
             if (this.mode != 'list') {
                 this.addActionHandler('selectLink', function () {
                     self.notify('Loading...');
@@ -129,7 +131,9 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
                         boolFilterList: this.getSelectBoolFilterList(),
                         primaryFilterName: this.getSelectPrimaryFilterName(),
                         multiple: true,
-                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null
+                        createAttributes: (this.mode === 'edit') ? this.getCreateAttributes() : null,
+                        mandatorySelectAttributeList: this.mandatorySelectAttributeList,
+                        forceSelectAllAttributes: this.forceSelectAllAttributes
                     }, function (dialog) {
                         dialog.render();
                         self.notify(false);
@@ -301,12 +305,20 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
             return $el;
         },
 
+        getIconHtml: function (id) {
+            return this.iconHtml;
+        },
+
         getDetailLinkHtml: function (id) {
             var name = this.nameHash[id] || id;
             if (!name && id) {
                 name = this.translate(this.foreignScope, 'scopeNames');
             }
-            return '<a href="#' + this.foreignScope + '/view/' + id + '">' + this.getHelper().stripTags(name) + '</a>';
+            var iconHtml = '';
+            if (this.mode == 'detail') {
+                iconHtml = this.getIconHtml(id);
+            }
+            return '<a href="#' + this.foreignScope + '/view/' + id + '">' + iconHtml + this.getHelper().stripTags(name) + '</a>';
         },
 
         getValueForDisplay: function () {
@@ -324,8 +336,9 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
 
         validateRequired: function () {
             if (this.isRequired()) {
-                if (this.model.get(this.idsName).length == 0) {
-                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate(this.name, 'fields', this.model.name));
+                var idList = this.model.get(this.idsName) || [];
+                if (idList.length == 0) {
+                    var msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
                     this.showValidationMessage(msg);
                     return true;
                 }
@@ -353,16 +366,19 @@ Espo.define('views/fields/link-multiple', 'views/fields/base', function (Dep) {
             var type = this.$el.find('select.search-type').val();
 
             if (type === 'anyOf') {
-                var values = this.ids || [];
+                var idList = this.ids || [];
 
                 var data = {
                     type: 'linkedWith',
-                    value: this.ids || [],
+                    value: idList,
                     nameHash: this.nameHash,
                     data: {
                         type: type
                     }
                 };
+                if (!idList.length) {
+                    data.value = null;
+                }
                 return data;
             } else if (type === 'noneOf') {
                 var values = this.ids || [];

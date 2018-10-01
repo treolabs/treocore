@@ -33,8 +33,10 @@
       },
       "converted":{
          "type":"currencyConverted",
-         "readOnly": true
+         "readOnly": true,
+         "importDisabled": true
       }
    },
-   "filter": true
+   "filter": true,
+   "personalData": true
 }

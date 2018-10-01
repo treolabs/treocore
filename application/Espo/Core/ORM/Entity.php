@@ -58,15 +58,14 @@ class Entity extends \Espo\ORM\Entity
             $repository = $this->entityManager->getRepository($parentType);
 
             $select = ['id', 'name'];
-            if ($parentType === 'Lead') {
-                $select[] = 'accountName';
-                $select[] = 'emailAddress';
-                $select[] = 'phoneNumber';
-            }
             $foreignEntity = $repository->select($select)->where(['id' => $parentId])->findOne();
             if ($foreignEntity) {
                 $this->set($field . 'Name', $foreignEntity->get('name'));
+            } else {
+                $this->set($field . 'Name', null);
             }
+        } else {
+            $this->set($field . 'Name', null);
         }
     }
 
@@ -110,11 +109,6 @@ class Entity extends \Espo\ORM\Entity
         }
 
         $defs['select'] = ['id', 'name'];
-        if ($foreignEntityType === 'Lead') {
-            $defs['select'][] = 'accountName';
-            $defs['select'][] = 'emailAddress';
-            $defs['select'][] = 'phoneNumber';
-        }
 
         $hasType = false;
         if ($this->hasField($field . 'Types')) {
@@ -148,6 +142,10 @@ class Entity extends \Espo\ORM\Entity
         }
 
         $this->set($idsAttribute, $ids);
+        if (!$this->isNew() && !$this->hasFetched($idsAttribute)) {
+            $this->setFetched($idsAttribute, $ids);
+        }
+
         $this->set($field . 'Names', $names);
         if ($hasType) {
             $this->set($field . 'Types', $types);
@@ -162,7 +160,13 @@ class Entity extends \Espo\ORM\Entity
         if (!$this->hasRelation($field) || !$this->hasAttribute($field . 'Id')) return;
         if ($this->getRelationType($field) !== 'hasOne' && $this->getRelationType($field) !== 'belongsTo') return;
 
-        $entity = $this->get($field);
+        $relatedEntityType = $this->getRelationParam($field, 'entity');
+
+        $select = ['id', 'name'];
+
+        $entity = $this->get($field, [
+            'select' => $select
+        ]);
 
         $entityId = null;
         $entityName = null;
@@ -171,7 +175,13 @@ class Entity extends \Espo\ORM\Entity
             $entityName = $entity->get('name');
         }
 
-        $this->set($field . 'Id', $entityId);
+        $idAttribute = $field . 'Id';
+
+        if (!$this->isNew() && !$this->hasFetched($idAttribute)) {
+            $this->setFetched($idAttribute, $entityId);
+        }
+
+        $this->set($idAttribute, $entityId);
         $this->set($field . 'Name', $entityName);
     }
 

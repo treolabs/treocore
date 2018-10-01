@@ -86,11 +86,12 @@ class Converter
 
     protected $maxIndexLength;
 
-    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Database\Schema\Schema $databaseSchema)
+    public function __construct(\Espo\Core\Utils\Metadata $metadata, \Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Database\Schema\Schema $databaseSchema, \Espo\Core\Utils\Config $config = null)
     {
         $this->metadata = $metadata;
         $this->fileManager = $fileManager;
         $this->databaseSchema = $databaseSchema;
+        $this->config = $config;
 
         $this->typeList = array_keys(\Doctrine\DBAL\Types\Type::getTypesMap());
     }
@@ -103,6 +104,11 @@ class Converter
     protected function getFileManager()
     {
         return $this->fileManager;
+    }
+
+    protected function getConfig()
+    {
+        return $this->config;
     }
 
     /**
@@ -129,7 +135,7 @@ class Converter
     protected function getMaxIndexLength()
     {
         if (!isset($this->maxIndexLength)) {
-            $this->maxIndexLength = $this->getDatabaseSchema()->getMaxIndexLength();
+            $this->maxIndexLength = $this->getDatabaseSchema()->getDatabaseHelper()->getMaxIndexLength();
         }
 
         return $this->maxIndexLength;
@@ -243,8 +249,10 @@ class Converter
             $tables[$entityName]->setPrimaryKey($primaryColumns);
 
             if (!empty($indexList[$entityName])) {
-                foreach($indexList[$entityName] as $indexName => $indexColumnList) {
-                    $tables[$entityName]->addIndex($indexColumnList, $indexName);
+                foreach($indexList[$entityName] as $indexName => $indexParams) {
+                    $indexColumnList = $indexParams['columns'];
+                    $indexFlagList = isset($indexParams['flags']) ? $indexParams['flags'] : array();
+                    $tables[$entityName]->addIndex($indexColumnList, $indexName, $indexFlagList);
                 }
             }
 
@@ -383,10 +391,6 @@ class Converter
             case 'jsonArray':
             case 'text':
             case 'longtext':
-                // @todo treoinject
-                if (!empty($default = $dbFieldParams['default'])) {
-                    $dbFieldParams['comment'] = "default={{$default}}";
-                }
                 unset($dbFieldParams['default']); //for db type TEXT can't be defined a default value
                 break;
 

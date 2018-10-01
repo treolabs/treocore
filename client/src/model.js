@@ -55,6 +55,11 @@ Espo.define('model', [], function () {
             Dep.prototype.initialize.call(this);
         },
 
+        sync: function (method, model, options) {
+            if (method === 'patch') options.type = 'PUT';
+            return Dep.prototype.sync.call(this, method, model, options);
+        },
+
         set: function (key, val, options) {
             if (typeof key === 'object') {
                 var o = key;
@@ -251,6 +256,17 @@ Espo.define('model', [], function () {
 
         getEntityType: function () {
             return this.name;
+        },
+
+        fetch: function (options) {
+            this.lastXhr = Dep.prototype.fetch.call(this, options);
+            return this.lastXhr;
+        },
+
+        abortLastFetch: function () {
+            if (this.lastXhr && this.lastXhr.readyState < 4) {
+                this.lastXhr.abort();
+            }
         }
 
     });

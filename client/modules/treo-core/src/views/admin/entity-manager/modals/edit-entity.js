@@ -122,6 +122,12 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
             if (this.scope) {
                 arr.push('sortBy');
                 arr.push('sortDirection');
+                arr.push('kanbanViewMode');
+                arr.push('kanbanStatusIgnoreList');
+            }
+
+            if (this.hasColorField) {
+                arr.push('color');
             }
 
             for (let param in this.additionalParams) {
@@ -150,7 +156,8 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
                 return;
             }
 
-            this.$el.find('button[data-name="save"]').addClass('disabled');
+            this.disableButton('save');
+            this.disableButton('resetToDefault');
 
             var url = 'EntityManager/action/createEntity';
             if (this.scope) {
@@ -167,8 +174,14 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
                 stream: this.model.get('stream'),
                 disabled: this.model.get('disabled'),
                 textFilterFields: this.model.get('textFilterFields'),
-                statusField: this.model.get('statusField')
+                fullTextSearch: this.model.get('fullTextSearch'),
+                statusField: this.model.get('statusField'),
+                iconClass: this.model.get('iconClass')
             };
+
+            if (this.hasColorField) {
+                data.color = this.model.get('color') || null
+            }
 
             if (data.statusField === '') {
                 data.statusField = null;
@@ -177,6 +190,8 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
             if (this.scope) {
                 data.sortBy = this.model.get('sortBy');
                 data.sortDirection = this.model.get('sortDirection');
+                data.kanbanViewMode = this.model.get('kanbanViewMode');
+                data.kanbanStatusIgnoreList = this.model.get('kanbanStatusIgnoreList');
             }
 
             for (let param in this.additionalParams) {
@@ -188,7 +203,8 @@ Espo.define('treo-core:views/admin/entity-manager/modals/edit-entity', 'class-re
                 type: 'POST',
                 data: JSON.stringify(data),
                 error: function () {
-                    this.$el.find('button[data-name="save"]').removeClass('disabled');
+                    this.enableButton('save');
+                    this.enableButton('resetToDefault');
                 }.bind(this)
             }).done(function () {
                 if (this.scope) {

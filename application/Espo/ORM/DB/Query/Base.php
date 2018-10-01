@@ -112,6 +112,14 @@ abstract class Base
         'LENGTH'
     ];
 
+    protected $matchFunctionList = ['MATCH_BOOLEAN', 'MATCH_NATURAL_LANGUAGE', 'MATCH_QUERY_EXPANSION'];
+
+    protected $matchFunctionMap = [
+        'MATCH_BOOLEAN' => 'IN BOOLEAN MODE',
+        'MATCH_NATURAL_LANGUAGE' => 'IN NATURAL LANGUAGE MODE',
+        'MATCH_QUERY_EXPANSION' => 'WITH QUERY EXPANSION'
+    ];
+
     protected $entityFactory;
 
     protected $pdo;
@@ -313,6 +321,45 @@ abstract class Base
         return $function . '(' . $part . ')';
     }
 
+    protected function convertMatchExpression($entity, $expression)
+    {
+        $delimiterPosition = strpos($expression, ':');
+        if ($delimiterPosition === false) {
+            throw new \Exception("Bad MATCH usage.");
+        }
+
+        $function = substr($expression, 0, $delimiterPosition);
+        $rest = substr($expression, $delimiterPosition + 1);
+
+        if (empty($rest)) {
+            throw new \Exception("Empty MATCH parameters.");
+        }
+
+        $delimiterPosition = strpos($rest, ':');
+        if ($delimiterPosition === false) {
+            throw new \Exception("Bad MATCH usage.");
+        }
+
+        $columns = substr($rest, 0, $delimiterPosition);
+        $query = mb_substr($rest, $delimiterPosition + 1);
+
+        $columnList = explode(',', $columns);
+
+        $tableName = $this->toDb($entity->getEntityType());
+
+        foreach ($columnList as $i => $column) {
+            $columnList[$i] = $tableName . '.' . $this->sanitize($column);
+        }
+
+        $query = $this->quote($query);
+
+        if (!in_array($function, $this->matchFunctionList)) return;
+        $modePart = ' ' . $this->matchFunctionMap[$function];
+
+        $result = "MATCH (" . implode(',', $columnList) . ") AGAINST (" . $query . "" . $modePart . ")";
+
+        return $result;
+    }
 
     protected function convertComplexExpression($entity, $field, $distinct = false)
     {
@@ -322,7 +369,14 @@ abstract class Base
         $entityType = $entity->getEntityType();
 
         if (strpos($field, ':')) {
-            list($function, $field) = explode(':', $field);
+            $dilimeterPosition = strpos($field, ':');
+            $function = substr($field, 0, $dilimeterPosition);
+
+            if (in_array($function, $this->matchFunctionList)) {
+                return $this->convertMatchExpression($entity, $field);
+            }
+
+            $field = substr($field, $dilimeterPosition + 1);
         }
         if (!empty($function)) {
             $function = preg_replace('/[^A-Za-z0-9_]+/', '', $function);
@@ -527,7 +581,13 @@ abstract class Base
             if (strpos($orderBy, 'LIST:') === 0) {
                 list($l, $field, $list) = explode(':', $orderBy);
                 $fieldPath = $this->getFieldPathForOrderBy($entity, $field);
-                $part = "FIELD(" . $fieldPath . ", '" . implode("', '", array_reverse(explode(",", $list))) . "') DESC";
+                $listQuoted = [];
+                $list = array_reverse(explode(',', $list));
+                foreach ($list as $i => $listItem) {
+                    $listItem = str_replace('_COMMA_', ',', $listItem);
+                    $listQuoted[] = $this->quote($listItem);
+                }
+                $part = "FIELD(" . $fieldPath . ", " . implode(", ", $listQuoted) . ") DESC";
                 return $part;
             }
 
@@ -729,6 +789,13 @@ abstract class Base
         foreach ($whereClause as $field => $value) {
 
             if (is_int($field)) {
+                if (is_string($value)) {
+                    if (strpos($value, 'MATCH_') === 0) {
+                        $rightPart = $this->convertMatchExpression($entity, $value);
+                        $whereParts[] = $rightPart;
+                        continue;
+                    }
+                }
                 $field = 'AND';
             }
 
@@ -781,6 +848,7 @@ abstract class Base
                 if (empty($isComplex)) {
 
                     if (!isset($entity->fields[$field])) {
+                        $whereParts[] = '0';
                         continue;
                     }
 
@@ -913,7 +981,7 @@ abstract class Base
                 }
             } else {
                 $internalPart = $this->getWhere($entity, $value, $field, $params, $level + 1);
-                if ($internalPart) {
+                if ($internalPart || $internalPart === '0') {
                     $whereParts[] = "(" . $internalPart . ")";
                 }
             }

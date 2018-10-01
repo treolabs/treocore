@@ -79,38 +79,32 @@ class Import extends \Espo\Services\Record
 
     protected function getSelectManagerFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('selectManagerFactory');
+        return $this->injections['selectManagerFactory'];
     }
 
     protected function getFileStorageManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fileStorageManager');
+        return $this->injections['fileStorageManager'];
     }
 
     protected function getFileManager()
     {
-        //@todo treoinject
-        return $this->getInjection('fileManager');
+        return $this->injections['fileManager'];
     }
 
     protected function getAcl()
     {
-        //@todo treoinject
-        return $this->getInjection('acl');
+        return $this->injections['acl'];
     }
 
     protected function getMetadata()
     {
-        //@todo treoinject
-        return $this->getInjection('metadata');
+        return $this->injections['metadata'];
     }
 
     protected function getServiceFactory()
     {
-        //@todo treoinject
-        return $this->getInjection('serviceFactory');
+        return $this->injections['serviceFactory'];
     }
 
     public function loadAdditionalFields(Entity $entity)
@@ -534,19 +528,22 @@ class Import extends \Espo\Services\Record
                     if ($value !== '') {
                         $type = $this->getMetadata()->get("entityDefs.{$scope}.fields.{$field}.type");
                         if ($type == 'personName') {
-                            $lastNameField = 'last' . ucfirst($field);
-                            $firstNameField = 'first' . ucfirst($field);
+                            $firstNameAttribute = 'first' . ucfirst($field);
+                            $lastNameAttribute = 'last' . ucfirst($field);
 
                             $personName = $this->parsePersonName($value, $params['personNameFormat']);
 
-                            if (!$entity->get($firstNameField)) {
-                                $entity->set($firstNameField, $personName['firstName']);
+                            if (!$entity->get($firstNameAttribute)) {
+                                $personName['firstName'] = $this->prepareAttributeValue($entity, $firstNameAttribute, $personName['firstName']);
+                                $entity->set($firstNameAttribute, $personName['firstName']);
                             }
-                            if (!$entity->get($lastNameField)) {
-                                $entity->set($lastNameField, $personName['lastName']);
+                            if (!$entity->get($lastNameAttribute)) {
+                                $personName['lastName'] = $this->prepareAttributeValue($entity, $lastNameAttribute, $personName['lastName']);
+                                $entity->set($lastNameAttribute, $personName['lastName']);
                             }
                             continue;
                         }
+
                         $entity->set($field, $this->parseValue($entity, $field, $value, $params));
                     }
                 } else {
@@ -569,6 +566,21 @@ class Import extends \Espo\Services\Record
 
                         $entity->set('phoneNumberData', $phoneNumberData);
                     }
+                }
+            }
+        }
+
+        $defaultCurrency = $this->getConfig('defaultCurrency');
+        if (!empty($params['currency'])) {
+            $defaultCurrency = $params['currency'];
+        }
+
+        $mFieldsDefs = $this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'fields'], []);
+
+        foreach ($mFieldsDefs as $field => $defs) {
+            if (!empty($defs['type']) && $defs['type'] === 'currency') {
+                if ($entity->has($field) && !$entity->get($field . 'Currency')) {
+                    $entity->set($field . 'Currency', $defaultCurrency);
                 }
             }
         }
@@ -647,6 +659,19 @@ class Import extends \Espo\Services\Record
         return $result;
     }
 
+    protected function prepareAttributeValue($entity, $attribute, $value)
+    {
+        if ($entity->getAttributeType($attribute) === $entity::VARCHAR) {
+            $maxLength = $entity->getAttributeParam($attribute, 'len');
+            if ($maxLength) {
+                if (mb_strlen($value) > $maxLength) {
+                    $value = substr($value, 0, $maxLength);
+                }
+            }
+        }
+        return $value;
+    }
+
     protected function parsePersonName($value, $format)
     {
         $firstName = '';
@@ -684,11 +709,6 @@ class Import extends \Espo\Services\Record
             $decimalMark = $params['decimalMark'];
         }
 
-        $defaultCurrency = 'USD';
-        if (!empty($params['defaultCurrency'])) {
-            $defaultCurrency = $params['defaultCurrency'];
-        }
-
         $dateFormat = 'Y-m-d';
         if (!empty($params['dateFormat'])) {
             if (!empty($this->dateFormatsMap[$params['dateFormat']])) {
@@ -711,6 +731,7 @@ class Import extends \Espo\Services\Record
                 if ($dt) {
                     return $dt->format('Y-m-d');
                 }
+                return null;
                 break;
             case Entity::DATETIME:
                 $timezone = new \DateTimeZone(isset($params['timezone']) ? $params['timezone'] : 'UTC');
@@ -719,15 +740,9 @@ class Import extends \Espo\Services\Record
                     $dt->setTimezone(new \DateTimeZone('UTC'));
                     return $dt->format('Y-m-d H:i:s');
                 }
+                return null;
                 break;
             case Entity::FLOAT:
-                $currencyAttribute = $attribute . 'Currency';
-                if ($entity->hasAttribute($currencyAttribute)) {
-                    if (!$entity->has($currencyAttribute)) {
-                        $entity->set($currencyAttribute, $defaultCurrency);
-                    }
-                }
-
                 $a = explode($decimalMark, $value);
                 $a[0] = preg_replace('/[^A-Za-z0-9\-]/', '', $a[0]);
 
@@ -752,6 +767,8 @@ class Import extends \Espo\Services\Record
                     return $value;
                 }
         }
+
+        $value = $this->prepareAttributeValue($entity, $attribute, $value);
 
         return $value;
     }
@@ -788,4 +805,3 @@ class Import extends \Espo\Services\Record
         }
     }
 }
-

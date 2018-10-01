@@ -174,7 +174,7 @@ class Table
         if (isset($this->data->$permission)) {
             return $this->data->$permission;
         }
-        return null;
+        return 'no';
     }
 
     public function getLevel($scope, $action)
@@ -285,16 +285,13 @@ class Table
         }
 
         $teamList = $this->getUser()->get('teams');
-        //@todo treoinject
-        if (!empty($teamList)) {
-            if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
-                throw new Error();
-            }
-            foreach ($teamList as $team) {
-                $teamRoleList = $team->get('roles');
-                foreach ($teamRoleList as $role) {
-                    $roleList[] = $role;
-                }
+        if (!(is_array($teamList) || $teamList instanceof \Traversable)) {
+            throw new Error();
+        }
+        foreach ($teamList as $team) {
+            $teamRoleList = $team->get('roles');
+            foreach ($teamRoleList as $role) {
+                $roleList[] = $role;
             }
         }
 
@@ -598,8 +595,8 @@ class Table
         $scopeList = [];
         $scopes = $this->metadata->get('scopes');
         foreach ($scopes as $scope => $d) {
-        	if (empty($d['acl'])) continue;
-        	$scopeList[] = $scope;
+            if (empty($d['acl'])) continue;
+            $scopeList[] = $scope;
         }
         return $scopeList;
     }
@@ -621,9 +618,9 @@ class Table
 
         foreach ($tableList as $table) {
             foreach ($scopeList as $scope) {
-            	if (!isset($table->$scope)) continue;
+                if (!isset($table->$scope)) continue;
 
-            	$row = $table->$scope;
+                $row = $table->$scope;
 
                 if ($row == false) {
                     if (!isset($data->$scope)) {
