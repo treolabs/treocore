@@ -59,6 +59,22 @@ class Schema extends AbstractListener
     }
 
     /**
+     * Prepare comment default value
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function prepareCommentDefaultValue(array $data): array
+    {
+        foreach ($data as $key => $query) {
+            $data[$key] = quotemeta(str_replace("\n", "\\n", $query));
+        }
+
+        return $data;
+    }
+
+    /**
      * Prepare LONGTEXT default value
      *
      * @param array $data
@@ -67,6 +83,8 @@ class Schema extends AbstractListener
      */
     protected function prepareLongTextDefault(array $data): array
     {
+        $data['queries'] = $this->prepareCommentDefaultValue($data['queries']);
+
         foreach ($data['queries'] as $key => $query) {
             // prepare fields
             $fields = [];
@@ -89,11 +107,30 @@ class Schema extends AbstractListener
 
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
-                    $data['queries'][$key] .= ";UPDATE {$tableName} SET {$field}='{$value}' WHERE {$field} IS NULL";
+                    $data['queries'][$key] .=
+                        ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' WHERE {$field} IS NULL";
                 }
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Parse default value
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function parseDefaultValue(string $value): string
+    {
+        $value = stripcslashes($value);
+
+        if (!empty($value) && preg_match("/(\\n)+/", $value)) {
+            $value = str_replace("\\n", "\n", $value);
+        }
+
+        return $value;
     }
 }
