@@ -40,12 +40,14 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Json;
+use Espo\Entities\User;
 use Treo\Core\Utils\Config;
 
 /**
- * Class Installer
+ * Service Installer
  *
  * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
 class Installer extends AbstractService
 {
@@ -291,28 +293,26 @@ class Installer extends AbstractService
      */
     public function createAdmin(array $params): array
     {
-        $result = ['status' => false, 'message' => ''];
+        // prepare result
+        $result = [
+            'status'  => true,
+            'message' => ''
+        ];
 
         // check password
         if ($params['password'] !== $params['confirmPassword']) {
-            $result['message'] = $this->translateError('differentPass');
+            // prepare result
+            $result = [
+                'status'  => false,
+                'message' => $this->translateError('differentPass')
+            ];
         } else {
             try {
                 // rebuild database
-                $result['status'] = $this->getContainer()->get('dataManager')->rebuild();
+                $this->getContainer()->get('dataManager')->rebuild();
 
                 // create user
-                $user = $this->getEntityManager()->getEntity('User');
-                $user->set(
-                    [
-                        'id'       => '1',
-                        'userName' => $params['username'],
-                        'password' => $this->getPasswordHash()->hash($params['password']),
-                        'lastName' => 'Admin',
-                        'isAdmin'  => '1'
-                    ]
-                );
-                $result['status'] = $this->getEntityManager()->saveEntity($user) && $result['status'];
+                $user = $this->createSuperAdminUser($params['username'], $params['password']);
 
                 // set installed
                 $this->getConfig()->set('isInstalled', true);
@@ -331,9 +331,13 @@ class Installer extends AbstractService
                         'version' => $this->getComposerVersion(),
                     ]
                 );
+
             } catch (\Exception $e) {
-                $result['status'] = false;
-                $result['message'] = $e->getMessage();
+                // prepare result
+                $result = [
+                    'status'  => false,
+                    'message' => $e->getMessage()
+                ];
             }
         }
 
@@ -587,5 +591,31 @@ class Installer extends AbstractService
         }
 
         return $result;
+    }
+
+    /**
+     * Create super admin user
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return User
+     * @throws Exceptions\Error
+     */
+    protected function createSuperAdminUser(string $username, string $password): User
+    {
+        // prepare data
+        $passwordHash = $this->getPasswordHash()->hash($password);
+        $today = (new \DateTime())->format('Y-m-d H:i:s');
+
+        $sql
+            = "INSERT INTO `user` (id, user_name, password, last_name, is_admin, created_at)
+					VALUES ('1', '$username', '$passwordHash', 'Admin', '1', '$today')";
+
+        $pdo = $this->getEntityManager()->getPDO();
+        $sth = $pdo->prepare($sql);
+        $sth->execute();
+
+        return $this->getEntityManager()->getEntity('User', 1);
     }
 }
