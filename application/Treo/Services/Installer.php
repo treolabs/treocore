@@ -36,17 +36,18 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Entities\User;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Json;
+use Espo\Entities\User;
 use Treo\Core\Utils\Config;
 
 /**
- * Class Installer
+ * Service Installer
  *
  * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
 class Installer extends AbstractService
 {
