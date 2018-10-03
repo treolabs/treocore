@@ -34,18 +34,45 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-use Treo\Console;
+/**
+ * Class DevelopMod
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class DevelopMod extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return 'Enable or disable development mode.';
+    }
 
-return [
-    "list"                         => Console\ListCommand::class,
-    "clear cache"                  => Console\ClearCache::class,
-    "rebuild"                      => Console\Rebuild::class,
-    "cron"                         => Console\Cron::class,
-    "events"                       => Console\Events::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class,
-    "composer <command>"           => Console\Composer::class,
-    "generate apidocs"             => Console\GenerateApidocs::class,
-    "developmod <param>"        => Console\DevelopMod::class,
-];
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        if ($data['param'] == 'enable') {
+            $isDevelopMode = true;
+        } elseif ($data['param'] == 'disable') {
+            $isDevelopMode = false;
+        } else {
+            self::show("Param should be or 'enable', or 'disable'", self::ERROR);
+        }
+
+        if (isset($isDevelopMode)) {
+            $this->getConfig()->set('isDevelopMode', $isDevelopMode);
+            $this->getConfig()->save();
+
+            self::show("Development mode " . $data['param'] . "d", self::SUCCESS);
+        }
+    }
+}
