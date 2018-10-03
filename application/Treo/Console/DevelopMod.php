@@ -61,15 +61,15 @@ class DevelopMod extends AbstractConsole
     public function run(array $data): void
     {
         if ($data['param'] == 'enable') {
-            $isDevelopMode = true;
+            $developMode = true;
         } elseif ($data['param'] == 'disable') {
-            $isDevelopMode = false;
+            $developMode = false;
         } else {
             self::show("Param should be or 'enable', or 'disable'", self::ERROR);
         }
 
         if (isset($isDevelopMode)) {
-            $this->getConfig()->set('isDevelopMode', $isDevelopMode);
+            $this->getConfig()->set('developMode', $developMode);
             $this->getConfig()->save();
 
             self::show("Development mode " . $data['param'] . "d", self::SUCCESS);
