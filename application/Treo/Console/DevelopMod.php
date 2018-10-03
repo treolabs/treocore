@@ -50,7 +50,7 @@ class DevelopMod extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Enable or disable development mode.';
+        return "Enable or disable development mode. 'param' can be enable|disable";
     }
 
     /**
