@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Hooks\Portal;
+namespace Treo\Hooks\Portal;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
