@@ -34,18 +34,17 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Jobs;
+namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
 
 /**
- * ModuleAutoUpdate job
+ * RestApiDocs job
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class ModuleAutoUpdate extends Base
+class RestApiDocs extends Base
 {
-
     /**
      * Run cron job
      *
@@ -53,8 +52,6 @@ class ModuleAutoUpdate extends Base
      */
     public function run(): bool
     {
-        $this->getServiceFactory()->create('Composer')->runUpdate();
-
-        return true;
+        return $this->getServiceFactory()->create('RestApiDocs')->generateDocumentation();
     }
 }

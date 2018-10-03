@@ -34,16 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Jobs;
+namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
 
 /**
- * RestApiDocs job
+ * Packagist job
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class RestApiDocs extends Base
+class Packagist extends Base
 {
     /**
      * Run cron job
@@ -52,6 +52,15 @@ class RestApiDocs extends Base
      */
     public function run(): bool
     {
-        return $this->getServiceFactory()->create('RestApiDocs')->generateDocumentation();
+        // create service
+        $service = $this->getServiceFactory()->create('Packagist');
+
+        // Refresh cache for module packages
+        $service->refresh();
+
+        // Notify admin users about new version of module, or about new module
+        $service->notify();
+
+        return true;
     }
 }

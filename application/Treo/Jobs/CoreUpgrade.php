@@ -34,16 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Jobs;
+namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
 
 /**
- * Packagist job
+ * CoreUpgrade job
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class Packagist extends Base
+class CoreUpgrade extends Base
 {
     /**
      * Run cron job
@@ -52,15 +52,6 @@ class Packagist extends Base
      */
     public function run(): bool
     {
-        // create service
-        $service = $this->getServiceFactory()->create('Packagist');
-
-        // Refresh cache for module packages
-        $service->refresh();
-
-        // Notify admin users about new version of module, or about new module
-        $service->notify();
-
-        return true;
+        return $this->getServiceFactory()->create('CoreUpgrade')->checkingNewVersion();
     }
 }

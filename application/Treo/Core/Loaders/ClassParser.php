@@ -46,11 +46,11 @@ class ClassParser extends Base
     /**
      * Load ClassParser
      *
-     * @return \Espo\Core\Utils\File\ClassParser
+     * @return \Treo\Core\Utils\File\ClassParser
      */
     public function load()
     {
-        return new \Espo\Core\Utils\File\ClassParser(
+        return new \Treo\Core\Utils\File\ClassParser(
             $this->getContainer()->get('fileManager'),
             $this->getContainer()->get('config'),
             $this->getContainer()->get('metadata')

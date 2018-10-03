@@ -34,17 +34,18 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Jobs;
+namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
 
 /**
- * CoreUpgrade job
+ * ModuleAutoUpdate job
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class CoreUpgrade extends Base
+class ModuleAutoUpdate extends Base
 {
+
     /**
      * Run cron job
      *
@@ -52,6 +53,8 @@ class CoreUpgrade extends Base
      */
     public function run(): bool
     {
-        return $this->getServiceFactory()->create('CoreUpgrade')->checkingNewVersion();
+        $this->getServiceFactory()->create('Composer')->runUpdate();
+
+        return true;
     }
 }
