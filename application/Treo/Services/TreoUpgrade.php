@@ -192,7 +192,7 @@ class TreoUpgrade extends AbstractService
             // prepare path
             $path = self::TREO_PACKAGES_URL . $version;
 
-            if ($this->getConfig()->get('allowUnstable')) {
+            if ($this->getConfig()->get('developMode')) {
                 $path .= '?dev=1';
             }
 

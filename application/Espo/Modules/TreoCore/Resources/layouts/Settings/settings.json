@@ -2,11 +2,10 @@
     {
         "label": "System",
         "rows": [
-            [{"name": "allowUnstable"}, {"name": "siteUrl"}],
-            [{"name": "exportDisabled"}, {"name": "globalSearchEntityList"}],
-            [{"name": "followCreatedEntities"}, {"name": "b2cMode"}],
-            [{"name": "aclStrictMode"}, {"name": "aclAllowDeleteCreated"}],
-            [{"name": "textFilterUseContainsForVarchar"}, false]
+            [{"name": "exportDisabled"}, {"name": "siteUrl"}],
+            [{"name": "followCreatedEntities"}, {"name": "globalSearchEntityList"}],
+            [{"name": "aclStrictMode"}, {"name": "b2cMode"}],
+            [{"name": "textFilterUseContainsForVarchar"}, {"name": "aclAllowDeleteCreated"}]
         ]
     },
     {

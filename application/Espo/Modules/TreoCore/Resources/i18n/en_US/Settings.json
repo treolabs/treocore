@@ -1,7 +1,6 @@
 {
     "fields": {
         "isStreamSide": "Is stream in side",
-        "allowUnstable": "Allow unstable versions",
         "notificationNewModuleVersionDisabled": "Send notification when new module version is available",
         "notificationNewModuleDisabled": "Send notification when new module is available",
         "notificationNewSystemVersionDisabled": "Send notification when new system version is available",
@@ -9,7 +8,6 @@
     },
     "tooltips": {
         "isStreamSide": "If enabled: Stream panel will be shown in side.",
-        "allowUnstable": "Administrators will be able to update the Treo system or module(s) to unstable versions."
     },
     "labels": {
         "Representation": "Representation",

@@ -130,7 +130,7 @@ class Packagist extends AbstractService
     {
         // prepare params
         $params = [
-            'allowUnstable' => $this->getConfig()->get('allowUnstable', 0),
+            'allowUnstable' => $this->getConfig()->get('developMode', 0),
             'token'         => $this->getToken(),
         ];
 

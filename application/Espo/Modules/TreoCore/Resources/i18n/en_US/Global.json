@@ -103,7 +103,6 @@
     "Site URL is empty": "Site URL is empty"
   },
   "messages": {
-    "allowUnstableParamBlocked": "Param cannot be modified. You should deactivate 'ModuleAutoUpdate' cron job first.",
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
     "massUpdateResult": "Updating {count} records"
   },

@@ -16,8 +16,5 @@
       "isSystem": true,
       "scheduling": "0 */2 * * *"
     }
-  },
-  "jobSchedulingMap": {
-    "ModuleAutoUpdate": "0 0 * * *"
   }
 }

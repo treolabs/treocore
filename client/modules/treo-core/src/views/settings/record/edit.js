@@ -34,14 +34,6 @@
 Espo.define('treo-core:views/settings/record/edit', 'class-replace!treo-core:views/settings/record/edit', function (Dep) {
 
     return Dep.extend({
-
-        setup: function () {
-            Dep.prototype.setup.call(this);
-
-            if (!this.getUser().isAdmin() || this.model.get('isPortalUser')) {
-                this.hideField('allowUnstable');
-            }
-        }
     });
 });
 
