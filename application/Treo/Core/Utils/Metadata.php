@@ -100,10 +100,10 @@ class Metadata extends \Espo\Core\Utils\Metadata
      */
     protected $paths
         = [
-            'treoCorePath' => 'application/Treo/Resources/metadata',
-            'corePath'     => 'application/Espo/Resources/metadata',
-            'modulePath'   => 'application/Espo/Modules/{*}/Resources/metadata',
-            'customPath'   => 'custom/Espo/Custom/Resources/metadata',
+            'corePath'   => 'application/Espo/Resources/metadata',
+            'treoPath'   => 'application/Treo/Resources/metadata',
+            'modulePath' => 'application/Espo/Modules/{*}/Resources/metadata',
+            'customPath' => 'custom/Espo/Custom/Resources/metadata',
         ];
 
     /**

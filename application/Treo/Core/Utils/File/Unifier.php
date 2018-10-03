@@ -52,35 +52,41 @@ class Unifier extends \Espo\Core\Utils\File\Unifier
     {
         $content = $this->unifySingle($paths['corePath'], $name, $recursively);
 
-        if (!empty($paths['treoCorePath'])) {
-            $coreContent = $content;
-            $content = $this->unifySingle($paths['treoCorePath'], $name, $recursively);
-
+        if (isset($paths['treoPath'])) {
+            $single = $this->unifySingle($paths['treoPath'], $name, $recursively);
             if ($this->useObjects) {
-                $content = Utils\DataUtil::merge($content, $coreContent);
+                $content = Utils\DataUtil::merge($content, $single);
             } else {
-                $content = Utils\Util::merge($content, $coreContent);
+                $content = Utils\Util::merge($content, $single);
             }
         }
 
         if (!empty($paths['modulePath'])) {
-            foreach ($this->getMetadata()->getModuleList() as $moduleName) {
+            $customDir = strstr($paths['modulePath'], '{*}', true);
+
+            if (!empty($this->getMetadata())) {
+                $moduleList = $this->getMetadata()->getModuleList();
+            } else {
+                $moduleList = $this->getFileManager()->getFileList($customDir, false, '', false);
+            }
+
+            foreach ($moduleList as $moduleName) {
                 $curPath = str_replace('{*}', $moduleName, $paths['modulePath']);
-                $curContent = $this->unifySingle($curPath, $name, $recursively, $moduleName);
+                $single = $this->unifySingle($curPath, $name, $recursively, $moduleName);
                 if ($this->useObjects) {
-                    $content = Utils\DataUtil::merge($content, $curContent);
+                    $content = Utils\DataUtil::merge($content, $single);
                 } else {
-                    $content = Utils\Util::merge($content, $curContent);
+                    $content = Utils\Util::merge($content, $single);
                 }
             }
         }
 
         if (!empty($paths['customPath'])) {
-            $customContent = $this->unifySingle($paths['customPath'], $name, $recursively);
+            $single = $this->unifySingle($paths['customPath'], $name, $recursively);
             if ($this->useObjects) {
-                $content = Utils\DataUtil::merge($content, $customContent);
+                $content = Utils\DataUtil::merge($content, $single);
             } else {
-                $content = Utils\Util::merge($content, $customContent);
+                $content = Utils\Util::merge($content, $single);
             }
         }
 

@@ -1,8 +1,6 @@
 {
   "fields": {
     "url": {
-      "type": "url",
-      "notStorable": true,
       "readOnly": false
     }
   }
