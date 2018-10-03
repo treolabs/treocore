@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Treo\Controllers;
 
 use Espo\Core\Controllers\Base;
 use Slim\Http\Request;

@@ -34,9 +34,8 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Treo\Controllers;
 
-use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 
@@ -45,7 +44,7 @@ use Slim\Http\Request;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ProgressManager extends Base
+class ProgressManager extends \Espo\Core\Controllers\Base
 {
 
     /**

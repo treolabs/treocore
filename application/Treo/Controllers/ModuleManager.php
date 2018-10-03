@@ -34,10 +34,9 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Controllers;
+namespace Treo\Controllers;
 
 use Treo\Services\ModuleManager as ModuleManagerService;
-use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Espo\Core\Utils\Json;
@@ -47,7 +46,7 @@ use Espo\Core\Utils\Json;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class ModuleManager extends Base
+class ModuleManager extends \Espo\Core\Controllers\Base
 {
 
     /**
