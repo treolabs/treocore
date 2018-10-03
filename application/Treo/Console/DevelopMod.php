@@ -72,6 +72,12 @@ class DevelopMod extends AbstractConsole
             $this->getConfig()->set('developMode', $developMode);
             $this->getConfig()->save();
 
+            // triggered
+            $this
+                ->getContainer()
+                ->get('eventManager')
+                ->triggered("DevelopMode", 'update', ['developMode' => $developMode]);
+
             self::show("Development mode " . $data['param'] . "d", self::SUCCESS);
         }
     }
