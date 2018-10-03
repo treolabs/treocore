@@ -46,15 +46,14 @@ class Install extends EspoInstall
         // call parent
         parent::afterRunAction();
 
+        // create composer service
+        $composerService = $this->getContainer()->get('serviceFactory')->create('Composer');
+
         // update minimum stability
-        $this->getService('Composer')->updateMinimumStability();
+        $composerService->updateMinimumStability();
 
         // call composer
-        $composerData = $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Composer')
-            ->runUpdate();
+        $composerData = $composerService->runUpdate();
 
         if ($composerData['status'] != 0) {
             $this->throwErrorAndRemovePackage('Composer requirements error! Log:' . $composerData['output']);
