@@ -68,7 +68,7 @@ class DevelopMod extends AbstractConsole
             self::show("Param should be or 'enable', or 'disable'", self::ERROR);
         }
 
-        if (isset($isDevelopMode)) {
+        if (isset($developMode)) {
             $this->getConfig()->set('developMode', $developMode);
             $this->getConfig()->save();
 
