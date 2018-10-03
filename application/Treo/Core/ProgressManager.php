@@ -206,13 +206,13 @@ class ProgressManager
     public function getProgressConfig(): array
     {
         if (is_null($this->progressConfig)) {
-            $this->progressConfig = [];
+            $this->progressConfig = include "application/Treo/Configs/ProgressManager.php";
             foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
                 // prepare path
                 $path = "application/Espo/Modules/{$module}/Configs/ProgressManager.php";
 
                 if (file_exists($path)) {
-                    $data = include "application/Espo/Modules/{$module}/Configs/ProgressManager.php";
+                    $data = include $path;
 
                     $this->progressConfig = array_merge_recursive($this->progressConfig, $data);
                 }
