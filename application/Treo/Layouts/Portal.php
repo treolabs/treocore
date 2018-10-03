@@ -32,45 +32,54 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Layouts;
-
-use Espo\Core\Container;
+namespace Treo\Layouts;
 
 /**
- * AbstractLayout class
+ * Portal layout
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-abstract class AbstractLayout
+class Portal extends AbstractLayout
 {
     /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * Set container
+     * Layout detail
      *
-     * @param Container $container
+     * @param array $data
      *
-     * @return AbstractLayout
+     * @return array
      */
-    public function setContainer(Container $container): AbstractLayout
+    public function layoutDetail(array $data): array
     {
-        $this->container = $container;
+        $generalPanel = [
+            'label' => 'General',
+            'rows'  => [
+                [
+                    [
+                        'name' => 'name'
+                    ],
+                    [
+                        'name' => 'isActive'
+                    ]
+                ],
+                [
+                    [
+                        'name' => 'url'
+                    ],
+                    [
+                        'name' => 'portalRoles'
+                    ]
+                ]
+            ]
+        ];
 
-        return $this;
-    }
+        foreach ($data as $k => $panel) {
+            if (!empty($panel['label']) && $panel['label'] == 'General') {
+                $data[$k] = $generalPanel;
+            }
+        }
 
-    /**
-     * Get container
-     *
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
+        return $data;
     }
 }

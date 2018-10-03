@@ -6,7 +6,7 @@
   *  Использовать механизм финальной модификации лояута. Механизм финальной модификации приминяется последним
  
 ### Как использовать механизм финальной модификации лояута? ###
-В рамках любого модуля нужно создать класс который будет унаследован от `Espo\Modules\TreoCore\Layouts\AbstractLayout`.
+В рамках любого модуля нужно создать класс который будет унаследован от `Treo\Layouts\AbstractLayout`.
 Класс нужно разместить в 
 ```
 /application/Espo/Modules/{MODULE_NAME}/Layouts/{ENTITY_NAME}.php
@@ -26,7 +26,7 @@ declare(strict_types = 1);
 
 namespace Espo\Modules\Pricing\Layouts;
 
-use Espo\Modules\TreoCore\Layouts\AbstractLayout;
+use Treo\Layouts\AbstractLayout;
 
 /**
  * Product layout

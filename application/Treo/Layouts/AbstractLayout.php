@@ -34,52 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Layouts;
+namespace Treo\Layouts;
 
 /**
- * Portal layout
+ * AbstractLayout class
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Portal extends AbstractLayout
+abstract class AbstractLayout
 {
-    /**
-     * Layout detail
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    public function layoutDetail(array $data): array
-    {
-        $generalPanel = [
-            'label' => 'General',
-            'rows'  => [
-                [
-                    [
-                        'name' => 'name'
-                    ],
-                    [
-                        'name' => 'isActive'
-                    ]
-                ],
-                [
-                    [
-                        'name' => 'url'
-                    ],
-                    [
-                        'name' => 'portalRoles'
-                    ]
-                ]
-            ]
-        ];
-
-        foreach ($data as $k => $panel) {
-            if (!empty($panel['label']) && $panel['label'] == 'General') {
-                $data[$k] = $generalPanel;
-            }
-        }
-
-        return $data;
-    }
+    use \Treo\Traits\ContainerTrait;
 }

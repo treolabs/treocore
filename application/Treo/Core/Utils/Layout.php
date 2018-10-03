@@ -43,7 +43,7 @@ use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
-use Espo\Modules\TreoCore\Layouts\AbstractLayout;
+use Treo\Layouts\AbstractLayout;
 
 /**
  * Class of Layout
