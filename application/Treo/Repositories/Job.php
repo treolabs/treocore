@@ -33,18 +33,16 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Repositories;
+namespace Treo\Repositories;
 
-use Espo\Core\CronManager;
 use Espo\ORM\Entity;
-use Espo\Repositories\Job as EspoJob;
 
 /**
- * Job repository
+ * Repository Job
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Job extends EspoJob
+class Job extends \Espo\Repositories\Job
 {
     /**
      * @param Entity $entity
