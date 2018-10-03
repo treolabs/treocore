@@ -39,8 +39,8 @@ namespace Treo\Core\Utils;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Module;
 use Espo\Core\Utils\Util;
-use Espo\Modules\TreoCore\Metadata\AbstractMetadata;
 use Treo\Core\Utils\File\Unifier;
+use Treo\Metadata\AbstractMetadata;
 
 /**
  * Metadata class
@@ -89,11 +89,6 @@ class Metadata extends \Espo\Core\Utils\Metadata
      * @var array
      */
     protected $changedData = [];
-
-    /**
-     * @var string
-     */
-    protected $moduleMetadataClass = 'Espo\Modules\%s\Metadata\Metadata';
 
     /**
      * @var array|null
@@ -269,13 +264,27 @@ class Metadata extends \Espo\Core\Utils\Metadata
      */
     protected function modulesModification(array $data): array
     {
+        // prepare classes
+        $classes = [
+            'Treo\Metadata\Metadata'
+        ];
+
+        // parse modules
         foreach ($this->getModuleList() as $module) {
-            $className = sprintf($this->moduleMetadataClass, $module);
+            $className = sprintf('Espo\Modules\%s\Metadata\Metadata', $module);
             if (class_exists($className)) {
-                $metadata = (new $className())->setContainer($this->getContainer());
-                if ($metadata instanceof AbstractMetadata) {
-                    $data = $metadata->modify($data);
-                }
+                $classes[] = $className;
+            }
+        }
+
+        foreach ($classes as $className) {
+            $metadata = new $className();
+            if ($metadata instanceof AbstractMetadata) {
+                // set container
+                $metadata->setContainer($this->getContainer());
+
+                // modify data
+                $data = $metadata->modify($data);
             }
         }
 
