@@ -46,6 +46,9 @@ class Install extends EspoInstall
         // call parent
         parent::afterRunAction();
 
+        // update minimum stability
+        $this->getService('Composer')->updateMinimumStability();
+
         // call composer
         $composerData = $this
             ->getContainer()
