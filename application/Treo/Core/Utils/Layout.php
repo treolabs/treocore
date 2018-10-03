@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Container;
-use Espo\Core\Utils\Layout as EspoLayout;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
@@ -50,7 +49,7 @@ use Treo\Layouts\AbstractLayout;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Layout extends EspoLayout
+class Layout extends \Espo\Core\Utils\Layout
 {
     /**
      * @var Container
@@ -144,9 +143,16 @@ class Layout extends EspoLayout
         // remove fields from layout if this fields not exist in metadata
         $data = $this->disableNotExistingFields($scope, $name, $data);
 
-        // modify data
+        // prepare classes
+        $classes = [
+            "Treo\\Layouts\\$scope"
+        ];
         foreach ($this->getMetadata()->getModuleList() as $module) {
-            $className = sprintf('Espo\Modules\%s\Layouts\%s', $module, $scope);
+            $classes[] = "Espo\\Modules\\$module\\Layouts\\$scope";
+        }
+
+        // modify data
+        foreach ($classes as $className) {
             if (class_exists($className)) {
                 // create class
                 $layout = new $className();
