@@ -34,9 +34,8 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Treo\Listeners;
 
-use Espo\Core\Container;
 use Espo\Core\Services\Base as BaseService;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Language;
@@ -50,29 +49,12 @@ use Treo\Core\Utils\Config;
  */
 abstract class AbstractListener
 {
-    /**
-     * @var Container
-     */
-    protected $container;
+    use \Treo\Traits\ContainerTrait;
 
     /**
      * @var array
      */
     protected $services = [];
-
-    /**
-     * Set container
-     *
-     * @param Container $container
-     *
-     * @return AbstractListener
-     */
-    public function setContainer(Container $container): AbstractListener
-    {
-        $this->container = $container;
-
-        return $this;
-    }
 
     /**
      * Common listening of all actions
@@ -85,16 +67,6 @@ abstract class AbstractListener
     public function common(string $action, array $data): array
     {
         return $data;
-    }
-
-    /**
-     * Get container
-     *
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
     }
 
     /**

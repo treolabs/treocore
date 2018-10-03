@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Treo\Listeners;
 
 /**
  * Class Schema
@@ -107,8 +107,8 @@ class Schema extends AbstractListener
 
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
-                    $data['queries'][$key] .=
-                        ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' WHERE {$field} IS NULL";
+                    $data['queries'][$key]
+                        .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' WHERE {$field} IS NULL";
                 }
             }
         }

@@ -33,7 +33,7 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Treo\Listeners;
 
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\ModuleMover;

@@ -33,40 +33,50 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Treo\Listeners;
 
-use Espo\ORM\Entity;
+use Espo\Core\CronManager;
+use Espo\Core\Utils\Json;
 
 /**
- * Class App
+ * Job listener
  *
- * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
+ * @author r.ratsun@zinitsolutions.com
  */
-class App extends AbstractListener
+class Job extends AbstractListener
 {
-
     /**
-     * After action user
-     * (change language)
-     *
      * @param array $data
      *
      * @return array
      */
-    public function afterActionUser(array $data): array
+    public function beforeUpdate(array $data): array
     {
-        $language = $data['request']->get('language');
-        $currentLanguage = $data['result']['language'] ?? '';
+        if (!empty($method = $data['method'])
+            && in_array($method, ['runUpdateJob', 'runUpgradeJob'])) {
+            // unblocked rub update button
+            if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
+                $this->getConfig()->set('isSystemUpdating', false);
+                $this->getConfig()->save();
+            }
 
-        if (!empty($data['result']['user']) && !empty($language) && $currentLanguage !== $language) {
-            /** @var Entity $preferences */
-            $preferences = $this->getContainer()->get('Preferences');
+            // set to EM log
+            if ($data['status'] == CronManager::FAILED) {
+                // prepare json data
+                $jsonData = Json::decode($data['data'], true);
 
-            // change language for user
-            $preferences->set('language', $language);
-            $this->getEntityManager()->saveEntity($preferences);
+                // prepare output
+                $output = "Updating failed.";
+                $output .= " We can't create connect to modules server. Please, try again.";
 
-            $data['result']['language'] = $language;
+                $note = $this->getEntityManager()->getEntity('Note');
+                $note->set('type', 'composerUpdate');
+                $note->set('parentType', 'ModuleManager');
+                $note->set('data', ['status' => 999, 'output' => $output]);
+                $note->set('createdById', $jsonData['createdById']);
+
+                $this->getEntityManager()->saveEntity($note, ['skipCreatedBy' => true]);
+            }
         }
 
         return $data;

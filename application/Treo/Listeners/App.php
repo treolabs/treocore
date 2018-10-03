@@ -33,45 +33,42 @@
  */
 declare(strict_types=1);
 
-namespace Espo\Modules\TreoCore\Listeners;
+namespace Treo\Listeners;
 
-use Treo\Core\Utils\Composer;
+use Espo\ORM\Entity;
 
 /**
- * Installer listener
+ * Class App
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
  */
-class Installer extends AbstractListener
+class App extends AbstractListener
 {
 
     /**
+     * After action user
+     * (change language)
+     *
      * @param array $data
      *
      * @return array
      */
-    public function afterInstallSystem(array $data): array
+    public function afterActionUser(array $data): array
     {
-        // generate gitlab user
-        $this->generateGitlabUser($data['user']['userName']);
+        $language = $data['request']->get('language');
+        $currentLanguage = $data['result']['language'] ?? '';
+
+        if (!empty($data['result']['user']) && !empty($language) && $currentLanguage !== $language) {
+            /** @var Entity $preferences */
+            $preferences = $this->getContainer()->get('Preferences');
+
+            // change language for user
+            $preferences->set('language', $language);
+            $this->getEntityManager()->saveEntity($preferences);
+
+            $data['result']['language'] = $language;
+        }
 
         return $data;
-    }
-
-    /**
-     * Generate gitlab user
-     *
-     * @param string $key
-     */
-    protected function generateGitlabUser(string $key): void
-    {
-        // create composer
-        $composer = new Composer();
-
-        // generate auth data
-        $authData = $composer->generateAuthData($key);
-
-        // set auth data
-        $composer->setAuthData($authData['username'], $authData['password']);
     }
 }
