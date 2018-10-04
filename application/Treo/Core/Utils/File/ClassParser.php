@@ -56,24 +56,31 @@ class ClassParser extends \Espo\Core\Utils\File\ClassParser
             ];
         }
 
+        // prepare treoPath
+        if (empty($paths['treoPath'])) {
+            $paths['treoPath'] = str_replace("application/Espo/", "application/Treo/", $paths['corePath']);
+        }
+
         if ($cacheFile && file_exists($cacheFile) && $this->getConfig()->get('useCache')) {
             $data = $this->getFileManager()->getPhpContents($cacheFile);
         } else {
+            // core
             $data = $this->getClassNameHash($paths['corePath']);
 
-            if (!empty($paths['treoPath'])) {
-                $data = array_merge($data, $this->getClassNameHash($paths['treoPath']));
-            }
+            // treo
+            $data = array_merge($data, $this->getClassNameHash($paths['treoPath']));
 
             if (isset($paths['modulePath'])) {
                 foreach ($this->getMetadata()->getModuleList() as $moduleName) {
                     $path = str_replace('{*}', $moduleName, $paths['modulePath']);
 
+                    // module
                     $data = array_merge($data, $this->getClassNameHash($path));
                 }
             }
 
             if (isset($paths['customPath'])) {
+                // custom
                 $data = array_merge($data, $this->getClassNameHash($paths['customPath']));
             }
 
