@@ -50,16 +50,16 @@ class Unifier extends \Espo\Core\Utils\File\Unifier
      */
     public function unify($name, $paths, $recursively = false)
     {
+        // prepare treoPath
+        if (empty($paths['treoPath'])) {
+            $paths['treoPath'] = str_replace("application/Espo/", "application/Treo/", $paths['corePath']);
+        }
+
+        // core
         $content = $this->unifySingle($paths['corePath'], $name, $recursively);
 
-        if (isset($paths['treoPath'])) {
-            $single = $this->unifySingle($paths['treoPath'], $name, $recursively);
-            if ($this->useObjects) {
-                $content = Utils\DataUtil::merge($content, $single);
-            } else {
-                $content = Utils\Util::merge($content, $single);
-            }
-        }
+        // treo
+        $content = $this->merge($content, $this->unifySingle($paths['treoPath'], $name, $recursively));
 
         if (!empty($paths['modulePath'])) {
             $customDir = strstr($paths['modulePath'], '{*}', true);
@@ -72,24 +72,34 @@ class Unifier extends \Espo\Core\Utils\File\Unifier
 
             foreach ($moduleList as $moduleName) {
                 $curPath = str_replace('{*}', $moduleName, $paths['modulePath']);
-                $single = $this->unifySingle($curPath, $name, $recursively, $moduleName);
-                if ($this->useObjects) {
-                    $content = Utils\DataUtil::merge($content, $single);
-                } else {
-                    $content = Utils\Util::merge($content, $single);
-                }
+
+                // module
+                $content = $this->merge($content, $this->unifySingle($curPath, $name, $recursively, $moduleName));
             }
         }
 
         if (!empty($paths['customPath'])) {
-            $single = $this->unifySingle($paths['customPath'], $name, $recursively);
-            if ($this->useObjects) {
-                $content = Utils\DataUtil::merge($content, $single);
-            } else {
-                $content = Utils\Util::merge($content, $single);
-            }
+            // custom
+            $content = $this->merge($content, $this->unifySingle($paths['customPath'], $name, $recursively));
         }
 
         return $content;
+    }
+
+    /**
+     * @param array|object $data1
+     * @param array|object $data2
+     *
+     * @return array|object
+     */
+    protected function merge($data1, $data2)
+    {
+        if ($this->useObjects) {
+            $result = Utils\DataUtil::merge($data1, $data2);
+        } else {
+            $result = Utils\Util::merge($data1, $data2);
+        }
+
+        return $result;
     }
 }

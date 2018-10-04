@@ -31,32 +31,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Utils;
+
+use Treo\Core\Utils\File\Unifier;
 
 /**
- * Language loader
+ * Class Language
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Language extends Base
+class Language extends \Espo\Core\Utils\Language
 {
+    /**
+     * @var null|Unifier
+     */
+    protected $treoUnifier = null;
 
     /**
-     * Load Language
-     *
-     * @return \Espo\Core\Utils\Language
+     * @return Unifier
      */
-    public function load()
+    protected function getUnifier()
     {
-        $config = $this->getContainer()->get('config');
+        if (is_null($this->treoUnifier)) {
+            $this->treoUnifier = new Unifier($this->getFileManager(), $this->getMetadata());
+        }
 
-        return new \Treo\Core\Utils\Language(
-            \Espo\Core\Utils\Language::detectLanguage($config, $this->getContainer()->get('preferences')),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata'),
-            $config->get('useCache')
-        );
+        return $this->treoUnifier;
     }
 }
