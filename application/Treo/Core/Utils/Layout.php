@@ -57,6 +57,17 @@ class Layout extends \Espo\Core\Utils\Layout
     protected $container;
 
     /**
+     * @var array
+     */
+    protected $paths
+        = [
+            'corePath'   => 'application/Espo/Resources/layouts',
+            'treoPath'   => 'application/Treo/Resources/layouts',
+            'modulePath' => 'application/Espo/Modules/{*}/Resources/layouts',
+            'customPath' => 'custom/Espo/Custom/Resources/layouts',
+        ];
+
+    /**
      * Construct
      */
     public function __construct()
@@ -106,6 +117,20 @@ class Layout extends \Espo\Core\Utils\Layout
                     // prepare data
                     $data = array_merge_recursive($data, Json::decode($fileData, true));
                 }
+            }
+        }
+
+        // from treo core data
+        if (empty($data)) {
+            // prepare file path
+            $filePath = Util::concatPath($this->paths['treoPath'], $scope);
+            $fileFullPath = Util::concatPath($filePath, $name . '.json');
+            if (file_exists($fileFullPath)) {
+                // get file data
+                $fileData = $this->getFileManager()->getContents($fileFullPath);
+
+                // prepare data
+                $data = Json::decode($fileData, true);
             }
         }
 
