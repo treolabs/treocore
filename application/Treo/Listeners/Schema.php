@@ -68,7 +68,9 @@ class Schema extends AbstractListener
     protected function prepareCommentDefaultValue(array $data): array
     {
         foreach ($data as $key => $query) {
-            $data[$key] = quotemeta(str_replace("\n", "\\n", $query));
+            if (preg_match("/COMMENT 'default={(.*)}'/s", $query)) {
+                $data[$key] = str_replace("\n", "{break}", $query);
+            }
         }
 
         return $data;
@@ -88,16 +90,22 @@ class Schema extends AbstractListener
         foreach ($data['queries'] as $key => $query) {
             // prepare fields
             $fields = [];
-            while (preg_match_all("/^.* (.*) LONGTEXT DEFAULT NULL COMMENT 'default={(.*)}'/", $query, $matches)) {
+            while (preg_match_all(
+                "/^.* (.*) (MEDIUMTEXT|LONGTEXT) DEFAULT NULL COMMENT 'default={(.*)}'/",
+                $query,
+                $matches
+            )) {
                 // prepare data
                 $field = $matches[1][0];
-                $value = $matches[2][0];
+                $type = $matches[2][0];
+                $value = $matches[3][0];
 
                 // push
                 $fields[$field] = $value;
 
                 // remove from query
-                $query = str_replace("{$field} LONGTEXT DEFAULT NULL COMMENT 'default={{$value}}'", "", $query);
+                $query =
+                    str_replace("{$field} {$type} DEFAULT NULL COMMENT 'default={{$value}}'", "", $query);
             }
 
             // prepare table name
@@ -125,10 +133,8 @@ class Schema extends AbstractListener
      */
     protected function parseDefaultValue(string $value): string
     {
-        $value = stripcslashes($value);
-
-        if (!empty($value) && preg_match("/(\\n)+/", $value)) {
-            $value = str_replace("\\n", "\n", $value);
+        if (!empty($value) && preg_match("/({break})+/", $value)) {
+            $value = str_replace("{break}", "\n", $value);
         }
 
         return $value;
