@@ -44,28 +44,7 @@ namespace Treo\Core\Utils;
 class ScheduledJob extends \Espo\Core\Utils\ScheduledJob
 {
     /**
-     * @var array - path to cron job files
-     */
-    protected $paths
-        = [
-            'corePath'   => 'application/Espo/Jobs',
-            'treoPath'   => 'application/Treo/Jobs',
-            'modulePath' => 'application/Espo/Modules/{*}/Jobs',
-            'customPath' => 'custom/Espo/Custom/Jobs',
-        ];
-
-    /**
      * @var string
      */
     protected $cronFile = 'console.php cron';
-
-    /**
-     * @inheritdoc
-     */
-    protected function init()
-    {
-        $classParser = $this->getContainer()->get('classParser');
-        $classParser->setAllowedMethods(array($this->allowedMethod));
-        $this->data = $classParser->getData($this->paths, $this->cacheFile);
-    }
 }

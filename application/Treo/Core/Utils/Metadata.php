@@ -96,17 +96,6 @@ class Metadata extends \Espo\Core\Utils\Metadata
     protected $composerLockData = null;
 
     /**
-     * @var array
-     */
-    protected $paths
-        = [
-            'corePath'   => 'application/Espo/Resources/metadata',
-            'treoPath'   => 'application/Treo/Resources/metadata',
-            'modulePath' => 'application/Espo/Modules/{*}/Resources/metadata',
-            'customPath' => 'custom/Espo/Custom/Resources/metadata',
-        ];
-
-    /**
      * Prepare version
      *
      * @param string $version
