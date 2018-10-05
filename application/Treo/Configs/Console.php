@@ -40,6 +40,7 @@ use Treo\Console;
 
 return [
     "list"                         => Console\ListCommand::class,
+    "upgrade --force"              => Console\Upgrade::class,
     "clear cache"                  => Console\ClearCache::class,
     "rebuild"                      => Console\Rebuild::class,
     "cron"                         => Console\Cron::class,
@@ -47,5 +48,5 @@ return [
     "migrate <module> <from> <to>" => Console\Migrate::class,
     "composer <command>"           => Console\Composer::class,
     "generate apidocs"             => Console\GenerateApidocs::class,
-    "developmod <param>"        => Console\DevelopMod::class,
+    "developmod <param>"           => Console\DevelopMod::class,
 ];
