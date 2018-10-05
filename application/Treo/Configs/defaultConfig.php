@@ -184,5 +184,6 @@ return [
     'massPrintPdfMaxCount' => 50,
     'emailKeepParentTeamsEntityList' => ['Case'],
     'recordListMaxSizeLimit' => 200,
-    'isInstalled' => false
+    'isInstalled' => false,
+    'developMode' => false
 ];

@@ -407,18 +407,6 @@ class Config extends EspoConfig
              */
             $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
 
-            /**
-             * Set version from composer
-             *
-             * @todo remove ot soon
-             */
-//            $config['version'] = $this->getTreoVersion();
-
-            /**
-             * Set allowUnstable param from composer
-             */
-            $config['allowUnstable'] = $this->getAllowUnstableParam();
-
             // set config
             $this->setConfigData($config);
         }
@@ -461,24 +449,6 @@ class Config extends EspoConfig
 
         if (!empty($version = $this->getComposerJsonData()['version'])) {
             $result = $version;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get allowUnstable param from composer
-     *
-     * @return bool
-     */
-    protected function getAllowUnstableParam(): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($this->getComposerJsonData()['minimum-stability'])
-            && $this->getComposerJsonData()['minimum-stability'] == 'RC') {
-            $result = true;
         }
 
         return $result;

@@ -1,0 +1,16 @@
+{
+    "fields": {
+        "isStreamSide": "Is stream in side",
+        "notificationNewModuleVersionDisabled": "Send notification when new module version is available",
+        "notificationNewModuleDisabled": "Send notification when new module is available",
+        "notificationNewSystemVersionDisabled": "Send notification when new system version is available",
+        "notificationInstallDeleteModuleDisabled": "Send notification when module is install / delete"
+    },
+    "tooltips": {
+        "isStreamSide": "If enabled: Stream panel will be shown in side."
+    },
+    "labels": {
+        "Representation": "Representation",
+        "System Notifications": "System Notifications"
+    }
+}

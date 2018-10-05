@@ -46,5 +46,6 @@ return [
     "events"                       => Console\Events::class,
     "migrate <module> <from> <to>" => Console\Migrate::class,
     "composer <command>"           => Console\Composer::class,
-    "generate apidocs"             => Console\GenerateApidocs::class
+    "generate apidocs"             => Console\GenerateApidocs::class,
+    "developmod <param>"        => Console\DevelopMod::class,
 ];

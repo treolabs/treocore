@@ -36,8 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Modules\TreoCore\Listeners\AbstractListener;
-use Treo\Traits\ContainerTrait;
+use Treo\Listeners\AbstractListener;
 
 /**
  * EventManager class
@@ -47,7 +46,7 @@ use Treo\Traits\ContainerTrait;
 class EventManager
 {
 
-    use ContainerTrait;
+    use \Treo\Traits\ContainerTrait;
 
     /**
      * Triggered an event
@@ -60,9 +59,15 @@ class EventManager
      */
     public function triggered(string $target, string $action, array $data = []): array
     {
+        // prepare classes
+        $classes = [
+            "Treo\\Listeners\\$target"
+        ];
         foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-            // prepare filename
-            $className = sprintf('Espo\Modules\%s\Listeners\%s', $module, $target);
+            $classes[] = "Espo\\Modules\\$module\\Listeners\\$target";
+        }
+
+        foreach ($classes as $className) {
             if (class_exists($className)) {
                 $listener = new $className();
                 if ($listener instanceof AbstractListener && method_exists($listener, $action)) {

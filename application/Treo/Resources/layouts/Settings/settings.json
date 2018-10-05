@@ -1,0 +1,29 @@
+[
+    {
+        "label": "System",
+        "rows": [
+            [{"name": "exportDisabled"}, {"name": "siteUrl"}],
+            [{"name": "followCreatedEntities"}, {"name": "globalSearchEntityList"}],
+            [{"name": "aclStrictMode"}, {"name": "b2cMode"}],
+            [{"name": "textFilterUseContainsForVarchar"}, {"name": "aclAllowDeleteCreated"}]
+        ]
+    },
+    {
+        "label": "Locale",
+        "rows": [
+            [{"name": "language"}, {"name": "timeZone"}],
+            [{"name": "dateFormat"}, {"name": "weekStart"}],
+            [{"name": "timeFormat"},  {"name": "thousandSeparator"}],
+            [{"name": "addressFormat"}, {"name": "decimalMark"}],
+            [{"name": "addressPreview"}, false]
+
+        ]
+    },
+    {
+        "label": "Activities",
+        "rows": [
+            [{"name": "calendarEntityList"}, {"name": "activitiesEntityList"}],
+            [false, {"name": "historyEntityList"}]
+        ]
+    }
+]

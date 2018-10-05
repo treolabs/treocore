@@ -1,0 +1,20 @@
+{
+  "jobs": {
+    "Cleanup": {
+      "isSystem": true,
+      "scheduling": "0 0 * * *"
+    },
+    "RestApiDocs": {
+      "isSystem": true,
+      "scheduling": "0 0 * * *"
+    },
+    "CoreUpgrade": {
+      "isSystem": true,
+      "scheduling": "0 */2 * * *"
+    },
+    "Packagist": {
+      "isSystem": true,
+      "scheduling": "0 */2 * * *"
+    }
+  }
+}

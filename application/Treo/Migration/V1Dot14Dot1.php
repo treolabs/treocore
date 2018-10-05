@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Treo\Migration;
 
 use Treo\Core\Utils\Composer as ComposerUtil;
+use Treo\Core\Migration\AbstractMigration;
 
 /**
  * Version 1.14.1

@@ -37,6 +37,7 @@ namespace Treo\Migration;
 use DateTime;
 use Espo\Core\Exceptions\Error;
 use PDO;
+use Treo\Core\Migration\AbstractMigration;
 
 /**
  * Version 1.9.2

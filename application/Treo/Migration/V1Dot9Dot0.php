@@ -34,6 +34,8 @@
 
 namespace Treo\Migration;
 
+use Treo\Core\Migration\AbstractMigration;
+
 /**
  * Version 1.9.0
  *

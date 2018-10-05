@@ -52,7 +52,7 @@ class Language extends Base
     {
         $config = $this->getContainer()->get('config');
 
-        return new \Espo\Core\Utils\Language(
+        return new \Treo\Core\Utils\Language(
             \Espo\Core\Utils\Language::detectLanguage($config, $this->getContainer()->get('preferences')),
             $this->getContainer()->get('fileManager'),
             $this->getContainer()->get('metadata'),

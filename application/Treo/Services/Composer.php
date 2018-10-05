@@ -401,6 +401,39 @@ class Composer extends AbstractService
     }
 
     /**
+     * Update minimum stability
+     *
+     * @return bool
+     */
+    public function updateMinimumStability(): bool
+    {
+        // prepare result
+        $result = false;
+
+        // prepare path
+        $path = 'composer.json';
+
+        if (file_exists($path)) {
+            // prepare data
+            $data = Json::decode(file_get_contents($path), true);
+            $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
+
+            // delete old file
+            unlink($path);
+
+            // create new file
+            $file = fopen($path, "w");
+            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            fclose($file);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get module ID
      *
      * @param string $packageId
