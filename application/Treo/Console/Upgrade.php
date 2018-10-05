@@ -78,10 +78,10 @@ class Upgrade extends AbstractConsole
 
             // render
             self::show('Treo system upgraded successfully.', self::SUCCESS);
+        } else {
+            // render
+            self::show('No available version for upgrade.', self::INFO);
         }
-
-        // render
-        self::show('No available version for upgrade.', self::INFO);
     }
 
     /**
