@@ -54,7 +54,7 @@ class Upgrade extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return "Force upgrading of Treo System. All modules would be deleted. Don't forget to run `composer update`.";
+        return "Force upgrading of Treo System. Don't forget to run `composer update`.";
     }
 
     /**
