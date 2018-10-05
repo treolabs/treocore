@@ -34,20 +34,47 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-use Treo\Console;
+use Treo\Core\Utils\ModuleMover;
 
-return [
-    "list"                             => Console\ListCommand::class,
-    "upgrade --force"                  => Console\Upgrade::class,
-    "module delete <moduleId> --force" => Console\ModuleDelete::class,
-    "clear cache"                      => Console\ClearCache::class,
-    "rebuild"                          => Console\Rebuild::class,
-    "cron"                             => Console\Cron::class,
-    "events"                           => Console\Events::class,
-    "migrate <module> <from> <to>"     => Console\Migrate::class,
-    "composer <command>"               => Console\Composer::class,
-    "generate apidocs"                 => Console\GenerateApidocs::class,
-    "developmod <param>"               => Console\DevelopMod::class,
-];
+/**
+ * Class ModuleDelete
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ModuleDelete extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return "Force deleting of module.";
+    }
+
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        if (in_array($data['moduleId'], $this->getMetadata()->getModuleList())) {
+            // delete for composer
+            try {
+                $this->getContainer()->get('serviceFactory')->create('ModuleManager')->deleteModule($data['moduleId']);
+            } catch (\Exception $e) {
+            }
+
+            // delete files
+            ModuleMover::delete([$data['moduleId'] => '1']);
+
+            self::show('Module deleted successfully.', self::SUCCESS);
+        } else {
+            self::show('No such module.', self::INFO);
+        }
+    }
+}
