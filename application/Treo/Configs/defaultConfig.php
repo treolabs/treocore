@@ -32,66 +32,29 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Treo\Configs;
 
 return [
-    'database' => [
-        'driver' => 'pdo_mysql',
-        'host' => 'localhost',
-        'port' => '',
-        'charset' => 'utf8',
-        'dbname' => '',
-        'user' => '',
-        'password' => '',
-    ],
-    'version' => '',
-    'useCache' => false,
-    'recordsPerPage' => 20,
-    'recordsPerPageSmall' => 5,
-    'applicationName' => 'TreoPim',
-    'timeZone' => 'UTC',
-    'dateFormat' => 'MM/DD/YYYY',
-    'timeFormat' => 'hh:mm a',
-    'weekStart' => 0,
-    'thousandSeparator' => ',',
-    'decimalMark' => '.',
-    'exportDelimiter' => ';',
-    'currencyList' => ['USD'],
-    'defaultCurrency' => 'USD',
-    'baseCurrency' => 'USD',
-    'currencyRates' => [],
-    'outboundEmailIsShared' => true,
-    'outboundEmailFromName' => 'TreoPim',
-    'outboundEmailFromAddress' => '',
-    'smtpServer' => '',
-    'smtpPort' => 25,
-    'smtpAuth' => true,
-    'smtpSecurity' => '',
-    'smtpUsername' => '',
-    'smtpPassword' => '',
-    'languageList' => [
+    'version'                => '',
+    'useCache'               => false,
+    'applicationName'        => 'TreoPim',
+    'outboundEmailFromName'  => 'TreoPim',
+    'languageList'           => [
         'en_US',
         'de_DE'
     ],
-    'language' => 'en_US',
-    'logger' =>
-    [
-        'path' => 'data/logs/espo.log',
-        'level' => 'WARNING', /** DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY */
-        'rotation' => true,
-        'maxFileNumber' => 30,
-    ],
-    'authenticationMethod' => 'Espo',
+    'language'               => 'en_US',
+    'authenticationMethod'   => 'Espo',
     'globalSearchEntityList' =>
-    [
-        'Account',
-        'Contact',
-        'Lead',
-        'Opportunity',
-    ],
-    'tabList'         => [
+        [
+            'Account',
+            'Contact',
+            'Lead',
+            'Opportunity',
+        ],
+    'tabList'                => [
         0 => 'Association',
         1 => 'Attribute',
         2 => 'AttributeGroup',
@@ -100,7 +63,7 @@ return [
         5 => 'Product',
         6 => 'ProductFamily'
     ],
-    'quickCreateList' => [
+    'quickCreateList'        => [
         0 => 'Association',
         1 => 'Attribute',
         2 => 'AttributeGroup',
@@ -110,80 +73,14 @@ return [
         6 => 'Product',
         7 => 'ProductFamily'
     ],
-    'exportDisabled' => false,
-    'adminNotifications' => true,
-    'adminNotificationsNewVersion' => true,
-    'adminNotificationsNewExtensionVersion' => true,
-    'adminNotificationsCronIsNotConfigured' => true,
-    'assignmentEmailNotifications' => false,
-    'assignmentEmailNotificationsEntityList' => ['Lead', 'Opportunity', 'Task', 'Case'],
-    'assignmentNotificationsEntityList' => ['Meeting', 'Call', 'Task', 'Email'],
-    "portalStreamEmailNotifications" => true,
-    'streamEmailNotificationsEntityList' => ['Case'],
-    'emailMessageMaxSize' => 10,
-    'notificationsCheckInterval' => 10,
-    'disabledCountQueryEntityList' => ['Email'],
-    'maxEmailAccountCount' => 2,
-    'followCreatedEntities' => false,
-    'b2cMode' => false,
-    'restrictedMode' => false,
-    'theme' => 'TreoDarkTheme',
-    'massEmailMaxPerHourCount' => 100,
-    'personalEmailMaxPortionSize' => 10,
-    'inboundEmailMaxPortionSize' => 20,
-    'authTokenLifetime' => 0,
-    'authTokenMaxIdleTime' => 120,
-    'userNameRegularExpression' => '[^a-z0-9\-@_\.\s]',
-    'addressFormat' => 1,
-    'displayListViewRecordCount' => true,
-    'dashboardLayout' => [
-        (object) [
-            'name' => 'My TreoPIM',
-            'layout' => [
-                (object) [
-                    'id' => 'default-activities',
-                    'name' => 'Activities',
-                    'x' => 2,
-                    'y' => 2,
-                    'width' => 2,
-                    'height' => 2
-                ],
-                (object) [
-                    'id' => 'default-stream',
-                    'name' => 'Stream',
-                    'x' => 0,
-                    'y' => 0,
-                    'width' => 2,
-                    'height' => 4
-                ],
-                (object) [
-                    'id' => 'default-tasks',
-                    'name' => 'Tasks',
-                    'x' => 2,
-                    'y' => 0,
-                    'width' => 2,
-                    'height' => 2
-                ]
-            ]
+    'theme'                  => 'TreoDarkTheme',
+    'dashboardLayout'        => [
+        (object)[
+            'name'   => 'My TreoPIM',
+            'layout' => []
         ]
     ],
-    'calendarEntityList' => ['Meeting', 'Call', 'Task'],
-    'activitiesEntityList' => ['Meeting', 'Call'],
-    'historyEntityList' => ['Meeting', 'Call'],
-    'lastViewedCount' => 20,
-    'cleanupJobPeriod' => '1 month',
-    'cleanupActionHistoryPeriod' => '15 days',
-    'cleanupAuthTokenPeriod' => '1 month',
-    'currencyFormat' => 1,
-    'currencyDecimalPlaces' => null,
-    'aclStrictMode' => false,
-    'aclAllowDeleteCreated' => false,
-    'inlineAttachmentUploadMaxSize' => 20,
-    'pmLimit' => 5,
-    'massUpdateMax' => 200,
-    'massPrintPdfMaxCount' => 50,
-    'emailKeepParentTeamsEntityList' => ['Case'],
-    'recordListMaxSizeLimit' => 200,
-    'isInstalled' => false,
-    'developMode' => false
+    'pmLimit'                => 5,
+    'massUpdateMax'          => 200,
+    'developMode'            => false
 ];

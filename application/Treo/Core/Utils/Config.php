@@ -86,6 +86,14 @@ class Config extends \Espo\Core\Utils\Config
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getDefaults()
+    {
+        return array_merge(parent::getDefaults(), include "application/Treo/Configs/defaultConfig.php");
+    }
+
+    /**
      * Load config
      *
      * @param  boolean $reload
