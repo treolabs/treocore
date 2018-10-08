@@ -66,13 +66,15 @@ class Settings extends \Espo\Controllers\Settings
      */
     protected function prepareTabList(array $config): array
     {
-        $newTabList = [];
-        foreach ($config['tabList'] as $item) {
-            if ($this->getMetadata()->get("scopes.$item.tab")) {
-                $newTabList[] = $item;
+        if (!empty($config['tabList'])) {
+            $newTabList = [];
+            foreach ($config['tabList'] as $item) {
+                if ($this->getMetadata()->get("scopes.$item.tab")) {
+                    $newTabList[] = $item;
+                }
             }
+            $config['tabList'] = $newTabList;
         }
-        $config['tabList'] = $newTabList;
 
         return $config;
     }
