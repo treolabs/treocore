@@ -108,6 +108,16 @@ class Metadata extends \Espo\Core\Utils\Metadata
     }
 
     /**
+     * Get Module List
+     *
+     * @return array
+     */
+    public function getModuleList()
+    {
+        return $this->getContainer()->get('config')->getModules();
+    }
+
+    /**
      * Get module config data
      *
      * @param string $module
@@ -287,8 +297,13 @@ class Metadata extends \Espo\Core\Utils\Metadata
      */
     protected function clearVars()
     {
+        // call parent
         parent::clearVars();
 
+        // reload modules
+        $this->getContainer()->get('config')->getModules(true);
+
+        // clear module config
         $this->moduleConfig = null;
     }
 
