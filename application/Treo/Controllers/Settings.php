@@ -76,6 +76,29 @@ class Settings extends \Espo\Controllers\Settings
             $config['tabList'] = $newTabList;
         }
 
+        if (!empty($config['twoLevelTabList'])) {
+            $newTabList = [];
+            foreach ($config['twoLevelTabList'] as $item) {
+                if (is_string($item)) {
+                    if ($this->getMetadata()->get("scopes.$item.tab")) {
+                        $newTabList[] = $item;
+                    }
+                } else {
+                    if (!empty($item->items)) {
+                        $newSubItems = [];
+                        foreach ($item->items as $subItem) {
+                            if ($this->getMetadata()->get("scopes.$subItem.tab")) {
+                                $newSubItems[] = $subItem;
+                            }
+                        }
+                        $item->items = $newSubItems;
+                    }
+                    $newTabList[] = $item;
+                }
+            }
+            $config['twoLevelTabList'] = $newTabList;
+        }
+
         return $config;
     }
 }
