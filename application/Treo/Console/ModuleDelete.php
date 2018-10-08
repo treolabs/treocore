@@ -34,53 +34,47 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-return [
-    'version'                => '',
-    'useCache'               => false,
-    'applicationName'        => 'TreoPim',
-    'outboundEmailFromName'  => 'TreoPim',
-    'languageList'           => [
-        'en_US',
-        'de_DE'
-    ],
-    'language'               => 'en_US',
-    'authenticationMethod'   => 'Espo',
-    'globalSearchEntityList' =>
-        [
-            'Account',
-            'Contact',
-            'Lead',
-            'Opportunity',
-        ],
-    'tabList'                => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Product',
-        6 => 'ProductFamily'
-    ],
-    'quickCreateList'        => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Channel',
-        6 => 'Product',
-        7 => 'ProductFamily'
-    ],
-    'theme'                  => 'TreoDarkTheme',
-    'dashboardLayout'        => [
-        (object)[
-            'name'   => 'My TreoPIM',
-            'layout' => []
-        ]
-    ],
-    'pmLimit'                => 5,
-    'massUpdateMax'          => 200,
-    'developMode'            => false
-];
+use Treo\Core\Utils\ModuleMover;
+
+/**
+ * Class ModuleDelete
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class ModuleDelete extends AbstractConsole
+{
+    /**
+     * Get console command description
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return "Force deleting of module.";
+    }
+
+    /**
+     * Run action
+     *
+     * @param array $data
+     */
+    public function run(array $data): void
+    {
+        if (in_array($data['moduleId'], $this->getMetadata()->getModuleList())) {
+            // delete for composer
+            try {
+                $this->getContainer()->get('serviceFactory')->create('ModuleManager')->deleteModule($data['moduleId']);
+            } catch (\Exception $e) {
+            }
+
+            // delete files
+            ModuleMover::delete([$data['moduleId'] => '1']);
+
+            self::show('Module deleted successfully.', self::SUCCESS);
+        } else {
+            self::show('No such module.', self::INFO);
+        }
+    }
+}

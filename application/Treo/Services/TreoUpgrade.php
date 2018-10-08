@@ -90,6 +90,75 @@ class TreoUpgrade extends AbstractService
 
         if (!empty($data = $this->getVersionData($currentVersion))
             && !empty($link = $data['link'])
+            && !empty($version = $data['version'])
+            && !empty($package = $this->downloadPackage())) {
+            // update config
+            $this->getConfig()->set('isSystemUpdating', true);
+            $this->getConfig()->save();
+
+            // create job
+            $jobEntity = $this->getEntityManager()->getEntity('Job');
+            $jobEntity->set(
+                [
+                    'name'        => 'Run TreoCore upgrade',
+                    'status'      => CronManager::PENDING,
+                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'serviceName' => 'TreoUpgrade',
+                    'method'      => 'runUpgradeJob',
+                    'data'        => [
+                        'versionFrom' => $currentVersion,
+                        'versionTo'   => $version,
+                        'fileName'    => $package,
+                        'createdById' => $this->getUser()->get('id')
+                    ]
+                ]
+            );
+            $this->getEntityManager()->saveEntity($jobEntity);
+
+            // prepare result
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Run upgrade core job
+     *
+     * @param array $data
+     */
+    public function runUpgradeJob(array $data): void
+    {
+        if (!empty($versionFrom = $data['versionFrom'])
+            && !empty($versionTo = $data['versionTo'])
+            && !empty($fileName = $data['fileName'])) {
+            // upgrade treocore
+            $upgradeManager = new UpgradeManager($this->getContainer());
+            $upgradeManager->install(['id' => $fileName]);
+
+            // call migration
+            $this
+                ->getContainer()
+                ->get('migration')
+                ->run(Migration::CORE_NAME, $data['versionFrom'], $data['versionTo']);
+        }
+    }
+
+    /**
+     * Download package
+     *
+     * @return null|string
+     */
+    public function downloadPackage(): ?string
+    {
+        // prepare result
+        $result = null;
+
+        // get current version
+        $currentVersion = $this->getConfig()->get('version');
+
+        if (!empty($data = $this->getVersionData($currentVersion))
+            && !empty($link = $data['link'])
             && !empty($version = $data['version'])) {
             // clearing cache
             if (file_exists(self::TREO_PACKAGES_PATH)) {
@@ -124,56 +193,11 @@ class TreoUpgrade extends AbstractService
                 unlink($zipName);
             }
 
-            // update config
-            $this->getConfig()->set('isSystemUpdating', true);
-            $this->getConfig()->save();
-
-            // create job
-            $jobEntity = $this->getEntityManager()->getEntity('Job');
-            $jobEntity->set(
-                [
-                    'name'        => 'Run TreoCore upgrade',
-                    'status'      => CronManager::PENDING,
-                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'serviceName' => 'TreoUpgrade',
-                    'method'  => 'runUpgradeJob',
-                    'data'        => [
-                        'versionFrom' => $currentVersion,
-                        'versionTo'   => $version,
-                        'fileName'    => $name,
-                        'createdById' => $this->getUser()->get('id')
-                    ]
-                ]
-            );
-            $this->getEntityManager()->saveEntity($jobEntity);
-
             // prepare result
-            $result = true;
+            $result = $name;
         }
 
         return $result;
-    }
-
-    /**
-     * Run upgrade core job
-     *
-     * @param array $data
-     */
-    public function runUpgradeJob(array $data): void
-    {
-        if (!empty($versionFrom = $data['versionFrom'])
-            && !empty($versionTo = $data['versionTo'])
-            && !empty($fileName = $data['fileName'])) {
-            // upgrade treocore
-            $upgradeManager = new UpgradeManager($this->getContainer());
-            $upgradeManager->install(['id' => $fileName]);
-
-            // call migration
-            $this
-                ->getContainer()
-                ->get('migration')
-                ->run(Migration::CORE_NAME, $data['versionFrom'], $data['versionTo']);
-        }
     }
 
     /**

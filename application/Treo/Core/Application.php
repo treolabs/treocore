@@ -97,42 +97,11 @@ class Application extends \Espo\Core\Application
      * Show image
      *
      * @param string $id
+     * @param string $mimeType
      */
-    public function showImage(string $id)
+    public function showImage(string $id, string $mimeType)
     {
-        // get attachment
-        $attachment = $this
-            ->getContainer()
-            ->get('entityManager')
-            ->getEntity('Attachment', $id);
-
-        // show 404
-        if (!$attachment) {
-            $this->show404();
-        }
-
-        // get file path
-        $filePath = $this
-            ->getContainer()
-            ->get('entityManager')
-            ->getRepository('Attachment')
-            ->getFilePath($attachment);
-
-        if (!file_exists($filePath)) {
-            $this->show404();
-        }
-
-        if (!in_array($attachment->get('type'), ['image/jpeg', 'image/png', 'image/gif'])) {
-            $this->show404();
-        }
-
-        header('Content-Disposition:inline;filename="' . $id . '.jpg"');
-        header('Content-Type: image/jpeg');
-        header('Pragma: public');
-        header('Cache-Control: max-age=360000, must-revalidate');
-        header('Content-Length: ' . filesize($filePath));
-        readfile($filePath);
-        exit;
+        $this->runEntryPoint('TreoImage', ['id' => $id, 'mimeType' => $mimeType]);
     }
 
     /**

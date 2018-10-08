@@ -39,13 +39,15 @@ namespace Treo\Configs;
 use Treo\Console;
 
 return [
-    "list"                         => Console\ListCommand::class,
-    "clear cache"                  => Console\ClearCache::class,
-    "rebuild"                      => Console\Rebuild::class,
-    "cron"                         => Console\Cron::class,
-    "events"                       => Console\Events::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class,
-    "composer <command>"           => Console\Composer::class,
-    "generate apidocs"             => Console\GenerateApidocs::class,
-    "developmod <param>"        => Console\DevelopMod::class,
+    "list"                             => Console\ListCommand::class,
+    "upgrade --force"                  => Console\Upgrade::class,
+    "module delete <moduleId> --force" => Console\ModuleDelete::class,
+    "clear cache"                      => Console\ClearCache::class,
+    "rebuild"                          => Console\Rebuild::class,
+    "cron"                             => Console\Cron::class,
+    "events"                           => Console\Events::class,
+    "migrate <module> <from> <to>"     => Console\Migrate::class,
+    "composer <command>"               => Console\Composer::class,
+    "generate apidocs"                 => Console\GenerateApidocs::class,
+    "developmod <param>"               => Console\DevelopMod::class,
 ];
