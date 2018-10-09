@@ -16247,7 +16247,7 @@ ul.dropdown-menu > li.checkbox {
     color: #2895ea;
 }
 
-#main .catalog-tree-panel .btn + .btn {
+#main .catalog-tree-panel .category-buttons .btn + .btn {
     border-left: 1px solid #e8eced;
 }
 
