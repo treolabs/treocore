@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Container as EspoContainer;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
@@ -46,7 +45,7 @@ use Treo\Core\Utils\Config;
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Container extends EspoContainer
+class Container extends \Espo\Core\Container
 {
     /**
      * @var array
