@@ -49,7 +49,7 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
                         view: 'views/fields/user-with-avatar'
                     },
                     {
-                        name: 'assignedUser'
+                        name: ':assignedUser'
                     },
                     {
                         name: 'teams'
@@ -143,16 +143,26 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
 
             // prepare field list
             let fieldList = [];
-            $.each(this.defaultPanelDefs.options.fieldList, function (k, row) {
-                if (typeof row.name != 'undefined') {
-                    if (metadata.get('scopes.' + scope + '.hasOwner') && row.name == 'ownerUser') {
-                        fieldList.push(row);
+            this.defaultPanelDefs.options.fieldList.forEach(fieldDefs => {
+                if (typeof fieldDefs.name !== 'undefined') {
+                    if (metadata.get('scopes.' + scope + '.hasOwner') && fieldDefs.name === 'ownerUser') {
+                        fieldList.push(fieldDefs);
                     }
-                    if (metadata.get('scopes.' + scope + '.hasAssignedUser') && row.name == 'assignedUser') {
-                        fieldList.push(row);
+                    if (metadata.get('scopes.' + scope + '.hasAssignedUser') && fieldDefs.name === ':assignedUser') {
+                        if (this.model.hasField('assignedUsers')) {
+                            fieldDefs.name = 'assignedUsers';
+                            if (!this.model.getFieldParam('assignedUsers', 'view')) {
+                                fieldDefs.view = 'views/fields/assigned-users';
+                            }
+                        } else if (this.model.hasField('assignedUser')) {
+                            fieldDefs.name = 'assignedUser';
+                        } else {
+                            fieldDefs = {};
+                        }
+                        fieldList.push(fieldDefs);
                     }
-                    if (metadata.get('scopes.' + scope + '.hasTeam') && row.name == 'teams') {
-                        fieldList.push(row);
+                    if (metadata.get('scopes.' + scope + '.hasTeam') && fieldDefs.name === 'teams') {
+                        fieldList.push(fieldDefs);
                     }
                 }
             });
