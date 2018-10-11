@@ -104,28 +104,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                         checkboxFixed.prop('checked', false);
                     }
 
-                    this.checkedList = [];
-
-                    if (e.currentTarget.checked) {
-                        this.$el.find('input.record-checkbox').prop('checked', true);
-                        this.$el.find('.actions-button').removeAttr('disabled');
-                        this.collection.models.forEach(function (model) {
-                            this.checkedList.push(model.id);
-                        }, this);
-
-                        this.$el.find('.list > table tbody tr').addClass('active');
-
-                        this.checkedAll = true;
-                    } else {
-                        if (this.allResultIsChecked) {
-                            this.unselectAllResult();
-                        }
-                        this.$el.find('input.record-checkbox').prop('checked', false);
-                        this.$el.find('.actions-button').attr('disabled', true);
-                        this.$el.find('.list > table tbody tr').removeClass('active');
-
-                        this.checkedAll = false;
-                    }
+                    this.selectAllHandler(e.currentTarget.checked);
+                    this.checkedAll = e.currentTarget.checked;
                 },
             });
         },
