@@ -41,6 +41,12 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             this.events = _.extend({}, this.events || {}, {
                 'click .navbar-toggle': function () {
                     this.$el.find('.menu').toggleClass('open-menu');
+                    let headerBreadcrumbs = $('.header-breadcrumbs');
+                    if (this.$el.find('.menu').hasClass('open-menu')) {
+                        headerBreadcrumbs.removeClass('fixed-header-breadcrumbs');
+                    } else {
+                        headerBreadcrumbs.addClass('fixed-header-breadcrumbs');
+                    }
                 },
 
                 'click .menu.open-menu a.nav-link': function (e) {
