@@ -308,6 +308,13 @@ class Installer extends AbstractService
             ];
         } else {
             try {
+                // create fake system user
+                $systemUser = $this->getEntityManager()->getEntity('User');
+                $systemUser->set('id', 'system');
+
+                // set system user to container
+                $this->getContainer()->setUser($systemUser);
+
                 // rebuild database
                 $this->getContainer()->get('dataManager')->rebuild();
 
