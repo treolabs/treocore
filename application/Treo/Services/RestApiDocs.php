@@ -123,7 +123,7 @@ class RestApiDocs extends Base
     {
         // prepare content
         $content = [
-            '{{ title }}'   => 'TreoCRM REST API documentation',
+            '{{ title }}'   => 'TreoPIM REST API documentation',
             '{{ date }}'    => date('d.m.Y'),
             '{{ content }}' => $this->getContent()
         ];
