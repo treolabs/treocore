@@ -17100,3 +17100,9 @@ span.jqtree-dragging {
     cursor: pointer;
     padding: 2px 8px;
 }
+
+.search-row .filters-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
