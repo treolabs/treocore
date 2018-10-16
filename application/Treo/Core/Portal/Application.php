@@ -126,4 +126,37 @@ class Application extends \Espo\Core\Portal\Application
             ]
         );
     }
+
+    /**
+     * Init container
+     */
+    protected function initContainer()
+    {
+        $this->container = new Container();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getRouteList()
+    {
+        $routes = new \Treo\Core\Utils\Route(
+            $this->getContainer()->get('config'),
+            $this->getMetadata(),
+            $this->getContainer()->get('fileManager')
+        );
+        $routeList = $routes->getAll();
+
+        foreach ($routeList as $i => $route) {
+            if (isset($route['route'])) {
+                if ($route['route']{0} !== '/') {
+                    $route['route'] = '/' . $route['route'];
+                }
+                $route['route'] = '/:portalId' . $route['route'];
+            }
+            $routeList[$i] = $route;
+        }
+
+        return $routeList;
+    }
 }
