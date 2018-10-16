@@ -54,7 +54,7 @@ trait EventTriggeredTrait
      */
     protected function triggered(string $target, string $action, array $data = []): array
     {
-        if (method_exists($this, 'getContainer')) {
+        if (method_exists($this, 'getContainer') && !is_null($this->getContainer())) {
             return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
         }
 
