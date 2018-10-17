@@ -77,24 +77,13 @@ class Composer extends AbstractService
         // prepare result
         $result = false;
 
-        if (empty($this->getConfig()->get('isSystemUpdating'))) {
+        if (!$this->isJobExists()) {
             // update config
             $this->getConfig()->set('isSystemUpdating', true);
             $this->getConfig()->save();
 
             // create job
-            $jobEntity = $this->getEntityManager()->getEntity('Job');
-            $jobEntity->set(
-                [
-                    'name'        => 'Run composer update command',
-                    'status'      => CronManager::PENDING,
-                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'serviceName' => 'Composer',
-                    'method'      => 'runUpdateJob',
-                    'data'        => ['createdById' => $this->getUser()->get('id')]
-                ]
-            );
-            $this->getEntityManager()->saveEntity($jobEntity);
+            $this->insertJob();
 
             // prepare result
             $result = true;
@@ -485,5 +474,48 @@ class Composer extends AbstractService
         }
 
         return $result;
+    }
+
+    /**
+     * Is runUpdateJob already exists
+     *
+     * @return bool
+     */
+    protected function isJobExists(): bool
+    {
+        $count = $this
+            ->getEntityManager()
+            ->getRepository('Job')
+            ->where(
+                [
+                    'serviceName' => 'Composer',
+                    'method'      => 'runUpdateJob',
+                    'status'      => [
+                        CronManager::PENDING, CronManager::RUNNING
+                    ]
+                ]
+            )
+            ->count();
+
+        return !empty($count);
+    }
+
+    /**
+     * Insert job to DB
+     */
+    protected function insertJob(): void
+    {
+        $jobEntity = $this->getEntityManager()->getEntity('Job');
+        $jobEntity->set(
+            [
+                'name'        => 'Run composer update command',
+                'status'      => CronManager::PENDING,
+                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'serviceName' => 'Composer',
+                'method'      => 'runUpdateJob',
+                'data'        => ['createdById' => $this->getUser()->get('id')]
+            ]
+        );
+        $this->getEntityManager()->saveEntity($jobEntity);
     }
 }
