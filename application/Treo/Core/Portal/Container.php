@@ -98,13 +98,8 @@ class Container extends \Treo\Core\Container
         $className = $this->getServiceClassName('aclManager', '\\Espo\\Core\\Portal\\AclManager');
         $mainClassName = $this->getServiceMainClassName('aclManager', '\\Espo\\Core\\AclManager');
 
-        $obj = new $className(
-            $this->get('container')
-        );
-        $objMain = new $mainClassName(
-            $this->get('container')
-        );
-        $obj->setMainManager($objMain);
+        $obj = new $className($this);
+        $obj->setMainManager(new $mainClassName($this));
 
         return $obj;
     }
@@ -187,5 +182,13 @@ class Container extends \Treo\Core\Container
         $className = $metadata->get('app.serviceContainer.classNames.' . $name, $default);
 
         return $className;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getContainerLoaders(string $name = null): array
+    {
+        return array_merge(parent::getContainerLoaders(), parent::getContainerLoaders(self::class));
     }
 }

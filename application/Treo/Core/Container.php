@@ -178,17 +178,19 @@ class Container extends \Espo\Core\Container
     /**
      * Get container loaders
      *
+     * @param string $name
+     *
      * @return array
      * @throws \ReflectionException
      */
-    protected function getContainerLoaders(): array
+    protected function getContainerLoaders(string $name = self::class): array
     {
         // prepare result
         $result = [];
 
-        $container = new \ReflectionClass(Container::class);
+        $container = new \ReflectionClass($name);
         foreach ($container->getMethods() as $m) {
-            if ($m->class == Container::class && preg_match("/^load(.*)$/", $m->name) && $m->name != 'load') {
+            if ($m->class == $name && preg_match("/^load(.*)$/", $m->name) && $m->name != 'load') {
                 $result[] = $m->name;
             }
         }
