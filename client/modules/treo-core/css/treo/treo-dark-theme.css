@@ -16661,11 +16661,12 @@ ul.dropdown-menu > li.checkbox {
     #main .catalog-tree-panel > button.collapse-panel {
         border: 0;
         left: -3px;
-        z-index: 999;
+        z-index: 1;
     }
 
     #main .catalog-tree-panel {
         min-height: 33px;
+        margin-top: 5px;
     }
 
     #main .catalog-tree-panel button:active {
@@ -17099,4 +17100,10 @@ span.jqtree-dragging {
     opacity: 0.6;
     cursor: pointer;
     padding: 2px 8px;
+}
+
+.search-row .filters-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
 }
