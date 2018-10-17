@@ -47,20 +47,6 @@ use Espo\Core\Utils\Config;
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
-     * {@inheritdoc}
-     */
-    public function __construct(...$args)
-    {
-        // call parent
-        parent::__construct(...$args);
-
-        // define gloabal variables
-        if (!defined('CORE_PATH')) {
-            define('CORE_PATH', dirname(dirname(dirname(dirname(__DIR__)))));
-        }
-    }
-
-    /**
      * Create mock service
      *
      * @param string $name
