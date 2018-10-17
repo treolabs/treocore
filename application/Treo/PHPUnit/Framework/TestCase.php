@@ -36,14 +36,15 @@ declare(strict_types=1);
 
 namespace Treo\PHPUnit\Framework;
 
-use PHPUnit\Framework\TestCase as NativeTestCase;
+use Espo\Core\Container;
+use Espo\Core\Utils\Config;
 
 /**
  * Class TestCase
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class TestCase extends NativeTestCase
+class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * {@inheritdoc}
@@ -54,6 +55,63 @@ class TestCase extends NativeTestCase
         parent::__construct(...$args);
 
         // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(dirname(__DIR__)))));
+        if (!defined('CORE_PATH')) {
+            define('CORE_PATH', dirname(dirname(dirname(dirname(__DIR__)))));
+        }
+    }
+
+    /**
+     * Create mock service
+     *
+     * @param string $name
+     * @param array  $methods
+     *
+     * @return mixed
+     */
+    protected function createMockService(string $name, array $methods = [])
+    {
+        $service = $this->createPartialMock($name, array_merge(['getContainer'], $methods));
+        $service
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($this->getContainer());
+
+        return $service;
+    }
+
+    /**
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        $container = $this->createPartialMock(Container::class, ['getConfig']);
+        $container
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($this->getConfig());
+
+        return $container;
+    }
+
+    /**
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        $config = $this->createPartialMock(Config::class, ['set', 'get', 'save']);
+        $config
+            ->expects($this->any())
+            ->method('set')
+            ->willReturn(true);
+        $config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn(true);
+        $config
+            ->expects($this->any())
+            ->method('save')
+            ->willReturn(true);
+
+        return $config;
     }
 }
