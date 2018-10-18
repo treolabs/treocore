@@ -129,5 +129,9 @@
     "composerUpdateThis": "{user} has run update",
     "activateModuleThis": "{user} has activated module",
     "deactivateModuleThis": "{user} has deactivated module"
+  },
+  "massActions": {
+    "addRelation": "Add relation",
+    "removeRelation": "Remove relation"
   }
 }
