@@ -88,7 +88,9 @@
     "On": "Auf",
     "Off": "Aus",
     "entitySelect": "Wählen Sie Entität",
-    "applyRelation": "Beziehung anwenden"
+    "applyRelation": "Beziehung anwenden",
+    "collapseAllPanels": "Alle Panels ausblenden",
+    "expandAllPanels": "Alle Panels anzeigen"
   },
   "links": {
     "ownerUser": "Besitzer"

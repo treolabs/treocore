@@ -39,6 +39,15 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
 
         panelNavigationView: 'treo-core:views/record/panel-navigation',
 
+        events: _.extend({
+            'click a[data-action="collapseAllPanels"]': function (e) {
+                this.collapseAllPanels('hide');
+            },
+            'click a[data-action="expandAllPanels"]': function (e) {
+                this.collapseAllPanels('show');
+            }
+        }, Dep.prototype.events),
+
         setup: function () {
             Dep.prototype.setup.call(this);
 
@@ -100,6 +109,30 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     };
                 }
             }, this);
+        },
+
+        collapseAllPanels(type) {
+            let bottom = this.getView('bottom');
+            if (bottom) {
+                (bottom.panelList || []).forEach(panel => {
+                    bottom.trigger('collapsePanel', panel.name, type);
+                });
+            }
+        },
+
+        setupFinal: function () {
+            this.build(this.addCollapsingButtonsToMiddleView);
+        },
+
+        addCollapsingButtonsToMiddleView(view) {
+            view.listenTo(view, 'after:render', view => {
+                let html = `` +
+                `<div class="pull-right btn-group">` +
+                    `<a class="btn btn-link" data-action="collapseAllPanels">${this.getLanguage().translate('collapseAllPanels', 'labels', 'Global')}</a>` +
+                    `<a class="btn btn-link" data-action="expandAllPanels">${this.getLanguage().translate('expandAllPanels', 'labels', 'Global')}</a>`+
+                `</div>`;
+                view.$el.find('.panel-heading').prepend(html);
+            });
         },
 
         hotKeyEdit: function (e) {
