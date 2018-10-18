@@ -17107,3 +17107,8 @@ span.jqtree-dragging {
     text-overflow: ellipsis;
     max-width: 150px;
 }
+
+.collapsing-buttons a,
+.collapsing-buttons a:hover {
+    color: inherit;
+}
