@@ -107,6 +107,9 @@
   "views/fields/text": [
     "treo-core"
   ],
+  "views/fields/wysiwyg": [
+    "treo-core"
+  ],
   "views/record/detail": [
     "treo-core"
   ],
