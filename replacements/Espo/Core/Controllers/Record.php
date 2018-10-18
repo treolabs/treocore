@@ -144,6 +144,10 @@ class Record extends Base
         if (empty($maxSize)) {
             $maxSize = $maxSizeLimit;
         }
+        // @todo treoinject
+//        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+//            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
+//        }
 
         $params = array(
             'where' => $where,
@@ -186,7 +190,6 @@ class Record extends Base
         if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
             throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
         }
-
 
         $params = array(
             'where' => $where,
