@@ -39,6 +39,8 @@ use \Espo\Core\Exceptions\Forbidden;
 use \Espo\Core\Exceptions\NotFound;
 use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Utils\Util;
+//@todo treoinject
+use Treo\Core\Controllers\Record as Base;
 
 class Record extends Base
 {
@@ -142,6 +144,10 @@ class Record extends Base
         if (empty($maxSize)) {
             $maxSize = $maxSizeLimit;
         }
+        // @todo treoinject
+//        if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
+//            throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
+//        }
 
         $params = array(
             'where' => $where,
@@ -184,7 +190,6 @@ class Record extends Base
         if (!empty($maxSize) && $maxSize > $maxSizeLimit) {
             throw new Forbidden("Max should should not exceed " . $maxSizeLimit . ". Use offset and limit.");
         }
-
 
         $params = array(
             'where' => $where,

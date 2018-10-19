@@ -60,7 +60,7 @@ Espo.define('treo-core:views/record/row-actions/default', 'class-replace!treo-co
                     label: rowActions[item].label
                 };
                 if (rowActions[item].iconClass) {
-                    let htmlLogo = `<span class="${rowActions[item].iconClass}" style="float: right; top: 3px; color: #333"></span>`;
+                    let htmlLogo = `<span class="additional-action-icon ${rowActions[item].iconClass}"></span>`;
                     action.html = `${this.translate(rowActions[item].label, 'labels', this.model.name)} ${htmlLogo}`;
                 }
                 list.push(action);

@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,11 +31,29 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Templates\Services;
+Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fields/wysiwyg',
+    Dep => Dep.extend({
 
+        listTemplate: 'treo-core:fields/wysiwyg/list',
 
-class Base extends \Treo\Core\Templates\Services\Base //@todo treoinject
-{
+        detailTemplate: 'treo-core:fields/wysiwyg/detail',
 
-}
+        fetch() {
+            let data = Dep.prototype.fetch.call(this);
+            return this.checkDataForDefaultTagsValue(data, this.name);
+        },
 
+        checkDataForDefaultTagsValue(data, field) {
+            if (data[field] === '<p><br></p>') {
+                data[field] = null;
+            }
+
+            if (data[field + 'Plain'] === '<p><br></p>') {
+                data[field + 'Plain'] = null
+            }
+
+            return data;
+        }
+
+    })
+);
