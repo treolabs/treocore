@@ -16224,20 +16224,89 @@ ul.dropdown-menu > li.checkbox {
     margin-right: -15px;
 }
 
-#main .catalog-tree-panel > .category-panel {
-    border: 0;
+#main .catalog-tree-panel {
+    position: relative;
+    border-top: 1px solid #e8eced;
     border-right: 1px solid #e8eced;
-    padding: 0 10px 10px 10px;
-    margin: -6px 0 10px 5px;
+    margin: -6px 14px -10px -15px;
+    padding: 0 15px 0 25px;
+    float: left;
+    min-height: 53px;
+}
+
+#main .catalog-tree-panel + .list-container {
+    padding: 0;
+}
+#main .catalog-tree-panel + .list-container .list {
+    border-left: 1px solid #e8eced;
+}
+#main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
+    margin-left: 40px;
+}
+#main .catalog-tree-panel + .list-buttons-container::before,
+#main .catalog-tree-panel + .list-buttons-container::after {
+    content: '';
+    display: table;
+    clear: right;
+}
+
+#main .catalog-tree-panel > .category-panel {
+    padding: 0;
+    margin: 0;
 }
 
 #main .catalog-tree-panel > button.collapse-panel {
-    top: 0;
+    position: absolute;
+    right: 10px;
+    height: 33px;
+    font-size: 10px;
+    padding: 0;
+    top: 1px;
     border: 0;
 }
 
-#main .catalog-tree-panel .field > input.category-search,
-#main .category-tree button.catalog-link{
+#main .catalog-tree-panel > button.collapsed {
+    left: 5px;
+}
+
+#main .category-tree button.catalog-link {
+    position: relative;
+    border-bottom: 1px solid;
+    padding: 5px 15px 5px 0;
+    color: #000;
+    font-size: 14px;
+    width: 100%;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+}
+
+#main .category-tree button.catalog-link:hover,
+#main .category-tree button.catalog-link:focus {
+    text-decoration: none;
+}
+#main .category-tree button.catalog-link > span.caret {
+    position: absolute;
+    right: 5px;
+    top: 15px;
+}
+
+#main .catalog-tree-panel .field[data-name="category-search"] {
+    position: relative;
+}
+#main .catalog-tree-panel .field[data-name="category-search"] > input.category-search {
+    border: 0;
+    border-bottom: 1px solid #e8eced;
+    padding: 0 5px;
+}
+#main .catalog-tree-panel .field[data-name="category-search"] > span.glyphicon.glyphicon-search {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+}
+
+#main .catalog-tree-panel .field[data-name="category-search"] > input.category-search,
+#main .category-tree button.catalog-link {
     border-bottom: 1px solid #e8eced;
 }
 
@@ -16253,6 +16322,66 @@ ul.dropdown-menu > li.checkbox {
 
 #main .catalog-tree-panel .category-buttons .btn + .btn {
     border-left: 1px solid #e8eced;
+}
+
+button.category {
+    color: #000;
+    padding: 0;
+}
+button.category:hover,
+button.category:focus {
+    color: #000;
+    text-decoration: none;
+}
+button.category span.glyphicon {
+    margin-right: 4px;
+}
+
+#main ul.list-group {
+    margin-bottom: 0;
+}
+
+#main ul.list-group-tree > li {
+    padding: 5px 0 0 14px;
+}
+
+#main ul.list-group-tree li.child {
+    padding-left: 18px;
+}
+
+#main ul.list-group-tree li.child.active {
+    color: #2895ea;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#main ul.list-group-tree li.child.active > button.category {
+    color: inherit;
+}
+
+#main ul.list-group-tree button.glyphicons > span[class^="glyphicon glyphicon-folder-"] {
+    margin-right: 2px;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+    #main .catalog-tree-panel {
+        padding: 0 10px 10px 10px;
+        margin: 0 0 10px 0;
+        float: none;
+    }
+
+    #main .catalog-tree-panel > button.collapse-panel {
+        top: 5px;
+        right: 0;
+    }
+
+    #main .catalog-tree-panel.catalog-tree-panel-hidden {
+        width: 25px
+    }
+
+    #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
+        margin-left: 0;
+    }
 }
 
 @media (min-width: 1200px) {
@@ -16654,7 +16783,7 @@ ul.dropdown-menu > li.checkbox {
         width: 100% !important;
     }
 
-    #main .list-container.hidden-catalog-tree-panel {
+    #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
         margin-left: 0;
     }
 
@@ -16673,19 +16802,19 @@ ul.dropdown-menu > li.checkbox {
         box-shadow: none;
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4  > .category-panel {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3  > .category-panel {
         margin: 20px 0 10px 5px;
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel {
         top: 20px;
         left: 10px;
         width: 30px;
         height: 30px;
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel::after,
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel::before {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel::after,
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel::before {
         content: "";
         display: block;
         width: 2px;
@@ -16696,17 +16825,17 @@ ul.dropdown-menu > li.checkbox {
         top: 5px;
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel::after {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel::after {
         -webkit-transform: rotate(-45deg);
         transform: rotate(-45deg);
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel::before {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel::before {
         -webkit-transform: rotate(45deg);
         transform: rotate(45deg);
     }
 
-    #main .catalog-tree-panel.col-xs-12.col-lg-4 > button.collapse-panel span {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 > button.collapse-panel span {
         display: none;
     }
 
@@ -16725,7 +16854,7 @@ ul.dropdown-menu > li.checkbox {
         transition: .3s transform cubic-bezier(0.19,1,.22,1);
     }
 
-    .catalog-tree-panel.col-xs-12.col-lg-4 {
+    #main .catalog-tree-panel.col-xs-12.col-lg-3 {
         position: fixed;
         top: 0;
         left: 0;
