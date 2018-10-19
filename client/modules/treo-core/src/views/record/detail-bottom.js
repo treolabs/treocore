@@ -35,6 +35,20 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
 
     return Dep.extend({
 
+        template: 'treo-core:record/bottom',
+
+        events: _.extend({
+            'click span.collapser[data-action="collapsePanel"]': function (e) {
+                this.collapseBottomPanel($(e.currentTarget).data('panel'));
+            },
+            'show.bs.collapse div.panel-body.panel-collapse.collapse': function (e) {
+                this.afterPanelCollapsed($(e.currentTarget), 'expanded');
+            },
+            'hide.bs.collapse div.panel-body.panel-collapse.collapse': function (e) {
+                this.afterPanelCollapsed($(e.currentTarget), 'collapsed');
+            },
+        }, Dep.prototype.events),
+
         setupPanels: function () {},
 
         setupStreamPanel: function () {
@@ -115,6 +129,10 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 this.wait(false);
 
             }.bind(this));
+
+            this.listenTo(this, 'collapsePanel', (panel, type) => {
+                this.collapseBottomPanel(panel, type);
+            });
         },
 
         setupRelationshipPanels: function () {
@@ -178,10 +196,25 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 } else {
                     this.recordHelper.setPanelStateParam(p.name, p.hidden || false);
                 }
+                p.expanded = this.getStorage().get('collapsed', p.name) !== 'collapsed';
 
                 this.panelList.push(p);
             }, this);
         },
+
+        collapseBottomPanel(panel, type) {
+            let panelBody = this.$el.find(`.panel-body[data-name="${panel}"]`);
+            panelBody.collapse(type ? type : 'toggle');
+        },
+
+        afterPanelCollapsed(target, state) {
+            if (state) {
+                target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).removeClass('caret-up');
+            } else {
+                target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).addClass('caret-up');
+            }
+            this.getStorage().set('collapsed', target.data('name'), state);
+        }
     });
 });
 

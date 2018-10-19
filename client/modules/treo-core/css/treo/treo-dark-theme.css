@@ -17241,6 +17241,11 @@ span.jqtree-dragging {
     max-width: 150px;
 }
 
+.collapsing-buttons a,
+.collapsing-buttons a:hover {
+    color: inherit;
+}
+
 #login .logo-container img.logo {
     height: 25px;
     margin-top: 9px;

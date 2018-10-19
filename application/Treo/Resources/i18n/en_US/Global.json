@@ -89,7 +89,9 @@
     "On": "On",
     "Off": "Off",
     "entitySelect": "Select Entity",
-    "applyRelation": "Apply Relation"
+    "applyRelation": "Apply Relation",
+    "collapseAllPanels": "Collapse All Panels",
+    "expandAllPanels": "Expand All Panels"
   },
   "links": {
     "ownerUser": "Owner"
