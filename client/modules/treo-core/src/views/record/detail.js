@@ -76,7 +76,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                         label: dropDownItems[item].label
                     };
                     if (dropDownItems[item].iconClass) {
-                        let htmlLogo = `<span class="${dropDownItems[item].iconClass}" style="float: right; top: 3px; color: #333"></span>`;
+                        let htmlLogo = `<span class="additional-action-icon ${dropDownItems[item].iconClass}"></span>`;
                         dropdownItem.html = `${this.translate(dropDownItems[item].label, 'labels', this.scope)} ${htmlLogo}`;
                     }
                     this.dropdownItemList.push(dropdownItem);

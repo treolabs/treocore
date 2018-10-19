@@ -16295,7 +16295,8 @@ ul.dropdown-menu > li.checkbox {
     }
 
     #header .navbar-brand img {
-        margin: 10px 0 7px 14px
+        margin: 10px 0 7px 49px;
+        height: 25px;
     }
 
     #header ul.tabs {
@@ -16375,6 +16376,7 @@ ul.dropdown-menu > li.checkbox {
         margin-bottom: 0;
         margin-right: 0 !important;
         margin-left: 0 !important;
+        padding-bottom: 20px;
     }
 
     .search-row .form-group {
@@ -16737,13 +16739,15 @@ ul.dropdown-menu > li.checkbox {
     }
 
     .search-row .text-filter + .input-group-btn .search,
+    .search-row .text-filter + .input-group-btn .reset,
     .search-row > div .search-right-buttons-group button {
         font-size: 0;
         height: 33px;
-        width: 33px;
+        width: 38px;
     }
 
     .search-row .text-filter + .input-group-btn .search .fa,
+    .search-row .text-filter + .input-group-btn .reset .fa,
     .search-row > div .search-right-buttons-group button .fa{
         font-size: 14px;
     }
@@ -17106,4 +17110,47 @@ span.jqtree-dragging {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 150px;
+}
+
+#login .logo-container img.logo {
+    height: 25px;
+    margin-top: 9px;
+}
+
+.additional-action-icon {
+    color: #999;
+    margin-left: 5px;
+}
+
+td[data-name="draggableIcon"] {
+    color: #999;
+}
+
+.full-page-modal > .modal-dialog {
+    width: 100%;
+}
+
+.full-page-modal .modal-body {
+    padding: 0;
+}
+
+.full-page-modal .header-container {
+    padding: 14px 44px 30px 14px;
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.full-page-modal .body-container {
+    overflow-y: auto;
+    padding: 14px;
+}
+
+.full-page-modal .close {
+    position: absolute;
+    right: 15px;
+    top: 8px;
+    font-size: 31px;
+}
+
+.full-page-modal .title-container {
+    font-size: 18px;
 }
