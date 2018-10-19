@@ -44,25 +44,21 @@
                     <span class="fa fa-search"></span>
                     <span>{{translate 'Search'}}</span>
                 </button>
-            </div>
-        </div>
-    </div>
-    <div class="form-group col-md-6 col-sm-5">
-        <div class="btn-group search-right-buttons-group">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" data-action="reset">
+                <button type="button" class="btn btn-default reset" data-action="reset">
                     <span class="fa fa-redo-alt"></span>&nbsp;{{translate 'Reset'}}
                 </button>
             </div>
         </div>
-        {{#if hasViewModeSwitcher}}
+    </div>
+    {{#if hasViewModeSwitcher}}
+    <div class="form-group col-md-6 col-sm-5">
         <div class="btn-group view-mode-switcher-buttons-group">
             {{#each viewModeDataList}}
             <button type="button" data-name="{{name}}" data-action="switchViewMode" class="btn btn-sm btn-default{{#ifEqual name ../viewMode}} active{{/ifEqual}}" title="{{title}}"><span class="{{iconClass}}"></span></button>
             {{/each}}
         </div>
-        {{/if}}
     </div>
+    {{/if}}
 </div>
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
