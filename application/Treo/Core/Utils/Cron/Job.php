@@ -35,17 +35,17 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils\Cron;
 
-use Espo\Core\CronManager;
-use Espo\Core\Utils\Cron\Job as EspoJob;
-use Treo\Core\EventManager;
 use PDO;
+use Espo\Core\CronManager;
+use Espo\Core\Utils\System;
+use Treo\Core\EventManager;
 
 /**
  * Job util
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Job extends EspoJob
+class Job extends \Espo\Core\Utils\Cron\Job
 {
     /**
      * @var EventManager
