@@ -402,18 +402,20 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function updateModuleFile(): bool
     {
-        // prepare data
-        $data = [];
+        // delete old
+        if (file_exists($this->moduleJsonPath)) {
+            unlink($this->moduleJsonPath);
+        }
 
         // reload modules
         $this->getMetadata()->init(true);
 
+        // prepare data
+        $data = [];
         foreach ($this->getMetadata()->getModuleList() as $module) {
-            if (!in_array($module, ['Crm', 'TreoCore'])) {
-                $data[$module] = [
-                    'order' => $this->createModuleLoadOrder($module)
-                ];
-            }
+            $data[$module] = [
+                'order' => $this->createModuleLoadOrder($module)
+            ];
         }
 
         return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
@@ -504,38 +506,24 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function createModuleLoadOrder(string $moduleId): int
     {
-        // prepare result
-        $result = 5100;
+        // get default order
+        $order = $this->getMetadata()->getModuleConfigData("{$moduleId}.order");
 
-        /**
-         * For requireds
-         */
+        if (empty($order)) {
+            $order = 10;
+        }
+
         if (!empty($requireds = $this->getModuleRequireds($moduleId))) {
             foreach ($requireds as $require) {
                 $requireMax = $this->createModuleLoadOrder($require);
-                if ($requireMax > $result) {
-                    $result = $requireMax;
+                if ($requireMax > $order) {
+                    $order = $requireMax;
                 }
             }
-
-            $result = $result + 10;
+            $order = $order + 10;
         }
 
-        /**
-         * For extends
-         */
-        if (!empty($extends = $this->getModuleConfigData($moduleId)['extends'])) {
-            foreach ($extends as $extend) {
-                $extendMax = $this->createModuleLoadOrder($extend);
-                if ($extendMax > $result) {
-                    $result = $extendMax;
-                }
-            }
-
-            $result = $result + 10;
-        }
-
-        return $result;
+        return $order;
     }
 
     /**
