@@ -47,7 +47,7 @@ use Treo\Core\Utils\Auth;
 class Application extends \Espo\Core\Application
 {
     /**
-     * @var string
+     * @var string required PHP version
      */
     private $validPhpVersion = '7.1';
 
