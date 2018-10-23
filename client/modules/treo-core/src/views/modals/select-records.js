@@ -44,6 +44,72 @@ Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:vi
             Dep.prototype.setup.call(this);
         },
 
+        loadList: function () {
+            var viewName = this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.listSelect') ||
+                this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.list') ||
+                'views/record/list';
+
+            this.createView('list', viewName, {
+                collection: this.collection,
+                el: this.containerSelector + ' .list-container',
+                selectable: true,
+                checkboxes: this.multiple,
+                massActionsDisabled: true,
+                rowActionsView: false,
+                layoutName: this.layoutName,
+                searchManager: this.searchManager,
+                checkAllResultDisabled: !this.massRelateEnabled,
+                buttonsDisabled: true,
+                skipBuildRows: true
+            }, function (view) {
+                this.listenToOnce(view, 'select', function (model) {
+                    this.trigger('select', model);
+                    this.close();
+                }.bind(this));
+
+                if (this.multiple) {
+                    this.listenTo(view, 'check', function () {
+                        if (view.checkedList.length) {
+                            this.enableButton('select');
+                        } else {
+                            this.disableButton('select');
+                        }
+                    }, this);
+                    this.listenTo(view, 'select-all-results', function () {
+                        this.enableButton('select');
+                    }, this);
+                }
+
+                if (this.options.forceSelectAllAttributes || this.forceSelectAllAttributes) {
+                    this.listenToOnce(view, 'after:build-rows', function () {
+                        this.wait(false);
+                    }, this);
+                    this.collection.fetch();
+                } else {
+                    view.getSelectAttributeList(function (selectAttributeList) {
+                        if (!~selectAttributeList.indexOf('name')) {
+                            selectAttributeList.push('name');
+                        }
+
+                        var mandatorySelectAttributeList = this.options.mandatorySelectAttributeList || this.mandatorySelectAttributeList || [];
+                        mandatorySelectAttributeList.forEach(function (attribute) {
+                            if (!~selectAttributeList.indexOf(attribute)) {
+                                selectAttributeList.push(attribute);
+                            }
+                        }, this);
+
+                        if (selectAttributeList) {
+                            this.collection.data.select = selectAttributeList.join(',');
+                        }
+                        this.listenToOnce(view, 'after:build-rows', function () {
+                            this.wait(false);
+                        }, this);
+                        this.collection.fetch();
+                    }.bind(this));
+                }
+            });
+        },
+
     });
 });
 
