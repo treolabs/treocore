@@ -42,10 +42,10 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
                 'click .navbar-toggle': function () {
                     this.$el.find('.menu').toggleClass('open-menu');
                     let headerBreadcrumbs = $('.header-breadcrumbs');
-                    if (this.$el.find('.menu').hasClass('open-menu')) {
-                        headerBreadcrumbs.removeClass('fixed-header-breadcrumbs');
-                    } else {
+                    if ($(window).scrollTop() > $('.page-header').outerHeight() && !$('#header .navbar .menu').hasClass('open-menu')) {
                         headerBreadcrumbs.addClass('fixed-header-breadcrumbs');
+                    } else {
+                        headerBreadcrumbs.removeClass('fixed-header-breadcrumbs');
                     }
                 },
 
