@@ -48,20 +48,20 @@ class CancelStatusActionTest extends TestCase
     /**
      * Test getProgressStatusActionData method return array data
      */
-    public function testGetProgressStatusActionData()
+    public function testIsGetProgressStatusActionDataReturnArray()
     {
         $this->assertInternalType(
             'array',
-            $this->createMockCancelStatusActionService()->getProgressStatusActionData([])
+            $this->createMockService(CancelStatusAction::class)->getProgressStatusActionData([])
         );
     }
 
     /**
      * Test cancel method return true
      */
-    public function testCancelReturnTrue()
+    public function testIsCancelReturnTrue()
     {
-        $service = $this->createMockCancelStatusActionService();
+        $service = $this->createMockService(CancelStatusAction::class, ['triggered', 'setClosePMJob']);
         $service
             ->expects($this->any())
             ->method('triggered')
@@ -69,7 +69,7 @@ class CancelStatusActionTest extends TestCase
 
         $service
             ->expects($this->once())
-            ->method('cancelDBAction')
+            ->method('setClosePMJob')
             ->willReturn(null);
 
         $this->assertTrue($service->cancel('id'));
@@ -78,18 +78,8 @@ class CancelStatusActionTest extends TestCase
     /**
      * Test cancel method return false
      */
-    public function testCancelReturnFalse()
+    public function testIsCancelReturnFalse()
     {
-        $this->assertFalse($this->createMockCancelStatusActionService()->cancel(''));
-    }
-
-    /**
-     * Create mock object
-     *
-     * @return mixed
-     */
-    protected function createMockCancelStatusActionService()
-    {
-        return $this->createMockService(CancelStatusAction::class, ['triggered', 'cancelDBAction']);
+        $this->assertFalse($this->createMockService(CancelStatusAction::class)->cancel(''));
     }
 }

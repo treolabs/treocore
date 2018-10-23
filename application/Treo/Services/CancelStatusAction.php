@@ -72,8 +72,8 @@ class CancelStatusAction extends \Espo\Core\Services\Base implements StatusActio
             // triggered before event
             $this->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
 
-            // set action cancel in DB
-            $this->cancelDBAction($id);
+            // set close ProgressManager job in DB
+            $this->setClosePMJob($id);
 
             // prepare result
             $result = true;
@@ -90,16 +90,15 @@ class CancelStatusAction extends \Espo\Core\Services\Base implements StatusActio
      *
      * @param string $id
      */
-    protected function cancelDBAction(string $id): void
+    protected function setClosePMJob(string $id): void
     {
         // prepare sql
-        $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
-        $sql = sprintf($sql, $id);
+        $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id=:id";
 
         $sth = $this
             ->getEntityManager()
             ->getPDO()
             ->prepare($sql);
-        $sth->execute();
+        $sth->execute(['id' => $id]);
     }
 }
