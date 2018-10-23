@@ -36,70 +36,60 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Treo\PHPUnit\Framework\TestCase;
+
 /**
- * CancelStatusAction service
+ * Class CancelStatusActionTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.zablodskiy@zinitsolutions.com
  */
-class CancelStatusAction extends \Espo\Core\Services\Base implements StatusActionInterface
+class CancelStatusActionTest extends TestCase
 {
-
     /**
-     * Get progress status action data
-     *
-     * @param array $data
-     *
-     * @return array
+     * Test getProgressStatusActionData method return array data
      */
-    public function getProgressStatusActionData(array $data): array
+    public function testGetProgressStatusActionData()
     {
-        return [];
+        $this->assertInternalType(
+            'array',
+            $this->createMockCancelStatusActionService()->getProgressStatusActionData([])
+        );
     }
 
     /**
-     * Cancel action
-     *
-     * @param string $id
-     *
-     * @return bool
+     * Test cancel method return true
      */
-    public function cancel(string $id): bool
+    public function testCancelReturnTrue()
     {
-        // prepare result
-        $result = false;
+        $service = $this->createMockCancelStatusActionService();
+        $service
+            ->expects($this->any())
+            ->method('triggered')
+            ->willReturn([]);
 
-        if (!empty($id)) {
-            // triggered before event
-            $this->triggered('ProgressManager', 'beforeCancel', ['id' => $id]);
+        $service
+            ->expects($this->once())
+            ->method('cancelDBAction')
+            ->willReturn(null);
 
-            // set action cancel in DB
-            $this->cancelDBAction($id);
-
-            // prepare result
-            $result = true;
-
-            // triggered after event
-            $this->triggered('ProgressManager', 'afterCancel', ['id' => $id]);
-        }
-
-        return $result;
+        $this->assertTrue($service->cancel('id'));
     }
 
     /**
-     * Cancel DB action
-     *
-     * @param string $id
+     * Test cancel method return false
      */
-    protected function cancelDBAction(string $id): void
+    public function testCancelReturnFalse()
     {
-        // prepare sql
-        $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id='%s'";
-        $sql = sprintf($sql, $id);
+        $this->assertFalse($this->createMockCancelStatusActionService()->cancel(''));
+    }
 
-        $sth = $this
-            ->getEntityManager()
-            ->getPDO()
-            ->prepare($sql);
-        $sth->execute();
+    /**
+     * Create mock object
+     *
+     * @return mixed
+     */
+    protected function createMockCancelStatusActionService()
+    {
+        return $this->createMockService(CancelStatusAction::class, ['triggered', 'cancelDBAction']);
     }
 }
