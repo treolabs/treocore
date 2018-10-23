@@ -50,6 +50,11 @@ use Treo\Core\Utils\Metadata;
 class RestApiDocs extends Base
 {
     /**
+     * @var string
+     */
+    protected $file = 'apidocs/index.html';
+
+    /**
      * @var array
      */
     protected $dependencies
@@ -91,27 +96,23 @@ class RestApiDocs extends Base
         // prepare result
         $result = false;
 
-        // get html
-        $html = $this->getHtml();
-
-        if (!empty($html)) {
-            // prepare file path
-            $filePath = 'apidocs/index.html';
-
-            // delete file
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-
-            // create file
-            $file = fopen($filePath, 'w');
-            fwrite($file, $html);
-            fclose($file);
-
-            $result = true;
+        if (!empty($html = $this->getHtml())) {
+            $result = $this->setToFile($html);
         }
 
         return $result;
+    }
+
+    /**
+     * Set html to file
+     *
+     * @param string $html
+     *
+     * @return bool
+     */
+    protected function setToFile(string $html): bool
+    {
+        return (!empty(file_put_contents($this->file, $html)));
     }
 
     /**
