@@ -196,7 +196,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 } else {
                     this.recordHelper.setPanelStateParam(p.name, p.hidden || false);
                 }
-                p.expanded = this.getStorage().get('collapsed', p.name) !== 'collapsed';
+
+                p.expanded = (this.getStorage().get('collapsedPanels', this.scope) || {})[p.name] !== 'collapsed';
 
                 this.panelList.push(p);
             }, this);
@@ -213,7 +214,13 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
             } else {
                 target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).addClass('caret-up');
             }
-            this.getStorage().set('collapsed', target.data('name'), state);
+            this.savePanelStateToStorage(target.data('name'), state);
+        },
+
+        savePanelStateToStorage(panelName, state) {
+            let stateObj = this.getStorage().get('collapsedPanels', this.scope) || {};
+            stateObj[panelName] = state;
+            this.getStorage().set('collapsedPanels', this.scope, stateObj);
         }
     });
 });
