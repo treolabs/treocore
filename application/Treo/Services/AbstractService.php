@@ -134,4 +134,15 @@ abstract class AbstractService
             ->get('language')
             ->translate($label, $category, $scope, $requiredOptions);
     }
+
+    /**
+     * Execute SQL query
+     *
+     * @param string $sql
+     */
+    protected function executeSql(string $sql): void
+    {
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth->execute();
+    }
 }
