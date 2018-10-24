@@ -16437,7 +16437,8 @@ button.category span.glyphicon {
     }
 
     #header ul.tabs {
-        margin: 10px 0 0 -8px
+        margin: 10px 0 0 -8px;
+        overflow-y: auto;
     }
 
     #navbar .nav.navbar-nav.navbar-right {
@@ -16738,10 +16739,11 @@ button.category span.glyphicon {
         z-index: 100;
         background: #424242;
         display: block;
-        height: auto !important;
+        height: calc(100vh - 44px);
         border: 0;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         overflow-x: visible !important;
+        overflow-y: auto;
     }
 
     #header .menu {
