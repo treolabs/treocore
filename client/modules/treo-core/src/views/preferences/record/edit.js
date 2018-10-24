@@ -39,6 +39,9 @@ Espo.define('treo-core:views/preferences/record/edit', 'class-replace!treo-core:
             Dep.prototype.setup.call(this);
 
             this.showField('dashboardLayout');
+            if (!this.model.get('isPortalUser')) {
+                this.showPanel('notifications');
+            }
         },
     });
 });
