@@ -139,10 +139,28 @@ abstract class AbstractService
      * Execute SQL query
      *
      * @param string $sql
+     *
+     * @return mixed
      */
-    protected function executeSql(string $sql): void
+    protected function executeSqlQuery(string $sql)
     {
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
+
+        return $sth;
+    }
+
+    /**
+     * Execute SQL SELECT query
+     *
+     * @param string $sql
+     *
+     * @return array
+     */
+    protected function executeSqlSelectQuery(string $sql): array
+    {
+        $data = $this->executeSqlQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return (empty($data)) ? [] : $data;
     }
 }
