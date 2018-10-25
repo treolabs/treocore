@@ -42,10 +42,10 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 this.collapseBottomPanel($(e.currentTarget).data('panel'));
             },
             'show.bs.collapse div.panel-body.panel-collapse.collapse': function (e) {
-                this.afterPanelCollapsed($(e.currentTarget), 'expanded');
+                this.afterPanelCollapsed($(e.currentTarget));
             },
             'hide.bs.collapse div.panel-body.panel-collapse.collapse': function (e) {
-                this.afterPanelCollapsed($(e.currentTarget), 'collapsed');
+                this.afterPanelCollapsed($(e.currentTarget), true);
             },
         }, Dep.prototype.events),
 
@@ -196,7 +196,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                 } else {
                     this.recordHelper.setPanelStateParam(p.name, p.hidden || false);
                 }
-                p.expanded = this.getStorage().get('collapsed', p.name) !== 'collapsed';
+
+                p.expanded = !(this.getStorage().get('collapsed-panels', this.scope) || []).includes(p.name);
 
                 this.panelList.push(p);
             }, this);
@@ -207,13 +208,26 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
             panelBody.collapse(type ? type : 'toggle');
         },
 
-        afterPanelCollapsed(target, state) {
-            if (state) {
+        afterPanelCollapsed(target, hide) {
+            if (hide) {
                 target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).removeClass('caret-up');
             } else {
                 target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).addClass('caret-up');
             }
-            this.getStorage().set('collapsed', target.data('name'), state);
+            this.savePanelStateToStorage(target.data('name'), hide);
+        },
+
+        savePanelStateToStorage(panelName, hide) {
+            let states = this.getStorage().get('collapsed-panels', this.scope) || [];
+            if (!hide && states.includes(panelName)) {
+                states.splice(states.indexOf(panelName), 1);
+            } else if (hide && !states.includes(panelName)) {
+                states.push(panelName);
+            } else {
+                return;
+            }
+            this.getStorage().set('collapsed-panels', this.scope, states);
+
         }
     });
 });

@@ -126,12 +126,15 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
 
         addCollapsingButtonsToMiddleView(view) {
             view.listenTo(view, 'after:render', view => {
-                let html = `` +
-                `<div class="pull-right btn-group collapsing-buttons">` +
-                    `<a class="btn btn-link" data-action="collapseAllPanels">${this.getLanguage().translate('collapseAllPanels', 'labels', 'Global')}</a>` +
-                    `<a class="btn btn-link" data-action="expandAllPanels">${this.getLanguage().translate('expandAllPanels', 'labels', 'Global')}</a>`+
-                `</div>`;
-                view.$el.find('.panel-heading').prepend(html);
+                let bottom = this.getView('bottom');
+                if (bottom && bottom.panelList.length) {
+                    let html = `` +
+                        `<div class="pull-right btn-group collapsing-buttons">` +
+                            `<a class="btn btn-link" data-action="collapseAllPanels">${this.getLanguage().translate('collapseAllPanels', 'labels', 'Global')}</a>` +
+                            `<a class="btn btn-link" data-action="expandAllPanels">${this.getLanguage().translate('expandAllPanels', 'labels', 'Global')}</a>`+
+                        `</div>`;
+                    view.$el.find('.panel-heading:first').prepend(html);
+                }
             });
         },
 
