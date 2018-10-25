@@ -2,6 +2,11 @@
     <div class="panel panel-{{#if style}}{{style}}{{else}}default{{/if}} panel-{{name}}{{#if hidden}} hidden{{/if}}{{#if sticked}} sticked{{/if}}" data-name="{{name}}" data-name="{{name}}">
         <div class="panel-heading">
             <div class="pull-right btn-group">
+                {{#unless notRefreshable}}
+                <button type="button" class="btn btn-default btn-sm action" data-action="refresh" data-panel="{{name}}" title="Click to refresh">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </button>
+                {{/unless}}
                 {{#if buttonList}}
                     {{#each buttonList}}
                     <button type="button" class="btn btn-{{#if ../../style}}{{../../style}}{{else}}default{{/if}} btn-sm action{{#if hidden}} hidden{{/if}}" data-action="{{action}}" data-panel="{{../../name}}" {{#each data}} data-{{hyphen @key}}="{{./this}}"{{/each}} title="{{#if title}}{{translate title scope=../../scope}}{{/if}}">{{#if html}}{{{html}}}{{else}}{{translate label scope=../../../../scope}}{{/if}}</button>
