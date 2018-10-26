@@ -17,11 +17,11 @@
         "label": "Authentication",
         "description": "authentication"
       },
-      {
-        "url": "#Composer/auth",
-        "label": "Git User",
-        "description": "gitAuth"
-      },
+//      {
+//        "url": "#Composer/auth",
+//        "label": "Git User",
+//        "description": "gitAuth"
+//      },
       {
         "url": "#ScheduledJob",
         "label": "Scheduled Jobs",
