@@ -190,4 +190,31 @@ class ComposerTest extends TestCase
         // test 4
         $this->assertTrue(isset($result['delete']));
     }
+
+    public function testIsGetComposerDiffMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class, ['getModuleId', 'getModule']);
+        $service
+            ->expects($this->any())
+            ->method('getModuleId')
+            ->willReturn('moduleId');
+        $service
+            ->expects($this->any())
+            ->method('getModule')
+            ->willReturn(['version' => 'some-version']);
+
+        $result = $service->getComposerDiff();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['install']));
+
+        // test 3
+        $this->assertTrue(isset($result['update']));
+
+        // test 4
+        $this->assertTrue(isset($result['delete']));
+    }
 }

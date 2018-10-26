@@ -371,7 +371,7 @@ class Composer extends AbstractService
             } elseif ($version != $composerStableData['require'][$package]) {
                 // prepare data
                 $id = $this->getModuleId($package);
-                $from = $this->getContainer()->get('metadata')->getModule($id)['version'];
+                $from = $this->getModule($id)['version'];
 
                 $result['update'][] = [
                     'id'      => $id,
@@ -543,5 +543,17 @@ class Composer extends AbstractService
             ->get('serviceFactory')
             ->create('ModuleManager')
             ->updateLoadOrder();
+    }
+
+    /**
+     * Get module data
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function getModule(string $id): array
+    {
+        return $this->getContainer()->get('metadata')->getModule($id);
     }
 }
