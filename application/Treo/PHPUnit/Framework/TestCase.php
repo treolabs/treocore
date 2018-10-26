@@ -56,11 +56,15 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function createMockService(string $name, array $methods = [])
     {
-        $service = $this->createPartialMock($name, array_merge(['getContainer'], $methods));
+        $service = $this->createPartialMock($name, array_merge(['getContainer', 'getConfig'], $methods));
         $service
             ->expects($this->any())
             ->method('getContainer')
             ->willReturn($this->getContainer());
+        $service
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($this->getConfig());
 
         return $service;
     }

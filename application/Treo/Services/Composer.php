@@ -97,15 +97,26 @@ class Composer extends AbstractService
      *
      * @param array $data
      *
-     * @throws \Espo\Core\Exceptions\Error
+     * @return bool
      */
-    public function runUpdateJob(array $data): void
+    public function runUpdateJob(array $data = []): bool
     {
+        // prepare result
+        $result = true;
+
+        // prepare data
+        $createdById = (isset($data['createdById'])) ? $data['createdById'] : null;
+
         try {
-            $this->runUpdate($data['createdById']);
+            $this->runUpdate($createdById);
         } catch (\Exception $e) {
             $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
+
+            // prepare result
+            $result = false;
         }
+
+        return $result;
     }
 
     /**
@@ -134,15 +145,10 @@ class Composer extends AbstractService
 
         if ($composer['status'] == 0) {
             // loggout all users
-            $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
-            $sth->execute();
+            $this->logoutAll();
 
             // update module file for load order
-            $this
-                ->getContainer()
-                ->get('serviceFactory')
-                ->create('ModuleManager')
-                ->updateModuleFile();
+            $this->updateModulesLoadOrder();
         }
 
         // triggered after action
@@ -249,9 +255,7 @@ class Composer extends AbstractService
      */
     public function setModuleComposerJson(array $data): void
     {
-        $file = fopen($this->moduleComposer, "w");
-        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        fclose($file);
+        $this->filePutContents($this->moduleComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -344,14 +348,10 @@ class Composer extends AbstractService
         ];
 
         if (!file_exists($this->moduleStableComposer)) {
-            $data = [
-                'require' => []
-            ];
+            // prepare data
+            $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-            file_put_contents(
-                $this->moduleStableComposer,
-                Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-            );
+            $this->filePutContents($this->moduleStableComposer, $data);
         }
 
         // prepare data
@@ -367,7 +367,7 @@ class Composer extends AbstractService
             } elseif ($version != $composerStableData['require'][$package]) {
                 // prepare data
                 $id = $this->getModuleId($package);
-                $from = $this->getContainer()->get('metadata')->getModule($id)['version'];
+                $from = $this->getModule($id)['version'];
 
                 $result['update'][] = [
                     'id'      => $id,
@@ -407,13 +407,7 @@ class Composer extends AbstractService
             $data = Json::decode(file_get_contents($path), true);
             $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
 
-            // delete old file
-            unlink($path);
-
-            // create new file
-            $file = fopen($path, "w");
-            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-            fclose($file);
+            $this->filePutContents($path, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             // prepare result
             $result = true;
@@ -517,5 +511,52 @@ class Composer extends AbstractService
             ]
         );
         $this->getEntityManager()->saveEntity($jobEntity);
+    }
+
+    /**
+     * Logout all users
+     */
+    protected function logoutAll(): void
+    {
+        $this->executeSqlQuery("UPDATE auth_token SET deleted = 1");
+    }
+
+    /**
+     * Update module(s) load order
+     *
+     * @return bool
+     */
+    protected function updateModulesLoadOrder(): bool
+    {
+        return $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('ModuleManager')
+            ->updateLoadOrder();
+    }
+
+    /**
+     * Get module data
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function getModule(string $id): array
+    {
+        return $this->getContainer()->get('metadata')->getModule($id);
+    }
+
+    /**
+     * @param      $filename
+     * @param      $data
+     * @param int  $flags
+     * @param null $context
+     *
+     * @return bool|int
+     */
+    protected function filePutContents($filename, $data, $flags = 0, $context = null)
+    {
+        return file_put_contents($filename, $data, $flags, $context);
     }
 }

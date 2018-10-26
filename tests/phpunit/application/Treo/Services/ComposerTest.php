@@ -41,40 +41,191 @@ use Treo\PHPUnit\Framework\TestCase;
  * Class ComposerTest
  *
  * @author r.ratsun@zinitsolutions.com
- * @todo   not finished
  */
 class ComposerTest extends TestCase
 {
     public function testIsCreateUpdateJobReturnFalse()
-    {
-        $service = $this->createMockComposerService();
-        $service
-            ->expects($this->any())
-            ->method('isJobExists')
-            ->willReturn(true);
-
-        $this->assertFalse($service->createUpdateJob());
-    }
-
-    public function testIsCreateUpdateJobReturnTrue()
-    {
-        $service = $this->createMockComposerService();
-        $service
-            ->expects($this->any())
-            ->method('isJobExists')
-            ->willReturn(false);
-
-        $this->assertTrue($service->createUpdateJob());
-    }
-
-    protected function createMockComposerService()
     {
         $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
         $service
             ->expects($this->any())
             ->method('insertJob')
             ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('isJobExists')
+            ->willReturn(true);
 
-        return $service;
+        // test
+        $this->assertFalse($service->createUpdateJob());
+    }
+
+    public function testIsCreateUpdateJobReturnTrue()
+    {
+        $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
+        $service
+            ->expects($this->any())
+            ->method('insertJob')
+            ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('isJobExists')
+            ->willReturn(false);
+
+        // test
+        $this->assertTrue($service->createUpdateJob());
+    }
+
+    public function testIsRunUpdateJobReturnTrue()
+    {
+        $service = $this->createMockService(Composer::class, ['runUpdate']);
+        $service
+            ->expects($this->any())
+            ->method('runUpdate')
+            ->willReturn([]);
+
+        // tests
+        $this->assertTrue($service->runUpdateJob(['createdById' => '1']));
+        $this->assertTrue($service->runUpdateJob(['createdById' => '2']));
+        $this->assertTrue($service->runUpdateJob(['createdById' => '2', 'qwe' => 123]));
+    }
+
+    public function testIsRunUpdateMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'runUpdate'));
+    }
+
+    public function testIsCancelChangesMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'cancelChanges'));
+    }
+
+    public function testIsUpdateMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'update'));
+    }
+
+    public function testIsDeleteMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'delete'));
+    }
+
+    public function testIsGetModuleComposerJsonMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class, ['setModuleComposerJson']);
+        $service
+            ->expects($this->any())
+            ->method('setModuleComposerJson')
+            ->willReturn(null);
+
+        $result = $service->getModuleComposerJson();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['require']));
+    }
+
+    public function testIsGetModuleStableComposerJsonReturnArray()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertInternalType('array', $service->getModuleStableComposerJson());
+    }
+
+    public function testIsSetModuleComposerJsonMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'setModuleComposerJson'));
+    }
+
+    public function testIsSaveComposerJsonMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'saveComposerJson'));
+    }
+
+    public function testIsStoreComposerLockMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'storeComposerLock'));
+    }
+
+    public function testIsGetComposerLockDiffMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        $result = $service->getComposerLockDiff();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['install']));
+
+        // test 3
+        $this->assertTrue(isset($result['update']));
+
+        // test 4
+        $this->assertTrue(isset($result['delete']));
+    }
+
+    public function testIsGetComposerDiffMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class, ['getModuleId', 'getModule']);
+        $service
+            ->expects($this->any())
+            ->method('getModuleId')
+            ->willReturn('moduleId');
+        $service
+            ->expects($this->any())
+            ->method('getModule')
+            ->willReturn(['version' => 'some-version']);
+
+        $result = $service->getComposerDiff();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['install']));
+
+        // test 3
+        $this->assertTrue(isset($result['update']));
+
+        // test 4
+        $this->assertTrue(isset($result['delete']));
+    }
+
+    public function testIsUpdateMinimumStabilityMethodReturnTrue()
+    {
+        $service = $this->createMockService(Composer::class, ['filePutContents']);
+        $service
+            ->expects($this->any())
+            ->method('filePutContents')
+            ->willReturn(1);
+
+        // test
+        $this->assertTrue($service->updateMinimumStability());
     }
 }
