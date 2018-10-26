@@ -72,7 +72,7 @@ class Packagist extends AbstractService
     public function __construct()
     {
         // get composer.json
-        $json = file_get_contents(CORE_PATH . '/composer.json');
+        $json = $this->filePutContants('composer.json');
 
         // set repository
         $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
@@ -135,9 +135,8 @@ class Packagist extends AbstractService
         ];
 
         $data = file_get_contents($this->url . "package?" . http_build_query($params));
-        $file = fopen($this->cacheFile, "w");
-        fwrite($file, $data);
-        fclose($file);
+
+        $this->filePutContants($this->cacheFile, $data);
 
         return true;
     }
@@ -169,15 +168,12 @@ class Packagist extends AbstractService
             $fileData = Json::decode(file_get_contents($this->notificationsFile), true);
         }
 
-        // get metadata
-        $metadata = $this->getContainer()->get('metadata');
-
         // get modules
-        $modules = $metadata->getModuleList();
+        $modules = $this->getModules();
 
         // checking new versions of modules
         foreach ($modules as $id) {
-            if (!empty($module = $metadata->getModule($id))) {
+            if (!empty($module = $this->getModule($id))) {
                 // get version
                 $package = $this->getPackage($id);
                 $version = $package['versions'][0]['version'];
@@ -224,9 +220,8 @@ class Packagist extends AbstractService
 
         // set to file
         if (!empty($fileData)) {
-            $file = fopen($this->notificationsFile, "w");
-            fwrite($file, Json::encode($fileData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            fclose($file);
+            $jsonData = Json::encode($fileData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $this->filePutContants($this->notificationsFile, $jsonData);
         }
 
         return true;
@@ -317,5 +312,23 @@ class Packagist extends AbstractService
         }
 
         return $token;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getModules(): array
+    {
+        return $this->getContainer()->get('metadata')->getModuleList();
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function getModule(string $id): array
+    {
+        return $this->getContainer()->get('metadata')->getModule($id);
     }
 }
