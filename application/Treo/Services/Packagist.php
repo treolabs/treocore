@@ -72,7 +72,7 @@ class Packagist extends AbstractService
     public function __construct()
     {
         // get composer.json
-        $json = $this->filePutContants('composer.json');
+        $json = file_get_contents('composer.json');
 
         // set repository
         $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
