@@ -396,11 +396,11 @@ class ModuleManager extends \Espo\Core\Services\Base
     }
 
     /**
-     * Update module file
+     * Update module(s) load order
      *
      * @return bool
      */
-    public function updateModuleFile(): bool
+    public function updateLoadOrder(): bool
     {
         // delete old
         if (file_exists($this->moduleJsonPath)) {

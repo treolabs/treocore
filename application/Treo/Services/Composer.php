@@ -134,15 +134,10 @@ class Composer extends AbstractService
 
         if ($composer['status'] == 0) {
             // loggout all users
-            $sth = $this->getEntityManager()->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
-            $sth->execute();
+            $this->logoutAll();
 
             // update module file for load order
-            $this
-                ->getContainer()
-                ->get('serviceFactory')
-                ->create('ModuleManager')
-                ->updateModuleFile();
+            $this->updateModulesLoadOrder();
         }
 
         // triggered after action
@@ -517,5 +512,27 @@ class Composer extends AbstractService
             ]
         );
         $this->getEntityManager()->saveEntity($jobEntity);
+    }
+
+    /**
+     * Logout all users
+     */
+    protected function logoutAll(): void
+    {
+        $this->executeSqlQuery("UPDATE auth_token SET deleted = 1");
+    }
+
+    /**
+     * Update module(s) load order
+     *
+     * @return bool
+     */
+    protected function updateModulesLoadOrder(): bool
+    {
+        return $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('ModuleManager')
+            ->updateLoadOrder();
     }
 }
