@@ -17314,3 +17314,13 @@ td[data-name="draggableIcon"] {
 .full-page-modal .title-container {
     font-size: 18px;
 }
+
+.full-page-modal .images-panel {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.full-page-modal .images-panel .image-field {
+    margin-bottom: 10px;
+}
