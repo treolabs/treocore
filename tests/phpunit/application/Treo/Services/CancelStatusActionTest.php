@@ -54,6 +54,25 @@ class CancelStatusActionTest extends TestCase
             'array',
             $this->createMockService(CancelStatusAction::class)->getProgressStatusActionData([])
         );
+
+        $this->assertInternalType(
+            'array',
+            $this->createMockService(CancelStatusAction::class)->getProgressStatusActionData([
+                'param' => 'value'
+            ])
+        );
+
+        $this->assertInternalType(
+            'array',
+            $this->createMockService(CancelStatusAction::class)->getProgressStatusActionData([
+                [
+                    'param' => 'value'
+                ],
+                [
+                    'param1' => 'value1'
+                ]
+            ])
+        );
     }
 
     /**
@@ -61,7 +80,7 @@ class CancelStatusActionTest extends TestCase
      */
     public function testIsCancelReturnTrue()
     {
-        $service = $this->createMockService(CancelStatusAction::class, ['triggered', 'setClosePMJob']);
+        $service = $this->createMockService(CancelStatusAction::class, ['triggered', 'closeJob']);
         $service
             ->expects($this->any())
             ->method('triggered')
@@ -69,7 +88,7 @@ class CancelStatusActionTest extends TestCase
 
         $service
             ->expects($this->once())
-            ->method('setClosePMJob')
+            ->method('closeJob')
             ->willReturn(null);
 
         $this->assertTrue($service->cancel('id'));
