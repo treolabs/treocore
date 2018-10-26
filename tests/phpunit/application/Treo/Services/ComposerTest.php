@@ -41,7 +41,6 @@ use Treo\PHPUnit\Framework\TestCase;
  * Class ComposerTest
  *
  * @author r.ratsun@zinitsolutions.com
- * @todo   not finished
  */
 class ComposerTest extends TestCase
 {
@@ -216,5 +215,17 @@ class ComposerTest extends TestCase
 
         // test 4
         $this->assertTrue(isset($result['delete']));
+    }
+
+    public function testIsUpdateMinimumStabilityMethodReturnTrue()
+    {
+        $service = $this->createMockService(Composer::class, ['filePutContents']);
+        $service
+            ->expects($this->any())
+            ->method('filePutContents')
+            ->willReturn(1);
+
+        // test
+        $this->assertTrue($service->updateMinimumStability());
     }
 }

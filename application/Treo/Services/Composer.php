@@ -255,7 +255,7 @@ class Composer extends AbstractService
      */
     public function setModuleComposerJson(array $data): void
     {
-        file_put_contents($this->moduleComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->filePutContents($this->moduleComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -348,14 +348,10 @@ class Composer extends AbstractService
         ];
 
         if (!file_exists($this->moduleStableComposer)) {
-            $data = [
-                'require' => []
-            ];
+            // prepare data
+            $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-            file_put_contents(
-                $this->moduleStableComposer,
-                Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-            );
+            $this->filePutContents($this->moduleStableComposer, $data);
         }
 
         // prepare data
@@ -411,13 +407,7 @@ class Composer extends AbstractService
             $data = Json::decode(file_get_contents($path), true);
             $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
 
-            // delete old file
-            unlink($path);
-
-            // create new file
-            $file = fopen($path, "w");
-            fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-            fclose($file);
+            $this->filePutContents($path, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             // prepare result
             $result = true;
@@ -555,5 +545,18 @@ class Composer extends AbstractService
     protected function getModule(string $id): array
     {
         return $this->getContainer()->get('metadata')->getModule($id);
+    }
+
+    /**
+     * @param      $filename
+     * @param      $data
+     * @param int  $flags
+     * @param null $context
+     *
+     * @return bool|int
+     */
+    protected function filePutContents($filename, $data, $flags = 0, $context = null)
+    {
+        return file_put_contents($filename, $data, $flags, $context);
     }
 }
