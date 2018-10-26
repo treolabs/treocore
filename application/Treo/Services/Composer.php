@@ -97,15 +97,26 @@ class Composer extends AbstractService
      *
      * @param array $data
      *
-     * @throws \Espo\Core\Exceptions\Error
+     * @return bool
      */
-    public function runUpdateJob(array $data): void
+    public function runUpdateJob(array $data = []): bool
     {
+        // prepare result
+        $result = true;
+
+        // prepare data
+        $createdById = (isset($data['createdById'])) ? $data['createdById'] : null;
+
         try {
-            $this->runUpdate($data['createdById']);
+            $this->runUpdate($createdById);
         } catch (\Exception $e) {
             $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
+
+            // prepare result
+            $result = false;
         }
+
+        return $result;
     }
 
     /**

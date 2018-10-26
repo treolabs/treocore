@@ -47,34 +47,47 @@ class ComposerTest extends TestCase
 {
     public function testIsCreateUpdateJobReturnFalse()
     {
-        $service = $this->createMockComposerService();
+        $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
+        $service
+            ->expects($this->any())
+            ->method('insertJob')
+            ->willReturn(null);
         $service
             ->expects($this->any())
             ->method('isJobExists')
             ->willReturn(true);
 
+        // test
         $this->assertFalse($service->createUpdateJob());
     }
 
     public function testIsCreateUpdateJobReturnTrue()
-    {
-        $service = $this->createMockComposerService();
-        $service
-            ->expects($this->any())
-            ->method('isJobExists')
-            ->willReturn(false);
-
-        $this->assertTrue($service->createUpdateJob());
-    }
-
-    protected function createMockComposerService()
     {
         $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
         $service
             ->expects($this->any())
             ->method('insertJob')
             ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('isJobExists')
+            ->willReturn(false);
 
-        return $service;
+        // test
+        $this->assertTrue($service->createUpdateJob());
+    }
+
+    public function testIsRunUpdateJobReturnTrue()
+    {
+        $service = $this->createMockService(Composer::class, ['runUpdate']);
+        $service
+            ->expects($this->any())
+            ->method('runUpdate')
+            ->willReturn([]);
+
+        // tests
+        $this->assertTrue($service->runUpdateJob(['createdById' => '1']));
+        $this->assertTrue($service->runUpdateJob(['createdById' => '2']));
+        $this->assertTrue($service->runUpdateJob(['createdById' => '2', 'qwe' => 123]));
     }
 }
