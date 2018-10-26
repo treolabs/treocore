@@ -90,4 +90,104 @@ class ComposerTest extends TestCase
         $this->assertTrue($service->runUpdateJob(['createdById' => '2']));
         $this->assertTrue($service->runUpdateJob(['createdById' => '2', 'qwe' => 123]));
     }
+
+    public function testIsRunUpdateMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'runUpdate'));
+    }
+
+    public function testIsCancelChangesMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'cancelChanges'));
+    }
+
+    public function testIsUpdateMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'update'));
+    }
+
+    public function testIsDeleteMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'delete'));
+    }
+
+    public function testIsGetModuleComposerJsonMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class, ['setModuleComposerJson']);
+        $service
+            ->expects($this->any())
+            ->method('setModuleComposerJson')
+            ->willReturn(null);
+
+        $result = $service->getModuleComposerJson();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['require']));
+    }
+
+    public function testIsGetModuleStableComposerJsonReturnArray()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertInternalType('array', $service->getModuleStableComposerJson());
+    }
+
+    public function testIsSetModuleComposerJsonMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'setModuleComposerJson'));
+    }
+
+    public function testIsSaveComposerJsonMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'saveComposerJson'));
+    }
+
+    public function testIsStoreComposerLockMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'storeComposerLock'));
+    }
+
+    public function testIsGetComposerLockDiffMethodReturnArray()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        $result = $service->getComposerLockDiff();
+
+        // test 1
+        $this->assertInternalType('array', $result);
+
+        // test 2
+        $this->assertTrue(isset($result['install']));
+
+        // test 3
+        $this->assertTrue(isset($result['update']));
+
+        // test 4
+        $this->assertTrue(isset($result['delete']));
+    }
 }
