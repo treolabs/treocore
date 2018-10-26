@@ -70,6 +70,14 @@ class Import extends \Espo\Services\Import
     /**
      * @inheritdoc
      */
+    protected function getServiceFactory()
+    {
+        return $this->getInjection('serviceFactory');
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function getAcl()
     {
         return $this->getInjection('acl');
