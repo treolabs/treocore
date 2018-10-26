@@ -44,43 +44,47 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class PackagistTest extends TestCase
 {
-    /**
-     * @var Packagist
-     */
-    protected $packagistMock;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function testGetPackageMethod()
     {
-        // prepare mock
-        $this->packagistMock = $this->createPartialMock(Packagist::class, ['getPackages']);
-        $this->packagistMock
+        $service = $this->createMockService(Packagist::class, ['getPackages']);
+        $service
             ->expects($this->any())
             ->method('getPackages')
-            ->willReturn([["treoId" => "Module1"], ["treoId" => "Module2"]]);
+            ->willReturn([['treoId' => 'TestModule']]);
+
+        // test
+        $this->assertEquals(['treoId' => 'TestModule'], $service->getPackage('TestModule'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown()
+    public function testIsGetPackagesMethodExists()
     {
-        // mockery close
-        \Mockery::close();
+        $service = $this->createMockService(Packagist::class);
 
-        // clean up
-        $this->packagistMock = null;
+        // test
+        $this->assertTrue(method_exists($service, 'getPackages'));
     }
 
-    /**
-     * Test getPackage method should return array data
-     */
-    public function testGetPackageMethodShouldReturnArrayData()
+    public function testIsRefreshMethodExists()
     {
-        $this->assertEquals([], $this->packagistMock->getPackage('Module0'));
-        $this->assertEquals(["treoId" => "Module1"], $this->packagistMock->getPackage('Module1'));
-        $this->assertEquals(["treoId" => "Module2"], $this->packagistMock->getPackage('Module2'));
+        $service = $this->createMockService(Packagist::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'refresh'));
+    }
+
+    public function testIsClearCacheMethodExists()
+    {
+        $service = $this->createMockService(Packagist::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'clearCache'));
+    }
+
+    public function testIsNotifyMethodExists()
+    {
+        $service = $this->createMockService(Packagist::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'notify'));
     }
 }

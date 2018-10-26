@@ -163,4 +163,17 @@ abstract class AbstractService
 
         return (empty($data)) ? [] : $data;
     }
+
+    /**
+     * @param      $filename
+     * @param      $data
+     * @param int  $flags
+     * @param null $context
+     *
+     * @return bool|int
+     */
+    protected function filePutContants($filename, $data, $flags = 0, $context = null)
+    {
+        return file_put_contents($filename, $data, $flags, $context);
+    }
 }
