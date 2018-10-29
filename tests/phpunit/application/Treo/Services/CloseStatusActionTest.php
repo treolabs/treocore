@@ -31,67 +31,63 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Treo\PHPUnit\Framework\TestCase;
+
 /**
- * CloseStatusAction service
+ * Class CloseStatusActionTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.zablodskiy@zinitsolutions.com
  */
-class CloseStatusAction extends \Espo\Core\Services\Base implements StatusActionInterface
+class CloseStatusActionTest extends TestCase
 {
-
-    /**
-     * Get progress status action data
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    public function getProgressStatusActionData(array $data): array
+    public function testIsGetProgressStatusActionDataReturnArray()
     {
-        return [];
+        $this->assertInternalType(
+            'array',
+            $this->createMockService(CloseStatusAction::class)->getProgressStatusActionData([])
+        );
+        $this->assertInternalType(
+            'array',
+            $this->createMockService(CloseStatusAction::class)->getProgressStatusActionData([
+                'param' => 'value'
+            ])
+        );
+        $this->assertInternalType(
+            'array',
+            $this->createMockService(CloseStatusAction::class)->getProgressStatusActionData([
+                [
+                    'param' => 'value'
+                ],
+                [
+                    'param1' => 'value1'
+                ]
+            ])
+        );
     }
 
     /**
-     * Close action
-     *
-     * @param string $id
-     *
-     * @return bool
+     * Is test close return true
      */
-    public function close(string $id): bool
+    public function testIsCloseReturnTrue()
     {
-        // prepare result
-        $result = false;
+        $service = $this->createMockService(CloseStatusAction::class, ['closeJob']);
 
-        if (!empty($id)) {
-            $this->closeJob($id);
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
+        $service
+            ->expects($this->once())
+            ->method('closeJob')
+            ->willReturn(null);
+        $this->assertTrue($service->close('id'));
     }
 
     /**
-     * Close progress manager job
-     *
-     * @param string $id
+     * Is test close return false
      */
-    protected function closeJob(string $id): void
+    public function testIsCloseReturnFalse()
     {
-        // prepare sql
-        $sql = "UPDATE progress_manager SET `is_closed`=1 WHERE id=:id";
-
-        $sth = $this
-            ->getEntityManager()
-            ->getPDO()
-            ->prepare($sql);
-        $sth->execute(['id' => $id]);
+        $this->assertFalse($this->createMockService(CloseStatusAction::class)->close(''));
     }
 }
