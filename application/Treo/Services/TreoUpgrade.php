@@ -67,8 +67,7 @@ class TreoUpgrade extends AbstractService
         // prepare result
         $result = null;
 
-        if (!empty($data = $this->getVersionData($this->getConfig()->get('version')))
-            && !empty($data['version'])) {
+        if (!empty($data = $this->getVersionData($this->getCurrentVersion())) && !empty($data['version'])) {
             $result = (string)$data['version'];
         }
 
@@ -237,5 +236,13 @@ class TreoUpgrade extends AbstractService
         }
 
         return $this->versionData;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCurrentVersion(): string
+    {
+        return $this->getConfig()->get('version');
     }
 }
