@@ -99,7 +99,7 @@ class Composer extends AbstractService
         // prepare result
         $result = false;
 
-        if (!$this->isJobExists()) {
+        if (!$this->isSystemUpdating()) {
             // create job
             $this->insertJob();
 
@@ -486,30 +486,6 @@ class Composer extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * Is runUpdateJob already exists
-     *
-     * @return bool
-     */
-    protected function isJobExists(): bool
-    {
-        $count = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(
-                [
-                    'serviceName' => 'Composer',
-                    'method'      => 'runUpdateJob',
-                    'status'      => [
-                        CronManager::PENDING, CronManager::RUNNING
-                    ]
-                ]
-            )
-            ->count();
-
-        return !empty($count);
     }
 
     /**

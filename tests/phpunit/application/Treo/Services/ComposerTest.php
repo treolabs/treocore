@@ -46,14 +46,14 @@ class ComposerTest extends TestCase
 {
     public function testIsCreateUpdateJobReturnFalse()
     {
-        $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
+        $service = $this->createMockService(Composer::class, ['insertJob', 'isSystemUpdating']);
         $service
             ->expects($this->any())
             ->method('insertJob')
             ->willReturn(null);
         $service
             ->expects($this->any())
-            ->method('isJobExists')
+            ->method('isSystemUpdating')
             ->willReturn(true);
 
         // test
@@ -62,14 +62,14 @@ class ComposerTest extends TestCase
 
     public function testIsCreateUpdateJobReturnTrue()
     {
-        $service = $this->createMockService(Composer::class, ['insertJob', 'isJobExists']);
+        $service = $this->createMockService(Composer::class, ['insertJob', 'isSystemUpdating']);
         $service
             ->expects($this->any())
             ->method('insertJob')
             ->willReturn(null);
         $service
             ->expects($this->any())
-            ->method('isJobExists')
+            ->method('isSystemUpdating')
             ->willReturn(false);
 
         // test
