@@ -54,12 +54,6 @@ class Job extends AbstractListener
     {
         if (!empty($method = $data['method'])
             && in_array($method, ['runUpdateJob', 'runUpgradeJob'])) {
-            // unblocked rub update button
-            if (in_array($data['status'], [CronManager::SUCCESS, CronManager::FAILED])) {
-                $this->getConfig()->set('isSystemUpdating', false);
-                $this->getConfig()->save();
-            }
-
             // set to EM log
             if ($data['status'] == CronManager::FAILED) {
                 // prepare json data

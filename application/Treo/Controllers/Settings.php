@@ -54,6 +54,9 @@ class Settings extends \Espo\Controllers\Settings
         // prepare tabList
         $config = $this->prepareTabList($config);
 
+        // set isSystemUpdating param
+        $config['isSystemUpdating'] = $this->getService('Composer')->isSystemUpdating();
+
         return $config;
     }
 

@@ -228,4 +228,12 @@ class ComposerTest extends TestCase
         // test
         $this->assertTrue($service->updateMinimumStability());
     }
+
+    public function testIsSystemUpdatingMethodExists()
+    {
+        $service = $this->createMockService(Composer::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'isSystemUpdating'));
+    }
 }

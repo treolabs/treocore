@@ -91,10 +91,6 @@ class TreoUpgrade extends AbstractService
             && !empty($link = $data['link'])
             && !empty($version = $data['version'])
             && !empty($package = $this->downloadPackage())) {
-            // update config
-            $this->getConfig()->set('isSystemUpdating', true);
-            $this->getConfig()->save();
-
             // create job
             $jobEntity = $this->getEntityManager()->getEntity('Job');
             $jobEntity->set(

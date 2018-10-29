@@ -68,6 +68,28 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
+     * Is system updating now ?
+     *
+     * @return bool
+     */
+    public function isSystemUpdating(): bool
+    {
+        $count = $this
+            ->getEntityManager()
+            ->getRepository('Job')
+            ->where(
+                [
+                    'serviceName' => 'Composer',
+                    'method'      => 'runUpdateJob',
+                    'status'      => [CronManager::PENDING, CronManager::RUNNING]
+                ]
+            )
+            ->count();
+
+        return ($count > 0);
+    }
+
+    /**
      * Create cron job for update composer
      *
      * @return bool
@@ -78,10 +100,6 @@ class Composer extends AbstractService
         $result = false;
 
         if (!$this->isJobExists()) {
-            // update config
-            $this->getConfig()->set('isSystemUpdating', true);
-            $this->getConfig()->save();
-
             // create job
             $this->insertJob();
 
@@ -163,7 +181,7 @@ class Composer extends AbstractService
      */
     public function cancelChanges(): void
     {
-        if (empty($this->getConfig()->get('isSystemUpdating'))) {
+        if (empty($this->isSystemUpdating())) {
             if (file_exists($this->moduleStableComposer)) {
                 if (file_exists($this->moduleComposer)) {
                     unlink($this->moduleComposer);

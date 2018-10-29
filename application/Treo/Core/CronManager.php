@@ -36,31 +36,11 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\CronManager as CoreCronManager;
-use Treo\Core\Utils\Cron\Job as JobUtil;
-
 /**
  * Class of CronManager
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class CronManager extends CoreCronManager
+class CronManager extends \Espo\Core\CronManager
 {
-    /**
-     * @var null|JobUtil
-     */
-    protected $treoCronJobUtil = null;
-
-    /**
-     * @return JobUtil
-     */
-    protected function getCronJobUtil()
-    {
-        if (is_null($this->treoCronJobUtil)) {
-            $this->treoCronJobUtil = new JobUtil($this->getConfig(), $this->getEntityManager());
-            $this->treoCronJobUtil->setEventManager($this->getContainer()->get('eventManager'));
-        }
-
-        return $this->treoCronJobUtil;
-    }
 }
