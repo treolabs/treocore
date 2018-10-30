@@ -17315,12 +17315,12 @@ td[data-name="draggableIcon"] {
     font-size: 18px;
 }
 
-.full-page-modal .images-panel {
+.full-page-modal .fixed-panel {
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 10px;
 }
 
-.full-page-modal .images-panel .image-field {
-    margin-bottom: 10px;
+.full-page-modal .fixed-panel .row {
+    margin-bottom: 15px;
 }
