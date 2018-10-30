@@ -50,28 +50,58 @@ class Email extends \Espo\Services\Email
      *
      * @return bool
      */
-    public function sendTestEmail($data)
+    public function sendTestEmail($data): bool
     {
-        $email = $this->getEntityManager()->getEntity('Email');
-        // get subject
-        $subject = $this
+        $this->sendEmail($data);
+
+        return true;
+    }
+
+    /**
+     * Get subject for test email
+     *
+     * @return string
+     */
+    protected function getTestEmailSubjectTranslate(): string
+    {
+        return $this
             ->getEntityManager()
             ->getContainer()
             ->get('language')
             ->translate('testEmailSubject', 'messages', 'Email');
+    }
+
+    /**
+     * Get entity for test email
+     *
+     * @param string $emailAddress
+     *
+     * @return Entity
+     */
+    protected function getTestEmailEntity(string $emailAddress): Entity
+    {
+        $email = $this->getEntityManager()->getEntity('Email');
 
         $email->set(
             [
-                'subject' => $subject,
+                'subject' => $this->getTestEmailSubjectTranslate(),
                 'isHtml'  => false,
-                'to'      => $data['emailAddress']
+                'to'      => $emailAddress
             ]
         );
 
-        $emailSender = $this->getEntityManager()->getContainer()->get('mailSender');
-        $emailSender->useSmtp($data)->send($email);
+        return $email;
+    }
 
-        return true;
+    /**
+     * Send email
+     *
+     * @param array $data
+     */
+    protected function sendEmail(array $data): void
+    {
+        $emailSender = $this->getEntityManager()->getContainer()->get('mailSender');
+        $emailSender->useSmtp($data)->send($this->getTestEmailEntity($data['emailAddress']));
     }
 
     /**
