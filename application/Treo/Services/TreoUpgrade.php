@@ -95,7 +95,7 @@ class TreoUpgrade extends AbstractService
             $jobEntity = $this->getEntityManager()->getEntity('Job');
             $jobEntity->set(
                 [
-                    'name'        => 'Run TreoCore upgrade',
+                    'name'        => 'run-treo-update',
                     'status'      => CronManager::PENDING,
                     'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'serviceName' => 'TreoUpgrade',

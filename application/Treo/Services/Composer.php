@@ -79,9 +79,8 @@ class Composer extends AbstractService
             ->getRepository('Job')
             ->where(
                 [
-                    'serviceName' => 'Composer',
-                    'method'      => 'runUpdateJob',
-                    'status'      => [CronManager::PENDING, CronManager::RUNNING]
+                    'name'   => 'run-treo-update',
+                    'status' => [CronManager::PENDING, CronManager::RUNNING]
                 ]
             )
             ->count();
@@ -496,7 +495,7 @@ class Composer extends AbstractService
         $jobEntity = $this->getEntityManager()->getEntity('Job');
         $jobEntity->set(
             [
-                'name'        => 'Run composer update command',
+                'name'        => 'run-treo-update',
                 'status'      => CronManager::PENDING,
                 'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'serviceName' => 'Composer',
