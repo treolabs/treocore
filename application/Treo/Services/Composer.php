@@ -68,6 +68,27 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
+     * Is system updating now ?
+     *
+     * @return bool
+     */
+    public function isSystemUpdating(): bool
+    {
+        $count = $this
+            ->getEntityManager()
+            ->getRepository('Job')
+            ->where(
+                [
+                    'name'   => 'run-treo-update',
+                    'status' => [CronManager::PENDING, CronManager::RUNNING]
+                ]
+            )
+            ->count();
+
+        return ($count > 0);
+    }
+
+    /**
      * Create cron job for update composer
      *
      * @return bool
@@ -77,11 +98,7 @@ class Composer extends AbstractService
         // prepare result
         $result = false;
 
-        if (!$this->isJobExists()) {
-            // update config
-            $this->getConfig()->set('isSystemUpdating', true);
-            $this->getConfig()->save();
-
+        if (!$this->isSystemUpdating()) {
             // create job
             $this->insertJob();
 
@@ -163,7 +180,7 @@ class Composer extends AbstractService
      */
     public function cancelChanges(): void
     {
-        if (empty($this->getConfig()->get('isSystemUpdating'))) {
+        if (empty($this->isSystemUpdating())) {
             if (file_exists($this->moduleStableComposer)) {
                 if (file_exists($this->moduleComposer)) {
                     unlink($this->moduleComposer);
@@ -471,30 +488,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * Is runUpdateJob already exists
-     *
-     * @return bool
-     */
-    protected function isJobExists(): bool
-    {
-        $count = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(
-                [
-                    'serviceName' => 'Composer',
-                    'method'      => 'runUpdateJob',
-                    'status'      => [
-                        CronManager::PENDING, CronManager::RUNNING
-                    ]
-                ]
-            )
-            ->count();
-
-        return !empty($count);
-    }
-
-    /**
      * Insert job to DB
      */
     protected function insertJob(): void
@@ -502,7 +495,7 @@ class Composer extends AbstractService
         $jobEntity = $this->getEntityManager()->getEntity('Job');
         $jobEntity->set(
             [
-                'name'        => 'Run composer update command',
+                'name'        => 'run-treo-update',
                 'status'      => CronManager::PENDING,
                 'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'serviceName' => 'Composer',

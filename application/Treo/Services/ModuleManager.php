@@ -201,7 +201,7 @@ class ModuleManager extends \Espo\Core\Services\Base
     public function installModule(string $id, string $version = null): bool
     {
         // is changing blocked?
-        if ($this->getConfig()->get('isSystemUpdating')) {
+        if ($this->isSystemUpdating()) {
             return false;
         }
 
@@ -244,7 +244,7 @@ class ModuleManager extends \Espo\Core\Services\Base
     public function updateModule(string $id, string $version): bool
     {
         // is changing blocked?
-        if ($this->getConfig()->get('isSystemUpdating')) {
+        if ($this->isSystemUpdating()) {
             return false;
         }
 
@@ -281,7 +281,7 @@ class ModuleManager extends \Espo\Core\Services\Base
     public function deleteModule(string $id): bool
     {
         // is changing blocked?
-        if ($this->getConfig()->get('isSystemUpdating')) {
+        if ($this->isSystemUpdating()) {
             return false;
         }
 
@@ -317,7 +317,7 @@ class ModuleManager extends \Espo\Core\Services\Base
     public function cancel(string $id): bool
     {
         // is changing blocked?
-        if ($this->getConfig()->get('isSystemUpdating')) {
+        if ($this->isSystemUpdating()) {
             return false;
         }
 
@@ -736,6 +736,14 @@ class ModuleManager extends \Espo\Core\Services\Base
     protected function getPackagistPackages(): array
     {
         return $this->getInjection('serviceFactory')->create('Packagist')->getPackages();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSystemUpdating(): bool
+    {
+        return $this->getComposerService()->isSystemUpdating();
     }
 
     /**

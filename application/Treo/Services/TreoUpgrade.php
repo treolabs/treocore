@@ -91,15 +91,11 @@ class TreoUpgrade extends AbstractService
             && !empty($link = $data['link'])
             && !empty($version = $data['version'])
             && !empty($package = $this->downloadPackage())) {
-            // update config
-            $this->getConfig()->set('isSystemUpdating', true);
-            $this->getConfig()->save();
-
             // create job
             $jobEntity = $this->getEntityManager()->getEntity('Job');
             $jobEntity->set(
                 [
-                    'name'        => 'Run TreoCore upgrade',
+                    'name'        => 'run-treo-update',
                     'status'      => CronManager::PENDING,
                     'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'serviceName' => 'TreoUpgrade',
