@@ -47,11 +47,6 @@ use Treo\Core\Utils\Auth;
 class Application extends \Espo\Core\Application
 {
     /**
-     * @var string required PHP version
-     */
-    private $validPhpVersion = '7.1';
-
-    /**
      * @inheritdoc
      */
     public function __construct()
@@ -59,23 +54,8 @@ class Application extends \Espo\Core\Application
         // call parent
         parent::__construct();
 
-        // prepare PHP version
-        $versionData = explode(".", phpversion());
-        $phpVersion = $versionData[0] . "." . $versionData[1];
-
         // validate PHP version
-        if (!version_compare($phpVersion, $this->validPhpVersion, '==')) {
-            echo "Invalid PHP version. PHP " . $this->validPhpVersion . " is required!";
-            die();
-        }
-    }
-
-    /**
-     * Init container
-     */
-    protected function initContainer()
-    {
-        $this->container = new Container();
+        $this->isPhpVersionValid();
     }
 
     /**
@@ -97,7 +77,7 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * Run client
+     * @inheritdoc
      */
     public function runClient()
     {
@@ -114,17 +94,6 @@ class Application extends \Espo\Core\Application
             ]
         );
         exit;
-    }
-
-    /**
-     * Show image
-     *
-     * @param string $id
-     * @param string $mimeType
-     */
-    public function showImage(string $id, string $mimeType)
-    {
-        $this->runEntryPoint('TreoImage', ['id' => $id, 'mimeType' => $mimeType]);
     }
 
     /**
@@ -161,7 +130,7 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * Clear cache
+     * @inheritdoc
      */
     public function runClearCache()
     {
@@ -169,7 +138,7 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * Rebuild
+     * @inheritdoc
      */
     public function runRebuild()
     {
@@ -177,7 +146,7 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * Run cron
+     * @inheritdoc
      */
     public function runCron()
     {
@@ -185,13 +154,21 @@ class Application extends \Espo\Core\Application
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function initContainer()
+    {
+        $this->container = new Container();
+    }
+
+    /**
      * Create auth
      *
-     * @return \Espo\Core\Utils\Auth|Auth
+     * @return Auth
      */
     protected function createAuth()
     {
-        return new Auth($this->container);
+        return new Auth($this->getContainer());
     }
 
     /**
@@ -209,11 +186,21 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * Show 404
+     * Is PHP version valid ?
      */
-    private function show404()
+    private function isPhpVersionValid()
     {
-        header("HTTP/1.0 404 Not Found");
-        exit;
+        // prepare data
+        $validPhpVersion = '7.1';
+
+        // prepare PHP version
+        $versionData = explode(".", phpversion());
+        $phpVersion = $versionData[0] . "." . $versionData[1];
+
+        // validate PHP version
+        if (!version_compare($phpVersion, $validPhpVersion, '==')) {
+            echo "Invalid PHP version. PHP {$validPhpVersion} is required!";
+            die();
+        }
     }
 }
