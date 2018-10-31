@@ -48,7 +48,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         data() {
             return {
-                disabledRunUpdateButton: this.getConfig().get('isSystemUpdating')
+                disabledRunUpdateButton: this.getConfig().get('isSystemUpdating'),
+                hideLoader: !this.getConfig().get('isSystemUpdating')
             }
         },
 
@@ -386,6 +387,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
                         this.installedCollection.trigger('disableActions', isSystemUpdating);
                         this.availableCollection.trigger('disableActions', isSystemUpdating);
+
+                        this.loaderShow();
                     }.bind(this)
                 });
             };
@@ -394,7 +397,13 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             if (!skipInitRun) {
                 configCheck();
             }
-        }
+            this.loaderShow();
+        },
+
+        loaderShow() {
+            let loader = this.$el.find('.loader');
+            this.getConfig().get('isSystemUpdating') ? loader.removeClass('hidden') : loader.addClass('hidden');
+        },
 
     })
 );

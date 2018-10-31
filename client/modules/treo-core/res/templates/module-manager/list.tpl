@@ -28,6 +28,7 @@
     <div class="btn-group pull-left" role="group">
         <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='ModuleManager' category='labels'}}</button>
         <button class="btn btn-default action" data-action="cancelUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}} style="display: none;">{{translate 'Cancel'}}</button>
+        <div class="loader {{#if hideLoader}}hidden{{/if}}"></div>
     </div>
     <div class="clearfix"></div>
 </div>
