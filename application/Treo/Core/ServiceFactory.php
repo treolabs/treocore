@@ -95,7 +95,15 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
     protected function createByClassName($className)
     {
         if (class_exists($className)) {
-            return (new $className())->setContainer($this->getContainer());
+            // create service
+            $service = (new $className())->setContainer($this->getContainer());
+
+            // for old services
+            if (method_exists($service, 'setInjections')) {
+                $service->setInjections();
+            }
+
+            return $service;
         }
 
         throw new Error("Class '$className' does not exist.");
