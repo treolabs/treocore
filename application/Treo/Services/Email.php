@@ -50,7 +50,7 @@ class Email extends \Espo\Services\Email
      *
      * @return bool
      */
-    public function sendTestEmail($data): bool
+    public function sendTestEmail($data)
     {
         $this->sendEmail($data);
 
