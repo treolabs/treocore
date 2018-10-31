@@ -59,7 +59,7 @@ if (!empty($id = PortalApp::getCallingPortalId())) {
 } elseif (!empty($uri = $_SERVER['REQUEST_URI']) && $uri != '/') {
     // if images path than call showImage
     if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', explode("?", $uri)[0], $matches)) {
-        $app->showImage($matches[1][0], $matches[2][0]);
+        $app->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
     }
 
     // show 404
