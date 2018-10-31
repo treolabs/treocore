@@ -18,7 +18,10 @@
 
                     <li class="preset-control remove-preset hidden"><a tabindex="-1" href="javascript:" data-action="removePreset">{{translate 'Remove Filter'}}</a></li>
                     <li class="preset-control save-preset hidden"><a tabindex="-1" href="javascript:" data-action="savePreset">{{translate 'Save Filter'}}</a></li>
+
+                    {{#if advancedFields.length}}
                     <li class="divider"></li>
+
                     <li class="dropdown-submenu">
                         <a href="javascript:" class="add-filter-button" tabindex="-1">
                             {{translate 'Add Field'}}
@@ -29,6 +32,7 @@
                             {{/each}}
                         </ul>
                     </li>
+                    {{/if}}
                     {{#if boolFilterList.length}}
                     <li class="divider"></li>
                     {{/if}}
