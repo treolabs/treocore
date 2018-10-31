@@ -64,6 +64,13 @@ abstract class Base implements Injectable
         ];
 
     /**
+     * @var array
+     *
+     * @deprecated remove it soon
+     */
+    protected $injections = [];
+
+    /**
      * @var Container
      */
     private $container = null;
@@ -100,6 +107,22 @@ abstract class Base implements Injectable
     public function getDependencyList()
     {
         return $this->dependencies;
+    }
+
+    /**
+     * Set injections
+     *
+     * @return Base
+     *
+     * @deprecated remove it soon
+     */
+    public function setInjections()
+    {
+        foreach ($this->getDependencyList() as $name) {
+            $this->injections[$name] = $this->getInjection($name);
+        }
+
+        return $this;
     }
 
     /**
