@@ -36,64 +36,33 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\ORM\Entity;
-use Treo\Core\Portal\Application as PortalApp;
+use Treo\PHPUnit\Framework\TestCase;
 
 /**
- * Portal service
+ * Class PortalTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.zablodskiy@zinitsolutions.com
  */
-class Portal extends \Espo\Services\Record
+class PortalTest extends TestCase
 {
-    /**
-     * @var null|array
-     */
-    protected $urls = null;
 
     /**
-     * @param Entity $entity
+     * Test is loadAdditionalFields method exists
      */
-    public function loadAdditionalFields(Entity $entity)
+    public function testIsLoadAdditionalFieldsMethodExists()
     {
-        parent::loadAdditionalFields($entity);
+        $service = $this->createMockService(Portal::class);
 
-        $this->setUrl($entity);
+        $this->assertTrue(method_exists($service, 'loadAdditionalFields'));
     }
 
     /**
-     * @param Entity $entity
+     * Test is loadAdditionalFieldsForList method exists
      */
-    public function loadAdditionalFieldsForList(Entity $entity)
+    public function testIsLoadAdditionalFieldsForListMethodExists()
     {
-        parent::loadAdditionalFieldsForList($entity);
+        $service = $this->createMockService(Portal::class);
 
-        $this->setUrl($entity);
-    }
-
-    /**
-     * Set url
-     *
-     * @param Entity $entity
-     */
-    protected function setUrl(Entity $entity): void
-    {
-        if (!empty($url = $this->getUrls()[$entity->get('id')])) {
-            $entity->set('url', $url);
-        }
-    }
-
-    /**
-     * Get urls
-     *
-     * @return array
-     */
-    protected function getUrls(): array
-    {
-        if (is_null($this->urls)) {
-            $this->urls = PortalApp::getUrlFileData();
-        }
-
-        return $this->urls;
+        $this->assertTrue(method_exists($service, 'loadAdditionalFieldsForList'));
     }
 }
