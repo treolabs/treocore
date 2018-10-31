@@ -1,0 +1,16 @@
+{
+  "dynamicLogic": {
+    "fields": {
+      "isStreamPanelFirst": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isFalse",
+              "attribute": "isStreamSide"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

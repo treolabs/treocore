@@ -4,6 +4,10 @@
             "type": "bool",
             "tooltip": true
         },
+        "isStreamPanelFirst": {
+            "type": "bool",
+            "tooltip": true
+        },
         "notificationNewModuleVersionDisabled": {
             "type": "bool",
             "default": true

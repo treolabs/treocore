@@ -1,9 +1,15 @@
 {
     "fields": {
+        "isStreamSide": "Ist stream panel in der seite",
+        "isStreamPanelFirst": "Ist stream panel zuerst",
         "notificationNewModuleVersionDisabled": "Meldung senden, sobald neue Modul-Versionen verfügbar sind",
         "notificationNewModuleDisabled": "Meldung senden, sobald neue Module verfügbar sind",
         "notificationNewSystemVersionDisabled": "Meldung senden, sobald neue Versionen des Systems verfügbar sind",
         "notificationInstallDeleteModuleDisabled": "Meldung senden, sobald die Module installiert / entfernt wurden"
+    },
+    "tooltips": {
+        "isStreamSide": "Wenn aktiviert, wird das Stream-Panel auf der Seite angezeigt.",
+        "isStreamPanelFirst": "Wenn aktiviert: Das Stream-Panel wird direkt nach der Übersicht angezeigt."
     },
     "labels": {
         "System Notifications": "System-Meldungen"

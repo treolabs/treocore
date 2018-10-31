@@ -70,7 +70,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     "view":"views/stream/panel",
                     "sticked": false,
                     "hidden": !streamAllowed,
-                    "order": 2
+                    "order": this.getConfig().get('isStreamPanelFirst') ? 5 : 1,
+                    "expanded": !(this.getStorage().get('collapsed-panels', this.scope) || []).includes('stream')
                 });
             }
         },
@@ -201,6 +202,28 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
 
                 this.panelList.push(p);
             }, this);
+        },
+
+        setupPanelViews() {
+            this.setupOptionalPanels();
+            this.sortPanelList();
+            Dep.prototype.setupPanelViews.call(this);
+        },
+
+        setupOptionalPanels() {
+            let optionalPanels = this.getMetadata().get(`clientDefs.${this.scope}.optionalBottomPanels`) || {};
+
+            this.panelList = this.panelList.filter(panel => {
+                if (panel.name in optionalPanels) {
+                    return optionalPanels[panel.name].every(condition => this.model.get(condition.field) === condition.value);
+                }
+                return true;
+            });
+        },
+
+        sortPanelList() {
+            this.panelList.forEach((item, index) => item.index = index);
+            this.panelList.sort((a, b) => (((a.order || 0) - (b.order || 0)) || (a.index - b.index)));
         },
 
         collapseBottomPanel(panel, type) {
