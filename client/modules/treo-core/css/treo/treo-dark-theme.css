@@ -17318,9 +17318,17 @@ td[data-name="draggableIcon"] {
 .full-page-modal .fixed-panel {
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 10px;
+    padding: 0 10px;
 }
 
 .full-page-modal .fixed-panel .row {
-    margin-bottom: 15px;
+    padding: 5px;
+}
+
+.full-page-modal .product-fields-panel .row.stripped:not(.hidden) {
+    background-color: #f2f2f2
+}
+
+.product-fields-panel .panel .cell {
+    padding: 5px;
 }
