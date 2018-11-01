@@ -138,8 +138,6 @@ class Installer extends AbstractService
      */
     public function generateConfig(): bool
     {
-        $result = false;
-
         // check if is install
         if ($this->isInstalled()) {
             throw new Exceptions\Forbidden($this->translateError('alreadyInstalled'));
@@ -150,29 +148,7 @@ class Installer extends AbstractService
 
         $pathToConfig = $config->getConfigPath();
 
-        // get default config
-        $defaultConfig = $config->getDefaults();
-
-        // get permissions
-        $owner = $this->getFileManager()->getPermissionUtils()->getDefaultOwner(true);
-        $group = $this->getFileManager()->getPermissionUtils()->getDefaultGroup(true);
-
-        if (!empty($owner)) {
-            $defaultConfig['defaultPermissions']['user'] = $owner;
-        }
-        if (!empty($group)) {
-            $defaultConfig['defaultPermissions']['group'] = $group;
-        }
-
-        $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
-        $defaultConfig['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
-
-        // create config if not exists
-        if (!file_exists($pathToConfig)) {
-            $result = $this->getFileManager()->putPhpContents($pathToConfig, $defaultConfig, true);
-        }
-
-        return $result;
+        return $this->checkIfConfigExist($pathToConfig);
     }
 
     /**
@@ -236,12 +212,11 @@ class Installer extends AbstractService
     {
         $result = ['status' => false, 'message' => ''];
 
-        if (!in_array($lang, $this->getConfig()->get('languageList'))) {
+        if (!$this->isCorrectLanguage($lang)) {
             $result['message'] = $this->translateError('languageNotCorrect');
             $result['status'] = false;
         } else {
-            $this->getConfig()->set('language', $lang);
-            $result['status'] = $this->getConfig()->save();
+            $result['status'] = $this->saveConfig(['language' => $lang]);
         }
 
         return $result;
@@ -270,10 +245,7 @@ class Installer extends AbstractService
             // check connect to db
             $this->isConnectToDb($dbSettings);
 
-            // update config
-            $config->set('database', array_merge($dbParams, $dbSettings));
-
-            $result['status'] = $config->save();
+            $result['status'] = $this->saveConfig(['database' => array_merge($dbParams, $dbSettings)]);
         } catch (\Exception $e) {
             $result['message'] = $this->translateError('notCorrectDatabaseConfig');
             $result['status'] = false;
@@ -308,37 +280,7 @@ class Installer extends AbstractService
             ];
         } else {
             try {
-                // create fake system user
-                $systemUser = $this->getEntityManager()->getEntity('User');
-                $systemUser->set('id', 'system');
-
-                // set system user to container
-                $this->getContainer()->setUser($systemUser);
-
-                // rebuild database
-                $this->getContainer()->get('dataManager')->rebuild();
-
-                // create user
-                $user = $this->createSuperAdminUser($params['username'], $params['password']);
-
-                // set installed
-                $this->getConfig()->set('isInstalled', true);
-
-                // set version
-                $this->getConfig()->set('version', $this->getComposerVersion());
-
-                // save config
-                $this->getConfig()->save();
-
-                $this->triggered(
-                    'Installer',
-                    'afterInstallSystem',
-                    [
-                        'user'    => $user->toArray(),
-                        'version' => $this->getComposerVersion(),
-                    ]
-                );
-
+                $this->createSystemUsers($params['username'], $params['password']);
             } catch (\Exception $e) {
                 // prepare result
                 $result = [
@@ -392,13 +334,7 @@ class Installer extends AbstractService
      */
     public function checkPermissions(): bool
     {
-        $this->getFileManager()->getPermissionUtils()->setMapPermission();
-
-        $error = $this->getFileManager()->getPermissionUtils()->getLastError();
-
-        if (!empty($error)) {
-            $message = is_array($error) ? implode($error, ' ;') : string($error);
-
+        if (!empty($message = $this->getLastPermissionError())) {
             throw new Exceptions\InternalServerError($message);
         }
 
@@ -624,5 +560,136 @@ class Installer extends AbstractService
         $sth->execute();
 
         return $this->getEntityManager()->getEntity('User', 1);
+    }
+
+    /**
+     * Save config fields
+     *
+     * @param array $params
+     *
+     * @return bool
+     */
+    protected function saveConfig(array $params): bool
+    {
+        foreach ($params as $field => $value) {
+            $this->getConfig()->set($field, $value);
+        }
+
+        return $this->getConfig()->save();
+    }
+
+
+    /**
+     * Get last permission error
+     *
+     * @return string
+     */
+    protected function getLastPermissionError(): string
+    {
+        $this->getFileManager()->getPermissionUtils()->setMapPermission();
+
+        $error =  $this->getFileManager()->getPermissionUtils()->getLastError();
+
+        return is_array($error) ? implode($error, ' ;') : string($error);
+    }
+
+    /**
+     * Create admin and fake system user
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @throws Exceptions\Error
+     */
+    protected function createSystemUsers(string $username, string $password): void
+    {
+        // create fake system user
+        $systemUser = $this->getEntityManager()->getEntity('User');
+        $systemUser->set('id', 'system');
+
+        // set system user to container
+        $this->getContainer()->setUser($systemUser);
+
+        // rebuild database
+        $this->getContainer()->get('dataManager')->rebuild();
+
+        // create user
+        $user = $this->createSuperAdminUser($username, $password);
+
+        // set installed
+        $this->getConfig()->set('isInstalled', true);
+
+        // set version
+        $this->getConfig()->set('version', $this->getComposerVersion());
+
+        // save config
+        $this->getConfig()->save();
+
+        $this->triggered(
+            'Installer',
+            'afterInstallSystem',
+            [
+                'user'    => $user->toArray(),
+                'version' => $this->getComposerVersion(),
+            ]
+        );
+    }
+
+    /**
+     * Get default config with permissions
+     *
+     * @return array
+     */
+    protected function getDefaultConfig(): array
+    {
+        $default = $this->getConfig()->getDefaults();
+
+        // get permissions
+        $owner = $this->getFileManager()->getPermissionUtils()->getDefaultOwner(true);
+        $group = $this->getFileManager()->getPermissionUtils()->getDefaultGroup(true);
+
+        if (!empty($owner)) {
+            $default['defaultPermissions']['user'] = $owner;
+        }
+        if (!empty($group)) {
+            $default['defaultPermissions']['group'] = $group;
+        }
+
+        $default['passwordSalt'] = $this->getPasswordHash()->generateSalt();
+        $default['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
+
+        return $default;
+    }
+
+    /**
+     * Create config if not exist
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+
+    protected function checkIfConfigExist(string $path): bool
+    {
+        $result = false;
+
+        if (!file_exists($path)) {
+            $result = $this->getFileManager()->putPhpContents($path, $this->getDefaultConfig(), true);
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Check if language correct
+     *
+     * @param string $language
+     *
+     * @return bool
+     */
+    protected function isCorrectLanguage(string $language): bool
+    {
+        return in_array($language, $this->getConfig()->get('languageList'));
     }
 }
