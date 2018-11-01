@@ -66,41 +66,10 @@ class ProgressManager extends AbstractProgressManager
         ];
 
         // prepare request data
-        $maxSize = (!empty($request->get('maxSize'))) ? (int)$request->get('maxSize') : self::$maxSize;
+        $maxSize = $this->getMaxSize($request);
 
         if (!empty($data = $this->getDbData($maxSize))) {
-            // prepare new records
-            $newRecords = [];
-
-            // set total
-            $result['total'] = $this->getDbDataTotal();
-
-            foreach ($data as $row) {
-                // prepare status key
-                $statusKey = array_flip(self::$progressStatus)[$row['status']];
-
-                $result['list'][] = [
-                    'id'       => $row['id'],
-                    'name'     => $row['name'],
-                    'progress' => round($row['progress'], 2),
-                    'status'   => [
-                        'key'       => $statusKey,
-                        'translate' => $this->translate('progressStatus', $statusKey)
-                    ],
-                    'actions'  => $this->getItemActions($statusKey, $row),
-                ];
-
-                if ($statusKey == 'new') {
-                    $newRecords[] = $row['id'];
-                }
-            }
-
-            /**
-             * Update status for new records
-             */
-            if (!empty($newRecords)) {
-                $this->updateStatus($newRecords, 'in_progress');
-            }
+            $result = array_merge($result, $this->getProgressesList($data));
         }
 
         return $result;
@@ -136,25 +105,7 @@ class ProgressManager extends AbstractProgressManager
             $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
         }
 
-        /**
-         * Set items to result
-         */
-        $result = [];
-        foreach ($data as $action) {
-            if (isset($config['actionService'][$action])) {
-                // create service
-                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
-
-                if (!empty($service) && $service instanceof StatusActionInterface) {
-                    $result[] = [
-                        'type' => $action,
-                        'data' => $service->getProgressStatusActionData($record),
-                    ];
-                }
-            }
-        }
-
-        return $result;
+        return $this->getActions($data, $config, $record);
     }
 
     /**
@@ -284,5 +235,91 @@ class ProgressManager extends AbstractProgressManager
     protected function getProgressConfig(): array
     {
         return $this->getInjection('progressManager')->getProgressConfig();
+    }
+
+    /**
+     * Get action services
+     *
+     * @param array $data
+     * @param array $config
+     * @param array $record
+     *
+     * @return array
+     */
+    protected function getActions(array $data, array $config, array $record): array
+    {
+        $result = [];
+
+        foreach ($data as $action) {
+            if (isset($config['actionService'][$action])) {
+                // create service
+                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
+
+                if (!empty($service) && $service instanceof StatusActionInterface) {
+                    $result[] = [
+                        'type' => $action,
+                        'data' => $service->getProgressStatusActionData($record),
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get max items size
+     *
+     * @param Request $request
+     *
+     * @return int
+     */
+    protected function getMaxSize(Request $request): int
+    {
+        return !empty($request->get('maxSize')) ? (int)$request->get('maxSize') : self::$maxSize;
+    }
+
+    /**
+     * Get list of progresses
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function getProgressesList(array $data): array
+    {
+        $newRecords = $result = [];
+
+        // set total
+        $result['total'] = $this->getDbDataTotal();
+
+        foreach ($data as $row) {
+            // prepare status key
+            $statusKey = array_flip(self::$progressStatus)[$row['status']];
+
+            $result['list'][] = [
+                'id'       => $row['id'],
+                'name'     => $row['name'],
+                'progress' => round($row['progress'], 2),
+                'status'   => [
+                    'key'       => $statusKey,
+                    'translate' => $this->translate('progressStatus', $statusKey)
+                ],
+                'actions'  => $this->getItemActions($statusKey, $row),
+            ];
+
+            if ($statusKey == 'new') {
+                $newRecords[] = $row['id'];
+            }
+        }
+
+        /**
+         * Update status for new records
+         */
+        if (!empty($newRecords)) {
+            $this->updateStatus($newRecords, 'in_progress');
+        }
+
+        return $result;
     }
 }
