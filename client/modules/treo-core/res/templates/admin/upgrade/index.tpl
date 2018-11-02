@@ -6,5 +6,6 @@
         <button class="btn btn-primary {{#if disableUpgrade}}hidden{{/if}}" data-action="upgradeSystem">
             {{translate 'upgradeTo' category='labels' scope='Admin'}}&nbsp;{{latestVersion}}
         </button>
+        <div class="loader {{#if hideLoader}}hidden{{/if}}"></div>
     </div>
 </div>

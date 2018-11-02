@@ -41,6 +41,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
 
         data: function () {
             return {
+                hideLoader: !this.upgradingInProgress,
                 disableUpgrade: this.upgradingInProgress || !this.latestVersion,
                 latestVersion: this.latestVersion,
                 systemVersion: this.systemVersion
@@ -138,6 +139,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                             this.disableUpgrade(false);
                             this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
                         }
+                        this.loaderShow();
                     }.bind(this)
                 });
             };
@@ -146,6 +148,12 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             if (!skipInitRun) {
                 configCheck();
             }
+            this.loaderShow();
+        },
+
+        loaderShow() {
+            let loader = this.$el.find('.loader');
+            this.upgradingInProgress ? loader.removeClass('hidden') : loader.addClass('hidden');
         },
 
     });
