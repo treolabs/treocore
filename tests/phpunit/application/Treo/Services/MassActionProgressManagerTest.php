@@ -45,40 +45,6 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class MassActionProgressManagerTest extends TestCase
 {
-
-    /**
-     * Test is executeProgressJob return true
-     */
-    public function testIsExecuteProgressJobReturnTrue()
-    {
-        $service = $this->createMockService(
-            MassActionProgressManager::class,
-            ['prepareProgressJobData', 'runProgressJob', 'finishProgressJob']
-        );
-
-        $service
-            ->expects($this->any())
-            ->method('prepareProgressJobData')
-            ->willReturn([
-                'fileId' => 'id',
-                'total' => 1
-            ]);
-
-        $service
-            ->expects($this->any())
-            ->method('runProgressJob')
-            ->willReturn(null);
-
-        $service
-            ->expects($this->any())
-            ->method('finishProgressJob')
-            ->willReturn(null);
-
-        $this->assertTrue($service->executeProgressJob([
-            'data' => []
-        ]));
-    }
-
     /**
      * Test is push method exists
      */
@@ -87,5 +53,141 @@ class MassActionProgressManagerTest extends TestCase
         $service = $this->createMockService(MassActionProgressManager::class);
 
         $this->assertTrue(method_exists($service, 'push'));
+    }
+
+    /**
+     * Test is executeProgressJob return true
+     */
+    public function testIsExecuteProgressJobReturnTrue()
+    {
+        $service = $this->createMockService(
+            MassActionProgressManager::class,
+            ['getDataFromFile', 'checkExists', 'getService']
+        );
+
+        $service
+            ->expects($this->once())
+            ->method('getDataFromFile')
+            ->willReturn(['key' => 'value']);
+
+        $service
+            ->expects($this->once())
+            ->method('checkExists')
+            ->willReturn(true);
+
+        $service
+            ->expects($this->once())
+            ->method('getService')
+            ->willReturn(null);
+
+        $data = [
+            'progressOffset' => 1,
+            'data' => '{"fileId":1,"entityType":"Product","total":1,"action":"some-action"}'
+        ];
+
+        // test data is valid json string
+        $this->assertJson($data['data']);
+
+        // test
+        $this->assertTrue($service->executeProgressJob($data));
+    }
+
+    /**
+     * Test is method throw exception
+     *
+     * @expectedException \Espo\Core\Exceptions\Error
+     */
+    public function testIsExecuteProgressJobThrowException()
+    {
+        $service = $this->createMockService(
+            MassActionProgressManager::class,
+            ['getDataFromFile', 'checkExists', 'getService']
+        );
+
+        $service
+            ->expects($this->once())
+            ->method('getDataFromFile')
+            ->willReturn([
+                'key' => 'value'
+            ]);
+
+        $service
+            ->expects($this->once())
+            ->method('checkExists')
+            ->willReturn(true);
+
+        $service
+            ->expects($this->once())
+            ->method('getService')
+            ->willThrowException(
+                new \Espo\Core\Exceptions\Error()
+            );
+
+        // test is method throw exception when wrong entityType
+        $this->assertTrue($service->executeProgressJob([
+            'progressOffset' => 1,
+            'data' => '{"fileId":1,"entityType":"Entity"}'
+        ]));
+    }
+
+    /**
+     * Test method when get empty data as argument
+     */
+    public function testIsExecuteProgressJobGetEmptyArgumentData()
+    {
+        $service = $this->createMockService(
+            MassActionProgressManager::class,
+            ['getDataFromFile', 'checkExists', 'getService']
+        );
+
+        $service
+            ->expects($this->once())
+            ->method('getDataFromFile')
+            ->willReturn(['key' => 'value']);
+
+        $service
+            ->expects($this->once())
+            ->method('checkExists')
+            ->willReturn(true);
+
+        $service
+            ->expects($this->once())
+            ->method('getService')
+            ->willReturn(null);
+
+        // test
+        $this->assertTrue($service->executeProgressJob([]));
+    }
+
+    /**
+     * Test method when get wrong data
+     */
+    public function testIsExecuteProgressJobGetWrongData()
+    {
+        $service = $this->createMockService(
+            MassActionProgressManager::class,
+            ['getDataFromFile', 'checkExists', 'getService']
+        );
+
+        $service
+            ->expects($this->once())
+            ->method('getDataFromFile')
+            ->willReturn(['key' => 'value']);
+
+        $service
+            ->expects($this->once())
+            ->method('checkExists')
+            ->willReturn(true);
+
+        $service
+            ->expects($this->once())
+            ->method('getService')
+            ->willReturn(null);
+
+        // test
+        $this->assertTrue($service->executeProgressJob([
+            'progressOffset' => 1,
+            'data' => []
+        ]));
     }
 }

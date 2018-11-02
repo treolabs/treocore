@@ -92,14 +92,66 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
      */
     public function executeProgressJob(array $data): bool
     {
-        $data = $this->prepareProgressJobData($data);
+        // set offset
+        $this->setOffset($data['progressOffset']);
+
+        // prepare data
+        $data = Json::decode($data['data'], true);
+        $this->setData($data);
 
         // prepare file id
         $fileId = $data['fileId'];
 
-        $this->runProgressJob($data, $fileId);
+        // set status
+        $this->setStatus('in_progress');
 
-        $this->finishProgressJob($fileId);
+        // get file data
+        $ids = $this->getDataFromFile($fileId);
+
+        $entityType = $data['entityType'];
+
+        if (!empty($ids) && $this->checkExists($entityType)) {
+            $records = [];
+            while (count($records) < $this->getConfig()->get('massUpdateMax', 200)) {
+                // prepare key
+                $key = $this->getOffset() + count($records);
+
+                // exit
+                if (!isset($ids[$key])) {
+                    break;
+                }
+
+                $records[] = $ids[$key];
+            }
+
+            // call mass action
+            $service = $this->getService($entityType);
+
+            if ($data['action'] == 'update') {
+                $service->massUpdate($data['data'], ['ids' => $records]);
+            } elseif ($data['action'] == 'delete') {
+                $service->massRemove(['ids' => $records]);
+            }
+
+            // set offset
+            $this->setOffset($this->getOffset() + count($records));
+
+            // set progress
+            $this->setProgress(($key + 1) / $data['total'] * 100);
+
+            if ($this->getOffset() == $data['total']) {
+                // set status
+                $this->setStatus('success');
+
+                // set progress
+                $this->setProgress(100);
+            }
+        }
+
+        if (in_array($this->getStatus(), ['success', 'error'])) {
+            // delete file
+            $this->deleteFile($fileId);
+        }
 
         return true;
     }
@@ -181,89 +233,29 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
     }
 
     /**
-     * Prepare data
+     * Check if service exist
      *
-     * @param array $data
+     * @param string $type
      *
-     * @return array
+     * @return bool
      */
-    protected function prepareProgressJobData(array $data): array
+    protected function checkExists(string $type): bool
     {
-        // set offset
-        $this->setOffset($data['progressOffset']);
-
-        // prepare data
-        $data = Json::decode($data['data'], true);
-        $this->setData($data);
-
-        return $data;
+        return $this->getServiceFactory()->checkExists($type);
     }
 
     /**
-     * Run progress job
+     * Get service
      *
-     * @param array $data
-     * @param string $fileId
+     * @param string $entityType
+     *
+     * @return mixed
+     *
+     * @throws \Espo\Core\Exceptions\Error
      */
-    protected function runProgressJob(array $data, string $fileId): void
+    protected function getService(string $entityType)
     {
-        // set status
-        $this->setStatus('in_progress');
-
-        // get file data
-        $ids = $this->getDataFromFile($fileId);
-
-        $entityType = $data['entityType'];
-
-        if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
-            $records = [];
-            while (count($records) < $this->getConfig()->get('massUpdateMax', 200)) {
-                // prepare key
-                $key = $this->getOffset() + count($records);
-
-                // exit
-                if (!isset($ids[$key])) {
-                    break;
-                }
-
-                $records[] = $ids[$key];
-            }
-
-            // call mass action
-            $service = $this->getServiceFactory()->create($entityType);
-
-            if ($data['action'] == 'update') {
-                $service->massUpdate($data['data'], ['ids' => $records]);
-            } elseif ($data['action'] == 'delete') {
-                $service->massRemove(['ids' => $records]);
-            }
-
-            // set offset
-            $this->setOffset($this->getOffset() + count($records));
-
-            // set progress
-            $this->setProgress(($key + 1) / $data['total'] * 100);
-
-            if ($this->getOffset() == $data['total']) {
-                // set status
-                $this->setStatus('success');
-
-                // set progress
-                $this->setProgress(100);
-            }
-        }
+        return $this->getServiceFactory()->create($entityType);
     }
 
-    /**
-     * Delete file after running progress job
-     *
-     * @param string $fileId
-     */
-    protected function finishProgressJob(string $fileId): void
-    {
-        if (in_array($this->getStatus(), ['success', 'error'])) {
-            // delete file
-            $this->deleteFile($fileId);
-        }
-    }
 }
