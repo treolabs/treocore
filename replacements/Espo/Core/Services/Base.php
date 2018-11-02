@@ -185,7 +185,7 @@ abstract class Base implements Injectable
      *
      * @throws Error
      */
-    protected function rebuild(): void
+    protected function rebuild()
     {
         $this->reloadDependency('entityManager');
         $this->getInjection('dataManager')->rebuild();
