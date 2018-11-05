@@ -108,10 +108,9 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
         // get file data
         $ids = $this->getDataFromFile($fileId);
 
-        // prepare entityType
         $entityType = $data['entityType'];
 
-        if (!empty($ids) && $this->getServiceFactory()->checkExists($entityType)) {
+        if (!empty($ids) && $this->checkExists($entityType)) {
             $records = [];
             while (count($records) < $this->getConfig()->get('massUpdateMax', 200)) {
                 // prepare key
@@ -126,7 +125,7 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
             }
 
             // call mass action
-            $service = $this->getServiceFactory()->create($entityType);
+            $service = $this->getService($entityType);
 
             if ($data['action'] == 'update') {
                 $service->massUpdate($data['data'], ['ids' => $records]);
@@ -232,4 +231,31 @@ class MassActionProgressManager extends AbstractProgressManager implements Progr
     {
         return $this->getInjection('serviceFactory');
     }
+
+    /**
+     * Check if service exist
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    protected function checkExists(string $type): bool
+    {
+        return $this->getServiceFactory()->checkExists($type);
+    }
+
+    /**
+     * Get service
+     *
+     * @param string $entityType
+     *
+     * @return mixed
+     *
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function getService(string $entityType)
+    {
+        return $this->getServiceFactory()->create($entityType);
+    }
+
 }
