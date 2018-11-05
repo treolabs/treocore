@@ -46,23 +46,15 @@ use Slim\Http\Request;
  */
 class ProgressManagerTest extends TestCase
 {
-
-    /**
-     * Test is translate method exists
-     */
-    public function testIsTranslateMethodExists()
-    {
-        $service = $this->createMockService(ProgressManager::class, ['translate']);
-
-        $this->assertTrue(method_exists($service, 'translate'));
-    }
-
     /**
      * Test is popupData return array
      */
     public function testIsPopupDataReturnArray()
     {
-        $service = $this->createMockService(ProgressManager::class, ['getMaxSize', 'getDbData', 'getProgressesList']);
+        $service = $this->createMockService(
+            ProgressManager::class,
+            ['getMaxSize', 'getDbData', 'getDbDataTotal', 'translate', 'getItemActions', 'updateStatus']
+        );
         $request = $this->createMockService(Request::class);
 
         $service
@@ -74,19 +66,62 @@ class ProgressManagerTest extends TestCase
             ->expects($this->any())
             ->method('getDbData')
             ->willReturn([
-                'id' => 'some-id',
-                'name' => 'some-name'
+                [
+                    'id' => 'some-id',
+                    'name' => 'some-name',
+                    'progress' => 0,
+                    'status' => '1_new'
+                ]
             ]);
 
         $service
             ->expects($this->any())
-            ->method('getProgressesList')
+            ->method('getDbDataTotal')
+            ->willReturn(1);
+
+        $service
+            ->expects($this->any())
+            ->method('translate')
+            ->willReturn('Translate');
+
+        $service
+            ->expects($this->any())
+            ->method('getItemActions')
             ->willReturn([
-                'total' => 0,
-                'list' => []
+                [
+                    'type' => 'some-type',
+                    'data' => []
+                ]
             ]);
 
-        $this->assertInternalType('array', $service->popupData($request));
+        $service
+            ->expects($this->any())
+            ->method('updateStatus')
+            ->willReturn(null);
+
+        // test 1
+        $result = $service->popupData($request);
+        $this->assertInternalType('array', $result);
+        $this->assertEquals(1, $result['total']);
+        $this->assertEquals(1, count($result['list']));
+
+        $service = $this->createMockService(ProgressManager::class, ['getMaxSize', 'getDbData']);
+
+        $service
+            ->expects($this->any())
+            ->method('getMaxSize')
+            ->willReturn(5);
+
+        $service
+            ->expects($this->any())
+            ->method('getDbData')
+            ->willReturn([]);
+
+        // test 2
+        $result = $service->popupData($request);
+        $this->assertInternalType('array', $result);
+        $this->assertEquals(0, $result['total']);
+        $this->assertEmpty($result['list']);
     }
 
     /**
@@ -94,33 +129,71 @@ class ProgressManagerTest extends TestCase
      */
     public function testIsGetItemActionsReturnArray()
     {
-        $service = $this->createMockService(ProgressManager::class, ['getProgressConfig', 'getActions']);
+        $service = $this->createMockService(
+            ProgressManager::class,
+            ['getProgressConfig']
+        );
+
+        $service
+            ->expects($this->any())
+            ->method('getProgressConfig')
+            ->willReturn([]);
+
+        // test 1
+        $result = $service->getItemActions('new', ['type' => 'some-type']);
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
+
+        $service = $this->createMockService(
+            ProgressManager::class,
+            ['getProgressConfig', 'getService']
+        );
+        $customService = $this->createMockService(CancelStatusAction::class, ['getProgressStatusActionData']);
 
         $service
             ->expects($this->any())
             ->method('getProgressConfig')
             ->willReturn([
-                'statusAction' => [],
+                'statusAction' => [
+                    'new' => ['cancel']
+                ],
+                'actionService' => [
+                    'cancel' => 'CancelStatusAction'
+                ],
                 'type' => []
             ]);
 
         $service
             ->expects($this->any())
-            ->method('getActions')
+            ->method('getService')
+            ->willReturn($customService);
+
+        $customService
+            ->expects($this->any())
+            ->method('getProgressStatusActionData')
             ->willReturn([
-                [
-                    'type' => 'some-type',
-                    'data' => 'some-data'
-                ]
+                'field1' => 'value1',
+                'field2' => 'value2'
             ]);
 
-        // test 1
-        $this->assertInternalType('array', $service->getItemActions('status', ['type' => '']));
-
         // test 2
-        $this->assertInternalType('array', $service->getItemActions('status', ['type' => '', 'name' => []]));
+        $result = $service->getItemActions('new', ['type' => 'some-type']);
+        $this->assertInternalType('array', $result);
+        $this->assertNotEmpty($result);
 
         // test 3
-        $this->assertInternalType('array', $service->getItemActions('', ['type' => '']));
+        $result = $service->getItemActions('', []);
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test is translate method exists
+     */
+    public function testIsTranslateMethodExists()
+    {
+        $service = $this->createMockService(ProgressManager::class, ['translate']);
+
+        $this->assertTrue(method_exists($service, 'translate'));
     }
 }

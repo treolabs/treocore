@@ -69,7 +69,33 @@ class ProgressManager extends AbstractProgressManager
         $maxSize = $this->getMaxSize($request);
 
         if (!empty($data = $this->getDbData($maxSize))) {
-            $result = array_merge($result, $this->getProgressesList($data));
+            // prepare new records
+            $newRecords = [];
+            // set total
+            $result['total'] = $this->getDbDataTotal();
+            foreach ($data as $row) {
+                // prepare status key
+                $statusKey = array_flip(self::$progressStatus)[$row['status']];
+                $result['list'][] = [
+                    'id'       => $row['id'],
+                    'name'     => $row['name'],
+                    'progress' => round($row['progress'], 2),
+                    'status'   => [
+                        'key'       => $statusKey,
+                        'translate' => $this->translate('progressStatus', $statusKey)
+                    ],
+                    'actions'  => $this->getItemActions($statusKey, $row),
+                ];
+                if ($statusKey == 'new') {
+                    $newRecords[] = $row['id'];
+                }
+            }
+            /**
+             * Update status for new records
+             */
+            if (!empty($newRecords)) {
+                $this->updateStatus($newRecords, 'in_progress');
+            }
         }
 
         return $result;
@@ -105,7 +131,24 @@ class ProgressManager extends AbstractProgressManager
             $data = array_merge($data, $config['type'][$record['type']]['action'][$status]);
         }
 
-        return $this->getActions($data, $config, $record);
+        /**
+         * Set items to result
+         */
+        $result = [];
+        foreach ($data as $action) {
+            if (isset($config['actionService'][$action])) {
+                // create service
+                $service = $this->getService($config['actionService'][$action]);
+                if (!empty($service) && $service instanceof StatusActionInterface) {
+                    $result[] = [
+                        'type' => $action,
+                        'data' => $service->getProgressStatusActionData($record),
+                    ];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -238,36 +281,6 @@ class ProgressManager extends AbstractProgressManager
     }
 
     /**
-     * Get action services
-     *
-     * @param array $data
-     * @param array $config
-     * @param array $record
-     *
-     * @return array
-     */
-    protected function getActions(array $data, array $config, array $record): array
-    {
-        $result = [];
-
-        foreach ($data as $action) {
-            if (isset($config['actionService'][$action])) {
-                // create service
-                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
-
-                if (!empty($service) && $service instanceof StatusActionInterface) {
-                    $result[] = [
-                        'type' => $action,
-                        'data' => $service->getProgressStatusActionData($record),
-                    ];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get max items size
      *
      * @param Request $request
@@ -280,46 +293,14 @@ class ProgressManager extends AbstractProgressManager
     }
 
     /**
-     * Get list of progresses
+     * Get service
      *
-     * @param array $data
+     * @param string $entityType
      *
-     * @return array
+     * @return mixed
      */
-    protected function getProgressesList(array $data): array
+    protected function getService(string $entityType)
     {
-        $newRecords = $result = [];
-
-        // set total
-        $result['total'] = $this->getDbDataTotal();
-
-        foreach ($data as $row) {
-            // prepare status key
-            $statusKey = array_flip(self::$progressStatus)[$row['status']];
-
-            $result['list'][] = [
-                'id'       => $row['id'],
-                'name'     => $row['name'],
-                'progress' => round($row['progress'], 2),
-                'status'   => [
-                    'key'       => $statusKey,
-                    'translate' => $this->translate('progressStatus', $statusKey)
-                ],
-                'actions'  => $this->getItemActions($statusKey, $row),
-            ];
-
-            if ($statusKey == 'new') {
-                $newRecords[] = $row['id'];
-            }
-        }
-
-        /**
-         * Update status for new records
-         */
-        if (!empty($newRecords)) {
-            $this->updateStatus($newRecords, 'in_progress');
-        }
-
-        return $result;
+        return $this->getInjection('serviceFactory')->create($entityType);
     }
 }
