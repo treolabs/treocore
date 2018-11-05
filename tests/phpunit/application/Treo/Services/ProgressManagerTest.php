@@ -47,9 +47,9 @@ use Slim\Http\Request;
 class ProgressManagerTest extends TestCase
 {
     /**
-     * Test is popupData return array
+     * Test popupData method
      */
-    public function testIsPopupDataReturnArray()
+    public function testPopupDataMethod()
     {
         $service = $this->createMockService(
             ProgressManager::class,
@@ -101,9 +101,10 @@ class ProgressManagerTest extends TestCase
 
         // test 1
         $result = $service->popupData($request);
-        $this->assertInternalType('array', $result);
+        $this->assertInternalType('int', $result['total']);
         $this->assertEquals(1, $result['total']);
-        $this->assertEquals(1, count($result['list']));
+        $this->assertInternalType('array', $result['list']);
+        $this->assertNotEmpty($result['list']);
 
         $service = $this->createMockService(ProgressManager::class, ['getMaxSize', 'getDbData']);
 
@@ -119,15 +120,16 @@ class ProgressManagerTest extends TestCase
 
         // test 2
         $result = $service->popupData($request);
-        $this->assertInternalType('array', $result);
+        $this->assertInternalType('int', $result['total']);
         $this->assertEquals(0, $result['total']);
+        $this->assertInternalType('array', $result['list']);
         $this->assertEmpty($result['list']);
     }
 
     /**
-     * Test is getItemInActions return array
+     * Test getItemInActions method
      */
-    public function testIsGetItemActionsReturnArray()
+    public function testGetItemActionsMethod()
     {
         $service = $this->createMockService(
             ProgressManager::class,
@@ -178,11 +180,13 @@ class ProgressManagerTest extends TestCase
 
         // test 2
         $result = $service->getItemActions('new', ['type' => 'some-type']);
-        $this->assertInternalType('array', $result);
-        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('type', $result[0]);
+        $this->assertInternalType('string', $result[0]['type']);
+        $this->assertArrayHasKey('data', $result[0]);
+        $this->assertInternalType('array', $result[0]['data']);
 
         // test 3
-        $result = $service->getItemActions('', []);
+        $result = $service->getItemActions('', ['type' => '']);
         $this->assertInternalType('array', $result);
         $this->assertEmpty($result);
     }
