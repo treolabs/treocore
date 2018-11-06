@@ -100,11 +100,29 @@ class ProgressManagerTest extends TestCase
             ->willReturn(null);
 
         // test 1
-        $result = $service->popupData($request);
-        $this->assertInternalType('int', $result['total']);
-        $this->assertEquals(1, $result['total']);
-        $this->assertInternalType('array', $result['list']);
-        $this->assertNotEmpty($result['list']);
+        $this->assertEquals(
+            [
+                'total' => 1,
+                'list' => [
+                    [
+                        'id' => 'some-id',
+                        'name' => 'some-name',
+                        'progress' => 0,
+                        'status' => [
+                            'key' => 'new',
+                            'translate' => 'Translate'
+                        ],
+                        'actions' => [
+                            [
+                                'type' => 'some-type',
+                                'data' => []
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $service->popupData($request)
+        );
 
         $service = $this->createMockService(ProgressManager::class, ['getMaxSize', 'getDbData']);
 
@@ -119,11 +137,7 @@ class ProgressManagerTest extends TestCase
             ->willReturn([]);
 
         // test 2
-        $result = $service->popupData($request);
-        $this->assertInternalType('int', $result['total']);
-        $this->assertEquals(0, $result['total']);
-        $this->assertInternalType('array', $result['list']);
-        $this->assertEmpty($result['list']);
+        $this->assertEquals(['total' => 0, 'list' => []], $service->popupData($request));
     }
 
     /**
@@ -142,9 +156,7 @@ class ProgressManagerTest extends TestCase
             ->willReturn([]);
 
         // test 1
-        $result = $service->getItemActions('new', ['type' => 'some-type']);
-        $this->assertInternalType('array', $result);
-        $this->assertEmpty($result);
+        $this->assertEquals([], $service->getItemActions('new', ['type' => 'some-type']));
 
         $service = $this->createMockService(
             ProgressManager::class,
@@ -179,16 +191,21 @@ class ProgressManagerTest extends TestCase
             ]);
 
         // test 2
-        $result = $service->getItemActions('new', ['type' => 'some-type']);
-        $this->assertArrayHasKey('type', $result[0]);
-        $this->assertInternalType('string', $result[0]['type']);
-        $this->assertArrayHasKey('data', $result[0]);
-        $this->assertInternalType('array', $result[0]['data']);
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'cancel',
+                    'data' => [
+                        'field1' => 'value1',
+                        'field2' => 'value2'
+                    ]
+                ]
+            ],
+            $service->getItemActions('new', ['type' => 'some-type'])
+        );
 
         // test 3
-        $result = $service->getItemActions('', ['type' => '']);
-        $this->assertInternalType('array', $result);
-        $this->assertEmpty($result);
+        $this->assertEquals([], $service->getItemActions('', ['type' => '']));
     }
 
     /**
