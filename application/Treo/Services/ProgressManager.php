@@ -66,19 +66,16 @@ class ProgressManager extends AbstractProgressManager
         ];
 
         // prepare request data
-        $maxSize = (!empty($request->get('maxSize'))) ? (int)$request->get('maxSize') : self::$maxSize;
+        $maxSize = $this->getMaxSize($request);
 
         if (!empty($data = $this->getDbData($maxSize))) {
             // prepare new records
             $newRecords = [];
-
             // set total
             $result['total'] = $this->getDbDataTotal();
-
             foreach ($data as $row) {
                 // prepare status key
                 $statusKey = array_flip(self::$progressStatus)[$row['status']];
-
                 $result['list'][] = [
                     'id'       => $row['id'],
                     'name'     => $row['name'],
@@ -89,12 +86,10 @@ class ProgressManager extends AbstractProgressManager
                     ],
                     'actions'  => $this->getItemActions($statusKey, $row),
                 ];
-
                 if ($statusKey == 'new') {
                     $newRecords[] = $row['id'];
                 }
             }
-
             /**
              * Update status for new records
              */
@@ -143,8 +138,7 @@ class ProgressManager extends AbstractProgressManager
         foreach ($data as $action) {
             if (isset($config['actionService'][$action])) {
                 // create service
-                $service = $this->getInjection('serviceFactory')->create($config['actionService'][$action]);
-
+                $service = $this->getService($config['actionService'][$action]);
                 if (!empty($service) && $service instanceof StatusActionInterface) {
                     $result[] = [
                         'type' => $action,
@@ -284,5 +278,29 @@ class ProgressManager extends AbstractProgressManager
     protected function getProgressConfig(): array
     {
         return $this->getInjection('progressManager')->getProgressConfig();
+    }
+
+    /**
+     * Get max items size
+     *
+     * @param Request $request
+     *
+     * @return int
+     */
+    protected function getMaxSize(Request $request): int
+    {
+        return !empty($request->get('maxSize')) ? (int)$request->get('maxSize') : self::$maxSize;
+    }
+
+    /**
+     * Get service
+     *
+     * @param string $entityType
+     *
+     * @return mixed
+     */
+    protected function getService(string $entityType)
+    {
+        return $this->getInjection('serviceFactory')->create($entityType);
     }
 }
