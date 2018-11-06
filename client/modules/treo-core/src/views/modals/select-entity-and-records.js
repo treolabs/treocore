@@ -77,7 +77,9 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
             if (!entity) {
                 return;
             }
+            this.scope = entity;
             this.collection.name = this.collection.urlRoot = this.collection.url = entity;
+            this.getModelFactory().getSeed(entity, seed => this.collection.model = seed);
             this.loadList();
         }
     })
