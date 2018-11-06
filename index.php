@@ -40,7 +40,7 @@ include "bootstrap.php";
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
-// create app
+// create  app
 $app = new App();
 
 if (!$app->isInstalled()) {
