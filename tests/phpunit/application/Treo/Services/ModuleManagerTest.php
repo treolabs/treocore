@@ -178,7 +178,7 @@ class ModuleManagerTest extends TestCase
             ->method('getModuleRequireds')
             ->willReturn([
                 'some-id2' => [
-                    'require'
+                    'require' => 'module1'
                 ]
             ]);
 
