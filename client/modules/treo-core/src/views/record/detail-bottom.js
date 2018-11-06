@@ -70,7 +70,7 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     "view":"views/stream/panel",
                     "sticked": false,
                     "hidden": !streamAllowed,
-                    "order": this.getConfig().get('isStreamPanelFirst') ? 5 : 2,
+                    "order": this.getConfig().get('isStreamPanelFirst') ? 2 : 5,
                     "expanded": !(this.getStorage().get('collapsed-panels', this.scope) || []).includes('stream')
                 });
             }
