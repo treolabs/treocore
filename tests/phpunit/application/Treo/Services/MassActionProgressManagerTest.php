@@ -87,19 +87,6 @@ class MassActionProgressManagerTest extends TestCase
         ]));
 
         $this->checkProgressJobExecution($service);
-
-        // test 2
-        $this->assertTrue($service->executeProgressJob([]));
-
-        $this->checkProgressJobExecution($service);
-
-        // test 3
-        $this->assertTrue($service->executeProgressJob([
-            'progressOffset' => 1,
-            'data' => []
-        ]));
-
-        $this->checkProgressJobExecution($service);
     }
 
     /**
