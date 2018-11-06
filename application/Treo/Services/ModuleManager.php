@@ -80,13 +80,59 @@ class ModuleManager extends \Espo\Core\Services\Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getInstalledModules($composerData, $composerDiff) as $id => $value) {
-            $result['list'][$id] = $value;
+        foreach ($this->getMetadata()->getModuleList() as $id) {
+            if (!empty($package = $this->getMetadata()->getModule($id))) {
+                $result['list'][$id] = [
+                    'id'                 => $id,
+                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
+                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
+                    'settingVersion'     => '*',
+                    'currentVersion'     => $package['version'],
+                    'versions'           => $this->getPackagistPackage($id)['versions'],
+                    'required'           => [],
+                    'requiredTranslates' => [],
+                    'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                    'isComposer'         => true,
+                    'status'             => $this->getModuleStatus($composerDiff, $id),
+                ];
+                if ($settingVersion = $composerData['require'][$package['name']]) {
+                    $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
+                }
+                if (!empty($requireds = $this->getModuleRequireds($id))) {
+                    $result['list'][$id]['required'] = $requireds;
+                    foreach ($requireds as $required) {
+                        $pRequired = $this
+                            ->getMetadata()
+                            ->getModule($required);
+                        $result['list'][$id]['requiredTranslates'][] = $this
+                            ->packageTranslate($pRequired['extra']['name']);
+                    }
+                }
+            }
         }
 
         // for uninstalled modules
-        foreach ($this->getUninstalledModules($composerData, $composerDiff) as $id => $value) {
-            $result['list'][$id] = $value;
+        foreach ($composerDiff['install'] as $row) {
+            $item = [
+                "id"             => $row['id'],
+                "name"           => $row['id'],
+                "description"    => '',
+                "settingVersion" => '*',
+                "currentVersion" => '',
+                "required"       => [],
+                "isSystem"       => false,
+                "isComposer"     => true,
+                "status"         => 'install'
+            ];
+            if (!empty($package = $this->getPackagistPackage($row['id']))) {
+                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
+                $item['description'] = $this->packageTranslate($package['description'], "-");
+                if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
+                    $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
+                }
+            }
+            // push
+            $result['list'][$row['id']] = $item;
         }
 
         // prepare result
@@ -747,11 +793,12 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getNoteData(array $where): array
     {
-        return $this
+        $entities = $this
             ->getEntityManager()
             ->getRepository('Note')
-            ->find($where)
-            ->toArray();
+            ->find($where);
+
+        return !empty($entities) ? $entities->toArray() : [];
     }
 
     /**

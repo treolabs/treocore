@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\Core\Exceptions\Error;
 use Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
 use Treo\PHPUnit\Framework\TestCase;
@@ -51,9 +52,10 @@ class ModuleManagerTest extends TestCase
     {
         $service = $this->createMockService(
             ModuleManager::class,
-            ['getComposerService', 'getInstalledModules', 'getUninstalledModules']
+            ['getComposerService', 'getMetadata', 'getPackagistPackage', 'packageTranslate', 'getModuleRequireds']
         );
         $composer = $this->createMockService(Composer::class, ['getModuleComposerJson', 'getComposerDiff']);
+        $metadata = $this->createMockService(Metadata::class, ['getModuleList', 'getModule']);
 
         $service
             ->expects($this->any())
@@ -61,22 +63,20 @@ class ModuleManagerTest extends TestCase
             ->willReturn($composer);
         $service
             ->expects($this->any())
-            ->method('getInstalledModules')
+            ->method('getMetadata')
+            ->willReturn($metadata);
+        $service
+            ->expects($this->any())
+            ->method('getPackagistPackage')
             ->willReturn([
-                'module1' => [
-                    'id' => 'some-id1',
-                    'name' => 'module1-name'
-                ]
+                'packageId' => 'module1',
+                'name' => [],
+                'description' => []
             ]);
         $service
             ->expects($this->any())
-            ->method('getUninstalledModules')
-            ->willReturn([
-                'module2' => [
-                    'id' => 'some-id2',
-                    'name' => 'module2-name'
-                ]
-            ]);
+            ->method('packageTranslate')
+            ->willReturn('Translate');
 
         $composer
             ->expects($this->any())
@@ -98,66 +98,91 @@ class ModuleManagerTest extends TestCase
                 ]
             ]);
 
+        $metadata
+            ->expects($this->any())
+            ->method('getModuleList')
+            ->willReturn([]);
+
         // test 1
         $expects = [
-            'total' => 2,
+            'total' => 1,
             'list' => [
                 [
-                    'id' => 'some-id1',
-                    'name' => 'module1-name'
-                ],
-                [
                     'id' => 'some-id2',
-                    'name' => 'module2-name'
+                    'name' => 'Translate',
+                    'description' => 'Translate',
+                    'settingVersion' => '1.0.0',
+                    'currentVersion' => '',
+                    'required' => [],
+                    'isSystem' => false,
+                    'isComposer' => true,
+                    'status' => 'install'
                 ]
             ]
         ];
         $this->assertEquals($expects, $service->getList());
 
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['getComposerService', 'getInstalledModules', 'getUninstalledModules']
-        );
-        $composer = $this->createMockService(Composer::class, ['getModuleComposerJson', 'getComposerDiff']);
-
-        $service
+        $metadata
             ->expects($this->any())
-            ->method('getComposerService')
-            ->willReturn($composer);
-        $service
+            ->method('getModuleList')
+            ->willReturn(['module1', 'module2']);
+        $metadata
             ->expects($this->any())
-            ->method('getInstalledModules')
+            ->method('getModule')
             ->willReturn([]);
-        $service
-            ->expects($this->any())
-            ->method('getUninstalledModules')
-            ->willReturn([]);
-
-        $composer
-            ->expects($this->any())
-            ->method('getModuleComposerJson')
-            ->willReturn([
-                'require' => [
-                    'module1' => '1.0.0'
-                ]
-            ]);
-        $composer
-            ->expects($this->any())
-            ->method('getComposerDiff')
-            ->willReturn([
-                'install' => [
-                    [
-                        'id' => 'some-id2',
-                        'package' => 'some-package'
-                    ]
-                ]
-            ]);
 
         // test 2
+        $this->assertEquals($expects, $service->getList());
+
+        $metadata
+            ->expects($this->any())
+            ->method('getModuleList')
+            ->willReturn(['module1']);
+        $metadata
+            ->expects($this->any())
+            ->method('getModule')
+            ->willReturn([
+                'extra' => [
+                    'name' => 'module1',
+                    'description' => 'description'
+                ],
+                'version' => '1.1.0'
+            ]);
+
+        $service
+            ->expects($this->any())
+            ->method('getPackagistPackage')
+            ->willReturn([]);
+
+        // test 3
         $expects = [
-            'total' => 0,
-            'list' => []
+            'total' => 1,
+            'list' => [
+                [
+                    'id' => 'some-id2',
+                    'name' => 'Translate',
+                    'description' => 'Translate',
+                    'settingVersion' => '1.0.0',
+                    'currentVersion' => '',
+                    'required' => [],
+                    'isSystem' => false,
+                    'isComposer' => true,
+                    'status' => 'install'
+                ]
+            ]
         ];
+        $this->assertEquals($expects, $service->getList());
+
+        $service
+            ->expects($this->any())
+            ->method('getModuleRequireds')
+            ->willReturn([
+                'some-id2' => [
+                    'require'
+                ]
+            ]);
+
+        // test 4
         $this->assertEquals($expects, $service->getList());
     }
 
@@ -247,7 +272,7 @@ class ModuleManagerTest extends TestCase
 
         $service = $this->createMockService(
             ModuleManager::class,
-            ['getPackagistPackages', 'getComposerService', 'getMetadata', 'packageTranslate']
+            ['getPackagistPackages', 'getComposerService', 'getMetadata']
         );
         $metadata = $this->createMockService(Metadata::class, ['getModuleList']);
         $composer = $this->createMockService(Composer::class, ['getComposerDiff']);
@@ -272,10 +297,6 @@ class ModuleManagerTest extends TestCase
             ->expects($this->any())
             ->method('getMetadata')
             ->willReturn($metadata);
-        $service
-            ->expects($this->any())
-            ->method('packageTranslate')
-            ->willReturn('Translate');
 
         $metadata
             ->expects($this->any())
@@ -360,34 +381,122 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is installModule throw exception
-     *
-     * @expectedException Espo\Core\Exceptions\Error
+     * Test is installModule throw exception if empty package
      */
-    public function testIsInstallModuleThrowException()
+    public function testIsInstallModuleThrowExceptionEmptyPackage()
     {
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['isSystemUpdating', 'getPackagistPackage', 'translateError']
-        );
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getPackagistPackage', 'translateError']
+            );
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
 
-        $service
-            ->expects($this->any())
-            ->method('translateError')
-            ->willReturn('Error');
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('No such module');
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn([]);
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([]);
 
-        // test
-        $this->assertTrue($service->installModule('id', '1.0.0'));
+            $service->installModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('No such module', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test is installModule throw exception if module install
+     */
+    public function testIsInstallModuleThrowExceptionModuleInstall()
+    {
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getPackagistPackage', 'translateError', 'getMetadata']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
+
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('Such module is already installed');
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([]);
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn($metadata);
+
+            $metadata
+                ->expects($this->any())
+                ->method('getModule')
+                ->willReturn([]);
+
+            $service->installModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('Such module is already installed', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test is installModule throw exception if invalid module version
+     */
+    public function testIsInstallModuleThrowExceptionVersionInvalid()
+    {
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getPackagistPackage', 'translateError', 'getMetadata', 'isVersionValid']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
+
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('Version in invalid');
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([]);
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn($metadata);
+            $service
+                ->expects($this->any())
+                ->method('isVersionValid')
+                ->willReturn(false);
+
+            $metadata
+                ->expects($this->any())
+                ->method('getModule')
+                ->willReturn([]);
+
+            $service->installModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('Version in invalid', $e->getMessage());
+        }
     }
 
     /**
@@ -448,35 +557,132 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is updateModule throw exception
-     *
-     * @expectedException Espo\Core\Exceptions\Error
+     * Test is updateModule throw exception if don't such module
      */
-    public function testIsUpdateModuleThrowException()
+    public function testIsUpdateModuleThrowExceptionNoFindModule()
     {
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['isSystemUpdating', 'getMetadata', 'getPackagistPackage']
-        );
-        $metadata = $this->createMockService(Metadata::class, ['getModule']);
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn($metadata);
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([]);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('No such module');
 
-        $service
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
+            $metadata
+                ->expects($this->any())
+                ->method('getModule')
+                ->willReturn([
+                    'name' => 'some-name'
+                ]);
 
-        $service
-            ->expects($this->any())
-            ->method('getPackagistPackage')
-            ->willReturn([]);
+            $service->updateModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('No such module', $e->getMessage());
+        }
+    }
 
-        // test
-        $this->assertTrue($service->updateModule('id', '1.0.0'));
+    /**
+     * Test updateModule if module wasn't installed
+     */
+    public function testIsUpdateModuleThrowExceptionModuleWasNotInstalled()
+    {
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
+
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn($metadata);
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([
+                    'name' => 'some-name'
+                ]);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('Module was not installed');
+
+            $metadata
+                ->expects($this->any())
+                ->method('getModule')
+                ->willReturn([]);
+
+            $service->updateModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('Module was not installed', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test updateModule throw exception if invalid module version
+     */
+    public function testIsUpdateModuleThrowExceptionModuleVersionInvalid()
+    {
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
+
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn($metadata);
+            $service
+                ->expects($this->any())
+                ->method('getPackagistPackage')
+                ->willReturn([
+                    'name' => 'some-name'
+                ]);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('Version in invalid');
+
+            $metadata
+                ->expects($this->any())
+                ->method('getModule')
+                ->willReturn([]);
+
+            $service->updateModule('id', '1.0.0');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('Version in invalid', $e->getMessage());
+        }
     }
 
     /**
@@ -542,29 +748,67 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is deleteModuel throw exception
-     *
-     * @expectedException Espo\Core\Exceptions\Error
+     * Test is deleteModule throw exception if system module
      */
-    public function testIsDeleteModuleThrowException()
+    public function testIsDeleteModuleThrowExceptionIsSystemModule()
     {
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['isSystemUpdating', 'isModuleSystem']
-        );
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'isModuleSystem', 'translateError']
+            );
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('isModuleSystem')
+                ->willReturn(true);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('isSystem');
 
-        $service
-            ->expects($this->any())
-            ->method('isModuleSystem')
-            ->willReturn(true);
+            $service->deleteModule('id');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('isSystem', $e->getMessage());
+        }
+    }
 
-        // test
-        $this->assertTrue($service->deleteModule('id'));
+    public function testIsDeleteModuleThrowExceptionNoSuchModule()
+    {
+        try {
+            $service = $this->createMockService(
+                ModuleManager::class,
+                ['isSystemUpdating', 'isModuleSystem', 'translateError', 'getMetadata']
+            );
+            $metadata = $this->createMockService(Metadata::class, ['getModule']);
+
+            $service
+                ->expects($this->any())
+                ->method('isSystemUpdating')
+                ->willReturn(false);
+            $service
+                ->expects($this->any())
+                ->method('isModuleSystem')
+                ->willReturn(true);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('No such module');
+            $service
+                ->expects($this->any())
+                ->method('getMetadata')
+                ->willReturn([]);
+
+            $service->deleteModule('id');
+        } catch (Error $e) {
+            // test
+            $this->assertEquals('No such module', $e->getMessage());
+        }
     }
 
     public function testIsCancelReturnTrue()
