@@ -2,11 +2,21 @@
   "dynamicLogic": {
     "fields": {
       "isStreamPanelFirst": {
-        "visible": {
+        "readOnly": {
           "conditionGroup": [
             {
-              "type": "isFalse",
+              "type": "isTrue",
               "attribute": "isStreamSide"
+            }
+          ]
+        }
+      },
+      "isStreamSide": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "isStreamPanelFirst"
             }
           ]
         }
