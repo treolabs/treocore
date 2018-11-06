@@ -80,63 +80,13 @@ class ModuleManager extends \Espo\Core\Services\Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getModuleList() as $id) {
-            if (!empty($package = $this->getMetadata()->getModule($id))) {
-                $result['list'][$id] = [
-                    'id'                 => $id,
-                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
-                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
-                    'settingVersion'     => '*',
-                    'currentVersion'     => $package['version'],
-                    'versions'           => $this->getPackagistPackage($id)['versions'],
-                    'required'           => [],
-                    'requiredTranslates' => [],
-                    'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
-                    'isComposer'         => true,
-                    'status'             => $this->getModuleStatus($composerDiff, $id),
-                ];
-
-                if ($settingVersion = $composerData['require'][$package['name']]) {
-                    $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
-                }
-                if (!empty($requireds = $this->getModuleRequireds($id))) {
-                    $result['list'][$id]['required'] = $requireds;
-                    foreach ($requireds as $required) {
-                        $pRequired = $this
-                            ->getMetadata()
-                            ->getModule($required);
-
-                        $result['list'][$id]['requiredTranslates'][] = $this
-                            ->packageTranslate($pRequired['extra']['name']);
-                    }
-                }
-            }
+        foreach ($this->getInstalledModules($composerData, $composerDiff) as $id => $value) {
+            $result['list'][$id] = $value;
         }
 
         // for uninstalled modules
-        foreach ($composerDiff['install'] as $row) {
-            $item = [
-                "id"             => $row['id'],
-                "name"           => $row['id'],
-                "description"    => '',
-                "settingVersion" => '*',
-                "currentVersion" => '',
-                "required"       => [],
-                "isSystem"       => false,
-                "isComposer"     => true,
-                "status"         => 'install'
-            ];
-
-            if (!empty($package = $this->getPackagistPackage($row['id']))) {
-                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
-                $item['description'] = $this->packageTranslate($package['description'], "-");
-                if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
-                    $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
-                }
-            }
-
-            // push
-            $result['list'][$row['id']] = $item;
+        foreach ($this->getUninstalledModules($composerData, $composerDiff) as $id => $value) {
+            $result['list'][$id] = $value;
         }
 
         // prepare result
@@ -374,10 +324,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             'order'       => 'DESC'
         ];
 
-        $result['total'] = $this
-            ->getEntityManager()
-            ->getRepository('Note')
-            ->count(['whereClause' => $where['whereClause']]);
+        $result['total'] = $this->getNoteCount($where);
 
         if ($result['total'] > 0) {
             if (!empty($request->get('after'))) {
@@ -385,11 +332,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             }
 
             // get collection
-            $result['list'] = $this
-                ->getEntityManager()
-                ->getRepository('Note')
-                ->find($where)
-                ->toArray();
+            $result['list'] = $this->getNoteData($where);
         }
 
         return $result;
@@ -418,7 +361,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             ];
         }
 
-        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+        return $this->putContentsJson($this->moduleJsonPath, $data);
     }
 
     /**
@@ -765,5 +708,137 @@ class ModuleManager extends \Espo\Core\Services\Base
         }
 
         return ($a < $b) ? -1 : 1;
+    }
+
+    /**
+     * Put JSON content to file
+     *
+     * @param string $moduleJsonPath
+     * @param array $data
+     *
+     * @return bool
+     */
+    protected function putContentsJson(string $moduleJsonPath, array $data): bool
+    {
+        return $this->getFileManager()->putContentsJson($moduleJsonPath, $data);
+    }
+
+    /**
+     * Get note count
+     *
+     * @param array $where
+     *
+     * @return int
+     */
+    protected function getNoteCount(array $where): int
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->count(['whereClause' => $where['whereClause']]);
+    }
+
+    /**
+     * Get note data
+     *
+     * @param array $where
+     *
+     * @return array
+     */
+    protected function getNoteData(array $where): array
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->find($where)
+            ->toArray();
+    }
+
+    /**
+     * Get installed modules list
+     *
+     * @param array $data
+     * @param array $diff
+     *
+     * @return array
+     */
+    protected function getInstalledModules(array $data, array $diff): array
+    {
+        $result = [];
+
+        foreach ($this->getMetadata()->getModuleList() as $id) {
+            if (!empty($package = $this->getMetadata()->getModule($id))) {
+                $result[$id] = [
+                    'id'                 => $id,
+                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
+                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
+                    'settingVersion'     => '*',
+                    'currentVersion'     => $package['version'],
+                    'versions'           => $this->getPackagistPackage($id)['versions'],
+                    'required'           => [],
+                    'requiredTranslates' => [],
+                    'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
+                    'isComposer'         => true,
+                    'status'             => $this->getModuleStatus($diff, $id),
+                ];
+
+                if ($settingVersion = $data['require'][$package['name']]) {
+                    $result[$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
+                }
+                if (!empty($requireds = $this->getModuleRequireds($id))) {
+                    $result[$id]['required'] = $requireds;
+                    foreach ($requireds as $required) {
+                        $pRequired = $this
+                            ->getMetadata()
+                            ->getModule($required);
+
+                        $result[$id]['requiredTranslates'][] = $this
+                            ->packageTranslate($pRequired['extra']['name']);
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get uninstalled modules list
+     *
+     * @param array $data
+     * @param array $diff
+     *
+     * @return array
+     */
+    protected function getUninstalledModules(array $data, array $diff): array
+    {
+        $result = [];
+
+        foreach ($diff['install'] as $row) {
+            $item = [
+                "id"             => $row['id'],
+                "name"           => $row['id'],
+                "description"    => '',
+                "settingVersion" => '*',
+                "currentVersion" => '',
+                "required"       => [],
+                "isSystem"       => false,
+                "isComposer"     => true,
+                "status"         => 'install'
+            ];
+
+            if (!empty($package = $this->getPackagistPackage($row['id']))) {
+                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
+                $item['description'] = $this->packageTranslate($package['description'], "-");
+                if (!empty($settingVersion = $data['require'][$package['packageId']])) {
+                    $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
+                }
+            }
+
+            // push
+            $result[$row['id']] = $item;
+        }
+
+        return $result;
     }
 }
