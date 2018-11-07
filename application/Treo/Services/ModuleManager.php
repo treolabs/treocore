@@ -146,46 +146,6 @@ class ModuleManager extends \Espo\Core\Services\Base
     }
 
     /**
-     * Get available modules for install
-     *
-     * @return array
-     */
-    public function getAvailableModulesList(): array
-    {
-        // prepare result
-        $result = [
-            'total' => 0,
-            'list'  => []
-        ];
-
-        if (!empty($packages = $this->getPackagistPackages())) {
-            // get diff
-            $diff = $this->getComposerService()->getComposerDiff();
-
-            // get installed modules
-            $installed = array_merge($this->getMetadata()->getModuleList(), array_column($diff['install'], 'id'));
-
-            foreach ($packages as $package) {
-                if (!in_array($package['treoId'], $installed)) {
-                    $result['list'][] = [
-                        'id'          => $package['treoId'],
-                        'name'        => $this->packageTranslate($package['name'], $package['treoId']),
-                        'description' => $this->packageTranslate($package['description'], '-'),
-                        'status'      => $package['status'],
-                        'versions'    => $package['versions']
-                    ];
-                }
-
-            }
-
-            // prepare total
-            $result['total'] = count($result['list']);
-        }
-
-        return $result;
-    }
-
-    /**
      * Install module
      *
      * @param string $id

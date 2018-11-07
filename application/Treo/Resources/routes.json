@@ -56,14 +56,6 @@
     }
   },
   {
-    "route": "/ModuleManager/availableModulesList",
-    "method": "get",
-    "params": {
-      "controller": "ModuleManager",
-      "action": "getAvailableModulesList"
-    }
-  },
-  {
     "route": "/ModuleManager/logs",
     "method": "get",
     "params": {

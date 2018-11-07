@@ -226,40 +226,6 @@ class ModuleManager extends \Espo\Core\Controllers\Base
     }
 
     /**
-     * @ApiDescription(description="Get available modules for install")
-     * @ApiMethod(type="GET")
-     * @ApiRoute(name="/ModuleManager/availableModulesList")
-     * @ApiReturn(sample="{
-     *     'total': 1,
-     *     'list': [
-     *           {
-     *               'id': 'Revisions',
-     *               'name': 'Revisions',
-     *               'version': '1.0.0',
-     *               'description': 'Module Revisions for TreoCRM.',
-     *               'status': 'available'
-     *           }
-     *       ]
-     * }")
-     *
-     * @return array
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     */
-    public function actionGetAvailableModulesList($params, $data, Request $request): array
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isGet()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        return $this->getModuleManagerService()->getAvailableModulesList();
-    }
-
-    /**
      * @ApiDescription(description="Get module manager stream data")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/ModuleManager/logs")

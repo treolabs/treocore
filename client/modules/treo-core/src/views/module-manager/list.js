@@ -145,7 +145,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             this.getCollectionFactory().create('ModuleManager', collection => {
                 this.availableCollection = collection;
                 collection.maxSize = 200;
-                collection.url = 'ModuleManager/availableModulesList';
+                collection.url = 'Store/action/list';
 
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('listAvailable', 'views/record/list', {

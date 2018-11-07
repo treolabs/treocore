@@ -36,8 +36,8 @@
   },
   "labels": {
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen",
-    "Modules (installed)": "Module (installiert)",
-    "Modules (available)": "Module (verfügbar)",
+    "Installed": "Installiert",
+    "Store": "Geschäft",
     "cancelModule": "Stornieren",
     "settings": "Einstellungen",
     "password": "Passwort",
