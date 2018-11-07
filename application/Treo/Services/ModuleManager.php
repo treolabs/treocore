@@ -95,7 +95,6 @@ class ModuleManager extends \Espo\Core\Services\Base
                     'isComposer'         => true,
                     'status'             => $this->getModuleStatus($composerDiff, $id),
                 ];
-
                 if ($settingVersion = $composerData['require'][$package['name']]) {
                     $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
@@ -105,7 +104,6 @@ class ModuleManager extends \Espo\Core\Services\Base
                         $pRequired = $this
                             ->getMetadata()
                             ->getModule($required);
-
                         $result['list'][$id]['requiredTranslates'][] = $this
                             ->packageTranslate($pRequired['extra']['name']);
                     }
@@ -126,7 +124,6 @@ class ModuleManager extends \Espo\Core\Services\Base
                 "isComposer"     => true,
                 "status"         => 'install'
             ];
-
             if (!empty($package = $this->getPackagistPackage($row['id']))) {
                 $item['name'] = $this->packageTranslate($package['name'], $row['id']);
                 $item['description'] = $this->packageTranslate($package['description'], "-");
@@ -134,7 +131,6 @@ class ModuleManager extends \Espo\Core\Services\Base
                     $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
             }
-
             // push
             $result['list'][$row['id']] = $item;
         }
@@ -374,10 +370,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             'order'       => 'DESC'
         ];
 
-        $result['total'] = $this
-            ->getEntityManager()
-            ->getRepository('Note')
-            ->count(['whereClause' => $where['whereClause']]);
+        $result['total'] = $this->getNoteCount($where);
 
         if ($result['total'] > 0) {
             if (!empty($request->get('after'))) {
@@ -385,11 +378,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             }
 
             // get collection
-            $result['list'] = $this
-                ->getEntityManager()
-                ->getRepository('Note')
-                ->find($where)
-                ->toArray();
+            $result['list'] = $this->getNoteData($where);
         }
 
         return $result;
@@ -418,7 +407,7 @@ class ModuleManager extends \Espo\Core\Services\Base
             ];
         }
 
-        return $this->getFileManager()->putContentsJson($this->moduleJsonPath, $data);
+        return $this->putContentsJson($this->moduleJsonPath, $data);
     }
 
     /**
@@ -765,5 +754,50 @@ class ModuleManager extends \Espo\Core\Services\Base
         }
 
         return ($a < $b) ? -1 : 1;
+    }
+
+    /**
+     * Put JSON content to file
+     *
+     * @param string $moduleJsonPath
+     * @param array $data
+     *
+     * @return bool
+     */
+    protected function putContentsJson(string $moduleJsonPath, array $data): bool
+    {
+        return $this->getFileManager()->putContentsJson($moduleJsonPath, $data);
+    }
+
+    /**
+     * Get note count
+     *
+     * @param array $where
+     *
+     * @return int
+     */
+    protected function getNoteCount(array $where): int
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->count(['whereClause' => $where['whereClause']]);
+    }
+
+    /**
+     * Get note data
+     *
+     * @param array $where
+     *
+     * @return array
+     */
+    protected function getNoteData(array $where): array
+    {
+        $entities = $this
+            ->getEntityManager()
+            ->getRepository('Note')
+            ->find($where);
+
+        return !empty($entities) ? $entities->toArray() : [];
     }
 }
