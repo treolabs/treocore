@@ -118,7 +118,7 @@ class Packagist extends AbstractService
             $this->packages = Json::decode(file_get_contents($this->cacheFile), true);
         }
 
-        return $this->packages;
+        return (!empty($this->packages) && is_array($this->packages)) ? $this->packages : [];
     }
 
     /**
@@ -128,15 +128,19 @@ class Packagist extends AbstractService
      */
     public function refresh(): bool
     {
+        // get auth data
+        $authData = (new ComposerUtil())->getAuthData();
+
         // prepare params
         $params = [
             'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'token'         => $this->getToken(),
+            'username'      => $authData['username'],
         ];
 
-        $data = file_get_contents($this->url . "package?" . http_build_query($params));
+        // prepare path
+        $path = $this->url . "packages?" . http_build_query($params);
 
-        $this->filePutContants($this->cacheFile, $data);
+        $this->filePutContants($this->cacheFile, file_get_contents($path));
 
         return true;
     }
@@ -286,32 +290,6 @@ class Packagist extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * Get gitlab token
-     *
-     * @return null|string
-     */
-    protected function getToken(): ?string
-    {
-        // prepare token
-        $token = $this->getConfig()->get('gitlabToken');
-
-        // get token
-        if (empty($token)) {
-            $token = null;
-            $authData = (new ComposerUtil())->getAuthData();
-            if (!empty($username = $authData['username'])) {
-                $token = Json::decode(file_get_contents($this->url . "gitlab-token?username=$username"), true)['token'];
-
-                // save
-                $this->getConfig()->set('gitlabToken', $token);
-                $this->getConfig()->save();
-            }
-        }
-
-        return $token;
     }
 
     /**
