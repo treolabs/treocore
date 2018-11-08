@@ -36,6 +36,10 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Treo\Core\Utils\Config;
+use Espo\Core\Exceptions;
+use Treo\Core\Utils\Language;
+use Espo\Entities\User;
 use Treo\PHPUnit\Framework\TestCase;
 
 /**
@@ -45,20 +49,194 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class InstallerTest extends TestCase
 {
+    protected $config = null;
+
+    /**
+     * Test getRequiredsList method
+     */
+    public function testGetRequiredsListMethod()
+    {
+        $service = $this->createMockService(Installer::class, ['getInstallConfig']);
+
+        $service
+            ->expects($this->any())
+            ->method('getInstallConfig')
+            ->willReturn([
+                'requirements' => []
+            ]);
+
+        // test 1
+        $this->assertEquals([], $service->getRequiredsList());
+
+        $service = $this->createMockService(Installer::class, ['getInstallConfig', 'translate', 'getMysqlVersion']);
+
+        $service
+            ->expects($this->any())
+            ->method('translate')
+            ->willReturn('Translate');
+        $service
+            ->expects($this->any())
+            ->method('getInstallConfig')
+            ->willReturn([
+                'requirements' => [
+                    'phpVersion' => '7.1',
+                    'phpRequires' => [],
+                    'phpSettings' => [],
+                    'mysqlVersion' => '5.3.3'
+                ]
+            ]);
+        $service
+            ->expects($this->any())
+            ->method('getMysqlVersion')
+            ->willReturn('5.5.3');
+
+        // test 2
+        $expects = [
+            [
+                'name' => 'Translate',
+                'validValue' => '7.1',
+                'value' => '7.1',
+                'isValid' => true
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => '>= 5.3.3',
+                'value' => '5.5.3',
+                'isValid' => true
+            ]
+        ];
+        $this->assertEquals($expects, $service->getRequiredsList());
+
+        $service = $this->createMockService(Installer::class, ['getInstallConfig', 'translate', 'getMysqlVersion']);
+
+        $service
+            ->expects($this->any())
+            ->method('translate')
+            ->willReturn('Translate');
+        $service
+            ->expects($this->any())
+            ->method('getInstallConfig')
+            ->willReturn([
+                'requirements' => [
+                    'phpVersion' => '7.1',
+                    'phpRequires' => [
+                        'require'
+                    ],
+                    'phpSettings' => [],
+                    'mysqlVersion' => '5.3.3'
+                ]
+            ]);
+        $service
+            ->expects($this->any())
+            ->method('getMysqlVersion')
+            ->willReturn('5.5.3');
+
+        // test 3
+        $expects = [
+            [
+                'name' => 'Translate',
+                'validValue' => '7.1',
+                'value' => '7.1',
+                'isValid' => true
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => 'Translate',
+                'value' => 'Translate',
+                'isValid' => false
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => '>= 5.3.3',
+                'value' => '5.5.3',
+                'isValid' => true
+            ]
+        ];
+        $this->assertEquals($expects, $service->getRequiredsList());
+
+        $service = $this->createMockService(Installer::class, ['getInstallConfig', 'translate', 'getMysqlVersion']);
+
+        $service
+            ->expects($this->any())
+            ->method('translate')
+            ->willReturn('Translate');
+        $service
+            ->expects($this->any())
+            ->method('getInstallConfig')
+            ->willReturn([
+                'requirements' => [
+                    'phpVersion' => '7.1',
+                    'phpRequires' => [
+                        'require'
+                    ],
+                    'phpSettings' => [
+                        'upload_max_filesize' => '20M'
+                    ],
+                    'mysqlVersion' => '5.3.3'
+                ]
+            ]);
+        $service
+            ->expects($this->any())
+            ->method('getMysqlVersion')
+            ->willReturn('5.5.3');
+
+        // test 4
+        $expects = [
+            [
+                'name' => 'Translate',
+                'validValue' => '7.1',
+                'value' => '7.1',
+                'isValid' => true
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => 'Translate',
+                'value' => 'Translate',
+                'isValid' => false
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => '>= 20M',
+                'value' => '2M',
+                'isValid' => false,
+            ],
+            [
+                'name' => 'Translate',
+                'validValue' => '>= 5.3.3',
+                'value' => '5.5.3',
+                'isValid' => true
+            ]
+        ];
+        $this->assertEquals($expects, $service->getRequiredsList());
+    }
 
     /**
      * Test is generateConfig return true
      */
     public function testIsGenerateConfigReturnTrue()
     {
-        $service = $this->createMockService(Installer::class, ['checkIfConfigExist']);
+        $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'getDefaults']);
+        $this->config
+            ->expects($this->any())
+            ->method('getConfigPath')
+            ->willReturn('data/config.php');
+        $this->config
+            ->expects($this->any())
+            ->method('getDefaults')
+            ->willReturn([]);
+
+        $service = $this->createMockService(Installer::class, ['isInstalled', 'putPhpContents']);
 
         $service
-            ->expects($this->once())
-            ->method('checkIfConfigExist')
+            ->expects($this->any())
+            ->method('isInstalled')
+            ->willReturn(false);
+        $service
+            ->expects($this->any())
+            ->method('putPhpContents')
             ->willReturn(true);
 
-
+        // test
         $this->assertTrue($service->generateConfig());
     }
 
@@ -67,40 +245,261 @@ class InstallerTest extends TestCase
      */
     public function testIsGenerateConfigReturnFalse()
     {
-        $service = $this->createMockService(Installer::class, ['checkIfConfigExist']);
+        $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'getDefaults']);
+        $this->config
+            ->expects($this->any())
+            ->method('getConfigPath')
+            ->willReturn('data/config.php');
+        $this->config
+            ->expects($this->any())
+            ->method('getDefaults')
+            ->willReturn([]);
+
+        $service = $this->createMockService(Installer::class, ['isInstalled', 'putPhpContents']);
 
         $service
-            ->expects($this->once())
-            ->method('checkIfConfigExist')
+            ->expects($this->any())
+            ->method('isInstalled')
+            ->willReturn(false);
+        $service
+            ->expects($this->any())
+            ->method('putPhpContents')
             ->willReturn(false);
 
-
+        // test
         $this->assertFalse($service->generateConfig());
     }
 
     /**
-     * Test is setLanguage return array
+     * Test is generateConfig method throw exception
      */
-    public function testIsSetLanguageReturnArray()
+    public function testIsGenerateConfigThrowException()
     {
-        $service = $this->createMockService(Installer::class, ['isCorrectLanguage', 'translateError', 'saveConfig']);
+        try {
+            $service = $this->createMockService(Installer::class, ['isInstalled', 'translateError']);
+
+            $service
+                ->expects($this->any())
+                ->method('isInstalled')
+                ->willReturn(true);
+            $service
+                ->expects($this->any())
+                ->method('translateError')
+                ->willReturn('alreadyInstalled');
+
+            $service->generateConfig();
+        } catch (Exceptions\Forbidden $e) {
+            $this->assertEquals('alreadyInstalled', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test getTranslations method
+     */
+    public function testGetTranslationsMethod()
+    {
+        $service = $this->createMockService(Installer::class, ['getLanguage']);
+        $language = $this->createMockService(Language::class, ['get']);
 
         $service
-            ->expects($this->once())
-            ->method('isCorrectLanguage')
-            ->willReturn(true);
+            ->expects($this->any())
+            ->method('getLanguage')
+            ->willReturn($language);
 
+        $language
+            ->expects($this->any())
+            ->method('get')
+            ->withConsecutive(['Installer'], ['Global.options.language'])
+            ->willReturnOnConsecutiveCalls([
+                'fields' => [
+                    'host' => 'Host Name',
+                    'dbname' => 'Database Name',
+                    'user' => 'Database User Name',
+                    'username' => 'User Name',
+                    'password' => 'Password',
+                    'confirmPassword' => 'Confirm Password'
+                ]
+            ], [
+                'de_DE' => 'German (de_DE)',
+                'en_GB' => 'English (en_GB)'
+            ]);
+
+        // test
+        $expects = [
+            'fields' => [
+                'host' => 'Host Name',
+                'dbname' => 'Database Name',
+                'user' => 'Database User Name',
+                'username' => 'User Name',
+                'password' => 'Password',
+                'confirmPassword' => 'Confirm Password'
+            ],
+            'labels' => [
+                'languages' => [
+                    'de_DE' => 'German (de_DE)',
+                    'en_GB' => 'English (en_GB)'
+                ]
+            ]
+        ];
+        $this->assertEquals($expects, $service->getTranslations());
+    }
+
+    /**
+     * Test getLicenseAndLanguages method
+     */
+    public function testGetLicenseAndLanguagesMethod()
+    {
+        $this->config = $this->createPartialMock(Config::class, ['get']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->withConsecutive(['languageList'], ['language'])
+            ->willReturnOnConsecutiveCalls([
+                0 => 'en_US',
+                1 => 'de_DE'
+            ], 'en_US');
+
+        $service = $this->createMockService(Installer::class, ['getContents']);
+
+        $service
+            ->expects($this->any())
+            ->method('getContents')
+            ->willReturn('Content');
+
+        // test
+        $expects = [
+            'languageList' => [
+                0 => 'en_US',
+                1 => 'de_DE'
+            ],
+            'language' => 'en_US',
+            'license' => 'Content'
+        ];
+        $this->assertEquals($expects, $service->getLicenseAndLanguages());
+    }
+
+    /**
+     * Test getDefaultDbSettings method
+     */
+    public function testGetDefaultDbSettingsMethod()
+    {
+        $this->config = $this->createPartialMock(Config::class, ['getDefaults']);
+        $this->config
+            ->expects($this->any())
+            ->method('getDefaults')
+            ->willReturn([
+                'database' => array (
+                    'driver' => 'pdo_mysql',
+                    'host' => 'localhost',
+                    'port' => '',
+                    'charset' => 'utf8mb4',
+                    'dbname' => '',
+                    'user' => '',
+                    'password' => '',
+                ),
+                'useCache' => true,
+                'recordsPerPage' => 20,
+                'recordsPerPageSmall' => 5,
+                'applicationName' => 'EspoCRM'
+            ]);
+
+        $service = $this->createMockService(Installer::class);
+
+        // test
+        $expects = [
+            'driver' => 'pdo_mysql',
+            'host' => 'localhost',
+            'port' => '',
+            'charset' => 'utf8mb4',
+            'dbname' => '',
+            'user' => '',
+            'password' => '',
+        ];
+        $this->assertEquals($expects, $service->getDefaultDBSettings());
+    }
+
+    /**
+     * Test  setLanguage method
+     */
+    public function testSetLanguageMethod()
+    {
+        $this->config = $this->createPartialMock(Config::class, ['get', 'set', 'save']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([
+                    0 => 'en_US',
+                    1 => 'de_DE'
+                ]);
+        $this->config
+            ->expects($this->any())
+            ->method('set')
+            ->willReturn(null);
+
+        $service = $this->createMockService(Installer::class, ['translateError']);
         $service
             ->expects($this->any())
             ->method('translateError')
-            ->willReturn(true);
+            ->willReturn('languageNotCorrect');
 
-        $service
+        // test 1
+        $expects = [
+            'status' => false,
+            'message' => 'languageNotCorrect'
+        ];
+        $this->assertEquals($expects, $service->setLanguage('en_GB'));
+
+        $this->config = $this->createPartialMock(Config::class, ['get', 'set', 'save']);
+        $this->config
             ->expects($this->any())
-            ->method('saveConfig')
+            ->method('get')
+            ->willReturn([
+                0 => 'en_US',
+                1 => 'de_DE'
+            ]);
+        $this->config
+            ->expects($this->any())
+            ->method('set')
+            ->willReturn(null);
+        $this->config
+            ->expects($this->any())
+            ->method('save')
+            ->willReturn(false);
+
+        $service = $this->createMockService(Installer::class);
+
+        // test 2
+        $expects = [
+            'status' => false,
+            'message' => ''
+        ];
+        $this->assertEquals($expects, $service->setLanguage('en_US'));
+
+        $this->config = $this->createPartialMock(Config::class, ['get', 'set', 'save']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([
+                0 => 'en_US',
+                1 => 'de_DE'
+            ]);
+        $this->config
+            ->expects($this->any())
+            ->method('set')
+            ->willReturn(null);
+        $this->config
+            ->expects($this->any())
+            ->method('save')
             ->willReturn(true);
 
-        $this->assertInternalType('array', $service->setLanguage('de_DE'));
+        $service = $this->createMockService(Installer::class);
+
+        // test 3
+        $expects = [
+            'status' => true,
+            'message' => ''
+        ];
+        $this->assertEquals($expects, $service->setLanguage('en_US'));
     }
 
     /**
@@ -108,86 +507,213 @@ class InstallerTest extends TestCase
      */
     public function testIsSetDbSettingsReturnArray()
     {
+        $this->config = $this->createPartialMock(Config::class, ['get', 'set', 'save']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([
+                'driver' => 'pdo_mysql',
+                'user' => 'root',
+                'password' => 'some-password'
+            ]);
+        $this->config
+            ->expects($this->any())
+            ->method('save')
+            ->willReturn(true);
+
         $service = $this->createMockService(
             Installer::class,
-            ['prepareDbParams', 'isConnectToDb', 'saveConfig', 'translateError']
+            ['prepareDbParams', 'isConnectToDb']
         );
 
         $service
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('prepareDbParams')
             ->willReturn([
                 'field' => 'value'
             ]);
-
         $service
-            ->expects($this->once())
+            ->expects($this->any())
+            ->method('isConnectToDb')
+            ->willReturn(null);
+
+        // test 1
+        $expects = [
+            'status' => true,
+            'message' => ''
+        ];
+        $this->assertEquals($expects, $service->setDbSettings(['field' => 'value']));
+
+        $this->config = $this->createPartialMock(Config::class, ['get', 'set', 'save']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([
+                'driver' => 'pdo_mysql',
+                'user' => 'root',
+                'password' => 'some-password'
+            ]);
+        $this->config
+            ->expects($this->any())
+            ->method('save')
+            ->willReturn(false);
+
+        $service = $this->createMockService(
+            Installer::class,
+            ['prepareDbParams', 'isConnectToDb']
+        );
+        $service
+            ->expects($this->any())
+            ->method('prepareDbParams')
+            ->willReturn([
+                'field' => 'value'
+            ]);
+        $service
+            ->expects($this->any())
+            ->method('isConnectToDb')
+            ->willReturn(null);
+
+        // test 2
+        $expects = [
+            'status' => false,
+            'message' => ''
+        ];
+        $this->assertEquals($expects, $service->setDbSettings(['field' => 'value']));
+
+        $this->config = $this->createPartialMock(Config::class, ['get']);
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([
+                'driver' => 'pdo_mysql',
+                'user' => 'root',
+                'password' => 'some-password'
+            ]);
+
+        $service = $this->createMockService(
+            Installer::class,
+            ['prepareDbParams', 'isConnectToDb', 'translateError']
+        );
+        $service
+            ->expects($this->any())
+            ->method('prepareDbParams')
+            ->willReturn([
+                'field' => 'value'
+            ]);
+        $service
+            ->expects($this->any())
+            ->method('isConnectToDb')
+            ->willThrowException(new \Exception());
+        $service
+            ->expects($this->any())
             ->method('translateError')
-            ->willReturn('Error');
+            ->willReturn('notCorrectDatabaseConfig');
 
-        $result = $service->setDbSettings([]);
-
-        // test is return array
-        $this->assertInternalType('array', $result);
-
-        // test if not empty message
-        $this->assertNotEmpty($result['message']);
+        // test 3
+        $expects = [
+            'status' => false,
+            'message' => 'notCorrectDatabaseConfig'
+        ];
+        $this->assertEquals($expects, $service->setDbSettings(['field' => 'value']));
     }
 
     /**
-     * Test is createAdmin return array
+     * Test createAdmin method
      */
-    public function testIsCreateAdminReturnArray()
+    public function testCreateAdminMethod()
     {
-        $service= $this->createMockService(
+        $this->config = $this->createPartialMock(Config::class, ['set', 'save']);
+
+        $service = $this->createMockService(
             Installer::class,
-            ['createSystemUsers', 'translateError']
+            ['translateError']
+        );
+        $service
+            ->expects($this->any())
+            ->method('translateError')
+            ->willReturn('differentPass');
+
+        // test 1
+        $expects = [
+            'status'  => false,
+            'message' => 'differentPass'
+        ];
+
+        $data = [
+            'username' => 'user1',
+            'password' => 'pass',
+            'confirmPassword' => 'pass1'
+        ];
+
+        $this->assertEquals($expects, $service->createAdmin($data));
+
+        $service = $this->createMockService(
+            Installer::class,
+            ['createFakeSystemUser', 'createSuperAdminUser', 'triggered', 'getComposerVersion']
+        );
+        $user = $this->createMockService(User::class, ['toArray']);
+
+        $service
+            ->expects($this->any())
+            ->method('createFakeSystemUser')
+            ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('createSuperAdminUser')
+            ->willReturn($user);
+        $service
+            ->expects($this->any())
+            ->method('triggered')
+            ->willReturn([]);
+        $service
+            ->expects($this->any())
+            ->method('getComposerVersion')
+            ->willReturn('1.0.0');
+
+        $user
+            ->expects($this->any())
+            ->method('toArray')
+            ->willReturn([
+                'field' => 'value'
+            ]);
+
+        // test 2
+        $expects = [
+            'status'  => true,
+            'message' => ''
+        ];
+
+        $data = [
+            'username' => 'user1',
+            'password' => 'pass',
+            'confirmPassword' => 'pass'
+        ];
+
+        $this->assertEquals($expects, $service->createAdmin($data));
+
+        $service = $this->createMockService(
+            Installer::class,
+            ['createFakeSystemUser']
         );
 
         $service
             ->expects($this->any())
-            ->method('createSystemUsers')
-            ->willReturn(null);
+            ->method('createFakeSystemUser')
+            ->willThrowException(new \Exception('Error'));
 
-        $service
-            ->expects($this->any())
-            ->method('translateError')
-            ->willReturn('Error');
+        // test 3
+        $expects = [
+            'status'  => false,
+            'message' => 'Error'
+        ];
 
-        // test is password equals to confirmPassword
-        $this->assertInternalType('array', $service->createAdmin([
-            'password' => 'some-password',
-            'confirmPassword' => 'some-password'
-        ]));
-
-        // test is password not equals to confirmPassword
-        $this->assertInternalType('array', $service->createAdmin([
-            'password' => 'some-password',
-            'confirmPassword' => 'some-other-password'
-        ]));
+        $this->assertEquals($expects, $service->createAdmin($data));
     }
 
     /**
-     * Test is getRequiredsList method return array
+     * Test checkDBConnection method
      */
-    public function testIsGetRequiredsListMethodReturnArray()
-    {
-        $service = $this->createMockService(Installer::class, ['getInstallConfig']);
-
-        $service
-            ->expects($this->once())
-            ->method('getInstallConfig')
-            ->willReturn([
-                'requirements' => []
-            ]);
-
-        $this->assertInternalType('array', $service->getRequiredsList());
-    }
-
-    /**
-     * Test is checkDBConnection return array data
-     */
-    public function testIsCheckDbConnectReturnArray()
+    public function testCheckDbConnectMethod()
     {
         $service = $this->createMockService(Installer::class, ['isConnectToDb', 'prepareDbParams']);
         $data = [
@@ -208,35 +734,41 @@ class InstallerTest extends TestCase
             ->method('prepareDbParams')
             ->willReturn($data);
 
-        $result = $service->checkDBConnect($data);
-
-        // test is array
-        $this->assertInternalType('array', $result);
-
-        // test is have key
-        $this->assertArrayHasKey('status', $result);
-    }
-
-    /**
-     * Test is checkDBConnection throw PDOException
-     */
-    public function testIsCheckDbConnectThrowException()
-    {
-        $service = $this->createMockService(Installer::class, ['isConnectToDb', 'prepareDbParams', 'translateError']);
-        $data = [
-            'host'     => 'host',
-            'port'     => 'port',
-            'dbname'   => 'dbname',
-            'user'     => 'user',
-            'password' => 'password'
+        // test 1
+        $expects = [
+            'status' => true,
+            'message' => ''
         ];
+        $this->assertEquals($expects, $service->checkDbConnect($data));
+
+        $service = $this->createMockService(Installer::class, ['isConnectToDb', 'prepareDbParams']);
 
         $service
             ->expects($this->once())
             ->method('isConnectToDb')
-            ->willThrowException(
-                new \PDOException()
-            );
+            ->willReturn(false);
+
+        $service
+            ->expects($this->once())
+            ->method('prepareDbParams')
+            ->willReturn($data);
+
+        // test 2
+        $expects = [
+            'status' => false,
+            'message' => ''
+        ];
+        $this->assertEquals($expects, $service->checkDbConnect($data));
+
+        $service = $this->createMockService(
+            Installer::class,
+            ['isConnectToDb', 'prepareDbParams', 'translateError']
+        );
+
+        $service
+            ->expects($this->once())
+            ->method('isConnectToDb')
+            ->willThrowException(new \PDOException());
 
         $service
             ->expects($this->once())
@@ -246,12 +778,50 @@ class InstallerTest extends TestCase
         $service
             ->expects($this->once())
             ->method('translateError')
-            ->willReturn('Error');
+            ->willReturn('notCorrectDatabaseConfig');
 
-        $result = $service->checkDBConnect($data);
+        // test 3
+        $expects = [
+            'status' => false,
+            'message' => 'notCorrectDatabaseConfig'
+        ];
+        $this->assertEquals($expects, $service->checkDbConnect($data));
+    }
 
-        // test is set error message
-        $this->assertNotEmpty($result['message']);
+    /**
+     * Test isInstalled method
+     */
+    public function testInstalledMethod()
+    {
+        $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'get']);
+        $this->config
+            ->expects($this->any())
+            ->method('getConfigPath')
+            ->willReturn('data/config.php');
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn(false);
+
+        $service = $this->createMockService(Installer::class);
+
+        // test 1
+        $this->assertFalse($service->isInstalled());
+
+        $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'get']);
+        $this->config
+            ->expects($this->any())
+            ->method('getConfigPath')
+            ->willReturn('/');
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn(true);
+
+        $service = $this->createMockService(Installer::class);
+
+        // test 2
+        $this->assertTrue($service->isInstalled());
     }
 
     /**
@@ -259,54 +829,45 @@ class InstallerTest extends TestCase
      */
     public function testIsCheckPermissionsReturnTrue()
     {
-        $service = $this->createMockService(Installer::class, ['getLastPermissionError']);
+        $service = $this->createMockService(Installer::class, ['setMapPermission', 'getLastError']);
 
         $service
             ->expects($this->once())
-            ->method('getLastPermissionError')
+            ->method('setMapPermission')
+            ->willReturn(null);
+        $service
+            ->expects($this->once())
+            ->method('getLastError')
             ->willReturn('');
 
         $this->assertTrue($service->checkPermissions());
     }
 
     /**
-     * Test is getLicenseAndLanguages method return array
+     * Test checkPermissions throw exception
      */
-    public function testIsGetLicenseAndLanguagesReturnArray()
+    public function testCheckPermissionsThrowException()
     {
-        $service = $this->createMockService(Installer::class);
+        try {
+            $service = $this->createMockService(Installer::class, ['setMapPermission', 'getLastError']);
 
-        $this->assertInternalType('array', $service->getLicenseAndLanguages());
+            $service
+                ->expects($this->once())
+                ->method('setMapPermission')
+                ->willReturn(null);
+            $service
+                ->expects($this->once())
+                ->method('getLastError')
+                ->willReturn('Error');
+
+            $service->checkPermissions();
+        } catch (Exceptions\InternalServerError $e) {
+            $this->assertEquals('Error', $e->getMessage());
+        }
     }
 
-    /**
-     * Test is isInstalled method exist
-     */
-    public function testIsInstalledMethodExists()
+    protected function getConfig()
     {
-        $service = $this->createMockService(Installer::class);
-
-        // test is method return true
-        $this->assertTrue(method_exists($service, 'isInstalled'));
-    }
-
-    /**
-     * Test is getTranslations method exists
-     */
-    public function testIsGetTranslationsMethodExists()
-    {
-        $service = $this->createMockService(Installer::class);
-
-        $this->assertTrue(method_exists($service, 'getTranslations'));
-    }
-
-    /**
-     * Test is getDefaultDbSettings method exists
-     */
-    public function testIsGetDefaultDbSettingsMethodExist()
-    {
-        $service = $this->createMockService(Installer::class);
-
-        $this->assertTrue(method_exists($service, 'getDefaultDbSettings'));
+        return $this->config;
     }
 }
