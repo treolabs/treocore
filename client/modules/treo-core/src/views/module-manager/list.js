@@ -148,7 +148,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 collection.url = 'Store/action/list';
 
                 this.listenToOnce(collection, 'sync', () => {
-                    debugger;
                     this.createView('listStore', 'views/record/list', {
                         scope: 'Store',
                         collection: collection,
