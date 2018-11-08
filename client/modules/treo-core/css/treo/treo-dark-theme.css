@@ -15843,6 +15843,10 @@ input#sn-checkbox-open-in-new-window {
     border-top: 1px solid gainsboro
 }
 
+.panel-info > .panel-heading {
+    padding: 5px 10px 6px;
+}
+
 .side .panel-default > .panel-heading  {
     border-top: 0;
 }
@@ -15853,6 +15857,15 @@ input#sn-checkbox-open-in-new-window {
     border-right-width: 0;
     padding-left: 8px;
     padding-right: 8px
+}
+
+.panel-info > .panel-heading > .btn-group > .btn-info {
+    color: #31708f;
+    border-color: #bce8ff;
+    background-color: #e0efff;
+    border-right-width: 0;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .side .panel-default > .panel-heading > .btn-group > .btn-default {

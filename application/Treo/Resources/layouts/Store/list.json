@@ -7,5 +7,10 @@
   {
     "name": "description",
     "notSortable": true
+  },
+  {
+    "name": "status",
+    "notSortable": true,
+    "width": 20
   }
 ]

@@ -1,0 +1,21 @@
+{
+  "fields": {
+    "name": {
+      "type": "varchar"
+    },
+    "description": {
+      "type": "varchar"
+    },
+    "status": {
+      "type": "enum",
+      "options": [
+        "available",
+        "buyable"
+      ],
+      "optionColors": {
+        "available": "00FF00",
+        "buyable": "FFFF00"
+      }
+    }
+  }
+}

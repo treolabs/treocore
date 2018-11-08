@@ -56,7 +56,6 @@
     "canceling": "stornieren...",
     "dependencies": "abhängigkeiten",
     "failed": "die Aktualisierung des Moduls ist fehlgeschlagen. Weitere Informationen finden Sie in dem Protokoll",
-    "installModule": "das Modul installieren",
     "Log": "Protokoll",
     "removeModule": "Modul löschen",
     "Run Update": "das Update starten",
