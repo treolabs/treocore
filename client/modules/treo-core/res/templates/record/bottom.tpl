@@ -4,7 +4,7 @@
             <div class="pull-right btn-group">
                 {{#unless notRefreshable}}
                 <button type="button" class="btn btn-default btn-sm action" data-action="refresh" data-panel="{{name}}" title="Click to refresh">
-                    <span class="glyphicon glyphicon-refresh"></span>
+                    <span class="fas fa-sync"></span>
                 </button>
                 {{/unless}}
                 {{#if buttonList}}
@@ -38,7 +38,7 @@
             {{/if}}
             {{#unless notRefreshable}}
             </span>
-            <span class="collapser caret {{#if expanded}}caret-up{{/if}}" style="cursor: pointer;" data-action="collapsePanel" data-panel="{{name}}"></span>
+            <span class="collapser glyphicon {{#if expanded}}glyphicon-menu-up{{else}}glyphicon-menu-down{{/if}}" data-action="collapsePanel" data-panel="{{name}}"></span>
             {{/unless}}
             </h4>
         </div>

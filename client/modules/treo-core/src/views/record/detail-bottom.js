@@ -232,10 +232,13 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
         },
 
         afterPanelCollapsed(target, hide) {
+            let collapser = target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`);
             if (hide) {
-                target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).removeClass('caret-up');
+                collapser.removeClass('glyphicon-menu-up');
+                collapser.addClass('glyphicon-menu-down');
             } else {
-                target.prev().find(`span.collapser[data-panel="${target.data('name')}"]`).addClass('caret-up');
+                collapser.removeClass('glyphicon-menu-down');
+                collapser.addClass('glyphicon-menu-up');
             }
             this.savePanelStateToStorage(target.data('name'), hide);
         },
