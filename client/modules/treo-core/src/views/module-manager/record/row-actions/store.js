@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/row-actions/available', 'views/record/row-actions/default',
+Espo.define('treo-core:views/module-manager/record/row-actions/store', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
         disableActions: false,
@@ -48,7 +48,7 @@ Espo.define('treo-core:views/module-manager/record/row-actions/available', 'view
         getActionList() {
             let list = [];
             let versions = this.model.get('versions');
-            if (!this.disableActions && versions && versions.length) {
+            if (!this.disableActions && versions && versions.length && this.model.get('status') === 'available') {
                 list.push({
                     action: 'installModule',
                     label: 'installModule',

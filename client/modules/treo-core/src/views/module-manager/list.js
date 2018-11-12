@@ -42,7 +42,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         installedCollection: null,
 
-        availableCollection: null,
+        storeCollection: null,
 
         actionsInProgress: 0,
 
@@ -81,7 +81,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         loadList() {
             this.loadInstalledModulesList();
-            this.loadAvailableModulesList();
+            this.loadStoreModulesList();
             this.loadLogList();
         },
 
@@ -141,18 +141,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             });
         },
 
-        loadAvailableModulesList() {
-            this.getCollectionFactory().create('ModuleManager', collection => {
-                this.availableCollection = collection;
+        loadStoreModulesList() {
+            this.getCollectionFactory().create('Store', collection => {
+                this.storeCollection = collection;
                 collection.maxSize = 200;
                 collection.url = 'Store/action/list';
 
                 this.listenToOnce(collection, 'sync', () => {
-                    this.createView('listAvailable', 'views/record/list', {
+                    this.createView('listStore', 'views/record/list', {
+                        scope: 'Store',
                         collection: collection,
-                        el: `${this.options.el} .list-container.modules-available`,
+                        el: `${this.options.el} .list-container.modules-store`,
                         type: 'list',
-                        layoutName: 'availableModulesList',
                         searchManager: false,
                         selectable: false,
                         checkboxes: false,
@@ -162,10 +162,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         paginationEnabled: false,
                         showCount: false,
                         showMore: false,
-                        rowActionsView: 'treo-core:views/module-manager/record/row-actions/available'
+                        rowActionsView: 'treo-core:views/module-manager/record/row-actions/store'
                     }, view => {
                         this.listenToOnce(view, 'after:render', () => {
-                            this.availableCollection.trigger('disableActions', this.getConfig().get('isSystemUpdating'));
+                            this.storeCollection.trigger('disableActions', this.getConfig().get('isSystemUpdating'));
                         });
                         view.render();
                     });
@@ -186,8 +186,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         actionRefresh(data) {
             if (data.collection === 'installed') {
                 this.installedCollection.fetch();
-            } else if (data.collection === 'available') {
-                this.availableCollection.fetch();
+            } else if (data.collection === 'store') {
+                this.storeCollection.fetch();
             }
         },
 
@@ -208,7 +208,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             let apiUrl;
             let requestType;
             if (data.mode === 'install') {
-                currentModel = this.availableCollection.get(data.id);
+                currentModel = this.storeCollection.get(data.id);
                 viewName = 'treo-core:views/module-manager/modals/install';
                 beforeSaveLabel = 'settingModuleForInstalling';
                 afterSaveLabel = 'settedModuleForInstalling';
@@ -234,7 +234,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         if (response) {
                             this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
                             if (data.mode === 'install') {
-                                this.availableCollection.fetch();
+                                this.storeCollection.fetch();
                             }
                             this.installedCollection.fetch();
                         }
@@ -293,7 +293,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 if (response) {
                     this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
                     if (data.status = 'install') {
-                        this.availableCollection.fetch();
+                        this.storeCollection.fetch();
                     }
                     this.installedCollection.fetch();
                 }
@@ -339,7 +339,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             this.ajaxRequest('Composer/cancel', 'DELETE').then(response => {
                 if (response) {
                     this.notify(this.translate('canceled', 'labels', 'ModuleManager'), 'success');
-                    this.availableCollection.fetch();
+                    this.storeCollection.fetch();
                     this.installedCollection.fetch();
                 }
             }).always(() => {
@@ -386,7 +386,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         this.disableActionButton('cancelUpdate', isSystemUpdating);
 
                         this.installedCollection.trigger('disableActions', isSystemUpdating);
-                        this.availableCollection.trigger('disableActions', isSystemUpdating);
+                        this.storeCollection.trigger('disableActions', isSystemUpdating);
 
                         this.loaderShow();
                     }.bind(this)
