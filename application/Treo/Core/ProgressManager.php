@@ -42,6 +42,7 @@ use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata;
 use Treo\Services\AbstractProgressManager;
 use Treo\Services\ProgressJobInterface as PMInterface;
 use Treo\Traits\ContainerTrait;
@@ -112,8 +113,12 @@ class ProgressManager
         // prepare data
         $data = [];
 
-        if (file_exists(self::CACHE_PATH)) {
-            $data = Json::decode(file_get_contents(self::CACHE_PATH), true);
+        if ($this->fileExists(self::CACHE_PATH)) {
+            $data = Json::decode($this->fileGetContents(self::CACHE_PATH), true);
+
+            if (!is_array($data)) {
+                $data = [];
+            }
         }
 
         return $data;
@@ -206,14 +211,12 @@ class ProgressManager
     public function getProgressConfig(): array
     {
         if (is_null($this->progressConfig)) {
-            $this->progressConfig = include "application/Treo/Configs/ProgressManager.php";
-            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+            $this->progressConfig = $this->includeFile("application/Treo/Configs/ProgressManager.php");
+            foreach ($this->getMetadata()->getModuleList() as $module) {
                 // prepare path
                 $path = "application/Espo/Modules/{$module}/Configs/ProgressManager.php";
 
-                if (file_exists($path)) {
-                    $data = include $path;
-
+                if (!empty($data = $this->includeFile($path))) {
                     $this->progressConfig = array_merge_recursive($this->progressConfig, $data);
                 }
             }
@@ -527,5 +530,66 @@ class ProgressManager
     protected function translate(string $tab, string $key): string
     {
         return $this->getContainer()->get('language')->translate($key, $tab, 'ProgressManager');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Include file
+     *
+     * @param string $path
+     *
+     * @return array|mixed
+     */
+    protected function includeFile(string $path)
+    {
+        $data = [];
+
+        if (file_exists($path)) {
+            $data = include $path;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Checks whether a file or directory exists
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function fileExists(string $filename): bool
+    {
+        return file_exists($filename);
+    }
+
+    /**
+     * Reads entire file into a string
+     *
+     * @param string $filename
+     * @param bool $use_include_path
+     * @param resource $context
+     * @param int $offset
+     * @param int|null $maxlen
+     *
+     * @return bool|string
+     */
+    protected function fileGetContents(
+        $filename,
+        $use_include_path = false,
+        $context = null,
+        $offset = 0,
+        $maxlen = null
+    ) {
+        return file_get_contents($filename, $use_include_path = false, $context = null, $offset = 0, $maxlen = null);
     }
 }
