@@ -15764,6 +15764,10 @@ input#sn-checkbox-open-in-new-window {
     border-bottom: 1px solid #f5f5f5
 }
 
+.modal-open .modal {
+    padding-right: 0 !important;
+}
+
 .modal-header {
     background-color: #273238;
     padding-top: 12px;
@@ -15783,6 +15787,10 @@ input#sn-checkbox-open-in-new-window {
 
 .modal-header .close:hover, .modal-header .close:focus {
     color: #fff
+}
+
+.modal-header .close > span {
+    color: #fff;
 }
 
 .dialog-record .modal-content > .modal-body {
