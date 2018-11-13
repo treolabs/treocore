@@ -17826,7 +17826,7 @@ button.category span.glyphicon {
     }
 
     .search-row .text-filter + .input-group-btn .search,
-    .search-row .text-filter + .input-group-btn [data-action="reset"],
+    .search-row .text-filter + .input-group-btn .reset,
     .search-row > div .search-right-buttons-group button {
         font-size: 0;
         height: 33px;
@@ -17834,7 +17834,7 @@ button.category span.glyphicon {
     }
 
     .search-row .text-filter + .input-group-btn .search .fa,
-    .search-row .text-filter + .input-group-btn [data-action="reset"] .fa,
+    .search-row .text-filter + .input-group-btn .reset .fa,
     .search-row > div .search-right-buttons-group button .fa{
         font-size: 14px;
     }
