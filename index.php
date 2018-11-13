@@ -40,6 +40,9 @@ include "bootstrap.php";
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
+// check PHP version
+App::isPhpVersionValid();
+
 // create  app
 $app = new App();
 

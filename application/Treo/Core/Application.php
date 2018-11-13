@@ -47,15 +47,22 @@ use Treo\Core\Utils\Auth;
 class Application extends \Espo\Core\Application
 {
     /**
-     * @inheritdoc
+     * Is PHP version valid ?
      */
-    public function __construct()
+    public static function isPhpVersionValid()
     {
-        // call parent
-        parent::__construct();
+        // prepare data
+        $validPhpVersion = '7.1';
+
+        // prepare PHP version
+        $versionData = explode(".", phpversion());
+        $phpVersion = $versionData[0] . "." . $versionData[1];
 
         // validate PHP version
-        $this->isPhpVersionValid();
+        if (!version_compare($phpVersion, $validPhpVersion, '==')) {
+            echo "Invalid PHP version. PHP {$validPhpVersion} is required!";
+            die();
+        }
     }
 
     /**
@@ -183,24 +190,5 @@ class Application extends \Espo\Core\Application
         );
 
         return $routes->getAll();
-    }
-
-    /**
-     * Is PHP version valid ?
-     */
-    private function isPhpVersionValid()
-    {
-        // prepare data
-        $validPhpVersion = '7.1';
-
-        // prepare PHP version
-        $versionData = explode(".", phpversion());
-        $phpVersion = $versionData[0] . "." . $versionData[1];
-
-        // validate PHP version
-        if (!version_compare($phpVersion, $validPhpVersion, '==')) {
-            echo "Invalid PHP version. PHP {$validPhpVersion} is required!";
-            die();
-        }
     }
 }

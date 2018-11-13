@@ -37,5 +37,10 @@ require_once('../../bootstrap.php');
 // define gloabal variables
 define('CORE_PATH', dirname(dirname(__DIR__)));
 
-$app = new \Treo\Core\Application();
+use Treo\Core\Application as App;
+
+// check PHP version
+App::isPhpVersionValid();
+
+$app = new App();
 $app->run();
