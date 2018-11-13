@@ -16705,6 +16705,15 @@ input#sn-checkbox-open-in-new-window {
     color: #fff;
 }
 
+#nofitication,
+#notification {
+    text-align: justify;
+}
+
+.alert {
+    height: auto;
+}
+
 .dialog-record .modal-content > .modal-body {
     background-color: #fff
 }
