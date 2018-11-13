@@ -151,18 +151,16 @@ class Installer extends AbstractService
         $pathToConfig = $config->getConfigPath();
 
         // get default config
-        if (!is_array($defaultConfig = $config->getDefaults())) {
+        $defaultConfig = $config->getDefaults();
+        if (empty($defaultConfig)) {
             $defaultConfig = [];
         }
 
         // get permissions
-        $owner = $this->getDefaultOwner(true);
-        $group = $this->getDefaultGroup(true);
-
-        if (!empty($owner)) {
+        if (!empty($owner = $this->getDefaultOwner(true))) {
             $defaultConfig['defaultPermissions']['user'] = $owner;
         }
-        if (!empty($group)) {
+        if (!empty($group = $this->getDefaultGroup(true))) {
             $defaultConfig['defaultPermissions']['group'] = $group;
         }
 
@@ -226,10 +224,8 @@ class Installer extends AbstractService
     {
         $defaultConfig = $this->getConfig()->getDefaults();
         $defaultDBSettings = [
-            'driver' => 'pdo_mysql',
             'host' => 'localhost',
             'port' => '',
-            'charset' => 'utf8mb4',
             'dbname' => '',
             'user' => '',
             'password' => '',
