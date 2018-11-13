@@ -576,20 +576,11 @@ class ProgressManager
      * Reads entire file into a string
      *
      * @param string $filename
-     * @param bool $use_include_path
-     * @param resource $context
-     * @param int $offset
-     * @param int|null $maxlen
      *
      * @return bool|string
      */
-    protected function fileGetContents(
-        $filename,
-        $use_include_path = false,
-        $context = null,
-        $offset = 0,
-        $maxlen = null
-    ) {
-        return file_get_contents($filename, $use_include_path, $context, $offset, $maxlen);
+    protected function fileGetContents($filename)
+    {
+        return file_get_contents($filename);
     }
 }
