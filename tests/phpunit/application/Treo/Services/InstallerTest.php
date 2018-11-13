@@ -225,7 +225,18 @@ class InstallerTest extends TestCase
             ->method('getDefaults')
             ->willReturn([]);
 
-        $service = $this->createMockService(Installer::class, ['isInstalled', 'putPhpContents']);
+        $service = $this->createMockService(
+            Installer::class,
+            [
+                'isInstalled',
+                'putPhpContents',
+                'getDefaultOwner',
+                'getDefaultGroup',
+                'generateSalt',
+                'generateKey',
+                'fileExists'
+            ]
+        );
 
         $service
             ->expects($this->any())
@@ -233,10 +244,42 @@ class InstallerTest extends TestCase
             ->willReturn(false);
         $service
             ->expects($this->any())
+            ->method('getDefaultOwner')
+            ->willReturn(5);
+        $service
+            ->expects($this->any())
+            ->method('getDefaultGroup')
+            ->willReturn(10);
+        $service
+            ->expects($this->any())
+            ->method('generateSalt')
+            ->willReturn('some-salt');
+        $service
+            ->expects($this->any())
+            ->method('generateKey')
+            ->willReturn('some-key');
+        $service
+            ->expects($this->any())
             ->method('putPhpContents')
             ->willReturn(true);
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(false);
 
-        // test
+        // test 1
+        $this->assertTrue($service->generateConfig());
+
+        $service
+            ->expects($this->any())
+            ->method('getDefaultOwner')
+            ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('getDefaultGroup')
+            ->willReturn(null);
+
+        // test 2
         $this->assertTrue($service->generateConfig());
     }
 
@@ -255,7 +298,18 @@ class InstallerTest extends TestCase
             ->method('getDefaults')
             ->willReturn([]);
 
-        $service = $this->createMockService(Installer::class, ['isInstalled', 'putPhpContents']);
+        $service = $this->createMockService(
+            Installer::class,
+            [
+                'isInstalled',
+                'putPhpContents',
+                'getDefaultOwner',
+                'getDefaultGroup',
+                'generateSalt',
+                'generateKey',
+                'fileExists'
+            ]
+        );
 
         $service
             ->expects($this->any())
@@ -263,10 +317,38 @@ class InstallerTest extends TestCase
             ->willReturn(false);
         $service
             ->expects($this->any())
+            ->method('getDefaultOwner')
+            ->willReturn(5);
+        $service
+            ->expects($this->any())
+            ->method('getDefaultGroup')
+            ->willReturn(10);
+        $service
+            ->expects($this->any())
+            ->method('generateSalt')
+            ->willReturn('some-salt');
+        $service
+            ->expects($this->any())
+            ->method('generateKey')
+            ->willReturn('some-key');
+        $service
+            ->expects($this->any())
             ->method('putPhpContents')
             ->willReturn(false);
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(false);
 
-        // test
+        // test 1
+        $this->assertFalse($service->generateConfig());
+
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(true);
+
+        // test 2
         $this->assertFalse($service->generateConfig());
     }
 
@@ -405,7 +487,7 @@ class InstallerTest extends TestCase
 
         $service = $this->createMockService(Installer::class);
 
-        // test
+        // test 1
         $expects = [
             'driver' => 'pdo_mysql',
             'host' => 'localhost',
@@ -415,6 +497,19 @@ class InstallerTest extends TestCase
             'user' => '',
             'password' => '',
         ];
+        $this->assertEquals($expects, $service->getDefaultDBSettings());
+
+        $this->config
+            ->expects($this->any())
+            ->method('getDefaults')
+            ->willReturn([
+                'useCache' => true,
+                'recordsPerPage' => 20,
+                'recordsPerPageSmall' => 5,
+                'applicationName' => 'EspoCRM'
+            ]);
+
+        // test 2
         $this->assertEquals($expects, $service->getDefaultDBSettings());
     }
 
@@ -797,13 +892,17 @@ class InstallerTest extends TestCase
         $this->config
             ->expects($this->any())
             ->method('getConfigPath')
-            ->willReturn('data/config.php');
+            ->willReturn('/some-path');
         $this->config
             ->expects($this->any())
             ->method('get')
             ->willReturn(false);
 
-        $service = $this->createMockService(Installer::class);
+        $service = $this->createMockService(Installer::class, ['fileExists']);
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(false);
 
         // test 1
         $this->assertFalse($service->isInstalled());
@@ -812,16 +911,39 @@ class InstallerTest extends TestCase
         $this->config
             ->expects($this->any())
             ->method('getConfigPath')
-            ->willReturn('/');
+            ->willReturn('data/config.php');
         $this->config
             ->expects($this->any())
             ->method('get')
             ->willReturn(true);
 
-        $service = $this->createMockService(Installer::class);
+        $service = $this->createMockService(Installer::class, ['fileExists']);
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(true);
 
         // test 2
         $this->assertTrue($service->isInstalled());
+
+        $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'get']);
+        $this->config
+            ->expects($this->any())
+            ->method('getConfigPath')
+            ->willReturn('data/config.php');
+        $this->config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn(false);
+
+        $service = $this->createMockService(Installer::class, ['fileExists']);
+        $service
+            ->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(true);
+
+        // test 3
+        $this->assertFalse($service->isInstalled());
     }
 
     /**

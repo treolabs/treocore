@@ -151,11 +151,13 @@ class Installer extends AbstractService
         $pathToConfig = $config->getConfigPath();
 
         // get default config
-        $defaultConfig = $config->getDefaults();
+        if (!is_array($defaultConfig = $config->getDefaults())) {
+            $defaultConfig = [];
+        }
 
         // get permissions
-        $owner = $this->getFileManager()->getPermissionUtils()->getDefaultOwner(true);
-        $group = $this->getFileManager()->getPermissionUtils()->getDefaultGroup(true);
+        $owner = $this->getDefaultOwner(true);
+        $group = $this->getDefaultGroup(true);
 
         if (!empty($owner)) {
             $defaultConfig['defaultPermissions']['user'] = $owner;
@@ -164,11 +166,11 @@ class Installer extends AbstractService
             $defaultConfig['defaultPermissions']['group'] = $group;
         }
 
-        $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
-        $defaultConfig['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
+        $defaultConfig['passwordSalt'] = $this->generateSalt();
+        $defaultConfig['cryptKey'] = $this->generateKey();
 
         // create config if not exists
-        if (!file_exists($pathToConfig)) {
+        if (!$this->fileExists($pathToConfig)) {
             $result = $this->putPhpContents($pathToConfig, $defaultConfig, true);
         }
 
@@ -222,7 +224,18 @@ class Installer extends AbstractService
      */
     public function getDefaultDbSettings(): array
     {
-        return $this->getConfig()->getDefaults()['database'];
+        $defaultConfig = $this->getConfig()->getDefaults();
+        $defaultDBSettings = [
+            'driver' => 'pdo_mysql',
+            'host' => 'localhost',
+            'port' => '',
+            'charset' => 'utf8mb4',
+            'dbname' => '',
+            'user' => '',
+            'password' => '',
+        ];
+
+        return isset($defaultConfig['database']) ? $defaultConfig['database'] : $defaultDBSettings;
     }
 
     /**
@@ -374,7 +387,7 @@ class Installer extends AbstractService
     {
         $config = $this->getConfig();
 
-        return file_exists($config->getConfigPath()) && $config->get('isInstalled');
+        return $this->fileExists($config->getConfigPath()) && $config->get('isInstalled');
     }
 
     /**
@@ -625,6 +638,18 @@ class Installer extends AbstractService
     }
 
     /**
+     * Checks whether a file or directory exists
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function fileExists(string $filename): bool
+    {
+        return file_exists($filename);
+    }
+
+    /**
      * Get language
      *
      * @return mixed|null
@@ -679,5 +704,49 @@ class Installer extends AbstractService
     protected function getLastError()
     {
         return $this->getFileManager()->getPermissionUtils()->getLastError();
+    }
+
+    /**
+     * Get default owner user id
+     *
+     * @param bool $usePosix
+     *
+     * @return int
+     */
+    protected function getDefaultOwner(bool $usePosix)
+    {
+        return $this->getFileManager()->getPermissionUtils()->getDefaultOwner($usePosix);
+    }
+
+    /**
+     * get default group user id
+     *
+     * @param bool $usePosix
+     *
+     * @return int
+     */
+    protected function getDefaultGroup(bool $usePosix)
+    {
+        return $this->getFileManager()->getPermissionUtils()->getDefaultGroup($usePosix);
+    }
+
+    /**
+     * Generate a new salt
+     *
+     * @return string
+     */
+    protected function generateSalt()
+    {
+        return $this->getPasswordHash()->generateSalt();
+    }
+
+    /**
+     * Generate key
+     *
+     * @return mixed
+     */
+    protected function generateKey()
+    {
+        return $this->getContainer()->get('crypt')->generateKey();
     }
 }
