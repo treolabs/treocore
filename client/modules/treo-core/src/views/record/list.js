@@ -303,6 +303,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
                 menu.removeAttr('style');
             });
+        },
+
+        fetchAttributeListFromLayout() {
+            let selectList = [];
+            if (this.scope && !this.getMetadata().get(['clientDefs', this.scope, 'disabledSelectList'])) {
+                selectList = Dep.prototype.fetchAttributeListFromLayout.call(this);
+            }
+            return selectList;
         }
 
     });
