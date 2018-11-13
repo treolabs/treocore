@@ -17172,7 +17172,7 @@ ul.dropdown-menu > li.checkbox {
     margin: -6px 14px -10px -15px;
     padding: 0 15px 0 25px;
     float: left;
-    min-height: 53px;
+    min-height: 35px;
 }
 
 #main .catalog-tree-panel + .list-container {
@@ -17313,6 +17313,7 @@ button.category span.glyphicon {
         padding: 0 10px 10px 10px;
         margin: 0 0 10px 0;
         float: none;
+        min-height: 53px;
     }
 
     #main .catalog-tree-panel > .category-panel > .no-data {
@@ -17363,6 +17364,10 @@ button.category span.glyphicon {
 @media screen and (min-width: 768px) {
     body {
         padding-top: 48px
+    }
+
+    body.minimized #header a.minimizer {
+        top: 0;
     }
 
     .record .list-container {
@@ -17826,6 +17831,7 @@ button.category span.glyphicon {
         background: #fff;
         z-index: 2000;
         height: 100vh;
+        overflow: auto;
     }
 
     .search-row .text-filter + .input-group-btn .search,
