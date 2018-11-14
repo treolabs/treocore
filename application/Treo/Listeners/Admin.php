@@ -48,6 +48,26 @@ class Admin extends AbstractListener
      *
      * @return array
      */
+    public function afterActionJobs(array $data): array
+    {
+        if (!empty($data['result']) && is_array($data['result'])) {
+            $result = [];
+            foreach ($data['result'] as $item) {
+                if (!in_array($item, \Treo\Metadata\Metadata::$jobs)) {
+                    $result[] = $item;
+                }
+            }
+            $data['result'] = $result;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function afterActionAdminNotificationList(array $data): array
     {
         // clearing result

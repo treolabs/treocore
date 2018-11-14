@@ -46,6 +46,11 @@ class Metadata extends AbstractMetadata
     /**
      * @var array
      */
+    public static $jobs = ['Dummy', 'CheckNewVersion', 'CheckNewExtensionVersion'];
+
+    /**
+     * @var array
+     */
     protected $allowedTheme = ['TreoDarkTheme'];
 
     /**
@@ -290,7 +295,7 @@ class Metadata extends AbstractMetadata
      */
     protected function deleteEspoScheduledJobs(array $data): array
     {
-        foreach (\Treo\Migration\V1Dot20Dot0::$jobs as $job) {
+        foreach (self::$jobs as $job) {
             if (isset($data['entityDefs']['ScheduledJob']['jobs'][$job])) {
                 unset($data['entityDefs']['ScheduledJob']['jobs'][$job]);
             }

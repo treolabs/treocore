@@ -46,11 +46,6 @@ use Treo\Core\Migration\AbstractMigration;
 class V1Dot20Dot0 extends AbstractMigration
 {
     /**
-     * @var array
-     */
-    public static $jobs = ['Dummy', 'CheckNewVersion', 'CheckNewExtensionVersion'];
-
-    /**
      * Up to current
      */
     public function up(): void
@@ -58,7 +53,7 @@ class V1Dot20Dot0 extends AbstractMigration
         $jobs = $this
             ->getEntityManager()
             ->getRepository('ScheduledJob')
-            ->where(['job' => self::$jobs])
+            ->where(['job' => \Treo\Metadata\Metadata::$jobs])
             ->find();
 
         if (!empty($jobs)) {
