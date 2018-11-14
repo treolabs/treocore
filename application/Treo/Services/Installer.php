@@ -133,6 +133,7 @@ class Installer extends AbstractService
      *  Generate default config if not exists
      *
      * @throws Exceptions\Forbidden
+     * @throws Exceptions\Error
      *
      * @return bool
      */
@@ -151,25 +152,24 @@ class Installer extends AbstractService
         $pathToConfig = $config->getConfigPath();
 
         // get default config
-        $defaultConfig = $config->getDefaults();
+        if (empty($defaultConfig = $config->getDefaults())) {
+            throw new Exceptions\Error();
+        }
 
         // get permissions
-        $owner = $this->getFileManager()->getPermissionUtils()->getDefaultOwner(true);
-        $group = $this->getFileManager()->getPermissionUtils()->getDefaultGroup(true);
-
-        if (!empty($owner)) {
+        if (!empty($owner = $this->getDefaultOwner(true))) {
             $defaultConfig['defaultPermissions']['user'] = $owner;
         }
-        if (!empty($group)) {
+        if (!empty($group = $this->getDefaultGroup(true))) {
             $defaultConfig['defaultPermissions']['group'] = $group;
         }
 
-        $defaultConfig['passwordSalt'] = $this->getPasswordHash()->generateSalt();
-        $defaultConfig['cryptKey'] = $this->getContainer()->get('crypt')->generateKey();
+        $defaultConfig['passwordSalt'] = $this->generateSalt();
+        $defaultConfig['cryptKey'] = $this->generateKey();
 
         // create config if not exists
-        if (!file_exists($pathToConfig)) {
-            $result = $this->getFileManager()->putPhpContents($pathToConfig, $defaultConfig, true);
+        if (!$this->fileExists($pathToConfig)) {
+            $result = $this->putPhpContents($pathToConfig, $defaultConfig, true);
         }
 
         return $result;
@@ -182,7 +182,7 @@ class Installer extends AbstractService
      */
     public function getTranslations(): array
     {
-        $language = $this->getContainer()->get('language');
+        $language = $this->getLanguage();
 
         $result = $language->get('Installer');
 
@@ -209,7 +209,7 @@ class Installer extends AbstractService
         ];
 
         // get license
-        $license = $this->getFileManager()->getContents('LICENSE.txt');
+        $license = $this->getContents('LICENSE.txt');
         $result['license'] = $license ? $license : '';
 
         return $result;
@@ -222,7 +222,18 @@ class Installer extends AbstractService
      */
     public function getDefaultDbSettings(): array
     {
-        return $this->getConfig()->getDefaults()['database'];
+        $defaultConfig = $this->getConfig()->getDefaults();
+        $defaultDBSettings = [
+            'driver' => 'pdo_mysql',
+            'host' => 'localhost',
+            'port' => '',
+            'charset' => 'utf8mb4',
+            'dbname' => '',
+            'user' => '',
+            'password' => '',
+        ];
+
+        return isset($defaultConfig['database']) ? $defaultConfig['database'] : $defaultDBSettings;
     }
 
     /**
@@ -309,14 +320,7 @@ class Installer extends AbstractService
         } else {
             try {
                 // create fake system user
-                $systemUser = $this->getEntityManager()->getEntity('User');
-                $systemUser->set('id', 'system');
-
-                // set system user to container
-                $this->getContainer()->setUser($systemUser);
-
-                // rebuild database
-                $this->getContainer()->get('dataManager')->rebuild();
+                $this->createFakeSystemUser();
 
                 // create user
                 $user = $this->createSuperAdminUser($params['username'], $params['password']);
@@ -381,7 +385,7 @@ class Installer extends AbstractService
     {
         $config = $this->getConfig();
 
-        return file_exists($config->getConfigPath()) && $config->get('isInstalled');
+        return $this->fileExists($config->getConfigPath()) && $config->get('isInstalled');
     }
 
     /**
@@ -392,12 +396,12 @@ class Installer extends AbstractService
      */
     public function checkPermissions(): bool
     {
-        $this->getFileManager()->getPermissionUtils()->setMapPermission();
+        $this->setMapPermission();
 
-        $error = $this->getFileManager()->getPermissionUtils()->getLastError();
+        $error = $this->getLastError();
 
         if (!empty($error)) {
-            $message = is_array($error) ? implode($error, ' ;') : string($error);
+            $message = is_array($error) ? implode($error, ' ;') : (string)$error;
 
             throw new Exceptions\InternalServerError($message);
         }
@@ -624,5 +628,123 @@ class Installer extends AbstractService
         $sth->execute();
 
         return $this->getEntityManager()->getEntity('User', 1);
+    }
+
+    protected function putPhpContents(string $path, array $data, bool $withObjects = false): bool
+    {
+        return $this->getFileManager()->putPhpContents($path, $path, $withObjects);
+    }
+
+    /**
+     * Checks whether a file or directory exists
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function fileExists(string $filename): bool
+    {
+        return file_exists($filename);
+    }
+
+    /**
+     * Get language
+     *
+     * @return mixed|null
+     */
+    protected function getLanguage()
+    {
+        return $this->getContainer()->get('language');
+    }
+
+    /**
+     * Get file contents into the string
+     *
+     * @param string $path
+     *
+     * @return mixed
+     */
+    protected function getContents(string $path)
+    {
+        return $this->getFileManager()->getContents($path);
+    }
+
+    /**
+     * Create fake system user
+     *
+     * @throws Exceptions\Error
+     */
+    protected function createFakeSystemUser(): void
+    {
+        $systemUser = $this->getEntityManager()->getEntity('User');
+        $systemUser->set('id', 'system');
+
+        // set system user to container
+        $this->getContainer()->setUser($systemUser);
+
+        // rebuild database
+        $this->getContainer()->get('dataManager')->rebuild();
+    }
+
+    /**
+     * Set permission
+     */
+    protected function setMapPermission(): void
+    {
+        $this->getFileManager()->getPermissionUtils()->setMapPermission();
+    }
+
+    /**
+     * Get last permission error
+     *
+     * @return array|string
+     */
+    protected function getLastError()
+    {
+        return $this->getFileManager()->getPermissionUtils()->getLastError();
+    }
+
+    /**
+     * Get default owner user id
+     *
+     * @param bool $usePosix
+     *
+     * @return int
+     */
+    protected function getDefaultOwner(bool $usePosix)
+    {
+        return $this->getFileManager()->getPermissionUtils()->getDefaultOwner($usePosix);
+    }
+
+    /**
+     * get default group user id
+     *
+     * @param bool $usePosix
+     *
+     * @return int
+     */
+    protected function getDefaultGroup(bool $usePosix)
+    {
+        return $this->getFileManager()->getPermissionUtils()->getDefaultGroup($usePosix);
+    }
+
+    /**
+     * Generate a new salt
+     *
+     * @return string
+     */
+    protected function generateSalt()
+    {
+        return $this->getPasswordHash()->generateSalt();
+    }
+
+    /**
+     * Generate key
+     *
+     * @return mixed
+     */
+    protected function generateKey()
+    {
+        return $this->getContainer()->get('crypt')->generateKey();
     }
 }
