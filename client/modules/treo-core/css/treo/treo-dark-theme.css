@@ -17410,7 +17410,7 @@ button.category span.glyphicon {
         position: static;
     }
 
-    #header .nav > li.more > .dropdown-menu {
+    #header .nav > li.more:not(.more-group) > .dropdown-menu {
         left: 220px;
         top: 47px;
     }
