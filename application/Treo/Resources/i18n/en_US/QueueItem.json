@@ -1,9 +1,13 @@
 {
-    "fields": {
-    },
-    "links": {
-    },
-    "labels": {
-        "Create QueueItem": "Create Queue Item"
-    }
+  "fields": {
+    "serviceName": "Service",
+    "methodName": "Method",
+    "data": "Data",
+    "sortOrder": "Sort order"
+  },
+  "links": {
+  },
+  "labels": {
+    "Create QueueItem": "Create Queue Item"
+  }
 }

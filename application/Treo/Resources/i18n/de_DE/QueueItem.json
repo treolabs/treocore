@@ -1,4 +1,12 @@
 {
+  "fields": {
+    "serviceName": "Bedienung",
+    "methodName": "Methode",
+    "data": "Daten",
+    "sortOrder": "Sortierreihenfolge"
+  },
+  "links": {
+  },
   "labels": {
     "Create QueueItem": "Queue Item erstellen"
   }

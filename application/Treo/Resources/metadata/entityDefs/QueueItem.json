@@ -8,17 +8,21 @@
     "serviceName": {
       "type": "varchar",
       "required": true,
-      "maxLength": 100
+      "readOnly": true
     },
     "methodName": {
       "type": "varchar",
-      "maxLength": 100
+      "required": true,
+      "readOnly": true
     },
     "data": {
-      "type": "jsonObject"
+      "type": "jsonObject",
+      "readOnly": true
     },
     "sortOrder": {
-      "type": "int"
+      "type": "int",
+      "required": true,
+      "readOnly": true
     },
     "createdAt": {
       "type": "datetime",

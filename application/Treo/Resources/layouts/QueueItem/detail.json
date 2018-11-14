@@ -1,0 +1,30 @@
+[
+  {
+    "rows": [
+      [
+        {
+          "name": "name"
+        },
+        false
+      ],
+      [
+        {
+          "name": "serviceName"
+        },
+        {
+          "name": "methodName"
+        }
+      ],
+      [
+        {
+          "name": "data"
+        },
+        {
+          "name": "sortOrder"
+        }
+      ]
+    ],
+    "style": "default",
+    "label": "Overview"
+  }
+]
