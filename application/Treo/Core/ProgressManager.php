@@ -125,7 +125,7 @@ class ProgressManager
         // show message if cron is not running
         $time = time();
         $cronTime = $this->getConfig()->get('cronTime', $time);
-        if (($time - $cronTime) > 60) {
+        if (($time - $cronTime) > 120) {
             // prepare message
             $message = $this
                 ->getContainer()

@@ -69,6 +69,9 @@ class Metadata extends AbstractMetadata
         // set allowed themes
         $data = $this->setAllowedTheme($data);
 
+        // delete espo scheduled jobs
+        $data = $this->deleteEspoScheduledJobs($data);
+
         return $data;
     }
 
@@ -274,6 +277,22 @@ class Metadata extends AbstractMetadata
             // check is theme allowed
             if (!in_array($themeName, $this->allowedTheme)) {
                 unset($data['themes'][$themeName]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function deleteEspoScheduledJobs(array $data): array
+    {
+        foreach (\Treo\Migration\V1Dot20Dot0::$jobs as $job) {
+            if (isset($data['entityDefs']['ScheduledJob']['jobs'][$job])) {
+                unset($data['entityDefs']['ScheduledJob']['jobs'][$job]);
             }
         }
 
