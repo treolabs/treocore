@@ -131,17 +131,24 @@ class ProgressManagerTest extends TestCase
      */
     public function testGetPopupDataMethod()
     {
-        $service = $this->createMockService(ProgressManager::class, ['fileExists']);
+        // prepare methods
+        $methods = ['fileExists', 'fileGetContents', 'cronIsNotRunning'];
+
+        $service = $this->createMockService(ProgressManager::class, $methods);
 
         $service
             ->expects($this->any())
             ->method('fileExists')
             ->willReturn(false);
+        $service
+            ->expects($this->any())
+            ->method('cronIsNotRunning')
+            ->willReturn(false);
 
         // test 1
         $this->assertEquals([], $service->getPopupData());
 
-        $service = $this->createMockService(ProgressManager::class, ['fileExists', 'fileGetContents']);
+        $service = $this->createMockService(ProgressManager::class, $methods);
         $service
             ->expects($this->any())
             ->method('fileExists')
@@ -150,11 +157,15 @@ class ProgressManagerTest extends TestCase
             ->expects($this->any())
             ->method('fileGetContents')
             ->willReturn('[]');
+        $service
+            ->expects($this->any())
+            ->method('cronIsNotRunning')
+            ->willReturn(false);
 
         // test 2
         $this->assertEquals([], $service->getPopupData());
 
-        $service = $this->createMockService(ProgressManager::class, ['fileExists', 'fileGetContents']);
+        $service = $this->createMockService(ProgressManager::class, $methods);
         $service
             ->expects($this->any())
             ->method('fileExists')
@@ -163,6 +174,10 @@ class ProgressManagerTest extends TestCase
             ->expects($this->any())
             ->method('fileGetContents')
             ->willReturn('["id1","id2"]');
+        $service
+            ->expects($this->any())
+            ->method('cronIsNotRunning')
+            ->willReturn(false);
 
         // test 3
         $expects = [
@@ -171,7 +186,7 @@ class ProgressManagerTest extends TestCase
         ];
         $this->assertEquals($expects, $service->getPopupData());
 
-        $service = $this->createMockService(ProgressManager::class, ['fileExists', 'fileGetContents']);
+        $service = $this->createMockService(ProgressManager::class, $methods);
         $service
             ->expects($this->any())
             ->method('fileExists')
@@ -180,6 +195,10 @@ class ProgressManagerTest extends TestCase
             ->expects($this->any())
             ->method('fileGetContents')
             ->willReturn('"field":"value"');
+        $service
+            ->expects($this->any())
+            ->method('cronIsNotRunning')
+            ->willReturn(false);
 
         // test 4
         $expects = [];

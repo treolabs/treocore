@@ -123,9 +123,7 @@ class ProgressManager
         }
 
         // show message if cron is not running
-        $time = time();
-        $cronTime = $this->getConfig()->get('cronTime', $time);
-        if (($time - $cronTime) > 120) {
+        if ($this->cronIsNotRunning()) {
             // prepare message
             $message = $this
                 ->getContainer()
@@ -600,5 +598,16 @@ class ProgressManager
     protected function fileGetContents($filename)
     {
         return file_get_contents($filename);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function cronIsNotRunning(): bool
+    {
+        $time = time();
+        $cronTime = $this->getConfig()->get('cronTime', $time);
+
+        return ($time - $cronTime) > 120;
     }
 }
