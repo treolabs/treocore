@@ -223,7 +223,10 @@ class InstallerTest extends TestCase
         $this->config
             ->expects($this->any())
             ->method('getDefaults')
-            ->willReturn([]);
+            ->willReturn([
+                'field1' => 'value1',
+                'field2' => 'value2'
+            ]);
 
         $service = $this->createMockService(
             Installer::class,
@@ -296,7 +299,10 @@ class InstallerTest extends TestCase
         $this->config
             ->expects($this->any())
             ->method('getDefaults')
-            ->willReturn([]);
+            ->willReturn([
+                'field1' => 'value1',
+                'field2' => 'value2'
+            ]);
 
         $service = $this->createMockService(
             Installer::class,
@@ -353,9 +359,9 @@ class InstallerTest extends TestCase
     }
 
     /**
-     * Test is generateConfig method throw exception
+     * Test is generateConfig method throw exception while system already installed
      */
-    public function testIsGenerateConfigThrowException()
+    public function testIsGenerateConfigThrowAlreadyInstalledException()
     {
         try {
             $service = $this->createMockService(Installer::class, ['isInstalled', 'translateError']);
@@ -371,7 +377,37 @@ class InstallerTest extends TestCase
 
             $service->generateConfig();
         } catch (Exceptions\Forbidden $e) {
+            // test
             $this->assertEquals('alreadyInstalled', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test is generateConfig method throw exception while empty default config
+     */
+    public function testIsGenerateConfigThrowEmptyConfigException()
+    {
+        try {
+            $this->config = $this->createPartialMock(Config::class, ['getConfigPath', 'getDefaults']);
+            $this->config
+                ->expects($this->any())
+                ->method('getConfigPath')
+                ->willReturn('some/config/path.php');
+            $this->config
+                ->expects($this->any())
+                ->method('getDefaults')
+                ->willReturn([]);
+
+            $service = $this->createMockService(Installer::class, ['isInstalled']);
+            $service
+                ->expects($this->any())
+                ->method('isInstalled')
+                ->willReturn(false);
+
+            $service->generateConfig();
+        } catch (Exceptions\Error $e) {
+            // test
+            $this->assertInstanceOf(Exceptions\Error::class, $e);
         }
     }
 

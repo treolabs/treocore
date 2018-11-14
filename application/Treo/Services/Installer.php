@@ -133,6 +133,7 @@ class Installer extends AbstractService
      *  Generate default config if not exists
      *
      * @throws Exceptions\Forbidden
+     * @throws Exceptions\Error
      *
      * @return bool
      */
@@ -151,9 +152,8 @@ class Installer extends AbstractService
         $pathToConfig = $config->getConfigPath();
 
         // get default config
-        $defaultConfig = $config->getDefaults();
-        if (empty($defaultConfig)) {
-            $defaultConfig = [];
+        if (empty($defaultConfig = $config->getDefaults())) {
+            throw new Exceptions\Error();
         }
 
         // get permissions
@@ -224,8 +224,10 @@ class Installer extends AbstractService
     {
         $defaultConfig = $this->getConfig()->getDefaults();
         $defaultDBSettings = [
+            'driver' => 'pdo_mysql',
             'host' => 'localhost',
             'port' => '',
+            'charset' => 'utf8mb4',
             'dbname' => '',
             'user' => '',
             'password' => '',
