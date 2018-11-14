@@ -18337,3 +18337,7 @@ td[data-name="draggableIcon"] {
     -o-transition-duration: .11s;
     transition-duration: .11s;
 }
+
+.field .multilang-labels .control-label {
+    margin-top: 15px;
+}
