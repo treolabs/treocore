@@ -1,4 +1,10 @@
 {
+  "scopeNames": {
+    "QueueItem": "Queue Item"
+  },
+  "scopeNamesPlural": {
+    "QueueItem": "Queue Manager"
+  },
   "options": {
     "language": {
       "af_ZA": "Afrikaans (af_ZA)",

@@ -239,10 +239,20 @@ class Metadata extends \Espo\Core\Utils\Metadata
     }
 
     /**
-     * @param string $entityName
-     * @param string $delim
-     *
-     * @return string
+     * @inheritdoc
+     */
+    public function getEntityPath($entityName, $delim = '\\')
+    {
+        $path = implode($delim, ['Treo', 'Entities', Util::normilizeClassName(ucfirst($entityName))]);
+        if (!class_exists($path)) {
+            $path = parent::getEntityPath($entityName, $delim);
+        }
+
+        return $path;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getRepositoryPath($entityName, $delim = '\\')
     {

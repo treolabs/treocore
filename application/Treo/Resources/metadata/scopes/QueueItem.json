@@ -1,0 +1,12 @@
+{
+  "entity": true,
+  "layouts": true,
+  "tab": true,
+  "acl": true,
+  "type": "Base",
+  "module": "TreoCore",
+  "object": true,
+  "hasAssignedUser": true,
+  "hasTeam": true,
+  "hasOwner": true
+}
