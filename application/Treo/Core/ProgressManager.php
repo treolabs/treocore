@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Exceptions\Error;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\ServiceFactory;
 use Espo\Core\Utils\Util;
@@ -121,6 +122,17 @@ class ProgressManager
             }
         }
 
+        // show message if cron is not running
+        if ((time() - $this->getConfig()->get('cronTime', 0)) > 60) {
+            // prepare message
+            $message = $this
+                ->getContainer()
+                ->get('language')
+                ->translate('cronIsNotRunning', 'messages', 'Admin');
+
+            throw new Error($message);
+        }
+
         return $data;
     }
 
@@ -201,6 +213,10 @@ class ProgressManager
             // set cron user as system user
             $this->setJobUser('system');
         }
+
+        // set last cron calling time
+        $this->getConfig()->set('cronTime', time());
+        $this->getConfig()->save();
     }
 
     /**
