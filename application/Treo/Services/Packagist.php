@@ -109,9 +109,9 @@ class Packagist extends AbstractService
      */
     public function getPackages(bool $force = false): array
     {
-        if (is_null($this->packages) || $force) {
+        if (is_null($this->packages)) {
             // caching
-            if (!file_exists($this->cacheFile)) {
+            if (!file_exists($this->cacheFile) || $force) {
                 $this->refresh();
             }
 
