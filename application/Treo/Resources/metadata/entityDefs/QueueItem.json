@@ -24,14 +24,7 @@
     "status": {
       "type": "enum",
       "notStorable": true,
-      "readOnly": true,
-      "default": "Pending",
-      "options": [
-        "Pending",
-        "Running",
-        "Success",
-        "Failed"
-      ]
+      "readOnly": true
     },
     "createdAt": {
       "type": "datetime",
