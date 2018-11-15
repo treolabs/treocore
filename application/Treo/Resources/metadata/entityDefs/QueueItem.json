@@ -24,6 +24,18 @@
       "required": true,
       "readOnly": true
     },
+    "status": {
+      "type": "enum",
+      "required": true,
+      "readOnly": true,
+      "default": "1_new",
+      "options": [
+        "1_new",
+        "2_in_progress",
+        "4_success",
+        "3_error"
+      ]
+    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true

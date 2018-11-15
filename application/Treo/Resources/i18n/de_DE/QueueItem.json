@@ -3,11 +3,20 @@
     "serviceName": "Bedienung",
     "methodName": "Methode",
     "data": "Daten",
-    "sortOrder": "Sortierreihenfolge"
+    "sortOrder": "Sortierreihenfolge",
+    "status": "Status"
   },
   "links": {
   },
   "labels": {
     "Create QueueItem": "Queue Item erstellen"
+  },
+  "options": {
+    "status": {
+      "1_new": "Neu",
+      "2_in_progress": "In Bearbeitung",
+      "3_error": "Error",
+      "4_success": "Erfolg"
+    }
   }
 }

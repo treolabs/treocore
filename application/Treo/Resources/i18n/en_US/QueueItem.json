@@ -3,11 +3,20 @@
     "serviceName": "Service",
     "methodName": "Method",
     "data": "Data",
-    "sortOrder": "Sort order"
+    "sortOrder": "Sort order",
+    "status": "Status"
   },
   "links": {
   },
   "labels": {
     "Create QueueItem": "Create Queue Item"
+  },
+  "options": {
+    "status": {
+      "1_new": "New",
+      "2_in_progress": "In progress",
+      "3_error": "Error",
+      "4_success": "Success"
+    }
   }
 }
