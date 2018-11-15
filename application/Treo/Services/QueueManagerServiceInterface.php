@@ -43,4 +43,10 @@ namespace Treo\Services;
  */
 interface QueueManagerServiceInterface
 {
+    /**
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function run(array $data = []): bool;
 }

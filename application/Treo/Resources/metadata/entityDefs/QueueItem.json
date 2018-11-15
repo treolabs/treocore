@@ -3,7 +3,8 @@
     "name": {
       "type": "varchar",
       "required": true,
-      "trim": true
+      "trim": true,
+      "readOnly": true
     },
     "serviceName": {
       "type": "varchar",

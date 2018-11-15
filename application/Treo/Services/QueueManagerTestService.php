@@ -41,6 +41,15 @@ namespace Treo\Services;
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Foo extends AbstractService implements QueueManagerServiceInterface
+class QueueManagerTestService extends AbstractService implements QueueManagerServiceInterface
 {
+    /**
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function run(array $data = []): bool
+    {
+        return true;
+    }
 }

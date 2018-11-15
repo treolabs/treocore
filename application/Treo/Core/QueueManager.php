@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Utils\Config;
 use Espo\Orm\EntityManager;
 use Treo\Services\QueueManagerServiceInterface;
 
@@ -142,14 +141,6 @@ class QueueManager
     protected function getEntityManager(): EntityManager
     {
         return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * @return Config
-     */
-    protected function getConfig(): Config
-    {
-        return $this->getContainer()->get('config');
     }
 
     /**
