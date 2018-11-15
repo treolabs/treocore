@@ -207,7 +207,39 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
         setupPanelViews() {
             this.setupOptionalPanels();
             this.sortPanelList();
-            Dep.prototype.setupPanelViews.call(this);
+
+            this.panelList.forEach(function (p) {
+                var name = p.name;
+                this.createView(name, p.view, {
+                    model: this.model,
+                    panelName: name,
+                    el: this.options.el + ' .panel[data-name="' + name + '"] > .panel-body',
+                    defs: p,
+                    mode: this.mode,
+                    recordHelper: this.recordHelper,
+                    inlineEditDisabled: this.inlineEditDisabled,
+                    readOnly: this.readOnly,
+                    disabled: p.hidden || false,
+                    recordViewObject: this.recordViewObject
+                }, function (view) {
+                    if ('getActionList' in view) {
+                        p.actionList = this.filterActions(view.getActionList());
+                    }
+                    if ('getButtonList' in view) {
+                        p.buttonList = this.filterActions(view.getButtonList());
+                    }
+
+                    if (view.titleHtml) {
+                        p.titleHtml = view.titleHtml;
+                    }
+
+                    if (p.label) {
+                        p.title = this.translate(p.label, 'labels', this.scope);
+                    } else {
+                        p.title = view.title;
+                    }
+                }, this);
+            }, this);
         },
 
         setupOptionalPanels() {
