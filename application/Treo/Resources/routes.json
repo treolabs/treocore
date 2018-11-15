@@ -96,33 +96,6 @@
     }
   },
   {
-    "route": "/ProgressManager/isShowPopup",
-    "method": "get",
-    "params": {
-      "controller": "ProgressManager",
-      "action": "isShowPopup"
-    }
-  },
-  {
-    "route": "/ProgressManager/popupShowed",
-    "method": "post",
-    "params": {
-      "controller": "ProgressManager",
-      "action": "popupShowed"
-    },
-    "conditions": {
-      "auth": false
-    }
-  },
-  {
-    "route": "/ProgressManager/popupData",
-    "method": "get",
-    "params": {
-      "controller": "ProgressManager",
-      "action": "popupData"
-    }
-  },
-  {
     "route": "/ProgressManager/:id/cancel",
     "method": "put",
     "params": {

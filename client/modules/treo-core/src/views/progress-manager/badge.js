@@ -72,12 +72,12 @@ Espo.define('treo-core:views/progress-manager/badge', 'view',
                 }
 
                 if (!this.isPanelShowed) {
-                    this.ajaxGetRequest('ProgressManager/isShowPopup', {})
-                        .then(response => {
-                            if (response && !this.isPanelShowed) {
-                                this.showProgress();
-                            }
-                        });
+                    // this.ajaxGetRequest('ProgressManager/isShowPopup', {})
+                    //     .then(response => {
+                    //         if (response && !this.isPanelShowed) {
+                    //             this.showProgress();
+                    //         }
+                    //     });
                 } else if (this.hasView('panel') && !this.isProgressModalShowed()) {
                     this.getView('panel').reloadList();
                 }

@@ -74,9 +74,6 @@ class Cron extends AbstractConsole
 
         // run queue manager
         $this->runQueueManager();
-
-        // @todo remove it soon
-        $this->getContainer()->get('progressManager')->run();
     }
 
     /**

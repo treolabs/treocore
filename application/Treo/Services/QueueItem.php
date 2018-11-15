@@ -51,22 +51,39 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
     private $jobs = null;
 
     /**
+     * @var array
+     */
+    private $services = [];
+
+    /**
      * @inheritdoc
      */
     public function prepareEntityForOutput(Entity $entity)
     {
         parent::prepareEntityForOutput($entity);
 
-        // set status
+        // load jobs
+        $this->loadJobs();
+
+        // prepare entity
         $entity->set('status', $this->getItemStatus($entity));
+        $entity->set('actions', $this->getItemActions($entity));
     }
 
     /**
-     * @param Entity $entity
-     *
-     * @return string
+     * @inheritdoc
      */
-    protected function getItemStatus(Entity $entity): string
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('serviceFactory');
+    }
+
+    /**
+     * Load jobs
+     */
+    protected function loadJobs(): void
     {
         if (is_null($this->jobs)) {
             $this->jobs = [];
@@ -83,8 +100,15 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
                 }
             }
         }
+    }
 
-        // prepare status
+    /**
+     * @param Entity $entity
+     *
+     * @return string
+     */
+    protected function getItemStatus(Entity $entity): string
+    {
         $status = 'Pending';
         if (!empty($this->jobs[$entity->get('id')])) {
             $status = $this->jobs[$entity->get('id')]->get('status');
@@ -94,5 +118,27 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
         }
 
         return $status;
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return array
+     */
+    protected function getItemActions(Entity $entity): array
+    {
+        if (empty($serviceName = $entity->get('serviceName'))) {
+            return [];
+        }
+
+        // create service
+        if (!isset($this->services[$serviceName])) {
+            $this->services[$serviceName] = $this->getInjection('serviceFactory')->create($serviceName);
+        }
+
+        // prepare methodName
+        $methodName = "get" . $entity->get('status') . "StatusActions";
+
+        return $this->services[$serviceName]->$methodName($entity);
     }
 }

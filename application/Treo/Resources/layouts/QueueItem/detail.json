@@ -13,15 +13,15 @@
         {
           "name": "serviceName"
         },
-        false
+        {
+          "name": "sortOrder"
+        }
       ],
       [
         {
           "name": "data"
         },
-        {
-          "name": "sortOrder"
-        }
+        false
       ]
     ],
     "style": "default",
