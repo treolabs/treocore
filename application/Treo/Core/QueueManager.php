@@ -213,7 +213,7 @@ class QueueManager
                 'name'        => $item->get('name'),
                 'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'serviceName' => $item->get('serviceName'),
-                'methodName'  => 'run',
+                'method'      => 'run',
                 'data'        => $item->get('data')
             ]
         );
