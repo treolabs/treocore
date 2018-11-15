@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Espo\Core\Exceptions\Error;
 use Treo\Core\Utils\Auth;
 
 /**
@@ -62,31 +63,53 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // run cron jobs
-        $this->runCronJobs();
+        // set last cron calling time
+        $this->updateCronTime();
 
-        // run ProgressManager jobs
+        // auth
+        $this->auth();
+
+        // run cron jobs
+        $this->runCronManager();
+
+        // run queue manager
+        $this->runQueueManager();
+
+        // @todo remove it soon
         $this->getContainer()->get('progressManager')->run();
     }
 
     /**
-     * Run cron jobs
-     *
-     * @throws \Espo\Core\Exceptions\Error
+     * @throws Error
      */
-    protected function runCronJobs(): void
+    protected function auth(): void
     {
-        if ($this->getConfig()->get('cronDisabled')) {
-            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
-            return;
-        }
-
         $auth = new Auth($this->getContainer());
         $auth->useNoAuth();
+    }
 
-        $this
-            ->getContainer()
-            ->get('cronManager')
-            ->run();
+    /**
+     * @throws Error
+     */
+    protected function runCronManager(): void
+    {
+        $this->getContainer()->get('cronManager')->run();
+    }
+
+    /**
+     * @throws Error
+     */
+    protected function runQueueManager(): void
+    {
+        $this->getContainer()->get('queueManager')->run();
+    }
+
+    /**
+     * Update cronTime
+     */
+    protected function updateCronTime(): void
+    {
+        $this->getConfig()->set('cronTime', time());
+        $this->getConfig()->save();
     }
 }

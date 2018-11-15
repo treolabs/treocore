@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\ORM\Entity;
+
 /**
  * Class QueueItem
  *
@@ -43,4 +45,54 @@ namespace Treo\Services;
  */
 class QueueItem extends \Espo\Core\Templates\Services\Base
 {
+    /**
+     * @var array|null
+     */
+    private $jobs = null;
+
+    /**
+     * @inheritdoc
+     */
+    public function prepareEntityForOutput(Entity $entity)
+    {
+        parent::prepareEntityForOutput($entity);
+
+        // set status
+        $entity->set('status', $this->getItemStatus($entity));
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return string
+     */
+    protected function getItemStatus(Entity $entity): string
+    {
+        if (is_null($this->jobs)) {
+            $this->jobs = [];
+
+            $jobs = $this
+                ->getEntityManager()
+                ->getRepository('Job')
+                ->where(['queueItemId!=' => null])
+                ->find();
+
+            if (!empty($jobs)) {
+                foreach ($jobs as $job) {
+                    $this->jobs[$job->get('queueItemId')] = $job;
+                }
+            }
+        }
+
+        // prepare status
+        $status = 'Pending';
+        if (!empty($this->jobs[$entity->get('id')])) {
+            $status = $this->jobs[$entity->get('id')]->get('status');
+            if ($status == 'Pending') {
+                $status = 'Running';
+            }
+        }
+
+        return $status;
+    }
 }

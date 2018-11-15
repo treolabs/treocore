@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
+use Espo\Core\ORM\Entity;
 use Espo\Orm\EntityManager;
 use Treo\Services\QueueManagerServiceInterface;
 
@@ -48,6 +49,19 @@ use Treo\Services\QueueManagerServiceInterface;
 class QueueManager
 {
     use \Treo\Traits\ContainerTrait;
+
+    /**
+     * @return bool
+     */
+    public function run(): bool
+    {
+        if (!$this->isRunning() && !empty($item = $this->getItemToRun())) {
+            // create cron job
+            $this->createCronJob($item);
+        }
+
+        return true;
+    }
 
     /**
      * @param string $name
@@ -133,6 +147,79 @@ class QueueManager
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRunning(): bool
+    {
+        $count = $this
+            ->getEntityManager()
+            ->getRepository('Job')
+            ->where(
+                [
+                    'queueItemId!=' => null,
+                    'status'        => ["Pending", "Running"]
+                ]
+            )
+            ->count();
+
+        return !empty($count);
+    }
+
+    /**
+     * @return null|Entity
+     */
+    protected function getItemToRun(): ?Entity
+    {
+        // prepare result
+        $result = null;
+
+        $sql
+            = "SELECT
+                      q.id
+                    FROM queue_item AS q
+                    LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
+                    WHERE 
+                          q.deleted=0
+                      AND j.id IS NULL
+                    ORDER BY q.sort_order ASC
+                    LIMIT 1 OFFSET 0";
+
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth->execute();
+        $data = $sth->fetch(\PDO::FETCH_ASSOC);
+
+        if (!empty($data)) {
+            $result = $this->getEntityManager()->getEntity('QueueItem', $data['id']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Entity $item
+     *
+     * @return Entity
+     * @throws Error
+     */
+    protected function createCronJob(Entity $item): Entity
+    {
+        $job = $this->getEntityManager()->getEntity('Job');
+        $job->set(
+            [
+                'queueItemId' => $item->get('id'),
+                'name'        => $item->get('name'),
+                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'serviceName' => $item->get('serviceName'),
+                'methodName'  => 'run',
+                'data'        => $item->get('data')
+            ]
+        );
+        $this->getEntityManager()->saveEntity($job);
+
+        return $job;
     }
 
     /**

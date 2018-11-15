@@ -12,10 +12,10 @@
   },
   "options": {
     "status": {
-      "1_new": "Neu",
-      "2_in_progress": "In Bearbeitung",
-      "3_error": "Error",
-      "4_success": "Erfolg"
+      "Pending": "Schwebend",
+      "Success": "Erfolg",
+      "Running": "Läuft",
+      "Failed": "Fehlgeschlagen"
     }
   }
 }

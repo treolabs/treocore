@@ -213,10 +213,6 @@ class ProgressManager
             // set cron user as system user
             $this->setJobUser('system');
         }
-
-        // set last cron calling time
-        $this->getConfig()->set('cronTime', time());
-        $this->getConfig()->save();
     }
 
     /**

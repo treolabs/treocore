@@ -23,14 +23,14 @@
     },
     "status": {
       "type": "enum",
-      "required": true,
+      "notStorable": true,
       "readOnly": true,
-      "default": "1_new",
+      "default": "Pending",
       "options": [
-        "1_new",
-        "2_in_progress",
-        "4_success",
-        "3_error"
+        "Pending",
+        "Running",
+        "Success",
+        "Failed"
       ]
     },
     "createdAt": {
