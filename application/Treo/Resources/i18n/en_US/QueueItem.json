@@ -1,7 +1,6 @@
 {
   "fields": {
     "serviceName": "Service",
-    "methodName": "Method",
     "data": "Data",
     "sortOrder": "Sort order",
     "status": "Status"

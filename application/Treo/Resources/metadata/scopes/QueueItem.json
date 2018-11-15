@@ -3,6 +3,11 @@
   "layouts": true,
   "tab": true,
   "acl": true,
+  "aclActionList": [
+    "read",
+    "edit",
+    "delete"
+  ],
   "type": "Base",
   "module": "TreoCore",
   "object": true,

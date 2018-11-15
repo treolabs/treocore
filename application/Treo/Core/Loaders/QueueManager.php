@@ -31,24 +31,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Controllers;
+namespace Treo\Core\Loaders;
 
-use Espo\Core\Exceptions\NotFound;
+use Treo\Core\QueueManager as Instance;
 
 /**
- * Class QueueItem
+ * Class QueueManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class QueueItem extends \Espo\Core\Templates\Controllers\Base
+class QueueManager extends Base
 {
     /**
-     * @inheritdoc
+     * Load QueueManager
+     *
+     * @return Instance
      */
-    public function actionCreate($params, $data, $request)
+    public function load()
     {
-        throw new NotFound();
+        return (new Instance())->setContainer($this->getContainer());
     }
 }

@@ -10,11 +10,6 @@
       "required": true,
       "readOnly": true
     },
-    "methodName": {
-      "type": "varchar",
-      "required": true,
-      "readOnly": true
-    },
     "data": {
       "type": "jsonObject",
       "readOnly": true
@@ -22,7 +17,8 @@
     "sortOrder": {
       "type": "int",
       "required": true,
-      "readOnly": true
+      "readOnly": true,
+      "default": 0
     },
     "status": {
       "type": "enum",
