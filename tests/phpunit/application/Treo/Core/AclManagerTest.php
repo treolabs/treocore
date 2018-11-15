@@ -52,6 +52,7 @@ class AclManagerTest extends TestCase
     {
         $service = $this->createMockService(AclManager::class);
 
+        // test
         $this->assertTrue(method_exists($service, 'getImplementation'));
     }
 }
