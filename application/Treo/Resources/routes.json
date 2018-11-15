@@ -96,22 +96,6 @@
     }
   },
   {
-    "route": "/ProgressManager/:id/cancel",
-    "method": "put",
-    "params": {
-      "controller": "ProgressManager",
-      "action": "cancel"
-    }
-  },
-  {
-    "route": "/ProgressManager/:id/close",
-    "method": "put",
-    "params": {
-      "controller": "ProgressManager",
-      "action": "close"
-    }
-  },
-  {
     "route": "/Installer/:action",
     "method": "post",
     "params": {
