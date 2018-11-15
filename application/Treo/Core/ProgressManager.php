@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Exceptions\Error;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\ServiceFactory;
 use Espo\Core\Utils\Util;
@@ -120,17 +119,6 @@ class ProgressManager
             if (!is_array($data)) {
                 $data = [];
             }
-        }
-
-        // show message if cron is not running
-        if ($this->cronIsNotRunning()) {
-            // prepare message
-            $message = $this
-                ->getContainer()
-                ->get('language')
-                ->translate('cronIsNotRunning', 'messages', 'Admin');
-
-            throw new Error($message);
         }
 
         return $data;
@@ -594,16 +582,5 @@ class ProgressManager
     protected function fileGetContents($filename)
     {
         return file_get_contents($filename);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function cronIsNotRunning(): bool
-    {
-        $time = time();
-        $cronTime = $this->getConfig()->get('cronTime', $time);
-
-        return ($time - $cronTime) > 120;
     }
 }
