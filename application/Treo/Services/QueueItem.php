@@ -46,11 +46,6 @@ use Espo\ORM\Entity;
 class QueueItem extends \Espo\Core\Templates\Services\Base
 {
     /**
-     * @var array|null
-     */
-    private $jobs = null;
-
-    /**
      * @var array
      */
     private $services = [];
@@ -62,11 +57,7 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
     {
         parent::prepareEntityForOutput($entity);
 
-        // load jobs
-        $this->loadJobs();
-
         // prepare entity
-        $entity->set('status', $this->getItemStatus($entity));
         $entity->set('actions', $this->getItemActions($entity));
     }
 
@@ -78,46 +69,6 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
         parent::init();
 
         $this->addDependency('serviceFactory');
-    }
-
-    /**
-     * Load jobs
-     */
-    protected function loadJobs(): void
-    {
-        if (is_null($this->jobs)) {
-            $this->jobs = [];
-
-            $jobs = $this
-                ->getEntityManager()
-                ->getRepository('Job')
-                ->where(['queueItemId!=' => null])
-                ->find();
-
-            if (!empty($jobs)) {
-                foreach ($jobs as $job) {
-                    $this->jobs[$job->get('queueItemId')] = $job;
-                }
-            }
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     *
-     * @return string
-     */
-    protected function getItemStatus(Entity $entity): string
-    {
-        $status = 'Pending';
-        if (!empty($this->jobs[$entity->get('id')])) {
-            $status = $this->jobs[$entity->get('id')]->get('status');
-            if ($status == 'Pending') {
-                $status = 'Running';
-            }
-        }
-
-        return $status;
     }
 
     /**

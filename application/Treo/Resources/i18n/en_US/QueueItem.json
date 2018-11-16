@@ -15,7 +15,9 @@
       "Pending": "Pending",
       "Success": "Success",
       "Running": "Running",
-      "Failed": "Failed"
+      "Failed": "Failed",
+      "Canceled": "Canceled",
+      "Closed": "Closed"
     }
   }
 }

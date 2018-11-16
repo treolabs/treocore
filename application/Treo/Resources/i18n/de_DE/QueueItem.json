@@ -15,7 +15,9 @@
       "Pending": "Schwebend",
       "Success": "Erfolg",
       "Running": "Läuft",
-      "Failed": "Fehlgeschlagen"
+      "Failed": "Fehlgeschlagen",
+      "Canceled": "Abgebrochen",
+      "Closed": "Geschlossen"
     }
   }
 }

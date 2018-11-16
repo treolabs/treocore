@@ -60,6 +60,9 @@ class QueueManager
             $this->createCronJob($item);
         }
 
+        // update statuses
+        $this->updateStatuses();
+
         return true;
     }
 
@@ -220,6 +223,40 @@ class QueueManager
         $this->getEntityManager()->saveEntity($job);
 
         return $job;
+    }
+
+    /**
+     * Update statuses
+     */
+    protected function updateStatuses(): void
+    {
+        $sql
+            = "SELECT
+                      q.id,
+                      j.status
+                    FROM queue_item AS q
+                    LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
+                    WHERE 
+                          q.deleted=0
+                      AND q.status NOT IN ('Closed', 'Canceled')
+                      AND j.status != q.status                      
+                    ORDER BY q.sort_order ASC";
+
+        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
+        $sth->execute();
+        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!empty($data)) {
+            $sql = '';
+            foreach ($data as $row) {
+                $sql .= "UPDATE `queue_item` SET status='" . $row['status'] . "' WHERE id='" . $row['id'] . "';";
+            }
+            $sth = $this
+                ->getEntityManager()
+                ->getPDO()
+                ->prepare($sql);
+            $sth->execute();
+        }
     }
 
     /**

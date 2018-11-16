@@ -23,8 +23,16 @@
     },
     "status": {
       "type": "enum",
-      "notStorable": true,
-      "readOnly": true
+      "readOnly": true,
+      "default": "Pending",
+      "options": [
+        "Pending",
+        "Running",
+        "Success",
+        "Failed",
+        "Canceled",
+        "Closed"
+      ]
     },
     "actions": {
       "type": "jsonObject",
