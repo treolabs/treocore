@@ -198,7 +198,7 @@ class QueueManager
 
         // set Running status for item
         $item->set('status', 'Running');
-        $this->getEntityManager()->saveEntity($item);
+        $this->getEntityManager()->saveEntity($item, ['force' => true]);
 
         return $job;
     }

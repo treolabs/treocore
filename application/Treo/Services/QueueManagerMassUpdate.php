@@ -34,56 +34,13 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
-
-use Espo\Core\Exceptions\BadRequest;
-use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
+namespace Treo\Services;
 
 /**
- * QueueItem hook
+ * Class QueueManagerMassUpdate
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Hook extends AbstractHook
+class QueueManagerMassUpdate extends QueueManagerBase
 {
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
-    public function beforeSave(Entity $entity, $options = [])
-    {
-        if (empty($options['force']) && $entity->get('status') != 'Pending') {
-            throw new BadRequest($this->translate('Queue item cannot be changed', 'exceptions', 'QueueItem'));
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
-    public function afterRemove(Entity $entity, $options = [])
-    {
-        if (empty($options['force'])) {
-            $this->deleteJob($entity);
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     */
-    protected function deleteJob(Entity $entity): void
-    {
-        $jobs = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(['queueItemId' => $entity->get('id')])
-            ->find();
-
-        if (!empty($jobs)) {
-            foreach ($jobs as $job) {
-                $this->getEntityManager()->removeEntity($job);
-            }
-        }
-    }
 }

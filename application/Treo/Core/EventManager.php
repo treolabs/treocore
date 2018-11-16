@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Treo\Listeners\AbstractCommonListener;
 use Treo\Listeners\AbstractListener;
 
 /**
@@ -45,8 +46,12 @@ use Treo\Listeners\AbstractListener;
  */
 class EventManager
 {
-
     use \Treo\Traits\ContainerTrait;
+
+    /**
+     * @var array
+     */
+    private $listeners = [];
 
     /**
      * Triggered an event
@@ -59,21 +64,18 @@ class EventManager
      */
     public function triggered(string $target, string $action, array $data = []): array
     {
+        // triggered common
+        $data = $this->triggeredCommon($target, $action, $data);
+
         // prepare classes
-        $classes = [
-            "Treo\\Listeners\\$target"
-        ];
-        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+        $classes = ["Treo\\Listeners\\$target"];
+        foreach ($this->getModuleList() as $module) {
             $classes[] = "Espo\\Modules\\$module\\Listeners\\$target";
         }
 
         foreach ($classes as $className) {
             if (class_exists($className)) {
-                $listener = new $className();
-                if ($listener instanceof AbstractListener && method_exists($listener, $action)) {
-                    // set container
-                    $listener->setContainer($this->getContainer());
-
+                if (!empty($listener = $this->getListener($className)) && method_exists($listener, $action)) {
                     // call
                     $result = $listener->{$action}($data);
 
@@ -84,5 +86,62 @@ class EventManager
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    protected function triggeredCommon(string $target, string $action, array $data): array
+    {
+        // prepare classes
+        $classes = ["Treo\\Listeners\\CommonListener"];
+        foreach ($this->getModuleList() as $module) {
+            $classes[] = "Espo\\Modules\\$module\\Listeners\\CommonListener";
+        }
+
+        foreach ($classes as $className) {
+            if (class_exists($className)) {
+                if (!empty($listener = $this->getListener($className)) && $listener instanceof AbstractCommonListener) {
+                    // call
+                    $result = $listener->commonAction($target, $action, $data);
+
+                    // check if exists result and update data
+                    $data = isset($result) ? $result : $data;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return null|AbstractListener
+     */
+    protected function getListener(string $className): ?AbstractListener
+    {
+        if (!isset($this->listeners[$className])) {
+            $this->listeners[$className] = null;
+            $listener = new $className();
+            if ($listener instanceof AbstractListener) {
+                $listener->setContainer($this->getContainer());
+                $this->listeners[$className] = $listener;
+            }
+        }
+
+        return $this->listeners[$className];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getModuleList(): array
+    {
+        return $this->getContainer()->get('metadata')->getModuleList();
     }
 }

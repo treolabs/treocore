@@ -57,19 +57,6 @@ abstract class AbstractListener
     protected $services = [];
 
     /**
-     * Common listening of all actions
-     *
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    public function common(string $action, array $data): array
-    {
-        return $data;
-    }
-
-    /**
      * Get service
      *
      * @param string $name

@@ -34,56 +34,21 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
-
-use Espo\Core\Exceptions\BadRequest;
-use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
+namespace Treo\Listeners;
 
 /**
- * QueueItem hook
+ * AbstractListener class
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class Hook extends AbstractHook
+abstract class AbstractCommonListener extends AbstractListener
 {
     /**
-     * @param Entity $entity
-     * @param array  $options
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
      */
-    public function beforeSave(Entity $entity, $options = [])
-    {
-        if (empty($options['force']) && $entity->get('status') != 'Pending') {
-            throw new BadRequest($this->translate('Queue item cannot be changed', 'exceptions', 'QueueItem'));
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
-    public function afterRemove(Entity $entity, $options = [])
-    {
-        if (empty($options['force'])) {
-            $this->deleteJob($entity);
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     */
-    protected function deleteJob(Entity $entity): void
-    {
-        $jobs = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(['queueItemId' => $entity->get('id')])
-            ->find();
-
-        if (!empty($jobs)) {
-            foreach ($jobs as $job) {
-                $this->getEntityManager()->removeEntity($job);
-            }
-        }
-    }
+    abstract public function commonAction(string $target, string $action, array $data): array;
 }
