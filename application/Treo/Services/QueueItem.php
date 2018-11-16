@@ -78,18 +78,25 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
      */
     protected function getItemActions(Entity $entity): array
     {
-        if (empty($serviceName = $entity->get('serviceName'))) {
-            return [];
+        // prepare result
+        $result = [];
+
+        // prepare action statuses
+        $statuses = ['Pending', 'Running', 'Success', 'Failed'];
+
+        if (!empty($serviceName = $entity->get('serviceName')) && in_array($entity->get('status'), $statuses)) {
+            // create service
+            if (!isset($this->services[$serviceName])) {
+                $this->services[$serviceName] = $this->getInjection('serviceFactory')->create($serviceName);
+            }
+
+            // prepare methodName
+            $methodName = "get" . $entity->get('status') . "StatusActions";
+
+            // prepare result
+            $result = $this->services[$serviceName]->$methodName($entity);
         }
 
-        // create service
-        if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->getInjection('serviceFactory')->create($serviceName);
-        }
-
-        // prepare methodName
-        $methodName = "get" . $entity->get('status') . "StatusActions";
-
-        return $this->services[$serviceName]->$methodName($entity);
+        return $result;
     }
 }

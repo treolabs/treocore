@@ -55,7 +55,7 @@ class QueueManager
      */
     public function run(): bool
     {
-        if (!$this->isRunning() && !empty($item = $this->getItemToRun())) {
+        if (!empty($item = $this->getItemToRun())) {
             // create cron job
             $this->createCronJob($item);
         }
@@ -153,25 +153,6 @@ class QueueManager
     }
 
     /**
-     * @return bool
-     */
-    protected function isRunning(): bool
-    {
-        $count = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(
-                [
-                    'queueItemId!=' => null,
-                    'status'        => ["Pending", "Running"]
-                ]
-            )
-            ->count();
-
-        return !empty($count);
-    }
-
-    /**
      * @return null|Entity
      */
     protected function getItemToRun(): ?Entity
@@ -179,23 +160,16 @@ class QueueManager
         // prepare result
         $result = null;
 
-        $sql
-            = "SELECT
-                      q.id
-                    FROM queue_item AS q
-                    LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
-                    WHERE 
-                          q.deleted=0
-                      AND j.id IS NULL
-                    ORDER BY q.sort_order ASC
-                    LIMIT 1 OFFSET 0";
+        // find
+        $item = $this
+            ->getEntityManager()
+            ->getRepository('QueueItem')
+            ->where(['status' => ['Pending', 'Running']])
+            ->order('sortOrder', false)
+            ->findOne();
 
-        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $data = $sth->fetch(\PDO::FETCH_ASSOC);
-
-        if (!empty($data)) {
-            $result = $this->getEntityManager()->getEntity('QueueItem', $data['id']);
+        if (!empty($item) && $item->get('status') == 'Pending') {
+            $result = $item;
         }
 
         return $result;
