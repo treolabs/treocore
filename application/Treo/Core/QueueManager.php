@@ -222,6 +222,10 @@ class QueueManager
         );
         $this->getEntityManager()->saveEntity($job);
 
+        // set Running status for item
+        $item->set('status', 'Running');
+        $this->getEntityManager()->saveEntity($item);
+
         return $job;
     }
 
@@ -238,7 +242,7 @@ class QueueManager
                     LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
                     WHERE 
                           q.deleted=0
-                      AND q.status NOT IN ('Closed', 'Canceled')
+                      AND j.status IN ('Success', 'Failed')
                       AND j.status != q.status                      
                     ORDER BY q.sort_order ASC";
 
@@ -251,7 +255,7 @@ class QueueManager
             foreach ($data as $row) {
                 // prepare vars
                 $id = $row['id'];
-                $status = ($row['status'] == 'Pending') ? 'Running' : $row['status'];
+                $status = $row['status'];
 
                 $sql .= "UPDATE `queue_item` SET status='{$status}' WHERE id='{$id}';";
             }
