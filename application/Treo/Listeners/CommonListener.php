@@ -68,8 +68,11 @@ class CommonListener extends AbstractCommonListener
      */
     protected function beforeActionMassUpdate(string $target, array $data): array
     {
+        // prepare where
+        $where = $this->getWhere($data['data']);
+
         // prepare select params
-        $selectParams = $this->getSelectParams($target, $this->getWhere($data['data']));
+        $selectParams = $this->getSelectParams($target, $where);
 
         // get count
         $count = $this
@@ -93,9 +96,9 @@ class CommonListener extends AbstractCommonListener
 
             // prepare job data
             $jobData = [
-                'entity'       => $target,
-                'selectParams' => $selectParams,
-                'attributes'   => $data['data']->attributes
+                'entity'     => $target,
+                'where'      => $where,
+                'attributes' => $data['data']->attributes
             ];
 
             // push job
