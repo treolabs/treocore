@@ -249,7 +249,11 @@ class QueueManager
         if (!empty($data)) {
             $sql = '';
             foreach ($data as $row) {
-                $sql .= "UPDATE `queue_item` SET status='" . $row['status'] . "' WHERE id='" . $row['id'] . "';";
+                // prepare vars
+                $id = $row['id'];
+                $status = ($row['status'] == 'Pending') ? 'Running' : $row['status'];
+
+                $sql .= "UPDATE `queue_item` SET status='{$status}' WHERE id='{$id}';";
             }
             $sth = $this
                 ->getEntityManager()
