@@ -71,14 +71,11 @@ class CommonListener extends AbstractCommonListener
         // prepare where
         $where = $this->getWhere($data['data']);
 
-        // prepare select params
-        $selectParams = $this->getSelectParams($target, $where);
-
         // get count
         $count = $this
             ->getEntityManager()
             ->getRepository($target)
-            ->count($selectParams);
+            ->count($this->getSelectParams($target, $where));
 
         if ($count > $this->getConfig()->get('massUpdateMax', 200)) {
             // modify where
@@ -88,13 +85,7 @@ class CommonListener extends AbstractCommonListener
             // set flag
             $this->isMassUpdate = true;
 
-            // prepare translate key
-            $key = $this
-                ->getContainer()
-                ->get('language')
-                ->translate('massUpdate', 'massActions', 'Global');
-
-            // prepare job data
+            // prepare jsobData
             $jobData = [
                 'entity'     => $target,
                 'where'      => $where,
@@ -102,11 +93,7 @@ class CommonListener extends AbstractCommonListener
             ];
 
             // push job
-            $this
-                ->getContainer()
-                ->get('queueManager')
-                ->push("{$target}. {$key}", "QueueManagerMassUpdate", $jobData);
-
+            $this->pushMassUpdateJob($target, $jobData);
         }
 
         return $data;
@@ -171,5 +158,25 @@ class CommonListener extends AbstractCommonListener
         }
 
         return $where;
+    }
+
+    /**
+     * @param string $name
+     * @param array  $data
+     *
+     * @return bool
+     */
+    protected function pushMassUpdateJob(string $name, array $data): bool
+    {
+        // prepare translate key
+        $key = $this
+            ->getContainer()
+            ->get('language')
+            ->translate('massUpdate', 'massActions', 'Global');
+
+        return $this
+            ->getContainer()
+            ->get('queueManager')
+            ->push("{$name}. {$key}", "QueueManagerMassUpdate", $data);
     }
 }
