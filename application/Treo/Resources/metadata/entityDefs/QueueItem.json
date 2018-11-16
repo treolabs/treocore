@@ -23,13 +23,8 @@
     },
     "status": {
       "type": "enum",
-      "readOnly": true,
       "default": "Pending",
       "options": [
-        "Pending",
-        "Running",
-        "Success",
-        "Failed",
         "Canceled",
         "Closed"
       ]

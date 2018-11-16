@@ -31,49 +31,29 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
+namespace Treo\Repositories;
 
-use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
-use Treo\Core\Portal\Application as PortalApp;
 
 /**
- * QueueItem hook
+ * Class Job
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class Hook extends AbstractHook
+class Job extends \Espo\Repositories\Job
 {
     /**
-     * @param Entity $entity
-     * @param array  $options
+     * @inheritdoc
      */
-    public function afterRemove(Entity $entity, $options = [])
+    protected function afterRemove(Entity $entity, array $options = [])
     {
-        if (empty($options['force'])) {
-            $this->deleteJob($entity);
+        if (!empty($item = $entity->get('queueItem'))) {
+            $this->getEntityManager()->removeEntity($item, ['force' => true]);
         }
-    }
 
-    /**
-     * @param Entity $entity
-     */
-    protected function deleteJob(Entity $entity): void
-    {
-        $jobs = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(['queueItemId' => $entity->get('id')])
-            ->find();
-
-        if (!empty($jobs)) {
-            foreach ($jobs as $job) {
-                $this->getEntityManager()->removeEntity($job);
-            }
-        }
+        // call parent
+        parent::afterRemove($entity, $options);
     }
 }
