@@ -39,7 +39,6 @@ namespace Treo\Hooks\QueueItem;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
 use Treo\Core\Hooks\AbstractHook;
-use Treo\Core\Portal\Application as PortalApp;
 
 /**
  * QueueItem hook
@@ -48,6 +47,17 @@ use Treo\Core\Portal\Application as PortalApp;
  */
 class Hook extends AbstractHook
 {
+    /**
+     * @param Entity $entity
+     * @param array  $options
+     */
+    public function beforeSave(Entity $entity, $options = [])
+    {
+        if ($entity->get('status') != 'Pending') {
+            throw new BadRequest($this->translate('Queue item cannot be changed', 'exceptions', 'QueueItem'));
+        }
+    }
+
     /**
      * @param Entity $entity
      * @param array  $options

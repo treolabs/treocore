@@ -19,5 +19,8 @@
       "Canceled": "Abgebrochen",
       "Closed": "Geschlossen"
     }
+  },
+  "exceptions": {
+    "Queue item cannot be changed": "Warteschlangenelement kann nicht geändert werden. Der Status sollte 'Schwebend' sein."
   }
 }

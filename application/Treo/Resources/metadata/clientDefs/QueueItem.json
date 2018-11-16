@@ -3,5 +3,20 @@
   "controller": "controllers/record",
   "boolFilterList": [
     "onlyMy"
-  ]
+  ],
+  "dynamicLogic": {
+    "fields": {
+      "status": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "notEquals",
+              "attribute": "status",
+              "value": "Pending"
+            }
+          ]
+        }
+      }
+    }
+  }
 }
