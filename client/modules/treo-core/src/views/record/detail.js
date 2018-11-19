@@ -221,7 +221,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 if (scrollTop < edge) {
                     if (scrollTop > stickTop) {
                         if (!$container.hasClass('stick-sub') && this.mode !== 'edit') {
-                            var $p = $('.popover');
+                            var $p = $('.popover:not(.note-popover)');
                             $p.each(function (i, el) {
                                 var $el = $(el);
                                 $el.css('top', ($el.position().top - ($container.height() - blockHeight * 2 + 10)) + 'px');
@@ -231,7 +231,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                         $block.show();
                     } else {
                         if ($container.hasClass('stick-sub') && this.mode !== 'edit') {
-                            var $p = $('.popover');
+                            var $p = $('.popover:not(.note-popover)');
                             $p.each(function (i, el) {
                                 var $el = $(el);
                                 $el.css('top', ($el.position().top + ($container.height() - blockHeight * 2 + 10)) + 'px');
@@ -244,17 +244,19 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     $p.each(function (i, el) {
                         var $el = $(el);
                         let top = $el.css('top').slice(0, -2);
-                        if (stickTop > $container.height()) {
-                            if (top - scrollTop > stickTop) {
-                                $el.removeClass('hidden');
+                        if (top > 0 && scrollTop > 0 && top > scrollTop) {
+                            if (stickTop > $container.height()) {
+                                if (top - scrollTop > stickTop) {
+                                    $el.removeClass('hidden');
+                                } else {
+                                    $el.addClass('hidden');
+                                }
                             } else {
-                                $el.addClass('hidden');
-                            }
-                        } else {
-                            if (top - scrollTop > ($container.height() + blockHeight * 2 + 10)) {
-                                $el.removeClass('hidden');
-                            } else {
-                                $el.addClass('hidden');
+                                if (top - scrollTop > ($container.height() + blockHeight * 2 + 10)) {
+                                    $el.removeClass('hidden');
+                                } else {
+                                    $el.addClass('hidden');
+                                }
                             }
                         }
                     }.bind(this));
