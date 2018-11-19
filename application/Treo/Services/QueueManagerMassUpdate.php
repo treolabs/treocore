@@ -43,4 +43,17 @@ namespace Treo\Services;
  */
 class QueueManagerMassUpdate extends QueueManagerBase
 {
+    /**
+     * @inheritdoc
+     */
+    public function run(array $data = []): bool
+    {
+        $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create($data["entityType"])
+            ->massUpdate($data["attributes"], ["ids" => $data["ids"]]);
+
+        return true;
+    }
 }
