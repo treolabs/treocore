@@ -410,16 +410,13 @@ $(function () {
 
         nextStep() {
             if (mainView.validate.call(this, 'adminSettings')) {
-                // hide buttons
-                $('.back-step').hide();
-                $('.next-step').hide();
+                this.disabledStepButtons(true);
 
                 this.setAdminSettings().done(function (data) {
                     if (data.status) {
                         window.location.reload();
                     } else {
-                        $('.back-step').show();
-                        $('.next-step').show();
+                        this.disabledStepButtons(false);
                         mainView.showMessageBoxText.call(this, 'alert-danger', data.message);
                     }
                 }.bind(this));
@@ -438,6 +435,16 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(data)
             });
+        },
+
+        disabledStepButtons(attr) {
+            this.$el.find('.back-step').attr('disabled', attr);
+            this.$el.find('.next-step').attr('disabled', attr);
+            if (attr) {
+                this.$el.find('.loader').removeClass('hidden');
+            } else {
+                this.$el.find('.loader').addClass('hidden');
+            }
         }
     });
 
