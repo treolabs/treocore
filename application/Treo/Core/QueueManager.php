@@ -55,8 +55,8 @@ class QueueManager
      */
     public function run(): bool
     {
+        // create cron job if it needs
         if (!empty($item = $this->getItemToRun())) {
-            // create cron job
             $this->createCronJob($item);
         }
 
@@ -81,6 +81,11 @@ class QueueManager
 
         if ($this->isService($serviceName)) {
             $result = $this->createQueueItem($name, $serviceName, $data);
+        }
+
+        // create cron job if it needs
+        if (!empty($item = $this->getItemToRun())) {
+            $this->createCronJob($item);
         }
 
         return $result;
