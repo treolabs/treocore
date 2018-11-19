@@ -55,13 +55,13 @@ class QueueManager
      */
     public function run(): bool
     {
+        // update statuses
+        $this->updateStatuses();
+
         // create cron job if it needs
         if (!empty($item = $this->getItemToRun())) {
             $this->createCronJob($item);
         }
-
-        // update statuses
-        $this->updateStatuses();
 
         return true;
     }
