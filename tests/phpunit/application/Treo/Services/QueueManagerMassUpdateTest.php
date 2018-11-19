@@ -37,48 +37,51 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 /**
- * Class QueueManagerMassUpdate
+ * Class QueueManagerMassUpdateTest
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class QueueManagerMassUpdate extends QueueManagerBase
+class QueueManagerMassUpdateTest extends \Treo\PHPUnit\Framework\TestCase
 {
-    /**
-     * @inheritdoc
-     */
-    public function run(array $data = []): bool
+    public function testIsRunMethodReturnTrue()
     {
-        // prepare result
-        $result = false;
+        $mock = $this->createMockService(QueueManagerMassUpdate::class, ['massUpdate']);
+        $mock
+            ->expects($this->any())
+            ->method('massUpdate')
+            ->willReturn([]);
 
-        // call mass remove method
-        if (isset($data["entityType"])
-            && !empty($data["attributes"])
-            && is_array($data["attributes"])
-            && !empty($data["ids"])
-            && is_array($data["ids"])) {
-            $this->massUpdate($data["entityType"], $data["attributes"], ["ids" => $data["ids"]]);
+        // test 1
+        $this->assertTrue($mock->run(['entityType' => 'T1', 'attributes' => ['description' => 'T1'], 'ids' => ['1']]));
 
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
+        // test 2
+        $this->assertTrue($mock->run(['entityType' => 'T2', 'attributes' => ['description' => 'T2'], 'ids' => ['3']]));
     }
 
-    /**
-     * @param string $entityType
-     * @param array  $attributes
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function massUpdate(string $entityType, array $attributes, array $data): array
+    public function testIsRunMethodReturnFalse()
     {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create($entityType)
-            ->massUpdate($attributes, $data);
+        $mock = $this->createMockService(QueueManagerMassDelete::class, ['massUpdate']);
+        $mock
+            ->expects($this->any())
+            ->method('massUpdate')
+            ->willReturn([]);
+
+        // test 1
+        $this->assertFalse($mock->run());
+
+        // test 2
+        $this->assertFalse($mock->run([]));
+
+        // test 3
+        $this->assertFalse($mock->run(['entityType1' => 'Test', 'attributes' => [], 'ids' => ['1']]));
+
+        // test 4
+        $this->assertFalse($mock->run(['entityType' => 'Test', 'ids' => []]));
+
+        // test 5
+        $this->assertFalse($mock->run(['entityType' => 'Test', 'ids' => 'test']));
+
+        // test 6
+        $this->assertFalse($mock->run(['entityType' => 'Test', 'attributes' => '1s']));
     }
 }

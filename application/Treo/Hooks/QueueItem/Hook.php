@@ -53,7 +53,7 @@ class Hook extends AbstractHook
      */
     public function beforeSave(Entity $entity, $options = [])
     {
-        if (empty($options['force']) && $entity->get('status') != 'Pending') {
+        if (empty($options['force']) && in_array($entity->get('status'), ['Running', 'Failed', 'Success'])) {
             throw new BadRequest($this->translate('Queue item cannot be changed', 'exceptions', 'QueueItem'));
         }
     }

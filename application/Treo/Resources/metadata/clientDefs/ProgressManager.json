@@ -1,7 +1,0 @@
-{
-    "progressActionViews": {
-        "showMessage": "treo-core:views/progress-manager/actions/show-message",
-        "close": "treo-core:views/progress-manager/actions/close",
-        "cancel": "treo-core:views/progress-manager/actions/cancel"
-    }
-}

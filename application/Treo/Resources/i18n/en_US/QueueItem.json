@@ -21,6 +21,6 @@
     }
   },
   "exceptions": {
-    "Queue item cannot be changed": "Queue item cannot be changed. Status should be 'Pending'."
+    "Queue item cannot be changed": "Queue item cannot be changed."
   }
 }
