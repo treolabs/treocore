@@ -45,7 +45,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
 {
     public function testIsRunMethodReturnTrue()
     {
-        $mock = $this->createMockService(QueueManager::class, ['updateStatuses', 'getItemToRun', 'createCronJob']);
+        $mock = $this->createPartialMock(QueueManager::class, ['updateStatuses', 'getItemToRun', 'createCronJob']);
         $mock
             ->expects($this->any())
             ->method('updateStatuses')
@@ -73,7 +73,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
             'createCronJob'
         ];
 
-        $mock = $this->createMockService(QueueManager::class, $methods);
+        $mock = $this->createPartialMock(QueueManager::class, $methods);
         $mock
             ->expects($this->any())
             ->method('getItemToRun')
@@ -108,7 +108,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
             'createCronJob'
         ];
 
-        $mock = $this->createMockService(QueueManager::class, $methods);
+        $mock = $this->createPartialMock(QueueManager::class, $methods);
         $mock
             ->expects($this->any())
             ->method('getItemToRun')
