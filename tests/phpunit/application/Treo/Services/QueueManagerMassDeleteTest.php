@@ -37,43 +37,54 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 /**
- * Class QueueManagerMassDelete
+ * Class QueueManagerMassDeleteTest
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class QueueManagerMassDelete extends QueueManagerBase
+class QueueManagerMassDeleteTest extends \Treo\PHPUnit\Framework\TestCase
 {
-    /**
-     * @inheritdoc
-     */
-    public function run(array $data = []): bool
+    public function testIsRunMethodReturnTrue()
     {
-        // prepare result
-        $result = false;
+        $mock = $this->createMockService(QueueManagerMassDelete::class, ['massRemove']);
+        $mock
+            ->expects($this->any())
+            ->method('massRemove')
+            ->willReturn([]);
 
-        // call mass remove method
-        if (isset($data["entityType"]) && !empty($data["ids"]) && is_array($data["ids"])) {
-            $this->massRemove($data["entityType"], ["ids" => $data["ids"]]);
+        // test 1
+        $this->assertTrue($mock->run(['entityType' => 'Test', 'ids' => ['1']]));
 
-            // prepare result
-            $result = true;
-        }
+        // test 2
+        $this->assertTrue($mock->run(['entityType' => 'Test 2', 'ids' => ['1', '2', '3']]));
 
-        return $result;
+        // test 3
+        $this->assertTrue($mock->run(['entityType' => 'Test 2', 'ids' => ['1', '2', '3'], 'foo' => '123']));
     }
 
-    /**
-     * @param string $entityType
-     * @param array  $ids
-     *
-     * @return array
-     */
-    protected function massRemove(string $entityType, array $data): array
+    public function testIsRunMethodReturnFalse()
     {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create($entityType)
-            ->massRemove($data);
+        $mock = $this->createMockService(QueueManagerMassDelete::class, ['massRemove']);
+        $mock
+            ->expects($this->any())
+            ->method('massRemove')
+            ->willReturn([]);
+
+        // test 1
+        $this->assertFalse($mock->run());
+
+        // test 2
+        $this->assertFalse($mock->run([]));
+
+        // test 3
+        $this->assertFalse($mock->run(['entityType1' => 'Test', 'ids' => ['1']]));
+
+        // test 4
+        $this->assertFalse($mock->run(['entityType' => 'Test', 'ids' => []]));
+
+        // test 5
+        $this->assertFalse($mock->run(['entityType' => 'Test', 'ids' => 'test']));
+
+        // test 6
+        $this->assertFalse($mock->run(['entityType' => 'Test']));
     }
 }
