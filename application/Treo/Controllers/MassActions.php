@@ -56,24 +56,37 @@ class MassActions extends \Espo\Core\Controllers\Base
      */
     public function actionMassUpdate(array $params, \stdClass $data, Request $request): array
     {
-        if (!isset($params['scope'])) {
+        if (!$request->isPut() || !isset($params['scope'])) {
             throw new BadRequest();
         }
-
-        // prepare scope
-        $scope = $params['scope'];
-
-        if (!$request->isPut()) {
-            throw new BadRequest();
-        }
-
-        if (!$this->getAcl()->check($scope, 'edit')) {
+        if (!$this->getAcl()->check($params['scope'], 'edit')) {
             throw new Forbidden();
         }
         if (empty($data->attributes)) {
             throw new BadRequest();
         }
 
-        return $this->getService('MassActions')->massUpdate($scope, $data);
+        return $this->getService('MassActions')->massUpdate($params['scope'], $data);
+    }
+
+    /**
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
+     *
+     * @return array
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionMassDelete(array $params, \stdClass $data, Request $request): array
+    {
+        if (!$request->isPost() || !isset($params['scope'])) {
+            throw new BadRequest();
+        }
+        if (!$this->getAcl()->check($params['scope'], 'delete')) {
+            throw new Forbidden();
+        }
+
+        return $this->getService('MassActions')->massDelete($params['scope'], $data);
     }
 }

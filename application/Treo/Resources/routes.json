@@ -149,5 +149,22 @@
       "controller": "QueueManager",
       "action": "massUpdate"
     }
+  },
+  {
+    "route": "/:controller/action/massDelete",
+    "method": "post",
+    "params": {
+      "controller": "MassActions",
+      "action": "massDelete",
+      "scope": ":controller"
+    }
+  },
+  {
+    "route": "/QueueManager/action/massDelete",
+    "method": "post",
+    "params": {
+      "controller": "QueueManager",
+      "action": "massDelete"
+    }
   }
 ]

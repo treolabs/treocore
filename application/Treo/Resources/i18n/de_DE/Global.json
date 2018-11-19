@@ -136,6 +136,7 @@
   },
   "massActions": {
     "massUpdatePartial": "Massenänderung (Teil %s)",
+    "removePartial": "Löschen (Teil %s)",
     "addRelation": "Beziehung hinzufügen",
     "removeRelation": "Beziehung entfernen"
   }

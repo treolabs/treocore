@@ -34,53 +34,26 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Services;
 
-return [
-    'version'                => '',
-    'useCache'               => false,
-    'applicationName'        => 'TreoPim',
-    'outboundEmailFromName'  => 'TreoPim',
-    'languageList'           => [
-        'en_US',
-        'de_DE'
-    ],
-    'language'               => 'en_US',
-    'authenticationMethod'   => 'Espo',
-    'globalSearchEntityList' =>
-        [
-            'Account',
-            'Contact',
-            'Lead',
-            'Opportunity',
-        ],
-    'tabList'                => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Product',
-        6 => 'ProductFamily'
-    ],
-    'quickCreateList'        => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Channel',
-        6 => 'Product',
-        7 => 'ProductFamily'
-    ],
-    'theme'                  => 'TreoDarkTheme',
-    'dashboardLayout'        => [
-        (object)[
-            'name'   => 'My TreoPIM',
-            'layout' => []
-        ]
-    ],
-    'webMassUpdateMax'       => 200, // count of max massUpdate items for WEB
-    'cronMassUpdateMax'      => 3000, // count of max massUpdate items for CRON
-    'developMode'            => false
-];
+/**
+ * Class QueueManagerMassDelete
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class QueueManagerMassDelete extends QueueManagerBase
+{
+    /**
+     * @inheritdoc
+     */
+    public function run(array $data = []): bool
+    {
+        $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create($data["entityType"])
+            ->massRemove(["ids" => $data["ids"]]);
+
+        return true;
+    }
+}

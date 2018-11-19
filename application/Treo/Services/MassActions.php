@@ -57,14 +57,14 @@ class MassActions extends AbstractService
     public function massUpdate(string $entityType, \stdClass $data): array
     {
         // get ids
-        $ids = $this->getMassUpdateIds($entityType, $data);
+        $ids = $this->getMassActionIds($entityType, $data);
 
         // attributes
         $attributes = $data->attributes;
 
         if (count($ids) > $this->getConfig()->get('webMassUpdateMax', 200)) {
             // create jobs
-            $this->createJobs($entityType, $attributes, $ids);
+            $this->createMassUpdateJobs($entityType, $attributes, $ids);
 
             return [
                 'count'          => 0,
@@ -73,7 +73,7 @@ class MassActions extends AbstractService
             ];
         }
 
-        return $this->espoMassUpdate($entityType, $attributes, ['ids' => $ids]);
+        return $this->getService($entityType)->massUpdate($attributes, ['ids' => $ids]);
     }
 
     /**
@@ -82,7 +82,32 @@ class MassActions extends AbstractService
      *
      * @return array
      */
-    public function getMassUpdateIds(string $entityType, \stdClass $data): array
+    public function massDelete(string $entityType, \stdClass $data): array
+    {
+        // get ids
+        $ids = $this->getMassActionIds($entityType, $data);
+
+        if (count($ids) > $this->getConfig()->get('webMassUpdateMax', 200)) {
+            // create jobs
+            $this->createMassDeleteJobs($entityType, $ids);
+
+            return [
+                'count'          => 0,
+                'ids'            => [],
+                'byQueueManager' => true
+            ];
+        }
+
+        return $this->getService($entityType)->massRemove(['ids' => $ids]);
+    }
+
+    /**
+     * @param string    $entityType
+     * @param \stdClass $data
+     *
+     * @return array
+     */
+    protected function getMassActionIds(string $entityType, \stdClass $data): array
     {
         $res = $this
             ->getEntityManager()
@@ -98,40 +123,99 @@ class MassActions extends AbstractService
      * @param \stdClass $attributes
      * @param array     $ids
      */
-    protected function createJobs(string $entityType, \stdClass $attributes, array $ids): void
+    protected function createMassUpdateJobs(string $entityType, \stdClass $attributes, array $ids): void
     {
-        // get cronMax
-        $cronMax = $this->getConfig()->get('cronMassUpdateMax', 2000);
+        if (count($ids) > $this->getConfig()->get('cronMassUpdateMax', 3000)) {
+            foreach ($this->getParts($ids) as $part => $rows) {
+                // prepare data
+                $name = $entityType . ". " . sprintf($this->translate('massUpdatePartial', 'massActions'), $part);
+                $data = [
+                    'entityType' => $entityType,
+                    'attributes' => $attributes,
+                    'ids'        => $rows
+                ];
 
-        // prepare data
-        $data = [
-            'entityType' => $entityType,
-            'attributes' => $attributes,
-            'ids'        => []
-        ];
-
-        if (count($ids) > $cronMax) {
-            foreach ($ids as $id) {
-                if (count($data['ids']) == $cronMax) {
-                    // push
-                    $this->qmPushMassUpdatePartial($entityType, $data);
-
-                    // clearing tmp ids
-                    $data['ids'] = [];
-                }
-
-                // push to tmp ids
-                $data['ids'][] = $id;
+                // push
+                $this->qmPush($name, "QueueManagerMassUpdate", $data);
             }
-            // push
-            $this->qmPushMassUpdatePartial($entityType, $data);
         } else {
             // prepare data
-            $data['ids'] = $ids;
+            $name = $entityType . ". " . $this->translate('massUpdate', 'massActions');
+            $data = [
+                'entityType' => $entityType,
+                'attributes' => $attributes,
+                'ids'        => $ids
+            ];
 
             // push
-            $this->qmPushMassUpdate($entityType, $data);
+            $this->qmPush($name, "QueueManagerMassUpdate", $data);
         }
+    }
+
+    /**
+     * @param string $entityType
+     * @param array  $ids
+     */
+    protected function createMassDeleteJobs(string $entityType, array $ids): void
+    {
+        if (count($ids) > $this->getConfig()->get('cronMassUpdateMax', 3000)) {
+            foreach ($this->getParts($ids) as $part => $rows) {
+                // prepare data
+                $name = $entityType . ". " . sprintf($this->translate('removePartial', 'massActions'), $part);
+                $data = [
+                    'entityType' => $entityType,
+                    'ids'        => $rows
+                ];
+
+                // push
+                $this->qmPush($name, "QueueManagerMassDelete", $data);
+            }
+        } else {
+            // prepare data
+            $name = $entityType . ". " . $this->translate('remove', 'massActions');
+            $data = [
+                'entityType' => $entityType,
+                'ids'        => $ids
+            ];
+
+            // push
+            $this->qmPush($name, "QueueManagerMassDelete", $data);
+        }
+    }
+
+    /**
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function getParts(array $ids): array
+    {
+        // prepare vars
+        $result = [];
+        $part = 1;
+        $tmpIds = [];
+        $cronMassUpdateMax = $this->getConfig()->get('cronMassUpdateMax', 3000);
+
+        foreach ($ids as $id) {
+            if (count($tmpIds) == $cronMassUpdateMax) {
+                $result[$part] = $tmpIds;
+
+                // clearing tmp ids
+                $tmpIds = [];
+
+                // increase parts
+                $part++;
+            }
+
+            // push to tmp ids
+            $tmpIds[] = $id;
+        }
+
+        if (!empty($tmpIds)) {
+            $result[$part] = $tmpIds;
+        }
+
+        return $result;
     }
 
     /**
@@ -181,19 +265,16 @@ class MassActions extends AbstractService
     }
 
     /**
-     * @param string    $entityType
-     * @param \stdClass $attributes
-     * @param array     $data
+     * @param string $name
      *
      * @return mixed
      */
-    protected function espoMassUpdate(string $entityType, \stdClass $attributes, array $data)
+    protected function getService(string $name)
     {
         return $this
             ->getContainer()
             ->get('serviceFactory')
-            ->create($entityType)
-            ->massUpdate($attributes, $data);
+            ->create($name);
     }
 
     /**
@@ -209,37 +290,5 @@ class MassActions extends AbstractService
             ->getContainer()
             ->get('queueManager')
             ->push($name, $serviceName, $data);
-    }
-
-    /**
-     * @param string $entityType
-     * @param string $serviceName
-     * @param array  $data
-     *
-     * @return bool
-     */
-    private function qmPushMassUpdate(string $entityType, array $data): bool
-    {
-        // prepare name
-        $name = $entityType . ". " . $this->translate('massUpdate', 'massActions');
-
-        return $this->qmPush($name, "QueueManagerMassUpdate", $data);
-    }
-
-    /**
-     * @param string $entityType
-     * @param array  $data
-     *
-     * @return bool
-     */
-    private function qmPushMassUpdatePartial(string $entityType, array $data): bool
-    {
-        // prepare translate key
-        $key = sprintf($this->translate('massUpdatePartial', 'massActions'), $this->massUpdatePart);
-
-        // increase
-        $this->massUpdatePart++;
-
-        return $this->qmPush("$entityType. $key", "QueueManagerMassUpdate", $data);
     }
 }
