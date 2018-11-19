@@ -139,6 +139,7 @@
     "deactivateModuleThis": "{user} has deactivated module"
   },
   "massActions": {
+    "massUpdatePartial": "Mass Update (Part %s)",
     "addRelation": "Add relation",
     "removeRelation": "Remove relation"
   }

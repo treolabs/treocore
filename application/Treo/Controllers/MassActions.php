@@ -34,21 +34,46 @@
 
 declare(strict_types=1);
 
-namespace Treo\Listeners;
+namespace Treo\Controllers;
+
+use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Forbidden;
+use Slim\Http\Request;
 
 /**
- * AbstractListener class
+ * Class MassActions
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-abstract class AbstractCommonListener extends AbstractListener
+class MassActions extends \Espo\Core\Controllers\Base
 {
     /**
-     * @param string $target
-     * @param string $action
-     * @param array  $data
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
      *
      * @return array
      */
-    abstract public function commonAction(string $target, string $action, array $data): array;
+    public function actionMassUpdate(array $params, \stdClass $data, Request $request): array
+    {
+        if (!isset($params['scope'])) {
+            throw new BadRequest();
+        }
+
+        // prepare scope
+        $scope = $params['scope'];
+
+        if (!$request->isPut()) {
+            throw new BadRequest();
+        }
+
+        if (!$this->getAcl()->check($scope, 'edit')) {
+            throw new Forbidden();
+        }
+        if (empty($data->attributes)) {
+            throw new BadRequest();
+        }
+
+        return $this->getService('MassActions')->massUpdate($scope, $data);
+    }
 }

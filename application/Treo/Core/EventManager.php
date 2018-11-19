@@ -64,50 +64,11 @@ class EventManager
      */
     public function triggered(string $target, string $action, array $data = []): array
     {
-        // triggered common
-        $data = $this->triggeredCommon($target, $action, $data);
-
-        // prepare classes
-        $classes = ["Treo\\Listeners\\$target"];
-        foreach ($this->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Listeners\\$target";
-        }
-
-        foreach ($classes as $className) {
+        foreach ($this->getClassNames($target) as $className) {
             if (class_exists($className)) {
                 if (!empty($listener = $this->getListener($className)) && method_exists($listener, $action)) {
                     // call
                     $result = $listener->{$action}($data);
-
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function triggeredCommon(string $target, string $action, array $data): array
-    {
-        // prepare classes
-        $classes = ["Treo\\Listeners\\CommonListener"];
-        foreach ($this->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Listeners\\CommonListener";
-        }
-
-        foreach ($classes as $className) {
-            if (class_exists($className)) {
-                if (!empty($listener = $this->getListener($className)) && $listener instanceof AbstractCommonListener) {
-                    // call
-                    $result = $listener->commonAction($target, $action, $data);
 
                     // check if exists result and update data
                     $data = isset($result) ? $result : $data;
@@ -135,6 +96,22 @@ class EventManager
         }
 
         return $this->listeners[$className];
+    }
+
+    /**
+     * @param string $target
+     *
+     * @return array
+     */
+    protected function getClassNames(string $target): array
+    {
+        // prepare classes
+        $classes = ["Treo\\Listeners\\$target"];
+        foreach ($this->getModuleList() as $module) {
+            $classes[] = "Espo\\Modules\\$module\\Listeners\\$target";
+        }
+
+        return $classes;
     }
 
     /**

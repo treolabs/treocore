@@ -80,7 +80,7 @@ return [
             'layout' => []
         ]
     ],
-    'pmLimit'                => 5,
-    'massUpdateMax'          => 200,
+    'webMassUpdateMax'       => 200, // count of max massUpdate items for WEB
+    'cronMassUpdateMax'      => 2000, // count of max massUpdate items for CRON
     'developMode'            => false
 ];
