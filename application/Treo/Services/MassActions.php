@@ -44,11 +44,6 @@ namespace Treo\Services;
 class MassActions extends AbstractService
 {
     /**
-     * @var int
-     */
-    private $massUpdatePart = 1;
-
-    /**
      * @param string    $entityType
      * @param \stdClass $data
      *
@@ -99,6 +94,88 @@ class MassActions extends AbstractService
         }
 
         return $this->getService($entityType)->massRemove(['ids' => $ids]);
+    }
+
+    /**
+     * Add relation to entities
+     *
+     * @param array  $ids
+     * @param array  $foreignIds
+     * @param string $entityType
+     * @param string $link
+     *
+     * @return bool
+     */
+    public function addRelation(array $ids, array $foreignIds, string $entityType, string $link): bool
+    {
+        // prepare result
+        $result = false;
+
+        // prepare repository
+        $repository = $this->getEntityManager()->getRepository($entityType);
+
+        // find entities
+        $entities = $repository->where(['id' => $ids])->find();
+
+        // find foreign entities
+        $foreignEntities = $this
+            ->getEntityManager()
+            ->getRepository($this->getForeignEntityType($entityType, $link))
+            ->where(['id' => $foreignIds])
+            ->find();
+
+        if (!empty($entities) && !empty($foreignEntities)) {
+            foreach ($entities as $entity) {
+                foreach ($foreignEntities as $foreignEntity) {
+                    if ($repository->relate($entity, $link, $foreignEntity) && !$result) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Remove relation from entities
+     *
+     * @param array  $ids
+     * @param array  $foreignIds
+     * @param string $entityType
+     * @param string $link
+     *
+     * @return bool
+     */
+    public function removeRelation(array $ids, array $foreignIds, string $entityType, string $link): bool
+    {
+        // prepare result
+        $result = false;
+
+        // prepare repository
+        $repository = $this->getEntityManager()->getRepository($entityType);
+
+        // find entities
+        $entities = $repository->where(['id' => $ids])->find();
+
+        // find foreign entities
+        $foreignEntities = $this
+            ->getEntityManager()
+            ->getRepository($this->getForeignEntityType($entityType, $link))
+            ->where(['id' => $foreignIds])
+            ->find();
+
+        if (!empty($entities) && !empty($foreignEntities)) {
+            foreach ($entities as $entity) {
+                foreach ($foreignEntities as $foreignEntity) {
+                    if ($repository->unrelate($entity, $link, $foreignEntity) && !$result) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -290,5 +367,20 @@ class MassActions extends AbstractService
             ->getContainer()
             ->get('queueManager')
             ->push($name, $serviceName, $data);
+    }
+
+    /**
+     * @param string $entityType
+     * @param string $link
+     *
+     * @return string
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    private function getForeignEntityType(string $entityType, string $link): string
+    {
+        return $this
+            ->getEntityManager()
+            ->getEntity($entityType)
+            ->getRelationParam($link, 'entity');
     }
 }

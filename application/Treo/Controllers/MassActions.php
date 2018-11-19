@@ -89,4 +89,62 @@ class MassActions extends \Espo\Core\Controllers\Base
 
         return $this->getService('MassActions')->massDelete($params['scope'], $data);
     }
+
+    /**
+     * Action add relation
+     *
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionAddRelation(array $params, \stdClass $data, Request $request): bool
+    {
+        if (!$request->isPost()) {
+            throw new BadRequest();
+        }
+        if (empty($data->ids) || empty($data->foreignIds) || !isset($params['scope']) || !isset($params['link'])) {
+            throw new BadRequest();
+        }
+        if (!$this->getAcl()->check($params['scope'], 'edit')) {
+            throw new Forbidden();
+        }
+
+        return $this
+            ->getService('MassActions')
+            ->addRelation($data->ids, $data->foreignIds, $params['scope'], $params['link']);
+    }
+
+    /**
+     * Action remove relation
+     *
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
+     *
+     * @return bool
+     *
+     * @throws BadRequest
+     * @throws Forbidden
+     */
+    public function actionRemoveRelation(array $params, \stdClass $data, Request $request): bool
+    {
+        if (!$request->isDelete()) {
+            throw new BadRequest();
+        }
+        if (empty($data->ids) || empty($data->foreignIds) || !isset($params['scope']) || !isset($params['link'])) {
+            throw new BadRequest();
+        }
+        if (!$this->getAcl()->check($params['scope'], 'edit')) {
+            throw new Forbidden();
+        }
+
+        return $this
+            ->getService('MassActions')
+            ->removeRelation($data->ids, $data->foreignIds, $params['scope'], $params['link']);
+    }
 }

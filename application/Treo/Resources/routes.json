@@ -118,22 +118,6 @@
     }
   },
   {
-    "route": "/:controller/:link/relation",
-    "method": "post",
-    "params": {
-      "controller": ":controller",
-      "action": "addRelation"
-    }
-  },
-  {
-    "route": "/:controller/:link/relation",
-    "method": "delete",
-    "params": {
-      "controller": ":controller",
-      "action": "removeRelation"
-    }
-  },
-  {
     "route": "/:controller/action/massUpdate",
     "method": "put",
     "params": {
@@ -165,6 +149,26 @@
     "params": {
       "controller": "QueueManager",
       "action": "massDelete"
+    }
+  },
+  {
+    "route": "/:controller/:link/relation",
+    "method": "post",
+    "params": {
+      "controller": "MassActions",
+      "action": "addRelation",
+      "scope": ":controller",
+      "link": ":link"
+    }
+  },
+  {
+    "route": "/:controller/:link/relation",
+    "method": "delete",
+    "params": {
+      "controller": "MassActions",
+      "action": "removeRelation",
+      "scope": ":controller",
+      "link": ":link"
     }
   }
 ]
