@@ -16761,8 +16761,14 @@ input#sn-checkbox-open-in-new-window {
     position: fixed;
     top: 11px;
     z-index: 1040;
+    white-space: nowrap;
     overflow: hidden;
-    height: 38px;
+    height: 33px;
+    text-overflow: ellipsis;
+}
+
+.fixed-header-breadcrumbs > span {
+    display: inline-block;
 }
 
 .panel-default > .panel-heading {
