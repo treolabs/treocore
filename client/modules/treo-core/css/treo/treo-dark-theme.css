@@ -16584,7 +16584,7 @@ a:hover, a:focus {
 
 #header a.minimizer {
     position: relative;
-    top: -20px
+    top: 0;
 }
 
 .dropdown-menu {
@@ -17042,6 +17042,10 @@ ul.dropdown-menu > li.checkbox {
     color: #fff
 }
 
+.navbar-inverse .navbar-nav > .more.open > a, .navbar-inverse .navbar-nav > .more.open > a:hover, .navbar-inverse .navbar-nav > .more.open > a:focus {
+    background-color: #616161;
+}
+
 .row.dashlets .panel-default {
     border: 0
 }
@@ -17397,8 +17401,9 @@ button.category span.glyphicon {
     }
 
     #header ul.tabs {
-        margin: 10px 0 0 -8px;
+        margin: 0 0 0 -8px;
         overflow-y: auto;
+        border-bottom: 1px solid #545454;
     }
 
     #navbar .nav.navbar-nav.navbar-right {
@@ -17411,8 +17416,9 @@ button.category span.glyphicon {
         position: static;
     }
 
-    #header .nav > li.more > .dropdown-menu {
+    #header .nav > li.more:not(.more-group) > .dropdown-menu {
         left: 220px;
+        top: 47px;
     }
 
     #header .navbar-right {
@@ -17434,8 +17440,33 @@ button.category span.glyphicon {
         height: 48px
     }
 
+    body.minimized #header ul.tabs {
+        overflow-x: hidden;
+        margin: 0 0 0 -8px;
+    }
+
+    body.minimized #header ul.tabs::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    body.minimized #header ul.tabs::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    body.minimized #header ul.tabs::-webkit-scrollbar-thumb {
+        background: #999;
+    }
+
+    body.minimized #header ul.tabs::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
     #header .navbar-header, #header ul.tabs, #header .navbar, #header .navbar-brand {
         width: 220px
+    }
+
+    body.minimized #header .navbar-header {
+        height: 35px;
     }
 
     #header a.navbar-brand {
@@ -17452,6 +17483,13 @@ button.category span.glyphicon {
 
     #header ul.tabs li > a {
         padding-left: 22px
+    }
+
+    li.more .dropdown-menu > .active > a,
+    li.more .dropdown-menu > .active > a:hover,
+    li.more .dropdown-menu > .active > a:focus {
+        color: #262626;
+        background-color: #f5f5f5;
     }
 
     body > .content, #header .navbar-right, body > footer {
