@@ -48,7 +48,7 @@ class EventManagerTest extends TestCase
     /**
      * Test is triggered method exists
      */
-    public function testisTriggeredExists()
+    public function testIsTriggeredExists()
     {
         $service = $this->createMockService(EventManager::class);
 
