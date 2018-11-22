@@ -64,6 +64,9 @@ class Upgrade extends AbstractConsole
      */
     public function run(array $data): void
     {
+        echo '<pre>';
+        print_r('123');
+        die();
         if (!empty($version = $this->getService()->getAvailableVersion())
             && !empty($package = $this->getService()->downloadPackage())) {
             // upgrade treocore

@@ -44,6 +44,42 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class TreoUpgradeTest extends TestCase
 {
+    public function testGetVersionsMethod()
+    {
+        // prepare methods
+        $methods = ['getDomain', 'getCurrentVersion', 'isDevelopMod', 'readJsonData'];
+
+        // create service
+        $service = $this->createMockService(TreoUpgrade::class, $methods);
+        $service
+            ->expects($this->any())
+            ->method('getDomain')
+            ->willReturn('some-path');
+        $service
+            ->expects($this->any())
+            ->method('getCurrentVersion')
+            ->willReturn('1.0.0');
+        $service
+            ->expects($this->any())
+            ->method('isDevelopMod')
+            ->willReturn(true);
+        $service
+            ->expects($this->any())
+            ->method('readJsonData')
+            ->willReturn(['1.0.0', '1.0.1']);
+
+        // test
+        $this->assertEquals(['1.0.0', '1.0.1'], $service->getVersions());
+    }
+
+    public function testIsCreateUpgradeJobMethodExists()
+    {
+        $service = $this->createMockService(TreoUpgrade::class);
+
+        // test
+        $this->assertTrue(method_exists($service, 'createUpgradeJob'));
+    }
+
     public function testIsRunUpgradeJobMethodExists()
     {
         $service = $this->createMockService(TreoUpgrade::class);

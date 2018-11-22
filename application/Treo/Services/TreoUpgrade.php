@@ -66,17 +66,13 @@ class TreoUpgrade extends AbstractService
     public function getVersions(): array
     {
         if (is_null($this->versions)) {
-            // prepare domain
-            $domain = json_decode(file_get_contents('composer.json'), true)['extra']['treo-packages'];
-
             // prepare path
-            $path = $domain . "/api/v1/Packages/" . $this->getCurrentVersion();
-            if ($this->getConfig()->get('developMode')) {
+            $path = $this->getDomain() . "/api/v1/Packages/" . $this->getCurrentVersion();
+            if ($this->isDevelopMod()) {
                 $path .= '?dev=1';
             }
-            $data = json_decode(file_get_contents($path), true);
 
-            $this->versions = $data;
+            $this->versions = $this->readJsonData($path);
         }
 
         return $this->versions;
@@ -204,5 +200,31 @@ class TreoUpgrade extends AbstractService
     protected function getCurrentVersion(): string
     {
         return $this->getConfig()->get('version');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDomain(): string
+    {
+        return $this->readJsonData('composer.json')['extra']['treo-packages'];
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    protected function readJsonData(string $path): array
+    {
+        return json_decode(file_get_contents($path), true);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDevelopMod(): bool
+    {
+        return !empty($this->getConfig()->get('developMode'));
     }
 }
