@@ -64,27 +64,28 @@ class Upgrade extends AbstractConsole
      */
     public function run(array $data): void
     {
-        echo '<pre>';
-        print_r('123');
-        die();
-        if (!empty($version = $this->getService()->getAvailableVersion())
-            && !empty($package = $this->getService()->downloadPackage())) {
-            // upgrade treocore
-            $upgradeManager = new UpgradeManager($this->getContainer());
-            $upgradeManager->install(['id' => $package]);
+        // get versions
+        $versions = array_column($this->getService()->getVersions(), 'link', 'version');
 
-            // call migration
-            $this
-                ->getContainer()
-                ->get('migration')
-                ->run(Migration::CORE_NAME, $this->getConfig()->get('version'), $version);
+        // prepare version to
+        $to = (!empty($data['versionTo'])) ? $data['versionTo'] : end(array_keys($versions));
 
-            // render
-            self::show('Treo system upgraded successfully.', self::SUCCESS);
-        } else {
-            // render
-            self::show('No available version for upgrade.', self::INFO);
+        if (!isset($versions[$to])) {
+            self::show('No such version for upgrade.', self::ERROR, true);
         }
+
+        // upgrade treocore
+        $upgradeManager = new UpgradeManager($this->getContainer());
+        $upgradeManager->install(['id' => $this->getService()->downloadPackage($versions[$to])]);
+
+        // call migration
+        $this
+            ->getContainer()
+            ->get('migration')
+            ->run(Migration::CORE_NAME, $this->getConfig()->get('version'), $to);
+
+        // render
+        self::show('Treo system upgraded successfully.', self::SUCCESS);
     }
 
     /**
