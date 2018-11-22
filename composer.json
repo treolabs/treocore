@@ -1,6 +1,6 @@
 {
     "name": "treo/treopim",
-    "version": "1.20.4",
+    "version": "1.20.3",
     "description": "TreoPIM. Open source PIM application.",
     "homepage": "https://treopim.de/",
     "license": "GPL-3.0-only",
@@ -40,7 +40,7 @@
         "wikimedia/composer-merge-plugin": "1.4.1",
         "treo-module/pim": "*"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "rc",
     "extra": {
         "espoVersion": "5.3.6",
         "merge-plugin": {

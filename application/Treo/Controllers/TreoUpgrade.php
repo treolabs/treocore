@@ -52,12 +52,12 @@ class TreoUpgrade extends Base
     /**
      * @ApiDescription(description="Get available version for Treo upgrade")
      * @ApiMethod(type="GET")
-     * @ApiRoute(name="/TreoUpgrade/availableVersion")
-     * @ApiReturn(sample="{'version': '1.0.0'}")
+     * @ApiRoute(name="/TreoUpgrade/versions")
+     * @ApiReturn(sample="['1.0.0', '1.0.1']")
      *
      * @return array
      */
-    public function actionAvailableVersion($params, $data, Request $request): array
+    public function actionVersions($params, $data, Request $request): array
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -67,7 +67,7 @@ class TreoUpgrade extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return ['version' => $this->getUpgradeService()->getAvailableVersion()];
+        return array_column($this->getUpgradeService()->getVersions(), 'version');
     }
 
     /**
@@ -88,7 +88,9 @@ class TreoUpgrade extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getUpgradeService()->createUpgradeJob();
+        return $this
+            ->getUpgradeService()
+            ->createUpgradeJob((!empty($data->version)) ? $data->version : null);
     }
 
     /**
