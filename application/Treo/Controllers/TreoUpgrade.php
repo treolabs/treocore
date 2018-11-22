@@ -53,7 +53,7 @@ class TreoUpgrade extends Base
      * @ApiDescription(description="Get available version for Treo upgrade")
      * @ApiMethod(type="GET")
      * @ApiRoute(name="/TreoUpgrade/versions")
-     * @ApiReturn(sample="['1.0.0', '1.0.1']")
+     * @ApiReturn(sample="[{'version': '1.0.0', 'link': '#'}]")
      *
      * @return array
      */
@@ -67,7 +67,7 @@ class TreoUpgrade extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return array_column($this->getUpgradeService()->getVersions(), 'version');
+        return $this->getUpgradeService()->getVersions();
     }
 
     /**
