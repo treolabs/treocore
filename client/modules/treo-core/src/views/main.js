@@ -30,7 +30,7 @@ Espo.define('treo-core:views/main', 'class-replace!treo-core:views/main', functi
                     let navBarRight = $('#header .navbar-right');
                     let width = $('#header ul.navbar-right > li').get().reduce((prev, curr) => {
                         return prev - $(curr).outerWidth()
-                    }, navBarRight.outerWidth() - parseInt(navBarRight.css('margin-left')) - 30);
+                    }, navBarRight.outerWidth() - 30);
                     if (scrollTop > this.$el.find('.page-header').outerHeight() && !$('#header .navbar .menu').hasClass('open-menu')) {
                         header.addClass('fixed-header-breadcrumbs')
                             .css('width', width + 'px');

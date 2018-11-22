@@ -129,6 +129,145 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             this.openMenu();
         },
 
+        adjust: function () {
+            var $window = $(window);
+
+            var navbarIsVertical = this.getThemeManager().getParam('navbarIsVertical');
+            var navbarStaticItemsHeight = this.getThemeManager().getParam('navbarStaticItemsHeight') || 0;
+
+            var smallScreenWidth = this.getThemeManager().getParam('screenWidthXs');
+
+            if (!navbarIsVertical) {
+                var $tabs = this.$el.find('ul.tabs');
+                var $moreDropdown = $tabs.find('li.more');
+                var $more = $tabs.find('li.more > ul');
+
+                $window.on('resize.navbar', function() {
+                    updateWidth();
+                });
+
+                var hideOneTab = function () {
+                    var count = $tabs.children().size();
+                    if (count <= 1) return;
+                    var $one = $tabs.children().eq(count - 2);
+                    $one.prependTo($more);
+                };
+                var unhideOneTab = function () {
+                    var $one = $more.children().eq(0);
+                    if ($one.size()) {
+                        $one.insertBefore($moreDropdown);
+                    }
+                };
+
+                var tabCount = this.tabList.length;
+                var $navbar = $('#navbar .navbar');
+                var navbarNeededHeight = (this.getThemeManager().getParam('navbarHeight') || 43) + 1;
+
+                $moreDd = $('#nav-more-tabs-dropdown');
+                $moreLi = $moreDd.closest('li');
+
+                var navbarBaseWidth = this.getThemeManager().getParam('navbarBaseWidth') || 516;
+
+                var updateWidth = function () {
+                    var windowWidth = $(window.document).width();
+                    var windowWidth = window.innerWidth;
+                    var moreWidth = $moreLi.width();
+
+                    $more.children('li.not-in-more').each(function (i, li) {
+                        unhideOneTab();
+                    });
+
+                    if (windowWidth < smallScreenWidth) {
+                        return;
+                    }
+
+                    $more.parent().addClass('hidden');
+
+                    var headerWidth = this.$el.width();
+
+                    var maxWidth = headerWidth - navbarBaseWidth - moreWidth;
+                    var width = $tabs.width();
+
+                    var i = 0;
+                    while (width > maxWidth) {
+                        hideOneTab();
+                        width = $tabs.width();
+                        i++;
+                        if (i >= tabCount) {
+                            setTimeout(function () {
+                                updateWidth();
+                            }, 100);
+                            break;
+                        }
+                    }
+
+                    if ($more.children().size() > 0) {
+                        $moreDropdown.removeClass('hidden');
+                    }
+                }.bind(this);
+
+                var processUpdateWidth = function (isRecursive) {
+                    if ($navbar.height() > navbarNeededHeight) {
+                        updateWidth();
+                        setTimeout(function () {
+                            processUpdateWidth(true);
+                        }, 200);
+                    } else {
+                        if (!isRecursive) {
+                            setTimeout(function () {
+                                processUpdateWidth(true);
+                            }, 10);
+                        }
+                        setTimeout(function () {
+                            processUpdateWidth(true);
+                        }, 1000);
+                    }
+                };
+
+                if ($navbar.height() <= navbarNeededHeight && $more.children().size() === 0) {
+                    $more.parent().addClass('hidden');
+                }
+
+                processUpdateWidth();
+
+            } else {
+                var $tabs = this.$el.find('ul.tabs');
+
+                var minHeight = $tabs.height() + navbarStaticItemsHeight;
+
+                var $more = $tabs.find('li.more > ul');
+
+                if ($more.children().size() === 0) {
+                    $more.parent().addClass('hidden');
+                }
+
+                $('body').css('minHeight', minHeight + 'px');
+
+                var updateSizeForVertical = function () {
+                    var windowHeight = window.innerHeight;
+                    var windowWidth = window.innerWidth;
+
+                    if (windowWidth < smallScreenWidth) {
+                        $tabs.css('height', 'auto');
+                        $more.css('max-height', '');
+                    } else {
+                        let tabsHeight = windowHeight - navbarStaticItemsHeight;
+                        if (!$('body').hasClass('minimized')) {
+                            tabsHeight -= 12;
+                        }
+                        $tabs.css('height', tabsHeight + 'px');
+                        $more.css('max-height', windowHeight + 'px');
+                    }
+
+                }.bind(this);
+
+                $(window).on('resize.navbar', function() {
+                    updateSizeForVertical();
+                });
+                updateSizeForVertical();
+            }
+        },
+
         init() {
             Dep.prototype.init.call(this);
 

@@ -136,8 +136,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                         let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
                         if (this.checkRelationshipType(defs.type, foreignType)
                             && this.getMetadata().get(['scopes', defs.entity, 'entity'])
-                            && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])) {
-                            foreignEntities.push({link: link, entity: links[link].entity});
+                            && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])
+                            && !defs.disableMassRelation) {
+                            foreignEntities.push({link: link, entity: defs.entity});
                         }
                     }
                 });

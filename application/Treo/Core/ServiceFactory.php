@@ -78,7 +78,7 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
         // prepare name
         $name = Util::normilizeClassName($name);
 
-        if (empty($this->services[$name])) {
+        if (!isset($this->services[$name])) {
             throw new Error("Service '{$name}' was not found.");
         }
 
