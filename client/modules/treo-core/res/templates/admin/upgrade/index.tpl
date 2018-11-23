@@ -3,9 +3,23 @@
 <div class="panel panel-default upload">
     <div class="panel-body">
         <p class="current-status"></p>
-        <button class="btn btn-primary {{#if disableUpgrade}}hidden{{/if}}" data-action="upgradeSystem">
-            {{translate 'upgradeTo' category='labels' scope='Admin'}}&nbsp;{{latestVersion}}
-        </button>
-        <div class="loader {{#if hideLoader}}hidden{{/if}}"></div>
+        {{#unless disableUpgrade}}
+        <div class="row">
+            <div class="cell form-group col-sm-6" data-name="versionToUpgrade">
+                <label class="control-label" data-name="versionToUpgrade">{{translate 'versionToUpgrade' category='labels' scope='Admin'}}</label>
+                <div class="field" data-name="versionToUpgrade">
+                    {{{versionToUpgrade}}}
+                </div>
+            </div>
+        </div>
+        {{/unless}}
+        <div class="row">
+            <div class="col-sm-6">
+                <button class="btn btn-primary {{#if disableUpgrade}}hidden{{/if}}" data-action="upgradeSystem">
+                    {{translate 'Upgrade' category='labels' scope='Admin'}}
+                </button>
+                <div class="loader {{#if hideLoader}}hidden{{/if}}"></div>
+            </div>
+        </div>
     </div>
 </div>

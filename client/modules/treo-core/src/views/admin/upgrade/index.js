@@ -37,13 +37,12 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
 
         template: 'treo-core:admin/upgrade/index',
 
-        latestVersion: null,
+        versionList: [],
 
         data: function () {
             return {
                 hideLoader: !this.upgradingInProgress,
-                disableUpgrade: this.upgradingInProgress || !this.latestVersion,
-                latestVersion: this.latestVersion,
+                disableUpgrade: this.upgradingInProgress || !this.versionList.length,
                 systemVersion: this.systemVersion
             };
         },
@@ -58,18 +57,25 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             Dep.prototype.setup.call(this);
 
             this.wait(true);
-            this.getConfig().fetch({
-                success: () => {
-                    this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
-                    this.systemVersion = this.getConfig().get('version');
-                    this.ajaxGetRequest('/TreoUpgrade/availableVersion')
-                    .then(response => {
-                        this.latestVersion = response.version;
-                    })
-                    .always(() => {
-                        this.wait(false)
-                    });
-                }
+            this.getModelFactory().create(null, model => {
+                this.model = model;
+
+                this.getConfig().fetch({
+                    success: () => {
+                        this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
+                        this.systemVersion = this.getConfig().get('version');
+                        this.ajaxGetRequest('/TreoUpgrade/versions')
+                            .then(response => {
+                                if (response && response.length) {
+                                    this.versionList = response.map(item => item.version).reverse();
+                                }
+                            })
+                            .always(() => {
+                                this.createField();
+                                this.wait(false)
+                            });
+                    }
+                });
             });
 
             this.listenToOnce(this, 'remove', () => {
@@ -89,16 +95,43 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             this.showCurrentStatus();
         },
 
-        upgradeSystem() {
-            this.disableUpgrade(true);
-            this.ajaxPostRequest('/TreoUpgrade/upgrade').then(response => {
-                if (response) {
-                    this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
-                } else {
-                    this.notify(this.translate('upgradeInProgress', 'messages', 'Admin'), 'danger');
-                }
-                this.initConfigCheck();
+        createField() {
+            this.createView('versionToUpgrade', 'views/fields/enum', {
+                model: this.model,
+                el: `${this.options.el} .field[data-name="versionToUpgrade"]`,
+                defs: {
+                    name: 'versionToUpgrade',
+                    params: {
+                        options: this.versionList
+                    }
+                },
+                mode: 'edit'
+            }, view => {
+                view.listenTo(view, 'after:render', () => {
+                    view.fetchToModel();
+                });
             });
+        },
+
+        upgradeSystem() {
+            if (!this.upgradingInProgress) {
+                this.disableUpgrade(true);
+                let data = false;
+                let versionToUpgrade = this.model.get('versionToUpgrade');
+                if (versionToUpgrade) {
+                    data = {
+                        version: versionToUpgrade
+                    }
+                }
+                this.ajaxPostRequest('/TreoUpgrade/upgrade', data).then(response => {
+                    if (response) {
+                        this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
+                    } else {
+                        this.notify(this.translate('upgradeInProgress', 'messages', 'Admin'), 'danger');
+                    }
+                    this.initConfigCheck();
+                });
+            }
         },
 
         showCurrentStatus() {
@@ -107,8 +140,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             if (this.upgradingInProgress) {
                 type = 'text-success';
                 text = this.translate('upgradeInProgress', 'messages', 'Admin');
-            } else if (this.latestVersion) {
-                type = 'text-danger';
+            } else if (this.versionList.length) {
+                type = '';
                 text = this.translate('Current version', 'labels', 'Global') + ': ' + this.systemVersion;
             } else {
                 type = 'text-success';
@@ -135,9 +168,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                         if (!this.upgradingInProgress) {
                             window.clearInterval(this.configCheckInterval);
                             this.configCheckInterval = null;
-                            this.showCurrentStatus();
-                            this.disableUpgrade(false);
                             this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
+                            this.reRender();
                         }
                         this.loaderShow();
                     }.bind(this)
