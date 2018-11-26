@@ -36,8 +36,8 @@
         "Running": "FFE208",
         "Success": "1DFF08",
         "Failed": "FF0000",
-        "Canceled": "B01F00",
-        "Closed": "B01F00"
+        "Canceled": "4F4F4F",
+        "Closed": "6E6E6E"
       }
     },
     "actions": {
