@@ -55,9 +55,6 @@ Espo.define('treo-core:views/queue-manager/badge', 'view',
                 el: `${this.options.el} .queue-panel-container`
             }, view => view.render());
 
-            // set popup as showed
-            this.ajaxPostRequest('ProgressManager/popupShowed', {"userId": this.getUser().get('id')});
-
             $(document).on('mouseup.queue', function (e) {
                 let container = this.$el.find('.queue-panel-container');
                 if (!container.is(e.target) && container.has(e.target).length === 0) {

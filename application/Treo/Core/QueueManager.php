@@ -222,7 +222,8 @@ class QueueManager
                     WHERE 
                           q.deleted=0
                       AND j.status IN ('Success', 'Failed')
-                      AND j.status != q.status                      
+                      AND j.status != q.status         
+                      AND q.status NOT IN ('Canceled','Closed')             
                     ORDER BY q.sort_order ASC";
 
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);

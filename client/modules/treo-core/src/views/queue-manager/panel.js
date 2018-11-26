@@ -60,7 +60,7 @@ Espo.define('treo-core:views/queue-manager/panel', 'view', function (Dep) {
                 this.collection.maxSize = 200;
                 this.collection.url = 'QueueItem';
                 this.collection.sortBy = 'sortOrder';
-                this.collection.asc = false;
+                this.collection.asc = true;
                 this.collection.where = this.getWhere();
                 this.collection.whereAdditional = this.getWhereAdditional();
 
