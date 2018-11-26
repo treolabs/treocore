@@ -47,6 +47,21 @@ class Job extends \Espo\Repositories\Job
     /**
      * @inheritdoc
      */
+    public function beforeSave(Entity $entity, array $options = [])
+    {
+        // set scheduledJobId to data
+        if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
+            $entity->set('targetType', 'ScheduledJob');
+            $entity->set('targetId', $scheduledJobId);
+        }
+
+        // call parent
+        parent::beforeSave($entity, $options);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function afterRemove(Entity $entity, array $options = [])
     {
         if (!empty($item = $entity->get('queueItem'))) {
