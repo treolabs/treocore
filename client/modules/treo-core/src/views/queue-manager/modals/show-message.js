@@ -31,58 +31,31 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/actions/request', 'view',
+Espo.define('treo-core:views/queue-manager/modals/show-message', 'views/modal',
     Dep => Dep.extend({
 
-        template: 'treo-core:progress-manager/actions/request',
+        className: 'dialog queue-modal',
 
-        actionId: null,
+        template: 'treo-core:queue-manager/modals/show-message',
 
-        url: 'ProgressManager/:id/request',
-
-        requestType: 'GET',
-
-        buttonLabel: 'request',
-
-        events: {
-            'click [data-action="request"]': function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.actionRequest();
-            },
-        },
+        buttonList: [
+            {
+                name: 'cancel',
+                label: 'Close'
+            }
+        ],
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.actionId = this.options.actionId;
+            this.header = this.translate('message', 'labels', 'QueueManager');
         },
 
         data() {
             return {
-                buttonLabel: this.buttonLabel
+                message: this.options.message
             };
         },
-
-        actionRequest() {
-            let requestMethod = `ajax${Espo.Utils.upperCaseFirst(this.requestType.toLowerCase())}Request`;
-            if (typeof this[requestMethod] === 'function') {
-                this[requestMethod](this.url.replace(':id', this.actionId), this.getRequestData())
-                    .then(response => {
-                        this.afterResponseCallback(response);
-                    });
-            }
-        },
-
-        getRequestData() {
-            return {};
-        },
-
-        afterResponseCallback(response) {
-            if (response) {
-                this.trigger('reloadList');
-            }
-        }
 
     })
 );

@@ -31,37 +31,15 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/fields/actions', 'views/fields/base',
+Espo.define('treo-core:views/queue-manager/actions/cancel', 'treo-core:views/queue-manager/actions/close',
     Dep => Dep.extend({
 
-        listTemplate: 'treo-core:progress-manager/fields/actions/list',
+        buttonLabel: 'cancel',
 
-        defaultActionView: 'treo-core:views/progress-manager/actions/show-message',
-
-        data() {
+        getRequestData () {
             return {
-                actions: this.model.get(this.name) || []
+                status: 'Canceled'
             };
-        },
-
-        afterRender() {
-            this.buildActions();
-        },
-
-        buildActions() {
-            (this.model.get(this.name) || []).forEach(action => {
-                let viewName = this.getMetadata().get(['clientDefs', 'ProgressManager', 'progressActionViews', action.type]) || this.defaultActionView;
-                this.createView(action.type, viewName, {
-                    el: `${this.options.el} .progress-manager-action[data-type="${action.type}"]`,
-                    actionData: action.data,
-                    actionId: this.model.id
-                }, view => {
-                    this.listenTo(view, 'reloadList', () => {
-                        this.model.trigger('reloadList');
-                    });
-                    view.render();
-                });
-            });
         }
 
     })

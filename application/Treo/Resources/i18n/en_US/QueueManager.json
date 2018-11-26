@@ -1,0 +1,18 @@
+{
+    "notificationMessages": {
+        "success": "%s was successfully completed",
+        "error": "%s failed"
+    },
+    "messages": {
+        "byQueueManager": "Processed by Queue Manager"
+    },
+    "labels": {
+        "showMessage": "Show Message",
+        "message": "Message",
+        "cancel": "Cancel",
+        "close": "Close",
+        "download": "Download",
+        "queueManager": "Queue Manager",
+        "showDone": "Show done"
+    }
+}

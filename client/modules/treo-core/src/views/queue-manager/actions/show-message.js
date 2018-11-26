@@ -31,14 +31,24 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/actions/close', 'treo-core:views/progress-manager/actions/request',
+Espo.define('treo-core:views/queue-manager/actions/show-message', 'treo-core:views/queue-manager/actions/abstract-action',
     Dep => Dep.extend({
 
-        url: 'ProgressManager/:id/close',
+        template: 'treo-core:queue-manager/actions/show-message',
 
-        requestType: 'PUT',
+        buttonLabel: 'showMessage',
 
-        buttonLabel: 'close',
+        data() {
+            return _.extend({
+                showButton: !!this.actionData.message
+            }, Dep.prototype.data.call(this));
+        },
+
+        actionShowMessageModal() {
+            this.createView('modal', 'treo-core:views/queue-manager/modals/show-message', {
+                message: this.actionData.message
+            }, view => view.render());
+        }
 
     })
 );

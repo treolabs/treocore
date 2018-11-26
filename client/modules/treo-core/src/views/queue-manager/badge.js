@@ -31,40 +31,48 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/fields/status', 'views/fields/base',
+Espo.define('treo-core:views/queue-manager/badge', 'view',
     Dep => Dep.extend({
 
-        listTemplate: 'treo-core:progress-manager/fields/status/list',
+        template: 'treo-core:queue-manager/badge',
 
-        data() {
-            return {
-                value: (this.model.get(this.name) || {}).translate || '',
-                color: this.getColor()
-            };
+        events: {
+            'click a[data-action="showQueue"]': function (e) {
+                this.showQueue();
+            },
         },
 
-        getColor() {
-            let color;
-            switch ((this.model.get(this.name) || {}).key) {
-                case 'new':
-                    color = '#5bc0de';
-                    break;
-                case 'in_progress':
-                    color = '#ef990e';
-                    break;
-                case 'error':
-                    color = '#cf605d';
-                    break;
-                case 'success':
-                    color = '#85b75f';
-                    break;
-                default:
-                    color = '#000';
-                    break;
+        afterRender() {
+            this.listenTo(Backbone, 'showQueuePanel', () => {
+                this.showQueue();
+            });
+        },
+
+        showQueue() {
+            this.closeQueue();
+
+            this.createView('panel', 'treo-core:views/queue-manager/panel', {
+                el: `${this.options.el} .queue-panel-container`
+            }, view => view.render());
+
+            // set popup as showed
+            this.ajaxPostRequest('ProgressManager/popupShowed', {"userId": this.getUser().get('id')});
+
+            $(document).on('mouseup.queue', function (e) {
+                let container = this.$el.find('.queue-panel-container');
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    this.closeQueue();
+                }
+            }.bind(this));
+        },
+
+        closeQueue() {
+            if (this.hasView('panel')) {
+                this.clearView('panel');
             }
-            return color;
+
+            $(document).off('mouseup.queue');
         }
 
     })
 );
-

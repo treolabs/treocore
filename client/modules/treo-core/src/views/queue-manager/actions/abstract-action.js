@@ -31,31 +31,38 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/modals/show-message', 'views/modal',
+Espo.define('treo-core:views/queue-manager/actions/abstract-action', 'view',
     Dep => Dep.extend({
 
-        className: 'dialog progress-modal',
+        template: 'treo-core:queue-manager/actions/abstract-action',
 
-        template: 'treo-core:progress-manager/modals/show-message',
+        buttonLabel: '',
 
-        buttonList: [
-            {
-                name: 'cancel',
-                label: 'Close'
-            }
-        ],
+        actionData: {},
+
+        events: {
+            'click [data-action="runAction"]': function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.runAction();
+            },
+        },
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.header = this.translate('message', 'labels', 'ProgressManager');
+            this.actionData = this.options.actionData || this.actionData;
         },
 
         data() {
             return {
-                message: this.options.message
+                buttonLabel: this.buttonLabel
             };
         },
+
+        runAction() {
+
+        }
 
     })
 );

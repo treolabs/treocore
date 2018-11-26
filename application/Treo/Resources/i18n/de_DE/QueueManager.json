@@ -1,0 +1,18 @@
+{
+    "notificationMessages": {
+        "error": "%  ist fehlgeschlagen",
+        "success": "%  wurde erfolgreich abgeschlossen"
+    },
+    "messages": {
+        "byQueueManager": "Wird vom Warteschlangenmanager verarbeitet"
+    },
+    "labels": {
+        "showMessage": "Meldung anzeigen",
+        "message": "Meldung",
+        "cancel": "abbrechen",
+        "close": "schließen",
+        "download": "herunterladen",
+        "queueManager": "Warteschlangenmanager",
+        "showDone": "Show erledigt"
+    }
+}

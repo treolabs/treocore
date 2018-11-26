@@ -30,7 +30,15 @@
         "Failed",
         "Canceled",
         "Closed"
-      ]
+      ],
+      "optionColors": {
+        "Pending": "00AFFF",
+        "Running": "FFE208",
+        "Success": "1DFF08",
+        "Failed": "FF0000",
+        "Canceled": "B01F00",
+        "Closed": "B01F00"
+      }
     },
     "actions": {
       "type": "jsonObject",

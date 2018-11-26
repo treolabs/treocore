@@ -31,38 +31,16 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/actions/show-message', 'view',
+Espo.define('treo-core:views/queue-manager/fields/loader', 'views/fields/base',
     Dep => Dep.extend({
 
-        template: 'treo-core:progress-manager/actions/show-message',
-
-        actionData: {},
-
-        events: {
-            'click [data-action="showMessageModal"]': function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.actionShowMessageModal();
-            },
-        },
-
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            this.actionData = this.options.actionData || this.actionData;
-        },
+        listTemplate: 'treo-core:queue-manager/fields/loader/list',
 
         data() {
             return {
-                showButton: !!this.actionData.message
+                showLoader: this.model.get('status') === 'Running'
             };
         },
-
-        actionShowMessageModal() {
-            this.createView('modal', 'treo-core:views/progress-manager/modals/show-message', {
-                message: this.actionData.message
-            }, view => view.render());
-        }
 
     })
 );

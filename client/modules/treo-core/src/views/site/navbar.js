@@ -277,9 +277,9 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
         },
 
         initProgressBadge() {
-            this.$el.find('.navbar-header').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container"></li>');
-            this.createView('progressBadgeHeader', 'treo-core:views/progress-manager/badge', {
-                el: `${this.options.el} .navbar-header .progress-badge-container`,
+            this.$el.find('.navbar-header').find('.notifications-badge-container').before('<li class="dropdown queue-badge-container"></li>');
+            this.createView('queueBadgeHeader', 'treo-core:views/queue-manager/badge', {
+                el: `${this.options.el} .navbar-header .queue-badge-container`,
                 intervalConditions: [
                     () => {
                         return $(window).innerWidth() < 768;
@@ -289,9 +289,9 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
                 view.render();
             });
 
-            this.$el.find('.navbar-right').find('.notifications-badge-container').before('<li class="dropdown progress-badge-container hidden-xs"></li>');
-            this.createView('progressBadgeRight', 'treo-core:views/progress-manager/badge', {
-                el: `${this.options.el} .navbar-right .progress-badge-container`,
+            this.$el.find('.navbar-right').find('.notifications-badge-container').before('<li class="dropdown queue-badge-container hidden-xs"></li>');
+            this.createView('queueBadgeRight', 'treo-core:views/queue-manager/badge', {
+                el: `${this.options.el} .navbar-right .queue-badge-container`,
                 intervalConditions: [
                     () => {
                         return $(window).innerWidth() >= 768;

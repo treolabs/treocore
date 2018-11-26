@@ -312,7 +312,141 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 selectList = Dep.prototype.fetchAttributeListFromLayout.call(this);
             }
             return selectList;
-        }
+        },
+
+        massActionMassUpdate: function () {
+            if (!this.getAcl().check(this.entityType, 'edit')) {
+                this.notify('Access denied', 'error');
+                return false;
+            }
+
+            Espo.Ui.notify(this.translate('loading', 'messages'));
+            var ids = false;
+            var allResultIsChecked = this.allResultIsChecked;
+            if (!allResultIsChecked) {
+                ids = this.checkedList;
+            }
+
+            this.createView('massUpdate', 'views/modals/mass-update', {
+                scope: this.entityType,
+                ids: ids,
+                where: this.collection.getWhere(),
+                selectData: this.collection.data,
+                byWhere: this.allResultIsChecked
+            }, function (view) {
+                view.render();
+                view.notify(false);
+                view.once('after:update', function (count, byQueueManager) {
+                    view.close();
+                    this.listenToOnce(this.collection, 'sync', function () {
+                        if (count) {
+                            var msg = 'massUpdateResult';
+                            if (count == 1) {
+                                msg = 'massUpdateResultSingle'
+                            }
+                            Espo.Ui.success(this.translate(msg, 'messages').replace('{count}', count));
+                        } else if (byQueueManager) {
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Backbone.trigger('showQueuePanel');
+                        } else {
+                            Espo.Ui.warning(this.translate('noRecordsUpdated', 'messages'));
+                        }
+                        if (allResultIsChecked) {
+                            this.selectAllResult();
+                        } else {
+                            ids.forEach(function (id) {
+                                this.checkRecord(id);
+                            }, this);
+                        }
+                    }.bind(this));
+                    this.collection.fetch();
+                }, this);
+            }.bind(this));
+        },
+
+        massActionRemove: function () {
+            if (!this.getAcl().check(this.entityType, 'delete')) {
+                this.notify('Access denied', 'error');
+                return false;
+            }
+
+            var count = this.checkedList.length;
+            var deletedCount = 0;
+
+            var self = this;
+
+            this.confirm({
+                message: this.translate('removeSelectedRecordsConfirmation', 'messages'),
+                confirmText: this.translate('Remove')
+            }, function () {
+                this.notify('Removing...');
+
+                var ids = [];
+                var data = {};
+                if (this.allResultIsChecked) {
+                    data.where = this.collection.getWhere();
+                    data.selectData = this.collection.data || {};
+                    data.byWhere = true;
+                } else {
+                    data.ids = ids;
+                }
+
+                for (var i in this.checkedList) {
+                    ids.push(this.checkedList[i]);
+                }
+
+                $.ajax({
+                    url: this.entityType + '/action/massDelete',
+                    type: 'POST',
+                    data: JSON.stringify(data)
+                }).done(function (result) {
+                    result = result || {};
+                    var count = result.count;
+                    var byQueueManager = result.byQueueManager;
+                    if (this.allResultIsChecked) {
+                        if (count) {
+                            this.unselectAllResult();
+                            this.listenToOnce(this.collection, 'sync', function () {
+                                var msg = 'massRemoveResult';
+                                if (count == 1) {
+                                    msg = 'massRemoveResultSingle'
+                                }
+                                Espo.Ui.success(this.translate(msg, 'messages').replace('{count}', count));
+                            }, this);
+                            this.collection.fetch();
+                            Espo.Ui.notify(false);
+                        } else if (byQueueManager) {
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Backbone.trigger('showQueuePanel');
+                        } else {
+                            Espo.Ui.warning(self.translate('noRecordsRemoved', 'messages'));
+                        }
+                    } else {
+                        var idsRemoved = result.ids || [];
+                        if (count) {
+                            idsRemoved.forEach(function (id) {
+                                Espo.Ui.notify(false);
+
+                                this.collection.trigger('model-removing', id);
+                                this.removeRecordFromList(id);
+                                this.uncheckRecord(id, null, true);
+
+                            }, this);
+                            var msg = 'massRemoveResult';
+                            if (count == 1) {
+                                msg = 'massRemoveResultSingle'
+                            }
+                            Espo.Ui.success(self.translate(msg, 'messages').replace('{count}', count));
+                        } else if (byQueueManager) {
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Backbone.trigger('showQueuePanel');
+                        } else {
+                            Espo.Ui.warning(self.translate('noRecordsRemoved', 'messages'));
+                        }
+                    }
+                }.bind(this));
+            }, this);
+        },
 
     });
 });

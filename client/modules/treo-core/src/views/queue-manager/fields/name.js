@@ -31,30 +31,20 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/progress-manager/fields/progress', 'views/fields/base',
+Espo.define('treo-core:views/queue-manager/fields/name', 'views/fields/varchar',
     Dep => Dep.extend({
 
-        listTemplate: 'treo-core:progress-manager/fields/progress/list',
+        listTemplate: 'treo-core:queue-manager/fields/name/list',
 
         data() {
-            let data = {
-                value: this.model.get(this.name) || 0
-            };
-
-            switch(data.value) {
-                case 100:
-                    data.stateClass = 'progress-bar-success';
-                    break;
-                case 0:
-                    data.stateClass = 'progress-bar-danger';
-                    break;
-                default:
-                    data.stateClass = 'progress-bar-warning';
-                    break;
-            }
-
-            return data;
+            return _.extend({
+                mutedText: ['Success', 'Failed'].includes(this.model.get('status'))
+            }, Dep.prototype.data.call(this));
         },
+
+        afterRender() {
+
+        }
 
     })
 );
