@@ -4,6 +4,10 @@
       "isSystem": true,
       "scheduling": "0 0 * * *"
     },
+    "TreoCleanup": {
+      "isSystem": true,
+      "scheduling": "0 1 * * *"
+    },
     "RestApiDocs": {
       "isSystem": true,
       "scheduling": "0 0 * * *"
