@@ -36,7 +36,7 @@ Espo.define('treo-core:views/queue-manager/actions/cancel', 'treo-core:views/que
 
         buttonLabel: 'cancel',
 
-        getRequestData () {
+        getSaveData () {
             return {
                 status: 'Canceled'
             };

@@ -1,10 +1,13 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <span>{{translate 'queueManager' category='labels' scope="QueueManager"}}</span>
-        <label class="pull-right">
-            <input type="checkbox" name="showDone" checked>
-            <span class="text-muted">{{translate 'showDone' category='labels' scope="QueueManager"}}</span>
-        </label>
+        <span class="pull-right">
+            <label class="show-done">
+                <input type="checkbox" name="showDone" {{#if showDone}}checked{{/if}}>
+                <span class="text-muted">{{translate 'showDone' category='labels' scope="QueueManager"}}</span>
+            </label>
+            <a href="#QueueItem" title="{{translate 'View List'}}" data-action="viewList">{{translate 'View List'}}</a>
+        </span>
     </div>
     <div class="panel-body">
         <div class="list-container">

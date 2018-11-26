@@ -1,3 +1,5 @@
 {{#if showLoader}}
-<div class="loader"></div>
+<div class="loader-container pull-left">
+    <div class="loader"></div>
+</div>
 {{/if}}

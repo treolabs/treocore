@@ -44,7 +44,9 @@ Espo.define('treo-core:views/queue-manager/badge', 'view',
 
         afterRender() {
             this.listenTo(Backbone, 'showQueuePanel', () => {
-                this.showQueue();
+                if (this.checkConditions()) {
+                    this.showQueue();
+                }
             });
         },
 
@@ -53,7 +55,12 @@ Espo.define('treo-core:views/queue-manager/badge', 'view',
 
             this.createView('panel', 'treo-core:views/queue-manager/panel', {
                 el: `${this.options.el} .queue-panel-container`
-            }, view => view.render());
+            }, view => {
+                this.listenTo(view, 'closeQueue', () => {
+                    this.closeQueue();
+                });
+                view.render();
+            });
 
             $(document).on('mouseup.queue', function (e) {
                 let container = this.$el.find('.queue-panel-container');
@@ -69,6 +76,15 @@ Espo.define('treo-core:views/queue-manager/badge', 'view',
             }
 
             $(document).off('mouseup.queue');
+        },
+
+        checkConditions() {
+            return (this.options.intervalConditions || []).every(item => {
+                if (typeof item === 'function') {
+                    return item();
+                }
+                return false;
+            });
         }
 
     })

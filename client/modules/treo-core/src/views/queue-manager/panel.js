@@ -39,6 +39,8 @@ Espo.define('treo-core:views/queue-manager/panel', 'view', function (Dep) {
 
         queueCheckInterval: 2,
 
+        showDone: true,
+
         template: 'treo-core:queue-manager/panel',
 
         events: _.extend({
@@ -46,13 +48,30 @@ Espo.define('treo-core:views/queue-manager/panel', 'view', function (Dep) {
                 e.preventDefault();
                 e.stopPropagation();
 
+                this.showDone = this.$showDone.is(':checked');
+                this.getStorage().set('list', 'showDone', this.showDone);
                 this.collection.where = this.getWhere();
                 this.collection.fetch();
+            },
+            'click [data-action="viewList"]': function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                this.getRouter().navigate($(e.target).attr('href'), {trigger: true});
+                this.trigger('closeQueue');
             }
         }, Dep.prototype.events),
 
+        data() {
+            return {
+                showDone: this.showDone
+            };
+        },
+
         setup() {
             this.queueCheckInterval = this.getConfig().get('queueCheckInterval') || this.queueCheckInterval;
+
+            this.showDone = !(this.getStorage().get('list', 'showDone') === 'false');
 
             this.wait(true);
             this.getCollectionFactory().create('QueueItem', collection => {
@@ -112,9 +131,7 @@ Espo.define('treo-core:views/queue-manager/panel', 'view', function (Dep) {
         },
 
         getWhere() {
-            let showDone = this.$showDone ? this.$showDone.is(':checked') : true;
-
-            if (showDone) {
+            if (this.showDone) {
                 return [];
             } else {
                 return [
