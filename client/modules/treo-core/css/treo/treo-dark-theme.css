@@ -18414,10 +18414,6 @@ td[data-name="draggableIcon"] {
     overflow: visible;
 }
 
-.queue-panel-container > .panel > .panel-body .list > table td .loader-container{
-    position: absolute;
-}
-
 .queue-panel-container .queue-manager-action {
     display: inline-block;
     min-width: 90px;
