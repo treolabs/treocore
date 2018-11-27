@@ -44,49 +44,32 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class TreoUpgradeTest extends TestCase
 {
-    public function testIsGetAvailableVersionReturnString()
+    public function testGetVersionsMethod()
     {
-        $service = $this->createMockService(TreoUpgrade::class, ['getVersionData', 'getCurrentVersion']);
+        // prepare methods
+        $methods = ['getDomain', 'getCurrentVersion', 'isDevelopMod', 'readJsonData'];
+
+        // create service
+        $service = $this->createMockService(TreoUpgrade::class, $methods);
+        $service
+            ->expects($this->any())
+            ->method('getDomain')
+            ->willReturn('some-path');
         $service
             ->expects($this->any())
             ->method('getCurrentVersion')
             ->willReturn('1.0.0');
         $service
             ->expects($this->any())
-            ->method('getVersionData')
-            ->willReturn(['version' => '2.0.1']);
-
-        // test 1
-        $this->assertEquals('2.0.1', $service->getAvailableVersion());
-
-        $service = $this->createMockService(TreoUpgrade::class, ['getVersionData', 'getCurrentVersion']);
+            ->method('isDevelopMod')
+            ->willReturn(true);
         $service
             ->expects($this->any())
-            ->method('getCurrentVersion')
-            ->willReturn('1.0.0');
-        $service
-            ->expects($this->any())
-            ->method('getVersionData')
-            ->willReturn(['version' => '2.1.1']);
-
-        // test 2
-        $this->assertEquals('2.1.1', $service->getAvailableVersion());
-    }
-
-    public function testIsGetAvailableVersionReturnNull()
-    {
-        $service = $this->createMockService(TreoUpgrade::class, ['getVersionData', 'getCurrentVersion']);
-        $service
-            ->expects($this->any())
-            ->method('getCurrentVersion')
-            ->willReturn('1.0.0');
-        $service
-            ->expects($this->any())
-            ->method('getVersionData')
-            ->willReturn([]);
+            ->method('readJsonData')
+            ->willReturn(['1.0.0', '1.0.1']);
 
         // test
-        $this->assertEquals(null, $service->getAvailableVersion());
+        $this->assertEquals(['1.0.0', '1.0.1'], $service->getVersions());
     }
 
     public function testIsCreateUpgradeJobMethodExists()

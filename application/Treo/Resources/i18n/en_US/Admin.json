@@ -4,7 +4,7 @@
     "Module Manager": "Modules Manager",
     "Modules": "Modules",
     "Git User": "Git User",
-    "upgradeTo": "Upgrade to"
+    "versionToUpgrade": "Version to upgrade"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",

@@ -43,6 +43,7 @@
     "minimum-stability": "stable",
     "extra": {
         "espoVersion": "5.3.6",
+        "treo-packages": "http://treo-packages.zinit1.com",
         "merge-plugin": {
             "include": [
                 "data/composer.json"

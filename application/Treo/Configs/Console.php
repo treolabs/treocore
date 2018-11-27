@@ -40,6 +40,7 @@ use Treo\Console;
 
 return [
     "list"                             => Console\ListCommand::class,
+    "upgrade <versionTo> --force"      => Console\Upgrade::class,
     "upgrade --force"                  => Console\Upgrade::class,
     "module delete <moduleId> --force" => Console\ModuleDelete::class,
     "clear cache"                      => Console\ClearCache::class,

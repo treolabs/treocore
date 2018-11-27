@@ -632,7 +632,7 @@ class Installer extends AbstractService
 
     protected function putPhpContents(string $path, array $data, bool $withObjects = false): bool
     {
-        return $this->getFileManager()->putPhpContents($path, $data, $withObjects);
+        return $this->getFileManager()->putPhpContents($path, $path, $withObjects);
     }
 
     /**
