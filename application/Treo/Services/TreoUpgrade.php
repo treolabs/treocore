@@ -48,73 +48,80 @@ use Treo\Core\Migration\Migration;
  */
 class TreoUpgrade extends AbstractService
 {
-
-    const TREO_PACKAGES_URL = 'http://treo-packages.zinit1.com/api/v1/Packages/';
-    const TREO_PACKAGES_PATH = 'data/upload/upgrades';
+    /**
+     * @var string
+     */
+    private $packagesPath = "data/upload/upgrades";
 
     /**
      * @var null|array
      */
-    protected $versionData = null;
+    private $versions = null;
 
     /**
-     * Get available version
+     * Get available versions
      *
-     * @return string|null
+     * @return array
      */
-    public function getAvailableVersion(): ?string
+    public function getVersions(): array
     {
-        // prepare result
-        $result = null;
+        if (is_null($this->versions)) {
+            // prepare path
+            $path = $this->getDomain() . "/api/v1/Packages/" . $this->getCurrentVersion();
+            if ($this->isDevelopMod()) {
+                $path .= '?dev=1';
+            }
 
-        if (!empty($data = $this->getVersionData($this->getCurrentVersion())) && !empty($data['version'])) {
-            $result = (string)$data['version'];
+            $this->versions = $this->readJsonData($path);
         }
 
-        return $result;
+        return $this->versions;
     }
 
     /**
      * Create upgrade job
      *
+     * @param string|null $to
+     *
      * @return bool
+     * @throws \Espo\Core\Exceptions\Error
      */
-    public function createUpgradeJob(): bool
+    public function createUpgradeJob(string $to = null): bool
     {
-        // prepare result
-        $result = false;
+        // prepare available versions
+        $versions = array_column($this->getVersions(), 'link', 'version');
 
-        // get current version
-        $currentVersion = $this->getConfig()->get('version');
+        $from = $this->getCurrentVersion();
 
-        if (!empty($data = $this->getVersionData($currentVersion))
-            && !empty($link = $data['link'])
-            && !empty($version = $data['version'])
-            && !empty($package = $this->downloadPackage())) {
-            // create job
-            $jobEntity = $this->getEntityManager()->getEntity('Job');
-            $jobEntity->set(
-                [
-                    'name'        => 'run-treo-update',
-                    'status'      => CronManager::PENDING,
-                    'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'serviceName' => 'TreoUpgrade',
-                    'method'      => 'runUpgradeJob',
-                    'data'        => [
-                        'versionFrom' => $currentVersion,
-                        'versionTo'   => $version,
-                        'fileName'    => $package,
-                        'createdById' => $this->getUser()->get('id')
-                    ]
-                ]
-            );
-            $this->getEntityManager()->saveEntity($jobEntity);
-
-            // prepare result
-            $result = true;
+        // prepare version to
+        if (is_null($to)) {
+            $to = end(array_keys($versions));
         }
 
-        return $result;
+        if (!isset($versions[$to]) || empty($package = $this->downloadPackage($versions[$to]))) {
+            return false;
+        }
+
+        // create job
+        $jobEntity = $this->getEntityManager()->getEntity('Job');
+        $jobEntity->set(
+            [
+                'name'        => 'run-treo-update',
+                'status'      => CronManager::PENDING,
+                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'serviceName' => 'TreoUpgrade',
+                'method'      => 'runUpgradeJob',
+                'data'        => [
+                    'versionFrom' => $from,
+                    'versionTo'   => $to,
+                    'fileName'    => $package,
+                    'createdById' => $this->getUser()->get('id')
+                ]
+            ]
+        );
+        $this->getEntityManager()->saveEntity($jobEntity);
+
+        return true;
     }
 
     /**
@@ -142,96 +149,49 @@ class TreoUpgrade extends AbstractService
     /**
      * Download package
      *
+     * @param string $link
+     *
      * @return null|string
      */
-    public function downloadPackage(): ?string
+    public function downloadPackage(string $link): ?string
     {
-        // prepare result
-        $result = null;
+        // parse link
+        $matches = explode("/", $link);
 
-        // get current version
-        $currentVersion = $this->getConfig()->get('version');
+        // prepare name
+        $name = str_replace(".zip", "", end($matches));
 
-        if (!empty($data = $this->getVersionData($currentVersion))
-            && !empty($link = $data['link'])
-            && !empty($version = $data['version'])) {
-            // clearing cache
-            if (file_exists(self::TREO_PACKAGES_PATH)) {
-                ModuleMover::deleteDir(self::TREO_PACKAGES_PATH);
-            }
-
-            // create upgrade dir
-            mkdir(self::TREO_PACKAGES_PATH, 0777, true);
-
-            // prepare name
-            $name = str_replace(".", "_", "{$currentVersion}_to_{$version}");
-
-            // prepare extract dir
-            $extractDir = self::TREO_PACKAGES_PATH . "/{$name}";
-
-            // prepare zip name
-            $zipName = self::TREO_PACKAGES_PATH . "/{$name}.zip";
-
-            // download
-            file_put_contents($zipName, fopen($link, 'r'));
-
-            // create extract dir
-            mkdir($extractDir, 0777, true);
-
-            $zip = new \ZipArchive();
-            $res = $zip->open($zipName);
-            if ($res === true) {
-                $zip->extractTo($extractDir);
-                $zip->close();
-
-                // delete archive
-                unlink($zipName);
-            }
-
-            // prepare result
-            $result = $name;
+        // clearing cache
+        if (file_exists($this->packagesPath)) {
+            ModuleMover::deleteDir($this->packagesPath);
         }
 
-        return $result;
-    }
+        // create upgrade dir
+        mkdir($this->packagesPath, 0777, true);
 
-    /**
-     * Get version data
-     *
-     * @param string $version
-     *
-     * @return array
-     */
-    protected function getVersionData(string $version): array
-    {
-        if (is_null($this->versionData)) {
-            // prepare result
-            $this->versionData = [];
+        // prepare extract dir
+        $extractDir = $this->packagesPath . "/{$name}";
 
-            // prepare path
-            $path = self::TREO_PACKAGES_URL . $version;
+        // prepare zip name
+        $zipName = $this->packagesPath . "/{$name}.zip";
 
-            if ($this->getConfig()->get('developMode')) {
-                $path .= '?dev=1';
-            }
+        // download
+        file_put_contents($zipName, fopen($link, 'r'));
 
-            try {
-                $json = file_get_contents($path);
-                if (is_string($json)) {
-                    $data = json_decode($json, true);
-                }
-            } catch (\Exception $e) {
-            }
+        // create extract dir
+        mkdir($extractDir, 0777, true);
 
-            if (!empty($data) && is_array($data)) {
-                $item = array_pop($data);
-                if (is_array($item)) {
-                    $this->versionData = $item;
-                }
-            }
+        $zip = new \ZipArchive();
+        $res = $zip->open($zipName);
+        if ($res === true) {
+            $zip->extractTo($extractDir);
+            $zip->close();
+
+            // delete archive
+            unlink($zipName);
         }
 
-        return $this->versionData;
+        return $name;
     }
 
     /**
@@ -240,5 +200,31 @@ class TreoUpgrade extends AbstractService
     protected function getCurrentVersion(): string
     {
         return $this->getConfig()->get('version');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDomain(): string
+    {
+        return $this->readJsonData('composer.json')['extra']['treo-packages'];
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    protected function readJsonData(string $path): array
+    {
+        return json_decode(file_get_contents($path), true);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDevelopMod(): bool
+    {
+        return !empty($this->getConfig()->get('developMode'));
     }
 }
