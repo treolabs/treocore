@@ -37,6 +37,15 @@ declare(strict_types=1);
 namespace Treo\Configs;
 
 return [
+    'database'               => [
+        'driver'   => 'pdo_mysql',
+        'host'     => 'localhost',
+        'port'     => '',
+        'charset'  => 'utf8mb4',
+        'dbname'   => '',
+        'user'     => '',
+        'password' => ''
+    ],
     'version'                => '',
     'useCache'               => false,
     'applicationName'        => 'TreoPim',

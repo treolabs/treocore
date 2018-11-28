@@ -46,11 +46,6 @@ App::isPhpVersionValid();
 // create  app
 $app = new App();
 
-if (!$app->isInstalled()) {
-    $app->runInstaller();
-    exit;
-}
-
 if (!empty($_GET['entryPoint'])) {
     $app->runEntryPoint($_GET['entryPoint']);
     exit;

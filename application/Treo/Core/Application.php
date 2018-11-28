@@ -66,6 +66,25 @@ class Application extends \Espo\Core\Application
     }
 
     /**
+     * @inheritdoc
+     */
+    public function isInstalled()
+    {
+        // prepare config path
+        $path = 'data/config.php';
+
+        if (!file_exists($path)) {
+            // get default data
+            $data = include 'application/Treo/Configs/defaultConfig.php';
+
+            // create config
+            $this->getContainer()->get('fileManager')->putPhpContents($path, $data, true);
+        }
+
+        return parent::isInstalled();
+    }
+
+    /**
      * Run console
      *
      * @param array $argv
@@ -86,8 +105,26 @@ class Application extends \Espo\Core\Application
     /**
      * @inheritdoc
      */
+    public function run($name = 'default')
+    {
+        // for installer
+        if (!$this->isInstalled()) {
+            $this->runInstallerApi();
+        }
+
+        parent::run($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function runClient()
     {
+        // for installer
+        if (!$this->isInstalled()) {
+            $this->runInstallerClient();
+        }
+
         $modules = $this->getContainer()->get('config')->get('modules');
         $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
 
@@ -101,39 +138,6 @@ class Application extends \Espo\Core\Application
             ]
         );
         exit;
-    }
-
-    /**
-     * Run client
-     */
-    public function runInstaller()
-    {
-        $result = ['status' => false, 'message' => ''];
-
-        // check permissions and generate config
-        try {
-            /** @var Installer $installer */
-            $installer = $this->getContainer()->get('serviceFactory')->create('Installer');
-            $result['status'] = $installer->checkPermissions();
-            $result['status'] = $installer->generateConfig() && $result['status'];
-        } catch (\Exception $e) {
-            $result['status'] = 'false';
-            $result['message'] = $e->getMessage();
-        }
-
-        $modules = $this->getContainer()->get('config')->get('modules');
-        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
-
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-installation.html',
-            [
-                'year'    => date('Y'),
-                'version' => $version,
-                'status'  => $result['status'],
-                'message' => $result['message']
-            ]
-        );
     }
 
     /**
@@ -190,5 +194,61 @@ class Application extends \Espo\Core\Application
         );
 
         return $routes->getAll();
+    }
+
+    /**
+     * Run API for installer
+     */
+    protected function runInstallerApi()
+    {
+        // prepare request
+        $request = $this->getSlim()->request();
+
+        // prepare action
+        $action = str_replace("/Installer/", "", $request->getPathInfo());
+
+        // call controller
+        $result = $this
+            ->getContainer()
+            ->get('controllerManager')
+            ->process('Installer', $action, [], $request->getBody(), $request);
+
+        header('Content-Type: application/json');
+        echo $result;
+        exit;
+    }
+
+    /**
+     * Run client for installer
+     */
+    protected function runInstallerClient()
+    {
+        $result = ['status' => false, 'message' => ''];
+
+        // check permissions and generate config
+        try {
+            /** @var Installer $installer */
+            $installer = $this->getContainer()->get('serviceFactory')->create('Installer');
+            $result['status'] = $installer->checkPermissions();
+            $result['status'] = $installer->generateConfig() && $result['status'];
+        } catch (\Exception $e) {
+            $result['status'] = 'false';
+            $result['message'] = $e->getMessage();
+        }
+
+        $modules = $this->getContainer()->get('config')->get('modules');
+        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
+
+        $this->getContainer()->get('clientManager')->display(
+            null,
+            'html/treo-installation.html',
+            [
+                'year'    => date('Y'),
+                'version' => $version,
+                'status'  => $result['status'],
+                'message' => $result['message']
+            ]
+        );
+        exit;
     }
 }

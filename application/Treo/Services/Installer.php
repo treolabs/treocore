@@ -42,6 +42,7 @@ use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Language;
 
 /**
  * Service Installer
@@ -182,7 +183,12 @@ class Installer extends AbstractService
      */
     public function getTranslations(): array
     {
-        $language = $this->getLanguage();
+        // create language
+        $language = new Language(
+            "en_US",
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata')
+        );
 
         $result = $language->get('Installer');
 
@@ -224,12 +230,12 @@ class Installer extends AbstractService
     {
         $defaultConfig = $this->getConfig()->getDefaults();
         $defaultDBSettings = [
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'port' => '',
-            'charset' => 'utf8mb4',
-            'dbname' => '',
-            'user' => '',
+            'driver'   => 'pdo_mysql',
+            'host'     => 'localhost',
+            'port'     => '',
+            'charset'  => 'utf8mb4',
+            'dbname'   => '',
+            'user'     => '',
             'password' => '',
         ];
 
@@ -645,16 +651,6 @@ class Installer extends AbstractService
     protected function fileExists(string $filename): bool
     {
         return file_exists($filename);
-    }
-
-    /**
-     * Get language
-     *
-     * @return mixed|null
-     */
-    protected function getLanguage()
-    {
-        return $this->getContainer()->get('language');
     }
 
     /**

@@ -106,7 +106,9 @@ class Cron extends AbstractConsole
      */
     protected function updateCronTime(): void
     {
-        $this->getConfig()->set('cronTime', time());
-        $this->getConfig()->save();
+        if (file_exists('data/config.php')) {
+            $this->getConfig()->set('cronTime', time());
+            $this->getConfig()->save();
+        }
     }
 }
