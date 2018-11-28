@@ -184,11 +184,7 @@ class Installer extends AbstractService
     public function getTranslations(): array
     {
         // create language
-        $language = new Language(
-            "en_US",
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata')
-        );
+        $language = $this->getLanguage();
 
         $result = $language->get('Installer');
 
@@ -742,5 +738,13 @@ class Installer extends AbstractService
     protected function generateKey()
     {
         return $this->getContainer()->get('crypt')->generateKey();
+    }
+
+    /**
+     * @return Language
+     */
+    protected function getLanguage(): Language
+    {
+        return new Language("en_US", $this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'));
     }
 }

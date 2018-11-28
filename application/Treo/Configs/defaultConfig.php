@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Configs;
 
 return [
-    'passwordSalt'           => md5(time()),
+    'passwordSalt'           => 'some-salt',
     'database'               => [
         'driver'   => 'pdo_mysql',
         'host'     => 'localhost',
