@@ -207,7 +207,7 @@ class TreoUpgrade extends AbstractService
      */
     protected function getDomain(): string
     {
-        return $this->readJsonData('composer.json')['extra']['treo-packages'];
+        return $this->readJsonData('composer.json')['extra']['treo-source'];
     }
 
     /**
