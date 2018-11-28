@@ -78,7 +78,7 @@ class Application extends \Espo\Core\Application
             $data = include 'application/Treo/Configs/defaultConfig.php';
 
             // prepare salt
-            $data['passwordSalt'] = md5(md5(time()) . time());
+            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
 
             // create config
             $this->getContainer()->get('fileManager')->putPhpContents($path, $data, true);
