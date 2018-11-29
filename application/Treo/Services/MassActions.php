@@ -57,7 +57,7 @@ class MassActions extends AbstractService
         // attributes
         $attributes = $data->attributes;
 
-        if (count($ids) > $this->getConfig()->get('webMassUpdateMax', 200)) {
+        if (count($ids) > $this->getWebMassUpdateMax()) {
             // create jobs
             $this->createMassUpdateJobs($entityType, $attributes, $ids);
 
@@ -82,7 +82,7 @@ class MassActions extends AbstractService
         // get ids
         $ids = $this->getMassActionIds($entityType, $data);
 
-        if (count($ids) > $this->getConfig()->get('webMassUpdateMax', 200)) {
+        if (count($ids) > $this->getWebMassUpdateMax()) {
             // create jobs
             $this->createMassDeleteJobs($entityType, $ids);
 
@@ -202,7 +202,7 @@ class MassActions extends AbstractService
      */
     protected function createMassUpdateJobs(string $entityType, \stdClass $attributes, array $ids): void
     {
-        if (count($ids) > $this->getConfig()->get('cronMassUpdateMax', 3000)) {
+        if (count($ids) > $this->getCronMassUpdateMax()) {
             foreach ($this->getParts($ids) as $part => $rows) {
                 // prepare data
                 $name = $entityType . ". " . sprintf($this->translate('massUpdatePartial', 'massActions'), $part);
@@ -235,7 +235,7 @@ class MassActions extends AbstractService
      */
     protected function createMassDeleteJobs(string $entityType, array $ids): void
     {
-        if (count($ids) > $this->getConfig()->get('cronMassUpdateMax', 3000)) {
+        if (count($ids) > $this->getCronMassUpdateMax()) {
             foreach ($this->getParts($ids) as $part => $rows) {
                 // prepare data
                 $name = $entityType . ". " . sprintf($this->translate('removePartial', 'massActions'), $part);
@@ -271,10 +271,9 @@ class MassActions extends AbstractService
         $result = [];
         $part = 1;
         $tmpIds = [];
-        $cronMassUpdateMax = $this->getConfig()->get('cronMassUpdateMax', 3000);
 
         foreach ($ids as $id) {
-            if (count($tmpIds) == $cronMassUpdateMax) {
+            if (count($tmpIds) == $this->getCronMassUpdateMax()) {
                 $result[$part] = $tmpIds;
 
                 // clearing tmp ids
@@ -382,5 +381,21 @@ class MassActions extends AbstractService
             ->getEntityManager()
             ->getEntity($entityType)
             ->getRelationParam($link, 'entity');
+    }
+
+    /**
+     * @return int
+     */
+    private function getWebMassUpdateMax(): int
+    {
+        return (int)$this->getConfig()->get('webMassUpdateMax', 200);
+    }
+
+    /**
+     * @return int
+     */
+    private function getCronMassUpdateMax(): int
+    {
+        return (int)$this->getConfig()->get('cronMassUpdateMax', 2000);
     }
 }
