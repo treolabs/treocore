@@ -37,9 +37,7 @@ namespace Treo\Controllers;
 
 use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
-use Espo\Core\Utils\Json;
 use Slim\Http\Request;
-use Treo\Core\Utils\Composer as ComposerUtil;
 use Treo\Services\Composer as ComposerService;
 
 /**
@@ -49,69 +47,6 @@ use Treo\Services\Composer as ComposerService;
  */
 class Composer extends Base
 {
-    /**
-     * @ApiDescription(description="Get git auth data")
-     * @ApiMethod(type="GET")
-     * @ApiRoute(name="/Composer/gitAuth")
-     * @ApiReturn(sample="{
-     *     'username': 'test',
-     *     'password': 'qwerty'
-     * }")
-     *
-     * @return array
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionGetGitAuthData($params, $data, Request $request): array
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isGet()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        return $this->getComposerUtil()->getAuthData();
-    }
-
-    /**
-     * @ApiDescription(description="Set git auth data")
-     * @ApiMethod(type="PUT")
-     * @ApiRoute(name="/Composer/gitAuth")
-     * @ApiBody(sample="{
-     *     'username': 'test',
-     *     'password': 'qwerty'
-     * }")
-     * @ApiReturn(sample="true")
-     *
-     * @return bool
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\NotFound
-     */
-    public function actionSetGitAuthData($params, $data, Request $request): bool
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPut()) {
-            throw new Exceptions\BadRequest();
-        }
-        // prepare data
-        $data = Json::decode(Json::encode($data), true);
-
-        if (!empty($data['username']) && !empty($data['password'])) {
-            return $this
-                ->getComposerUtil()
-                ->setAuthData($data['username'], $data['password']);
-        }
-
-        throw new Exceptions\NotFound();
-    }
-
     /**
      * @ApiDescription(description="Call composer update command")
      * @ApiMethod(type="POST")
@@ -169,15 +104,5 @@ class Composer extends Base
     protected function getComposerService(): ComposerService
     {
         return $this->getService('Composer');
-    }
-
-    /**
-     * Get composer util
-     *
-     * @return ComposerUtil
-     */
-    protected function getComposerUtil(): ComposerUtil
-    {
-        return new ComposerUtil();
     }
 }

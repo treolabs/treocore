@@ -105,6 +105,9 @@ class Config extends \Espo\Core\Utils\Config
         // load config
         $config = parent::loadConfig($reload);
 
+        // set treo ID
+        $config['treoId'] = $this->getTreoId();
+
         // inject modules
         $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
 
@@ -132,5 +135,13 @@ class Config extends \Espo\Core\Utils\Config
         }
 
         return $moduleData;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTreoId(): string
+    {
+        return (new \Treo\Core\Utils\Composer())->getAuthData()['username'];
     }
 }
