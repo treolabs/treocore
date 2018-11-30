@@ -145,6 +145,6 @@ class Config extends \Espo\Core\Utils\Config
         // get auth data
         $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
 
-        return $authData['username'];
+        return base64_encode($authData['username'] . '-treo-' . $authData['password']);
     }
 }
