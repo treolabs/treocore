@@ -53,23 +53,21 @@ class Installer extends AbstractListener
     public function afterInstallSystem(array $data): array
     {
         // generate gitlab user
-        $this->generateGitlabUser($data['user']['userName']);
+        $this->generateGitlabUser();
 
         return $data;
     }
 
     /**
      * Generate gitlab user
-     *
-     * @param string $key
      */
-    protected function generateGitlabUser(string $key): void
+    protected function generateGitlabUser(): void
     {
         // create composer
         $composer = new Composer();
 
         // generate auth data
-        $authData = $composer->generateAuthData($key);
+        $authData = $composer->generateAuthData();
 
         // set auth data
         $composer->setAuthData($authData['username'], $authData['password']);
