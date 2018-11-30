@@ -86,7 +86,7 @@ We are already working on the following connectors for export channels:
 ### Alternative installation
 1. Download or clone treopim:
     ````
-    git clone https://github.com/ZinitSolutionsGmbH/treopim.git
+    git clone https://github.com/treolabs/treopim.git
     ````
 2. Go to treopim project:
     ````
@@ -105,6 +105,6 @@ TreoPIM is published under the GNU GPLv3 [license](LICENSE.txt).
 
 ### Support
 
-- TreoPIM is a developed and supported by [Zinit Solutions GmbH](https://zinitsolutions.de/).
-- Be a part of our [community](http://zinitsolutions.com).
+- TreoPIM is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
+- Be a part of our [community](https://treolabs.com/).
 - To Contact Us please visit [TreoPIM Website](http://treopim.de).
