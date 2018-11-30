@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use \Espo\ORM\Entity;
+use Espo\ORM\Entity;
 
 /**
  * Email service
