@@ -195,7 +195,7 @@ class Layout extends \Espo\Core\Utils\Layout
             }
         }
 
-        return Json::encode($data);
+        return Json::encode(array_values($data));
     }
 
     /**
