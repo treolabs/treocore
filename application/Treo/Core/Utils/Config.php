@@ -106,7 +106,9 @@ class Config extends \Espo\Core\Utils\Config
         $config = parent::loadConfig($reload);
 
         // set treo ID
-        $config['treoId'] = $this->getTreoId();
+        if (!isset($config['treoId'])) {
+            $config['treoId'] = $this->getTreoId();
+        }
 
         // inject modules
         $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
