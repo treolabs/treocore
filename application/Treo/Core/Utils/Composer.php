@@ -117,14 +117,12 @@ class Composer
     }
 
     /**
-     * @param string $key
-     *
      * @return array
      */
-    public function generateAuthData(string $key): array
+    public function generateAuthData(): array
     {
         return [
-            'username' => "treo-{$key}-" . time(),
+            'username' => "treo-" . time(),
             'password' => Util::generateId()
         ];
     }

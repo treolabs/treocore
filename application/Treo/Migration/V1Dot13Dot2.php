@@ -87,21 +87,8 @@ class V1Dot13Dot2 extends AbstractMigration
         $composer = new Composer();
 
         if (empty($composer->getAuthData()['username'])) {
-            // prepare key
-            $key = Util::generateId();
-
-            $users = $this
-                ->getEntityManager()
-                ->getRepository('User')
-                ->where(['isAdmin' => 1])
-                ->find();
-
-            if (!empty($users)) {
-                $key = $users->toArray()[0]['userName'];
-            }
-
             // generate auth data
-            $authData = $composer->generateAuthData($key);
+            $authData = $composer->generateAuthData();
 
             // set auth data
             $composer->setAuthData($authData['username'], $authData['password']);
