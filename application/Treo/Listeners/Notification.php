@@ -74,6 +74,6 @@ class Notification extends AbstractListener
         $time = time();
         $cacheTimestamp = $this->getConfig()->get('cacheTimestamp', $time);
 
-        return ($time - $cacheTimestamp) > 120;
+        return ($time - $cacheTimestamp) > 300;
     }
 }
