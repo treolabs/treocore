@@ -63,9 +63,6 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // set last cron calling time
-        $this->updateCronTime();
-
         // auth
         $this->auth();
 
@@ -99,16 +96,5 @@ class Cron extends AbstractConsole
     protected function runQueueManager(): void
     {
         $this->getContainer()->get('queueManager')->run();
-    }
-
-    /**
-     * Update cronTime
-     */
-    protected function updateCronTime(): void
-    {
-        if (file_exists('data/config.php')) {
-            $this->getConfig()->set('cronTime', time());
-            $this->getConfig()->save();
-        }
     }
 }
