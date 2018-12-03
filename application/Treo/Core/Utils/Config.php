@@ -51,22 +51,6 @@ class Config extends \Espo\Core\Utils\Config
     protected $modules = null;
 
     /**
-     * @inheritdoc
-     */
-    public function save()
-    {
-        // get config data
-        $data = include($this->configPath);
-
-        // only array can be saved
-        if (!is_array($data)) {
-            return false;
-        }
-
-        return parent::save();
-    }
-
-    /**
      * Get modules
      *
      * @param bool $force
