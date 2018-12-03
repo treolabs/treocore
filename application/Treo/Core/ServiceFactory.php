@@ -96,11 +96,18 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
     {
         if (class_exists($className)) {
             // create service
-            $service = (new $className())->setContainer($this->getContainer());
+            $service = new $className();
 
-            // for old services
-            if (method_exists($service, 'setInjections')) {
-                $service->setInjections();
+            // for espo services
+            if ($service instanceof \Espo\Core\Interfaces\Injectable) {
+                foreach ($service->getDependencyList() as $name) {
+                    $service->inject($name, $this->getContainer()->get($name));
+                }
+            }
+
+            // for treo services
+            if ($service instanceof \Treo\Services\AbstractService) {
+                $service->setContainer($this->getContainer());
             }
 
             return $service;
