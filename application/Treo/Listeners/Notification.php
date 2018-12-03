@@ -72,7 +72,7 @@ class Notification extends AbstractListener
     protected function cronIsNotRunning(): bool
     {
         // prepare result
-        $result = true;
+        $result = false;
 
         // get cache data
         $data = $this
