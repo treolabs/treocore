@@ -602,7 +602,7 @@ class ProgressManager
     protected function cronIsNotRunning(): bool
     {
         // prepare result
-        $result = true;
+        $result = false;
 
         // get cache data
         $data = $this
