@@ -83,6 +83,14 @@ abstract class Base implements Injectable
     }
 
     /**
+     * @param $name
+     * @param $object
+     */
+    public function inject($name, $object)
+    {
+    }
+
+    /**
      * Set container
      *
      * @param Container $container
