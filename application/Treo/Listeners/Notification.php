@@ -71,9 +71,19 @@ class Notification extends AbstractListener
      */
     protected function cronIsNotRunning(): bool
     {
-        $time = time();
-        $cacheTimestamp = $this->getConfig()->get('cacheTimestamp', $time);
+        // prepare result
+        $result = true;
 
-        return ($time - $cacheTimestamp) > 300;
+        // get cache data
+        $data = $this
+            ->getContainer()
+            ->get('fileManager')
+            ->getPhpContents('data/cache/application/cronLastRunTime.php');
+
+        if (is_array($data) && !empty($data['time'])) {
+            $result = (time() - $data['time']) > 300;
+        }
+
+        return $result;
     }
 }
