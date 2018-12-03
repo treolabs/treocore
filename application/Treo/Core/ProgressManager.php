@@ -213,10 +213,6 @@ class ProgressManager
             // set cron user as system user
             $this->setJobUser('system');
         }
-
-        // set last cron calling time
-        $this->getConfig()->set('cronTime', time());
-        $this->getConfig()->save();
     }
 
     /**
@@ -605,9 +601,19 @@ class ProgressManager
      */
     protected function cronIsNotRunning(): bool
     {
-        $time = time();
-        $cronTime = $this->getConfig()->get('cronTime', $time);
+        // prepare result
+        $result = true;
 
-        return ($time - $cronTime) > 120;
+        // get cache data
+        $data = $this
+            ->getContainer()
+            ->get('fileManager')
+            ->getPhpContents('data/cache/application/cronLastRunTime.php');
+
+        if (is_array($data) && !empty($data['time'])) {
+            $result = (time() - $data['time']) > 300;
+        }
+
+        return $result;
     }
 }
