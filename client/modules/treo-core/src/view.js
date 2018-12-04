@@ -37,9 +37,11 @@ Espo.define('treo-core:view', 'class-replace!treo-core:view',
         pipelines: {},
 
         initialize(options) {
-            this.loadPipelines(options.helper.metadata, () => {
-                Dep.prototype.initialize.call(this, options);
-            });
+            if (options && options.helper) {
+                this.loadPipelines(options.helper.metadata, () => {
+                    Dep.prototype.initialize.call(this, options);
+                });
+            }
         },
 
         loadPipelines(metadata, callback) {
