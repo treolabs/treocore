@@ -38,7 +38,6 @@ namespace Treo\Core\Portal;
 
 use Espo\Entities\Portal;
 use Espo\Core\Utils\Language;
-use Espo\Core\Portal\Utils\Language as PortalLanguage;
 use Espo\Core\Portal\Utils\Layout;
 use Espo\Core\Portal\Utils\ThemeManager;
 
@@ -138,22 +137,6 @@ class Container extends \Treo\Core\Container
             $this->get('metadata'),
             $this->get('user')
         );
-    }
-
-    /**
-     * @return PortalLanguage
-     */
-    protected function loadLanguage()
-    {
-        $language = new PortalLanguage(
-            Language::detectLanguage($this->get('config'), $this->get('preferences')),
-            $this->get('fileManager'),
-            $this->get('metadata'),
-            $this->get('useCache')
-        );
-        $language->setPortal($this->get('portal'));
-
-        return $language;
     }
 
     /**
