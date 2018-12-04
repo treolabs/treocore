@@ -43,54 +43,15 @@ namespace Treo\Core;
 class HookManager extends \Espo\Core\HookManager
 {
     /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $data;
-
-    /**
      * @inheritdoc
      */
-    public function createHookByClassName($className)
+    protected function getHookData($hookDirs, array $hookData = [])
     {
-        if (class_exists($className)) {
-            return (new $className())->setContainer($this->container);
+        // hack for loading treo hooks
+        if ($this->paths['corePath'] == $hookDirs) {
+            $hookData = parent::getHookData('application/Treo/Hooks', $hookData);
         }
 
-        $GLOBALS['log']->error("Hook class '{$className}' does not exist.");
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function loadHooks()
-    {
-        if ($this->getConfig()->get('useCache') && file_exists($this->cacheFile)) {
-            $this->data = $this->getFileManager()->getPhpContents($this->cacheFile);
-            return;
-        }
-
-        $metadata = $this->container->get('metadata');
-
-        $data = $this->getHookData($this->paths['customPath']);
-
-        foreach ($metadata->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            $data = $this->getHookData($modulePath, $data);
-        }
-
-        $data = $this->getHookData('application/Treo/Hooks', $data);
-
-        $data = $this->getHookData($this->paths['corePath'], $data);
-
-        $this->data = $this->sortHooks($data);
-
-        if ($this->getConfig()->get('useCache')) {
-            $this->getFileManager()->putPhpContents($this->cacheFile, $this->data);
-        }
+        return parent::getHookData($hookDirs, $hookData);
     }
 }
