@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Database\Schema\Converter;
 use Treo\Core\Utils\Database\Schema\Schema as Instance;
 
 /**
@@ -52,18 +53,22 @@ class Schema extends Base
      */
     public function load()
     {
+        // prepare data
+        $config = $this->getContainer()->get('config');
+        $metadata = $this->getContainer()->get('metadata');
+        $fileManager = $this->getContainer()->get('fileManager');
+        $entityManager = $this->getContainer()->get('entityManager');
+        $classParser = $this->getContainer()->get('classParser');
+        $ormMetadata = $this->getContainer()->get('ormMetadata');
+
         // create
-        $schema = new Instance(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('entityManager'),
-            $this->getContainer()->get('classParser'),
-            $this->getContainer()->get('ormMetadata')
-        );
+        $schema = new Instance($config, $metadata, $fileManager, $entityManager, $classParser, $ormMetadata);
 
         // set container
         $schema->setContainer($this->getContainer());
+
+        // set converter
+        $schema->schemaConverter = new Converter($metadata, $fileManager, $this, $config);
 
         return $schema;
     }
