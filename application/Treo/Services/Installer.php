@@ -7,7 +7,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Json;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Language;
 
 /**
  * Service Installer
@@ -182,6 +183,7 @@ class Installer extends AbstractService
      */
     public function getTranslations(): array
     {
+        // create language
         $language = $this->getLanguage();
 
         $result = $language->get('Installer');
@@ -224,12 +226,12 @@ class Installer extends AbstractService
     {
         $defaultConfig = $this->getConfig()->getDefaults();
         $defaultDBSettings = [
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'port' => '',
-            'charset' => 'utf8mb4',
-            'dbname' => '',
-            'user' => '',
+            'driver'   => 'pdo_mysql',
+            'host'     => 'localhost',
+            'port'     => '',
+            'charset'  => 'utf8mb4',
+            'dbname'   => '',
+            'user'     => '',
             'password' => '',
         ];
 
@@ -648,16 +650,6 @@ class Installer extends AbstractService
     }
 
     /**
-     * Get language
-     *
-     * @return mixed|null
-     */
-    protected function getLanguage()
-    {
-        return $this->getContainer()->get('language');
-    }
-
-    /**
      * Get file contents into the string
      *
      * @param string $path
@@ -746,5 +738,13 @@ class Installer extends AbstractService
     protected function generateKey()
     {
         return $this->getContainer()->get('crypt')->generateKey();
+    }
+
+    /**
+     * @return Language
+     */
+    protected function getLanguage(): Language
+    {
+        return new Language("en_US", $this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'));
     }
 }

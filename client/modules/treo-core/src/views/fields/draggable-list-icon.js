@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -7,7 +6,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -32,11 +31,16 @@
  * and "TreoPIM" word.
  */
 
-namespace Espo\Core\Templates\Services;
+Espo.define('treo-core:views/fields/draggable-list-icon', 'view',
+    Dep => Dep.extend({
 
+        template: 'treo-core:fields/draggable-list-icon/base',
 
-class Base extends \Treo\Core\Templates\Services\Base //@todo treoinject
-{
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
 
-}
+            this.$el.css({verticalAlign: 'middle'});
+        }
 
+    })
+);

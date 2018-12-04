@@ -2,9 +2,10 @@
     {
         "label": "System",
         "rows": [
+            [{"name": "treoId"}, false],
             [{"name": "exportDisabled"}, {"name": "siteUrl"}],
             [{"name": "followCreatedEntities"}, {"name": "globalSearchEntityList"}],
-            [{"name": "aclStrictMode"}, {"name": "b2cMode"}],
+            [{"name": "aclStrictMode"}, false],
             [{"name": "textFilterUseContainsForVarchar"}, {"name": "aclAllowDeleteCreated"}]
         ]
     },

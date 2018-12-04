@@ -7,7 +7,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -36,14 +36,12 @@ declare(strict_types=1);
 
 namespace Treo\Jobs;
 
-use Espo\Core\Jobs\Base;
-
 /**
  * CoreUpgrade job
  *
  * @author r.ratsun r.ratsun@zinitsolutions.com
  */
-class CoreUpgrade extends Base
+class CoreUpgrade extends \Espo\Core\Jobs\Base
 {
     /**
      * Run cron job
@@ -52,6 +50,84 @@ class CoreUpgrade extends Base
      */
     public function run(): bool
     {
-        return $this->getServiceFactory()->create('CoreUpgrade')->checkingNewVersion();
+        // max version
+        $version = array_pop($this->getVersions());
+
+        if ($version != $this->getConfig()->get('notifiedVersion')) {
+            // create notification(s)
+            $this->notifyAboutNewVersion($version);
+
+            // update config
+            $this->getConfig()->set('notifiedVersion', $version);
+            $this->getConfig()->save();
+        }
+
+        return true;
+    }
+
+    /**
+     * Notify about new version
+     *
+     * @param string $version
+     */
+    protected function notifyAboutNewVersion(string $version): void
+    {
+        if (!empty($users = $this->getAdminUsers())) {
+            // is notification disabled ?
+            $isDisabled = $this->getConfig()->get('notificationNewSystemVersionDisabled');
+
+            foreach ($users as $user) {
+                // prepare user data
+                $data = json_decode($user['data'], true);
+
+                // prepare config key
+                $key = 'receiveNewSystemVersionNotifications';
+
+                if ((isset($data[$key]) && $data[$key]) || (!isset($data[$key]) && !$isDisabled)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type'    => 'Message',
+                            'userId'  => $user['id'],
+                            'message' => sprintf($this->notification('newCoreVersion'), $version)
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdminUsers(): array
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->getAdminUsers();
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function notification(string $key): string
+    {
+        return $this
+            ->getContainer()
+            ->get('language')
+            ->translate($key, 'treoNotifications', 'TreoNotification');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getVersions(): array
+    {
+        return array_column($this->getServiceFactory()->create('TreoUpgrade')->getVersions(), 'version');
     }
 }

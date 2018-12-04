@@ -7,7 +7,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Database\Schema\Converter;
 use Treo\Core\Utils\Database\Schema\Schema as Instance;
 
 /**
@@ -52,18 +53,22 @@ class Schema extends Base
      */
     public function load()
     {
+        // prepare data
+        $config = $this->getContainer()->get('config');
+        $metadata = $this->getContainer()->get('metadata');
+        $fileManager = $this->getContainer()->get('fileManager');
+        $entityManager = $this->getContainer()->get('entityManager');
+        $classParser = $this->getContainer()->get('classParser');
+        $ormMetadata = $this->getContainer()->get('ormMetadata');
+
         // create
-        $schema = new Instance(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('entityManager'),
-            $this->getContainer()->get('classParser'),
-            $this->getContainer()->get('ormMetadata')
-        );
+        $schema = new Instance($config, $metadata, $fileManager, $entityManager, $classParser, $ormMetadata);
 
         // set container
         $schema->setContainer($this->getContainer());
+
+        // set converter
+        $schema->schemaConverter = new Converter($metadata, $fileManager, $schema, $config);
 
         return $schema;
     }

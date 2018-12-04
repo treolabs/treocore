@@ -6,7 +6,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -225,6 +225,73 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             }
 
             this.changeDropDownPosition();
+
+            if (this.options.dragableListRows) {
+                this.initDraggableList();
+            }
+        },
+
+        initDraggableList() {
+            if (this.getAcl().check(this.scope, 'edit')) {
+                this.setCellWidth();
+
+                this.$el.find(this.listContainerEl).sortable({
+                    delay: 150,
+                    update: function () {
+                        this.saveListItemOrder();
+                    }.bind(this)
+                });
+            }
+        },
+
+        setCellWidth() {
+            let el = this.$el.find(this.listContainerEl);
+
+            el.find('td').each(function (i) {
+                $(this).css('width', $(this).outerWidth());
+            });
+        },
+
+        saveListItemOrder() {
+            let saveUrl = this.getListRowsOrderSaveUrl();
+            if (saveUrl) {
+                this.ajaxPutRequest(saveUrl, {ids: this.getIdsFromDom()})
+                    .then(response => {
+                        let statusMsg = 'Error occurred';
+                        let type = 'error';
+                        if (response) {
+                            statusMsg = 'Saved';
+                            type = 'success';
+                        }
+                        this.collection.trigger('listSorted');
+                        this.notify(statusMsg, type, 3000);
+                    });
+            }
+        },
+
+        getListRowsOrderSaveUrl() {
+            return this.options.listRowsOrderSaveUrl;
+        },
+
+        getIdsFromDom() {
+            return $.map(this.$el.find(`${this.listContainerEl} tr`), function (item) {
+                return $(item).data('id');
+            });
+        },
+
+        _convertLayout: function (listLayout, model) {
+            if (this.options.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
+                listLayout.unshift({
+                    widthPx: '40',
+                    align: 'center',
+                    notSortable: true,
+                    customLabel: '',
+                    name: 'draggableIcon',
+                    view: 'treo-core:views/fields/draggable-list-icon'
+                });
+            }
+
+            return Dep.prototype._convertLayout.call(this, listLayout, model)
         },
 
         fixedTableHead() {

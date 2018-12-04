@@ -1,13 +1,13 @@
 {
     "name": "treo/treopim",
-    "version": "2.0.0",
+    "version": "2.5.3",
     "description": "TreoPIM. Open source PIM application.",
     "homepage": "https://treopim.de/",
     "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "Roman Ratsun",
-            "email": "r.ratsun@zinitsolutions.com"
+            "email": "r.ratsun@treolabs.com"
         }
     ],
     "require": {
@@ -43,7 +43,7 @@
     "minimum-stability": "stable",
     "extra": {
         "espoVersion": "5.3.6",
-        "treo-packages": "http://treo-packages.zinit1.com",
+        "treo-source": "https://source.treopim.com",
         "merge-plugin": {
             "include": [
                 "data/composer.json"
@@ -54,10 +54,7 @@
         "psr-0": {
             "": "application/",
             "Espo\\Custom": "custom/"
-        },
-        "classmap": [
-            "replacements/"
-        ]
+        }
     },
     "scripts": {
         "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",

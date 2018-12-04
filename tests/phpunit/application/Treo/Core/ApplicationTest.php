@@ -61,14 +61,6 @@ class ApplicationTest extends TestCase
         $this->assertTrue(method_exists($service, 'runClient'));
     }
 
-    public function testIsRunInstallerMethodExists()
-    {
-        $service = $this->createMockService(Application::class);
-
-        // test 1
-        $this->assertTrue(method_exists($service, 'runInstaller'));
-    }
-
     public function testIsRunClearCacheMethodExists()
     {
         $service = $this->createMockService(Application::class);

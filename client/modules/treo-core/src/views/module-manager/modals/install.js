@@ -6,7 +6,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -55,14 +55,14 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         setupHeader() {
-            this.header = this.translate('installModule', 'labels', 'ModuleManager');
+            this.header = this.translate('installModule', 'labels', 'Store');
         },
 
         setupButtonList() {
             this.buttonList = [
                 {
                     name: 'save',
-                    label: this.translate('installModule', 'labels', 'ModuleManager'),
+                    label: this.translate('installModule', 'labels', 'Store'),
                     style: 'primary',
                 },
                 {

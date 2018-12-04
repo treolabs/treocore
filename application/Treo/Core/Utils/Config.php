@@ -7,7 +7,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -105,6 +105,11 @@ class Config extends \Espo\Core\Utils\Config
         // load config
         $config = parent::loadConfig($reload);
 
+        // set treo ID
+        if (!isset($config['treoId'])) {
+            $config['treoId'] = $this->getTreoId();
+        }
+
         // inject modules
         $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
 
@@ -132,5 +137,16 @@ class Config extends \Espo\Core\Utils\Config
         }
 
         return $moduleData;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTreoId(): string
+    {
+        // get auth data
+        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+
+        return base64_encode($authData['username'] . '-treo-' . $authData['password']);
     }
 }

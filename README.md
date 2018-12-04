@@ -38,7 +38,7 @@ TreoPIM comes with a lot of functions directly from the box.
 | Product Management     | Change history, Notifications and Comments |
 | Image Management         | and much more.. |
 
-Want to know more about TreoPIM functions? Please [visit our website](http://treopim.de)!
+Want to know more about TreoPIM functions? Please [visit our website](http://treopim.com)!
 
 ##Technology
 
@@ -46,7 +46,7 @@ TreoPIM is based on EspoCRM and uses PHP7 and backbone.js.
 
 ![echnology_schem](docs/_assets/technologie_scheme_eng.png)
 
-Want to know more about TreoPIM Technology please [visit our website](http://treopim.de)!
+Want to know more about TreoPIM Technology please [visit our website](http://treopim.com)!
 
 ## Integrations
 
@@ -86,7 +86,7 @@ We are already working on the following connectors for export channels:
 ### Alternative installation
 1. Download or clone treopim:
     ````
-    git clone https://github.com/ZinitSolutionsGmbH/treopim.git
+    git clone https://github.com/treolabs/treopim.git
     ````
 2. Go to treopim project:
     ````
@@ -105,6 +105,6 @@ TreoPIM is published under the GNU GPLv3 [license](LICENSE.txt).
 
 ### Support
 
-- TreoPIM is a developed and supported by [Zinit Solutions GmbH](https://zinitsolutions.de/).
-- Be a part of our [community](http://zinitsolutions.com).
-- To Contact Us please visit [TreoPIM Website](http://treopim.de).
+- TreoPIM is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
+- Be a part of our [community](https://treolabs.com/).
+- To Contact Us please visit [TreoPIM Website](http://treopim.com).

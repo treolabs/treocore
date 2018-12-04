@@ -7,7 +7,7 @@
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 Zinit Solutions GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -71,9 +71,19 @@ class Notification extends AbstractListener
      */
     protected function cronIsNotRunning(): bool
     {
-        $time = time();
-        $cronTime = $this->getConfig()->get('cronTime', $time);
+        // prepare result
+        $result = false;
 
-        return ($time - $cronTime) > 120;
+        // get cache data
+        $data = $this
+            ->getContainer()
+            ->get('fileManager')
+            ->getPhpContents('data/cache/application/cronLastRunTime.php');
+
+        if (is_array($data) && !empty($data['time'])) {
+            $result = (time() - $data['time']) > 300;
+        }
+
+        return $result;
     }
 }

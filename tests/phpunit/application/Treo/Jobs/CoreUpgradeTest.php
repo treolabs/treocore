@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,14 +32,22 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/composer', 'controller',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        defaultAction: "auth",
+namespace Treo\Jobs;
 
-        auth() {
-            this.main('treo-core:views/composer/auth');
-        },
+/**
+ * Class CoreUpgradeTest
+ *
+ * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ */
+class CoreUpgradeTest extends \Treo\PHPUnit\Framework\TestCase
+{
+    public function testIsRunConsoleMethodExists()
+    {
+        $mock = $this->createPartialMock(CoreUpgrade::class, []);
 
-    })
-);
+        // test 1
+        $this->assertTrue(method_exists($mock, 'run'));
+    }
+}

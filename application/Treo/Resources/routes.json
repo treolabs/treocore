@@ -96,28 +96,6 @@
     }
   },
   {
-    "route": "/Installer/:action",
-    "method": "post",
-    "params": {
-      "controller": "Installer",
-      "action": ":action"
-    },
-    "conditions": {
-      "auth": false
-    }
-  },
-  {
-    "route": "/Installer/:action",
-    "method": "get",
-    "params": {
-      "controller": "Installer",
-      "action": ":action"
-    },
-    "conditions": {
-      "auth": false
-    }
-  },
-  {
     "route": "/:controller/action/massUpdate",
     "method": "put",
     "params": {
