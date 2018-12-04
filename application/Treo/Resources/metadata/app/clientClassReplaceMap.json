@@ -2,6 +2,9 @@
   "app": [
     "treo-core"
   ],
+  "view": [
+    "treo-core"
+  ],
   "search-manager": [
     "treo-core"
   ],
