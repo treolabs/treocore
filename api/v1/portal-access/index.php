@@ -34,6 +34,9 @@
 
 require_once('../../../bootstrap.php');
 
+// define gloabal variables
+define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
 if (!empty($_GET['portalId'])) {
     $portalId = $_GET['portalId'];
 } else {
