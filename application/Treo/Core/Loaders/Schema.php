@@ -68,7 +68,7 @@ class Schema extends Base
         $schema->setContainer($this->getContainer());
 
         // set converter
-        $schema->schemaConverter = new Converter($metadata, $fileManager, $this, $config);
+        $schema->schemaConverter = new Converter($metadata, $fileManager, $schema, $config);
 
         return $schema;
     }
