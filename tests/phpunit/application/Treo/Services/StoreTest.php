@@ -45,6 +45,9 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class StoreTest extends TestCase
 {
+    /**
+     * Test for getList method
+     */
     public function testGetListMethod()
     {
         $service = $this->createMockService(Store::class, ['getPackages', 'getInstalled', 'packageTranslate']);
@@ -93,5 +96,28 @@ class StoreTest extends TestCase
             ]
         ];
         $this->assertEquals($expects, $service1->getList());
+    }
+
+    /**
+     * Is getPackages method exists
+     */
+    public function testIsGetPackagesMethodExists()
+    {
+        $this->assertTrue(method_exists($this->createMockService(Store::class), 'getPackages'));
+    }
+
+    /**
+     * Test for getPackage method
+     */
+    public function testGetPackageMethod()
+    {
+        $service = $this->createMockService(Store::class, ['getPackages']);
+        $service
+            ->expects($this->any())
+            ->method('getPackages')
+            ->willReturn([['treoId' => 'TestModule']]);
+
+        // test
+        $this->assertEquals(['treoId' => 'TestModule'], $service->getPackage('TestModule'));
     }
 }
