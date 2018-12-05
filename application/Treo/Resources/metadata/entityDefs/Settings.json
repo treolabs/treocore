@@ -16,10 +16,6 @@
       "type": "bool",
       "default": true
     },
-    "notificationNewModuleDisabled": {
-      "type": "bool",
-      "default": true
-    },
     "notificationNewSystemVersionDisabled": {
       "type": "bool",
       "default": true

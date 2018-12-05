@@ -94,11 +94,9 @@ class Preferences extends AbstractLayout
             ],
             [
                 [
-                    'name' => 'receiveNewModuleNotifications'
-                ],
-                [
                     'name' => 'receiveInstallDeleteModuleNotifications'
                 ],
+                false
             ]
         ];
 

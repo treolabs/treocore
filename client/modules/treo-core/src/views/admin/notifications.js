@@ -34,7 +34,7 @@
 Espo.define('treo-core:views/admin/notifications', 'class-replace!treo-core:views/admin/notifications',
     Dep => Dep.extend({
 
-        revertFields: ['notificationNewModuleVersionDisabled', 'notificationNewModuleDisabled'],
+        revertFields: ['notificationNewModuleVersionDisabled'],
 
         dependencyDefs: {
             'assignmentEmailNotifications': {

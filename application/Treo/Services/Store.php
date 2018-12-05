@@ -62,6 +62,8 @@ class Store extends AbstractService
      */
     public function getList(): array
     {
+        $this->notify();
+
         // prepare result
         $result = [
             'total' => 0,
@@ -146,6 +148,75 @@ class Store extends AbstractService
      */
     public function notify(): void
     {
+        // get module notified versions
+        $notifiedVersions = $this->getConfig()->get("moduleNotifiedVersion", []);
+
+        foreach ($this->getModules() as $id) {
+            // get notified version
+            $version = (isset($notifiedVersions[$id])) ? $notifiedVersions[$id] : null;
+
+            // get package
+            $package = $this->getPackage($id);
+
+            if (isset($package['versions'][0]['version'])) {
+                // prepare version
+                $packageVersion = $package['versions'][0]['version'];
+
+                if ($packageVersion != $version) {
+                    // push
+                    $notifiedVersions[$id] = $packageVersion;
+
+                    // send
+                    $this->sendNotification($package);
+                }
+            }
+        }
+
+        // set to config
+        $this->getConfig()->set("moduleNotifiedVersion", $notifiedVersions);
+        $this->getConfig()->save();
+    }
+
+    /**
+     * @param array $package
+     */
+    protected function sendNotification(array $package): void
+    {
+        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
+            // prepare config data
+            $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);
+
+            // prepare preference key
+            $key = 'receiveNewModuleVersionNotifications';
+
+            foreach ($users as $user) {
+                // prepare preferences
+                $preferences = json_decode($user['data'], true);
+
+                // is disabled for user
+                $isDisabled = (isset($preferences[$key]) && !$preferences[$key]);
+
+                if (!$isDisabled && !$isDisabledGlobally) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type'   => 'TreoMessage',
+                            'userId' => $user['id'],
+                            'data'   => [
+                                'id'              => $package['treoId'],
+                                'messageTemplate' => 'newModuleVersion',
+                                'messageVars'     => [
+                                    'moduleName'    => $this->getModuleTranslateName($package),
+                                    'moduleVersion' => $package['versions'][0]['version'],
+                                ]
+                            ],
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
+            }
+        }
     }
 
     /**
@@ -206,5 +277,49 @@ class Store extends AbstractService
         }
 
         return $this->url;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getModules(): array
+    {
+        return $this->getContainer()->get('metadata')->getModuleList();
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return array
+     */
+    protected function getModule(string $id): array
+    {
+        return $this->getContainer()->get('metadata')->getModule($id);
+    }
+
+    /**
+     * Get module name
+     *
+     * @param array $package
+     *
+     * @return string
+     */
+    protected function getModuleTranslateName(array $package): string
+    {
+        // get current language
+        $currentLang = $this
+            ->getContainer()
+            ->get('language')
+            ->getLanguage();
+
+        // prepare result
+        $result = $package['treoId'];
+        if (!empty($package['name'][$currentLang])) {
+            $result = $package['name'][$currentLang];
+        } elseif ($package['name']['default']) {
+            $result = $package['name']['default'];
+        }
+
+        return $result;
     }
 }
