@@ -208,6 +208,9 @@ class Store extends AbstractService
     protected function sendNotification(array $package): void
     {
         if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
+            // prepare id
+            $id = $package['treoId'];
+
             // prepare config data
             $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);
 
@@ -229,10 +232,10 @@ class Store extends AbstractService
                             'type'   => 'TreoMessage',
                             'userId' => $user['id'],
                             'data'   => [
-                                'id'              => $package['treoId'],
+                                'id'              => $id,
                                 'messageTemplate' => 'newModuleVersion',
                                 'messageVars'     => [
-                                    'moduleName'    => $this->getModuleTranslateName($package),
+                                    'moduleName'    => $this->packageTranslate($package['name'], $id),
                                     'moduleVersion' => $package['versions'][0]['version'],
                                 ]
                             ],
@@ -320,31 +323,5 @@ class Store extends AbstractService
     protected function getModule(string $id): array
     {
         return $this->getContainer()->get('metadata')->getModule($id);
-    }
-
-    /**
-     * Get module name
-     *
-     * @param array $package
-     *
-     * @return string
-     */
-    protected function getModuleTranslateName(array $package): string
-    {
-        // get current language
-        $currentLang = $this
-            ->getContainer()
-            ->get('language')
-            ->getLanguage();
-
-        // prepare result
-        $result = $package['treoId'];
-        if (!empty($package['name'][$currentLang])) {
-            $result = $package['name'][$currentLang];
-        } elseif ($package['name']['default']) {
-            $result = $package['name']['default'];
-        }
-
-        return $result;
     }
 }
