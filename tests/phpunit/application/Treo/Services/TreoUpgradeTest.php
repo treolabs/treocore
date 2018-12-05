@@ -44,6 +44,9 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class TreoUpgradeTest extends TestCase
 {
+    /**
+     * Test for getVersions method
+     */
     public function testGetVersionsMethod()
     {
         // prepare methods
@@ -72,6 +75,9 @@ class TreoUpgradeTest extends TestCase
         $this->assertEquals(['1.0.0', '1.0.1'], $service->getVersions());
     }
 
+    /**
+     * Is createUpgradeJob method exists
+     */
     public function testIsCreateUpgradeJobMethodExists()
     {
         $service = $this->createMockService(TreoUpgrade::class);
@@ -80,6 +86,9 @@ class TreoUpgradeTest extends TestCase
         $this->assertTrue(method_exists($service, 'createUpgradeJob'));
     }
 
+    /**
+     * Is runUpgradeJob method exists
+     */
     public function testIsRunUpgradeJobMethodExists()
     {
         $service = $this->createMockService(TreoUpgrade::class);
@@ -88,11 +97,22 @@ class TreoUpgradeTest extends TestCase
         $this->assertTrue(method_exists($service, 'runUpgradeJob'));
     }
 
+    /**
+     * Is downloadPackage method exists
+     */
     public function testIsDownloadPackageMethodExists()
     {
         $service = $this->createMockService(TreoUpgrade::class);
 
         // test
         $this->assertTrue(method_exists($service, 'downloadPackage'));
+    }
+
+    /**
+     * Is notify method exists
+     */
+    public function testIsNotifyMethodExists()
+    {
+        $this->assertTrue(method_exists($this->createMockService(TreoUpgrade::class), 'notify'));
     }
 }

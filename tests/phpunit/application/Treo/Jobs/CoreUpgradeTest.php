@@ -43,11 +43,11 @@ namespace Treo\Jobs;
  */
 class CoreUpgradeTest extends \Treo\PHPUnit\Framework\TestCase
 {
-    public function testIsRunConsoleMethodExists()
+    /**
+     * Is run method exists
+     */
+    public function testIsRunMethodExists()
     {
-        $mock = $this->createPartialMock(CoreUpgrade::class, []);
-
-        // test 1
-        $this->assertTrue(method_exists($mock, 'run'));
+        $this->assertTrue(method_exists($this->createPartialMock(CoreUpgrade::class, []), 'run'));
     }
 }

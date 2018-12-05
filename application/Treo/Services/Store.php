@@ -142,6 +142,13 @@ class Store extends AbstractService
     }
 
     /**
+     * Send notification about new version of module
+     */
+    public function notify(): void
+    {
+    }
+
+    /**
      * @return array
      */
     protected function getComposerDiff(): array

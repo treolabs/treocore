@@ -195,6 +195,24 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
+     * Send notification about new version of core
+     */
+    public function notify(): void
+    {
+        // max version
+        $version = array_pop(array_column($this->getVersions(), 'version'));
+
+        if ($version != $this->getConfig()->get('notifiedVersion')) {
+            // create notification(s)
+            $this->notifyAboutNewVersion($version);
+
+            // update config
+            $this->getConfig()->set('notifiedVersion', $version);
+            $this->getConfig()->save();
+        }
+    }
+
+    /**
      * @return string
      */
     protected function getCurrentVersion(): string
@@ -226,5 +244,63 @@ class TreoUpgrade extends AbstractService
     protected function isDevelopMod(): bool
     {
         return !empty($this->getConfig()->get('developMode'));
+    }
+
+    /**
+     * Notify about new version
+     *
+     * @param string $version
+     */
+    protected function notifyAboutNewVersion(string $version): void
+    {
+        if (!empty($users = $this->getAdminUsers())) {
+            // is notification disabled ?
+            $isDisabled = $this->getConfig()->get('notificationNewSystemVersionDisabled');
+
+            foreach ($users as $user) {
+                // prepare user data
+                $data = json_decode($user['data'], true);
+
+                // prepare config key
+                $key = 'receiveNewSystemVersionNotifications';
+
+                if ((isset($data[$key]) && $data[$key]) || (!isset($data[$key]) && !$isDisabled)) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type'    => 'Message',
+                            'userId'  => $user['id'],
+                            'message' => sprintf($this->notification('newCoreVersion'), $version)
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdminUsers(): array
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('User')
+            ->getAdminUsers();
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function notification(string $key): string
+    {
+        return $this
+            ->getContainer()
+            ->get('language')
+            ->translate($key, 'treoNotifications', 'TreoNotification');
     }
 }

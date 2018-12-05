@@ -50,84 +50,28 @@ class CoreUpgrade extends \Espo\Core\Jobs\Base
      */
     public function run(): bool
     {
-        // max version
-        $version = array_pop($this->getVersions());
+        // send notification about new version of core
+        $this->coreNotification();
 
-        if ($version != $this->getConfig()->get('notifiedVersion')) {
-            // create notification(s)
-            $this->notifyAboutNewVersion($version);
-
-            // update config
-            $this->getConfig()->set('notifiedVersion', $version);
-            $this->getConfig()->save();
-        }
+        // send notification about new version of module
+        $this->moduleNotification();
 
         return true;
     }
 
     /**
-     * Notify about new version
-     *
-     * @param string $version
+     * Send notification about new version of core
      */
-    protected function notifyAboutNewVersion(string $version): void
+    protected function coreNotification(): void
     {
-        if (!empty($users = $this->getAdminUsers())) {
-            // is notification disabled ?
-            $isDisabled = $this->getConfig()->get('notificationNewSystemVersionDisabled');
-
-            foreach ($users as $user) {
-                // prepare user data
-                $data = json_decode($user['data'], true);
-
-                // prepare config key
-                $key = 'receiveNewSystemVersionNotifications';
-
-                if ((isset($data[$key]) && $data[$key]) || (!isset($data[$key]) && !$isDisabled)) {
-                    // create notification
-                    $notification = $this->getEntityManager()->getEntity('Notification');
-                    $notification->set(
-                        [
-                            'type'    => 'Message',
-                            'userId'  => $user['id'],
-                            'message' => sprintf($this->notification('newCoreVersion'), $version)
-                        ]
-                    );
-                    $this->getEntityManager()->saveEntity($notification);
-                }
-            }
-        }
+        $this->getServiceFactory()->create('TreoUpgrade')->notify();
     }
 
     /**
-     * @return array
+     * Send notification about new version of module
      */
-    protected function getAdminUsers(): array
+    protected function moduleNotification(): void
     {
-        return $this
-            ->getEntityManager()
-            ->getRepository('User')
-            ->getAdminUsers();
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function notification(string $key): string
-    {
-        return $this
-            ->getContainer()
-            ->get('language')
-            ->translate($key, 'treoNotifications', 'TreoNotification');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getVersions(): array
-    {
-        return array_column($this->getServiceFactory()->create('TreoUpgrade')->getVersions(), 'version');
+        $this->getServiceFactory()->create('Store')->notify();
     }
 }

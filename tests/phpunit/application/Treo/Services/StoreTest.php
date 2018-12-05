@@ -120,4 +120,12 @@ class StoreTest extends TestCase
         // test
         $this->assertEquals(['treoId' => 'TestModule'], $service->getPackage('TestModule'));
     }
+
+    /**
+     * Is notify method exists
+     */
+    public function testIsNotifyMethodExists()
+    {
+        $this->assertTrue(method_exists($this->createMockService(Store::class), 'notify'));
+    }
 }
