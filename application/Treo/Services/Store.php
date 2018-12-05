@@ -147,7 +147,10 @@ class Store extends AbstractService
     public function notify(): void
     {
         // get module notified versions
-        $notifiedVersions = $this->getConfig()->get("moduleNotifiedVersion", []);
+        $nativeNotifiedVersions = $this->getConfig()->get("moduleNotifiedVersion", []);
+
+        // clone
+        $notifiedVersions = $nativeNotifiedVersions;
 
         foreach ($this->getModules() as $id) {
             // get notified version
@@ -165,14 +168,18 @@ class Store extends AbstractService
                     $notifiedVersions[$id] = $packageVersion;
 
                     // send
-                    $this->sendNotification($package);
+                    if (!is_null($version)) {
+                        $this->sendNotification($package);
+                    }
                 }
             }
         }
 
         // set to config
-        $this->getConfig()->set("moduleNotifiedVersion", $notifiedVersions);
-        $this->getConfig()->save();
+        if ($nativeNotifiedVersions != $notifiedVersions) {
+            $this->getConfig()->set("moduleNotifiedVersion", $notifiedVersions);
+            $this->getConfig()->save();
+        }
     }
 
     /**
