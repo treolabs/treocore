@@ -62,8 +62,6 @@ class Store extends AbstractService
      */
     public function getList(): array
     {
-        $this->notify();
-
         // prepare result
         $result = [
             'total' => 0,
