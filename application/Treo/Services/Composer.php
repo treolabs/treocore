@@ -445,14 +445,7 @@ class Composer extends AbstractService
         // prepare result
         $result = $packageId;
 
-        // get packages
-        $packages = $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Packagist')
-            ->getPackages();
-
-        foreach ($packages as $package) {
+        foreach ($this->getPackages() as $package) {
             if ($package['packageId'] == $packageId) {
                 $result = $package['treoId'];
             }
@@ -551,5 +544,17 @@ class Composer extends AbstractService
     protected function filePutContents($filename, $data, $flags = 0, $context = null)
     {
         return file_put_contents($filename, $data, $flags, $context);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPackages(): array
+    {
+        return $this
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Store')
+            ->getPackages();
     }
 }

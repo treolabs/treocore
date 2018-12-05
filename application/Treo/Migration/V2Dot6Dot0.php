@@ -31,36 +31,39 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\Migration;
 
-use Espo\Core\Jobs\Base;
+use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Packagist job
+ * Version 2.6.0
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@zinitsolutions.com
  */
-class Packagist extends Base
+class V2Dot6Dot0 extends AbstractMigration
 {
     /**
-     * Run cron job
-     *
-     * @return bool
+     * Up to current
      */
-    public function run(): bool
+    public function up(): void
     {
-        // create service
-        $service = $this->getServiceFactory()->create('Packagist');
+        // delete file
+        $path = 'data/notifications.json';
+        if (file_exists($path)) {
+            unlink($path);
+        }
 
-        // Refresh cache for module packages
-        $service->refresh();
+        // delete job
+        $job = $this
+            ->getEntityManager()
+            ->getRepository('ScheduledJob')
+            ->where(['job' => 'Packagist'])
+            ->findOne();
 
-        // Notify admin users about new version of module, or about new module
-        $service->notify();
-
-        return true;
+        if (!empty($job)) {
+            $this->getEntityManager()->removeEntity($job);
+        }
     }
 }

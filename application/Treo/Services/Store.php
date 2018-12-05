@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\Core\Utils\Json;
+
 /**
  * Class Store
  *
@@ -43,6 +45,16 @@ namespace Treo\Services;
  */
 class Store extends AbstractService
 {
+    /**
+     * @var string
+     */
+    protected $url = null;
+
+    /**
+     * @var null|array
+     */
+    protected $packages = null;
+
     /**
      * Get list
      *
@@ -83,9 +95,50 @@ class Store extends AbstractService
     /**
      * @return array
      */
-    protected function getPackages(): array
+    public function getPackages(): array
     {
-        return $this->getContainer()->get('serviceFactory')->create('Packagist')->getPackages(true);
+        if (is_null($this->packages)) {
+            // get auth data
+            $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+
+            // prepare params
+            $params = [
+                'allowUnstable' => $this->getConfig()->get('developMode', 0),
+                'username'      => $authData['username'],
+            ];
+
+            // prepare path
+            $path = $this->getUrl() . "packages?" . http_build_query($params);
+
+            // get json data
+            $json = file_get_contents($path);
+
+            // prepare result
+            $this->packages = [];
+            if (!empty($json)) {
+                $this->packages = Json::decode($json, true);
+            }
+        }
+
+        return $this->packages;
+    }
+
+    /**
+     * Get current module package
+     *
+     * @param string $module
+     *
+     * @return array
+     */
+    public function getPackage(string $module): array
+    {
+        foreach ($this->getPackages() as $package) {
+            if ($module == $package['treoId']) {
+                return $package;
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -131,5 +184,20 @@ class Store extends AbstractService
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getUrl(): string
+    {
+        if (is_null($this->url)) {
+            // get composer.json
+            $json = file_get_contents('composer.json');
+
+            $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
+        }
+
+        return $this->url;
     }
 }

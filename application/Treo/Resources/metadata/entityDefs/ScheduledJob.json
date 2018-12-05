@@ -15,10 +15,6 @@
     "CoreUpgrade": {
       "isSystem": true,
       "scheduling": "0 */2 * * *"
-    },
-    "Packagist": {
-      "isSystem": true,
-      "scheduling": "0 */2 * * *"
     }
   }
 }

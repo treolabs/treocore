@@ -672,9 +672,8 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getPackagistPackage(string $id): array
     {
-        return $this->getInjection('serviceFactory')->create('Packagist')->getPackage($id);
+        return $this->getInjection('serviceFactory')->create('Store')->getPackage($id);
     }
-
 
     /**
      * Get packages
@@ -684,7 +683,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getPackagistPackages(): array
     {
-        return $this->getInjection('serviceFactory')->create('Packagist')->getPackages();
+        return $this->getInjection('serviceFactory')->create('Store')->getPackages();
     }
 
     /**
@@ -720,7 +719,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      * Put JSON content to file
      *
      * @param string $moduleJsonPath
-     * @param array $data
+     * @param array  $data
      *
      * @return bool
      */

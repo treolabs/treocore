@@ -259,7 +259,7 @@ class Composer extends AbstractListener
     protected function notifyDelete(string $id, string $createdById)
     {
         // get package
-        $package = $this->getService('Packagist')->getPackage($id);
+        $package = $this->getService('Store')->getPackage($id);
 
         if (empty($package)) {
             return;
