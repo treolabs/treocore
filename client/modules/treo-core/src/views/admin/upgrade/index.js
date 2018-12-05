@@ -56,7 +56,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
         setup: function () {
             Dep.prototype.setup.call(this);
 
-            this.wait(true);
+            this.waitForView('versionToUpgrade');
+            this.waitForView('list');
             this.getModelFactory().create(null, model => {
                 this.model = model;
 
@@ -67,12 +68,13 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                         this.ajaxGetRequest('/TreoUpgrade/versions')
                             .then(response => {
                                 if (response && response.length) {
-                                    this.versionList = response.map(item => item.version).reverse();
+                                    this.versionList = response.map(item => item.version);
+                                    if (this.versionList.length) {
+                                        this.model.set(this.versionList[this.versionList.length - 1]);
+                                    }
+                                    this.createField();
+                                    this.createList(response);
                                 }
-                            })
-                            .always(() => {
-                                this.createField();
-                                this.wait(false)
                             });
                     }
                 });
@@ -106,10 +108,6 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                     }
                 },
                 mode: 'edit'
-            }, view => {
-                view.listenTo(view, 'after:render', () => {
-                    view.fetchToModel();
-                });
             });
         },
 
@@ -188,5 +186,48 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             this.upgradingInProgress ? loader.removeClass('hidden') : loader.addClass('hidden');
         },
 
+        createList(data) {
+            this.getCollectionFactory().create('versions', collection => {
+                this.collection = collection;
+                this.collection.add(data.map(item => {
+                    item.id = item.version;
+                    return item;
+                }));
+
+                this.createView('list', 'views/record/list', {
+                    el: `${this.options.el} .list-container`,
+                    collection: this.collection,
+                    type: 'list',
+                    listLayout: [
+                        {
+                            type: 'varchar',
+                            name: 'version',
+                            notSortable: true,
+                            customLabel: this.translate('version', 'labels', 'ModuleManager'),
+                            width: '30'
+                        },
+                        {
+                            type: 'text',
+                            name: 'description',
+                            notSortable: true,
+                            customLabel: this.translate('description', 'fields'),
+                            view: 'treo-core:views/fields/varchar-html'
+                        }
+                    ],
+                    searchManager: false,
+                    selectable: false,
+                    checkboxes: false,
+                    massActionsDisabled: true,
+                    checkAllResultDisabled: false,
+                    buttonsDisabled: true,
+                    paginationEnabled: false,
+                    showCount: false,
+                    showMore: false,
+                    rowActionsView: false
+                }, view => {
+
+                });
+            });
+        }
     });
 });
