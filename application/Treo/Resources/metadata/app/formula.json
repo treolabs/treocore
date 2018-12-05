@@ -1,0 +1,6 @@
+{
+  "functionClassNameMap": {
+    "setAttribute": "\\Treo\\Core\\Formula\\Functions\\SetAttributeType",
+    "entity\\sumRelated": "\\Treo\\Core\\Formula\\Functions\\EntityGroup\\SumRelatedType"
+  }
+}
