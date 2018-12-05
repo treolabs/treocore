@@ -50,6 +50,9 @@ class CoreUpgrade extends \Espo\Core\Jobs\Base
      */
     public function run(): bool
     {
+        // refresh module packages cache
+        $this->refreshPackagesCache();
+
         // send notification about new version of core
         $this->coreNotification();
 
@@ -73,5 +76,13 @@ class CoreUpgrade extends \Espo\Core\Jobs\Base
     protected function moduleNotification(): void
     {
         $this->getServiceFactory()->create('Store')->notify();
+    }
+
+    /**
+     * Refresh module packages cache
+     */
+    protected function refreshPackagesCache(): void
+    {
+        $this->getServiceFactory()->create('Store')->refresh();
     }
 }

@@ -46,6 +46,14 @@ use Treo\PHPUnit\Framework\TestCase;
 class StoreTest extends TestCase
 {
     /**
+     * Is refresh method exists
+     */
+    public function testIsRefreshMethodExists()
+    {
+        $this->assertTrue(method_exists($this->createMockService(Store::class), 'refresh'));
+    }
+
+    /**
      * Test for getList method
      */
     public function testGetListMethod()

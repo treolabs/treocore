@@ -56,6 +56,36 @@ class Store extends AbstractService
     protected $packages = null;
 
     /**
+     * @var string
+     */
+    protected $cache = 'data/cache/packages.json';
+
+    /**
+     * Refresh cached data
+     */
+    public function refresh(): void
+    {
+        // get auth data
+        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+
+        // prepare params
+        $params = [
+            'allowUnstable' => $this->getConfig()->get('developMode', 0),
+            'username'      => $authData['username'],
+        ];
+
+        // prepare path
+        $path = $this->getUrl() . "packages?" . http_build_query($params);
+
+        // get json data
+        $json = file_get_contents($path);
+
+        if (!empty($json)) {
+            file_put_contents($this->cache, $json);
+        }
+    }
+
+    /**
      * Get list
      *
      * @return array
@@ -98,25 +128,15 @@ class Store extends AbstractService
     public function getPackages(): array
     {
         if (is_null($this->packages)) {
-            // get auth data
-            $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
-
-            // prepare params
-            $params = [
-                'allowUnstable' => $this->getConfig()->get('developMode', 0),
-                'username'      => $authData['username'],
-            ];
-
-            // prepare path
-            $path = $this->getUrl() . "packages?" . http_build_query($params);
-
-            // get json data
-            $json = file_get_contents($path);
+            // refresh cache if it needs
+            if (!file_exists($this->cache)) {
+                $this->refresh();
+            }
 
             // prepare result
             $this->packages = [];
-            if (!empty($json)) {
-                $this->packages = Json::decode($json, true);
+            if (file_exists($this->cache)) {
+                $this->packages = Json::decode(file_get_contents($this->cache), true);
             }
         }
 
