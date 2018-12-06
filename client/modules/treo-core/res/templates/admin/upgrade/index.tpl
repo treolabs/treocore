@@ -24,9 +24,11 @@
                     </div>
                 </div>
             </div>
+	        {{#unless disableUpgrade}}
             <div class="col-sm-8 col-xs-12">
                 <div class="list-container">{{{list}}}</div>
             </div>
+	        {{/unless}}
         </div>
     </div>
 </div>

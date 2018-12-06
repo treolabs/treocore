@@ -67,14 +67,12 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                         this.systemVersion = this.getConfig().get('version');
                         this.ajaxGetRequest('/TreoUpgrade/versions')
                             .then(response => {
-                                if (response && response.length) {
-                                    this.versionList = response.map(item => item.version);
-                                    if (this.versionList.length) {
-                                        this.model.set(this.versionList[this.versionList.length - 1]);
-                                    }
-                                    this.createField();
-                                    this.createList(response);
+                                this.versionList = (response || []).map(item => item.version);
+                                if (this.versionList.length) {
+                                    this.model.set(this.versionList[this.versionList.length - 1]);
                                 }
+                                this.createField();
+                                this.createList(response);
                             });
                     }
                 });
@@ -189,7 +187,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
         createList(data) {
             this.getCollectionFactory().create('versions', collection => {
                 this.collection = collection;
-                this.collection.add(data.map(item => {
+                this.collection.add((data || []).map(item => {
                     item.id = item.version;
                     return item;
                 }));
