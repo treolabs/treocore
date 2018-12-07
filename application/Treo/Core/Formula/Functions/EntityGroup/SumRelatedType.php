@@ -108,6 +108,8 @@ class SumRelatedType extends \Espo\Core\Formula\Functions\EntityGroup\SumRelated
         $foreignSelectManager->addJoin($foreignLink, $selectParams);
 
         $selectParams['groupBy'] = [$foreignLink . '.id'];
+        // @todo treoinject. Espo bug fix
+        $selectParams['whereClause'] = [$foreignLink . '.id' => $entity->get('id')];
 
         $entityManager->getRepository($foreignEntityType)->handleSelectParams($selectParams);
 
@@ -122,6 +124,6 @@ class SumRelatedType extends \Espo\Core\Formula\Functions\EntityGroup\SumRelated
             return 0;
         }
 
-        return array_column($rowList, 'SUM:' . $field, 'foreignId');
+        return $rowList[0]['SUM:' . $field];
     }
 }
