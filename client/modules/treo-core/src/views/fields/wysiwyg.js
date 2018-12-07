@@ -59,6 +59,16 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
             this.showMoreText = false;
         },
 
+        data() {
+            let data = Dep.prototype.data.call(this);
+            data.valueWithoutTags = this.removeTags(data.value);
+            return data;
+        },
+
+        removeTags(html) {
+            return (html || '').replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s\s+/g, ' ').trim()
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
