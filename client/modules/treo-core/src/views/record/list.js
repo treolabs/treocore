@@ -294,6 +294,17 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             return Dep.prototype._convertLayout.call(this, listLayout, model)
         },
 
+        _getHeaderDefs() {
+            let defs = Dep.prototype._getHeaderDefs.call(this);
+            let model = this.collection.model.prototype;
+            defs.forEach(item => {
+                if (item.name && ['wysiwyg', 'wysiwygMultiLang'].includes(model.getFieldType(item.name))) {
+                    item.sortable = false;
+                }
+            });
+            return defs;
+        },
+
         fixedTableHead() {
 
             let $window = $(window),
