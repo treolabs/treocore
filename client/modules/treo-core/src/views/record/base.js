@@ -99,7 +99,7 @@ Espo.define('treo-core:views/record/base', 'class-replace!treo-core:views/record
             model.set(attrs, {silent: true});
 
             if (this.validate()) {
-                model.attributes = initialAttributes;
+                model.attributes = beforeSaveAttributes;
                 this.trigger('cancel:save');
                 this.afterNotValid();
                 return;
