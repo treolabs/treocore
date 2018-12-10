@@ -18486,3 +18486,16 @@ td[data-name="draggableIcon"] {
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
 }
+
+.upgrade-panel .current-status {
+    display: inline-block;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+.upgrade-panel .versions {
+     margin-left: -21px;
+     margin-right: -21px;
+}
