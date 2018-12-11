@@ -96,6 +96,22 @@
     }
   },
   {
+    "route": "/Job/action/massUpdate",
+    "method": "put",
+    "params": {
+      "controller": "Job",
+      "action": "massUpdate"
+    }
+  },
+  {
+    "route": "/QueueItem/action/massUpdate",
+    "method": "put",
+    "params": {
+      "controller": "QueueItem",
+      "action": "massUpdate"
+    }
+  },
+  {
     "route": "/:controller/action/massUpdate",
     "method": "put",
     "params": {
@@ -105,11 +121,19 @@
     }
   },
   {
-    "route": "/QueueManager/action/massUpdate",
-    "method": "put",
+    "route": "/Job/action/massDelete",
+    "method": "post",
     "params": {
-      "controller": "QueueManager",
-      "action": "massUpdate"
+      "controller": "Job",
+      "action": "massDelete"
+    }
+  },
+  {
+    "route": "/QueueItem/action/massDelete",
+    "method": "post",
+    "params": {
+      "controller": "QueueItem",
+      "action": "massDelete"
     }
   },
   {
@@ -119,14 +143,6 @@
       "controller": "MassActions",
       "action": "massDelete",
       "scope": ":controller"
-    }
-  },
-  {
-    "route": "/QueueManager/action/massDelete",
-    "method": "post",
-    "params": {
-      "controller": "QueueManager",
-      "action": "massDelete"
     }
   },
   {
