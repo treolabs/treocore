@@ -51,17 +51,6 @@ class Hook extends AbstractHook
      * @param Entity $entity
      * @param array  $options
      */
-    public function beforeSave(Entity $entity, $options = [])
-    {
-        if (empty($options['force']) && in_array($entity->get('status'), ['Running', 'Failed', 'Success'])) {
-            throw new BadRequest($this->translate('Queue item cannot be changed', 'exceptions', 'QueueItem'));
-        }
-    }
-
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
     public function afterRemove(Entity $entity, $options = [])
     {
         if (empty($options['force'])) {

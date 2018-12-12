@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
 
 /**
@@ -64,11 +65,27 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
     /**
      * @inheritdoc
      */
+    public function updateEntity($id, $data)
+    {
+        // get entity
+        $entity = $this->getEntity($id);
+
+        if (in_array($entity->get('status'), ['Running', 'Failed', 'Success'])) {
+            throw new BadRequest($this->exception('Queue item cannot be changed'));
+        }
+
+        return parent::updateEntity($id, $data);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function init()
     {
         parent::init();
 
         $this->addDependency('serviceFactory');
+        $this->addDependency('language');
     }
 
     /**
@@ -98,5 +115,15 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function exception(string $key): string
+    {
+        return $this->getInjection('language')->translate($key, 'exceptions', 'QueueItem');
     }
 }
