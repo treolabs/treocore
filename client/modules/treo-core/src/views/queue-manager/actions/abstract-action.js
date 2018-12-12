@@ -40,11 +40,15 @@ Espo.define('treo-core:views/queue-manager/actions/abstract-action', 'view',
 
         actionData: {},
 
+        disabled: false,
+
         events: {
             'click [data-action="runAction"]': function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                this.runAction();
+                if (this.canRun()) {
+                    this.runAction();
+                }
             },
         },
 
@@ -56,12 +60,19 @@ Espo.define('treo-core:views/queue-manager/actions/abstract-action', 'view',
 
         data() {
             return {
-                buttonLabel: this.buttonLabel
+                buttonLabel: this.buttonLabel,
+                disabled: this.disabled
             };
         },
 
         runAction() {
+            if (!this.canRun()) {
+                //run action
+            }
+        },
 
+        canRun() {
+            return !this.disabled;
         }
 
     })

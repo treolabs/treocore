@@ -52,7 +52,7 @@ Espo.define('treo-core:views/queue-manager/fields/actions', 'views/fields/base',
 
         buildActions() {
             (this.model.get(this.name) || []).forEach(action => {
-                let actionDefs = this.getMetadata().get(['clientDefs', 'QueueManager', 'queueActions', action.type]) || this.defaultActionDefs;
+                let actionDefs = this.getMetadata().get(['clientDefs', 'QueueItem', 'queueActions', action.type]) || this.defaultActionDefs;
                 if (actionDefs.view && this.getAcl().check(this.model, actionDefs.acl)) {
                     this.createView(action.type, actionDefs.view, {
                         el: `${this.options.el} .queue-manager-action[data-type="${action.type}"]`,

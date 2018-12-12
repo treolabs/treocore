@@ -1,3 +1,3 @@
-<a type="button" href="javascript:" class="btn btn-default btn-block" data-action="runAction">
-    <span>{{translate buttonLabel scope='QueueManager' category='labels'}}</span>
+<a type="button" href="javascript:" class="btn btn-default btn-block" data-action="runAction" {{#if disabled}}disabled{{/if}}>
+    <span>{{translate buttonLabel scope='QueueItem' category='labels'}}</span>
 </a>

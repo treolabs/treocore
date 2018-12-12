@@ -48,7 +48,7 @@ Espo.define('treo-core:views/queue-manager/modals/show-message', 'views/modal',
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.header = this.translate('message', 'labels', 'QueueManager');
+            this.header = this.translate('message', 'labels', 'QueueItem');
         },
 
         data() {

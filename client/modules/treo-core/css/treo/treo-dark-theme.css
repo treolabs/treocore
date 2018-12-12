@@ -18398,6 +18398,10 @@ td[data-name="draggableIcon"] {
     overflow-x: hidden
 }
 
+.queue-panel-container > .panel > .panel-body .list > table {
+    overflow: hidden;
+}
+
 .queue-panel-container > .panel > .panel-body .list > table td {
     white-space: normal;
     text-overflow: initial;

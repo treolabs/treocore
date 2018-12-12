@@ -424,7 +424,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                             }
                             Espo.Ui.success(this.translate(msg, 'messages').replace('{count}', count));
                         } else if (byQueueManager) {
-                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueItem'));
                             Backbone.trigger('showQueuePanel');
                         } else {
                             Espo.Ui.warning(this.translate('noRecordsUpdated', 'messages'));
@@ -494,7 +494,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                             this.collection.fetch();
                             Espo.Ui.notify(false);
                         } else if (byQueueManager) {
-                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueItem'));
                             Backbone.trigger('showQueuePanel');
                         } else {
                             Espo.Ui.warning(self.translate('noRecordsRemoved', 'messages'));
@@ -516,7 +516,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                             }
                             Espo.Ui.success(self.translate(msg, 'messages').replace('{count}', count));
                         } else if (byQueueManager) {
-                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueManager'));
+                            Espo.Ui.success(this.translate('byQueueManager', 'messages', 'QueueItem'));
                             Backbone.trigger('showQueuePanel');
                         } else {
                             Espo.Ui.warning(self.translate('noRecordsRemoved', 'messages'));

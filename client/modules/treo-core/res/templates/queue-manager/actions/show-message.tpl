@@ -1,5 +1,5 @@
 {{#if showButton}}
 <a type="button" href="javascript:" class="btn btn-default btn-block" data-action="runAction">
-    <span>{{translate buttonLabel scope='QueueManager' category='labels'}}</span>
+    <span>{{translate buttonLabel scope='QueueItem' category='labels'}}</span>
 </a>
 {{/if}}
