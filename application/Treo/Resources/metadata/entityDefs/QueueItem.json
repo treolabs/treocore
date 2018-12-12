@@ -3,6 +3,7 @@
     "name": {
       "type": "varchar",
       "required": true,
+      "readOnly": true,
       "trim": true
     },
     "serviceName": {
@@ -22,6 +23,7 @@
     },
     "status": {
       "type": "enum",
+      "readOnly": true,
       "default": "Pending",
       "options": [
         "Pending",
