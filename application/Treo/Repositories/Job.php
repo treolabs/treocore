@@ -49,14 +49,11 @@ class Job extends \Espo\Repositories\Job
      */
     public function beforeSave(Entity $entity, array $options = [])
     {
-        // set scheduledJobId to data
-        if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
-            $entity->set('targetType', 'ScheduledJob');
-            $entity->set('targetId', $scheduledJobId);
-        }
+        // triggered event
+        $data = $this->triggered('Job', 'beforeSave', ['entity' => $entity, 'options' => $options]);
 
         // call parent
-        parent::beforeSave($entity, $options);
+        parent::beforeSave($data['entity'], $data['options']);
     }
 
     /**
@@ -64,11 +61,34 @@ class Job extends \Espo\Repositories\Job
      */
     protected function afterRemove(Entity $entity, array $options = [])
     {
-        if (!empty($item = $entity->get('queueItem'))) {
-            $this->getEntityManager()->removeEntity($item, ['force' => true]);
-        }
+        // triggered event
+        $data = $this->triggered('Job', 'afterRemove', ['entity' => $entity, 'options' => $options]);
 
         // call parent
-        parent::afterRemove($entity, $options);
+        parent::afterRemove($data['entity'], $data['options']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('eventManager');
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    protected function triggered(string $target, string $action, array $data = []): array
+    {
+        return $this->getInjection('eventManager')->triggered($target, $action, $data);
     }
 }
