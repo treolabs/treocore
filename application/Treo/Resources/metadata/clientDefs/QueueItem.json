@@ -3,5 +3,18 @@
   "controller": "controllers/record",
   "boolFilterList": [
     "onlyMy"
-  ]
+  ],
+  "queueActions": {
+    "cancel": {
+      "view": "treo-core:views/queue-manager/actions/cancel",
+      "acl": "edit"
+    },
+    "close": {
+      "view": "treo-core:views/queue-manager/actions/close",
+      "acl": "edit"
+    },
+    "show-message": {
+       "view": "treo-core:views/queue-manager/actions/show-message"
+    }
+  }
 }
