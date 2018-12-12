@@ -61,12 +61,12 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
 
         data() {
             let data = Dep.prototype.data.call(this);
-            data.valueWithoutTags = this.removeTags(data.value);
+            data.valueWithoutTags = data.value;
             return data;
         },
 
         removeTags(html) {
-            return (html || '').replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s\s+/g, ' ').trim()
+            return $('<textarea />').html((html || '').replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s\s+/g, ' ').trim()).text();
         },
 
         afterRender() {
@@ -98,6 +98,9 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
 
         getValueForDisplay() {
             let text = this.model.get(this.name);
+            if (this.mode === 'list') {
+                text = this.removeTags(text);
+            }
 
             if (this.mode === 'list' || (this.mode === 'detail' && (this.model.has('isHtml') && !this.model.get('isHtml')))) {
                 if (text && !this.showMoreText && !this.showMoreDisabled) {
