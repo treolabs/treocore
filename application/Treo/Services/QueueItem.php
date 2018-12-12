@@ -70,7 +70,8 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
         // get entity
         $entity = $this->getEntity($id);
 
-        if (in_array($entity->get('status'), ['Running', 'Failed', 'Success'])) {
+        if (isset($data->status) && $data->status == 'Canceled'
+            && in_array($entity->get('status'), ['Running', 'Failed', 'Success'])) {
             throw new BadRequest($this->exception('Queue item cannot be changed'));
         }
 
