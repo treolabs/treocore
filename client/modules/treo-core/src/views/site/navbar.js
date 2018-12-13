@@ -37,6 +37,8 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
 
         template: 'treo-core:site/navbar',
 
+        isMoreFields: false,
+
         openMenu: function () {
             this.events = _.extend({}, this.events || {}, {
                 'click .navbar-toggle': function () {
@@ -79,6 +81,7 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
             }.bind(this));
 
             var tabList = this.getTabList();
+            this.isMoreFields = tabList.some(tab => tab === '_delimiter_');
 
             var scopes = this.getMetadata().get('scopes') || {};
 
@@ -309,51 +312,13 @@ Espo.define('treo-core:views/site/navbar', 'class-replace!treo-core:views/site/n
         },
 
         setupTabDefsList: function () {
-            var tabDefsList = [];
-            var moreIsMet = false;
-            var colorsDisabled =
-                this.getPreferences().get('scopeColorsDisabled') ||
-                this.getPreferences().get('tabColorsDisabled') ||
-                this.getConfig().get('scopeColorsDisabled') ||
-                this.getConfig().get('tabColorsDisabled');
-            var tabIconsDisabled = this.getConfig().get('tabIconsDisabled');
+            Dep.prototype.setupTabDefsList.call(this);
 
-            this.tabList.forEach(function (tab, i) {
-                if (tab === '_delimiter_') {
-                    this.isMoreFields = moreIsMet = true;
-                    return;
+            this.tabDefsList.forEach(tab => {
+                if (!tab.iconClass) {
+                    tab.colorIconClass = 'color-icon glyphicon glyphicon-stop';
                 }
-                if (typeof tab === 'object') {
-                    return;
-                }
-                var label = this.getLanguage().translate(tab, 'scopeNamesPlural');
-                var color = null;
-                if (!colorsDisabled) {
-                    var color = this.getMetadata().get(['clientDefs', tab, 'color']);
-                }
-
-                var shortLabel = label.substr(0, 2);
-
-                var iconClass = null;
-                if (!tabIconsDisabled) {
-                    iconClass = this.getMetadata().get(['clientDefs', tab, 'iconClass'])
-                }
-
-                var o = {
-                    link: '#' + tab,
-                    label: label,
-                    shortLabel: shortLabel,
-                    name: tab,
-                    isInMore: moreIsMet,
-                    color: color,
-                    iconClass: iconClass
-                };
-                if (color && !iconClass) {
-                    o.colorIconClass = 'color-icon glyphicon glyphicon-stop';
-                }
-                tabDefsList.push(o);
-            }, this);
-            this.tabDefsList = tabDefsList;
+            });
         },
 
     });
