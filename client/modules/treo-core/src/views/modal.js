@@ -49,7 +49,42 @@ Espo.define('treo-core:views/modal', 'class-replace!treo-core:views/modal', func
                    }
                }
            });
-       }
+
+           this.listenTo(this, 'after:render', () => {
+               const headerHeight = this.$el.find('header.modal-header').outerHeight();
+               const footerHeight = this.$el.find('footer.modal-footer').outerHeight();
+
+               let diffHeight = headerHeight + footerHeight;
+
+               if (!this.dialog.options.fullHeight) {
+                   diffHeight = diffHeight + this.dialog.options.bodyDiffHeight;
+               }
+
+               const adjustHeight = () => {
+                   const windowHeight = window.innerHeight;
+                   const windowWidth = window.innerWidth;
+                   const cssParams = {
+                       overflow: 'auto'
+                   };
+                   if (!this.dialog.options.fullHeight && windowHeight < 512) {
+                       cssParams.maxHeight = 'none';
+                       cssParams.height = 'none';
+                   } else if (this.dialog.options.fullHeight) {
+                       cssParams.height = (windowHeight - diffHeight) + 'px';
+                   } else {
+                       if (windowWidth <= this.dialog.options.screenWidthXs) {
+                           cssParams.maxHeight = 'none';
+                       } else {
+                           cssParams.maxHeight = (windowHeight - diffHeight) + 'px';
+                       }
+                   }
+
+                   this.$el.find('div.modal-body').css(cssParams);
+               };
+               $(window).off('resize.adjust-modal-height').on('resize.adjust-modal-height', adjustHeight);
+               adjustHeight();
+           });
+       },
 
    });
 });
