@@ -56,6 +56,11 @@ return [
         'de_DE'
     ],
     'language'               => 'en_US',
+    'currencyList'           => [
+        0 => 'EUR'
+    ],
+    'defaultCurrency'        => 'EUR',
+    'baseCurrency'           => 'EUR',
     'authenticationMethod'   => 'Espo',
     'globalSearchEntityList' =>
         [
