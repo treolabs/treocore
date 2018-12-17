@@ -41,6 +41,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         checkedAll: false,
 
+        dragndropEventName: null,
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -48,6 +50,11 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.listenTo(this, 'after:save', () => {
                 this.collection.fetch();
+            });
+
+            this.dragndropEventName = `resize.drag-n-drop-table-${this.cid}`;
+            this.listenToOnce(this, 'remove', () => {
+                $(window).off(this.dragndropEventName);
             });
 
             _.extend(this.events, {
@@ -228,6 +235,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             if (this.options.dragableListRows) {
                 this.initDraggableList();
+                $(window).off(this.dragndropEventName).on(this.dragndropEventName, () => {
+                    this.initDraggableList();
+                });
             }
         },
 
@@ -236,6 +246,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.setCellWidth();
 
                 this.$el.find(this.listContainerEl).sortable({
+                    handle: window.innerWidth < 768 ? '.cell[data-name="draggableIcon"]' : false,
                     delay: 150,
                     update: function () {
                         this.saveListItemOrder();
