@@ -154,10 +154,6 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
                             if (!this.model.getFieldParam('assignedUsers', 'view')) {
                                 fieldDefs.view = 'views/fields/assigned-users';
                             }
-                        } else if (this.model.hasField('assignedUser')) {
-                            fieldDefs.name = 'assignedUser';
-                        } else {
-                            fieldDefs = {};
                         }
                         fieldList.push(fieldDefs);
                     }
