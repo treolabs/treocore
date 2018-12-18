@@ -48,6 +48,9 @@ return [
         'password' => ''
     ],
     'version'                => '',
+    'lastViewedCount'        => 20,
+    'decimalMark'            => '.',
+    'thousandSeparator'      => ',',
     'useCache'               => false,
     'applicationName'        => 'TreoPim',
     'outboundEmailFromName'  => 'TreoPim',
