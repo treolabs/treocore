@@ -17635,8 +17635,7 @@ button.category span.glyphicon {
     }
 
     .panel-body > div > .list {
-        margin: 0 !important;
-        width: 100%;
+        width: calc(100% + 28px);
     }
 
     .list-container .list-buttons-container {
