@@ -31,48 +31,14 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/queue-manager/actions/abstract-action', 'view',
+Espo.define('treo-core:views/queue-manager/actions/download', 'treo-core:views/queue-manager/actions/abstract-action',
     Dep => Dep.extend({
 
-        template: 'treo-core:queue-manager/actions/abstract-action',
-
-        buttonLabel: '',
-
-        actionData: {},
-
-        disabled: false,
-
-        events: {
-            'click [data-action="runAction"]': function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.canRun()) {
-                    this.runAction();
-                }
-            },
-        },
-
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            this.actionData = this.options.actionData || this.actionData;
-        },
-
-        data() {
-            return {
-                buttonLabel: this.buttonLabel,
-                disabled: this.disabled
-            };
-        },
+        buttonLabel: 'download',
 
         runAction() {
-            //run action
+            window.location = `${this.getBasePath()}?entryPoint=download&id=${this.actionData.attachmentId}`;
         },
-
-        canRun() {
-            return !this.disabled;
-        }
-
     })
 );
 
