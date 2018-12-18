@@ -377,10 +377,12 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     success: function (config) {
                         let isSystemUpdating = !!config.get('isSystemUpdating');
                         if (!isSystemUpdating) {
-                            window.clearInterval(this.configCheckInterval);
-                            this.configCheckInterval = null;
-                            this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
-                            this.trigger('composerUpdate:failed');
+                            this.getUser().fetch().then(() => {
+                                window.clearInterval(this.configCheckInterval);
+                                this.configCheckInterval = null;
+                                this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
+                                this.trigger('composerUpdate:failed');
+                            });
                         }
                         this.disableActionButton('runUpdate', isSystemUpdating);
                         this.disableActionButton('cancelUpdate', isSystemUpdating);

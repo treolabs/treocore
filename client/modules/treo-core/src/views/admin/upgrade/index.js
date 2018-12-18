@@ -68,7 +68,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                 success: () => {
                     this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
                     this.systemVersion = this.getConfig().get('version');
-                    this.ajaxGetRequest('/TreoUpgrade/versions')
+                    this.ajaxGetRequest('TreoUpgrade/versions')
                         .then(response => {
                             this.versions = (response || []).length;
                             this.createList(response);
@@ -117,10 +117,12 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                     success: function (config) {
                         this.upgradingInProgress = !!config.get('isSystemUpdating');
                         if (!this.upgradingInProgress) {
-                            window.clearInterval(this.configCheckInterval);
-                            this.configCheckInterval = null;
-                            this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
-                            this.reRender();
+                            this.getUser().fetch().then(() => {
+                                window.clearInterval(this.configCheckInterval);
+                                this.configCheckInterval = null;
+                                this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
+                                this.reRender();
+                            });
                         }
                         this.collection.trigger('disableUpgrading', this.upgradingInProgress);
                         this.loaderShow();
@@ -197,7 +199,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                 if (data && data.id) {
                     dataToUpgrade.version = data.id;
                 }
-                this.ajaxPostRequest('/TreoUpgrade/upgrade', dataToUpgrade).then(response => {
+                this.ajaxPostRequest('TreoUpgrade/upgrade', dataToUpgrade).then(response => {
                     if (response) {
                         this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
                     } else {
