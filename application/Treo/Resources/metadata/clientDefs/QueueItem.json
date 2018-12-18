@@ -14,7 +14,10 @@
       "acl": "edit"
     },
     "show-message": {
-       "view": "treo-core:views/queue-manager/actions/show-message"
+      "view": "treo-core:views/queue-manager/actions/show-message"
+    },
+    "download": {
+      "view": "treo-core:views/queue-manager/actions/download"
     }
   }
 }
