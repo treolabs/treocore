@@ -10,7 +10,6 @@
 /composer.lock
 !/apidocs/
 /apidocs/index.html
-/application/Espo/Modules/*
-!/application/Espo/Modules/.gitkeep
-/client/modules/*
+/application/Espo
+/client/*
 !/client/modules/treo-core/

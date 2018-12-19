@@ -1,1 +1,0 @@
-<span title="{{fullDateValue}}">{{dateValue}}</span>

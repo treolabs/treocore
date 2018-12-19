@@ -133,7 +133,7 @@ class Mover
         if (is_dir($dirname)) {
             $dir_handle = opendir($dirname);
         }
-        if (!$dir_handle) {
+        if (empty($dir_handle)) {
             return false;
         }
         while ($file = readdir($dir_handle)) {
@@ -156,15 +156,25 @@ class Mover
      */
     protected static function updateEspo(): void
     {
-        // delete
-        self::deleteDir('application/Espo');
+        // delete backend
+        foreach (scandir('application/Espo') as $dir) {
+            if (!in_array($dir, ['.', '..', 'Modules'])) {
+                self::deleteDir('application/Espo/' . $dir);
+            }
+        }
+        self::deleteDir('application/Espo/Modules/Crm');
+
+        // delete frontend
+        foreach (scandir('client') as $dir) {
+            if (!in_array($dir, ['.', '..', 'modules'])) {
+                self::deleteDir('client/' . $dir);
+            }
+        }
+        self::deleteDir('client/modules/crm');
 
         // copy
         self::copyDir('vendor/espocrm/espocrm/application/Espo', 'application/Espo');
-
-        echo '<pre>';
-        print_r('123');
-        die();
+        self::copyDir('vendor/espocrm/espocrm/client', 'client');
     }
 
     /**
