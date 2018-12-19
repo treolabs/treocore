@@ -64,19 +64,25 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             Object.keys(dropDownItems).forEach((item) => {
                 let check = true;
                 if (dropDownItems[item].conditions) {
-                    check = dropDownItems[item].conditions.every((condition) => {
-                        let operator = condition.operator;
-                        let value = condition.value;
-                        let attribute = this.model.get(condition.attribute);
-                        let currentCheck;
-                        switch(operator) {
-                            case ('in'):
-                                currentCheck = value.includes(attribute);
-                                break;
-                            default:
-                                currentCheck = false;
+                    check = dropDownItems[item].conditions.every(condition => {
+                        if (Espo.Utils.isObject(condition)) {
+                            let operator = condition.operator;
+                            let value = condition.value;
+                            let attribute = this.model.get(condition.attribute);
+                            let currentCheck;
+                            switch (operator) {
+                                case ('in'):
+                                    currentCheck = value.includes(attribute);
+                                    break;
+                                default:
+                                    currentCheck = false;
+                            }
+                            return currentCheck;
+                        } else {
+                            if (condition === 'notNewModel') {
+                                return !this.model.isNew();
+                            }
                         }
-                        return currentCheck;
                     });
                 }
                 if (check) {
