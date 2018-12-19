@@ -345,7 +345,7 @@ class Metadata extends \Espo\Core\Utils\Metadata
         $composerLock = 'composer.lock';
 
         // prepare dir
-        $vendorTreoDir = 'vendor/' . ModuleMover::TREODIR . '/';
+        $vendorTreoDir = 'vendor/' . Mover::TREODIR . '/';
 
         if (file_exists($vendorTreoDir) && is_dir($vendorTreoDir) && file_exists($composerLock)) {
             // prepare data

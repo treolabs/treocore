@@ -41,7 +41,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\ModuleMover as TreoComposer;
+use Treo\Core\Utils\Mover;
 
 /**
  * ModuleManager service
@@ -491,10 +491,10 @@ class ModuleManager extends \Espo\Core\Services\Base
             if (!empty($package = $this->getMetadata()->getModule($moduleId))) {
                 if (!empty($composerRequire = $package['require']) && is_array($composerRequire)) {
                     // get treo modules
-                    $treoModule = TreoComposer::getModules();
+                    $treoModule = Mover::getModules();
 
                     foreach ($composerRequire as $key => $version) {
-                        if (preg_match_all("/^(" . TreoComposer::TREODIR . "\/)(.*)$/", $key, $matches)) {
+                        if (preg_match_all("/^(" . Mover::TREODIR . "\/)(.*)$/", $key, $matches)) {
                             if (!empty($matches[2][0])) {
                                 $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
                             }

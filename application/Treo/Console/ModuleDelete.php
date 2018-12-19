@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Treo\Core\Utils\ModuleMover;
+use Treo\Core\Utils\Mover;
 
 /**
  * Class ModuleDelete
@@ -70,7 +70,7 @@ class ModuleDelete extends AbstractConsole
             }
 
             // delete files
-            ModuleMover::delete([$data['moduleId'] => '1']);
+            Mover::delete([$data['moduleId'] => '1']);
 
             self::show('Module deleted successfully.', self::SUCCESS);
         } else {

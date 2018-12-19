@@ -36,7 +36,7 @@ declare(strict_types=1);
 namespace Treo\Listeners;
 
 use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\ModuleMover;
+use Treo\Core\Utils\Mover;
 use Treo\Services\Composer as ComposerService;
 use Treo\Traits\EventTriggeredTrait;
 
@@ -109,7 +109,7 @@ class Composer extends AbstractListener
                         $this->clearModuleData($row['id']);
 
                         // delete dir
-                        ModuleMover::delete([$row['id'] => $row['package']]);
+                        Mover::delete([$row['id'] => $row['package']]);
 
                         // set createdById
                         $row['createdById'] = $data['createdById'];

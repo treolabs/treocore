@@ -1,6 +1,6 @@
 {
   "name": "treo/treopim",
-  "version": "2.6.24",
+  "version": "3.0.0",
   "description": "TreoPIM. Open source PIM application.",
   "homepage": "https://treopim.de/",
   "license": "GPL-3.0-only",
@@ -38,11 +38,11 @@
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.1.0",
     "wikimedia/composer-merge-plugin": "1.4.1",
+    "espocrm/espocrm": "5.3.6",
     "treo-module/pim": "*"
   },
   "minimum-stability": "stable",
   "extra": {
-    "espoVersion": "5.3.6",
     "treo-source": "https://source.treopim.com",
     "merge-plugin": {
       "include": [
@@ -57,8 +57,8 @@
     }
   },
   "scripts": {
-    "post-install-cmd": "Treo\\Core\\Utils\\ModuleMover::update",
-    "post-update-cmd": "Treo\\Core\\Utils\\ModuleMover::update"
+    "post-install-cmd": "Treo\\Core\\Utils\\Mover::update",
+    "post-update-cmd": "Treo\\Core\\Utils\\Mover::update"
   },
   "repositories": [
     {

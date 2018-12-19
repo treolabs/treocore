@@ -38,7 +38,7 @@ namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Treo\Core\UpgradeManager;
-use Treo\Core\Utils\ModuleMover;
+use Treo\Core\Utils\Mover;
 use Treo\Core\Migration\Migration;
 
 /**
@@ -163,7 +163,7 @@ class TreoUpgrade extends AbstractService
 
         // clearing cache
         if (file_exists($this->packagesPath)) {
-            ModuleMover::deleteDir($this->packagesPath);
+            Mover::deleteDir($this->packagesPath);
         }
 
         // create upgrade dir

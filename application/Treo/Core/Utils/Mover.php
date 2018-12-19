@@ -38,11 +38,11 @@ namespace Treo\Core\Utils;
 use Espo\Core\Utils\Util;
 
 /**
- * ModuleMover util
+ * Mover util
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class ModuleMover
+class Mover
 {
     /**
      * @var string

@@ -151,7 +151,7 @@ class Composer
         // prepare response
         $status = $application->run($input, $output);
         $output = str_replace(
-            'Treo\\Core\\Utils\\ModuleMover::update',
+            'Treo\\Core\\Utils\\Mover::update',
             '',
             $output->fetch()
         );
