@@ -48,6 +48,8 @@ return [
         'password' => ''
     ],
     'version'                => '',
+    'recordsPerPage'         => 200,
+    'recordsPerPageSmall'    => 5,
     'lastViewedCount'        => 20,
     'decimalMark'            => '.',
     'thousandSeparator'      => ',',
