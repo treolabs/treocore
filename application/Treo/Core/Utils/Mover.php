@@ -86,10 +86,13 @@ class Mover
     }
 
     /**
-     * Update treo modules
+     * Update
      */
     public static function update(): void
     {
+        // update espo core
+        self::updateEspo();
+
         foreach (self::getModules() as $moduleId => $key) {
             // update frontend files
             self::updateFrontend($moduleId);
@@ -146,6 +149,22 @@ class Mover
         rmdir($dirname);
 
         return true;
+    }
+
+    /**
+     * Update EspoCRM core
+     */
+    protected static function updateEspo(): void
+    {
+        // delete
+        self::deleteDir('application/Espo');
+
+        // copy
+        self::copyDir('vendor/espocrm/espocrm/application/Espo', 'application/Espo');
+
+        echo '<pre>';
+        print_r('123');
+        die();
     }
 
     /**

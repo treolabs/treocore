@@ -1,7 +1,0 @@
-{
-  "fields": {
-    "status": "Statusas",
-    "executionTime": "Vykdymo laikas",
-    "target": "Adresatas"
-  }
-}

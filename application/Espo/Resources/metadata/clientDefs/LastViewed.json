@@ -1,9 +1,0 @@
-{
-    "controller": "controllers/last-viewed",
-    "views": {
-        "list": "views/last-viewed/list"
-    },
-    "recordViews": {
-        "list": "views/last-viewed/record/list"
-    }
-}

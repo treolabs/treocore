@@ -1,6 +1,0 @@
-[
-    {"name":"name", "link": true},
-    {"name":"job"},
-    {"name":"status", "width": 15},
-    {"name":"scheduling", "width": 15}
-]
