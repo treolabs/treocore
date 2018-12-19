@@ -154,8 +154,19 @@ class Mover
     /**
      * Update EspoCRM core
      */
-    protected static function updateEspo(): void
+    protected static function updateEspo()
     {
+        // get espo version
+        $espoVersion = json_decode(file_get_contents('composer.json'))->require->{"espocrm/espocrm"};
+
+        $versionFile = 'data/espo-version.json';
+        if (file_exists($versionFile)) {
+            $version = json_decode(file_get_contents($versionFile))->version;
+            if ($version == $espoVersion) {
+                return null;
+            }
+        }
+
         // delete backend
         foreach (scandir('application/Espo') as $dir) {
             if (!in_array($dir, ['.', '..', 'Modules'])) {
@@ -175,6 +186,9 @@ class Mover
         // copy
         self::copyDir('vendor/espocrm/espocrm/application/Espo', 'application/Espo');
         self::copyDir('vendor/espocrm/espocrm/client', 'client');
+
+        // set version
+        file_put_contents($versionFile, json_encode(['version' => $espoVersion]));
     }
 
     /**

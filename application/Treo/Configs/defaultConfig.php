@@ -48,7 +48,6 @@ return [
         'password' => ''
     ],
     'version'                => '',
-    'espoVersion'            => '',
     'recordsPerPage'         => 200,
     'recordsPerPageSmall'    => 5,
     'lastViewedCount'        => 20,
