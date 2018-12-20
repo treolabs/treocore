@@ -168,20 +168,24 @@ class Mover
         }
 
         // delete backend
-        foreach (scandir('application/Espo') as $dir) {
-            if (!in_array($dir, ['.', '..', 'Modules'])) {
-                self::deleteDir('application/Espo/' . $dir);
+        if (file_exists('application/Espo')) {
+            foreach (scandir('application/Espo') as $dir) {
+                if (!in_array($dir, ['.', '..', 'Modules'])) {
+                    self::deleteDir('application/Espo/' . $dir);
+                }
             }
+            self::deleteDir('application/Espo/Modules/Crm');
         }
-        self::deleteDir('application/Espo/Modules/Crm');
 
         // delete frontend
-        foreach (scandir('client') as $dir) {
-            if (!in_array($dir, ['.', '..', 'modules'])) {
-                self::deleteDir('client/' . $dir);
+        if (file_exists('client')) {
+            foreach (scandir('client') as $dir) {
+                if (!in_array($dir, ['.', '..', 'modules'])) {
+                    self::deleteDir('client/' . $dir);
+                }
             }
+            self::deleteDir('client/modules/crm');
         }
-        self::deleteDir('client/modules/crm');
 
         // copy
         self::copyDir('vendor/espocrm/espocrm/application/Espo', 'application/Espo');
