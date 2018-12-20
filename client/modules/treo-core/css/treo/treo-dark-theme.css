@@ -18502,3 +18502,13 @@ td[data-name="draggableIcon"] {
      margin-left: -21px;
      margin-right: -21px;
 }
+
+.mapping-container .configurator-buttons {
+    padding: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .mapping-container .configurator-buttons .conf-button {
+        margin-bottom: -1px;
+    }
+}
