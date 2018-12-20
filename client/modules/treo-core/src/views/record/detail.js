@@ -65,12 +65,12 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             Dep.prototype.setupActionItems.call(this);
 
             const dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']) || {};
-            Object.keys(dropDownItems).forEach((item) => {
+            Object.keys(dropDownItems).forEach(item => {
                 const check = (dropDownItems[item].conditions || []).every(condition => {
                     let check;
-                    switch (condition.condType) {
+                    switch (condition.type) {
                         case 'type':
-                            check = this.type === condition.condValue;
+                            check = this.type === condition.value;
                             break;
                         default:
                             check = true;
