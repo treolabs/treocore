@@ -35,8 +35,6 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Espo\Core\Utils\Util;
-
 /**
  * Mover util
  *
@@ -111,7 +109,7 @@ class Mover
     {
         foreach ($modules as $moduleId => $key) {
             // delete dir from frontend
-            self::deleteDir('client/modules/' . Util::fromCamelCase($moduleId, '-') . '/');
+            self::deleteDir('client/modules/' . self::fromCamelCase($moduleId, '-') . '/');
 
             // delete dir from backend
             self::deleteDir("application/Espo/Modules/{$moduleId}/");
@@ -205,7 +203,7 @@ class Mover
         if (array_key_exists($moduleId, self::getModules())) {
             // prepare params
             $moduleKey = self::getModules()[$moduleId];
-            $module = Util::fromCamelCase($moduleId, '-');
+            $module = self::fromCamelCase($moduleId, '-');
             $source = "vendor/" . self::TREODIR . "/{$moduleKey}/client/modules/{$module}/";
             $dest = "client/modules/{$module}/";
 
@@ -299,5 +297,27 @@ class Mover
         unlink($src);
 
         return true;
+    }
+
+    /**
+     * @param        $name
+     * @param string $symbol
+     *
+     * @return null|string|string[]
+     */
+    public static function fromCamelCase($name, $symbol = '_')
+    {
+        if (is_array($name)) {
+            foreach ($name as &$value) {
+                $value = static::fromCamelCase($value, $symbol);
+            }
+
+            return $name;
+        }
+
+        $name[0] = strtolower($name[0]);
+        return preg_replace_callback('/([A-Z])/', function ($matches) use ($symbol) {
+            return $symbol . strtolower($matches[1]);
+        }, $name);
     }
 }
