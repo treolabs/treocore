@@ -109,16 +109,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     };
                 }
             }, this);
-
-            this.model.listenTo(this.model, 'restored-from-stream', fields => {
-                let fieldsArr = fields.split(',');
-                fieldsArr.forEach(field => {
-                    let view = this.getFieldView(field);
-                    if (view) {
-                        view.reRender();
-                    }
-                });
-            });
         },
 
         collapseAllPanels(type) {
