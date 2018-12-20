@@ -59,32 +59,26 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     this.hotKeySave(e);
                 }
             });
+        },
 
-            let dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']) || {};
+        setupActionItems() {
+            Dep.prototype.setupActionItems.call(this);
+
+            const dropDownItems = this.getMetadata().get(['clientDefs', this.scope, 'additionalDropdownItems']) || {};
             Object.keys(dropDownItems).forEach((item) => {
-                let check = true;
-                if (dropDownItems[item].conditions) {
-                    check = dropDownItems[item].conditions.every(condition => {
-                        if (Espo.Utils.isObject(condition)) {
-                            let operator = condition.operator;
-                            let value = condition.value;
-                            let attribute = this.model.get(condition.attribute);
-                            let currentCheck;
-                            switch (operator) {
-                                case ('in'):
-                                    currentCheck = value.includes(attribute);
-                                    break;
-                                default:
-                                    currentCheck = false;
-                            }
-                            return currentCheck;
-                        } else {
-                            if (condition === 'notNewModel') {
-                                return !this.model.isNew();
-                            }
-                        }
-                    });
-                }
+                const check = (dropDownItems[item].conditions || []).every(condition => {
+                    let check;
+                    switch (condition.condType) {
+                        case 'type':
+                            check = this.type === condition.condValue;
+                            break;
+                        default:
+                            check = true;
+                            break;
+                    }
+                    return check;
+                });
+
                 if (check) {
                     let dropdownItem = {
                         name: dropDownItems[item].name,
