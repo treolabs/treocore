@@ -62,6 +62,14 @@ Espo.define('treo-core:views/login', 'class-replace!treo-core:views/login',
             }, Dep.prototype.data.call(this));
         },
 
+        getLogoSrc: function () {
+            const companyLogoId = this.getConfig().get('companyLogoId');
+            if (!companyLogoId) {
+                return this.getBasePath() + 'client/modules/treo-core/img/treo_pim_logo_white.svg';
+            }
+            return this.getBasePath() + '?entryPoint=LogoImage&id='+companyLogoId+'&t=' + companyLogoId;
+        },
+
         getLocales() {
             let translatedOptions = Espo.Utils.clone(this.getLanguage().translate('language', 'options') || {});
 
