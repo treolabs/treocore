@@ -37,8 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core\Portal;
 
 use Espo\Entities\Portal;
-use Espo\Core\Utils\Language;
-use Espo\Core\Portal\Utils\Layout;
 use Espo\Core\Portal\Utils\ThemeManager;
 
 /**
@@ -124,18 +122,6 @@ class Container extends \Treo\Core\Container
             $this->get('config'),
             $this->get('metadata'),
             $this->get('portal')
-        );
-    }
-
-    /**
-     * @return Layout
-     */
-    protected function loadLayout()
-    {
-        return new Layout(
-            $this->get('fileManager'),
-            $this->get('metadata'),
-            $this->get('user')
         );
     }
 

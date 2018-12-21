@@ -36,13 +36,10 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Espo\Core\Container;
-use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Core\Utils\Metadata;
-use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
-use Espo\Entities\User;
+use Espo\Core\Utils\Util;
 use Treo\Layouts\AbstractLayout;
+use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class of Layout
@@ -51,29 +48,7 @@ use Treo\Layouts\AbstractLayout;
  */
 class Layout extends \Espo\Core\Utils\Layout
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $paths
-        = [
-            'corePath'   => 'application/Espo/Resources/layouts',
-            'treoPath'   => 'application/Treo/Resources/layouts',
-            'modulePath' => 'application/Espo/Modules/{*}/Resources/layouts',
-            'customPath' => 'custom/Espo/Custom/Resources/layouts',
-        ];
-
-    /**
-     * Construct
-     */
-    public function __construct()
-    {
-        // blocked parent construct
-    }
+    use \Treo\Traits\ContainerTrait;
 
     /**
      * Get Layout context
@@ -85,9 +60,10 @@ class Layout extends \Espo\Core\Utils\Layout
      */
     public function get($scope, $name)
     {
-        // prepare params
-        $data = [];
+        // prepare scope
         $scope = $this->sanitizeInput($scope);
+
+        // prepare name
         $name = $this->sanitizeInput($name);
 
         // cache
@@ -95,8 +71,25 @@ class Layout extends \Espo\Core\Utils\Layout
             return Json::encode($this->changedData[$scope][$name]);
         }
 
+        // compose
+        $layout = $this->compose($scope, $name);
+
+        // remove fields from layout if this fields not exist in metadata
+        $layout = $this->disableNotExistingFields($scope, $name, $layout);
+
+        // modify layouts
+        $layout = $this->modifyLayouts($scope, $name, $layout);
+
+        return Json::encode(array_values($layout));
+    }
+
+    protected function compose(string $scope, string $name): array
+    {
+        // prepare data
+        $data = [];
+
         // from custom data
-        $fileFullPath = Util::concatPath($this->getLayoutPath($scope, true), $name . '.json');
+        $fileFullPath = $this->concatPath($this->getLayoutPath($scope, true), $name . '.json');
         if (file_exists($fileFullPath)) {
             $fileData = $this->getFileManager()->getContents($fileFullPath);
 
@@ -108,8 +101,8 @@ class Layout extends \Espo\Core\Utils\Layout
         if (empty($data)) {
             foreach ($this->getMetadata()->getModuleList() as $module) {
                 // prepare file path
-                $filePath = Util::concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
-                $fileFullPath = Util::concatPath($filePath, $name . '.json');
+                $filePath = $this->concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
+                $fileFullPath = $this->concatPath($filePath, $name . '.json');
                 if (file_exists($fileFullPath)) {
                     // get file data
                     $fileData = $this->getFileManager()->getContents($fileFullPath);
@@ -123,8 +116,8 @@ class Layout extends \Espo\Core\Utils\Layout
         // from treo core data
         if (empty($data)) {
             // prepare file path
-            $filePath = Util::concatPath($this->paths['treoPath'], $scope);
-            $fileFullPath = Util::concatPath($filePath, $name . '.json');
+            $filePath = $this->concatPath('application/Treo/Resources/layouts', $scope);
+            $fileFullPath = $this->concatPath($filePath, $name . '.json');
             if (file_exists($fileFullPath)) {
                 // get file data
                 $fileData = $this->getFileManager()->getContents($fileFullPath);
@@ -137,8 +130,8 @@ class Layout extends \Espo\Core\Utils\Layout
         // from core data
         if (empty($data)) {
             // prepare file path
-            $filePath = Util::concatPath($this->paths['corePath'], $scope);
-            $fileFullPath = Util::concatPath($filePath, $name . '.json');
+            $filePath = $this->concatPath($this->paths['corePath'], $scope);
+            $fileFullPath = $this->concatPath($filePath, $name . '.json');
             if (file_exists($fileFullPath)) {
                 // get file data
                 $fileData = $this->getFileManager()->getContents($fileFullPath);
@@ -151,8 +144,8 @@ class Layout extends \Espo\Core\Utils\Layout
         // default
         if (empty($data)) {
             // prepare file path
-            $fileFullPath = Util::concatPath(
-                Util::concatPath($this->params['defaultsPath'], 'layouts'),
+            $fileFullPath = $this->concatPath(
+                $this->concatPath($this->params['defaultsPath'], 'layouts'),
                 $name . '.json'
             );
 
@@ -165,37 +158,7 @@ class Layout extends \Espo\Core\Utils\Layout
             }
         }
 
-        // remove fields from layout if this fields not exist in metadata
-        $data = $this->disableNotExistingFields($scope, $name, $data);
-
-        // prepare classes
-        $classes = [
-            "Treo\\Layouts\\$scope"
-        ];
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Layouts\\$scope";
-        }
-
-        // modify data
-        foreach ($classes as $className) {
-            if (class_exists($className)) {
-                // create class
-                $layout = new $className();
-
-                // set container
-                if ($layout instanceof AbstractLayout) {
-                    $layout->setContainer($this->getContainer());
-                }
-
-                // call method
-                $method = 'layout' . ucfirst($name);
-                if (method_exists($layout, $method)) {
-                    $data = $layout->{$method}($data);
-                }
-            }
-        }
-
-        return Json::encode(array_values($data));
+        return $data;
     }
 
     /**
@@ -251,56 +214,70 @@ class Layout extends \Espo\Core\Utils\Layout
     }
 
     /**
-     * Set container
+     * @param string $scope
+     * @param string $name
+     * @param array  $data
      *
-     * @param Container $container
-     *
-     * @return Layout
+     * @return array
      */
-    public function setContainer(Container $container): Layout
+    protected function modifyLayouts(string $scope, string $name, array $data): array
     {
-        $this->container = $container;
+        // prepare classes
+        $classes = [
+            "Treo\\Layouts\\$scope"
+        ];
+        foreach ($this->getMetadata()->getModuleList() as $module) {
+            $classes[] = "Espo\\Modules\\$module\\Layouts\\$scope";
+        }
 
-        return $this;
+        // modify data
+        foreach ($classes as $className) {
+            if (class_exists($className)) {
+                // create class
+                $layout = new $className();
+
+                // set container
+                if ($layout instanceof AbstractLayout) {
+                    $layout->setContainer($this->getContainer());
+                }
+
+                // call method
+                $method = 'layout' . ucfirst($name);
+                if (method_exists($layout, $method)) {
+                    $data = $layout->{$method}($data);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
-     * Get container
-     *
-     * @return Container
+     * @return bool
      */
-    protected function getContainer(): Container
+    protected function isPortal(): bool
     {
-        return $this->container;
+        return (get_class($this->getContainer()) == PortalContainer::class);
     }
 
     /**
-     * Get file manager
+     * Get a full path of the file
      *
-     * @return FileManager
+     * @param string | array $folderPath - Folder path, Ex. myfolder
+     * @param string         $filePath   - File path, Ex. file.json
+     *
+     * @return string
      */
-    protected function getFileManager(): FileManager
+    protected function concatPath($folderPath, $filePath = null)
     {
-        return $this->getContainer()->get('fileManager');
-    }
+        // for portal
+        if ($this->isPortal()) {
+            $portalPath = Util::concatPath($folderPath, 'portal/' . $filePath);
+            if (file_exists($portalPath)) {
+                return $portalPath;
+            }
+        }
 
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata(): Metadata
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser(): User
-    {
-        return $this->getContainer()->get('user');
+        return Util::concatPath($folderPath, $filePath);
     }
 }

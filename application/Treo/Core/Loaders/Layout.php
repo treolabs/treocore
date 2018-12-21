@@ -52,6 +52,11 @@ class Layout extends Base
      */
     public function load()
     {
-        return (new LayoutUtil())->setContainer($this->getContainer());
+        // prepare data
+        $fileManager = $this->getContainer()->get('fileManager');
+        $metadata = $this->getContainer()->get('metadata');
+        $user = $this->getContainer()->get('user');
+
+        return (new LayoutUtil($fileManager, $metadata, $user))->setContainer($this->getContainer());
     }
 }
