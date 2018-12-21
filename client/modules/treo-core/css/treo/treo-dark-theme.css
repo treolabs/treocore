@@ -18512,3 +18512,10 @@ td[data-name="draggableIcon"] {
         margin-bottom: -1px;
     }
 }
+
+.was,
+.became {
+    display: inline-block;
+    width: 100%;
+    word-break: break-word;
+}
