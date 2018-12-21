@@ -113,7 +113,7 @@ class Installer extends AbstractService
                     'name'       => $this->translate($setting, 'requirements', 'Installer'),
                     'validValue' => '>= ' . $value,
                     'value'      => $systemValue,
-                    'isValid'    => ($preparedSystemValue >= $preparedValue)
+                    'isValid'    => ($preparedSystemValue >= $preparedValue || empty($systemValue))
                 ];
             }
 
@@ -568,13 +568,16 @@ class Installer extends AbstractService
 
         switch ($last) {
             case 'G':
-                $value = (int)$value * 1024;
+                $value = (int)$value * 1024 * 1024 * 1024;
                 break;
             case 'M':
-                $value = (int)$value * 1024;
+                $value = (int)$value * 1024 * 1024;
                 break;
             case 'K':
                 $value = (int)$value * 1024;
+                break;
+            default:
+                $value = (int)$value;
                 break;
         }
 
