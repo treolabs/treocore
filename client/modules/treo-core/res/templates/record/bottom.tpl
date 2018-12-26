@@ -38,8 +38,8 @@
             {{/if}}
             {{#unless notRefreshable}}
             </span>
-            <span class="collapser glyphicon {{#if expanded}}glyphicon-menu-up{{else}}glyphicon-menu-down{{/if}}" data-action="collapsePanel" data-panel="{{name}}"></span>
             {{/unless}}
+            <span class="collapser glyphicon {{#if expanded}}glyphicon-menu-up{{else}}glyphicon-menu-down{{/if}}" data-action="collapsePanel" data-panel="{{name}}"></span>
             </h4>
         </div>
         <div class="panel-body{{#if isForm}} panel-body-form{{/if}} panel-collapse collapse {{#if expanded}}in{{/if}}" data-name="{{name}}">
