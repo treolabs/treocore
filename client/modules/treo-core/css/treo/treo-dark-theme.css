@@ -17586,7 +17586,7 @@ button.category span.glyphicon {
         margin-left: -15px
     }
 
-    .detail .bottom .panel-default > .panel-heading {
+    .detail .bottom .panel-default > .panel-heading:not(.note-toolbar) {
         position: relative
     }
 
