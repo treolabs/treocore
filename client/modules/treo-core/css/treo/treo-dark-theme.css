@@ -17090,10 +17090,6 @@ ul.dropdown-menu > li.checkbox {
     border-radius: 100%;
 }
 
-.detail-button-container .panel-navigation {
-    width: calc(100% - 156px);
-}
-
 #content .completeness {
     position: relative;
     border: 0;
