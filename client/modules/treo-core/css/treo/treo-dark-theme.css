@@ -18519,3 +18519,8 @@ td[data-name="draggableIcon"] {
     width: 100%;
     word-break: break-word;
 }
+
+.was .html-container,
+.became .html-container {
+    overflow-x: auto;
+}
