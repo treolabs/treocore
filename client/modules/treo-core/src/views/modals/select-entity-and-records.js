@@ -54,8 +54,10 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             let options = [];
             let translatedOptions = {};
             this.model.get('foreignEntities').forEach(entityDefs => {
-                options.push(entityDefs.entity);
-                translatedOptions[entityDefs.entity] = this.translate(entityDefs.link, 'links', this.model.get('mainEntity'));
+                let entity = (entityDefs.customDefs || {}).entity || entityDefs.entity;
+                options.push(entity);
+                let link = (entityDefs.customDefs || {}).link || entityDefs.link;
+                translatedOptions[entity] = this.translate(link, 'links', this.model.get('mainEntity'));
             });
 
             this.createView('entitySelect', 'views/fields/enum', {

@@ -175,7 +175,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             this.getModelFactory().create(null, model => {
                 model.set({
                     mainEntity: this.scope,
-                    entitySelect: foreignEntities[0].entity,
+                    entitySelect: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
                     foreignEntities: foreignEntities
                 });
 
@@ -184,7 +184,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     model: model,
                     multiple: true,
                     createButton: false,
-                    scope: foreignEntities[0].entity,
+                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
                     headerLabel: type
                 }, view => {
                     view.render(() => {
@@ -200,7 +200,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                         (models || []).forEach(model => foreignIds.push(model.id));
                         let data = this.getDataForUpdateRelation(foreignIds, view.model);
                         let links = this.getMetadata().get(['entityDefs', this.scope, 'links']) || {};
-                        let foreignEntity = Object.keys(links).find(link => links[link].entity === view.model.get('entitySelect'));
+                        let entity = view.model.get('entitySelect');
+                        let foreignEntity = (foreignEntities.find(item => (item.customDefs || {}).entity || item.entity === entity) || {}).link;
                         let url = `${this.scope}/${foreignEntity}/relation`;
                         this.sendDataForUpdateRelation(type, url, data);
                     });
