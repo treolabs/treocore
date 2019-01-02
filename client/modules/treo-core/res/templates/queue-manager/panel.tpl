@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading clearfix">
         <span>{{translate 'queueManager' category='labels' scope="QueueItem"}}</span>
         <span class="pull-right">
             <label class="show-done">

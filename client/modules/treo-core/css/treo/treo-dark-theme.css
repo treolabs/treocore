@@ -18520,3 +18520,10 @@ td[data-name="draggableIcon"] {
 .became .html-container {
     overflow-x: auto;
 }
+
+@media screen and (max-width: 768px) {
+    .content {
+        z-index: 0;
+        position: relative;
+    }
+}
