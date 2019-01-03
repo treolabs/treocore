@@ -17596,13 +17596,13 @@ button.category span.glyphicon {
         padding-left: 15px;
     }
 
-    .dashlets::after {
+    .dashlets > div::after {
         content: '';
         height: 100%;
         width: 1px;
         background: #dcdcdc;
         position: absolute;
-        left: 50%;
+        right: 0;
     }
 }
 
