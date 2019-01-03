@@ -102,5 +102,7 @@ return [
     ],
     'webMassUpdateMax'       => 200, // count of max massUpdate items for WEB
     'cronMassUpdateMax'      => 3000, // count of max massUpdate items for CRON
-    'developMode'            => false
+    'developMode'            => false,
+    'exportDelimiter' => ';',
+    'timeZone' => 'UTC'
 ];
