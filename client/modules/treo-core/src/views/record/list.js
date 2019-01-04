@@ -43,6 +43,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         dragndropEventName: null,
 
+        massRelationView: 'treo-core:views/modals/select-entity-and-records',
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -173,34 +175,45 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             this.getModelFactory().create(null, model => {
                 model.set({
                     mainEntity: this.scope,
-                    entitySelect: foreignEntities[0].entity,
+                    entitySelect: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
                     foreignEntities: foreignEntities
                 });
 
-                this.createView('dialog', 'treo-core:views/modals/select-entity-and-records', {
+                let view = this.getMetadata().get(['clientDefs', this.scope, 'massRelationView']) || this.massRelationView;
+                this.createView('dialog', view, {
                     model: model,
                     multiple: true,
                     createButton: false,
-                    scope: foreignEntities[0].entity,
+                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
                     headerLabel: type
                 }, view => {
                     view.render(() => {
                         this.notify(false);
                     });
-                    view.listenTo(view, 'select', params => {
+                    view.listenTo(view, 'select', models => {
+                        if (view.validate()) {
+                            this.notify('Not valid', 'error');
+                            return;
+                        }
+
                         let foreignIds = [];
-                        params.forEach(model => foreignIds.push(model.id));
-                        let data = {
-                            ids: this.checkedList,
-                            foreignIds: foreignIds
-                        };
+                        (models || []).forEach(model => foreignIds.push(model.id));
+                        let data = this.getDataForUpdateRelation(foreignIds, view.model);
                         let links = this.getMetadata().get(['entityDefs', this.scope, 'links']) || {};
-                        let foreignEntity = Object.keys(links).find(link => links[link].entity === view.model.get('entitySelect'));
+                        let entity = view.model.get('entitySelect');
+                        let foreignEntity = (foreignEntities.find(item => (item.customDefs || {}).entity || item.entity === entity) || {}).link;
                         let url = `${this.scope}/${foreignEntity}/relation`;
                         this.sendDataForUpdateRelation(type, url, data);
                     });
                 });
             });
+        },
+
+        getDataForUpdateRelation(foreignIds, viewModel) {
+            return {
+                ids: this.checkedList,
+                foreignIds: foreignIds
+            }
         },
 
         sendDataForUpdateRelation(type, url, data) {

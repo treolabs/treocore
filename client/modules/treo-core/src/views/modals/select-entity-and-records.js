@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/select-records',
+Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modals/select-records',
     Dep => Dep.extend({
 
         template: 'treo-core:modals/select-entity-and-records',
@@ -44,14 +44,20 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
 
             this.waitForView('entitySelect');
             this.createEntitySelectView();
+
+            this.listenTo(this.model, 'change:entitySelect', model => {
+                this.reloadList(model.get('entitySelect'));
+            });
         },
 
         createEntitySelectView() {
             let options = [];
             let translatedOptions = {};
             this.model.get('foreignEntities').forEach(entityDefs => {
-                options.push(entityDefs.entity);
-                translatedOptions[entityDefs.entity] = this.translate(entityDefs.link, 'links', this.model.get('mainEntity'));
+                let entity = (entityDefs.customDefs || {}).entity || entityDefs.entity;
+                options.push(entity);
+                let link = (entityDefs.customDefs || {}).link || entityDefs.link;
+                translatedOptions[entity] = this.translate(link, 'links', this.model.get('mainEntity'));
             });
 
             this.createView('entitySelect', 'views/fields/enum', {
@@ -65,12 +71,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                     }
                 },
                 mode: 'edit'
-            }, view => {
-                view.render();
-                view.listenTo(view.model, 'change:entitySelect', model => {
-                    this.reloadList(model.get('entitySelect'));
-                });
-            });
+            }, view => {});
         },
 
         reloadList(entity) {
@@ -83,7 +84,25 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
             this.collection.sortBy = collectionDefs.sortBy;
             this.collection.asc = collectionDefs.asc;
             this.getModelFactory().getSeed(entity, seed => this.collection.model = seed);
+            this.loadSearch();
             this.loadList();
+        },
+
+        validate: function () {
+            let notValid = false;
+            let fields = this.getFieldViews();
+            for (let i in fields) {
+                if (fields[i].mode === 'edit') {
+                    if (!fields[i].disabled && !fields[i].readOnly) {
+                        notValid = fields[i].validate() || notValid;
+                    }
+                }
+            }
+            return notValid
+        },
+
+        getFieldViews() {
+            return {};
         }
     })
 );

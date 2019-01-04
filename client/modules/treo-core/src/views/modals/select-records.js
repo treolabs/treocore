@@ -62,7 +62,7 @@ Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:vi
                 buttonsDisabled: true,
                 skipBuildRows: true
             }, function (view) {
-                this.listenToOnce(view, 'select', function (model) {
+                this.listenTo(view, 'select', function (model) {
                     this.trigger('select', model);
                     this.close();
                 }.bind(this));
