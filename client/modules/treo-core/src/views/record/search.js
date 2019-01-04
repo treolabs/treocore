@@ -329,5 +329,9 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
             this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="glyphicon glyphicon-ok pull-right"></span>');
         },
+
+        isLeftDropdown() {
+            return Dep.prototype.isLeftDropdown.call(this) || this.getAdvancedDefs().length;
+        },
     });
 });
