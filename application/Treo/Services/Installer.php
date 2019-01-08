@@ -748,6 +748,10 @@ class Installer extends AbstractService
      */
     protected function getLanguage(): Language
     {
-        return new Language("en_US", $this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'));
+        return new Language(
+            $this->getConfig()->get('language'),
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata')
+        );
     }
 }
