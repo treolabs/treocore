@@ -80,7 +80,7 @@ class Layout extends \Espo\Core\Utils\Layout
         // modify layouts
         $layout = $this->modifyLayouts($scope, $name, $layout);
 
-        return Json::encode(array_values($layout));
+        return Json::encode($layout);
     }
 
     protected function compose(string $scope, string $name): array
