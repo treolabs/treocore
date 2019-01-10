@@ -51,7 +51,7 @@ class MigrateTest extends TestCase
         $service = $this->createMockService(Migrate::class);
 
         // test
-        $this->assertEquals('Run migration.', $service->getDescription());
+        $this->assertEquals('Run migration.', $service::getDescription());
     }
 
     /**
