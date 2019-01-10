@@ -51,7 +51,7 @@ class EventsTest extends TestCase
         $service = $this->createMockService(Events::class);
 
         // test
-        $this->assertEquals('Show all triggered events.', $service->getDescription());
+        $this->assertEquals('Show all triggered events.', $service::getDescription());
     }
 
     /**
