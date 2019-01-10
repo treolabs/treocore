@@ -44,7 +44,7 @@ use Treo\PHPUnit\Framework\TestCase;
 class DevelopModTest extends TestCase
 {
     /**
-     * Test run method
+     * Test getDescription method
      */
     public function testGetDescription()
     {
