@@ -38,6 +38,7 @@ namespace Treo\EntryPoints;
 
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Exceptions\Forbidden;
+use Espo\ORM\Entity;
 
 /**
  * EntryPoint Image
@@ -63,23 +64,26 @@ class TreoImage extends \Espo\Core\EntryPoints\Base
 
     /**
      * @param array $data
+     *
+     * @throws Forbidden
+     * @throws NotFound
      */
     public function run(array $data = [])
     {
         // get attachment
-        $attachment = $this->getEntityManager()->getEntity('Attachment', $data['id']);
+        $attachment = $this->getEntity('Attachment', $data['id']);
         if (!$attachment) {
             throw new NotFound();
         }
 
         // is granted ?
-        if (!$this->getAcl()->checkEntity($attachment)) {
+        if (!$this->checkEntity($attachment)) {
             throw new Forbidden();
         }
 
         // get file path
-        $filePath = $this->getEntityManager()->getRepository('Attachment')->getFilePath($attachment);
-        if (!file_exists($filePath)) {
+        $filePath = $this->getFilePath($attachment);
+        if (!$this->fileExists($filePath)) {
             throw new NotFound();
         }
 
@@ -102,5 +106,54 @@ class TreoImage extends \Espo\Core\EntryPoints\Base
         }
         readfile($filePath);
         exit;
+    }
+
+    /**
+     * Get entity
+     *
+     * @param string $entityType
+     * @param string|null $entityId
+     *
+     * @return Entity|null
+     */
+    protected function getEntity(string $entityType, string $entityId = null): ?Entity
+    {
+        return $this->getEntityManager()->getEntity($entityType, $entityId);
+    }
+
+    /**
+     * Check acl entity
+     *
+     * @param Entity $entity
+     *
+     * @return bool
+     */
+    protected function checkEntity(Entity $entity): bool
+    {
+        return $this->getAcl()->checkEntity($entity);
+    }
+
+    /**
+     * Get file path
+     *
+     * @param Entity $entity
+     *
+     * @return string
+     */
+    protected function getFilePath(Entity $entity): string
+    {
+        return $this->getEntityManager()->getRepository('Attachment')->getFilePath($entity);
+    }
+
+    /**
+     * Checks whether a file or directory exists
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function fileExists(string $filename): bool
+    {
+        return file_exists($filename);
     }
 }
