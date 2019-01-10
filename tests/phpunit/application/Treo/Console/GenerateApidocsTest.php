@@ -51,7 +51,7 @@ class GenerateApidocsTest extends TestCase
         $service = $this->createMockService(GenerateApidocs::class);
 
         // test
-        $this->assertEquals('Generate REST API documentation.', $service->getDescription());
+        $this->assertEquals('Generate REST API documentation.', $service::getDescription());
     }
 
     /**
