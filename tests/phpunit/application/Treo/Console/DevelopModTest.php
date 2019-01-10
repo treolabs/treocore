@@ -53,7 +53,7 @@ class DevelopModTest extends TestCase
         // test
         $this->assertEquals(
             'Enable or disable development mode. \'param\' can be enable|disable',
-            $service->getDescription()
+            $service::getDescription()
         );
     }
 
