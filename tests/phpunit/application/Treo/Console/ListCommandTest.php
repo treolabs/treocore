@@ -51,7 +51,7 @@ class ListCommandTest extends TestCase
         $service = $this->createMockService(ListCommand::class);
 
         // test
-        $this->assertEquals('Show all existiong command and them descriptions.', $service->getDescription());
+        $this->assertEquals('Show all existiong command and them descriptions.', $service::getDescription());
     }
 
     /**
