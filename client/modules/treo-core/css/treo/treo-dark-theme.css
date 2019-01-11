@@ -16942,10 +16942,11 @@ ul.dropdown-menu > li.checkbox {
     text-align: center;
     padding: 6px;
     border-top: 0;
+    background-color: #424242;
 }
 
 #login.panel > .panel-body {
-    border: 1px solid #424242;
+    border: 1px solid #c0c0c0;
 }
 
 #login .logo-container {
