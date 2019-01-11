@@ -70,10 +70,7 @@ class BaseTest extends TestCase
             ->method('getInjection')
             ->willReturn($metadata);
 
-        $entity = $this->createMockService(
-            Entity::class,
-            ['getEntityType', 'has', 'get', 'hasAttribute', 'hasRelation', 'hasLinkMultipleId']
-        );
+        $entity = $this->createMockService(Entity::class, ['getEntityType', 'has', 'get']);
         $entity
             ->expects($this->any())
             ->method('getEntityType')
