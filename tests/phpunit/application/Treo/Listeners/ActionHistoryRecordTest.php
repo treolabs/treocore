@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,54 +32,58 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Treo\Listeners;
 
+use Treo\Core\Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
+use Treo\PHPUnit\Framework\TestCase;
 
 /**
- * ActionHistoryRecord listener
+ * Class ActionHistoryRecordTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ActionHistoryRecord extends AbstractListener
+class ActionHistoryRecordTest extends TestCase
 {
     /**
-     * @param array $data
-     *
-     * @return array
+     * Test is beforeActionList method exists
      */
-    public function beforeActionList(array $data): array
+    public function testIsBeforeActionListExists()
     {
-        // get where
-        $where = $data['request']->get('where', []);
+        $service = $this->createMockService(ActionHistoryRecord::class, ['getMetadata']);
+        $request = $this->createMockService(Request::class, ['get', 'setQuery']);
+        $metadata = $this->createMockService(Metadata::class, ['get']);
 
-        // get scopes
-        $scopes = $this
-            ->getMetadata()
-            ->get('scopes');
+        $metadata
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
 
-        // prepare where
-        $where[] = [
-            'type'      => 'in',
-            'attribute' => 'targetType',
-            'value'     => array_keys($scopes)
+        $service
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
+
+        $request
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
+        $request
+            ->expects($this->any())
+            ->method('setQuery')
+            ->willReturn($request);
+
+        $testData = [
+            'request' => $request,
+            'data' => [],
+            'params' => []
         ];
 
-        // set where
-        $data['request']->setQuery('where', $where);
+        // test
+        $result = $service->beforeActionList($testData);
 
-        return $data;
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata(): Metadata
-    {
-        return $this->getContainer()->get('metadata');
+        foreach (array_keys($testData) as $key) {
+            $this->assertArrayHasKey($key, $result);
+        }
     }
 }
