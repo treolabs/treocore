@@ -4,7 +4,7 @@
 phpcs="$(/usr/bin/php tools/phpcs.phar --standard=PSR2 application/Treo/)"
 if [ ! -z "$phpcs" ]
 then
-  echo "PHP CodeSniffer failed! Call 'php tools/phpcs.phar --standard=PSR2 application/Treo/' for details."
+  echo "PHP CodeSniffer failed! $phpcs"
   exit 1
 fi
 
