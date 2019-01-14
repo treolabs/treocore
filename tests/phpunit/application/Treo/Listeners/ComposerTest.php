@@ -35,6 +35,7 @@
 namespace Treo\Listeners;
 
 use Treo\PHPUnit\Framework\TestCase;
+use Treo\Services\Composer as ComposerService;
 
 /**
  * Class ComposerTest
@@ -44,57 +45,116 @@ use Treo\PHPUnit\Framework\TestCase;
 class ComposerTest extends TestCase
 {
     /**
-     * Test is beforeComposerUpdate method exists
+     * Test beforeComposerUpdate method
      */
-    public function testIsBeforeComposerUpdateExists()
+    public function testBeforeComposerUpdateMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createMockService(Composer::class, ['getComposerService']);
+        $composerService = $this->createMockService(ComposerService::class, ['storeComposerLock']);
+
+        $composerService
+            ->expects($this->any())
+            ->method('storeComposerLock')
+            ->willReturn(null);
+
+        $service
+            ->expects($this->any())
+            ->method('getComposerService')
+            ->willReturn($composerService);
+
+        $testData = [
+            'request' => null,
+            'data' => [],
+            'params' => []
+        ];
 
         // test
-        $this->assertTrue(method_exists($service, 'beforeComposerUpdate'));
+        $this->assertArrayKeys($testData, $service->beforeComposerUpdate($testData));
     }
 
     /**
-     * Test is afterComposerUpdate method exists
+     * Test afterComposerUpdate method
      */
-    public function testIsAfterComposerUpdateExists()
+    public function testAfterComposerUpdateMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createMockService(Composer::class, ['notifyComposerUpdate']);
+        $service
+            ->expects($this->any())
+            ->method('notifyComposerUpdate')
+            ->willReturn(null);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterComposerUpdate'));
+        $testData = [
+            'composer' => [
+                'status' => 0
+            ],
+            'createdById' => 'id'
+        ];
+
+        $this->assertArrayKeys($testData, $service->afterComposerUpdate($testData));
     }
 
     /**
-     * Test is afterInstallModule method exists
+     * Test afterInstallModule method
      */
-    public function testIsAfterInstallModuleExists()
+    public function testAfterInstallModuleMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createMockService(Composer::class, ['notifyInstall']);
+
+        $service
+            ->expects($this->any())
+            ->method('notifyInstall')
+            ->willReturn(null);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterInstallModule'));
+        $testData = [
+            'id' => 'some-id',
+            'createdById' => 'some-id'
+        ];
+
+        $this->assertArrayKeys($testData, $service->afterInstallModule($testData));
     }
 
     /**
-     * Test is afterUpdateModule method exists
+     * Test afterUpdateModule method
      */
-    public function testIsAfterUpdateModuleExists()
+    public function testAfterUpdateModuleMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createMockService(Composer::class, ['notifyUpdate']);
+
+        $service
+            ->expects($this->any())
+            ->method('notifyUpdate')
+            ->willReturn(null);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterUpdateModule'));
+        $testData = [
+            'id' => 'some-id',
+            'from' => '',
+            'createdById' => 'some-id'
+        ];
+
+        $this->assertArrayKeys($testData, $service->afterUpdateModule($testData));
     }
 
     /**
-     * Test is afterDeleteModule method exists
+     * Test afterDeleteModule method
      */
-    public function testIsAfterDeleteModuleExists()
+    public function testAfterDeleteModuleMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createMockService(Composer::class, ['notifyDelete']);
+
+        $service
+            ->expects($this->any())
+            ->method('notifyDelete')
+            ->willReturn(null);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterDeleteModule'));
+        $testData = [
+            'id' => 'some-id',
+            'createdById' => 'some-id'
+        ];
+
+        $this->assertArrayKeys($testData, $service->afterDeleteModule($testData));
     }
 }
