@@ -34,6 +34,8 @@
 
 namespace Treo\Listeners;
 
+use Treo\Core\Slim\Http\Request;
+use Treo\Core\Utils\Metadata;
 use Treo\PHPUnit\Framework\TestCase;
 
 /**
@@ -48,9 +50,40 @@ class ActionHistoryRecordTest extends TestCase
      */
     public function testIsBeforeActionListExists()
     {
-        $service = $this->createMockService(ActionHistoryRecord::class);
+        $service = $this->createMockService(ActionHistoryRecord::class, ['getMetadata']);
+        $request = $this->createMockService(Request::class, ['get', 'setQuery']);
+        $metadata = $this->createMockService(Metadata::class, ['get']);
+
+        $metadata
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
+
+        $service
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
+
+        $request
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
+        $request
+            ->expects($this->any())
+            ->method('setQuery')
+            ->willReturn($request);
+
+        $testData = [
+            'request' => $request,
+            'data' => [],
+            'params' => []
+        ];
 
         // test
-        $this->assertTrue(method_exists($service, 'beforeActionList'));
+        $result = $service->beforeActionList($testData);
+
+        foreach (array_keys($testData) as $key) {
+            $this->assertArrayHasKey($key, $result);
+        }
     }
 }

@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Treo\Core\Utils\Metadata;
+
 /**
  * ActionHistoryRecord listener
  *
@@ -55,8 +57,7 @@ class ActionHistoryRecord extends AbstractListener
 
         // get scopes
         $scopes = $this
-            ->getContainer()
-            ->get('metadata')
+            ->getMetadata()
             ->get('scopes');
 
         // prepare where
@@ -70,5 +71,15 @@ class ActionHistoryRecord extends AbstractListener
         $data['request']->setQuery('where', $where);
 
         return $data;
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->getContainer()->get('metadata');
     }
 }
