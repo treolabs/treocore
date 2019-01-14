@@ -112,14 +112,13 @@ class MassActions extends AbstractService
         $result = false;
 
         // prepare repository
-        $repository = $this->getEntityManager()->getRepository($entityType);
+        $repository = $this->getRepository($entityType);
 
         // find entities
         $entities = $repository->where(['id' => $ids])->find();
 
         // find foreign entities
         $foreignEntities = $this
-            ->getEntityManager()
             ->getRepository($this->getForeignEntityType($entityType, $link))
             ->where(['id' => $foreignIds])
             ->find();
@@ -153,14 +152,13 @@ class MassActions extends AbstractService
         $result = false;
 
         // prepare repository
-        $repository = $this->getEntityManager()->getRepository($entityType);
+        $repository = $this->getRepository($entityType);
 
         // find entities
         $entities = $repository->where(['id' => $ids])->find();
 
         // find foreign entities
         $foreignEntities = $this
-            ->getEntityManager()
             ->getRepository($this->getForeignEntityType($entityType, $link))
             ->where(['id' => $foreignIds])
             ->find();
@@ -176,6 +174,18 @@ class MassActions extends AbstractService
         }
 
         return $result;
+    }
+
+    /**
+     * Get repository
+     *
+     * @param string $entityType
+     *
+     * @return mixed
+     */
+    protected function getRepository(string $entityType)
+    {
+        return $this->getEntityManager()->getRepository($entityType);
     }
 
     /**
@@ -354,6 +364,29 @@ class MassActions extends AbstractService
     }
 
     /**
+     * @param string $entityType
+     * @param string $link
+     *
+     * @return string
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function getForeignEntityType(string $entityType, string $link): string
+    {
+        return $this
+            ->getEntityManager()
+            ->getEntity($entityType)
+            ->getRelationParam($link, 'entity');
+    }
+
+    /**
+     * @return int
+     */
+    protected function getWebMassUpdateMax(): int
+    {
+        return (int)$this->getConfig()->get('webMassUpdateMax', 200);
+    }
+
+    /**
      * @param string $name
      * @param string $serviceName
      * @param array  $data
@@ -366,29 +399,6 @@ class MassActions extends AbstractService
             ->getContainer()
             ->get('queueManager')
             ->push($name, $serviceName, $data);
-    }
-
-    /**
-     * @param string $entityType
-     * @param string $link
-     *
-     * @return string
-     * @throws \Espo\Core\Exceptions\Error
-     */
-    private function getForeignEntityType(string $entityType, string $link): string
-    {
-        return $this
-            ->getEntityManager()
-            ->getEntity($entityType)
-            ->getRelationParam($link, 'entity');
-    }
-
-    /**
-     * @return int
-     */
-    private function getWebMassUpdateMax(): int
-    {
-        return (int)$this->getConfig()->get('webMassUpdateMax', 200);
     }
 
     /**
