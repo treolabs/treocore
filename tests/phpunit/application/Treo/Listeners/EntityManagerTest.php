@@ -44,24 +44,60 @@ use Treo\PHPUnit\Framework\TestCase;
 class EntityManagerTest extends TestCase
 {
     /**
-     * Test is afterActionCreateEntity method exists
+     * Test afterActionCreateEntity method
      */
-    public function testIsAfterActionCreateEntityExists()
+    public function testAfterActionCreateEntityMethod()
     {
-        $service = $this->createMockService(EntityManager::class);
+        $service = $this->createMockService(EntityManager::class, ['updateScope', 'rebuild']);
+
+        $service
+            ->expects($this->any())
+            ->method('updateScope')
+            ->willReturn(null);
+        $service
+            ->expects($this->any())
+            ->method('rebuild')
+            ->willReturn(null);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterActionCreateEntity'));
+        $testData = [
+            'request' => null,
+            'params' => [],
+            'data' => (object)[],
+            'result' => []
+        ];
+
+        $result = $service->afterActionCreateEntity($testData);
+
+        foreach (array_keys($testData) as $key) {
+            $this->assertArrayHasKey($key, $result);
+        };
     }
 
     /**
-     * Test is afterActionUpdateEntity method exists
+     * Test afterActionUpdateEntity method
      */
-    public function testAfterActionUpdateEntity()
+    public function testAfterActionUpdateEntityMethod()
     {
-        $service = $this->createMockService(EntityManager::class);
+        $service = $this->createMockService(EntityManager::class, ['afterActionCreateEntity']);
 
         // test
-        $this->assertTrue(method_exists($service, 'afterActionUpdateEntity'));
+        $testData = [
+            'request' => null,
+            'params' => [],
+            'data' => [],
+            'result' => []
+        ];
+
+        $service
+            ->expects($this->any())
+            ->method('afterActionCreateEntity')
+            ->willReturn($testData);
+
+        $result = $service->afterActionUpdateEntity($testData);
+
+        foreach (array_keys($testData) as $key) {
+            $this->assertArrayHasKey($key, $result);
+        }
     }
 }
