@@ -41,7 +41,7 @@ use Treo\PHPUnit\Framework\TestCase;
 /**
  * Class AclManagerTest
  *
- * @author r.zablodskiy@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
 class AclManagerTest extends TestCase
 {
