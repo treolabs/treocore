@@ -44,7 +44,7 @@ use Treo\PHPUnit\Framework\TestCase;
 class ComposerTest extends TestCase
 {
     /**
-     * Test getDescription method 1
+     * Test getDescription method
      */
     public function testGetDescriptionMethod()
     {
