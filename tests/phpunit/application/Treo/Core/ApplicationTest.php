@@ -41,7 +41,7 @@ use Treo\PHPUnit\Framework\TestCase;
 /**
  * Class ApplicationTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class ApplicationTest extends TestCase
 {
