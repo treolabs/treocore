@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "message 1"
+echo "message 12"
