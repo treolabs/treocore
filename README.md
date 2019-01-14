@@ -106,5 +106,5 @@ TreoPIM is published under the GNU GPLv3 [license](LICENSE.txt).
 ### Support
 
 - TreoPIM is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
-- Be a part of our [community](https://treolabs.com/).
+- Be a part of our [community](https://community.treolabs.com/).
 - To Contact Us please visit [TreoPIM Website](http://treopim.com).
