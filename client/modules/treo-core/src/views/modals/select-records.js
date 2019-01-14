@@ -31,17 +31,56 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/modals/select-records', 'class-replace!treo-core:views/modals/select-records', function (Dep) {
+Espo.define('treo-core:views/modals/select-records', ['class-replace!treo-core:views/modals/select-records', 'search-manager'], function (Dep, SearchManager) {
 
     return Dep.extend({
 
         layoutName: "listSmall",
+
+        disableSavePreset: false,
 
         setup() {
             this.layoutName = this.options.layoutName || this.layoutName;
             this.rowActionsDisabled = this.options.rowActionsDisabled || this.rowActionsDisabled;
 
             Dep.prototype.setup.call(this);
+        },
+
+        loadSearch: function () {
+            var searchManager = this.searchManager = new SearchManager(this.collection, 'listSelect', null, this.getDateTime());
+            searchManager.emptyOnReset = true;
+            if (this.filters) {
+                searchManager.setAdvanced(this.filters);
+            }
+
+            var boolFilterList = this.boolFilterList || this.getMetadata().get('clientDefs.' + this.scope + '.selectDefaultFilters.boolFilterList');
+            if (boolFilterList) {
+                var d = {};
+                boolFilterList.forEach(function (item) {
+                    d[item] = true;
+                });
+                searchManager.setBool(d);
+            }
+            var primaryFilterName = this.primaryFilterName || this.getMetadata().get('clientDefs.' + this.scope + '.selectDefaultFilters.filter');
+            if (primaryFilterName) {
+                searchManager.setPrimary(primaryFilterName);
+            }
+
+            this.collection.where = searchManager.getWhere();
+
+            if (this.searchPanel) {
+                this.createView('search', 'views/record/search', {
+                    collection: this.collection,
+                    el: this.containerSelector + ' .search-container',
+                    searchManager: searchManager,
+                    disableSavePreset: this.disableSavePreset,
+                }, function (view) {
+                    this.listenTo(view, 'reset', function () {
+                        this.collection.sortBy = this.defaultSortBy;
+                        this.collection.asc = this.defaultAsc;
+                    }, this);
+                });
+            }
         },
 
         loadList: function () {
