@@ -65,9 +65,5 @@
       "type": "composer",
       "url": "https://packagist.treopim.com"
     }
-  ],
-  "require-dev": {
-    "phpunit/phpunit": "^7",
-    "mockery/mockery": "^1.1"
-  }
+  ]
 }

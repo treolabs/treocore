@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # start phpunit
-vendor/bin/phpunit --bootstrap vendor/autoload.php tests
+/usr/bin/php phpunit.phar --bootstrap bootstrap.php tests
