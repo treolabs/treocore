@@ -1,4 +1,5 @@
 #!/bin/bash
+# For developers only!
 
 # start PHP CodeSniffer
 phpcs="$(/usr/bin/php tools/phpcs.phar --standard=PSR2 application/Treo/)"
