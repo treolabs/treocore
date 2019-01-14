@@ -49,7 +49,7 @@ class ApplicationTest extends TestCase
     {
         $service = $this->createMockService(Application::class);
 
-        // test 1 1
+        // test 1
         $this->assertTrue(method_exists($service, 'runConsole'));
     }
 
