@@ -70,58 +70,7 @@ class Composer extends AbstractListener
     public function afterComposerUpdate(array $data): array
     {
         if (!empty($data)) {
-            // push to stream
-            $this->pushToStream('composerUpdate', $data['composer'], $data['createdById']);
-
-            if (isset($data['composer']['status']) && $data['composer']['status'] === 0) {
-                // save stable-composer.json file
-                $this->getComposerService()->saveComposerJson();
-
-                // get composer diff
-                $composerDiff = $this->getComposerService()->getComposerLockDiff();
-
-                // for install module
-                if (!empty($composerDiff['install'])) {
-                    foreach ($composerDiff['install'] as $row) {
-                        // set createdById
-                        $row['createdById'] = $data['createdById'];
-
-                        // triggered event
-                        $this->triggered('Composer', 'afterInstallModule', $row);
-                    }
-                }
-
-                // for updated modules
-                if (!empty($composerDiff['update'])) {
-                    foreach ($composerDiff['update'] as $row) {
-                        // set createdById
-                        $row['createdById'] = $data['createdById'];
-
-                        // triggered event
-                        $this->triggered('Composer', 'afterUpdateModule', $row);
-                    }
-                }
-
-                // for deleted modules
-                if (!empty($composerDiff['delete'])) {
-                    foreach ($composerDiff['delete'] as $row) {
-                        // clear module activation and sort order data
-                        $this->clearModuleData($row['id']);
-
-                        // delete dir
-                        Mover::delete([$row['id'] => $row['package']]);
-
-                        // set createdById
-                        $row['createdById'] = $data['createdById'];
-
-                        // triggered event
-                        $this->triggered('Composer', 'afterDeleteModule', $row);
-                    }
-                }
-
-                // drop cache
-                $this->getContainer()->get('dataManager')->clearCache();
-            }
+            $this->notifyComposerUpdate($data);
         }
 
         return $data;
@@ -425,5 +374,66 @@ class Composer extends AbstractListener
     protected function getComposerService(): ComposerService
     {
         return $this->getService('Composer');
+    }
+
+    /**
+     * Notify about composer update
+     *
+     * @param array $data
+     */
+    protected function notifyComposerUpdate(array $data): void
+    {
+        // push to stream
+        $this->pushToStream('composerUpdate', $data['composer'], $data['createdById']);
+
+        if (isset($data['composer']['status']) && $data['composer']['status'] === 0) {
+            // save stable-composer.json file
+            $this->getComposerService()->saveComposerJson();
+
+            // get composer diff
+            $composerDiff = $this->getComposerService()->getComposerLockDiff();
+
+            // for install module
+            if (!empty($composerDiff['install'])) {
+                foreach ($composerDiff['install'] as $row) {
+                    // set createdById
+                    $row['createdById'] = $data['createdById'];
+
+                    // triggered event
+                    $this->triggered('Composer', 'afterInstallModule', $row);
+                }
+            }
+
+            // for updated modules
+            if (!empty($composerDiff['update'])) {
+                foreach ($composerDiff['update'] as $row) {
+                    // set createdById
+                    $row['createdById'] = $data['createdById'];
+
+                    // triggered event
+                    $this->triggered('Composer', 'afterUpdateModule', $row);
+                }
+            }
+
+            // for deleted modules
+            if (!empty($composerDiff['delete'])) {
+                foreach ($composerDiff['delete'] as $row) {
+                    // clear module activation and sort order data
+                    $this->clearModuleData($row['id']);
+
+                    // delete dir
+                    Mover::delete([$row['id'] => $row['package']]);
+
+                    // set createdById
+                    $row['createdById'] = $data['createdById'];
+
+                    // triggered event
+                    $this->triggered('Composer', 'afterDeleteModule', $row);
+                }
+            }
+
+            // drop cache
+            $this->getContainer()->get('dataManager')->clearCache();
+        }
     }
 }

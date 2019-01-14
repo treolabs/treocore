@@ -104,4 +104,19 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
         return $config;
     }
+
+    /**
+     * Assert array keys
+     *
+     * @param array $data
+     * @param array $result
+     */
+    protected function assertArrayKeys(array $data, array $result): void
+    {
+        $keys = array_keys($data);
+
+        foreach ($keys as $key) {
+            $this->assertArrayHasKey($key, $result);
+        }
+    }
 }
