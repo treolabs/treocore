@@ -35,7 +35,60 @@ Espo.define('treo-core:views/header', 'class-replace!treo-core:views/header', fu
 
     return Dep.extend({
 
-        template: 'treo-core:header'
+        template: 'treo-core:header',
+
+        overviewFilters: [
+            {
+                name: 'fieldsFilter',
+                view: 'treo-core:views/fields/overview-fields-filter'
+            },
+            {
+                name: 'localesFilter',
+                view: 'treo-core:views/fields/overview-locales-filter'
+            }
+        ],
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            if (this.model) {
+                this.createOverviewFilters();
+            }
+        },
+
+        createOverviewFilters() {
+            this.overviewFilters = this.filterOverviewFilters();
+
+            (this.overviewFilters || []).forEach(filter => {
+                this.createView(filter.name, filter.view, {
+                    el: `${this.options.el} .field[data-name="${filter.name}"]`,
+                    model: this.model,
+                    name: filter.name,
+                    storageKey: 'overview-filters'
+                }, view => {
+                    view.listenTo(view, 'after:render', () => {
+                        let headerButtons = view.$el.parents('.header-buttons');
+                        let headerItemsWidth;
+                        if (headerButtons) {
+                            headerItemsWidth = headerButtons.find('.header-items').outerWidth();
+                            headerItemsWidth += 11;
+                        }
+                        view.$el.parent().css('width', `calc((100% - ${headerItemsWidth}px) / 2)`);
+                    });
+                });
+            });
+        },
+
+        filterOverviewFilters() {
+            let overviewFilters = [];
+            overviewFilters = (this.overviewFilters || []).filter(filter => {
+                if (filter.name === 'localesFilter') {
+                    return this.getConfig().get('isMultilangActive') && (this.getConfig().get('inputLanguageList') || []).length
+                }
+                return true;
+            });
+            return overviewFilters;
+        }
 
     });
 });

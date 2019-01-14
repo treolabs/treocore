@@ -1,9 +1,10 @@
 <div class="row">
-    <div class="col-lg-9 col-sm-7">
+    <div class="col-lg-7 col-sm-7">
         <h3>{{{header}}}</h3>
     </div>
-    <div class="col-lg-3 col-sm-5">
+    <div class="col-lg-5 col-sm-5">
         <div class="header-buttons btn-group pull-right">
+            <div class="header-items">
             {{#each items.buttons}}
             <a {{#if link}}href="{{link}}"{{else}}href="javascript:"{{/if}} class="btn btn-{{#if style}}{{style}}{{else}}default{{/if}} action{{#if hidden}} hidden{{/if}}" data-name="{{name}}" data-action="{{action}}"{{#each data}} data-{{@key}}="{{./this}}"{{/each}}>
                 {{#if iconHtml}}{{{iconHtml}}}{{/if}}
@@ -36,6 +37,18 @@
                 </ul>
             </div>
             {{/if}}
+            </div>
+
+            <div class="cell filter-cell" data-name="localesFilter">
+                <div class="field" data-name="localesFilter">
+                    {{{localesFilter}}}
+                </div>
+            </div>
+            <div class="cell filter-cell" data-name="fieldsFilter">
+                <div class="field" data-name="fieldsFilter">
+                    {{{fieldsFilter}}}
+                </div>
+            </div>
         </div>
     </div>
 </div>

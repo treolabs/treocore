@@ -72,6 +72,15 @@
       "zh_CN": "Chinesisch vereinfacht (zh_CN)",
       "zh_HK": "Chinesisch traditionell (zh_HK)",
       "zh_TW": "Chinesisch traditionell (zh_TW)"
+    },
+    "fieldsFilter": {
+      "": "Alle Felder",
+      "empty": "Leerfelder",
+      "emptyAndRequired": "Leere Benötigte Felder"
+    },
+    "localesFilter": {
+      "": "Alle Locales",
+      "showGenericFields": "Generische Felder anzeigen"
     }
   },
   "fields": {
