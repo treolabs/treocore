@@ -1,14 +1,12 @@
-#!/bin/sh
-
-str="test";
-
-if [ $str == "test" ]
-then
-    echo "Show message"
-fi
+#!/bin/bash
 
 # start PHP CodeSniffer
-#/usr/bin/php tools/phpcs.phar --standard=PSR2 application/Treo/
+phpcs="$(/usr/bin/php tools/phpcs.phar --standard=PSR2 application/Treo/)"
+if [ ! -z "$phpcs" ]
+then
+  echo "PHP CodeSniffer failed! Call 'php tools/phpcs.phar --standard=PSR2 application/Treo/' for details."
+  exit 1
+fi
 
 # start PHPUnit
-#/usr/bin/php tools/phpunit.phar --bootstrap bootstrap.php tests
+/usr/bin/php tools/phpunit.phar --bootstrap bootstrap.php tests
