@@ -67,7 +67,6 @@ class Job extends AbstractListener
 
             // call service method
             $this->controlFollowersJob($entity->get('data'));
-
         }
 
         return ['entity' => $entity, 'options' => $options];

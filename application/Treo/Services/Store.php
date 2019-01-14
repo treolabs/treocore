@@ -112,7 +112,6 @@ class Store extends AbstractService
                         'versions'    => $package['versions']
                     ];
                 }
-
             }
 
             // prepare total

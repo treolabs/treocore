@@ -116,7 +116,8 @@ class Schema extends AbstractListener
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
                     $data['queries'][$key]
-                        .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}' WHERE {$field} IS NULL";
+                        .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}'
+                         WHERE {$field} IS NULL";
                 }
             }
         }

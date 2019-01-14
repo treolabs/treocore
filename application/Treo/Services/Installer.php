@@ -344,7 +344,6 @@ class Installer extends AbstractService
                         'version' => $this->getComposerVersion(),
                     ]
                 );
-
             } catch (\Exception $e) {
                 // prepare result
                 $result = [
