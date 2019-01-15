@@ -59,7 +59,7 @@ class EntityManager extends AbstractListener
         $this->updateScope(get_object_vars($data['data']));
 
         if ($data['result']) {
-            $this->getContainer()->get('dataManager')->rebuild();
+            $this->rebuild();
         }
 
         return $data;
@@ -140,5 +140,13 @@ class EntityManager extends AbstractListener
         }
 
         return $this->scopesConfig;
+    }
+
+    /**
+     * Rebuild database
+     */
+    protected function rebuild(): void
+    {
+        $this->getContainer()->get('dataManager')->rebuild();
     }
 }
