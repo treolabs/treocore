@@ -37,8 +37,8 @@ declare(strict_types=1);
 namespace Treo\Configs;
 
 return [
-    'passwordSalt'           => 'some-salt',
-    'database'               => [
+    'passwordSalt'              => 'some-salt',
+    'database'                  => [
         'driver'   => 'pdo_mysql',
         'host'     => 'localhost',
         'port'     => '',
@@ -47,34 +47,34 @@ return [
         'user'     => '',
         'password' => ''
     ],
-    'version'                => '',
-    'recordsPerPage'         => 200,
-    'recordsPerPageSmall'    => 5,
-    'lastViewedCount'        => 20,
-    'decimalMark'            => '.',
-    'thousandSeparator'      => ',',
-    'useCache'               => false,
-    'applicationName'        => 'TreoPim',
-    'outboundEmailFromName'  => 'TreoPim',
-    'languageList'           => [
+    'version'                   => '',
+    'recordsPerPage'            => 200,
+    'recordsPerPageSmall'       => 5,
+    'lastViewedCount'           => 20,
+    'decimalMark'               => '.',
+    'thousandSeparator'         => ',',
+    'useCache'                  => false,
+    'applicationName'           => 'TreoPim',
+    'outboundEmailFromName'     => 'TreoPim',
+    'languageList'              => [
         'en_US',
         'de_DE'
     ],
-    'language'               => 'en_US',
-    'currencyList'           => [
+    'language'                  => 'en_US',
+    'currencyList'              => [
         0 => 'EUR'
     ],
-    'defaultCurrency'        => 'EUR',
-    'baseCurrency'           => 'EUR',
-    'authenticationMethod'   => 'Espo',
-    'globalSearchEntityList' =>
+    'defaultCurrency'           => 'EUR',
+    'baseCurrency'              => 'EUR',
+    'authenticationMethod'      => 'Espo',
+    'globalSearchEntityList'    =>
         [
             'Account',
             'Contact',
             'Lead',
             'Opportunity',
         ],
-    'tabList'                => [
+    'tabList'                   => [
         0 => 'Association',
         1 => 'Attribute',
         2 => 'AttributeGroup',
@@ -83,7 +83,7 @@ return [
         5 => 'Product',
         6 => 'ProductFamily'
     ],
-    'quickCreateList'        => [
+    'quickCreateList'           => [
         0 => 'Association',
         1 => 'Attribute',
         2 => 'AttributeGroup',
@@ -93,16 +93,18 @@ return [
         6 => 'Product',
         7 => 'ProductFamily'
     ],
-    'theme'                  => 'TreoDarkTheme',
-    'dashboardLayout'        => [
+    'theme'                     => 'TreoDarkTheme',
+    'dashboardLayout'           => [
         (object)[
             'name'   => 'My TreoPIM',
             'layout' => []
         ]
     ],
-    'webMassUpdateMax'       => 200, // count of max massUpdate items for WEB
-    'cronMassUpdateMax'      => 3000, // count of max massUpdate items for CRON
-    'developMode'            => false,
-    'exportDelimiter'        => ';',
-    'timeZone'               => 'UTC'
+    'webMassUpdateMax'          => 200, // count of max massUpdate items for WEB
+    'cronMassUpdateMax'         => 3000, // count of max massUpdate items for CRON
+    'developMode'               => false,
+    'exportDelimiter'           => ';',
+    'timeZone'                  => 'UTC',
+    'noteDeleteThresholdPeriod' => '1 month',
+    'noteEditThresholdPeriod'   => '7 days'
 ];

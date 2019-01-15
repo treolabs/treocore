@@ -59,11 +59,12 @@ class ControllerManager
      * @param array   $params
      * @param mixed   $data
      * @param Request $request
+     * @param object  $response
      *
      * @return string
      * @throws NotFound
      */
-    public function process($controllerName, $actionName, $params, $data, $request)
+    public function process($controllerName, $actionName, $params, $data, $request, $response)
     {
         // normilizeClassName
         $className = Util::normilizeClassName($controllerName);
@@ -123,7 +124,7 @@ class ControllerManager
         }
 
         if (method_exists($controller, $beforeMethodName)) {
-            $controller->$beforeMethodName($params, $data, $request);
+            $controller->$beforeMethodName($params, $data, $request, $response);
         }
 
         // triggered before action
@@ -142,7 +143,7 @@ class ControllerManager
         $data = (isset($event['data'])) ? $event['data'] : $data;
         $request = (isset($event['request'])) ? $event['request'] : $request;
 
-        $result = $controller->$primaryActionMethodName($params, $data, $request);
+        $result = $controller->$primaryActionMethodName($params, $data, $request, $response);
 
         // triggered after action
         $event = $this->triggered(
@@ -160,7 +161,7 @@ class ControllerManager
         $result = (isset($event['result'])) ? $event['result'] : $result;
 
         if (method_exists($controller, $afterMethodName)) {
-            $controller->$afterMethodName($params, $data, $request);
+            $controller->$afterMethodName($params, $data, $request, $response);
         }
 
         if (is_array($result) || is_bool($result) || $result instanceof StdClass) {

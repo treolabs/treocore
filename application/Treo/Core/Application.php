@@ -128,7 +128,7 @@ class Application extends \Espo\Core\Application
             $this->runInstallerClient();
         }
 
-        $modules = $this->getContainer()->get('config')->get('modules');
+        $modules = $this->getConfig()->get('modules');
         $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
 
         $this->getContainer()->get('clientManager')->display(
@@ -191,7 +191,7 @@ class Application extends \Espo\Core\Application
     protected function getRouteList()
     {
         $routes = new \Treo\Core\Utils\Route(
-            $this->getContainer()->get('config'),
+            $this->getConfig(),
             $this->getMetadata(),
             $this->getContainer()->get('fileManager')
         );
@@ -239,7 +239,7 @@ class Application extends \Espo\Core\Application
             $result['message'] = $e->getMessage();
         }
 
-        $modules = $this->getContainer()->get('config')->get('modules');
+        $modules = $this->getConfig()->get('modules');
         $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
 
         $this->getContainer()->get('clientManager')->display(
