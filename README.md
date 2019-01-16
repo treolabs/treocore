@@ -75,29 +75,22 @@ We are already working on the following connectors for export channels:
 - Documentation for developers is available [here](docs/).
 
 ### Installation
-
-1. Create your new project by running:
-    ````
+1. Install [composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) if not installed yet
+2. Create your TreoPIM project by running:    
+    ```
     composer create-project treo/treopim my-treopim-project --no-dev
-    ````
-2. Install TreoPIM by following the TreoPIM installation wizard in web interface.
-3. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+    ```
+3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+4. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
 
 ### Alternative installation
-1. Download or clone treopim:
-    ````
-    git clone https://github.com/treolabs/treopim.git
-    ````
-2. Go to treopim project:
-    ````
-    cd treopim
-    ````
-3. Update composer:
+1. Download [zip](https://github.com/treolabs/treopim/archive/master.zip) TreoPIM project and unpack it
+2. Goto your project and update dependencies by composer:
    ```
    /usr/bin/php composer.phar install --no-dev
    ```
-4. Install TreoPIM by following the TreoPIM installation wizard in web interface.
-5. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
+4. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
 
 ### License
 
