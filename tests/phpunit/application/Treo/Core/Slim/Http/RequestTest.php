@@ -45,6 +45,8 @@ class RequestTest extends TestCase
 {
     /**
      * Test setQuery method
+     *
+     * @throws \ReflectionException
      */
     public function testSetQueryMethod()
     {
