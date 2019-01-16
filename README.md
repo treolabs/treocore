@@ -75,7 +75,7 @@ We are already working on the following connectors for export channels:
 - Documentation for developers is available [here](docs/).
 
 ### Installation
-1. Install [composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) if not installed yet
+1. Install [composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) if it needs
 2. Create your TreoPIM project by running:    
     ```
     composer create-project treo/treopim my-treopim-project --no-dev
