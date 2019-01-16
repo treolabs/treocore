@@ -56,6 +56,10 @@
       "Espo\\Custom": "custom/"
     }
   },
+  "require-dev": {
+    "phpunit/phpunit": "^7",
+    "squizlabs/php_codesniffer": "*"
+  },
   "scripts": {
     "post-install-cmd": "Treo\\Core\\Utils\\Mover::update",
     "post-update-cmd": "Treo\\Core\\Utils\\Mover::update"
