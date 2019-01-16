@@ -85,7 +85,7 @@ We are already working on the following connectors for export channels:
 
 ### Alternative installation
 1. Download [zip](https://github.com/treolabs/treopim/archive/master.zip) TreoPIM project and unpack it
-2. Goto your project and update dependencies by composer:
+2. Go to your project and update dependencies by composer:
    ```
    /usr/bin/php composer.phar install --no-dev
    ```
