@@ -63,7 +63,7 @@ We are already working on the following connectors for export channels:
 
 ### Requirements
 
-* PHP 7.1 or above (with json, openssl, pdo_mysql, zip, gd, mbstring, imap, curl, xml extensions)
+* PHP 7.1 (with json, openssl, pdo_mysql, zip, gd, mbstring, imap, curl, xml extensions)
 * MySQL 5.5.3 or above
 
 ### Documentation
