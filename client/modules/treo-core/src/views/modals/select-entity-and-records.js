@@ -40,7 +40,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             Dep.prototype.setup.call(this);
 
             this.buttonList.find(button => button.name === 'select').label = 'applyRelation';
-            this.header = this.getLanguage().translate(this.options.headerLabel, 'massActions', 'Global');
+            this.header = this.getLanguage().translate(this.options.type, 'massActions', 'Global');
 
             this.waitForView('entitySelect');
             this.createEntitySelectView();
@@ -48,6 +48,41 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             this.listenTo(this.model, 'change:entitySelect', model => {
                 this.reloadList(model.get('entitySelect'));
             });
+
+            this.listenTo(this, 'select', models => {
+                if (this.validate()) {
+                    this.notify('Not valid', 'error');
+                    return;
+                }
+
+                let foreignIds = [];
+                (models || []).forEach(model => foreignIds.push(model.id));
+                let data = this.getDataForUpdateRelation(foreignIds, this.model);
+                let entity = this.model.get('entitySelect');
+                let foreignEntity = ((this.model.get('foreignEntities') || []).find(item => (item.customDefs || {}).entity || item.entity === entity) || {}).link;
+                let url = `${this.model.get('mainEntity')}/${foreignEntity}/relation`;
+                this.sendDataForUpdateRelation(url, data);
+            });
+        },
+
+        getDataForUpdateRelation(foreignIds, viewModel) {
+            return {
+                ids: this.options.checkedList,
+                foreignIds: foreignIds
+            }
+        },
+
+        sendDataForUpdateRelation(url, data) {
+            if (this.options.type === 'addRelation') {
+                this.ajaxPostRequest(url, data).then(response => {
+                    this.notify('Linked', 'success');
+                });
+            } else if (this.options.type === 'removeRelation') {
+                data = JSON.stringify(data);
+                this.ajaxRequest(url, 'DELETE', data).then(response => {
+                    this.notify('Unlinked', 'success');
+                });
+            }
         },
 
         createEntitySelectView() {
