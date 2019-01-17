@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -32,37 +32,21 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Treo\Console;
 
-use Treo\Core\Utils\Composer as Util;
-
 /**
- * Composer console
+ * Class CleanupTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class Composer extends AbstractConsole
+class CleanupTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Get console command description
-     *
-     * @return string
+     * Test is run method exists
      */
-    public static function getDescription(): string
+    public function testIsRunExists()
     {
-        return 'Run composer commands by extractor.';
-    }
-
-    /**
-     * Run action
-     *
-     * @param array $data
-     */
-    public function run(array $data): void
-    {
-        // render
-        self::show((new Util())->run($data['command'])['output']);
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(Cleanup::class, []), 'run'));
     }
 }
