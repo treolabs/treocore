@@ -87,7 +87,6 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
     {
         parent::init();
 
-        $this->addDependency('serviceFactory');
         $this->addDependency('language');
     }
 
@@ -101,13 +100,16 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
         // prepare result
         $result = [];
 
+        // prepare service name
+        $serviceName = $this->getServiceName($entity);
+
         // prepare action statuses
         $statuses = ['Pending', 'Running', 'Success', 'Failed'];
 
-        if (!empty($serviceName = $entity->get('serviceName')) && in_array($entity->get('status'), $statuses)) {
+        if (in_array($entity->get('status'), $statuses)) {
             // create service
             if (!isset($this->services[$serviceName])) {
-                $this->services[$serviceName] = $this->getInjection('serviceFactory')->create($serviceName);
+                $this->services[$serviceName] = $this->getServiceFactory()->create($serviceName);
             }
 
             // prepare methodName
@@ -128,5 +130,30 @@ class QueueItem extends \Espo\Core\Templates\Services\Base
     protected function exception(string $key): string
     {
         return $this->getInjection('language')->translate($key, 'exceptions', 'QueueItem');
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return string
+     */
+    protected function getServiceName(Entity $entity): string
+    {
+        $serviceName = (string)$entity->get('serviceName');
+        if (empty($serviceName) || !$this->checkExists($serviceName)) {
+            $serviceName = 'QueueManagerBase';
+        }
+
+        return $serviceName;
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return bool
+     */
+    protected function checkExists(string $serviceName): bool
+    {
+        return $this->getServiceFactory()->checkExists($serviceName);
     }
 }
