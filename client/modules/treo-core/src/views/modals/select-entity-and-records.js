@@ -42,12 +42,37 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             this.buttonList.find(button => button.name === 'select').label = 'applyRelation';
             this.header = this.getLanguage().translate(this.options.type, 'massActions', 'Global');
 
-            this.waitForView('entitySelect');
-            this.createEntitySelectView();
+            this.waitForView('selectedLink');
+            this.createSelectedLinkView();
 
-            this.listenTo(this.model, 'change:entitySelect', model => {
-                this.reloadList(model.get('entitySelect'));
+            this.listenTo(this.model, 'change:selectedLink', model => {
+                this.reloadList(model.get('selectedLink'));
             });
+
+            if (this.multiple) {
+                let selectButton = this.buttonList.find(button => button.name === 'select');
+                selectButton.onClick = dialog => {
+                    if (this.validate()) {
+                        this.notify('Not valid', 'error');
+                        return;
+                    }
+
+                    let listView = this.getView('list');
+                    if (listView.allResultIsChecked) {
+                        let where = this.collection.where;
+                        this.trigger('select', {
+                            massRelate: true,
+                            where: where
+                        });
+                    } else {
+                        let list = listView.getSelectedLabel();
+                        if (list.length) {
+                            this.trigger('select', list);
+                        }
+                    }
+                    dialog.close();
+                };
+            }
 
             this.listenTo(this, 'select', models => {
                 if (this.validate()) {
@@ -58,9 +83,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
                 let foreignIds = [];
                 (models || []).forEach(model => foreignIds.push(model.id));
                 let data = this.getDataForUpdateRelation(foreignIds, this.model);
-                let entity = this.model.get('entitySelect');
-                let foreignEntity = ((this.model.get('foreignEntities') || []).find(item => (item.customDefs || {}).entity || item.entity === entity) || {}).link;
-                let url = `${this.model.get('mainEntity')}/${foreignEntity}/relation`;
+                let url = `${this.model.get('mainEntity')}/${this.model.get('selectedLink')}/relation`;
                 this.sendDataForUpdateRelation(url, data);
             });
         },
@@ -85,21 +108,24 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             }
         },
 
-        createEntitySelectView() {
+        createSelectedLinkView() {
             let options = [];
             let translatedOptions = {};
             this.model.get('foreignEntities').forEach(entityDefs => {
-                let entity = (entityDefs.customDefs || {}).entity || entityDefs.entity;
-                options.push(entity);
-                let link = (entityDefs.customDefs || {}).link || entityDefs.link;
-                translatedOptions[entity] = this.translate(link, 'links', this.model.get('mainEntity'));
+                let link = entityDefs.link;
+                options.push(link);
+                let translation = this.translate(link, 'links', this.model.get('mainEntity'));
+                if (entityDefs.customDefs) {
+                    translation = this.translate(entityDefs.customDefs.link, 'links', this.model.get('mainEntity'));
+                }
+                translatedOptions[link] = translation;
             });
 
-            this.createView('entitySelect', 'views/fields/enum', {
+            this.createView('selectedLink', 'views/fields/enum', {
                 model: this.model,
-                el: `${this.options.el} .entity-container .field[data-name="entitySelect"]`,
+                el: `${this.options.el} .entity-container .field[data-name="selectedLink"]`,
                 defs: {
-                    name: 'entitySelect',
+                    name: 'selectedLink',
                     params: {
                         options: options,
                         translatedOptions: translatedOptions
@@ -109,10 +135,17 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
             }, view => {});
         },
 
-        reloadList(entity) {
-            if (!entity) {
+        getEntityFromSelectedLink() {
+            let selectedLink = this.model.get('selectedLink');
+            let entityDefs = (this.model.get('foreignEntities') || []).find(item => item.link === selectedLink) || {};
+            return entityDefs.customDefs ? entityDefs.customDefs.entity : entityDefs.entity;
+        },
+
+        reloadList(selectedLink) {
+            if (!selectedLink) {
                 return;
             }
+            let entity = this.getEntityFromSelectedLink();
             this.scope = entity;
             this.collection.name = this.collection.urlRoot = this.collection.url = entity;
             let collectionDefs = (this.getMetadata().get(['entityDefs', entity, 'collection']) || {});
@@ -138,6 +171,14 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
 
         getFieldViews() {
             return {};
+        },
+
+        close() {
+            if (this.validate()) {
+                return;
+            }
+
+            Dep.prototype.close.call(this);
         }
     })
 );

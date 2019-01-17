@@ -180,10 +180,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.notify('Loading...');
             this.getModelFactory().create(null, model => {
-                let foreignEntity = (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity;
                 model.set({
                     mainEntity: this.scope,
-                    entitySelect: foreignEntity,
+                    selectedLink: foreignEntities[0].link,
                     foreignEntities: foreignEntities
                 });
 
@@ -192,7 +191,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     model: model,
                     multiple: true,
                     createButton: false,
-                    scope: foreignEntity,
+                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
                     type: type,
                     checkedList: this.checkedList
                 }, view => {
