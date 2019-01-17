@@ -94,7 +94,7 @@
     "showFullList": "Show Full List",
     "On": "On",
     "Off": "Off",
-    "entitySelect": "Select Entity",
+    "selectedLink": "Select Entity",
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
     "expandAllPanels": "Expand All"
