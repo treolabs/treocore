@@ -3,8 +3,6 @@
 /apidocs/
 /data/*
 !/data/.htaccess
-/tests/
-!/tests/phpunit/application/Treo
 /vendor/
 /custom/*
 !/custom/.htaccess
