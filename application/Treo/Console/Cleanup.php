@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,36 +32,38 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Console;
 
-use Treo\PHPUnit\Framework\TestCase;
-
 /**
- * Class ComposerTest
+ * Class Cleanup
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun@treolabs.com
  */
-class ComposerTest extends TestCase
+class Cleanup extends AbstractConsole
 {
     /**
-     * Test getDescription method
+     * Get console command description
+     *
+     * @return string
      */
-    public function testGetDescriptionMethod()
+    public static function getDescription(): string
     {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertEquals('Run composer commands by extractor.', $service::getDescription());
+        return 'Database and attachments clearing.';
     }
 
     /**
-     * Test is run method exists
+     * Run action
+     *
+     * @param array $data
      */
-    public function testIsRunExists()
+    public function run(array $data): void
     {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'run'));
+        if ((new \Treo\Jobs\TreoCleanup($this->getContainer()))->run()) {
+            self::show('Cleanup successfully finished', self::SUCCESS);
+        } else {
+            self::show('Something wrong. Cleanup failed. Check log for details', self::ERROR);
+        }
     }
 }
