@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils\File;
 
+use Espo\Core\Exceptions\Error;
+
 /**
  * Class ClassParser
  *
@@ -61,7 +63,7 @@ class ClassParser extends \Espo\Core\Utils\File\ClassParser
             $paths['treoPath'] = str_replace("application/Espo/", "application/Treo/", $paths['corePath']);
         }
 
-        if ($cacheFile && file_exists($cacheFile) && $this->getConfig()->get('useCache')) {
+        if ($cacheFile && $this->fileExists($cacheFile) && $this->getConfig()->get('useCache')) {
             $data = $this->getFileManager()->getPhpContents($cacheFile);
         } else {
             // core
@@ -87,11 +89,23 @@ class ClassParser extends \Espo\Core\Utils\File\ClassParser
             if ($cacheFile && $this->getConfig()->get('useCache')) {
                 $result = $this->getFileManager()->putPhpContents($cacheFile, $data);
                 if ($result == false) {
-                    throw new \Espo\Core\Exceptions\Error();
+                    throw new Error();
                 }
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Checks whether a file or directory exists
+     *
+     * @param string|bool $filename
+     *
+     * @return bool
+     */
+    protected function fileExists($filename): bool
+    {
+        return file_exists($filename);
     }
 }
