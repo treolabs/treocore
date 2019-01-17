@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Controllers;
 
-use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Treo\Services\TreoUpgrade as Service;
@@ -44,9 +43,9 @@ use Treo\Services\TreoUpgrade as Service;
 /**
  * Controller TreoUpgrade
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class TreoUpgrade extends Base
+class TreoUpgrade extends \Espo\Core\Controllers\Base
 {
 
     /**
@@ -55,7 +54,13 @@ class TreoUpgrade extends Base
      * @ApiRoute(name="/TreoUpgrade/versions")
      * @ApiReturn(sample="[{'version': '1.0.0', 'link': '#'}]")
      *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
      * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
      */
     public function actionVersions($params, $data, Request $request): array
     {
@@ -76,7 +81,14 @@ class TreoUpgrade extends Base
      * @ApiRoute(name="/TreoUpgrade/upgrade")
      * @ApiReturn(sample="'bool'")
      *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
      * @return bool
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
      */
     public function actionUpgrade($params, $data, Request $request): bool
     {
@@ -91,6 +103,36 @@ class TreoUpgrade extends Base
         return $this
             ->getUpgradeService()
             ->createUpgradeJob((!empty($data->version)) ? $data->version : null);
+    }
+
+    /**
+     * @ApiDescription(description="Get update log")
+     * @ApiMethod(type="GET")
+     * @ApiRoute(name="/TreoUpgrade/action/getUpdateLog")
+     * @ApiReturn(sample="[{'log': 'string', 'status': 'bool'}]")
+     *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return bool
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetUpdateLog($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isGet()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this
+            ->getUpgradeService()
+            ->getUpdateLog();
     }
 
     /**

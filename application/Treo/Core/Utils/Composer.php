@@ -148,14 +148,19 @@ class Composer
         $input = new StringInput("{$command} --working-dir=" . CORE_PATH);
         $output = new BufferedOutput();
 
-        // prepare response
-        $status = $application->run($input, $output);
-        $output = str_replace(
-            'Treo\\Core\\Utils\\Mover::update',
-            '',
-            $output->fetch()
-        );
+        return [
+            'status' => $application->run($input, $output),
+            'output' => $this->prepareOutput($output->fetch())
+        ];
+    }
 
-        return ['status' => $status, 'output' => $output];
+    /**
+     * @param string $output
+     *
+     * @return string
+     */
+    protected function prepareOutput(string $output): string
+    {
+        return preg_replace("/\<warning\>[^)]+\<\/warning\>/", "", $output);
     }
 }

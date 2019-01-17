@@ -35,14 +35,12 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Treo\PHPUnit\Framework\TestCase;
-
 /**
  * Class TreoUpgradeTest
  *
  * @author r.ratsun@zinitsolutions.com
  */
-class TreoUpgradeTest extends TestCase
+class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test for getVersions method
@@ -53,7 +51,7 @@ class TreoUpgradeTest extends TestCase
         $methods = ['getDomain', 'getCurrentVersion', 'isDevelopMod', 'readJsonData'];
 
         // create service
-        $service = $this->createMockService(TreoUpgrade::class, $methods);
+        $service = $this->createPartialMock(TreoUpgrade::class, $methods);
         $service
             ->expects($this->any())
             ->method('getDomain')
@@ -80,7 +78,7 @@ class TreoUpgradeTest extends TestCase
      */
     public function testIsCreateUpgradeJobMethodExists()
     {
-        $service = $this->createMockService(TreoUpgrade::class);
+        $service = $this->createPartialMock(TreoUpgrade::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'createUpgradeJob'));
@@ -91,7 +89,7 @@ class TreoUpgradeTest extends TestCase
      */
     public function testIsRunUpgradeJobMethodExists()
     {
-        $service = $this->createMockService(TreoUpgrade::class);
+        $service = $this->createPartialMock(TreoUpgrade::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'runUpgradeJob'));
@@ -102,7 +100,7 @@ class TreoUpgradeTest extends TestCase
      */
     public function testIsDownloadPackageMethodExists()
     {
-        $service = $this->createMockService(TreoUpgrade::class);
+        $service = $this->createPartialMock(TreoUpgrade::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'downloadPackage'));
@@ -113,6 +111,41 @@ class TreoUpgradeTest extends TestCase
      */
     public function testIsNotifyMethodExists()
     {
-        $this->assertTrue(method_exists($this->createMockService(TreoUpgrade::class), 'notify'));
+        $this->assertTrue(method_exists($this->createPartialMock(TreoUpgrade::class, []), 'notify'));
+    }
+
+    /**
+     * Test for getUpdateLog method
+     */
+    public function testGetUpdateLogMethod()
+    {
+        // prepare outputs
+        $output = 'Some str';
+        $output2 = 'Nothing to install or update\n';
+
+        $service = $this->createPartialMock(TreoUpgrade::class, ['getComposerUpdateLog', 'parseComposerOutput']);
+        $service2 = clone $service;
+
+        // test 1
+        $service
+            ->expects($this->any())
+            ->method('getComposerUpdateLog')
+            ->willReturn(['output' => $output, 'status' => 0]);
+        $service
+            ->expects($this->any())
+            ->method('parseComposerOutput')
+            ->willReturn($output);
+        $this->assertEquals(['log' => $output, 'status' => true], $service->getUpdateLog());
+
+        // test 2
+        $service2
+            ->expects($this->any())
+            ->method('getComposerUpdateLog')
+            ->willReturn(['output' => $output2, 'status' => 0]);
+        $service2
+            ->expects($this->any())
+            ->method('parseComposerOutput')
+            ->willReturn($output2);
+        $this->assertEquals(['log' => $output2, 'status' => false], $service2->getUpdateLog());
     }
 }
