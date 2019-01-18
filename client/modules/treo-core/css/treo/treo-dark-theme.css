@@ -17077,14 +17077,14 @@ ul.dropdown-menu > li.checkbox {
 .page-header .header-buttons .header-items {
     display: inline-block;
     float: right;
-    max-width: 33%;
+    margin-left: 5px;
+    margin-bottom: 2px;
 }
 
 .page-header .header-buttons .filter-cell {
     display: inline-block;
-    float: right;
-    max-width: 190px;
-    margin-right: 5px;
+    max-width: 170px;
+    min-width: 100px;
 }
 
 .page-header .header-buttons .filter-cell .field {

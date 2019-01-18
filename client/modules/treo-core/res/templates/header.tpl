@@ -38,15 +38,16 @@
             </div>
             {{/if}}
             </div>
-
-            <div class="cell filter-cell" data-name="localesFilter">
-                <div class="field" data-name="localesFilter">
-                    {{{localesFilter}}}
+            <div class="pull-right">
+                <div class="cell filter-cell" data-name="fieldsFilter">
+                    <div class="field" data-name="fieldsFilter">
+                        {{{fieldsFilter}}}
+                    </div>
                 </div>
-            </div>
-            <div class="cell filter-cell" data-name="fieldsFilter">
-                <div class="field" data-name="fieldsFilter">
-                    {{{fieldsFilter}}}
+                <div class="cell filter-cell" data-name="localesFilter">
+                    <div class="field" data-name="localesFilter">
+                        {{{localesFilter}}}
+                    </div>
                 </div>
             </div>
         </div>

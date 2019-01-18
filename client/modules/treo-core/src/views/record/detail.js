@@ -39,12 +39,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
 
         panelNavigationView: 'treo-core:views/record/panel-navigation',
 
-        currentFieldFilter: null,
-
-        currentLocaleFilter: null,
-
-        showGenericFields: null,
-
         events: _.extend({
             'click a[data-action="collapseAllPanels"]': function (e) {
                 this.collapseAllPanels('hide');
@@ -77,16 +71,16 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
         },
 
         applyOverviewFilters() {
-            this.currentFieldFilter = this.model.get('fieldsFilter');
-            this.currentLocaleFilter = this.model.get('localesFilter');
-            this.showGenericFields = this.model.get('showGenericFields');
+            let currentFieldFilter = (this.model.advancedEntityView || {}).fieldsFilter;
+            let currentLocaleFilter = (this.model.advancedEntityView || {}).localesFilter;
+            let showGenericFields = (this.model.advancedEntityView || {}).showGenericFields;
 
             let fields = this.getFieldViews();
             Object.keys(fields).forEach(name => {
                 let fieldView = fields[name];
                 let actualFields = this.getFieldManager().getActualAttributeList(fieldView.model.getFieldType(name), name);
                 if (
-                    this.currentLocaleFilter !== null
+                    currentLocaleFilter !== null
                     &&
                     this.getConfig().get('isMultilangActive')
                     &&
@@ -94,29 +88,29 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     &&
                     (this.getConfig().get('inputLanguageList') || []).length
                 ) {
-                    let hiddenLocales = this.currentLocaleFilter ? this.getConfig().get('inputLanguageList').filter(lang => lang !== this.currentLocaleFilter) : [];
+                    let hiddenLocales = currentLocaleFilter ? this.getConfig().get('inputLanguageList').filter(lang => lang !== currentLocaleFilter) : [];
                     fieldView.setHiddenLocales(hiddenLocales);
                     let langFieldNameList = fieldView.getLangFieldNameList();
-                    langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(field, fieldView));
+                    langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, field, fieldView));
                     fieldView.langFieldNameList = langFieldNameList;
-                    fieldView.hideMainOption = !this.showGenericFields || !this.checkFieldValue(name, fieldView);
+                    fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, name, fieldView);
                     !fieldView.langFieldNameList.length && fieldView.hideMainOption ? fieldView.hide() : fieldView.show();
                     fieldView.reRender();
                 } else {
-                    actualFields.every(field => this.checkFieldValue(field, fieldView)) ? fieldView.show() : fieldView.hide();
+                    actualFields.every(field => this.checkFieldValue(currentFieldFilter, field, fieldView)) ? fieldView.show() : fieldView.hide();
                 }
             });
 
             this.model.trigger('overview-filters-applied');
         },
 
-        checkFieldValue(field, fieldView) {
-            let check = !this.currentFieldFilter;
-            if (this.currentFieldFilter === 'empty') {
-                check = fieldView.model.get(field) === null;
+        checkFieldValue(currentFieldFilter, field, fieldView) {
+            let check = !currentFieldFilter;
+            if (currentFieldFilter === 'empty') {
+                check = fieldView.model.get(field) === null || fieldView.model.get(field) === '';
             }
-            if (this.currentFieldFilter === 'emptyAndRequired') {
-                check = fieldView.model.get(field) === null && fieldView.isRequired();
+            if (currentFieldFilter === 'emptyAndRequired') {
+                check = (fieldView.model.get(field) === null || fieldView.model.get(field) === '') && fieldView.isRequired();
             }
             return check;
         },

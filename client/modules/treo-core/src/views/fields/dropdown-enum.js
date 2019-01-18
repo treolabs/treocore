@@ -38,6 +38,8 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
 
         optionsList: [],
 
+        modelKey: null,
+
         storageKey: null,
 
         events: _.extend({
@@ -74,7 +76,8 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
                 }
             }
             this.selected = this.selected || (this.optionsList.find(option => option.selectable) || {}).name;
-            this.model.set({[this.name]: this.selected}, {silent: true});
+            this.modelKey = this.options.modelKey || this.modelKey;
+            this.setDataToModel({[this.name]: this.selected});
 
             this.listenTo(this, 'after:render', () => {
                 this.options.hidden ? this.hide() : this.show();
@@ -87,7 +90,10 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
                 if (option.name && option.field && (option.type || option.view)) {
                     let views = ((this.getStorage().get(this.storageKey, this.scope) || {})[this.name] || {}).views || {};
                     let dataKeys = this.getFieldManager().getActualAttributeList(option.type, option.name);
-                    dataKeys.forEach(key => this.model.set({[key]: typeof views[key] !== 'undefined' ? views[key] : option.default}, {silent: true}));
+                    dataKeys.forEach(key => {
+                        let value = typeof views[key] !== 'undefined' ? views[key] : option.default;
+                        this.setDataToModel({[key]: value});
+                    });
 
                     let view = option.view || this.getFieldManager().getFieldView(option.type) || 'views/fields/base';
                     this.createView(option.name, view, {
@@ -131,16 +137,28 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
                     let field = this.getView(name);
                     if (field) {
                         let fieldData = field.fetch();
-                        this.model.set(fieldData, {silent: true});
+                        this.setDataToModel(fieldData);
                         currentFilterData.views = _.extend(currentFilterData.views, fieldData);
                     }
                 }
                 this.getStorage().set(this.storageKey, this.scope, _.extend(previousFilters, {[this.name]: currentFilterData}));
             }
-            this.model.set({[this.name]: this.selected}, {silent: true});
+            this.setDataToModel({[this.name]: this.selected});
             this.reRender();
 
             this.model.trigger('overview-filters-changed');
+        },
+
+        setDataToModel(data) {
+            if (Espo.Utils.isObject(data)) {
+                Object.keys(data).forEach(item => {
+                    if (this.modelKey) {
+                        this.model[this.modelKey] = _.extend({}, this.model[this.modelKey] , {[item]: data[item]});
+                    } else {
+                        this.model.set({[item]: data[item]}, {silent: true});
+                    }
+                });
+            }
         },
 
         getParentCell() {
