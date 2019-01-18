@@ -123,13 +123,16 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
         $output = 'Some str';
         $output2 = 'Nothing to install or update\n';
 
-        $service = $this->createPartialMock(TreoUpgrade::class, ['getComposerUpdateLog', 'parseComposerOutput']);
+        // prepare methods
+        $methods = ['runComposer', 'parseComposerOutput', 'createComposerJson'];
+
+        $service = $this->createPartialMock(TreoUpgrade::class, $methods);
         $service2 = clone $service;
 
         // test 1
         $service
             ->expects($this->any())
-            ->method('getComposerUpdateLog')
+            ->method('runComposer')
             ->willReturn(['output' => $output, 'status' => 0]);
         $service
             ->expects($this->any())
@@ -140,7 +143,7 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
         // test 2
         $service2
             ->expects($this->any())
-            ->method('getComposerUpdateLog')
+            ->method('runComposer')
             ->willReturn(['output' => $output2, 'status' => 0]);
         $service2
             ->expects($this->any())

@@ -145,7 +145,11 @@ class Composer
         $application = new Application();
         $application->setAutoExit(false);
 
-        $input = new StringInput("{$command} --working-dir=" . CORE_PATH);
+        if (strpos($command, "-d=") === false) {
+            $command .= " -d=" . CORE_PATH;
+        }
+
+        $input = new StringInput($command);
         $output = new BufferedOutput();
 
         return [

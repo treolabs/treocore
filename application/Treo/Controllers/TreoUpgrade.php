@@ -132,7 +132,7 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
 
         return $this
             ->getUpgradeService()
-            ->getUpdateLog();
+            ->getUpdateLog((!empty($request->get('core'))) ? (string)$request->get('core') : null);
     }
 
     /**

@@ -216,9 +216,11 @@ class TreoUpgrade extends AbstractService
     /**
      * Get update log
      *
+     * @param string|null $version
+     *
      * @return array
      */
-    public function getUpdateLog(): array
+    public function getUpdateLog(string $version = null): array
     {
         // prepare result
         $result = [
@@ -226,7 +228,18 @@ class TreoUpgrade extends AbstractService
             'status' => false
         ];
 
-        if (!empty($log = $this->getComposerUpdateLog())) {
+        // prepare composer command
+        $command = "update --dry-run";
+
+        if (!is_null($version)) {
+            // create composer.json file
+            $this->createComposerJson($version);
+
+            // prepare composer command
+            $command .= " -d=" . CORE_PATH . "/data/core-composer/";
+        }
+
+        if (!empty($log = $this->runComposer($command))) {
             $result['log'] = $this->parseComposerOutput($log['output']);
             if (strpos($result['log'], 'Nothing to install or update') === false) {
                 $result['status'] = empty($log['status']);
@@ -237,13 +250,36 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
-     * Get composer update log
+     * Create composer.json file
+     *
+     * @param string|null $version
+     */
+    protected function createComposerJson(string $version = null): void
+    {
+        $dir = 'data/core-composer';
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
+
+        $data = $this->readJsonData('composer.json');
+        $data['config']['vendor-dir'] = CORE_PATH . "/vendor";
+        if (!is_null($version)) {
+            $data['version'] = $version;
+        }
+
+        file_put_contents("$dir/composer.json", json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * Run composer command
+     *
+     * @param string $command
      *
      * @return array
      */
-    protected function getComposerUpdateLog(): array
+    protected function runComposer(string $command): array
     {
-        return (new Composer())->run("update --dry-run");
+        return (new Composer())->run($command);
     }
 
     /**
