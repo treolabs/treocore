@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,48 +31,40 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata;
+use Espo\Core\Utils\ThemeManager as Manager;
+
 /**
- * ThemeManager loader
+ * Class ThemeManagerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ThemeManager extends Base
+class ThemeManagerTest extends TestCase
 {
-
     /**
-     * Load ThemeManager
-     *
-     * @return \Espo\Core\Utils\ThemeManager
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new \Espo\Core\Utils\ThemeManager(
-            $this->getConfig(),
-            $this->getMetadata()
-        );
-    }
+        $mock = $this->createPartialMock(ThemeManager::class, ['getConfig', 'getMetadata']);
+        $config = $this->createPartialMock(Config::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, []);
 
-    /**
-     * Get config
-     *
-     * @return \Treo\Core\Utils\Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
 
-    /**
-     * Get metadata
-     *
-     * @return \Treo\Core\Utils\Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        // test
+        $this->assertInstanceOf(Manager::class, $mock->load());
     }
 }
