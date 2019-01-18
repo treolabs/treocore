@@ -87,7 +87,7 @@
     "showFullList": "Vollständige Liste anzeigen",
     "On": "Auf",
     "Off": "Aus",
-    "entitySelect": "Wählen Sie Entität",
+    "selectedLink": "Wählen Sie Entität",
     "applyRelation": "Beziehung anwenden",
     "collapseAllPanels": "Alle ausblenden",
     "expandAllPanels": "Alle anzeigen"
