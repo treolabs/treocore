@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,64 +31,52 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Layout as LayoutUtil;
+use PHPUnit\Framework\TestCase;
 use Espo\Core\Utils\File\Manager;
 use Treo\Core\Utils\Metadata;
 use Espo\Entities\User;
+use Treo\Core\Container;
+use Treo\Core\Utils\Layout as LayoutUtil;
 
 /**
- * Layout loader
+ * Class LayoutTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Layout extends Base
+class LayoutTest extends TestCase
 {
-
     /**
-     * Load Layout
-     *
-     * @return LayoutUtil
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return (new LayoutUtil(
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->getUser()
-        ))->setContainer($this->getContainer());
-    }
+        $mock = $this->createPartialMock(Layout::class, ['getFileManager', 'getMetadata', 'getUser', 'getContainer']);
+        $fileManager = $this->createPartialMock(Manager::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, []);
+        $user = $this->createPartialMock(User::class, []);
+        $container = $this->createPartialMock(Container::class, []);
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($container);
+        $mock
+            ->expects($this->any())
+            ->method('getFileManager')
+            ->willReturn($fileManager);
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
+        $mock
+            ->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
 
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        // test
+        $this->assertInstanceOf(LayoutUtil::class, $mock->load());
     }
 }
