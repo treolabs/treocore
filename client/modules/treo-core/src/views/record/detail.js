@@ -59,6 +59,60 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     this.hotKeySave(e);
                 }
             });
+
+            if (this.type === 'detail') {
+                this.listenTo(this, 'after:render', () => {
+                    this.applyOverviewFilters();
+                });
+                this.listenTo(this.model, 'sync overview-filters-changed', () => {
+                    this.applyOverviewFilters();
+                });
+            }
+        },
+
+        applyOverviewFilters() {
+            let currentFieldFilter = (this.model.advancedEntityView || {}).fieldsFilter;
+            let currentLocaleFilter = (this.model.advancedEntityView || {}).localesFilter;
+            let showGenericFields = (this.model.advancedEntityView || {}).showGenericFields;
+
+            let fields = this.getFieldViews();
+            Object.keys(fields).forEach(name => {
+                let fieldView = fields[name];
+                let actualFields = this.getFieldManager().getActualAttributeList(fieldView.model.getFieldType(name), name);
+                if (
+                    currentLocaleFilter !== null
+                    &&
+                    this.getConfig().get('isMultilangActive')
+                    &&
+                    fieldView.model.getFieldParam(name, 'isMultilang')
+                    &&
+                    (this.getConfig().get('inputLanguageList') || []).length
+                ) {
+                    let hiddenLocales = currentLocaleFilter ? this.getConfig().get('inputLanguageList').filter(lang => lang !== currentLocaleFilter) : [];
+                    fieldView.setHiddenLocales(hiddenLocales);
+                    let langFieldNameList = fieldView.getLangFieldNameList();
+                    langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, field, fieldView));
+                    fieldView.langFieldNameList = langFieldNameList;
+                    fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, name, fieldView);
+                    !fieldView.langFieldNameList.length && fieldView.hideMainOption ? fieldView.hide() : fieldView.show();
+                    fieldView.reRender();
+                } else {
+                    actualFields.every(field => this.checkFieldValue(currentFieldFilter, field, fieldView)) ? fieldView.show() : fieldView.hide();
+                }
+            });
+
+            this.model.trigger('overview-filters-applied');
+        },
+
+        checkFieldValue(currentFieldFilter, field, fieldView) {
+            let check = !currentFieldFilter;
+            if (currentFieldFilter === 'empty') {
+                check = fieldView.model.get(field) === null || fieldView.model.get(field) === '';
+            }
+            if (currentFieldFilter === 'emptyAndRequired') {
+                check = (fieldView.model.get(field) === null || fieldView.model.get(field) === '') && fieldView.isRequired();
+            }
+            return check;
         },
 
         setupActionItems() {

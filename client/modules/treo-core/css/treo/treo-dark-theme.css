@@ -17070,6 +17070,61 @@ ul.dropdown-menu > li.checkbox {
     font-size: 24px;
 }
 
+.page-header .header-buttons {
+    width: 100%;
+}
+
+.page-header .header-buttons .header-items {
+    display: inline-block;
+    float: right;
+    margin-left: 5px;
+    margin-bottom: 2px;
+}
+
+.page-header .header-buttons .filter-cell {
+    display: inline-block;
+    max-width: 170px;
+    min-width: 100px;
+}
+
+.page-header .header-buttons .filter-cell .field {
+    position: relative;
+}
+
+.page-header .header-buttons .filter-cell .field .selected-element {
+    cursor: default;
+    -moz-appearance: menulist;
+    -webkit-appearance: menulist;
+    padding: 6px 12px 6px 6px;
+}
+
+.page-header .header-buttons .filter-cell .field .selected-element span {
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+}
+
+.page-header .header-buttons .filter-cell .dropdown-enum-menu {
+    width: 100%;
+}
+
+.page-header .header-buttons .filter-cell .dropdown-enum-menu > li > a {
+    padding: 10px 15px;
+}
+
+.page-header .header-buttons .filter-cell .dropdown-enum-menu > li > a,
+.page-header .header-buttons .filter-cell .dropdown-enum-menu > li > a > .field {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.page-header .header-buttons .filter-cell .dropdown-enum-menu > li > a > .field[data-name="showGenericFields"] .control-label,
+.page-header .header-buttons .filter-cell .dropdown-enum-menu > li > a > .field[data-name="showGenericFields"] .main-element {
+    margin: 0;
+    position: relative;
+    top: 1px;
+}
+
 .selectize-input.focus {
     box-shadow: none;
     border-color: #66afe9 !important;
@@ -18370,6 +18425,10 @@ td[data-name="draggableIcon"] {
 
 .field .multilang-labels .control-label {
     margin-top: 15px;
+}
+
+.field .main-field.hidden + .multilang-labels .control-label:first-child {
+    margin-top: 0;
 }
 
 .queue-panel-container {
