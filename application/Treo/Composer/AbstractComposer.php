@@ -36,55 +36,52 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application as App;
+
 /**
- * Class PostUpdate
+ * Class AbstractComposer
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostUpdate extends AbstractComposer
+abstract class AbstractComposer
 {
+
     /**
-     * Run
+     * @var null|App
      */
-    public static function run(): void
+    protected static $app = null;
+
+    /**
+     * @return App
+     */
+    protected static function app(): App
     {
-        // relocate files
-        self::relocateFiles();
+        if (is_null(self::$app)) {
+            include "bootstrap.php";
 
-        // rebuild
-        self::rebuild();
+            // define gloabal variables
+            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
-        // loggout all users
-        self::logoutAll();
+            // create app
+            self::$app = new App();
+        }
 
-        // update module file for load order
-        self::updateModulesLoadOrder();
+        return self::$app;
     }
 
     /**
-     * Logout all
+     * Relocate files
      */
-    protected static function logoutAll(): void
+    protected static function relocateFiles(): void
     {
-        $sth = self::app()
-            ->getContainer()
-            ->get('entityManager')
-            ->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
-
-        $sth->execute();
+        \Treo\Core\Utils\Mover::update();
     }
 
     /**
-     * Update module(s) load order
-     *
-     * @return bool
+     * Rebuild
      */
-    protected static function updateModulesLoadOrder(): bool
+    protected static function rebuild(): void
     {
-        return self::app()
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('ModuleManager')
-            ->updateLoadOrder();
+        (new \Treo\Console\Rebuild())->setContainer(self::app()->getContainer())->run([]);
     }
 }

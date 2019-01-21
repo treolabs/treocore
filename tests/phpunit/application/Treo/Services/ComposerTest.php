@@ -163,14 +163,6 @@ class ComposerTest extends TestCase
         $this->assertTrue(method_exists($service, 'saveComposerJson'));
     }
 
-    public function testIsStoreComposerLockMethodExists()
-    {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'storeComposerLock'));
-    }
-
     public function testIsGetComposerLockDiffMethodReturnArray()
     {
         $service = $this->createMockService(Composer::class);

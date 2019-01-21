@@ -146,33 +146,7 @@ class Composer extends AbstractService
      */
     public function runUpdate(string $createdById = null): array
     {
-        // prepare creator user id
-        if (is_null($createdById)) {
-            $createdById = $this->getUser()->get('id');
-        }
-
-        // triggered before action
-        $this->triggered('Composer', 'beforeComposerUpdate', []);
-
-        // call composer
-        $composer = (new ComposerUtil())->run('update');
-
-        // rebuild
-        $this->rebuild();
-
-        if ($composer['status'] == 0) {
-            // loggout all users
-            $this->logoutAll();
-
-            // update module file for load order
-            $this->updateModulesLoadOrder();
-        }
-
-        // triggered after action
-        $eventData = $this
-            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
-
-        return $eventData['composer'];
+        return (new ComposerUtil())->run('update');
     }
 
     /**
@@ -288,19 +262,6 @@ class Composer extends AbstractService
 
             // copy file
             copy($this->moduleComposer, $this->moduleStableComposer);
-        }
-    }
-
-    /**
-     * Storing composer.lock
-     */
-    public function storeComposerLock(): void
-    {
-        if (file_exists($this->oldComposerLock)) {
-            unlink($this->oldComposerLock);
-        }
-        if (file_exists($this->composerLock)) {
-            copy($this->composerLock, $this->oldComposerLock);
         }
     }
 
@@ -497,28 +458,6 @@ class Composer extends AbstractService
             ]
         );
         $this->getEntityManager()->saveEntity($jobEntity);
-    }
-
-    /**
-     * Logout all users
-     */
-    protected function logoutAll(): void
-    {
-        $this->executeSqlQuery("UPDATE auth_token SET deleted = 1");
-    }
-
-    /**
-     * Update module(s) load order
-     *
-     * @return bool
-     */
-    protected function updateModulesLoadOrder(): bool
-    {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('ModuleManager')
-            ->updateLoadOrder();
     }
 
     /**

@@ -41,7 +41,7 @@ namespace Treo\Composer;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostInstall extends PostUpdate
+class PostInstall extends AbstractComposer
 {
     /**
      * Run

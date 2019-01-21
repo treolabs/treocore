@@ -54,19 +54,6 @@ class Composer extends AbstractListener
      *
      * @return array
      */
-    public function beforeComposerUpdate(array $data): array
-    {
-        // storing old composer.lock
-        $this->getComposerService()->storeComposerLock();
-
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     public function afterComposerUpdate(array $data): array
     {
         if (!empty($data)) {

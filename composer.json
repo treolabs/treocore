@@ -62,6 +62,7 @@
   },
   "scripts": {
     "post-install-cmd": "Treo\\Composer\\PostInstall::run",
+    "pre-update-cmd": "Treo\\Composer\\PreUpdate::run",
     "post-update-cmd": "Treo\\Composer\\PostUpdate::run"
   },
   "repositories": [

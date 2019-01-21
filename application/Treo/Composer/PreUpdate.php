@@ -37,54 +37,31 @@ declare(strict_types=1);
 namespace Treo\Composer;
 
 /**
- * Class PostUpdate
+ * Class PreUpdate
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostUpdate extends AbstractComposer
+class PreUpdate extends AbstractComposer
 {
     /**
      * Run
      */
     public static function run(): void
     {
-        // relocate files
-        self::relocateFiles();
-
-        // rebuild
-        self::rebuild();
-
-        // loggout all users
-        self::logoutAll();
-
-        // update module file for load order
-        self::updateModulesLoadOrder();
+        // storing composer.lock
+        self::storeComposerLock();
     }
 
     /**
-     * Logout all
+     * Storing composer.lock
      */
-    protected static function logoutAll(): void
+    protected static function storeComposerLock(): void
     {
-        $sth = self::app()
-            ->getContainer()
-            ->get('entityManager')
-            ->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
-
-        $sth->execute();
-    }
-
-    /**
-     * Update module(s) load order
-     *
-     * @return bool
-     */
-    protected static function updateModulesLoadOrder(): bool
-    {
-        return self::app()
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('ModuleManager')
-            ->updateLoadOrder();
+        if (file_exists("data/old-composer.lock")) {
+            unlink("data/old-composer.lock");
+        }
+        if (file_exists("composer.lock")) {
+            copy("composer.lock", "data/old-composer.lock");
+        }
     }
 }
