@@ -43,4 +43,12 @@ namespace Treo\Composer;
  */
 class PostInstall extends PostUpdate
 {
+    /**
+     * Run
+     */
+    public static function run(): void
+    {
+        // relocate files
+        self::relocateFiles();
+    }
 }

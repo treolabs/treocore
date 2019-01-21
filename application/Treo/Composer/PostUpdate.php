@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application as App;
+
 /**
  * Class PostUpdate
  *
@@ -44,11 +46,53 @@ namespace Treo\Composer;
 class PostUpdate
 {
     /**
+     * @var null|App
+     */
+    protected static $app = null;
+
+    /**
      * Run
      */
     public static function run(): void
     {
-        // call mover
+        // relocate files
+        self::relocateFiles();
+
+        // rebuild
+        self::rebuild();
+    }
+
+    /**
+     * @return App
+     */
+    protected static function createApp(): App
+    {
+        if (is_null(self::$app)) {
+            include "bootstrap.php";
+
+            // define gloabal variables
+            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
+            // create app
+            self::$app = new App();
+        }
+
+        return self::$app;
+    }
+
+    /**
+     * Relocate files
+     */
+    protected static function relocateFiles(): void
+    {
         \Treo\Core\Utils\Mover::update();
+    }
+
+    /**
+     * Rebuild
+     */
+    protected static function rebuild(): void
+    {
+        (new \Treo\Console\Rebuild())->setContainer(self::createApp()->getContainer())->run([]);
     }
 }
