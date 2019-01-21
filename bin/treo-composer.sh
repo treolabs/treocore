@@ -15,12 +15,6 @@ do
 
      # run composer update command
      $php composer.phar update --no-dev > "data/composer.log" 2>&1
-
-     if [ $? -eq 0 ]
-     then
-       # run rebuild
-       $php console.php rebuild > /dev/null 2>&1
-     fi
    fi
    sleep 1;
 done
