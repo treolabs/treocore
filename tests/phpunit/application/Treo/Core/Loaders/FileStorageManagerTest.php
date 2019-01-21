@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,41 +32,44 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Container;
 use Treo\Core\Utils\Metadata;
 use Espo\Core\FileStorage\Manager;
 
 /**
- * FileStorageManager loader
+ * Class FileStorageManagerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class FileStorageManager extends Base
+class FileStorageManagerTest extends TestCase
 {
-
     /**
-     * Load FileStorageManager
-     *
-     * @return \Espo\Core\FileStorage\Manager
+     * Test load method
      */
-    public function load()
+    public function testLoad()
     {
-        return new Manager(
-            $this->getMetadata()->get(['app', 'fileStorage', 'implementationClassNameMap']),
-            $this->getContainer()
-        );
-    }
+        $mock = $this->createPartialMock(FileStorageManager::class, ['getContainer', 'getMetadata']);
+        $container = $this->createPartialMock(Container::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, ['get']);
 
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        $metadata
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
+
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
+        $mock
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($container);
+
+        // test
+        $this->assertInstanceOf(Manager::class, $mock->load());
     }
 }
