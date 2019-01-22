@@ -65,7 +65,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modal
                             where: where
                         });
                     } else {
-                        let list = listView.getSelectedLabel();
+                        let list = listView.getSelected();
                         if (list.length) {
                             this.trigger('select', list);
                         }
