@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,75 +31,60 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
-use Espo\Entities\Preferences;
 use Espo\Core\Utils\File\Manager;
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Utils\Config;
+use Espo\Entities\Preferences;
+use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Language as Instance;
 
 /**
- * Language loader
+ * Class LanguageTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Language extends Base
+class LanguageTest extends TestCase
 {
-
     /**
-     * Load Language
-     *
-     * @return \Espo\Core\Utils\Language
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new \Treo\Core\Utils\Language(
-            \Espo\Core\Utils\Language::detectLanguage($this->getConfig(), $this->getPreferences()),
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->getConfig()->get('useCache')
+        $mock = $this->createPartialMock(
+            Language::class,
+            ['getConfig', 'getPreferences', 'getFileManager', 'getMetadata']
         );
-    }
+        $config = $this->createPartialMock(Config::class, ['get']);
+        $preferences = $this->createPartialMock(Preferences::class, []);
+        $fileManager = $this->createPartialMock(Manager::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, []);
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
+        $config
+            ->expects($this->any())
+            ->method('get')
+            ->willReturn(false);
 
-    /**
-     * Get preferences
-     *
-     * @return Preferences
-     */
-    protected function getPreferences()
-    {
-        return $this->getContainer()->get('preferences');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $mock
+            ->expects($this->any())
+            ->method('getPreferences')
+            ->willReturn($preferences);
+        $mock
+            ->expects($this->any())
+            ->method('getFileManager')
+            ->willReturn($fileManager);
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }
