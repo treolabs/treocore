@@ -66,7 +66,6 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                         this.systemVersion = this.getConfig().get('version');
                         this.ajaxGetRequest('TreoUpgrade/versions')
                             .then(response => {
-                                debugger;
                                 this.versionList = (response || []).map(item => item.version).reverse();
                                 if (this.versionList.length) {
                                     this.model.set(this.versionList[this.versionList.length - 1]);
