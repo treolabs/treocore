@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,40 +31,40 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
 use Treo\Core\Utils\Config;
+use Espo\Core\Utils\NumberUtil;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Number loader
+ * Class NumberTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Number extends Base
+class NumberTest extends TestCase
 {
-
     /**
-     * Load Number
-     *
-     * @return \Espo\Core\Utils\NumberUtil
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new \Espo\Core\Utils\NumberUtil(
-            $this->getConfig()->get('decimalMark'),
-            $this->getConfig()->get('thousandSeparator')
-        );
-    }
+        $mock = $this->createPartialMock(Number::class, ['getConfig']);
+        $config = $this->createPartialMock(Config::class, ['get']);
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
+        $config
+            ->expects($this->any())
+            ->method('get')
+            ->withConsecutive(['decimalMark'], ['thousandSeparator'])
+            ->willReturnOnConsecutiveCalls(['.'], [',']);
+
+        $mock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+
+        // test
+        $this->assertInstanceOf(NumberUtil::class, $mock->load());
     }
 }
