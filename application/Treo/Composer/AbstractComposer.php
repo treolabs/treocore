@@ -84,4 +84,13 @@ abstract class AbstractComposer
     {
         (new \Treo\Console\Rebuild())->setContainer(self::app()->getContainer())->run([]);
     }
+
+    /**
+     * @param string $filename
+     * @param string $content
+     */
+    protected static function filePutContents(string $filename, string $content): void
+    {
+        file_put_contents($filename, $content);
+    }
 }

@@ -55,16 +55,6 @@ class Composer extends AbstractService
     /**
      * @var string
      */
-    protected $composerLock = 'composer.lock';
-
-    /**
-     * @var string
-     */
-    protected $oldComposerLock = 'data/old-composer.lock';
-
-    /**
-     * @var string
-     */
     protected $moduleComposer = 'data/composer.json';
 
     /**
@@ -250,124 +240,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * Save stable-composer.json file
-     */
-    public function saveComposerJson(): void
-    {
-        if (file_exists($this->moduleComposer)) {
-            // delete old file
-            if (file_exists($this->moduleStableComposer)) {
-                unlink($this->moduleStableComposer);
-            }
-
-            // copy file
-            copy($this->moduleComposer, $this->moduleStableComposer);
-        }
-    }
-
-    /**
-     * Get composer.lock diff
-     *
-     * @return array
-     */
-    public function getComposerLockDiff(): array
-    {
-        // prepare result
-        $result = [
-            'install' => [],
-            'update'  => [],
-            'delete'  => [],
-        ];
-
-        if (file_exists($this->oldComposerLock) && file_exists($this->composerLock)) {
-            // prepare data
-            $oldData = $this->getComposerLockTreoPackages($this->oldComposerLock);
-            $newData = $this->getComposerLockTreoPackages($this->composerLock);
-
-            foreach ($oldData as $package) {
-                if (!isset($newData[$package['name']])) {
-                    $result['delete'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $package
-                    ];
-                } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                    $result['update'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $newData[$package['name']],
-                        'from'    => $package['version']
-                    ];
-                }
-            }
-            foreach ($newData as $package) {
-                if (!isset($oldData[$package['name']])) {
-                    $result['install'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $package
-                    ];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get composer diff
-     *
-     * @return array
-     */
-    public function getComposerDiff(): array
-    {
-        // prepare result
-        $result = [
-            'install' => [],
-            'update'  => [],
-            'delete'  => [],
-        ];
-
-        if (!file_exists($this->moduleStableComposer)) {
-            // prepare data
-            $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
-            $this->filePutContents($this->moduleStableComposer, $data);
-        }
-
-        // prepare data
-        $composerData = $this->getModuleComposerJson();
-        $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
-
-        foreach ($composerData['require'] as $package => $version) {
-            if (!isset($composerStableData['require'][$package])) {
-                $result['install'][] = [
-                    'id'      => $this->getModuleId($package),
-                    'package' => $package
-                ];
-            } elseif ($version != $composerStableData['require'][$package]) {
-                // prepare data
-                $id = $this->getModuleId($package);
-                $from = $this->getModule($id)['version'];
-
-                $result['update'][] = [
-                    'id'      => $id,
-                    'package' => $package,
-                    'from'    => $from
-                ];
-            }
-        }
-
-        foreach ($composerStableData['require'] as $package => $version) {
-            if (!isset($composerData['require'][$package])) {
-                $result['delete'][] = [
-                    'id'      => $this->getModuleId($package),
-                    'package' => $package
-                ];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Update minimum stability
      *
      * @return bool
@@ -409,32 +281,6 @@ class Composer extends AbstractService
         foreach ($this->getPackages() as $package) {
             if ($package['packageId'] == $packageId) {
                 $result = $package['treoId'];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get prepared composer.lock treo packages
-     *
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function getComposerLockTreoPackages(string $path): array
-    {
-        // prepare result
-        $result = [];
-
-        if (file_exists($path)) {
-            $data = Json::decode(file_get_contents($path), true);
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
-                    if (!empty($package['extra']['treoId'])) {
-                        $result[$package['name']] = $package;
-                    }
-                }
             }
         }
 
