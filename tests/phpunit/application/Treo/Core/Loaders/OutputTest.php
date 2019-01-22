@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,37 +32,33 @@
  * and "TreoPIM" word.
  */
 
-declare(strict_types=1);
-
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
+use Espo\Core\Utils\Api\Output as Instance;
 use Espo\Core\Utils\Api\Slim;
 
 /**
- * Output loader
+ * Class OutputTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Output extends Base
+class OutputTest extends TestCase
 {
-
     /**
-     * Load Output
-     *
-     * @return \Espo\Core\Utils\Api\Output
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new \Espo\Core\Utils\Api\Output($this->getSlim());
-    }
+        $mock = $this->createPartialMock(Output::class, ['getSlim']);
+        $slim = $this->createPartialMock(Slim::class, []);
 
-    /**
-     * Get slim
-     *
-     * @return Slim
-     */
-    protected function getSlim()
-    {
-        return $this->getContainer()->get('slim');
+        $mock
+            ->expects($this->any())
+            ->method('getSlim')
+            ->willReturn($slim);
+
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }
