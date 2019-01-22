@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,60 +31,49 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
 use Espo\Core\Utils\File\Manager;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\File\ClassParser as Instance;
 
 /**
- * ClassParser loader
+ * Class ClassParserTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ClassParser extends Base
+class ClassParserTest extends TestCase
 {
-
     /**
-     * Load ClassParser
-     *
-     * @return Instance
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new Instance($this->getFileManager(), $this->getConfig(), $this->getMetadata());
-    }
+        $mock = $this->createPartialMock(
+            ClassParser::class,
+            ['getFileManager', 'getConfig', 'getMetadata']
+        );
+        $fileManager = $this->createPartialMock(Manager::class, []);
+        $config = $this->createPartialMock(Config::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, []);
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getFileManager')
+            ->willReturn($fileManager);
+        $mock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }
