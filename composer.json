@@ -61,9 +61,9 @@
     "squizlabs/php_codesniffer": "*"
   },
   "scripts": {
-    "post-install-cmd": "Treo\\Composer\\PostInstall::run",
-    "pre-update-cmd": "Treo\\Composer\\PreUpdate::run",
-    "post-update-cmd": "Treo\\Composer\\PostUpdate::run"
+    "post-install-cmd": "Treo\\Composer\\Cmd::postInstall",
+    "pre-update-cmd": "Treo\\Composer\\Cmd::preUpdate",
+    "post-update-cmd": "Treo\\Composer\\Cmd::postUpdate"
   },
   "repositories": [
     {

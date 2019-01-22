@@ -36,61 +36,49 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\Application as App;
+use Treo\Core\Container;
 
 /**
- * Class AbstractComposer
+ * Class Cmd
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-abstract class AbstractComposer
+class Cmd
 {
-
     /**
-     * @var null|App
+     * Before update
      */
-    protected static $app = null;
-
-    /**
-     * @return App
-     */
-    protected static function app(): App
+    public static function preUpdate(): void
     {
-        if (is_null(self::$app)) {
-            include "bootstrap.php";
-
-            // define gloabal variables
-            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-            // create app
-            self::$app = new App();
-        }
-
-        return self::$app;
+        (new PreUpdate())->run();
     }
 
     /**
-     * Relocate files
+     * After install
      */
-    protected static function relocateFiles(): void
+    public static function postInstall(): void
     {
-        \Treo\Core\Utils\Mover::update();
+        (new PostInstall())->run();
     }
 
     /**
-     * Rebuild
+     * After update
      */
-    protected static function rebuild(): void
+    public static function postUpdate(): void
     {
-        (new \Treo\Console\Rebuild())->setContainer(self::app()->getContainer())->run([]);
+        (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
     /**
-     * @param string $filename
-     * @param string $content
+     * @return Container
      */
-    protected static function filePutContents(string $filename, string $content): void
+    protected static function getContainer(): Container
     {
-        file_put_contents($filename, $content);
+        include "bootstrap.php";
+
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
+        return (new \Treo\Core\Application())->getContainer();
     }
 }

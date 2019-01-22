@@ -44,44 +44,80 @@ use Treo\Core\Utils\Mover;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostUpdate extends AbstractComposer
+class PostUpdate extends PostInstall
 {
+    use \Treo\Traits\ContainerTrait;
+
     /**
      * Run
      */
-    public static function run(): void
+    public function run(): void
     {
         // relocate files
-        self::relocateFiles();
+        $this->relocateFiles();
 
         // rebuild
-        self::rebuild();
+        $this->rebuild();
 
         // loggout all users
-        self::logoutAll();
+        $this->logoutAll();
 
         // update module file for load order
-        self::updateModulesLoadOrder();
+        $this->updateModulesLoadOrder();
 
         // save stable-composer.json file
-        self::filePutContents('data/stable-composer.json', file_get_contents('data/composer.json'));
+        $this->saveStableComposerJson();
 
         // run migrations
-        self::runMigrations();
+        $this->runMigrations();
 
         // delete modules
-        self::deleteModules();
+        $this->deleteModules();
 
         // drop cache
-        self::clearCache();
+        $this->clearCache();
+    }
+
+    /**
+     * Delete modules
+     */
+    protected function deleteModules(): void
+    {
+        if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['delete'])) {
+            // create service
+            $service = $this->getContainer()->get('serviceFactory')->create('ModuleManager');
+            foreach ($composerDiff['delete'] as $row) {
+                // clear module activation and sort order data
+                $service->clearModuleData($row['id']);
+
+                // delete dir
+                Mover::delete([$row['id'] => $row['package']]);
+            }
+        }
+    }
+
+    /**
+     * Drop cache
+     */
+    protected function clearCache(): void
+    {
+        $this->getContainer()->get('dataManager')->clearCache();
+    }
+
+    /**
+     * Rebuild
+     */
+    protected function rebuild(): void
+    {
+        (new \Treo\Console\Rebuild())->setContainer($this->getContainer())->run([]);
     }
 
     /**
      * Logout all
      */
-    protected static function logoutAll(): void
+    protected function logoutAll(): void
     {
-        $sth = self::app()
+        $sth = $this
             ->getContainer()
             ->get('entityManager')
             ->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
@@ -94,9 +130,9 @@ class PostUpdate extends AbstractComposer
      *
      * @return bool
      */
-    protected static function updateModulesLoadOrder(): bool
+    protected function updateModulesLoadOrder(): bool
     {
-        return self::app()
+        return $this
             ->getContainer()
             ->get('serviceFactory')
             ->create('ModuleManager')
@@ -104,11 +140,42 @@ class PostUpdate extends AbstractComposer
     }
 
     /**
+     * Save stable-composer.json file
+     */
+    protected function saveStableComposerJson(): void
+    {
+        file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
+    }
+
+    /**
+     * Run migrations
+     */
+    protected function runMigrations(): void
+    {
+        if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['update'])) {
+            foreach ($composerDiff['update'] as $row) {
+                // get package
+                $package = $this
+                    ->getContainer()
+                    ->get('metadata')
+                    ->getModule($row['id']);
+
+                // prepare data
+                $from = Metadata::prepareVersion($row['from']);
+                $to = Metadata::prepareVersion($package['version']);
+
+                // run migration
+                $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+            }
+        }
+    }
+
+    /**
      * Get composer.lock diff
      *
      * @return array
      */
-    protected static function getComposerLockDiff(): array
+    protected function getComposerLockDiff(): array
     {
         // prepare result
         $result = [
@@ -118,8 +185,8 @@ class PostUpdate extends AbstractComposer
         ];
 
         // prepare data
-        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = self::getComposerLockTreoPackages("composer.lock");
+        $oldData = $this->getComposerLockTreoPackages("data/old-composer.lock");
+        $newData = $this->getComposerLockTreoPackages("composer.lock");
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
@@ -154,7 +221,7 @@ class PostUpdate extends AbstractComposer
      *
      * @return array
      */
-    protected static function getComposerLockTreoPackages(string $path): array
+    protected function getComposerLockTreoPackages(string $path): array
     {
         // prepare result
         $result = [];
@@ -171,54 +238,5 @@ class PostUpdate extends AbstractComposer
         }
 
         return $result;
-    }
-
-    /**
-     * Run migrations
-     */
-    protected static function runMigrations(): void
-    {
-        if (!empty($composerDiff = self::getComposerLockDiff()) && !empty($composerDiff['update'])) {
-            foreach ($composerDiff['update'] as $row) {
-                // get package
-                $package = self::app()
-                    ->getContainer()
-                    ->get('metadata')
-                    ->getModule($row['id']);
-
-                // prepare data
-                $from = Metadata::prepareVersion($row['from']);
-                $to = Metadata::prepareVersion($package['version']);
-
-                // run migration
-                self::app()->getContainer()->get('migration')->run($row['id'], $from, $to);
-            }
-        }
-    }
-
-    /**
-     * Delete modules
-     */
-    protected static function deleteModules(): void
-    {
-        if (!empty($composerDiff = self::getComposerLockDiff()) && !empty($composerDiff['delete'])) {
-            // create service
-            $service = self::app()->getContainer()->get('serviceFactory')->create('ModuleManager');
-            foreach ($composerDiff['delete'] as $row) {
-                // clear module activation and sort order data
-                $service->clearModuleData($row['id']);
-
-                // delete dir
-                Mover::delete([$row['id'] => $row['package']]);
-            }
-        }
-    }
-
-    /**
-     * Drop cache
-     */
-    protected static function clearCache(): void
-    {
-        self::app()->getContainer()->get('dataManager')->clearCache();
     }
 }

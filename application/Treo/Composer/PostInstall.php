@@ -41,14 +41,22 @@ namespace Treo\Composer;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostInstall extends AbstractComposer
+class PostInstall
 {
     /**
      * Run
      */
-    public static function run(): void
+    public function run(): void
     {
         // relocate files
-        self::relocateFiles();
+        $this->relocateFiles();
+    }
+
+    /**
+     * Relocate files
+     */
+    protected function relocateFiles(): void
+    {
+        \Treo\Core\Utils\Mover::update();
     }
 }

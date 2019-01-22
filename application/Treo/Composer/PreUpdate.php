@@ -41,21 +41,21 @@ namespace Treo\Composer;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PreUpdate extends AbstractComposer
+class PreUpdate
 {
     /**
      * Run
      */
-    public static function run(): void
+    public function run(): void
     {
         // storing composer.lock
-        self::storeComposerLock();
+        $this->storeComposerLock();
     }
 
     /**
      * Storing composer.lock
      */
-    protected static function storeComposerLock(): void
+    protected function storeComposerLock(): void
     {
         if (file_exists("data/old-composer.lock")) {
             unlink("data/old-composer.lock");
