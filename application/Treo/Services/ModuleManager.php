@@ -77,7 +77,7 @@ class ModuleManager extends \Espo\Core\Services\Base
         $composerData = $this->getComposerService()->getModuleComposerJson();
 
         // get diff
-        $composerDiff = $this->getComposerService()->getComposerDiff();
+        $composerDiff = $this->getComposerDiff();
 
         // for installed modules
         foreach ($this->getMetadata()->getModuleList() as $id) {
@@ -758,5 +758,13 @@ class ModuleManager extends \Espo\Core\Services\Base
             ->find($where);
 
         return !empty($entities) ? $entities->toArray() : [];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getComposerDiff(): array
+    {
+        return (new \Treo\Composer\PostUpdate())->getComposerLockDiff();
     }
 }

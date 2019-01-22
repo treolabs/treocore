@@ -251,7 +251,7 @@ class Store extends AbstractService
      */
     protected function getComposerDiff(): array
     {
-        return $this->getContainer()->get('serviceFactory')->create('Composer')->getComposerDiff();
+        return (new \Treo\Composer\PostUpdate())->getComposerLockDiff();
     }
 
     /**
