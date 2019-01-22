@@ -4,7 +4,7 @@
     "Module Manager": "Modules Manager",
     "Modules": "Modules",
     "Git User": "Git User",
-    "versionToUpgrade": "Version to upgrade"
+    "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
