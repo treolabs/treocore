@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,27 +31,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Container;
 use Espo\Core\InjectableFactory as Instance;
 
 /**
- * InjectableFactory loader
+ * Class InjectableFactoryTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class InjectableFactory extends Base
+class InjectableFactoryTest extends TestCase
 {
-
     /**
-     * Load InjectableFactory
-     *
-     * @return Instance
+     * Test load method
      */
-    public function load()
+    public function testLoad()
     {
-        return new Instance($this->getContainer());
+        $mock = $this->createPartialMock(InjectableFactory::class, ['getContainer']);
+        $container = $this->createPartialMock(Container::class, []);
+
+        $mock
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($container);
+
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }
