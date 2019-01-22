@@ -38,6 +38,7 @@ namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Treo\Core\UpgradeManager;
+use Treo\Core\Utils\Composer;
 use Treo\Core\Utils\Mover;
 use Treo\Core\Migration\Migration;
 
@@ -213,6 +214,106 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
+     * Get update log
+     *
+     * @param string|null $version
+     *
+     * @return array
+     */
+    public function getUpdateLog(string $version = null): array
+    {
+        // prepare result
+        $result = [
+            'log'    => null,
+            'status' => false
+        ];
+
+        // prepare composer command
+        $command = "update --dry-run";
+
+        if (!is_null($version)) {
+            // create composer.json file
+            $this->createComposerJson($version);
+
+            // prepare composer command
+            $command .= " -d=" . CORE_PATH . "/data/core-composer/";
+        }
+
+        if (!empty($log = $this->runComposer($command))) {
+            $result['log'] = $this->parseComposerOutput($log['output']);
+            if (strpos($result['log'], 'Nothing to install or update') === false) {
+                $result['status'] = empty($log['status']);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create composer.json file
+     *
+     * @param string|null $version
+     */
+    protected function createComposerJson(string $version = null): void
+    {
+        $dir = 'data/core-composer';
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
+
+        $data = $this->readJsonData('composer.json');
+        $data['config']['vendor-dir'] = CORE_PATH . "/vendor";
+        if (!is_null($version)) {
+            $data['version'] = $version;
+        }
+
+        file_put_contents("$dir/composer.json", json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * Run composer command
+     *
+     * @param string $command
+     *
+     * @return array
+     */
+    protected function runComposer(string $command): array
+    {
+        return (new Composer())->run($command);
+    }
+
+    /**
+     * @param string $output
+     *
+     * @return string
+     */
+    protected function parseComposerOutput(string $output): string
+    {
+        // prepare result
+        $result = '';
+
+        // delete composer static content
+        $point = false;
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $output) as $line) {
+            if ($point) {
+                $result .= $line . PHP_EOL;
+            }
+            if ($line == 'Updating dependencies (including require-dev)') {
+                $point = true;
+            }
+        }
+
+        // prepare treo modules names
+        if (!empty($packages = $this->getTreoPackages())) {
+            foreach ($packages as $package) {
+                $result = str_replace($package['packageId'] . " ", "'" . $package['name']['default'] . "' ", $result);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @return string
      */
     protected function getCurrentVersion(): string
@@ -302,5 +403,15 @@ class TreoUpgrade extends AbstractService
             ->getContainer()
             ->get('language')
             ->translate($key, 'treoNotifications', 'TreoNotification');
+    }
+
+    /**
+     * Get treo packages
+     *
+     * @return array
+     */
+    protected function getTreoPackages(): array
+    {
+        return $this->getContainer()->get('serviceFactory')->create('Store')->getPackages();
     }
 }
