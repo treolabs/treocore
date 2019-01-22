@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,50 +31,47 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
 use Treo\Core\AclManager;
 use Espo\Entities\User;
+use Espo\Core\Acl as Instance;
 
 /**
- * Class Acl loader
+ * Class AclTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Acl extends Base
+class AclTest extends TestCase
 {
-
     /**
-     * Load Acl
-     *
-     * @return mixed
+     * Test load method
      */
-    public function load()
+    public function testLoad()
     {
-        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Acl');
+        $mock = $this->createPartialMock(
+            Acl::class,
+            ['getServiceClassName', 'getAclManager', 'getUser']
+        );
+        $aclManager = $this->createPartialMock(AclManager::class, []);
+        $user = $this->createPartialMock(User::class, []);
 
-        return new $className($this->getAclManager(), $this->getUser());
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getServiceClassName')
+            ->willReturn('\\Espo\\Core\\Acl');
+        $mock
+            ->expects($this->any())
+            ->method('getAclManager')
+            ->willReturn($aclManager);
+        $mock
+            ->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
 
-    /**
-     * Get acl manager
-     *
-     * @return AclManager
-     */
-    protected function getAclManager()
-    {
-        return $this->getContainer()->get('aclManager');
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }
