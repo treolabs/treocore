@@ -58,6 +58,19 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
+     * Run validate
+     *
+     * @return bool
+     */
+    public function runValidate(): bool
+    {
+        // create file for treo-composer.sh
+        $this->filePutContents('data/composer-validate.txt', '1');
+
+        return true;
+    }
+
+    /**
      * Run update
      *
      * @return bool

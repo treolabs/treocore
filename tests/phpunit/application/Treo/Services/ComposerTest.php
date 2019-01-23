@@ -42,7 +42,19 @@ namespace Treo\Services;
  */
 class ComposerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testIsRunUpdateReturnTrue()
+    /**
+     * Test for runValidate method
+     */
+    public function testRunValidateMethod()
+    {
+        // test
+        $this->assertTrue($this->createPartialMock(Composer::class, ['filePutContents'])->runValidate());
+    }
+
+    /**
+     * Test for runUpdate method
+     */
+    public function testRunUpdateMethod()
     {
         $service = $this->createPartialMock(Composer::class, ['filePutContents', 'setComposerUser']);
 

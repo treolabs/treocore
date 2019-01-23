@@ -115,40 +115,16 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test for getUpdateLog method
+     * Test for createUpdateLog method
      */
-    public function testGetUpdateLogMethod()
+    public function testCreateUpdateLogMethod()
     {
-        // prepare outputs
-        $output = 'Some str';
-        $output2 = 'Nothing to install or update\n';
-
-        // prepare methods
-        $methods = ['runComposer', 'parseComposerOutput', 'createComposerJson'];
-
-        $service = $this->createPartialMock(TreoUpgrade::class, $methods);
-        $service2 = clone $service;
+        $service = $this->createPartialMock(TreoUpgrade::class, ['runValidate', 'createComposerJson']);
 
         // test 1
-        $service
-            ->expects($this->any())
-            ->method('runComposer')
-            ->willReturn(['output' => $output, 'status' => 0]);
-        $service
-            ->expects($this->any())
-            ->method('parseComposerOutput')
-            ->willReturn($output);
-        $this->assertEquals(['log' => $output, 'status' => true], $service->getUpdateLog());
+        $this->assertTrue($service->createUpdateLog('1.0.0'));
 
         // test 2
-        $service2
-            ->expects($this->any())
-            ->method('runComposer')
-            ->willReturn(['output' => $output2, 'status' => 0]);
-        $service2
-            ->expects($this->any())
-            ->method('parseComposerOutput')
-            ->willReturn($output2);
-        $this->assertEquals(['log' => $output2, 'status' => false], $service2->getUpdateLog());
+        $this->assertTrue($service->createUpdateLog('2.0.0'));
     }
 }

@@ -214,58 +214,39 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
-     * Get update log
+     * Create update log
      *
-     * @param string|null $version
+     * @param string $version
      *
      * @return array
      */
-    public function getUpdateLog(string $version = null): array
+    public function createUpdateLog(string $version): bool
     {
-        // prepare result
-        $result = [
-            'log'    => null,
-            'status' => false
-        ];
+        // create composer.json file
+        $this->createComposerJson($version);
 
-        // prepare composer command
-        $command = "update --dry-run";
+        // run validate
+        $this->runValidate();
 
-        if (!is_null($version)) {
-            // create composer.json file
-            $this->createComposerJson($version);
-
-            // prepare composer command
-            $command .= " -d=" . CORE_PATH . "/data/core-composer/";
-        }
-
-        if (!empty($log = $this->runComposer($command))) {
-            $result['log'] = $this->parseComposerOutput($log['output']);
-            if (strpos($result['log'], 'Nothing to install or update') === false) {
-                $result['status'] = empty($log['status']);
-            }
-        }
-
-        return $result;
+        return true;
     }
 
     /**
      * Create composer.json file
      *
-     * @param string|null $version
+     * @param string $version
      */
-    protected function createComposerJson(string $version = null): void
+    protected function createComposerJson(string $version): void
     {
-        $dir = 'data/core-composer';
+        $dir = 'data/core-validate';
         if (!file_exists($dir)) {
             mkdir($dir);
         }
 
         $data = $this->readJsonData('composer.json');
         $data['config']['vendor-dir'] = CORE_PATH . "/vendor";
-        if (!is_null($version)) {
-            $data['version'] = $version;
-        }
+        $data['version'] = $version;
+        $data['extra']['merge-plugin']['include'][0] = CORE_PATH . "/data/composer.json";
 
         file_put_contents("$dir/composer.json", json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
@@ -413,5 +394,13 @@ class TreoUpgrade extends AbstractService
     protected function getTreoPackages(): array
     {
         return $this->getContainer()->get('serviceFactory')->create('Store')->getPackages();
+    }
+
+    /**
+     * Run validate
+     */
+    protected function runValidate(): void
+    {
+        $this->getContainer()->get('serviceFactory')->create('Composer')->runValidate();
     }
 }
