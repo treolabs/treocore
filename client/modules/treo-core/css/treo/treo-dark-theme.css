@@ -18574,3 +18574,23 @@ td[data-name="draggableIcon"] {
         position: relative;
     }
 }
+
+.bottom .panel .group {
+    margin-top: -1px;
+    padding: 10px 0;
+}
+
+.bottom .panel .group .group-name {
+    padding: 0 0 5px;
+}
+
+.bottom .panel .group .group-name strong {
+    font-weight: bold;
+    border-bottom: 1px solid #dcdcdc;
+    display: block;
+    padding: 5px 10px;
+}
+
+.bottom .panel .group .list-container {
+    border-bottom: 1px solid #ececec;
+}
