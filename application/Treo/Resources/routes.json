@@ -8,14 +8,6 @@
     }
   },
   {
-    "route": "/TreoUpgrade/upgrade",
-    "method": "post",
-    "params": {
-      "controller": "TreoUpgrade",
-      "action": "upgrade"
-    }
-  },
-  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {
