@@ -34,21 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Treo\Composer;
+namespace Treo\Console;
 
 /**
- * Class PostUpdateTest
+ * Class ComposerLogTest
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author r.ratsun@treolabs.com
  */
-class PostUpdateTest extends \PHPUnit\Framework\TestCase
+class ComposerLogTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * Test is getDescription method exists
+     */
+    public function testISGetDescriptionExists()
+    {
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'getDescription'));
+    }
+
     /**
      * Test is run method exists
      */
     public function testIsRunExists()
     {
         // test
-        $this->assertTrue(method_exists($this->createPartialMock(PostUpdate::class, []), 'run'));
+        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'run'));
     }
 }

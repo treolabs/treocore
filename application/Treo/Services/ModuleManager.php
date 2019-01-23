@@ -737,6 +737,6 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getComposerDiff(): array
     {
-        return (new \Treo\Composer\PostUpdate())->getComposerLockDiff();
+        return $this->getComposerService()->getComposerDiff();
     }
 }

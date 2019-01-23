@@ -79,50 +79,6 @@ class PostUpdate extends PostInstall
     }
 
     /**
-     * Get composer.lock diff
-     *
-     * @return array
-     */
-    public function getComposerLockDiff(): array
-    {
-        // prepare result
-        $result = [
-            'install' => [],
-            'update'  => [],
-            'delete'  => [],
-        ];
-
-        // prepare data
-        $oldData = $this->getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = $this->getComposerLockTreoPackages("composer.lock");
-
-        foreach ($oldData as $package) {
-            if (!isset($newData[$package['name']])) {
-                $result['delete'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $package
-                ];
-            } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                $result['update'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $newData[$package['name']],
-                    'from'    => $package['version']
-                ];
-            }
-        }
-        foreach ($newData as $package) {
-            if (!isset($oldData[$package['name']])) {
-                $result['install'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $package
-                ];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Delete modules
      */
     protected function deleteModules(): void
@@ -215,6 +171,50 @@ class PostUpdate extends PostInstall
                 $this->getContainer()->get('migration')->run($row['id'], $from, $to);
             }
         }
+    }
+
+    /**
+     * Get composer.lock diff
+     *
+     * @return array
+     */
+    protected function getComposerLockDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        // prepare data
+        $oldData = $this->getComposerLockTreoPackages("data/old-composer.lock");
+        $newData = $this->getComposerLockTreoPackages("composer.lock");
+
+        foreach ($oldData as $package) {
+            if (!isset($newData[$package['name']])) {
+                $result['delete'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $package
+                ];
+            } elseif ($package['version'] != $newData[$package['name']]['version']) {
+                $result['update'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $newData[$package['name']],
+                    'from'    => $package['version']
+                ];
+            }
+        }
+        foreach ($newData as $package) {
+            if (!isset($oldData[$package['name']])) {
+                $result['install'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $package
+                ];
+            }
+        }
+
+        return $result;
     }
 
     /**

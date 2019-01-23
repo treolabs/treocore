@@ -194,6 +194,66 @@ class Composer extends AbstractService
     }
 
     /**
+     * Get composer diff
+     *
+     * @return array
+     */
+    public function getComposerDiff(): array
+    {
+        return $this->compareComposerSchemas();
+    }
+
+    /**
+     * @return array
+     */
+    protected function compareComposerSchemas(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        if (!file_exists($this->moduleStableComposer)) {
+            // prepare data
+            $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $this->filePutContents($this->moduleStableComposer, $data);
+        }
+
+        // prepare data
+        $composerData = $this->getModuleComposerJson();
+        $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+        foreach ($composerData['require'] as $package => $version) {
+            if (!isset($composerStableData['require'][$package])) {
+                $result['install'][] = [
+                    'id'      => $this->getModuleId($package),
+                    'package' => $package
+                ];
+            } elseif ($version != $composerStableData['require'][$package]) {
+                // prepare data
+                $id = $this->getModuleId($package);
+                $from = $this->getModule($id)['version'];
+                $result['update'][] = [
+                    'id'      => $id,
+                    'package' => $package,
+                    'from'    => $from
+                ];
+            }
+        }
+        foreach ($composerStableData['require'] as $package => $version) {
+            if (!isset($composerData['require'][$package])) {
+                $result['delete'][] = [
+                    'id'      => $this->getModuleId($package),
+                    'package' => $package
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get module ID
      *
      * @param string $packageId

@@ -122,4 +122,22 @@ class ComposerTest extends \PHPUnit\Framework\TestCase
         // test
         $this->assertTrue($service->updateMinimumStability());
     }
+
+    /**
+     * Test for getComposerDiff method
+     */
+    public function testGetComposerDiffMethod()
+    {
+        // prepare expected
+        $expected = ['install' => [], 'update' => [], 'delete' => []];
+
+        $service = $this->createPartialMock(Composer::class, ['compareComposerSchemas']);
+        $service
+            ->expects($this->any())
+            ->method('compareComposerSchemas')
+            ->willReturn($expected);
+
+        // test
+        $this->assertEquals($expected, $service->getComposerDiff());
+    }
 }
