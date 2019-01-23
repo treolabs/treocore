@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -36,60 +36,37 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Config;
-use Espo\Core\ORM\EntityManager;
+use PHPUnit\Framework\TestCase;
+use Espo\Core\Mail\Sender;
 
 /**
- * MailSender loader
+ * Class MailSenderTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class MailSender extends Base
+class MailSenderTest extends TestCase
 {
-
     /**
-     * Load MailSender
-     *
-     * @return mixed
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        $className = $this->getServiceClassName('mailSernder', '\\Espo\\Core\\Mail\\Sender');
-        return $this->getMailSender($className);
-    }
-
-    /**
-     * Get mail sender class
-     *
-     * @param string $className
-     *
-     * @return mixed
-     */
-    protected function getMailSender(string $className)
-    {
-        return new $className(
-            $this->getConfig(),
-            $this->getEntityManager()
+        $mock = $this->createPartialMock(
+            MailSender::class,
+            ['getServiceClassName', 'getMailSender']
         );
-    }
+        $mailSender = $this->createPartialMock(Sender::class, []);
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getServiceClassName')
+            ->willReturn('\\Espo\\Core\\Mail\\Sender');
+        $mock
+            ->expects($this->any())
+            ->method('getMailSender')
+            ->willReturn($mailSender);
 
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
+        // test
+        $this->assertInstanceOf(Sender::class, $mock->load());
     }
 }
