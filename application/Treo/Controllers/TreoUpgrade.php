@@ -79,6 +79,7 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
      * @ApiDescription(description="Run upgrade TreoCore")
      * @ApiMethod(type="POST")
      * @ApiRoute(name="/TreoUpgrade/upgrade")
+     * @ApiBody(sample="{'version': '1.0.0'}")
      * @ApiReturn(sample="'bool'")
      *
      * @param         $params
@@ -96,13 +97,13 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
             throw new Exceptions\Forbidden();
         }
 
-        if (!$request->isPost()) {
+        if (!$request->isPost() || empty($data->version)) {
             throw new Exceptions\BadRequest();
         }
 
         return $this
             ->getUpgradeService()
-            ->createUpgradeJob((!empty($data->version)) ? $data->version : null);
+            ->runUpgrade((string)$data->version);
     }
 
     /**
@@ -131,7 +132,9 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getUpgradeService()->createUpdateLog((string)$data->version);
+        return $this
+            ->getUpgradeService()
+            ->createUpdateLog((string)$data->version);
     }
 
     /**

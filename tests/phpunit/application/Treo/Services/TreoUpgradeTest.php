@@ -74,25 +74,12 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Is createUpgradeJob method exists
+     * Is runUpgrade method exists
      */
-    public function testIsCreateUpgradeJobMethodExists()
+    public function testIsRunUpgradeMethodExists()
     {
-        $service = $this->createPartialMock(TreoUpgrade::class, []);
-
         // test
-        $this->assertTrue(method_exists($service, 'createUpgradeJob'));
-    }
-
-    /**
-     * Is runUpgradeJob method exists
-     */
-    public function testIsRunUpgradeJobMethodExists()
-    {
-        $service = $this->createPartialMock(TreoUpgrade::class, []);
-
-        // test
-        $this->assertTrue(method_exists($service, 'runUpgradeJob'));
+        $this->assertTrue(method_exists($this->createPartialMock(TreoUpgrade::class, []), 'runUpgrade'));
     }
 
     /**
@@ -100,10 +87,8 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsDownloadPackageMethodExists()
     {
-        $service = $this->createPartialMock(TreoUpgrade::class, []);
-
         // test
-        $this->assertTrue(method_exists($service, 'downloadPackage'));
+        $this->assertTrue(method_exists($this->createPartialMock(TreoUpgrade::class, []), 'downloadPackage'));
     }
 
     /**
