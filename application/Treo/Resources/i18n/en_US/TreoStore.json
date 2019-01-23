@@ -1,6 +1,7 @@
 {
   "fields": {
-    "status": "Status"
+    "status": "Status",
+    "versions": "Versions"
   },
   "options": {
     "status": {

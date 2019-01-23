@@ -10,6 +10,25 @@
       "type": "text",
       "readOnly": true
     },
+    "status": {
+      "type": "enum",
+      "required": false,
+      "fontSize": 1,
+      "options": [
+        "buyable",
+        "available"
+      ],
+      "optionColors": {
+        "buyable": "FFFF00",
+        "available": "00FF00"
+      },
+      "default": "buyable",
+      "readOnly": true
+    },
+    "versions": {
+      "type": "jsonObject",
+      "readOnly": true
+    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
@@ -36,21 +55,6 @@
     "teams": {
       "type": "linkMultiple",
       "view": "views/fields/teams"
-    },
-    "status": {
-      "type": "enum",
-      "required": false,
-      "fontSize": 1,
-      "options": [
-        "buyable",
-        "available"
-      ],
-      "optionColors": {
-        "buyable": "FFFF00",
-        "available": "00FF00"
-      },
-      "default": "buyable",
-      "readOnly": true
     }
   },
   "links": {
