@@ -32,6 +32,8 @@
  * and "TreoPIM" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Core\Loaders;
 
 use PHPUnit\Framework\TestCase;
