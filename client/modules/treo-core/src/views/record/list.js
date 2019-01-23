@@ -233,7 +233,6 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.setCellWidth();
 
                 this.$el.find(this.listContainerEl).sortable({
-                    containment: this.$el.find(this.listContainerEl),
                     handle: window.innerWidth < 768 ? '.cell[data-name="draggableIcon"]' : false,
                     delay: 150,
                     update: function () {
