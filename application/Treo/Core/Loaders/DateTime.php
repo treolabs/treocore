@@ -35,6 +35,9 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Config;
+use Espo\Core\Utils\DateTime as Instance;
+
 /**
  * DateTime loader
  *
@@ -50,10 +53,20 @@ class DateTime extends Base
      */
     public function load()
     {
-        return new \Espo\Core\Utils\DateTime(
-            $this->getContainer()->get('config')->get('dateFormat'),
-            $this->getContainer()->get('config')->get('timeFormat'),
-            $this->getContainer()->get('config')->get('timeZone')
+        return new Instance(
+            $this->getConfig()->get('dateFormat'),
+            $this->getConfig()->get('timeFormat'),
+            $this->getConfig()->get('timeZone')
         );
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
     }
 }

@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -16,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,32 +32,33 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/admin/upgrade/record/row-actions/upgrade-action', 'views/record/row-actions/default',
-    Dep => Dep.extend({
+namespace Treo\Core\Loaders;
 
-        disableUpgrading: false,
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Container;
+use Treo\Core\Migration\Migration as Instance;
 
-        setup() {
-            Dep.prototype.setup.call(this);
+/**
+ * Class MigrationTest
+ *
+ * @author r.zablodskiy@treolabs.com
+ */
+class MigrationTest extends TestCase
+{
+    /**
+     * Test load method
+     */
+    public function testLoadMethod()
+    {
+        $mock = $this->createPartialMock(Migration::class, ['getContainer']);
+        $container = $this->createPartialMock(Container::class, []);
 
-            this.listenTo(this.model.collection, 'disableUpgrading', disableUpgrading => {
-                this.disableUpgrading = disableUpgrading;
-                this.reRender();
-            });
-        },
+        $mock
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($container);
 
-        getActionList() {
-            let list = [];
-            if (!this.disableUpgrading) {
-                list.push({
-                    action: 'upgradeNow',
-                    label: 'upgradeNow',
-                    data: {
-                        id: this.model.id
-                    }
-                });
-            }
-            return list;
-        }
-    })
-);
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
+    }
+}

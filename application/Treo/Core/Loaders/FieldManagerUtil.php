@@ -35,6 +35,9 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\Utils\FieldManagerUtil as Instance;
+use Treo\Core\Utils\Metadata;
+
 /**
  * FieldManagerUtil loader
  *
@@ -50,6 +53,16 @@ class FieldManagerUtil extends Base
      */
     public function load()
     {
-        return new \Espo\Core\Utils\FieldManagerUtil($this->getContainer()->get('metadata'));
+        return new Instance($this->getMetadata());
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
     }
 }

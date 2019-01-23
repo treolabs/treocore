@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\Utils\Api\Slim;
+
 /**
  * Output loader
  *
@@ -51,6 +53,16 @@ class Output extends Base
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Api\Output($this->getContainer()->get('slim'));
+        return new \Espo\Core\Utils\Api\Output($this->getSlim());
+    }
+
+    /**
+     * Get slim
+     *
+     * @return Slim
+     */
+    protected function getSlim()
+    {
+        return $this->getContainer()->get('slim');
     }
 }

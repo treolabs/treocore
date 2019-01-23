@@ -51,8 +51,28 @@ class ThemeManager extends Base
     public function load()
     {
         return new \Espo\Core\Utils\ThemeManager(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('metadata')
+            $this->getConfig(),
+            $this->getMetadata()
         );
+    }
+
+    /**
+     * Get config
+     *
+     * @return \Treo\Core\Utils\Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return \Treo\Core\Utils\Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
     }
 }

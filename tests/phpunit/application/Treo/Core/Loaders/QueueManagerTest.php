@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,64 +31,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
-declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\Utils\Language;
-use Espo\Core\Utils\File\Manager;
-use Treo\Core\Utils\Metadata;
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Container;
+use Treo\Core\QueueManager as Instance;
 
 /**
- * BaseLanguage loader
+ * Class QueueManagerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class BaseLanguage extends Base
+class QueueManagerTest extends TestCase
 {
-
     /**
-     * Load BaseLanguage
-     *
-     * @return Language
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return new Language(
-            'en_US',
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->useCache()
-        );
-    }
+        $mock = $this->createPartialMock(QueueManager::class, ['getContainer']);
+        $container = $this->createPartialMock(Container::class, []);
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getContainer')
+            ->willReturn($container);
 
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Is use cache
-     *
-     * @return bool|null
-     */
-    protected function useCache()
-    {
-        return $this->getContainer()->get('useCache');
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }

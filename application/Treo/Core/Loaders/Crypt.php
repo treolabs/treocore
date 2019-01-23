@@ -35,6 +35,9 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\Utils\Crypt as Instance;
+use Treo\Core\Utils\Config;
+
 /**
  * Crypt loader
  *
@@ -46,10 +49,20 @@ class Crypt extends Base
     /**
      * Load Crypt
      *
-     * @return \Espo\Core\Utils\Crypt
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Crypt($this->getContainer()->get('config'));
+        return new Instance($this->getConfig());
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
     }
 }
