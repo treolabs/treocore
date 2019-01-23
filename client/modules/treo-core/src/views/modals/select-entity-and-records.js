@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/modals/select-entity-and-records', 'pim:views/modals/select-records',
+Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/select-records',
     Dep => Dep.extend({
 
         template: 'treo-core:modals/select-entity-and-records',
