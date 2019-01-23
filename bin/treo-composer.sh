@@ -11,8 +11,11 @@ do
      rm "data/composer-validate.txt";
 
      # run composer validate command
-     $php composer.phar update --no-dev --dry-run -d=data/composer-validate > "data/composer-validate.log" 2>&1
+     $php composer.phar update --no-dev --dry-run > "data/composer-validate.log" 2>&1
      echo "{{finished}}" >> "data/composer-validate.log"
+
+     # restore composer.json file
+     cp "data/cached-composer.json" "composer.json"
    fi
 
    # is neet to update composer

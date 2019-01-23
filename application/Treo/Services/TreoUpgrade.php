@@ -194,17 +194,16 @@ class TreoUpgrade extends AbstractService
      */
     protected function createComposerJson(string $version): void
     {
-        $dir = 'data/core-validate';
-        if (!file_exists($dir)) {
-            mkdir($dir);
-        }
+        // get content
+        $content = file_get_contents('composer.json');
 
-        $data = $this->readJsonData('composer.json');
-        $data['config']['vendor-dir'] = CORE_PATH . "/vendor";
+        // copy
+        file_put_contents("data/cached-composer.json", $content);
+
+        // set version
+        $data = json_decode($content, true);
         $data['version'] = $version;
-        $data['extra']['merge-plugin']['include'][0] = CORE_PATH . "/data/composer.json";
-
-        file_put_contents("$dir/composer.json", json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        file_put_contents("composer.json", json_encode($data));
     }
 
     /**
