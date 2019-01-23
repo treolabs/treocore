@@ -78,7 +78,7 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
     /**
      * @ApiDescription(description="Run upgrade TreoCore")
      * @ApiMethod(type="POST")
-     * @ApiRoute(name="/TreoUpgrade/upgrade")
+     * @ApiRoute(name="/TreoUpgrade/action/Upgrade")
      * @ApiBody(sample="{'version': '1.0.0'}")
      * @ApiReturn(sample="'bool'")
      *
