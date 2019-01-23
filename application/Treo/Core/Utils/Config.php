@@ -145,7 +145,7 @@ class Config extends \Espo\Core\Utils\Config
     protected function getTreoId(): string
     {
         // get auth data
-        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+        $authData = (new \Treo\Services\Composer())->getAuthData();
 
         return base64_encode($authData['username'] . '-treo-' . $authData['password']);
     }

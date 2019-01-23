@@ -36,9 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\CronManager;
 use Treo\Core\UpgradeManager;
-use Treo\Core\Utils\Composer;
 use Treo\Core\Utils\Mover;
 use Treo\Core\Migration\Migration;
 

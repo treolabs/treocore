@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
-use Treo\Core\Utils\Composer;
+use Treo\Services\Composer;
 
 /**
  * Installer listener
@@ -63,13 +63,10 @@ class Installer extends AbstractListener
      */
     protected function generateGitlabUser(): void
     {
-        // create composer
-        $composer = new Composer();
-
         // generate auth data
-        $authData = $composer->generateAuthData();
+        $authData = Composer::generateAuthData();
 
         // set auth data
-        $composer->setAuthData($authData['username'], $authData['password']);
+        Composer::setAuthData($authData['username'], $authData['password']);
     }
 }
