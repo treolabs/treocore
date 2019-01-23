@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "status": "Status"
+  },
+  "options": {
+    "status": {
+      "buyable": "buyable",
+      "available": "available"
+    }
+  }
+}
