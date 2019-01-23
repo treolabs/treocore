@@ -43,7 +43,7 @@ use Treo\Core\Utils\Composer as ComposerUtil;
 /**
  * Composer service
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class Composer extends AbstractService
 {
@@ -58,85 +58,19 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
-     * Is system updating now ?
+     * Run update
      *
      * @return bool
      */
-    public function isSystemUpdating(): bool
+    public function runUpdate(): bool
     {
-        $count = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(
-                [
-                    'name'   => 'run-treo-update',
-                    'status' => [CronManager::PENDING, CronManager::RUNNING]
-                ]
-            )
-            ->count();
+        // create file for treo-composer.sh
+        $this->filePutContents('data/composer-update.txt', '1');
 
-        return ($count > 0);
-    }
+        // set user to config
+        $this->setComposerUser();
 
-    /**
-     * Create cron job for update composer
-     *
-     * @return bool
-     */
-    public function createUpdateJob(): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!$this->isSystemUpdating()) {
-            // create job
-            $this->insertJob();
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Run composer UPDATE command by CLI
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function runUpdateJob(array $data = []): bool
-    {
-        // prepare result
-        $result = true;
-
-        // prepare data
-        $createdById = (isset($data['createdById'])) ? $data['createdById'] : null;
-
-        try {
-            $this->runUpdate($createdById);
-        } catch (\Exception $e) {
-            $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
-
-            // prepare result
-            $result = false;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Run composer UPDATE command
-     *
-     * @param string|null $createdById
-     *
-     * @return array
-     * @throws \Espo\Core\Exceptions\Error
-     */
-    public function runUpdate(string $createdById = null): array
-    {
-        return (new ComposerUtil())->run('update');
+        return true;
     }
 
     /**
@@ -144,15 +78,8 @@ class Composer extends AbstractService
      */
     public function cancelChanges(): void
     {
-        if (empty($this->isSystemUpdating())) {
-            if (file_exists($this->moduleStableComposer)) {
-                if (file_exists($this->moduleComposer)) {
-                    unlink($this->moduleComposer);
-                }
-
-                // copy file
-                copy($this->moduleStableComposer, $this->moduleComposer);
-            }
+        if (file_exists($this->moduleStableComposer)) {
+            file_put_contents($this->moduleComposer, file_get_contents($this->moduleStableComposer));
         }
     }
 
@@ -341,5 +268,14 @@ class Composer extends AbstractService
             ->get('serviceFactory')
             ->create('Store')
             ->getPackages();
+    }
+
+    /**
+     * Set current user to config for composer
+     */
+    protected function setComposerUser(): void
+    {
+        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        $this->getConfig()->save();
     }
 }

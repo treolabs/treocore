@@ -42,58 +42,12 @@ namespace Treo\Services;
  */
 class ComposerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testIsCreateUpdateJobReturnFalse()
+    public function testIsRunUpdateReturnTrue()
     {
-        $service = $this->createPartialMock(Composer::class, ['insertJob', 'isSystemUpdating']);
-        $service
-            ->expects($this->any())
-            ->method('insertJob')
-            ->willReturn(null);
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
+        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'setComposerUser']);
 
         // test
-        $this->assertFalse($service->createUpdateJob());
-    }
-
-    public function testIsCreateUpdateJobReturnTrue()
-    {
-        $service = $this->createPartialMock(Composer::class, ['insertJob', 'isSystemUpdating']);
-        $service
-            ->expects($this->any())
-            ->method('insertJob')
-            ->willReturn(null);
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
-
-        // test
-        $this->assertTrue($service->createUpdateJob());
-    }
-
-    public function testIsRunUpdateJobReturnTrue()
-    {
-        $service = $this->createPartialMock(Composer::class, ['runUpdate']);
-        $service
-            ->expects($this->any())
-            ->method('runUpdate')
-            ->willReturn([]);
-
-        // tests
-        $this->assertTrue($service->runUpdateJob(['createdById' => '1']));
-        $this->assertTrue($service->runUpdateJob(['createdById' => '2']));
-        $this->assertTrue($service->runUpdateJob(['createdById' => '2', 'qwe' => 123]));
-    }
-
-    public function testIsRunUpdateMethodExists()
-    {
-        $service = $this->createPartialMock(Composer::class, []);
-
-        // test
-        $this->assertTrue(method_exists($service, 'runUpdate'));
+        $this->assertTrue($service->runUpdate());
     }
 
     public function testIsCancelChangesMethodExists()
@@ -167,13 +121,5 @@ class ComposerTest extends \PHPUnit\Framework\TestCase
 
         // test
         $this->assertTrue($service->updateMinimumStability());
-    }
-
-    public function testIsSystemUpdatingMethodExists()
-    {
-        $service = $this->createPartialMock(Composer::class, []);
-
-        // test
-        $this->assertTrue(method_exists($service, 'isSystemUpdating'));
     }
 }

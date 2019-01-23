@@ -43,7 +43,7 @@ use Treo\Services\Composer as ComposerService;
 /**
  * Composer controller
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Composer extends Base
 {
@@ -68,7 +68,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        return $this->getComposerService()->createUpdateJob();
+        return $this->getComposerService()->runUpdate();
     }
 
     /**

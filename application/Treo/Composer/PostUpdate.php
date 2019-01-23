@@ -153,7 +153,10 @@ class PostUpdate extends PostInstall
      */
     protected function rebuild(): void
     {
-        (new \Treo\Console\Rebuild())->setContainer($this->getContainer())->run([]);
+        $this
+            ->getContainer()
+            ->get('dataManager')
+            ->rebuild();
     }
 
     /**

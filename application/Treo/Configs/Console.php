@@ -45,6 +45,7 @@ return [
     "module delete <moduleId> --force" => Console\ModuleDelete::class,
     "clear cache"                      => Console\ClearCache::class,
     "cleanup"                          => Console\Cleanup::class,
+    "composer-log"                     => Console\ComposerLog::class,
     "rebuild"                          => Console\Rebuild::class,
     "cron"                             => Console\Cron::class,
     "events"                           => Console\Events::class,
