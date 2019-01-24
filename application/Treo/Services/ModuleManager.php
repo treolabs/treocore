@@ -83,7 +83,7 @@ class ModuleManager extends \Espo\Core\Services\Base
         // for installed modules
         foreach ($this->getInstalled() as $item) {
             // prepare id
-            $id = $item->get('treoId');
+            $id = $item->get('id');
 
             if (!empty($package = $this->getMetadata()->getModule($id))) {
                 $result['list'][$id] = [
@@ -129,8 +129,8 @@ class ModuleManager extends \Espo\Core\Services\Base
                 "status"         => 'install'
             ];
             if (!empty($package = $this->getPackagistPackage($row['id']))) {
-                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
-                $item['description'] = $this->packageTranslate($package['description'], "-");
+                $item['name'] = $package['name'];
+                $item['description'] = $package['description'];
                 if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
                     $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
@@ -681,7 +681,7 @@ class ModuleManager extends \Espo\Core\Services\Base
         $data = $this
             ->getEntityManager()
             ->getRepository('TreoStore')
-            ->where(['treoId' => $id])
+            ->where(['id' => $id])
             ->findOne();
 
         if (!empty($data)) {
@@ -710,8 +710,8 @@ class ModuleManager extends \Espo\Core\Services\Base
 
         if (count($data) > 0) {
             foreach ($data as $row) {
-                $result[$row->get('treoId')] = $row->toArray();
-                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
             }
         }
 
@@ -800,7 +800,7 @@ class ModuleManager extends \Espo\Core\Services\Base
         return $this
             ->getEntityManager()
             ->getRepository('TreoStore')
-            ->where(['treoId' => $this->getMetadata()->getModuleList()])
+            ->where(['id' => $this->getMetadata()->getModuleList()])
             ->find();
     }
 }

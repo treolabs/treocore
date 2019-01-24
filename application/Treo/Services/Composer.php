@@ -447,7 +447,7 @@ class Composer extends AbstractService
 
         foreach ($this->getPackages() as $package) {
             if ($package['packageId'] == $packageId) {
-                $result = $package['treoId'];
+                $result = $package['id'];
             }
         }
 
@@ -562,8 +562,8 @@ class Composer extends AbstractService
 
         if (count($data) > 0) {
             foreach ($data as $row) {
-                $result[$row->get('treoId')] = $row->toArray();
-                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
             }
         }
 

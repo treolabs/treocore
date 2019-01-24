@@ -74,7 +74,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
 
         foreach ($this->getInstalled() as $package) {
             // prepare id
-            $id = $package['treoId'];
+            $id = $package['id'];
 
             // get notified version
             $version = (isset($notifiedVersions[$id])) ? $notifiedVersions[$id] : null;
@@ -127,6 +127,11 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
 
         foreach ($data as $package) {
             $entity = $this->getEntityManager()->getEntity("TreoStore");
+            $entity->id = $package['treoId'];
+            $entity->set('packageId', $package['packageId']);
+            $entity->set('url', $package['url']);
+            $entity->set('status', $package['status']);
+            $entity->set('versions', $package['versions']);
             foreach ($package['name'] as $locale => $value) {
                 if ($locale == 'default') {
                     $entity->set('name', $value);
@@ -141,11 +146,6 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
                     $entity->set('description' . Util::toCamelCase(strtolower($locale), "_", true), $value);
                 }
             }
-            $entity->set('treoId', $package['treoId']);
-            $entity->set('packageId', $package['packageId']);
-            $entity->set('url', $package['url']);
-            $entity->set('status', $package['status']);
-            $entity->set('versions', $package['versions']);
 
             $this->getEntityManager()->saveEntity($entity);
         }
@@ -195,13 +195,13 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
         // find
         $data = $this
             ->getRepository()
-            ->where(['treoId' => $this->getInjection('metadata')->getModuleList()])
+            ->where(['id' => $this->getInjection('metadata')->getModuleList()])
             ->find();
 
         if (count($data) > 0) {
             foreach ($data as $row) {
-                $result[$row->get('treoId')] = $row->toArray();
-                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
             }
         }
 
@@ -215,7 +215,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
     {
         if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
             // prepare id
-            $id = $package['treoId'];
+            $id = $package['id'];
 
             // prepare config data
             $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);

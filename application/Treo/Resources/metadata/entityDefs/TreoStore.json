@@ -12,10 +12,6 @@
       "isMultilang": true,
       "readOnly": true
     },
-    "treoId": {
-      "type": "varchar",
-      "readOnly": true
-    },
     "packageId": {
       "type": "varchar",
       "readOnly": true
@@ -26,7 +22,6 @@
     },
     "status": {
       "type": "enum",
-      "required": false,
       "fontSize": 1,
       "options": [
         "buyable",
