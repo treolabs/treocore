@@ -48,142 +48,13 @@ use Treo\PHPUnit\Framework\TestCase;
  */
 class ModuleManagerTest extends TestCase
 {
-    public function testGetListMethod()
+    /**
+     * Test is getList method exist
+     */
+    public function testIsGetListExists()
     {
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['getComposerService', 'getMetadata', 'getPackagistPackage', 'packageTranslate', 'getModuleRequireds']
-        );
-        $composer = $this->createMockService(Composer::class, ['getModuleComposerJson', 'getComposerDiff']);
-        $metadata = $this->createMockService(Metadata::class, ['getModuleList', 'getModule']);
-
-        $service
-            ->expects($this->any())
-            ->method('getComposerService')
-            ->willReturn($composer);
-        $service
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
-        $service
-            ->expects($this->any())
-            ->method('getPackagistPackage')
-            ->willReturn([
-                'packageId' => 'module1',
-                'name' => [],
-                'description' => []
-            ]);
-        $service
-            ->expects($this->any())
-            ->method('packageTranslate')
-            ->willReturn('Translate');
-
-        $composer
-            ->expects($this->any())
-            ->method('getModuleComposerJson')
-            ->willReturn([
-                'require' => [
-                    'module1' => '1.0.0'
-                ]
-            ]);
-        $composer
-            ->expects($this->any())
-            ->method('getComposerDiff')
-            ->willReturn([
-                'install' => [
-                    [
-                        'id' => 'some-id2',
-                        'package' => 'some-package'
-                    ]
-                ]
-            ]);
-
-        $metadata
-            ->expects($this->any())
-            ->method('getModuleList')
-            ->willReturn([]);
-
-        // test 1
-        $expects = [
-            'total' => 1,
-            'list' => [
-                [
-                    'id' => 'some-id2',
-                    'name' => 'Translate',
-                    'description' => 'Translate',
-                    'settingVersion' => '1.0.0',
-                    'currentVersion' => '',
-                    'required' => [],
-                    'isSystem' => false,
-                    'isComposer' => true,
-                    'status' => 'install'
-                ]
-            ]
-        ];
-        $this->assertEquals($expects, $service->getList());
-
-        $metadata
-            ->expects($this->any())
-            ->method('getModuleList')
-            ->willReturn(['module1', 'module2']);
-        $metadata
-            ->expects($this->any())
-            ->method('getModule')
-            ->willReturn([]);
-
-        // test 2
-        $this->assertEquals($expects, $service->getList());
-
-        $metadata
-            ->expects($this->any())
-            ->method('getModuleList')
-            ->willReturn(['module1']);
-        $metadata
-            ->expects($this->any())
-            ->method('getModule')
-            ->willReturn([
-                'extra' => [
-                    'name' => 'module1',
-                    'description' => 'description'
-                ],
-                'version' => '1.1.0'
-            ]);
-
-        $service
-            ->expects($this->any())
-            ->method('getPackagistPackage')
-            ->willReturn([]);
-
-        // test 3
-        $expects = [
-            'total' => 1,
-            'list' => [
-                [
-                    'id' => 'some-id2',
-                    'name' => 'Translate',
-                    'description' => 'Translate',
-                    'settingVersion' => '1.0.0',
-                    'currentVersion' => '',
-                    'required' => [],
-                    'isSystem' => false,
-                    'isComposer' => true,
-                    'status' => 'install'
-                ]
-            ]
-        ];
-        $this->assertEquals($expects, $service->getList());
-
-        $service
-            ->expects($this->any())
-            ->method('getModuleRequireds')
-            ->willReturn([
-                'some-id2' => [
-                    'require' => 'module1'
-                ]
-            ]);
-
-        // test 4
-        $this->assertEquals($expects, $service->getList());
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(ModuleManager::class, []), 'getList'));
     }
 
     /**
@@ -206,9 +77,11 @@ class ModuleManagerTest extends TestCase
         $service
             ->expects($this->any())
             ->method('getPackagistPackage')
-            ->willReturn([
-                'packageId' => 'some-id'
-            ]);
+            ->willReturn(
+                [
+                    'packageId' => 'some-id'
+                ]
+            );
         $service
             ->expects($this->any())
             ->method('getMetadata')
@@ -397,9 +270,11 @@ class ModuleManagerTest extends TestCase
         $metadata
             ->expects($this->any())
             ->method('getModule')
-            ->willReturn([
-                'name' => 'some-name'
-            ]);
+            ->willReturn(
+                [
+                    'name' => 'some-name'
+                ]
+            );
 
         $composer
             ->expects($this->any())
@@ -458,9 +333,11 @@ class ModuleManagerTest extends TestCase
             $metadata
                 ->expects($this->any())
                 ->method('getModule')
-                ->willReturn([
-                    'name' => 'some-name'
-                ]);
+                ->willReturn(
+                    [
+                        'name' => 'some-name'
+                    ]
+                );
 
             $service->updateModule('id', '1.0.0');
         } catch (Error $e) {
@@ -492,9 +369,11 @@ class ModuleManagerTest extends TestCase
             $service
                 ->expects($this->any())
                 ->method('getPackagistPackage')
-                ->willReturn([
-                    'name' => 'some-name'
-                ]);
+                ->willReturn(
+                    [
+                        'name' => 'some-name'
+                    ]
+                );
             $service
                 ->expects($this->any())
                 ->method('translateError')
@@ -535,9 +414,11 @@ class ModuleManagerTest extends TestCase
             $service
                 ->expects($this->any())
                 ->method('getPackagistPackage')
-                ->willReturn([
-                    'name' => 'some-name'
-                ]);
+                ->willReturn(
+                    [
+                        'name' => 'some-name'
+                    ]
+                );
             $service
                 ->expects($this->any())
                 ->method('translateError')
@@ -699,9 +580,11 @@ class ModuleManagerTest extends TestCase
         $service
             ->expects($this->any())
             ->method('getPackagistPackage')
-            ->willReturn([
-                'packageId' => 'some-id'
-            ]);
+            ->willReturn(
+                [
+                    'packageId' => 'some-id'
+                ]
+            );
         $service
             ->expects($this->any())
             ->method('getComposerService')
@@ -710,15 +593,19 @@ class ModuleManagerTest extends TestCase
         $composer
             ->expects($this->any())
             ->method('getModuleComposerJson')
-            ->willReturn(['require' => [
-                'some-id' => 'some-value'
-            ]]);
+            ->willReturn(
+                ['require' => [
+                    'some-id' => 'some-value'
+                ]]
+            );
         $composer
             ->expects($this->any())
             ->method('getModuleStableComposerJson')
-            ->willReturn(['require' => [
-                'some-id' => 'some-value'
-            ]]);
+            ->willReturn(
+                ['require' => [
+                    'some-id' => 'some-value'
+                ]]
+            );
         $composer
             ->expects($this->any())
             ->method('setModuleComposerJson')
@@ -753,9 +640,11 @@ class ModuleManagerTest extends TestCase
         $service
             ->expects($this->any())
             ->method('getPackagistPackage')
-            ->willReturn([
-                'packageId' => ''
-            ]);
+            ->willReturn(
+                [
+                    'packageId' => ''
+                ]
+            );
 
         // test 2
         $this->assertFalse($service->cancel('id'));
@@ -782,7 +671,7 @@ class ModuleManagerTest extends TestCase
         // test 1
         $expects = [
             'total' => 0,
-            'list' => []
+            'list'  => []
         ];
         $this->assertEquals($expects, $service->getLogs($request));
 
@@ -795,22 +684,24 @@ class ModuleManagerTest extends TestCase
         $service
             ->expects($this->any())
             ->method('getNoteData')
-            ->willReturn([
+            ->willReturn(
                 [
-                    'id' => 'some-id',
-                    'deleted' => 0,
-                    'data' => 'some-data'
+                    [
+                        'id'      => 'some-id',
+                        'deleted' => 0,
+                        'data'    => 'some-data'
+                    ]
                 ]
-            ]);
+            );
 
         // test 2
         $expects = [
             'total' => 1,
-            'list' => [
+            'list'  => [
                 [
-                    'id' => 'some-id',
+                    'id'      => 'some-id',
                     'deleted' => 0,
-                    'data' => 'some-data'
+                    'data'    => 'some-data'
                 ]
             ]
         ];

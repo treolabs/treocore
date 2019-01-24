@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 
 /**
  * Class TreoStore
@@ -126,8 +127,20 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
 
         foreach ($data as $package) {
             $entity = $this->getEntityManager()->getEntity("TreoStore");
-            $entity->set('name', $package['name']['default']);
-            $entity->set('description', $package['description']['default']);
+            foreach ($package['name'] as $locale => $value) {
+                if ($locale == 'default') {
+                    $entity->set('name', $value);
+                } else {
+                    $entity->set('name' . Util::toCamelCase(strtolower($locale), "_", true), $value);
+                }
+            }
+            foreach ($package['description'] as $locale => $value) {
+                if ($locale == 'default') {
+                    $entity->set('description', $value);
+                } else {
+                    $entity->set('description' . Util::toCamelCase(strtolower($locale), "_", true), $value);
+                }
+            }
             $entity->set('treoId', $package['treoId']);
             $entity->set('packageId', $package['packageId']);
             $entity->set('url', $package['url']);

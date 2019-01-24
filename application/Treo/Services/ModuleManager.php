@@ -39,6 +39,7 @@ namespace Treo\Services;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
+use Espo\ORM\EntityCollection;
 use Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Mover;
@@ -80,15 +81,18 @@ class ModuleManager extends \Espo\Core\Services\Base
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getModuleList() as $id) {
+        foreach ($this->getInstalled() as $item) {
+            // prepare id
+            $id = $item->get('treoId');
+
             if (!empty($package = $this->getMetadata()->getModule($id))) {
                 $result['list'][$id] = [
                     'id'                 => $id,
-                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
-                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
+                    'name'               => $item->get('name'),
+                    'description'        => $item->get('description'),
                     'settingVersion'     => '*',
                     'currentVersion'     => $package['version'],
-                    'versions'           => $this->getPackagistPackage($id)['versions'],
+                    'versions'           => json_decode(json_encode($item->get('versions')), true),
                     'required'           => [],
                     'requiredTranslates' => [],
                     'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
@@ -786,5 +790,17 @@ class ModuleManager extends \Espo\Core\Services\Base
             ->find($where);
 
         return !empty($entities) ? $entities->toArray() : [];
+    }
+
+    /**
+     * @return EntityCollection
+     */
+    protected function getInstalled(): EntityCollection
+    {
+        return $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->where(['treoId' => $this->getMetadata()->getModuleList()])
+            ->find();
     }
 }

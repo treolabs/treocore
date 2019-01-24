@@ -2,12 +2,14 @@
   "fields": {
     "name": {
       "type": "varchar",
+      "isMultilang": true,
       "required": true,
       "trim": true,
       "readOnly": true
     },
     "description": {
       "type": "text",
+      "isMultilang": true,
       "readOnly": true
     },
     "treoId": {
