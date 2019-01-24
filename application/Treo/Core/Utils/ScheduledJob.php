@@ -39,12 +39,8 @@ namespace Treo\Core\Utils;
 /**
  * Class ScheduledJob
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
 class ScheduledJob extends \Espo\Core\Utils\ScheduledJob
 {
-    /**
-     * @var string
-     */
-    protected $cronFile = 'console.php cron';
 }
