@@ -48,12 +48,7 @@ class Schema extends \Espo\Core\Utils\Database\Schema\Schema
     use ContainerTrait;
 
     /**
-     * Rebuild database schema
-     *
-     * @param array|null $entityList
-     *
-     * @return bool
-     * @throws Error
+     * @inheritdoc
      */
     public function rebuild($entityList = null)
     {
