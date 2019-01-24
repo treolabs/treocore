@@ -36,9 +36,9 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 /**
- * Mover util
+ * Class Mover
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Mover
 {
@@ -46,11 +46,6 @@ class Mover
      * @var string
      */
     const TREODIR = 'treo-module';
-
-    /**
-     * @var array
-     */
-    const SKIP = ['.', '..'];
 
     /**
      * Get treo modules
@@ -62,19 +57,16 @@ class Mover
         // prepare result
         $result = [];
 
-        // prepare treo crm vendor dir path
+        // prepare path
         $path = "vendor/" . self::TREODIR . "/";
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $row) {
-                if (!in_array($row, self::SKIP)) {
-                    $modulePath = "{$path}/{$row}/application/Espo/Modules/";
-                    if (file_exists($modulePath) && is_dir($modulePath)) {
-                        foreach (scandir($modulePath) as $moduleId) {
-                            if (!in_array($moduleId, self::SKIP)) {
-                                $result[$moduleId] = $row;
-                            }
-                        }
+                $composerFile = "{$path}/{$row}/composer.json";
+                if (file_exists($composerFile)) {
+                    $composerData = json_decode(file_get_contents($composerFile), true);
+                    if (isset($composerData['extra']['treoId'])) {
+                        $result[$composerData['extra']['treoId']] = $row;
                     }
                 }
             }
@@ -91,28 +83,30 @@ class Mover
         // update espo core
         self::updateEspo();
 
-        foreach (self::getModules() as $moduleId => $key) {
-            // update frontend files
-            self::updateFrontend($moduleId);
+        foreach (self::getModules() as $id => $key) {
+            // relocate client
+            self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
+            self::copyDir("vendor/" . self::TREODIR . "/$key/client/modules/", "client/");
 
-            // update backend files
-            self::updateBackend($moduleId);
+            // relocate api
+            self::deleteDir("application/Espo/Modules/{$id}");
+            self::copyDir("vendor/" . self::TREODIR . "/$key/application/Espo/", "application/");
         }
     }
 
     /**
-     * Delete treo module
+     * Delete module
      *
      * @param array $modules
      */
     public static function delete(array $modules): void
     {
-        foreach ($modules as $moduleId => $key) {
+        foreach ($modules as $id => $key) {
             // delete dir from frontend
-            self::deleteDir('client/modules/' . self::fromCamelCase($moduleId, '-') . '/');
+            self::deleteDir('client/modules/' . self::fromCamelCase($id, '-') . '/');
 
             // delete dir from backend
-            self::deleteDir("application/Espo/Modules/{$moduleId}/");
+            self::deleteDir("application/Espo/Modules/{$id}/");
         }
     }
 
@@ -120,33 +114,12 @@ class Mover
      * Delete directory
      *
      * @param string $dirname
-     *
-     * @return bool
      */
-    public static function deleteDir(string $dirname): bool
+    public static function deleteDir(string $dirname): void
     {
-        if (!file_exists($dirname)) {
-            return false;
+        if (file_exists($dirname)) {
+            exec("rm $dirname -r");
         }
-        if (is_dir($dirname)) {
-            $dir_handle = opendir($dirname);
-        }
-        if (empty($dir_handle)) {
-            return false;
-        }
-        while ($file = readdir($dir_handle)) {
-            if ($file != "." && $file != "..") {
-                if (!is_dir($dirname . "/" . $file)) {
-                    unlink($dirname . "/" . $file);
-                } else {
-                    self::deleteDir($dirname . '/' . $file);
-                }
-            }
-        }
-        closedir($dir_handle);
-        rmdir($dirname);
-
-        return true;
     }
 
     /**
@@ -194,109 +167,16 @@ class Mover
     }
 
     /**
-     * Update frontend
-     *
-     * @param string $moduleId
-     */
-    protected static function updateFrontend(string $moduleId): void
-    {
-        if (array_key_exists($moduleId, self::getModules())) {
-            // prepare params
-            $moduleKey = self::getModules()[$moduleId];
-            $module = self::fromCamelCase($moduleId, '-');
-            $source = "vendor/" . self::TREODIR . "/{$moduleKey}/client/modules/{$module}/";
-            $dest = "client/modules/{$module}/";
-
-            // delete dir
-            self::deleteDir($dest);
-
-            // copy dir
-            self::copyDir($source, $dest);
-        }
-    }
-
-
-    /**
-     * Update backend
-     *
-     * @param string $moduleId
-     */
-    protected static function updateBackend(string $moduleId): void
-    {
-        if (array_key_exists($moduleId, self::getModules())) {
-            // prepare params
-            $moduleKey = self::getModules()[$moduleId];
-            $source = "vendor/" . self::TREODIR . "/{$moduleKey}/application/Espo/Modules/{$moduleId}/";
-            $dest = "application/Espo/Modules/{$moduleId}/";
-
-            // delete dir
-            self::deleteDir($dest);
-
-            // copy dir
-            self::copyDir($source, $dest);
-        }
-    }
-
-    /**
      * Recursively copy files from one directory to another
      *
      * @param string $src
      * @param string $dest
-     *
-     * @return bool
      */
-    protected static function copyDir(string $src, string $dest): bool
+    protected static function copyDir(string $src, string $dest): void
     {
-        if (!is_dir($src)) {
-            return false;
+        if (file_exists($src)) {
+            exec("cp {$src} {$dest} -r");
         }
-        if (!is_dir($dest)) {
-            if (!mkdir($dest)) {
-                return false;
-            }
-        }
-        $i = new \DirectoryIterator($src);
-        foreach ($i as $f) {
-            if ($f->isFile()) {
-                copy($f->getRealPath(), "$dest/" . $f->getFilename());
-            } elseif (!$f->isDot() && $f->isDir()) {
-                self::copyDir($f->getRealPath(), "$dest/$f");
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Recursively move files from one directory to another
-     *
-     * @param string $src
-     * @param string $dest
-     *
-     * @return bool
-     */
-    protected static function moveDir(string $src, string $dest): bool
-    {
-        if (!is_dir($src)) {
-            return false;
-        }
-        if (!is_dir($dest)) {
-            if (!mkdir($dest)) {
-                return false;
-            }
-        }
-        $i = new \DirectoryIterator($src);
-        foreach ($i as $f) {
-            if ($f->isFile()) {
-                rename($f->getRealPath(), "$dest/" . $f->getFilename());
-            } elseif (!$f->isDot() && $f->isDir()) {
-                self::moveDir($f->getRealPath(), "$dest/$f");
-                unlink($f->getRealPath());
-            }
-        }
-        unlink($src);
-
-        return true;
     }
 
     /**
