@@ -10,6 +10,18 @@
       "type": "text",
       "readOnly": true
     },
+    "treoId": {
+      "type": "varchar",
+      "readOnly": true
+    },
+    "packageId": {
+      "type": "varchar",
+      "readOnly": true
+    },
+    "url": {
+      "type": "varchar",
+      "readOnly": true
+    },
     "status": {
       "type": "enum",
       "required": false,
@@ -32,49 +44,6 @@
     "createdAt": {
       "type": "datetime",
       "readOnly": true
-    },
-    "modifiedAt": {
-      "type": "datetime",
-      "readOnly": true
-    },
-    "createdBy": {
-      "type": "link",
-      "readOnly": true,
-      "view": "views/fields/user"
-    },
-    "modifiedBy": {
-      "type": "link",
-      "readOnly": true,
-      "view": "views/fields/user"
-    },
-    "assignedUser": {
-      "type": "link",
-      "required": true,
-      "view": "views/fields/assigned-user"
-    },
-    "teams": {
-      "type": "linkMultiple",
-      "view": "views/fields/teams"
-    }
-  },
-  "links": {
-    "createdBy": {
-      "type": "belongsTo",
-      "entity": "User"
-    },
-    "modifiedBy": {
-      "type": "belongsTo",
-      "entity": "User"
-    },
-    "assignedUser": {
-      "type": "belongsTo",
-      "entity": "User"
-    },
-    "teams": {
-      "type": "hasMany",
-      "entity": "Team",
-      "relationName": "EntityTeam",
-      "layoutRelationshipsDisabled": true
     }
   },
   "collection": {
@@ -94,7 +63,6 @@
     },
     "assignedUser": {
       "columns": [
-        "assignedUserId",
         "deleted"
       ]
     }

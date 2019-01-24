@@ -145,7 +145,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             this.getCollectionFactory().create('Store', collection => {
                 this.storeCollection = collection;
                 collection.maxSize = 200;
-                collection.url = 'Store/action/list';
+                collection.url = 'TreoStore/action/list';
 
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('listStore', 'views/record/list', {

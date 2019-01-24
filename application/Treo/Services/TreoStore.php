@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\Core\Utils\Json;
+
 /**
  * Class TreoStore
  *
@@ -43,4 +45,198 @@ namespace Treo\Services;
  */
 class TreoStore extends \Espo\Core\Templates\Services\Base
 {
+    /**
+     * @var string
+     */
+    protected $url = null;
+
+    /**
+     * Refresh cached data
+     */
+    public function refresh(): void
+    {
+        if (!empty($json = $this->getRemotePackages())) {
+            $this->caching(Json::decode($json, true));
+        }
+    }
+
+    /**
+     * Send notification about new version of module
+     */
+    public function notify(): void
+    {
+        // get module notified versions
+        $nativeNotifiedVersions = $this->getConfig()->get("moduleNotifiedVersion", []);
+
+        // clone
+        $notifiedVersions = $nativeNotifiedVersions;
+
+        foreach ($this->getInstalled() as $package) {
+            // prepare id
+            $id = $package['treoId'];
+
+            // get notified version
+            $version = (isset($notifiedVersions[$id])) ? $notifiedVersions[$id] : null;
+
+            if (isset($package['versions'][0]['version'])) {
+                // prepare version
+                $packageVersion = $package['versions'][0]['version'];
+
+                if ($packageVersion != $version) {
+                    // push
+                    $notifiedVersions[$id] = $packageVersion;
+
+                    // send
+                    if (!is_null($version)) {
+                        $this->sendNotification($package);
+                    }
+                }
+            }
+        }
+
+        // set to config
+        if ($nativeNotifiedVersions != $notifiedVersions) {
+            $this->getConfig()->set("moduleNotifiedVersion", $notifiedVersions);
+            $this->getConfig()->save();
+        }
+    }
+
+    /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('metadata');
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function caching(array $data): void
+    {
+        // delete all
+        $sth = $this
+            ->getEntityManager()
+            ->getPDO()
+            ->prepare("DELETE FROM treo_store");
+        $sth->execute();
+
+        foreach ($data as $package) {
+            $entity = $this->getEntityManager()->getEntity("TreoStore");
+            $entity->set('name', $package['name']['default']);
+            $entity->set('description', $package['description']['default']);
+            $entity->set('treoId', $package['treoId']);
+            $entity->set('packageId', $package['packageId']);
+            $entity->set('url', $package['url']);
+            $entity->set('status', $package['status']);
+            $entity->set('versions', $package['versions']);
+
+            $this->getEntityManager()->saveEntity($entity);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRemotePackages(): string
+    {
+        // get auth data
+        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+
+        // prepare params
+        $params = [
+            'allowUnstable' => $this->getConfig()->get('developMode', 0),
+            'username'      => $authData['username'],
+        ];
+
+        return file_get_contents($this->getUrl() . "packages?" . http_build_query($params));
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getUrl(): string
+    {
+        if (is_null($this->url)) {
+            // get composer.json
+            $json = file_get_contents('composer.json');
+
+            $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
+        }
+
+        return $this->url;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInstalled(): array
+    {
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getRepository()
+            ->where(['treoId' => $this->getInjection('metadata')->getModuleList()])
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('treoId')] = $row->toArray();
+                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $package
+     */
+    protected function sendNotification(array $package): void
+    {
+        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
+            // prepare id
+            $id = $package['treoId'];
+
+            // prepare config data
+            $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);
+
+            // prepare preference key
+            $key = 'receiveNewModuleVersionNotifications';
+
+            foreach ($users as $user) {
+                // prepare preferences
+                $preferences = json_decode($user['data'], true);
+
+                // is disabled for user
+                $isDisabled = (isset($preferences[$key]) && !$preferences[$key]);
+
+                if (!$isDisabled && !$isDisabledGlobally) {
+                    // create notification
+                    $notification = $this->getEntityManager()->getEntity('Notification');
+                    $notification->set(
+                        [
+                            'type'   => 'TreoMessage',
+                            'userId' => $user['id'],
+                            'data'   => [
+                                'id'              => $id,
+                                'messageTemplate' => 'newModuleVersion',
+                                'messageVars'     => [
+                                    'moduleName'    => $package['name'],
+                                    'moduleVersion' => $package['versions'][0]['version'],
+                                ]
+                            ],
+                        ]
+                    );
+                    $this->getEntityManager()->saveEntity($notification);
+                }
+            }
+        }
+    }
 }

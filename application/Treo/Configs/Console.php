@@ -48,6 +48,7 @@ return [
     "rebuild"                          => Console\Rebuild::class,
     "cron"                             => Console\Cron::class,
     "events"                           => Console\Events::class,
+    "store refresh"                    => Console\StoreRefresh::class,
     "migrate <module> <from> <to>"     => Console\Migrate::class,
     "generate apidocs"                 => Console\GenerateApidocs::class,
     "developmod <param>"               => Console\DevelopMod::class,

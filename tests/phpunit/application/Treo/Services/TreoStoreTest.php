@@ -34,55 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\Services;
+
+use Treo\PHPUnit\Framework\TestCase;
 
 /**
- * CoreUpgrade job
+ * Class TreoStoreTest
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class TreoStoreTest extends TestCase
 {
     /**
-     * Run cron job
-     *
-     * @return bool
+     * Is refresh method exists
      */
-    public function run(): bool
+    public function testIsRefreshMethodExists()
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
-
-        // send notification about new version of core
-        $this->coreNotification();
-
-        // send notification about new version of module
-        $this->moduleNotification();
-
-        return true;
+        $this->assertTrue(method_exists($this->createMockService(TreoStore::class), 'refresh'));
     }
 
     /**
-     * Send notification about new version of core
+     * Is notify method exists
      */
-    protected function coreNotification(): void
+    public function testIsNotifyMethodExists()
     {
-        $this->getServiceFactory()->create('TreoUpgrade')->notify();
-    }
-
-    /**
-     * Send notification about new version of module
-     */
-    protected function moduleNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
-
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
+        $this->assertTrue(method_exists($this->createMockService(TreoStore::class), 'notify'));
     }
 }

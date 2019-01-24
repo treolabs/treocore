@@ -208,11 +208,16 @@ class Composer extends AbstractListener
     protected function notifyDelete(string $id, string $createdById)
     {
         // get package
-        $package = $this->getService('Store')->getPackage($id);
+        $package = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->where(['treoId' => $id])
+            ->findOne();
 
         if (empty($package)) {
             return;
         }
+        $package = $package->toArray();
 
         // get current language
         $currentLang = $this

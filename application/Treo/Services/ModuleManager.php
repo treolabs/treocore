@@ -46,7 +46,7 @@ use Treo\Core\Utils\Mover;
 /**
  * ModuleManager service
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class ModuleManager extends \Espo\Core\Services\Base
 {
@@ -668,22 +668,50 @@ class ModuleManager extends \Espo\Core\Services\Base
      * @param string $id
      *
      * @return array
-     * @throws Exceptions\Error
      */
     protected function getPackagistPackage(string $id): array
     {
-        return $this->getInjection('serviceFactory')->create('Store')->getPackage($id);
+        // prepare result
+        $result = [];
+
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->where(['treoId' => $id])
+            ->findOne();
+
+        if (!empty($data)) {
+            $result = $data->toArray();
+            $result['versions'] = json_decode(json_encode($data->get('versions')), true);
+        }
+
+        return $result;
     }
 
     /**
      * Get packages
      *
      * @return array
-     * @throws Exceptions\Error
      */
     protected function getPackagistPackages(): array
     {
-        return $this->getInjection('serviceFactory')->create('Store')->getPackages();
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('treoId')] = $row->toArray();
+                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
     }
 
     /**

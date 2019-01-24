@@ -1,9 +1,5 @@
 {
   "entity": true,
-  "layouts": true,
-  "tab": true,
-  "acl": true,
-  "aclPortal": false,
   "type": "Base",
   "module": "TreoCore",
   "object": true

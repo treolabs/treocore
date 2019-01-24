@@ -551,10 +551,22 @@ class Composer extends AbstractService
      */
     protected function getPackages(): array
     {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Store')
-            ->getPackages();
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('treoId')] = $row->toArray();
+                $result[$row->get('treoId')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
     }
 }
