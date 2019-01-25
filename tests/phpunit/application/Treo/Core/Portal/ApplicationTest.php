@@ -38,6 +38,11 @@ namespace Treo\Core\Portal;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class ApplicationTest
+ *
+ * @author r.zablodskiy@treolabs.com
+ */
 class ApplicationTest extends TestCase
 {
     /**
