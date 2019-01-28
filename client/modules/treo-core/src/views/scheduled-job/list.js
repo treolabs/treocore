@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,33 +30,23 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+Espo.define('treo-core:views/scheduled-job/list', ['class-replace!treo-core:views/list', 'views/list'], function (Dep, List) {
 
-declare(strict_types=1);
+    return Dep.extend({
 
-namespace Treo\Traits;
+        setup: function () {
+            Dep.prototype.setup.call(this);
 
-/**
- * Class EventTriggeredTrait
- *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
- */
-trait EventTriggeredTrait
-{
-    /**
-     * Triggered event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function triggered(string $target, string $action, array $data = []): array
-    {
-        if (method_exists($this, 'getContainer') && !is_null($this->getContainer())) {
-            return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
-        }
+            this.menu.buttons.push({
+                link: '#Admin/jobs',
+                html: this.translate('Jobs', 'labels', 'Admin')
+            });
+        },
 
-        return $this->getInjection('eventManager')->triggered($target, $action, $data);
-    }
-}
+        afterRender: function () {
+            List.prototype.afterRender.call(this);
+        },
+
+    });
+
+});

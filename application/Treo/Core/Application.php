@@ -128,18 +128,13 @@ class Application extends \Espo\Core\Application
             $this->runInstallerClient();
         }
 
-        $modules = $this->getContainer()->get('config')->get('modules');
-        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
+        // prepare vars
+        $vars = [
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
+        ];
 
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-main.html',
-            [
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $version
-            ]
-        );
+        $this->getContainer()->get('clientManager')->display(null, 'html/main.html', $vars);
         exit;
     }
 
@@ -239,19 +234,14 @@ class Application extends \Espo\Core\Application
             $result['message'] = $e->getMessage();
         }
 
-        $modules = $this->getContainer()->get('config')->get('modules');
-        $version = !empty($modules['TreoCore']['version']) ? 'v.' . $modules['TreoCore']['version'] : "";
+        // prepare vars
+        $vars = [
+            'year'    => date('Y'),
+            'status'  => $result['status'],
+            'message' => $result['message']
+        ];
 
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-installation.html',
-            [
-                'year'    => date('Y'),
-                'version' => $version,
-                'status'  => $result['status'],
-                'message' => $result['message']
-            ]
-        );
+        $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
         exit;
     }
 }
