@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,34 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Repositories;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+use Espo\Repositories\Email as EspoEmail;
+use Espo\ORM\Entity;
 
 /**
- * Preferences loader
+ * Class Email
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Preferences extends Base
+class Email extends EspoEmail
 {
-
     /**
-     * Load Preferences
+     * Prepare addressess
      *
-     * @return mixed
-     *
-     * @throws Error
+     * @param Entity $entity
+     * @param string $type
+     * @param bool $addAssignedUser
      */
-    public function load()
+    protected function prepareAddressess(Entity $entity, $type, $addAssignedUser = false)
     {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
-    }
+        if (!$entity->has($type) || empty($entity->get($type))) {
+            return;
+        }
 
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        parent::prepareAddressess($entity, $type, $addAssignedUser);
     }
 }

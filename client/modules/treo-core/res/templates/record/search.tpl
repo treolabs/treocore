@@ -11,7 +11,7 @@
                     <li class="filter-menu-closer"></li>
                     <li><a class="preset" tabindex="-1" href="javascript:" data-name="" data-action="selectPreset"><div>{{translate 'All'}}</div></a></li>
                     {{#each presetFilterList}}
-                    <li><a class="preset" tabindex="-1" href="javascript:" data-name="{{name}}" data-action="selectPreset"><div>{{#if label}}{{label}}{{else}}{{translate name category='presetFilters' scope=../../entityType}}{{/if}}</div></a></li>
+                        <li><a class="preset" tabindex="-1" href="javascript:" data-name="{{name}}" data-action="selectPreset"><div>{{#if label}}{{label}}{{else}}{{translate name category='presetFilters' scope=../../entityType}}{{/if}}</div></a></li>
                     {{/each}}
                     <li class="divider preset-control hidden"></li>
 
@@ -33,12 +33,12 @@
                         </ul>
                     </li>
                     {{/if}}
-                    {{#if boolFilterList.length}}
-                    <li class="divider"></li>
+                    {{#if boolFilterListLength}}
+                        <li class="divider"></li>
                     {{/if}}
 
-                    {{#each boolFilterList}}
-                    <li class="checkbox"><label><input type="checkbox" data-role="boolFilterCheckbox" name="{{./this}}" {{#ifPropEquals ../bool this true}}checked{{/ifPropEquals}}> {{translate this scope=../entityType category='boolFilters'}}</label></li>
+                    {{#each boolFilterListComplex}}
+                        <li class="checkbox{{#if hidden}} hidden{{/if}}"><label><input type="checkbox" data-role="boolFilterCheckbox" name="{{name}}" {{#ifPropEquals ../bool name true}}checked{{/ifPropEquals}}> {{translate name scope=../entityType category='boolFilters'}}</label></li>
                     {{/each}}
                 </ul>
             </div>
@@ -67,7 +67,6 @@
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
 <div class="row advanced-filters" style=" display: flex; flex-wrap: wrap;">
-    <div class="filter-applying-condition text-center hidden col-xs-12">{{{translate "filterApplyingCondition" scope="Search" category="messages"}}}</div>
     {{#each filterDataList}}
     <div class="filter filter-{{name}} col-sm-4 col-md-3" data-name="{{name}}">
         {{{var key ../this}}}

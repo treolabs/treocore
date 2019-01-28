@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,42 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+use PHPUnit\Framework\TestCase;
+use Espo\Core\Mail\Sender;
 
 /**
- * Preferences loader
+ * Class MailSenderTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Preferences extends Base
+class MailSenderTest extends TestCase
 {
-
     /**
-     * Load Preferences
-     *
-     * @return mixed
-     *
-     * @throws Error
+     * Test load method
      */
-    public function load()
+    public function testLoadMethod()
     {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
-    }
+        $mock = $this->createPartialMock(
+            MailSender::class,
+            ['getServiceClassName', 'getMailSender']
+        );
+        $mailSender = $this->createPartialMock(Sender::class, []);
 
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getServiceClassName')
+            ->willReturn('\\Espo\\Core\\Mail\\Sender');
+        $mock
+            ->expects($this->any())
+            ->method('getMailSender')
+            ->willReturn($mailSender);
 
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        // test
+        $this->assertInstanceOf(Sender::class, $mock->load());
     }
 }

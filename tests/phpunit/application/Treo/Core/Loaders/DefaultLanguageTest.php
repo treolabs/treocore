@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,49 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+use PHPUnit\Framework\TestCase;
+use Treo\Core\Utils\Metadata;
+use Espo\Core\Utils\File\Manager;
+use Espo\Core\Utils\Language as Instance;
 
 /**
- * Preferences loader
+ * Class DefaultLanguageTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Preferences extends Base
+class DefaultLanguageTest extends TestCase
 {
-
     /**
-     * Load Preferences
-     *
-     * @return mixed
-     *
-     * @throws Error
+     * Test load method
      */
-    public function load()
+    public function testLoad()
     {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
-    }
+        $mock = $this->createPartialMock(
+            DefaultLanguage::class,
+            ['getFileManager', 'getMetadata', 'useCache']
+        );
+        $fileManager = $this->createPartialMock(Manager::class, []);
+        $metadata = $this->createPartialMock(Metadata::class, []);
 
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
-    }
+        $mock
+            ->expects($this->any())
+            ->method('getFileManager')
+            ->willReturn($fileManager);
+        $mock
+            ->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn($metadata);
+        $mock
+            ->expects($this->any())
+            ->method('useCache')
+            ->willReturn(false);
 
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        // test
+        $this->assertInstanceOf(Instance::class, $mock->load());
     }
 }

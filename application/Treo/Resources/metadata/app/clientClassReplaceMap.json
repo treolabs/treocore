@@ -13,7 +13,10 @@
   ],
   "controllers/admin": [
     "treo-core"
-  ],  
+  ],
+  "views/detail": [
+    "treo-core"
+  ],
   "views/modal": [
     "treo-core"
   ],

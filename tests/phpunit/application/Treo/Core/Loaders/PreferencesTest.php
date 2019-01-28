@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,53 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use PHPUnit\Framework\TestCase;
 use Espo\Core\ORM\EntityManager;
 use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+use Espo\Entities\Preferences as Entity;
 
 /**
- * Preferences loader
+ * Class PreferencesTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Preferences extends Base
+class PreferencesTest extends TestCase
 {
-
     /**
-     * Load Preferences
-     *
-     * @return mixed
-     *
-     * @throws Error
+     * Test load method
      */
-    public function load()
+    public function testLoad()
     {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
-    }
+        $mock = $this->createPartialMock(Preferences::class, ['getEntityManager', 'getUser']);
+        $entityManager = $this->createPartialMock(EntityManager::class, ['getEntity']);
+        $user = $this->createPartialMock(User::class, []);
+        $preferences = $this->createPartialMock(Entity::class, []);
 
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
-    }
+        $reflection = new \ReflectionClass($user);
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($user, '1');
 
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
+        $entityManager
+            ->expects($this->any())
+            ->method('getEntity')
+            ->withConsecutive(['Preferences', '1'])
+            ->willReturnOnConsecutiveCalls($preferences);
+        $mock
+            ->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($entityManager);
+        $mock
+            ->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
+
+        // test
+        $this->assertInstanceOf(Entity::class, $mock->load());
     }
 }

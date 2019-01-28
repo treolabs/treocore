@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -33,51 +33,17 @@
  */
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
-
-use Espo\Core\ORM\EntityManager;
-use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+namespace Treo\Entities;
 
 /**
- * Preferences loader
+ * Class Image
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class Preferences extends Base
+class Image extends \Espo\Core\Templates\Entities\Base
 {
-
     /**
-     * Load Preferences
-     *
-     * @return mixed
-     *
-     * @throws Error
+     * @var string
      */
-    public function load()
-    {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
-    }
-
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    protected function getUser()
-    {
-        return $this->getContainer()->get('user');
-    }
+    protected $entityType = "Image";
 }

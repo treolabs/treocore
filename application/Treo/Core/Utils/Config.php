@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Module;
 
 /**
  * Class of Config
@@ -64,7 +65,7 @@ class Config extends \Espo\Core\Utils\Config
             $this->modules = [];
 
             // create moduleConfig
-            $moduleConfig = new \Espo\Core\Utils\Module($this->getFileManager());
+            $moduleConfig = $this->getModuleUtil();
 
             $modules = $this->getFileManager()->getFileList("application/Espo/Modules/", false, '', false);
             $toSort = [];
@@ -91,6 +92,16 @@ class Config extends \Espo\Core\Utils\Config
     public function getDefaults()
     {
         return array_merge(parent::getDefaults(), include "application/Treo/Configs/defaultConfig.php");
+    }
+
+    /**
+     * Get module util
+     *
+     * @return Module
+     */
+    protected function getModuleUtil()
+    {
+        return new Module($this->getFileManager()) ;
     }
 
     /**

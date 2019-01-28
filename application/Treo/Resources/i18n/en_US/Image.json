@@ -1,0 +1,17 @@
+{
+  "fields": {
+    "name": "Code",
+    "alt": "Alt",
+    "mimeType": "Mime Type",
+    "width": "Width",
+    "height": "Height",
+    "size": "Size",
+    "imageFile": "File",
+    "imageLink": "Link",
+    "isLink": "Is link"
+  },
+  "links": [],
+  "labels": {
+    "Create Image": "Create Image"
+  }
+}

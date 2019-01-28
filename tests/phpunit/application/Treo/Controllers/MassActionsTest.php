@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,61 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Controllers;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Entities\User;
-use Espo\Core\Exceptions\Error;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Preferences loader
+ * Class MassActionsTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Preferences extends Base
+class MassActionsTest extends TestCase
 {
-
     /**
-     * Load Preferences
-     *
-     * @return mixed
-     *
-     * @throws Error
+     * Test is actionMassDelete method exists
      */
-    public function load()
+    public function testIsActionMassDeleteExists()
     {
-        return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
+        $mock = $this->createPartialMock(MassActions::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'actionMassDelete'));
     }
 
     /**
-     * Get entity manager
-     *
-     * @return EntityManager
+     * Test is actionRemoveRelation method exists
      */
-    protected function getEntityManager()
+    public function testIsActionRemoveRelationExists()
     {
-        return $this->getContainer()->get('entityManager');
+        $mock = $this->createPartialMock(MassActions::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'actionRemoveRelation'));
     }
 
     /**
-     * Get user
-     *
-     * @return User
+     * Test is actionAddRelation method exists
      */
-    protected function getUser()
+    public function testIsActionAddRelationExists()
     {
-        return $this->getContainer()->get('user');
+        $mock = $this->createPartialMock(MassActions::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'actionAddRelation'));
+    }
+
+    /**
+     * Test is actionMassUpdate method exists
+     */
+    public function testIsActionMassUpdateExists()
+    {
+        $mock = $this->createPartialMock(MassActions::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'actionMassUpdate'));
     }
 }
