@@ -55,8 +55,10 @@ class Email extends EspoEmail
      */
     protected function prepareAddressess(Entity $entity, $type, $addAssignedUser = false)
     {
-        if (!empty($entity->get($type))) {
-            parent::prepareAddressess($entity, $type, $addAssignedUser);
+        if (!$entity->has($type) || empty($entity->get($type))) {
+            return;
         }
+
+        parent::prepareAddressess($entity, $type, $addAssignedUser);
     }
 }
