@@ -7,3 +7,7 @@ RewriteRule ^ index.php [QSA,L]
 <FilesMatch ^(auth\.json)$>
   Deny from all
 </FilesMatch>
+
+<FilesMatch "(composer|composer-validate)\.log$">
+  Allow from all
+</FilesMatch>

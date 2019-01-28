@@ -40,7 +40,14 @@
     <div class="btn-group pull-left" role="group">
         <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='ModuleManager' category='labels'}}</button>
         <button class="btn btn-default action" data-action="cancelUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}} style="display: none;">{{translate 'Cancel'}}</button>
-        <div class="loader {{#if hideLoader}}hidden{{/if}}"></div>
+    </div>
+    <div class="progress-log-wrapper">
+        <div class="spinner{{#unless hideLoader}} hidden{{/unless}}">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+        <span class="progress-status"></span>
     </div>
     <div class="clearfix"></div>
 </div>
