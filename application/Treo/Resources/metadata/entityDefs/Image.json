@@ -13,14 +13,16 @@
       "trim": true
     },
     "imageLink": {
-      "type": "url"
+      "type": "url",
+      "required": true
     },
     "isLink": {
       "type": "bool"
     },
     "imageFile": {
       "type": "image",
-      "previewSize": "small"
+      "previewSize": "small",
+      "required": true
     },
     "mimeType": {
       "type": "varchar",

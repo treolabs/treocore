@@ -119,7 +119,8 @@
   "exceptions": {
     "URL is invalid": "URL is invalid",
     "Such URL is already exists": "Such URL is already exists",
-    "Site URL is empty": "Site URL is empty"
+    "Site URL is empty": "Site URL is empty",
+    "Code is invalid": "Code is invalid. Code should be unique. Only letters, numbers and char \"_\" expected."
   },
   "messages": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",

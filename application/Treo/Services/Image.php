@@ -37,14 +37,25 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\ORM\Entity;
+use Espo\Core\Exceptions\Error;
 
 /**
  * Class Image
  *
  * @author r.ratsun@treolabs.com
  */
-class Image extends \Espo\Core\Templates\Services\Base
+class Image extends \Treo\Core\Templates\Services\Base
 {
+    /**
+     * @inheritdoc
+     */
+    protected function beforeCreateEntity(Entity $entity, $data)
+    {
+        if (!$this->isCodeValid($entity, 'name')) {
+            throw new Error($this->translate('Code is invalid', 'exceptions'));
+        }
+    }
+
     /**
      * @inheritdoc
      */
