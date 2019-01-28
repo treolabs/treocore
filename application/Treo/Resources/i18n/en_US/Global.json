@@ -1,9 +1,11 @@
 {
   "scopeNames": {
-    "QueueItem": "Queue Item"
+    "QueueItem": "Queue Item",
+    "Image": "Image"
   },
   "scopeNamesPlural": {
-    "QueueItem": "Queue Manager"
+    "QueueItem": "Queue Manager",
+    "Image": "Images"
   },
   "options": {
     "language": {
