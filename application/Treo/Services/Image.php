@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\ORM\Entity;
+
 /**
  * Class Image
  *
@@ -43,4 +45,54 @@ namespace Treo\Services;
  */
 class Image extends \Espo\Core\Templates\Services\Base
 {
+    /**
+     * @inheritdoc
+     */
+    protected function afterCreateEntity(Entity $entity, $data)
+    {
+        // parent
+        parent::afterCreateEntity($entity, $data);
+
+        // parse image data
+        $this->parseImage($entity);
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return bool
+     */
+    protected function parseImage(Entity $entity): bool
+    {
+        if (!empty($entity->get('isLink'))) {
+            return false;
+        }
+
+        // get attachment
+        $attachment = $entity->get('imageFile');
+
+        // get file path
+        $filePath = $this
+            ->getEntityManager()
+            ->getRepository('Attachment')
+            ->getFilePath($attachment);
+
+        // get image sizes
+        $imageBytes = $attachment->get('size');
+        $imageSize = getimagesize($filePath);
+
+        // prepare entity
+        $entity->set('size', round($imageBytes / pow(2, 20), 2));
+        $entity->set('width', $imageSize[0]);
+        $entity->set('height', $imageSize[1]);
+        $entity->set('mimeType', $attachment->get('type'));
+        if (empty($entity->get('alt'))) {
+            $entity->set('alt', $entity->get('imageFileName'));
+        }
+
+        // save
+        $this->getEntityManager()->saveEntity($entity, ['skipAll' => true]);
+
+        return true;
+    }
 }
