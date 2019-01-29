@@ -87,6 +87,7 @@ class TreoUpgrade extends AbstractService
      */
     public function runUpgrade(string $to): bool
     {
+        throw new \Espo\Core\Exceptions\NotFound();
         // prepare available versions
         $versions = array_column($this->getVersions(), 'link', 'version');
 
