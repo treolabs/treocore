@@ -85,10 +85,16 @@ We are already working on the following connectors for export channels:
       composer create-project treo/treopim my-treopim-project --no-dev
       ```
 2. Install TreoPIM by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
-3. Configure crontab:
+3. Make cron handler file executable:
    ```
-   * * * * * cd PATH_TO_PROJECT; ./bin/cron.sh /usr/bin/php 
-   ```      
+   chmod +x bin/cron.sh
+ 
+   ```
+4. Configure crontab:
+   ```
+   * * * * * cd PATH_TO_PROJECT; ./bin/cron.sh process-treopim /usr/bin/php 
+   ```
+   Parameter **process-treopim** is an unique id of process. You should use different process ID if you had few TreoPIM project in one server
 
 ### License
 
