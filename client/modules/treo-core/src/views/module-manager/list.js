@@ -382,7 +382,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.inProgress = false;
                     this.$el.find('.spinner').addClass('hidden');
                     this.toggleActionButton('cancelUpdate', false);
-                    this.actionCancelUpdate();
                 }
                 this.showCurrentStatus(this.messageText, this.messageType);
             }

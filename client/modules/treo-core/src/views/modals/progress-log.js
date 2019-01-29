@@ -78,7 +78,6 @@ Espo.define('treo-core:views/modals/progress-log', 'views/modal',
 
             let spinner = this.$el.find('.spinner');
             this.inProgress ? spinner.removeClass('hidden') : spinner.addClass('hidden');
-            this.showCurrentStatus(this.messageText, this.messageType);
         },
 
         setupHeader() {
@@ -92,13 +91,6 @@ Espo.define('treo-core:views/modals/progress-log', 'views/modal',
                     label: 'Cancel'
                 }
             ];
-        },
-
-        showCurrentStatus(text, type) {
-            let el = this.$el.find('.progress-status');
-            el.removeClass();
-            el.addClass('progress-status text-' + type);
-            el.text(text);
         },
 
     })
