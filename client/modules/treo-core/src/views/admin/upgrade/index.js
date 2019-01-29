@@ -197,7 +197,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                         this.messageText = this.translate('validationSuccessful', 'messages', 'Admin');
                     } else if (actionName === 'upgradeSystem') {
                         this.messageText = this.translate('upgradeSuccessful', 'messages', 'Admin');
-                        this.getConfig().fetch();
+                        location.reload();
                     }
                 }
                 this.actionFinished(actionName);

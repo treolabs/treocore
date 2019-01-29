@@ -377,11 +377,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.trigger('composerUpdate:failed');
                     this.actionFinished();
                 } else {
-                    this.messageType = 'success';
-                    this.messageText = this.translate('upgradeSuccessful', 'messages', 'Admin');
-                    this.inProgress = false;
-                    this.$el.find('.spinner').addClass('hidden');
-                    this.toggleActionButton('cancelUpdate', false);
+                    location.reload();
                 }
                 this.showCurrentStatus(this.messageText, this.messageType);
             }
