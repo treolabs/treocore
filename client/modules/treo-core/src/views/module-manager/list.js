@@ -279,6 +279,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }, () => {
                 this.actionsInProgress++;
                 this.notify(this.translate('updating', 'labels', 'ModuleManager'));
+                this.actionStarted();
                 this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
                     this.notify(this.translate('updateStarted', 'labels', 'ModuleManager'), 'success');
                     setTimeout(() => {
@@ -286,8 +287,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
                         this.messageType = 'success';
                         this.showCurrentStatus(this.messageText, this.messageType);
-                        this.actionStarted();
                     }, 2000);
+                }, error => {
+                    this.actionFinished();
                 }).always(() => {
                     this.actionsInProgress--;
                     this.trigger('composerUpdate:started');
@@ -373,15 +375,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.messageType = 'danger';
                     this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
                     this.trigger('composerUpdate:failed');
+                    this.actionFinished();
                 } else {
                     this.messageType = 'success';
                     this.messageText = this.translate('upgradeSuccessful', 'messages', 'Admin');
-                    this.getConfig().fetch();
+                    this.inProgress = false;
+                    this.$el.find('.spinner').addClass('hidden');
+                    this.toggleActionButton('cancelUpdate', false);
+                    this.actionCancelUpdate();
                 }
-                this.actionFinished();
                 this.showCurrentStatus(this.messageText, this.messageType);
-                this.trigger('update-finished');
             }
+            this.trigger('log-updated');
         },
 
         actionStarted() {
@@ -414,9 +419,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }, view => {
                 this.listenTo(this, 'log-updated', () => {
                     view.trigger('log-updated', this.getProgressData());
-                });
-                this.listenTo(this, 'update-finished', () => {
-                    view.trigger('update-finished', this.getProgressData());
                 });
                 view.render()
             });
