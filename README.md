@@ -91,9 +91,11 @@ We are already working on the following connectors for export channels:
    ```
 4. Configure crontab:
    ```
-   * * * * * cd PATH_TO_PROJECT; ./bin/cron.sh process-treopim /usr/bin/php 
+   * * * * * cd /var/www/my-treopim-project; ./bin/cron.sh process-treopim /usr/bin/php 
    ```
-   Parameter **process-treopim** is an unique id of process. You should use different process ID if you had few TreoPIM project in one server
+   - **/var/www/my-treopim-project** - path to project root
+   - **process-treopim** - an unique id of process. You should use different process ID if you have few TreoPIM project in one server
+   - **/usr/bin/php** - PHP7.1
 
 ### License
 
