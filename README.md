@@ -87,8 +87,7 @@ We are already working on the following connectors for export channels:
 2. Install TreoPIM by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 3. Make cron handler file executable:
    ```
-   chmod +x bin/cron.sh
- 
+   chmod +x bin/cron.sh 
    ```
 4. Configure crontab:
    ```
