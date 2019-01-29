@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # prepare PHP
-php=$1
+php=$2
 
 while true
 do
