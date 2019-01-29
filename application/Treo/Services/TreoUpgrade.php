@@ -88,6 +88,7 @@ class TreoUpgrade extends AbstractService
      */
     public function createUpgradeJob(string $to = null): bool
     {
+        throw new \Espo\Core\Exceptions\NotFound();
         // prepare available versions
         $versions = array_column($this->getVersions(), 'link', 'version');
 
