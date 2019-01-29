@@ -310,6 +310,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.notify(this.translate('canceled', 'labels', 'ModuleManager'), 'success');
                     this.storeCollection.fetch();
                     this.installedCollection.fetch();
+                    this.reRender();
                 }
             }).always(() => {
                 this.actionsInProgress--;

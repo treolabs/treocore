@@ -40,10 +40,6 @@ Espo.define('treo-core:views/modals/progress-log', 'views/modal',
 
         log: null,
 
-        messageText: null,
-
-        messageType: null,
-
         data() {
             return {
                 logData: this.log,
@@ -68,8 +64,6 @@ Espo.define('treo-core:views/modals/progress-log', 'views/modal',
             if (progressData) {
                 this.log = progressData.log;
                 this.inProgress = progressData.inProgress;
-                this.messageText = progressData.messageText;
-                this.messageType = progressData.messageType;
             }
         },
 
