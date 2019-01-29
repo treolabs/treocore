@@ -5,7 +5,7 @@
     "Modules": "Module",
     "Git User": "Git Benutzer",
     "availableVersions": "Version zum Upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">einzelheiten</a>)",
-    "log": "Protokoll",
+    "log": "log",
     "Upgrade": "Aktualisierung",
     "Validate": "Bestätigen",
     "progressLog": "Fortschritte Log"
