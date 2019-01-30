@@ -53,7 +53,7 @@ class PostUpdate
      */
     public function run(): void
     {
-        if (!$this->isInstalled()) {
+        if ($this->isInstalled()) {
             // rebuild
             $this->rebuild();
 
