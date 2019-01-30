@@ -44,7 +44,7 @@ use Treo\Core\Utils\Mover;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class PostUpdate extends PostInstall
+class PostUpdate
 {
     use \Treo\Traits\ContainerTrait;
 
@@ -53,9 +53,6 @@ class PostUpdate extends PostInstall
      */
     public function run(): void
     {
-        // relocate files
-        $this->relocateFiles();
-
         // rebuild
         $this->rebuild();
 

@@ -58,7 +58,8 @@ class Cmd
      */
     public static function postInstall(): void
     {
-        (new PostInstall())->run();
+        // relocate files
+        self::relocateFiles();
     }
 
     /**
@@ -66,6 +67,9 @@ class Cmd
      */
     public static function postUpdate(): void
     {
+        // relocate files
+        self::relocateFiles();
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
@@ -80,5 +84,14 @@ class Cmd
         define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
         return (new \Treo\Core\Application())->getContainer();
+    }
+
+
+    /**
+     * Relocate files
+     */
+    protected static function relocateFiles(): void
+    {
+        \Treo\Core\Utils\Mover::update();
     }
 }
