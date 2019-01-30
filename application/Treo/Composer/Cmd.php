@@ -89,9 +89,11 @@ class Cmd
      */
     protected static function relocateFiles(): void
     {
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+        if (!defined('CORE_PATH')) {
+            // define gloabal variables
+            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
-        \Treo\Core\Utils\Mover::update();
+            \Treo\Core\Utils\Mover::update();
+        }
     }
 }

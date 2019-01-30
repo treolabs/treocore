@@ -53,26 +53,28 @@ class PostUpdate
      */
     public function run(): void
     {
-        // rebuild
-        $this->rebuild();
+        if (!$this->isInstalled()) {
+            // rebuild
+            $this->rebuild();
 
-        // loggout all users
-        $this->logoutAll();
+            // loggout all users
+            $this->logoutAll();
 
-        // update module file for load order
-        $this->updateModulesLoadOrder();
+            // update module file for load order
+            $this->updateModulesLoadOrder();
 
-        // save stable-composer.json file
-        $this->saveStableComposerJson();
+            // save stable-composer.json file
+            $this->saveStableComposerJson();
 
-        // run migrations
-        $this->runMigrations();
+            // run migrations
+            $this->runMigrations();
 
-        // delete modules
-        $this->deleteModules();
+            // delete modules
+            $this->deleteModules();
 
-        // drop cache
-        $this->clearCache();
+            // drop cache
+            $this->clearCache();
+        }
     }
 
     /**
@@ -238,5 +240,13 @@ class PostUpdate
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isInstalled(): bool
+    {
+        return !empty($this->getContainer()->get('config')->get('isInstalled'));
     }
 }
