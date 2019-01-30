@@ -31,8 +31,8 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/module-manager/list', 'views/list',
-    Dep => Dep.extend({
+Espo.define('treo-core:views/module-manager/list', ['views/list', 'search-manager'],
+    (Dep, SearchManager) => Dep.extend({
 
         template: 'treo-core:module-manager/list',
 
@@ -43,6 +43,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         installedCollection: null,
 
         storeCollection: null,
+
+        storeBoolFilterList: ['notEntity'],
+
+        storeBoolFilterData: {
+            notEntity() {
+                return this.getInstalledModulesIds()
+            }
+        },
+
+        storeSearchManager: null,
+
+        storeCollectionSelectList: null,
 
         actionsInProgress: 0,
 
@@ -137,31 +149,93 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     });
                 });
 
-                collection.fetch();
+                this.listenTo(collection, 'sync', () => {
+                    this.trigger('installed-collection-fetched');
+                });
+
+                collection.fetch().fail(() => {
+                    this.trigger('installed-collection-fetched');
+                });
             });
         },
 
+        getInstalledModulesIds() {
+            return this.installedCollection.map(model => model.id);
+        },
+
+        prepareStoreCollectionSelectList() {
+            return new Promise(resolve => {
+                if ((this.storeCollectionSelectList || []).length) {
+                    return resolve();
+                } else {
+                    this.getHelper().layoutManager.get('TreoStore', 'list', layout => {
+                        this.storeCollectionSelectList = [];
+                        layout.forEach(item => {
+                            if (item.name) {
+                                let field = item.name;
+                                let fieldType = this.getMetadata().get(['entityDefs', 'TreoStore', 'fields', field, 'type']);
+                                if (fieldType) {
+                                    this.getFieldManager().getAttributeList(fieldType, field).forEach(attribute => {
+                                        this.storeCollectionSelectList.push(attribute);
+                                    });
+                                }
+                            }
+                        });
+                        this.storeCollection.data.select = this.storeCollectionSelectList.join(',');
+                        return resolve();
+                    });
+                }
+            });
+        },
+
+        updateStoreSearchManager() {
+            this.storeSearchManager = new SearchManager(this.storeCollection, 'list', false, this.getDateTime());
+            let filters = {};
+            this.storeBoolFilterList.forEach(name => {
+                filters[name] = true;
+            });
+            this.storeSearchManager.setBool(filters);
+            let where = this.storeSearchManager.getWhere();
+            where.forEach(item => {
+                if (item.type === 'bool') {
+                    let data = {};
+                    this.storeBoolFilterList.forEach(name => {
+                        if (typeof this.storeBoolFilterData[name] === 'function') {
+                            data[name] = this.storeBoolFilterData[name].call(this);
+                        }
+                    });
+                    item.data = data;
+                }
+            });
+            this.storeCollection.where = where;
+        },
+
         loadStoreModulesList() {
-            this.getCollectionFactory().create('Store', collection => {
+            this.getCollectionFactory().create('TreoStore', collection => {
                 this.storeCollection = collection;
-                collection.maxSize = 200;
-                collection.url = 'TreoStore/action/list';
+                collection.maxSize = 5;
+
+                this.listenTo(this, 'installed-collection-fetched', () => {
+                    this.updateStoreSearchManager();
+                    Promise.all([this.prepareStoreCollectionSelectList()]).then(response => {
+                        this.storeCollection.fetch();
+                    });
+                });
 
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('listStore', 'views/record/list', {
-                        scope: 'Store',
                         collection: collection,
                         el: `${this.options.el} .list-container.modules-store`,
-                        type: 'list',
-                        searchManager: false,
+                        layoutName: 'list',
+                        searchManager: this.storeSearchManager,
                         selectable: false,
                         checkboxes: false,
                         massActionsDisabled: true,
                         checkAllResultDisabled: false,
                         buttonsDisabled: false,
                         paginationEnabled: false,
-                        showCount: false,
-                        showMore: false,
+                        showCount: true,
+                        showMore: true,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/store'
                     }, view => {
                         this.listenToOnce(view, 'after:render', () => {
@@ -170,8 +244,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         view.render();
                     });
                 });
-
-                collection.fetch();
             });
         },
 
