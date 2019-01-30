@@ -72,7 +72,30 @@ class DevelopMod extends AbstractConsole
             $this->getConfig()->set('developMode', $developMode);
             $this->getConfig()->save();
 
+            // developmod for composer
+            $this->composer();
+
             self::show("Development mode " . $data['param'] . "d", self::SUCCESS);
         }
+    }
+
+
+    /**
+     * Developmod for composer
+     */
+    protected function composer(): void
+    {
+        // prepare data
+        $data = json_decode(file_get_contents('composer.json'), true);
+        if (!empty($this->getConfig()->get('developMode'))) {
+            $data['minimum-stability'] = 'rc';
+            $devData = ['require' => ['phpunit/phpunit' => '^7', 'squizlabs/php_codesniffer' => '*']];
+        } else {
+            $data['minimum-stability'] = 'stable';
+            $devData = ['require' => []];
+        }
+
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        file_put_contents('data/dev-composer.json', json_encode($devData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }
