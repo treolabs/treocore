@@ -39,7 +39,7 @@ namespace Treo\Console;
 /**
  * Class DevelopMod
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class DevelopMod extends AbstractConsole
 {
@@ -71,12 +71,6 @@ class DevelopMod extends AbstractConsole
         if (isset($developMode)) {
             $this->getConfig()->set('developMode', $developMode);
             $this->getConfig()->save();
-
-            // triggered
-            $this
-                ->getContainer()
-                ->get('eventManager')
-                ->triggered("DevelopMode", 'update', ['developMode' => $developMode]);
 
             self::show("Development mode " . $data['param'] . "d", self::SUCCESS);
         }

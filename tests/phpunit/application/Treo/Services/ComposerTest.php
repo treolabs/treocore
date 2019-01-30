@@ -119,22 +119,6 @@ class ComposerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(method_exists($service, 'setModuleComposerJson'));
     }
 
-    public function testIsUpdateMinimumStabilityMethodReturnTrue()
-    {
-        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'getContainer']);
-        $service
-            ->expects($this->any())
-            ->method('filePutContents')
-            ->willReturn(1);
-        $service
-            ->expects($this->any())
-            ->method('getContainer')
-            ->willReturn($this->createPartialMock(\Espo\Core\Container::class, []));
-
-        // test
-        $this->assertTrue($service->updateMinimumStability());
-    }
-
     /**
      * Test for getComposerDiff method
      */
