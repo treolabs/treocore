@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Treo\Core\UpgradeManager;
+use Espo\Core\UpgradeManager;
 use Treo\Core\Utils\Mover;
 use Treo\Core\Migration\Migration;
 

@@ -50,9 +50,6 @@ class PreUpdate
     {
         // storing composer.lock
         $this->storeComposerLock();
-
-        // for developmod
-        $this->developMode();
     }
 
     /**
@@ -66,49 +63,5 @@ class PreUpdate
         if (file_exists("composer.lock")) {
             copy("composer.lock", "data/old-composer.lock");
         }
-    }
-
-
-    /**
-     * DevelopMod
-     */
-    protected function developMode(): void
-    {
-        // prepare path
-        $path = 'composer.json';
-
-        if (file_exists($path)) {
-            // prepare data
-            $data = json_decode(file_get_contents($path), true);
-            if ($this->isDevelopMode()) {
-                $data['minimum-stability'] = 'rc';
-                $data['require']['phpunit/phpunit'] = '^7';
-                $data['require']['squizlabs/php_codesniffer'] = '*';
-            } else {
-                $data['minimum-stability'] = 'stable';
-                if (isset($data['require']['phpunit/phpunit'])) {
-                    unset($data['require']['phpunit/phpunit']);
-                }
-                if (isset($data['require']['squizlabs/php_codesniffer'])) {
-                    unset($data['require']['squizlabs/php_codesniffer']);
-                }
-            }
-
-            file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isDevelopMode(): bool
-    {
-        if (file_exists('data/config.php')) {
-            $config = include 'data/config.php';
-
-            return !empty($config['developMode']);
-        }
-
-        return false;
     }
 }
