@@ -80,9 +80,6 @@ class Cmd
     {
         include "bootstrap.php";
 
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
         return (new \Treo\Core\Application())->getContainer();
     }
 
@@ -92,6 +89,9 @@ class Cmd
      */
     protected static function relocateFiles(): void
     {
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
         \Treo\Core\Utils\Mover::update();
     }
 }
