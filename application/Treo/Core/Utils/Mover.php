@@ -159,8 +159,8 @@ class Mover
         }
 
         // copy
-        self::copyDir('vendor/espocrm/espocrm/application/Espo', 'application/Espo');
-        self::copyDir('vendor/espocrm/espocrm/client', 'client');
+        self::copyDir('vendor/espocrm/espocrm/application/Espo/', 'application/');
+        self::copyDir('vendor/espocrm/espocrm/client/', CORE_PATH . "/");
 
         // set version
         file_put_contents($versionFile, json_encode(['version' => $espoVersion]));
