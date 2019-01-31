@@ -42,7 +42,7 @@ use Treo\Core\Migration\AbstractMigration;
  *
  * @author r.ratsun@treolabs.com
  */
-class V2Dot9Dot0 extends AbstractMigration
+class V3Dot1Dot0 extends AbstractMigration
 {
     /**
      * Up to current
