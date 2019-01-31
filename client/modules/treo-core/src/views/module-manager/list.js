@@ -149,13 +149,11 @@ Espo.define('treo-core:views/module-manager/list', ['views/list', 'search-manage
                     });
                 });
 
-                this.listenTo(collection, 'sync', () => {
+                this.listenTo(collection, 'sync error', () => {
                     this.trigger('installed-collection-fetched');
                 });
 
-                collection.fetch().fail(() => {
-                    this.trigger('installed-collection-fetched');
-                });
+                collection.fetch();
             });
         },
 
@@ -213,7 +211,7 @@ Espo.define('treo-core:views/module-manager/list', ['views/list', 'search-manage
         loadStoreModulesList() {
             this.getCollectionFactory().create('TreoStore', collection => {
                 this.storeCollection = collection;
-                collection.maxSize = 5;
+                collection.maxSize = 20;
 
                 this.listenTo(this, 'installed-collection-fetched', () => {
                     this.updateStoreSearchManager();
