@@ -54,8 +54,8 @@ return [
     'decimalMark'            => '.',
     'thousandSeparator'      => ',',
     'useCache'               => false,
-    'applicationName'        => 'TreoPim',
-    'outboundEmailFromName'  => 'TreoPim',
+    'applicationName'        => 'TreoPIM',
+    'outboundEmailFromName'  => 'TreoPIM',
     'languageList'           => [
         'en_US',
         'de_DE'

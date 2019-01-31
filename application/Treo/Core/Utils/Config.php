@@ -52,19 +52,6 @@ class Config extends \Espo\Core\Utils\Config
     protected $modules = null;
 
     /**
-     * @inheritdoc
-     */
-    public function get($name, $default = null)
-    {
-        // set default name
-        if ($name == 'applicationName') {
-            $default = 'TreoPIM';
-        }
-
-        return parent::get($name, $default);
-    }
-
-    /**
      * Get modules
      *
      * @param bool $force

@@ -236,9 +236,10 @@ class Application extends \Espo\Core\Application
 
         // prepare vars
         $vars = [
-            'year'    => date('Y'),
-            'status'  => $result['status'],
-            'message' => $result['message']
+            'applicationName' => 'TreoPIM',
+            'year'            => date('Y'),
+            'status'          => $result['status'],
+            'message'         => $result['message']
         ];
 
         $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
