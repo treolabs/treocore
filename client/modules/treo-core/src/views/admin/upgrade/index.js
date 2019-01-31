@@ -37,177 +37,247 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
 
         template: 'treo-core:admin/upgrade/index',
 
-        versionList: [],
+        inProgress: false,
 
-        events: _.extend({
-            'click .action': function (e) {
-                var $el = $(e.currentTarget);
-                var action = $el.data('action');
-                var method = 'action' + Espo.Utils.upperCaseFirst(action);
-                if (typeof this[method] == 'function') {
-                    var data = $el.data();
-                    this[method](data, e);
-                    e.preventDefault();
-                }
-            }
-        }, Dep.prototype.events),
+        log: null,
+
+        messageText: null,
+
+        messageType: null,
+
+        validationSuccessful: false,
+
+        versionList: [],
 
         data: function () {
             return {
-                hideLoader: !this.upgradingInProgress,
-                availableVersions: !!this.versions,
-                systemVersion: this.systemVersion
+                systemVersion: this.systemVersion,
+                alreadyUpdated: !(this.versionList || []).length
             };
+        },
+
+        events: {
+            'click button[data-action="validateSystem"]': function () {
+                this.actionUpgradeSystem('validateSystem');
+            },
+            'click button[data-action="upgradeSystem"]': function () {
+                this.actionUpgradeSystem('upgradeSystem');
+            },
+            'click a[data-action="showLog"]': function () {
+                this.actionShowLog();
+            }
         },
 
         setup: function () {
             Dep.prototype.setup.call(this);
 
-            this.waitForView('list');
-            this.getConfig().fetch({
-                success: () => {
-                    this.upgradingInProgress = this.getConfig().get('isSystemUpdating');
-                    this.systemVersion = this.getConfig().get('version');
-                    this.ajaxGetRequest('TreoUpgrade/versions')
-                        .then(response => {
-                            this.versions = (response || []).length;
-                            this.createList(response);
-                        });
-                }
+            this.wait(true);
+            this.getModelFactory().create(null, model => {
+                this.model = model;
+
+                this.getConfig().fetch({
+                    success: () => {
+                        this.systemVersion = this.getConfig().get('version');
+                        this.ajaxGetRequest('TreoUpgrade/versions')
+                            .then(response => {
+                                this.versionList = (response || []).map(item => item.version).reverse();
+                                if (this.versionList.length) {
+                                    this.model.set({versionToUpgrade: this.versionList[0]});
+                                    this.createField();
+                                }
+                            })
+                            .always(() => {
+                                this.wait(false);
+                            });
+                    }
+                });
             });
 
             this.listenToOnce(this, 'remove', () => {
-                if (this.configCheckInterval) {
-                    window.clearInterval(this.configCheckInterval);
-                    this.configCheckInterval = null;
+                if (this.logCheckInterval) {
+                    window.clearInterval(this.logCheckInterval);
+                    this.logCheckInterval = null;
+                }
+            });
+
+            this.listenTo(this.model, 'change:versionToUpgrade', () => {
+                if (this.validationSuccessful) {
+                    this.reRender();
                 }
             });
         },
 
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            if (this.upgradingInProgress) {
-                this.initConfigCheck(true);
-            }
-            this.showCurrentStatus();
+        createField() {
+            this.createView('versionToUpgrade', 'views/fields/enum', {
+                model: this.model,
+                el: `${this.options.el} .field[data-name="versionToUpgrade"]`,
+                defs: {
+                    name: 'versionToUpgrade',
+                    params: {
+                        options: this.versionList
+                    }
+                },
+                mode: 'edit'
+            });
         },
 
-        showCurrentStatus() {
-            let el = this.$el.find('.current-status > span');
-            let type, text;
-            if (this.upgradingInProgress) {
-                type = 'text-success';
-                text = this.translate('upgradeInProgress', 'messages', 'Admin');
-            } else if (this.versions) {
-                type = '';
-                text = this.translate('Current version', 'labels', 'Global') + ': ' + this.systemVersion;
-            } else {
-                type = 'text-success';
-                text = this.translate('systemAlreadyUpgraded', 'messages', 'Admin');
+        actionUpgradeSystem(actionName) {
+            let url;
+            let logFile;
+            if (actionName === 'validateSystem') {
+                url = 'TreoUpgrade/action/createUpdateLog';
+                this.messageText = this.translate('validationStarted', 'messages', 'Admin');
+                logFile = 'composer-validate.log';
+            } else if (actionName === 'upgradeSystem') {
+                if (!this.validationSuccessful) {
+                    this.actionFinished(actionName);
+                    return;
+                }
+                url = 'TreoUpgrade/action/Upgrade';
+                this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
+                logFile = 'composer.log';
             }
-            el.removeClass();
-            el.addClass('current-status ' + type);
-            el.text(text);
+
+            this.actionStarted();
+
+            this.ajaxPostRequest(url, {version: this.model.get('versionToUpgrade')}).then(response => {
+                this.messageType = 'success';
+                setTimeout(() => {
+                    this.initLogCheck(actionName, logFile);
+                    this.showCurrentStatus(this.messageText, this.messageType);
+                }, 2000);
+            }, error => {
+                this.messageText = this.getLanguage().translate('Error occurred');
+                this.messageType = 'danger';
+                this.showCurrentStatus(this.messageText, this.messageType);
+            });
         },
 
-        initConfigCheck(skipInitRun) {
-            let configCheck = () => {
-                this.getConfig().fetch({
-                    success: function (config) {
-                        this.upgradingInProgress = !!config.get('isSystemUpdating');
-                        if (!this.upgradingInProgress) {
-                            this.getUser().fetch().then(() => {
-                                window.clearInterval(this.configCheckInterval);
-                                this.configCheckInterval = null;
-                                this.notify(this.translate('upgradeFailed', 'messages', 'Admin'), 'danger');
-                                this.reRender();
-                            });
-                        }
-                        this.collection.trigger('disableUpgrading', this.upgradingInProgress);
-                        this.loaderShow();
-                        this.showCurrentStatus();
-                    }.bind(this)
+        initLogCheck(actionName, file) {
+            let logCheck = () => {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'text',
+                    url: `../../data/${file}`,
+                    cache: false,
+                    success: response => {
+                        this.log = response;
+                        this.checkLog(actionName);
+                    },
+                    error: xhr => {
+                        this.notify('Error occurred', 'error');
+                        window.clearInterval(this.logCheckInterval);
+                        this.reRender();
+                    }
                 });
             };
-            window.clearInterval(this.configCheckInterval);
-            this.configCheckInterval = window.setInterval(configCheck, 10000);
-            if (!skipInitRun) {
-                configCheck();
+            window.clearInterval(this.logCheckInterval);
+            this.logCheckInterval = window.setInterval(logCheck, 1000);
+            logCheck();
+        },
+
+        checkLog(actionName) {
+            let pos = this.log.indexOf('{{finished}}');
+            if (pos > -1) {
+                window.clearInterval(this.logCheckInterval);
+                this.log = this.log.slice(0, pos);
+
+                if (this.log.indexOf('Problem 1') > -1 || this.log.indexOf('exceeded the timeout') > -1) {
+                    this.messageType = 'danger';
+                    if (actionName === 'validateSystem') {
+                        this.validationSuccessful = false;
+                        this.messageText = this.translate('validationFailed', 'messages', 'Admin');
+                    } else if (actionName === 'upgradeSystem') {
+                        this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
+                    }
+                } else {
+                    this.messageType = 'success';
+                    if (actionName === 'validateSystem') {
+                        this.validationSuccessful = true;
+                        this.messageText = this.translate('validationSuccessful', 'messages', 'Admin');
+                    } else if (actionName === 'upgradeSystem') {
+                        this.messageText = this.translate('upgradeSuccessful', 'messages', 'Admin');
+                        location.reload();
+                    }
+                }
+                this.actionFinished(actionName);
+                this.showCurrentStatus(this.messageText, this.messageType);
             }
-            this.loaderShow();
+            this.trigger('log-updated');
         },
 
-        loaderShow() {
-            let loader = this.$el.find('.loader');
-            this.upgradingInProgress ? loader.removeClass('hidden') : loader.addClass('hidden');
+        toggleButtonDisabling(action, property) {
+            let button = this.$el.find(`button[data-action="${action}"]`);
+            button.prop('disabled', property);
+            if (!property) {
+                button.removeClass('hidden');
+            }
         },
 
-        createList(data) {
-            this.getCollectionFactory().create('Versions', collection => {
-                this.collection = collection;
-                data = (data || []).reverse();
-                this.collection.add(data.map(item => {
-                    item.id = item.version;
-                    return item;
-                }));
+        toggleButtonHiding(action, hide) {
+            let button = this.$el.find(`button[data-action="${action}"]`);
+            hide ? button.addClass('hidden') : button.removeClass('hidden');
+        },
 
-                this.createView('list', 'views/record/list', {
-                    el: `${this.options.el} .list-container`,
-                    collection: this.collection,
-                    type: 'list',
-                    listLayout: [
-                        {
-                            type: 'varchar',
-                            name: 'version',
-                            notSortable: true,
-                            customLabel: this.translate('version', 'labels', 'ModuleManager'),
-                            width: '30'
-                        },
-                        {
-                            type: 'text',
-                            name: 'description',
-                            notSortable: true,
-                            customLabel: this.translate('description', 'fields'),
-                            view: 'treo-core:views/fields/varchar-html'
-                        }
-                    ],
-                    searchManager: false,
-                    selectable: false,
-                    checkboxes: false,
-                    massActionsDisabled: true,
-                    checkAllResultDisabled: false,
-                    buttonsDisabled: true,
-                    paginationEnabled: false,
-                    showCount: false,
-                    showMore: false,
-                    rowActionsView: 'treo-core:views/admin/upgrade/record/row-actions/upgrade-action'
-                }, view => {
-                    view.listenToOnce(view, 'after:render', () => {
-                        this.collection.trigger('disableUpgrading', this.upgradingInProgress);
-                    });
+        actionStarted() {
+            this.inProgress = true;
+            let select = this.getView('versionToUpgrade');
+            select.$element.prop('disabled', true);
+            this.toggleButtonDisabling('validateSystem', true);
+            this.toggleButtonDisabling('upgradeSystem', true);
+            this.$el.find('.spinner').removeClass('hidden');
+            this.$el.find('.progress-status').addClass('hidden');
+        },
+
+        actionFinished(actionName) {
+            this.inProgress = false;
+            let select = this.getView('versionToUpgrade');
+            select.$element.prop('disabled', false);
+
+            if (actionName === 'validateSystem') {
+                if (this.validationSuccessful) {
+                    this.toggleButtonHiding('validateSystem', true);
+                    this.toggleButtonDisabling('upgradeSystem', false);
+                } else {
+                    this.toggleButtonDisabling('validateSystem', false);
+                }
+            } else if (actionName === 'upgradeSystem') {
+                if (this.validationSuccessful) {
+                    this.toggleButtonDisabling('upgradeSystem', false);
+                } else {
+                    this.toggleButtonDisabling('validateSystem', false);
+                }
+            }
+            this.$el.find('.spinner').addClass('hidden');
+        },
+
+        showCurrentStatus(text, type) {
+            text = text + ` (<a href="javascript:" class="action" data-action="showLog">${this.translate('log', 'labels', 'Admin')}</a>)`;
+            let el = this.$el.find('.progress-status');
+            el.removeClass();
+            el.addClass('progress-status text-' + type);
+            el.html(text);
+        },
+
+        actionShowLog() {
+            this.createView('progress-log', 'treo-core:views/modals/progress-log', {
+                progressData: this.getProgressData()
+            }, view => {
+                this.listenTo(this, 'log-updated', () => {
+                    view.trigger('log-updated', this.getProgressData());
                 });
+                view.render()
             });
         },
 
-        actionUpgradeNow(data) {
-            if (!this.upgradingInProgress) {
-                this.notify('Loading...');
-                this.collection.trigger('disableUpgrading', true);
-
-                let dataToUpgrade = {};
-                if (data && data.id) {
-                    dataToUpgrade.version = data.id;
-                }
-                this.ajaxPostRequest('TreoUpgrade/upgrade', dataToUpgrade).then(response => {
-                    if (response) {
-                        this.notify(this.translate('upgradeStarted', 'messages', 'Admin'), 'success');
-                    } else {
-                        this.notify(this.translate('upgradeInProgress', 'messages', 'Admin'), 'danger');
-                    }
-                    this.initConfigCheck();
-                });
+        getProgressData() {
+            return {
+                log: this.log,
+                inProgress: this.inProgress,
+                messageText: this.messageText,
+                messageType: this.messageType
             }
-        }
+        },
+
     });
 });

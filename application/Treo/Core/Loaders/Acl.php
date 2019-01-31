@@ -35,6 +35,9 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\AclManager;
+use Espo\Entities\User;
+
 /**
  * Class Acl loader
  *
@@ -52,6 +55,26 @@ class Acl extends Base
     {
         $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Acl');
 
-        return new $className($this->getContainer()->get('aclManager'), $this->getContainer()->get('user'));
+        return new $className($this->getAclManager(), $this->getUser());
+    }
+
+    /**
+     * Get acl manager
+     *
+     * @return AclManager
+     */
+    protected function getAclManager()
+    {
+        return $this->getContainer()->get('aclManager');
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    protected function getUser()
+    {
+        return $this->getContainer()->get('user');
     }
 }

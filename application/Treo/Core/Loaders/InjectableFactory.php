@@ -35,6 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\InjectableFactory as Instance;
+
 /**
  * InjectableFactory loader
  *
@@ -46,10 +48,10 @@ class InjectableFactory extends Base
     /**
      * Load InjectableFactory
      *
-     * @return \Espo\Core\InjectableFactory
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\InjectableFactory($this->getContainer());
+        return new Instance($this->getContainer());
     }
 }

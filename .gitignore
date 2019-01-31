@@ -1,16 +1,15 @@
 .idea/
+/nb_metadata
 
-/apidocs/
+/apidocs/index.html
+/application/Espo
+/custom/*
+!/custom/.htaccess
 /data/*
 !/data/.htaccess
 /vendor/
-/custom/*
-!/custom/.htaccess
-/nb_metadata
 /composer.lock
-!/apidocs/
-/apidocs/index.html
-/application/Espo
+/auth.json
 
 !client/
 client/*

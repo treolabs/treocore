@@ -35,6 +35,11 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata;
+use Espo\Entities\Preferences;
+use Espo\Core\Utils\File\Manager;
+
 /**
  * Language loader
  *
@@ -50,13 +55,51 @@ class Language extends Base
      */
     public function load()
     {
-        $config = $this->getContainer()->get('config');
-
         return new \Treo\Core\Utils\Language(
-            \Espo\Core\Utils\Language::detectLanguage($config, $this->getContainer()->get('preferences')),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata'),
-            $config->get('useCache')
+            \Espo\Core\Utils\Language::detectLanguage($this->getConfig(), $this->getPreferences()),
+            $this->getFileManager(),
+            $this->getMetadata(),
+            $this->getConfig()->get('useCache')
         );
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get preferences
+     *
+     * @return Preferences
+     */
+    protected function getPreferences()
+    {
+        return $this->getContainer()->get('preferences');
+    }
+
+    /**
+     * Get file manager
+     *
+     * @return Manager
+     */
+    protected function getFileManager()
+    {
+        return $this->getContainer()->get('fileManager');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
     }
 }

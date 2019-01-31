@@ -35,18 +35,13 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\DataManager as EspoDataManager;
-use Treo\Traits\EventTriggeredTrait;
-
 /**
  * Class DataManager
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class DataManager extends EspoDataManager
+class DataManager extends \Espo\Core\DataManager
 {
-    use EventTriggeredTrait;
-
     /**
      * Rebuild the system with metadata, database and cache clearing
      *
@@ -66,5 +61,19 @@ class DataManager extends EspoDataManager
         $this->triggered('DataManager', 'afterRebuild', ['entityList' => $entityList]);
 
         return $result;
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    protected function triggered(string $target, string $action, array $data = []): array
+    {
+        return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
     }
 }

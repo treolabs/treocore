@@ -38,15 +38,16 @@ namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Json;
-use Treo\Core\Utils\Composer as ComposerUtil;
+use Espo\Core\Utils\Util;
 
 /**
  * Composer service
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class Composer extends AbstractService
 {
+    const GITLAB = 'gitlab.zinit1.com';
     /**
      * @var string
      */
@@ -55,124 +56,88 @@ class Composer extends AbstractService
     /**
      * @var string
      */
-    protected $composerLock = 'composer.lock';
-
-    /**
-     * @var string
-     */
-    protected $oldComposerLock = 'data/old-composer.lock';
-
-    /**
-     * @var string
-     */
     protected $moduleComposer = 'data/composer.json';
 
     /**
-     * Is system updating now ?
-     *
-     * @return bool
-     */
-    public function isSystemUpdating(): bool
-    {
-        $count = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(
-                [
-                    'name'   => 'run-treo-update',
-                    'status' => [CronManager::PENDING, CronManager::RUNNING]
-                ]
-            )
-            ->count();
-
-        return ($count > 0);
-    }
-
-    /**
-     * Create cron job for update composer
-     *
-     * @return bool
-     */
-    public function createUpdateJob(): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!$this->isSystemUpdating()) {
-            // create job
-            $this->insertJob();
-
-            // prepare result
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Run composer UPDATE command by CLI
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function runUpdateJob(array $data = []): bool
-    {
-        // prepare result
-        $result = true;
-
-        // prepare data
-        $createdById = (isset($data['createdById'])) ? $data['createdById'] : null;
-
-        try {
-            $this->runUpdate($createdById);
-        } catch (\Exception $e) {
-            $GLOBALS['log']->error('Composer update failed. Error Details: ' . $e->getMessage());
-
-            // prepare result
-            $result = false;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Run composer UPDATE command
-     *
-     * @param string|null $createdById
+     * Get auth data
      *
      * @return array
-     * @throws \Espo\Core\Exceptions\Error
      */
-    public function runUpdate(string $createdById = null): array
+    public static function getAuthData(): array
     {
-        // prepare creator user id
-        if (is_null($createdById)) {
-            $createdById = $this->getUser()->get('id');
+        // prepare result
+        $result = [
+            'username' => '',
+            'password' => ''
+        ];
+
+        if (file_exists('auth.json')) {
+            $jsonData = Json::decode(file_get_contents('auth.json'), true);
+            if (!empty($jsonData['http-basic'][self::GITLAB])) {
+                $result = $jsonData['http-basic'][self::GITLAB];
+            }
         }
 
-        // triggered before action
-        $this->triggered('Composer', 'beforeComposerUpdate', []);
+        return $result;
+    }
 
-        // call composer
-        $composer = (new ComposerUtil())->run('update');
+    /**
+     * Set auth data
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
+    public static function setAuthData(string $username, string $password): bool
+    {
+        // set username & password
+        $jsonData['http-basic'][self::GITLAB]['username'] = $username;
+        $jsonData['http-basic'][self::GITLAB]['password'] = $password;
 
-        // rebuild
-        $this->rebuild();
+        file_put_contents('auth.json', Json::encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        if ($composer['status'] == 0) {
-            // loggout all users
-            $this->logoutAll();
+        return true;
+    }
 
-            // update module file for load order
-            $this->updateModulesLoadOrder();
-        }
+    /**
+     * @return array
+     */
+    public static function generateAuthData(): array
+    {
+        return [
+            'username' => "treo-" . time(),
+            'password' => Util::generateId()
+        ];
+    }
 
-        // triggered after action
-        $eventData = $this
-            ->triggered('Composer', 'afterComposerUpdate', ['composer' => $composer, 'createdById' => $createdById]);
+    /**
+     * Run validate
+     *
+     * @return bool
+     */
+    public function runValidate(): bool
+    {
+        // create file for treo-composer.sh
+        $this->filePutContents('data/composer-validate.txt', '1');
 
-        return $eventData['composer'];
+        return true;
+    }
+
+    /**
+     * Run update
+     *
+     * @return bool
+     */
+    public function runUpdate(): bool
+    {
+        // create file for treo-composer.sh
+        $this->filePutContents('data/composer-update.txt', '1');
+
+        // set user to config
+        $this->setComposerUser();
+
+        return true;
     }
 
     /**
@@ -180,15 +145,8 @@ class Composer extends AbstractService
      */
     public function cancelChanges(): void
     {
-        if (empty($this->isSystemUpdating())) {
-            if (file_exists($this->moduleStableComposer)) {
-                if (file_exists($this->moduleComposer)) {
-                    unlink($this->moduleComposer);
-                }
-
-                // copy file
-                copy($this->moduleStableComposer, $this->moduleComposer);
-            }
+        if (file_exists($this->moduleStableComposer)) {
+            file_put_contents($this->moduleComposer, file_get_contents($this->moduleStableComposer));
         }
     }
 
@@ -276,86 +234,19 @@ class Composer extends AbstractService
     }
 
     /**
-     * Save stable-composer.json file
-     */
-    public function saveComposerJson(): void
-    {
-        if (file_exists($this->moduleComposer)) {
-            // delete old file
-            if (file_exists($this->moduleStableComposer)) {
-                unlink($this->moduleStableComposer);
-            }
-
-            // copy file
-            copy($this->moduleComposer, $this->moduleStableComposer);
-        }
-    }
-
-    /**
-     * Storing composer.lock
-     */
-    public function storeComposerLock(): void
-    {
-        if (file_exists($this->oldComposerLock)) {
-            unlink($this->oldComposerLock);
-        }
-        if (file_exists($this->composerLock)) {
-            copy($this->composerLock, $this->oldComposerLock);
-        }
-    }
-
-    /**
-     * Get composer.lock diff
-     *
-     * @return array
-     */
-    public function getComposerLockDiff(): array
-    {
-        // prepare result
-        $result = [
-            'install' => [],
-            'update'  => [],
-            'delete'  => [],
-        ];
-
-        if (file_exists($this->oldComposerLock) && file_exists($this->composerLock)) {
-            // prepare data
-            $oldData = $this->getComposerLockTreoPackages($this->oldComposerLock);
-            $newData = $this->getComposerLockTreoPackages($this->composerLock);
-
-            foreach ($oldData as $package) {
-                if (!isset($newData[$package['name']])) {
-                    $result['delete'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $package
-                    ];
-                } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                    $result['update'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $newData[$package['name']],
-                        'from'    => $package['version']
-                    ];
-                }
-            }
-            foreach ($newData as $package) {
-                if (!isset($oldData[$package['name']])) {
-                    $result['install'][] = [
-                        'id'      => $package['extra']['treoId'],
-                        'package' => $package
-                    ];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get composer diff
      *
      * @return array
      */
     public function getComposerDiff(): array
+    {
+        return $this->compareComposerSchemas();
+    }
+
+    /**
+     * @return array
+     */
+    protected function compareComposerSchemas(): array
     {
         // prepare result
         $result = [
@@ -367,14 +258,12 @@ class Composer extends AbstractService
         if (!file_exists($this->moduleStableComposer)) {
             // prepare data
             $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
             $this->filePutContents($this->moduleStableComposer, $data);
         }
 
         // prepare data
         $composerData = $this->getModuleComposerJson();
         $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
-
         foreach ($composerData['require'] as $package => $version) {
             if (!isset($composerStableData['require'][$package])) {
                 $result['install'][] = [
@@ -385,7 +274,6 @@ class Composer extends AbstractService
                 // prepare data
                 $id = $this->getModuleId($package);
                 $from = $this->getModule($id)['version'];
-
                 $result['update'][] = [
                     'id'      => $id,
                     'package' => $package,
@@ -393,7 +281,6 @@ class Composer extends AbstractService
                 ];
             }
         }
-
         foreach ($composerStableData['require'] as $package => $version) {
             if (!isset($composerData['require'][$package])) {
                 $result['delete'][] = [
@@ -401,33 +288,6 @@ class Composer extends AbstractService
                     'package' => $package
                 ];
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Update minimum stability
-     *
-     * @return bool
-     */
-    public function updateMinimumStability(): bool
-    {
-        // prepare result
-        $result = false;
-
-        // prepare path
-        $path = 'composer.json';
-
-        if (file_exists($path)) {
-            // prepare data
-            $data = Json::decode(file_get_contents($path), true);
-            $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
-
-            $this->filePutContents($path, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-            // prepare result
-            $result = true;
         }
 
         return $result;
@@ -455,32 +315,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * Get prepared composer.lock treo packages
-     *
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function getComposerLockTreoPackages(string $path): array
-    {
-        // prepare result
-        $result = [];
-
-        if (file_exists($path)) {
-            $data = Json::decode(file_get_contents($path), true);
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
-                    if (!empty($package['extra']['treoId'])) {
-                        $result[$package['name']] = $package;
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Insert job to DB
      */
     protected function insertJob(): void
@@ -497,28 +331,6 @@ class Composer extends AbstractService
             ]
         );
         $this->getEntityManager()->saveEntity($jobEntity);
-    }
-
-    /**
-     * Logout all users
-     */
-    protected function logoutAll(): void
-    {
-        $this->executeSqlQuery("UPDATE auth_token SET deleted = 1");
-    }
-
-    /**
-     * Update module(s) load order
-     *
-     * @return bool
-     */
-    protected function updateModulesLoadOrder(): bool
-    {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('ModuleManager')
-            ->updateLoadOrder();
     }
 
     /**
@@ -556,5 +368,14 @@ class Composer extends AbstractService
             ->get('serviceFactory')
             ->create('Store')
             ->getPackages();
+    }
+
+    /**
+     * Set current user to config for composer
+     */
+    protected function setComposerUser(): void
+    {
+        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        $this->getConfig()->save();
     }
 }

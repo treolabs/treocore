@@ -35,6 +35,10 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Metadata;
+use Espo\Core\Utils\File\Manager;
+use Espo\Core\Utils\Language as Instance;
+
 /**
  * DefaultLanguage loader
  *
@@ -46,15 +50,45 @@ class DefaultLanguage extends Base
     /**
      * Load DefaultLanguage
      *
-     * @return \Espo\Core\Utils\Language
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Language(
+        return new Instance(
             null,
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('useCache')
+            $this->getFileManager(),
+            $this->getMetadata(),
+            $this->useCache()
         );
+    }
+
+    /**
+     * Get file manager
+     *
+     * @return Manager
+     */
+    protected function getFileManager()
+    {
+        return $this->getContainer()->get('fileManager');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Us use cache
+     *
+     * @return bool|null
+     */
+    protected function useCache()
+    {
+        return $this->getContainer()->get('useCache');
     }
 }

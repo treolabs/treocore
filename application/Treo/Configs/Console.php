@@ -44,11 +44,12 @@ return [
     "upgrade --force"                  => Console\Upgrade::class,
     "module delete <moduleId> --force" => Console\ModuleDelete::class,
     "clear cache"                      => Console\ClearCache::class,
+    "cleanup"                          => Console\Cleanup::class,
+    "composer-log"                     => Console\ComposerLog::class,
     "rebuild"                          => Console\Rebuild::class,
     "cron"                             => Console\Cron::class,
     "events"                           => Console\Events::class,
     "migrate <module> <from> <to>"     => Console\Migrate::class,
-    "composer <command>"               => Console\Composer::class,
     "generate apidocs"                 => Console\GenerateApidocs::class,
     "developmod <param>"               => Console\DevelopMod::class,
 ];

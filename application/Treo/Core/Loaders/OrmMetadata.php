@@ -35,6 +35,11 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\Utils\Metadata\OrmMetadata as Instance;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\File\Manager;
+use Espo\Core\Utils\Config;
+
 /**
  * OrmMetadata loader
  *
@@ -50,10 +55,40 @@ class OrmMetadata extends Base
      */
     public function load()
     {
-        return new \Espo\Core\Utils\Metadata\OrmMetadata(
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('config')->get('useCache')
+        return new Instance(
+            $this->getMetadata(),
+            $this->getFileManager(),
+            $this->getConfig()->get('useCache')
         );
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Get file manager
+     *
+     * @return Manager
+     */
+    protected function getFileManager()
+    {
+        return $this->getContainer()->get('fileManager');
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
     }
 }

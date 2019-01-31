@@ -35,7 +35,49 @@ Espo.define('treo-core:views/header', 'class-replace!treo-core:views/header', fu
 
     return Dep.extend({
 
-        template: 'treo-core:header'
+        template: 'treo-core:header',
+
+        overviewFilters: [
+            {
+                name: 'fieldsFilter',
+                view: 'treo-core:views/fields/overview-fields-filter'
+            },
+            {
+                name: 'localesFilter',
+                view: 'treo-core:views/fields/overview-locales-filter'
+            }
+        ],
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            if (this.model && !this.model.isNew() && this.getMetadata().get(['scopes', this.scope, 'customizable'])) {
+                this.createOverviewFilters();
+            }
+        },
+
+        createOverviewFilters() {
+            this.overviewFilters = this.filterOverviewFilters();
+
+            (this.overviewFilters || []).forEach(filter => {
+                this.createView(filter.name, filter.view, {
+                    el: `${this.options.el} .field[data-name="${filter.name}"]`,
+                    model: this.model,
+                    name: filter.name,
+                    storageKey: 'overview-filters',
+                    modelKey: 'advancedEntityView'
+                }, view => view.render());
+            });
+        },
+
+        filterOverviewFilters() {
+            return (this.overviewFilters || []).filter(filter => {
+                if (filter.name === 'localesFilter') {
+                    return this.getConfig().get('isMultilangActive') && (this.getConfig().get('inputLanguageList') || []).length
+                }
+                return true;
+            });
+        }
 
     });
 });

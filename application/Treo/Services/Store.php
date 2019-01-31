@@ -66,7 +66,7 @@ class Store extends AbstractService
     public function refresh(): void
     {
         // get auth data
-        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
+        $authData = (new \Treo\Services\Composer())->getAuthData();
 
         // prepare params
         $params = [

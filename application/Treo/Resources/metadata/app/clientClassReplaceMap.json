@@ -13,7 +13,10 @@
   ],
   "controllers/admin": [
     "treo-core"
-  ],  
+  ],
+  "views/detail": [
+    "treo-core"
+  ],
   "views/modal": [
     "treo-core"
   ],
@@ -83,9 +86,6 @@
   "views/admin/layouts/relationships": [
     "treo-core"
   ],
-  "views/fields/array": [
-    "treo-core"
-  ],
   "views/fields/base": [
     "treo-core"
   ],
@@ -147,6 +147,9 @@
     "treo-core"
   ],
   "views/notification/badge": [
+    "treo-core"
+  ],
+  "views/scheduled-job/list": [
     "treo-core"
   ]
 }

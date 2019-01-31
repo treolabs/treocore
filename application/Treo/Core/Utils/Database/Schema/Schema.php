@@ -36,27 +36,19 @@ declare(strict_types=1);
 namespace Treo\Core\Utils\Database\Schema;
 
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Utils\Database\Schema\Schema as EspoSchema;
 use Treo\Traits\ContainerTrait;
-use Treo\Traits\EventTriggeredTrait;
 
 /**
  * Class Schema
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class Schema extends EspoSchema
+class Schema extends \Espo\Core\Utils\Database\Schema\Schema
 {
     use ContainerTrait;
-    use EventTriggeredTrait;
 
     /**
-     * Rebuild database schema
-     *
-     * @param array|null $entityList
-     *
-     * @return bool
-     * @throws Error
+     * @inheritdoc
      */
     public function rebuild($entityList = null)
     {
@@ -113,5 +105,19 @@ class Schema extends EspoSchema
         )['result'];
 
         return $result;
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     */
+    protected function triggered(string $target, string $action, array $data = []): array
+    {
+        return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
     }
 }

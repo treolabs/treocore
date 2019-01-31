@@ -36,6 +36,8 @@ declare(strict_types=1);
 namespace Treo\Core\Loaders;
 
 use Espo\Core\Utils\Language;
+use Espo\Core\Utils\File\Manager;
+use Treo\Core\Utils\Metadata;
 
 /**
  * BaseLanguage loader
@@ -54,9 +56,39 @@ class BaseLanguage extends Base
     {
         return new Language(
             'en_US',
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('useCache')
+            $this->getFileManager(),
+            $this->getMetadata(),
+            $this->useCache()
         );
+    }
+
+    /**
+     * Get file manager
+     *
+     * @return Manager
+     */
+    protected function getFileManager()
+    {
+        return $this->getContainer()->get('fileManager');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Is use cache
+     *
+     * @return bool|null
+     */
+    protected function useCache()
+    {
+        return $this->getContainer()->get('useCache');
     }
 }

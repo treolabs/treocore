@@ -35,6 +35,10 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Config;
+use Espo\Core\Utils\ThemeManager;
+use Espo\Core\Utils\ClientManager as Instance;
+
 /**
  * ClientManager loader
  *
@@ -46,13 +50,30 @@ class ClientManager extends Base
     /**
      * Load ClientManager
      *
-     * @return \Espo\Core\Utils\ClientManager
+     * @return Instance
      */
     public function load()
     {
-        return new \Espo\Core\Utils\ClientManager(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('themeManager')
-        );
+        return new Instance($this->getConfig(), $this->getThemeManager());
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Get theme manager
+     *
+     * @return ThemeManager
+     */
+    protected function getThemeManager()
+    {
+        return $this->getContainer()->get('themeManager');
     }
 }

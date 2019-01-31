@@ -4,5 +4,5 @@
 </p>
 
 <button class="scroll-top hidden">
-    <span class="glyphicon glyphicon-chevron-up"></span>
+    <span class="fas fa-chevron-up"></span>
 </button>

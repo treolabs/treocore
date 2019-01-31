@@ -35,6 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Config;
+
 /**
  * Number loader
  *
@@ -51,8 +53,18 @@ class Number extends Base
     public function load()
     {
         return new \Espo\Core\Utils\NumberUtil(
-            $this->getContainer()->get('config')->get('decimalMark'),
-            $this->getContainer()->get('config')->get('thousandSeparator')
+            $this->getConfig()->get('decimalMark'),
+            $this->getConfig()->get('thousandSeparator')
         );
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
     }
 }

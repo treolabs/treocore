@@ -147,7 +147,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                             && this.getMetadata().get(['scopes', defs.entity, 'entity'])
                             && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])
                             && !defs.disableMassRelation) {
-                            foreignEntities.push({link: link, entity: defs.entity});
+                            let data = {
+                                link: link,
+                                entity: defs.entity,
+                            };
+                            if (defs.customDefs) {
+                                data.customDefs = defs.customDefs;
+                            }
+                            foreignEntities.push(data);
                         }
                     }
                 });
@@ -175,7 +182,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             this.getModelFactory().create(null, model => {
                 model.set({
                     mainEntity: this.scope,
-                    entitySelect: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
+                    selectedLink: foreignEntities[0].link,
                     foreignEntities: foreignEntities
                 });
 
@@ -185,48 +192,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     multiple: true,
                     createButton: false,
                     scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
-                    headerLabel: type
+                    type: type,
+                    checkedList: this.checkedList
                 }, view => {
                     view.render(() => {
                         this.notify(false);
                     });
-                    view.listenTo(view, 'select', models => {
-                        if (view.validate()) {
-                            this.notify('Not valid', 'error');
-                            return;
-                        }
-
-                        let foreignIds = [];
-                        (models || []).forEach(model => foreignIds.push(model.id));
-                        let data = this.getDataForUpdateRelation(foreignIds, view.model);
-                        let links = this.getMetadata().get(['entityDefs', this.scope, 'links']) || {};
-                        let entity = view.model.get('entitySelect');
-                        let foreignEntity = (foreignEntities.find(item => (item.customDefs || {}).entity || item.entity === entity) || {}).link;
-                        let url = `${this.scope}/${foreignEntity}/relation`;
-                        this.sendDataForUpdateRelation(type, url, data);
-                    });
                 });
             });
-        },
-
-        getDataForUpdateRelation(foreignIds, viewModel) {
-            return {
-                ids: this.checkedList,
-                foreignIds: foreignIds
-            }
-        },
-
-        sendDataForUpdateRelation(type, url, data) {
-            if (type === 'addRelation') {
-                this.ajaxPostRequest(url, data).then(response => {
-                    this.notify('Linked', 'success');
-                });
-            } else if (type === 'removeRelation') {
-                data = JSON.stringify(data);
-                this.ajaxRequest(url, 'DELETE', data).then(response => {
-                    this.notify('Unlinked', 'success');
-                });
-            }
         },
 
         massActionAddRelation() {

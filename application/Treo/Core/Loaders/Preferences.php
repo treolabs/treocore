@@ -35,6 +35,10 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\ORM\EntityManager;
+use Espo\Entities\User;
+use Espo\Core\Exceptions\Error;
+
 /**
  * Preferences loader
  *
@@ -47,12 +51,33 @@ class Preferences extends Base
      * Load Preferences
      *
      * @return mixed
+     *
+     * @throws Error
      */
     public function load()
     {
         return $this
-                ->getContainer()
-                ->get('entityManager')
-                ->getEntity('Preferences', $this->getContainer()->get('user')->id);
+                ->getEntityManager()
+                ->getEntity('Preferences', $this->getUser()->id);
+    }
+
+    /**
+     * Get entity manager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->getContainer()->get('entityManager');
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    protected function getUser()
+    {
+        return $this->getContainer()->get('user');
     }
 }

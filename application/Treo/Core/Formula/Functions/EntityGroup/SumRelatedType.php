@@ -36,14 +36,17 @@ declare(strict_types=1);
 
 namespace Treo\Core\Formula\Functions\EntityGroup;
 
-use \Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Error;
+use Espo\ORM\EntityManager;
+use Espo\Core\Formula\Functions\EntityGroup\SumRelatedType as EspoSumRelatedType;
+use Treo\Core\SelectManagerFactory;
 
 /**
  * Class SumRelatedType
  *
  * @author r.ratsun <r.ratsun@zinitsolutions.com>
  */
-class SumRelatedType extends \Espo\Core\Formula\Functions\EntityGroup\SumRelatedType
+class SumRelatedType extends EspoSumRelatedType
 {
     /**
      * @inheritdoc
@@ -81,15 +84,13 @@ class SumRelatedType extends \Espo\Core\Formula\Functions\EntityGroup\SumRelated
 
         $entity = $this->getEntity();
 
-        $entityManager = $this->getInjection('entityManager');
-
         $foreignEntityType = $entity->getRelationParam($link, 'entity');
 
         if (empty($foreignEntityType)) {
             throw new Error();
         }
 
-        $foreignSelectManager = $this->getInjection('selectManagerFactory')->create($foreignEntityType);
+        $foreignSelectManager = $this->getSelectManagerFactory()->create($foreignEntityType);
 
         $foreignLink = $entity->getRelationParam($link, 'foreign');
 
@@ -111,19 +112,66 @@ class SumRelatedType extends \Espo\Core\Formula\Functions\EntityGroup\SumRelated
         // @todo treoinject. Espo bug fix
         $selectParams['whereClause'] = [$foreignLink . '.id' => $entity->get('id')];
 
-        $entityManager->getRepository($foreignEntityType)->handleSelectParams($selectParams);
+        $this->handleSelectParams($foreignEntityType, $selectParams);
 
-        $sql = $entityManager->getQuery()->createSelectQuery($foreignEntityType, $selectParams);
-
-        $pdo = $entityManager->getPDO();
-        $sth = $pdo->prepare($sql);
-        $sth->execute();
-        $rowList = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        $rowList = $this->query($foreignEntityType, $selectParams);
 
         if (empty($rowList)) {
             return 0;
         }
 
         return $rowList[0]['SUM:' . $field];
+    }
+
+    /**
+     * Get entity manager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->getInjection('entityManager');
+    }
+
+    /**
+     * Get select manager factory
+     *
+     * @return SelectManagerFactory
+     */
+    protected function getSelectManagerFactory(): SelectManagerFactory
+    {
+        return $this->getInjection('selectManagerFactory');
+    }
+
+    /**
+     * Handle select params
+     *
+     * @param string $foreignEntityType
+     * @param array $selectParams
+     */
+    protected function handleSelectParams(string $foreignEntityType, array $selectParams)
+    {
+        $this
+            ->getEntityManager()
+            ->getRepository($foreignEntityType)
+            ->handleSelectParams($selectParams);
+    }
+
+    /**
+     * Execute query
+     *
+     * @param string $foreignEntityType
+     * @param array $selectParams
+     *
+     * @return array
+     */
+    protected function query(string $foreignEntityType, array $selectParams): array
+    {
+        $sql = $this->getEntityManager()->getQuery()->createSelectQuery($foreignEntityType, $selectParams);
+
+        $pdo = $this->getEntityManager()->getPDO();
+        $sth = $pdo->prepare($sql);
+        $sth->execute();
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

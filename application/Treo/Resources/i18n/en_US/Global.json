@@ -1,9 +1,11 @@
 {
   "scopeNames": {
-    "QueueItem": "Queue Item"
+    "QueueItem": "Queue Item",
+    "Image": "Image"
   },
   "scopeNamesPlural": {
-    "QueueItem": "Queue Manager"
+    "QueueItem": "Queue Manager",
+    "Image": "Images"
   },
   "options": {
     "language": {
@@ -79,6 +81,15 @@
       "zh_CN": "Simplified Chinese (zh_CN)",
       "zh_HK": "Traditional Chinese (zh_HK)",
       "zh_TW": "Traditional Chinese (zh_TW)"
+    },
+    "fieldsFilter": {
+      "": "All Fields",
+      "empty": "Empty Fields",
+      "emptyAndRequired": "Empty Required Fields"
+    },
+    "localesFilter": {
+      "": "All Locales",
+      "showGenericFields": "Show Generic Fields"
     }
   },
   "fields": {
@@ -94,7 +105,7 @@
     "showFullList": "Show Full List",
     "On": "On",
     "Off": "Off",
-    "entitySelect": "Select Entity",
+    "selectedLink": "Select Entity",
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
     "expandAllPanels": "Expand All"
@@ -108,7 +119,8 @@
   "exceptions": {
     "URL is invalid": "URL is invalid",
     "Such URL is already exists": "Such URL is already exists",
-    "Site URL is empty": "Site URL is empty"
+    "Site URL is empty": "Site URL is empty",
+    "Code is invalid": "Code is invalid. Code should be unique. Only letters, numbers and char \"_\" expected."
   },
   "messages": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
