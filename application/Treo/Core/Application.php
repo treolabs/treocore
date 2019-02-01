@@ -186,7 +186,7 @@ class Application extends \Espo\Core\Application
     protected function getRouteList()
     {
         $routes = new \Treo\Core\Utils\Route(
-            $this->getContainer()->get('config'),
+            $this->getConfig(),
             $this->getMetadata(),
             $this->getContainer()->get('fileManager')
         );

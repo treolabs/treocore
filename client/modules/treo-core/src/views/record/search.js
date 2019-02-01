@@ -254,7 +254,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             if (this.isRendered()) {
                 rendered = true;
                 var div = document.createElement('div');
-                div.className = "filter filter-" + name + " col-sm-4 col-md-3";
+                div.className = "filter filter-" + name;
                 div.setAttribute("data-name", name);
                 var nameIndex = name.split('-')[1];
                 var beforeFilterName = name.split('-')[0] + '-' + (+nameIndex - 1);
@@ -376,7 +376,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
             presetName = presetName || '';
 
-            this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="glyphicon glyphicon-ok pull-right"></span>');
+            this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="fas fa-check pull-right"></span>');
         },
 
         isLeftDropdown() {

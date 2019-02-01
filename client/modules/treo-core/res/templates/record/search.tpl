@@ -44,7 +44,7 @@
             </div>
             {{#unless textFilterDisabled}}<input type="text" class="form-control text-filter" name="textFilter" value="{{textFilter}}" tabindex="1">{{/unless}}
             <div class="input-group-btn">
-                <button type="button" class="btn btn-primary search btn-icon" data-action="search">
+                <button type="button" class="btn btn-primary search btn-icon btn-icon-x-wide" data-action="search">
                     <span class="fa fa-search"></span>
                     <span>{{translate 'Search'}}</span>
                 </button>
@@ -58,7 +58,7 @@
     <div class="form-group col-md-6 col-sm-5">
         <div class="btn-group view-mode-switcher-buttons-group">
             {{#each viewModeDataList}}
-            <button type="button" data-name="{{name}}" data-action="switchViewMode" class="btn btn-sm btn-default{{#ifEqual name ../viewMode}} active{{/ifEqual}}" title="{{title}}"><span class="{{iconClass}}"></span></button>
+            <button type="button" data-name="{{name}}" data-action="switchViewMode" class="btn btn-sm btn-icon btn-default{{#ifEqual name ../viewMode}} active{{/ifEqual}}" title="{{title}}"><span class="{{iconClass}}"></span></button>
             {{/each}}
         </div>
     </div>
@@ -66,7 +66,7 @@
 </div>
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
-<div class="row advanced-filters" style=" display: flex; flex-wrap: wrap;">
+<div class="row advanced-filters grid-auto-fill-sm" style=" display: flex; flex-wrap: wrap;">
     {{#each filterDataList}}
     <div class="filter filter-{{name}} col-sm-4 col-md-3" data-name="{{name}}">
         {{{var key ../this}}}

@@ -5,11 +5,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand nav-link" href="#"><img src="{{logoSrc}}" class="logo"><span class="home-icon glyphicon glyphicon-th-large" title="{{translate 'Home'}}"></span></a>
+        <a class="navbar-brand nav-link" href="#"><img src="{{logoSrc}}" class="logo"><span class="home-icon fas fa-th-large" title="{{translate 'Home'}}"></span></a>
         <div class="navbar-header-inner pull-right">
             {{#if globalSearch}}
                 <button type="button" class="search-toggle pull-left visible-xs">
-                    <span class="glyphicon glyphicon-search"></span>
+                    <span class="fa fa-search"></span>
                 </button>
             {{/if}}
             <ul class="visible-xs header-right pull-left">
@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <div class="dropdown menu-container visible-xs pull-left">
-                <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="fas fa-bars"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
                     {{#each menuDataList}}
                     {{#unless divider}}
@@ -56,7 +56,7 @@
             {{/each}}
             {{#if isMoreFields}}
             <li class="dropdown more">
-                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="fas fa-ellipsis-h"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                     {{#each tabDefsList}}
                     {{#if isInMore}}
@@ -87,7 +87,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown menu-container hidden-xs">
-                <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                <a id="nav-menu-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Menu'}}"><span class="fas fa-bars"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-menu-dropdown">
                     {{#each menuDataList}}
                     {{#unless divider}}
@@ -100,7 +100,7 @@
             </li>
             {{#if enableQuickCreate}}
             <li class="dropdown hidden-xs quick-create-container hidden-xs">
-                <a id="nav-quick-create-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+	            <a id="nav-quick-create-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#" title="{{translate 'Create'}}"><i class="fas fa-plus"></i></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-quick-create-dropdown">
                     <li class="dropdown-header">{{translate 'Create'}}</li>
                     {{#each quickCreateList}}
@@ -119,8 +119,8 @@
             {{/if}}
         </ul>
         <a class="minimizer" href="javascript:">
-            <span class="glyphicon glyphicon glyphicon-menu-right right"></span>
-            <span class="glyphicon glyphicon glyphicon-menu-left left"></span>
+            <span class="fas fa-chevron-right right"></span>
+            <span class="fas fa-chevron-left left"></span>
         </a>
     </div>
 </div>
