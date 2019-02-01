@@ -9,7 +9,6 @@
 !/data/.htaccess
 /vendor/
 /composer.lock
-/auth.json
 
 !client/
 client/*

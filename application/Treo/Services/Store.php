@@ -46,11 +46,6 @@ use Espo\Core\Utils\Json;
 class Store extends AbstractService
 {
     /**
-     * @var string
-     */
-    protected $url = null;
-
-    /**
      * @var null|array
      */
     protected $packages = null;
@@ -65,20 +60,14 @@ class Store extends AbstractService
      */
     public function refresh(): void
     {
-        // get auth data
-        $authData = (new \Treo\Services\Composer())->getAuthData();
-
         // prepare params
         $params = [
             'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'username'      => $authData['username'],
+            'id'            => $this->getConfig()->get('treoId', 'public'),
         ];
 
-        // prepare path
-        $path = $this->getUrl() . "packages?" . http_build_query($params);
-
         // get json data
-        $json = file_get_contents($path);
+        $json = file_get_contents("https://packagist.treopim.com/api/v1/packages?" . http_build_query($params));
 
         if (!empty($json)) {
             file_put_contents($this->cache, $json);
@@ -289,21 +278,6 @@ class Store extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getUrl(): string
-    {
-        if (is_null($this->url)) {
-            // get composer.json
-            $json = file_get_contents('composer.json');
-
-            $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
-        }
-
-        return $this->url;
     }
 
     /**
