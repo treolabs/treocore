@@ -1,5 +1,5 @@
 <div class="detail" id="{{id}}">
-    {{#if buttonsDisabled}}
+    {{#unless buttonsDisabled}}
     <div class="detail-button-container button-container record-buttons clearfix">
         <div class="btn-group pull-left" role="group">
             {{#each buttonList}}{{button name scope=../../entityType label=label style=style hidden=hidden html=html}}{{/each}}
@@ -44,7 +44,7 @@
         {{/if}}
         </div>
     </div>
-    {{/if}}
+    {{/unless}}
 
 
     <div class="row">
