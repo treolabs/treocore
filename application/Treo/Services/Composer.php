@@ -57,6 +57,26 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
+     * Put repository file
+     *
+     * @param string $treoId
+     */
+    public static function putRepositoryFile(string $treoId): void
+    {
+        // prepare data
+        $data = [
+            'repositories' => [
+                [
+                    "type" => "composer",
+                    "url"  => "https://packagist.treopim.com/packages.json?id=$treoId",
+                ]
+            ]
+        ];
+
+        file_put_contents('data/repositories.json', json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+    }
+
+    /**
      * Run validate
      *
      * @return bool

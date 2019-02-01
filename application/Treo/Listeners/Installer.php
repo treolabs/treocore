@@ -67,5 +67,8 @@ class Installer extends AbstractListener
         //set to config
         $this->getConfig()->set('treoId', $treoId);
         $this->getConfig()->save();
+
+        // create repositories file
+        \Treo\Services\Composer::putRepositoryFile($treoId);
     }
 }
