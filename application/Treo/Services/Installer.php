@@ -36,10 +36,11 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
-use Espo\Core\Utils\PasswordHash;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\PasswordHash;
+use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Language;
@@ -47,8 +48,7 @@ use Treo\Core\Utils\Language;
 /**
  * Service Installer
  *
- * @author y.haiduchyk <y.haiduchyk@zinitsolutions.com>
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class Installer extends AbstractService
 {
@@ -62,6 +62,14 @@ class Installer extends AbstractService
      * @var null|array
      */
     protected $installConfig = null;
+
+    /**
+     * @return string
+     */
+    public static function generateTreoId(): string
+    {
+        return substr(md5(md5(Util::generateId() . "-treo-salt-") . Util::generateId()), 0, 21);
+    }
 
     /**
      * Get requireds list

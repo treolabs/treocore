@@ -1,6 +1,6 @@
 {
     "name": "treo/treopim",
-    "version": "3.1.0-rc3",
+    "version": "3.1.0",
     "description": "TreoPIM. Open source PIM application.",
     "homepage": "https://treopim.com",
     "license": "GPL-3.0-only",
@@ -47,6 +47,7 @@
         "merge-plugin": {
             "include": [
                 "data/composer.json",
+                "data/repositories.json",
                 "data/dev-composer.json"
             ]
         }
@@ -65,7 +66,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "https://packagist.treopim.com"
+            "url": "https://packagist.treopim.com/packages.json?id=public"
         }
     ]
 }

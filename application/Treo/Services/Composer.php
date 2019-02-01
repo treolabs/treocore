@@ -38,7 +38,6 @@ namespace Treo\Services;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Util;
 
 /**
  * Composer service
@@ -47,7 +46,6 @@ use Espo\Core\Utils\Util;
  */
 class Composer extends AbstractService
 {
-    const GITLAB = 'gitlab.zinit1.com';
     /**
      * @var string
      */
@@ -59,56 +57,23 @@ class Composer extends AbstractService
     protected $moduleComposer = 'data/composer.json';
 
     /**
-     * Get auth data
+     * Put repository file
      *
-     * @return array
+     * @param string $treoId
      */
-    public static function getAuthData(): array
+    public static function putRepositoryFile(string $treoId): void
     {
-        // prepare result
-        $result = [
-            'username' => '',
-            'password' => ''
+        // prepare data
+        $data = [
+            'repositories' => [
+                [
+                    "type" => "composer",
+                    "url"  => "https://packagist.treopim.com/packages.json?id=$treoId",
+                ]
+            ]
         ];
 
-        if (file_exists('auth.json')) {
-            $jsonData = Json::decode(file_get_contents('auth.json'), true);
-            if (!empty($jsonData['http-basic'][self::GITLAB])) {
-                $result = $jsonData['http-basic'][self::GITLAB];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Set auth data
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @return bool
-     */
-    public static function setAuthData(string $username, string $password): bool
-    {
-        // set username & password
-        $jsonData['http-basic'][self::GITLAB]['username'] = $username;
-        $jsonData['http-basic'][self::GITLAB]['password'] = $password;
-
-        file_put_contents('auth.json', Json::encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        return true;
-    }
-
-    /**
-     * @return array
-     */
-    public static function generateAuthData(): array
-    {
-        return [
-            'username' => "treo-" . time(),
-            'password' => Util::generateId()
-        ];
+        file_put_contents('data/repositories.json', json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 
     /**

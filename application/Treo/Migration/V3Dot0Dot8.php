@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Copyright (C) 2017-2018 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -33,42 +33,23 @@
  */
 declare(strict_types=1);
 
-namespace Treo\Listeners;
+namespace Treo\Migration;
+
+use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Installer listener
+ * Version 3.0.8
  *
  * @author r.ratsun@treolabs.com
  */
-class Installer extends AbstractListener
+class V3Dot0Dot8 extends AbstractMigration
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * Up to current
      */
-    public function afterInstallSystem(array $data): array
+    public function up(): void
     {
-        // generate Treo ID
-        $this->generateTreoId();
-
-        return $data;
-    }
-
-    /**
-     * Generate Treo ID
-     */
-    protected function generateTreoId(): void
-    {
-        // generate id
-        $treoId = \Treo\Services\Installer::generateTreoId();
-
-        //set to config
-        $this->getConfig()->set('treoId', $treoId);
+        $this->getConfig()->set('treoId', $this->getConfig()->get('treoId'));
         $this->getConfig()->save();
-
-        // create repositories file
-        \Treo\Services\Composer::putRepositoryFile($treoId);
     }
 }
