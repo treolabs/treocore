@@ -56,22 +56,6 @@
     }
   },
   {
-    "route": "/Composer/gitAuth",
-    "method": "get",
-    "params": {
-      "controller": "Composer",
-      "action": "getGitAuthData"
-    }
-  },
-  {
-    "route": "/Composer/gitAuth",
-    "method": "put",
-    "params": {
-      "controller": "Composer",
-      "action": "setGitAuthData"
-    }
-  },
-  {
     "route": "/Composer/update",
     "method": "post",
     "params": {
