@@ -37,116 +37,23 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 
 /**
- * Class Store
+ * Class TreoStore
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@treolabs.com
  */
-class Store extends AbstractService
+class TreoStore extends \Espo\Core\Templates\Services\Base
 {
-    /**
-     * @var null|array
-     */
-    protected $packages = null;
-
-    /**
-     * @var string
-     */
-    protected $cache = 'data/cache/packages.json';
-
     /**
      * Refresh cached data
      */
     public function refresh(): void
     {
-        // prepare params
-        $params = [
-            'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'id'            => $this->getConfig()->get('treoId', 'public'),
-        ];
-
-        // get json data
-        $json = file_get_contents("https://packagist.treopim.com/api/v1/packages?" . http_build_query($params));
-
-        if (!empty($json)) {
-            file_put_contents($this->cache, $json);
+        if (!empty($json = $this->getRemotePackages())) {
+            $this->caching(Json::decode($json, true));
         }
-    }
-
-    /**
-     * Get list
-     *
-     * @return array
-     */
-    public function getList(): array
-    {
-        // prepare result
-        $result = [
-            'total' => 0,
-            'list'  => []
-        ];
-
-        if (!empty($packages = $this->getPackages())) {
-            // get installed panel data
-            $installed = $this->getInstalled();
-
-            foreach ($packages as $package) {
-                if (!in_array($package['treoId'], $installed)) {
-                    $result['list'][] = [
-                        'id'          => $package['treoId'],
-                        'name'        => $this->packageTranslate($package['name'], $package['treoId']),
-                        'description' => $this->packageTranslate($package['description'], '-'),
-                        'status'      => $package['status'],
-                        'versions'    => $package['versions']
-                    ];
-                }
-            }
-
-            // prepare total
-            $result['total'] = count($result['list']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPackages(): array
-    {
-        if (is_null($this->packages)) {
-            // refresh cache if it needs
-            if (!file_exists($this->cache)) {
-                $this->refresh();
-            }
-
-            // prepare result
-            $this->packages = [];
-            if (file_exists($this->cache)) {
-                $this->packages = Json::decode(file_get_contents($this->cache), true);
-            }
-        }
-
-        return $this->packages;
-    }
-
-    /**
-     * Get current module package
-     *
-     * @param string $module
-     *
-     * @return array
-     */
-    public function getPackage(string $module): array
-    {
-        foreach ($this->getPackages() as $package) {
-            if ($module == $package['treoId']) {
-                return $package;
-            }
-        }
-
-        return [];
     }
 
     /**
@@ -160,12 +67,12 @@ class Store extends AbstractService
         // clone
         $notifiedVersions = $nativeNotifiedVersions;
 
-        foreach ($this->getModules() as $id) {
+        foreach ($this->getInstalled() as $package) {
+            // prepare id
+            $id = $package['id'];
+
             // get notified version
             $version = (isset($notifiedVersions[$id])) ? $notifiedVersions[$id] : null;
-
-            // get package
-            $package = $this->getPackage($id);
 
             if (isset($package['versions'][0]['version'])) {
                 // prepare version
@@ -191,13 +98,100 @@ class Store extends AbstractService
     }
 
     /**
+     * Init
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('metadata');
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function caching(array $data): void
+    {
+        // delete all
+        $sth = $this
+            ->getEntityManager()
+            ->getPDO()
+            ->prepare("DELETE FROM treo_store");
+        $sth->execute();
+
+        foreach ($data as $package) {
+            $entity = $this->getEntityManager()->getEntity("TreoStore");
+            $entity->id = $package['treoId'];
+            $entity->set('packageId', $package['packageId']);
+            $entity->set('url', $package['url']);
+            $entity->set('status', $package['status']);
+            $entity->set('versions', $package['versions']);
+            foreach ($package['name'] as $locale => $value) {
+                if ($locale == 'default') {
+                    $entity->set('name', $value);
+                } else {
+                    $entity->set('name' . Util::toCamelCase(strtolower($locale), "_", true), $value);
+                }
+            }
+            foreach ($package['description'] as $locale => $value) {
+                if ($locale == 'default') {
+                    $entity->set('description', $value);
+                } else {
+                    $entity->set('description' . Util::toCamelCase(strtolower($locale), "_", true), $value);
+                }
+            }
+
+            $this->getEntityManager()->saveEntity($entity);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRemotePackages(): string
+    {
+        // prepare params
+        $params = [
+            'allowUnstable' => $this->getConfig()->get('developMode', 0),
+            'id'            => $this->getConfig()->get('treoId', 'common')
+        ];
+
+        return file_get_contents("https://packagist.treopim.com/api/v1/packages?" . http_build_query($params));
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInstalled(): array
+    {
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getRepository()
+            ->where(['id' => $this->getInjection('metadata')->getModuleList()])
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param array $package
      */
     protected function sendNotification(array $package): void
     {
         if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
             // prepare id
-            $id = $package['treoId'];
+            $id = $package['id'];
 
             // prepare config data
             $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);
@@ -223,7 +217,7 @@ class Store extends AbstractService
                                 'id'              => $id,
                                 'messageTemplate' => 'newModuleVersion',
                                 'messageVars'     => [
-                                    'moduleName'    => $this->packageTranslate($package['name'], $id),
+                                    'moduleName'    => $package['name'],
                                     'moduleVersion' => $package['versions'][0]['version'],
                                 ]
                             ],
@@ -233,68 +227,5 @@ class Store extends AbstractService
                 }
             }
         }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getComposerDiff(): array
-    {
-        return $this->getContainer()->get('serviceFactory')->create('Composer')->getComposerDiff();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getModuleList(): array
-    {
-        return $this->getContainer()->get('metadata')->getModuleList();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getInstalled()
-    {
-        return array_merge($this->getModuleList(), array_column($this->getComposerDiff()['install'], 'id'));
-    }
-
-    /**
-     * @param array  $field
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function packageTranslate(array $field, string $default = ''): string
-    {
-        // get current language
-        $currentLang = $this->getContainer()->get('language')->getLanguage();
-
-        $result = $default;
-        if (!empty($field[$currentLang])) {
-            $result = $field[$currentLang];
-        } elseif ($field['default']) {
-            $result = $field['default'];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getModules(): array
-    {
-        return $this->getContainer()->get('metadata')->getModuleList();
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return array
-     */
-    protected function getModule(string $id): array
-    {
-        return $this->getContainer()->get('metadata')->getModule($id);
     }
 }

@@ -272,7 +272,7 @@ class Composer extends AbstractService
 
         foreach ($this->getPackages() as $package) {
             if ($package['packageId'] == $packageId) {
-                $result = $package['treoId'];
+                $result = $package['id'];
             }
         }
 
@@ -328,11 +328,23 @@ class Composer extends AbstractService
      */
     protected function getPackages(): array
     {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Store')
-            ->getPackages();
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
     }
 
     /**

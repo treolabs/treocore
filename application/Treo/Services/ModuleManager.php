@@ -39,6 +39,7 @@ namespace Treo\Services;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
+use Espo\ORM\EntityCollection;
 use Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Mover;
@@ -46,7 +47,7 @@ use Treo\Core\Utils\Mover;
 /**
  * ModuleManager service
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class ModuleManager extends \Espo\Core\Services\Base
 {
@@ -77,18 +78,21 @@ class ModuleManager extends \Espo\Core\Services\Base
         $composerData = $this->getComposerService()->getModuleComposerJson();
 
         // get diff
-        $composerDiff = $this->getComposerDiff();
+        $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getMetadata()->getModuleList() as $id) {
+        foreach ($this->getInstalled() as $item) {
+            // prepare id
+            $id = $item->get('id');
+
             if (!empty($package = $this->getMetadata()->getModule($id))) {
                 $result['list'][$id] = [
                     'id'                 => $id,
-                    'name'               => $this->packageTranslate($package['extra']['name'], $id),
-                    'description'        => $this->packageTranslate($package['extra']['description'], '-'),
+                    'name'               => $item->get('name'),
+                    'description'        => $item->get('description'),
                     'settingVersion'     => '*',
                     'currentVersion'     => $package['version'],
-                    'versions'           => $this->getPackagistPackage($id)['versions'],
+                    'versions'           => json_decode(json_encode($item->get('versions')), true),
                     'required'           => [],
                     'requiredTranslates' => [],
                     'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
@@ -125,8 +129,8 @@ class ModuleManager extends \Espo\Core\Services\Base
                 "status"         => 'install'
             ];
             if (!empty($package = $this->getPackagistPackage($row['id']))) {
-                $item['name'] = $this->packageTranslate($package['name'], $row['id']);
-                $item['description'] = $this->packageTranslate($package['description'], "-");
+                $item['name'] = $package['name'];
+                $item['description'] = $package['description'];
                 if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
                     $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
@@ -156,6 +160,11 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function installModule(string $id, string $version = null): bool
     {
+        // is changing blocked?
+        if ($this->isSystemUpdating()) {
+            return false;
+        }
+
         // prepare params
         $packagistPackage = $this->getPackagistPackage($id);
 
@@ -194,6 +203,11 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function updateModule(string $id, string $version): bool
     {
+        // is changing blocked?
+        if ($this->isSystemUpdating()) {
+            return false;
+        }
+
         // prepare params
         $package = $this->getMetadata()->getModule($id);
 
@@ -226,6 +240,11 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function deleteModule(string $id): bool
     {
+        // is changing blocked?
+        if ($this->isSystemUpdating()) {
+            return false;
+        }
+
         // prepare modules
         if ($this->isModuleSystem($id)) {
             throw new Exceptions\Error($this->translateError('isSystem'));
@@ -257,6 +276,11 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function cancel(string $id): bool
     {
+        // is changing blocked?
+        if ($this->isSystemUpdating()) {
+            return false;
+        }
+
         // prepare result
         $result = false;
 
@@ -648,22 +672,58 @@ class ModuleManager extends \Espo\Core\Services\Base
      * @param string $id
      *
      * @return array
-     * @throws Exceptions\Error
      */
     protected function getPackagistPackage(string $id): array
     {
-        return $this->getInjection('serviceFactory')->create('Store')->getPackage($id);
+        // prepare result
+        $result = [];
+
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->where(['id' => $id])
+            ->findOne();
+
+        if (!empty($data)) {
+            $result = $data->toArray();
+            $result['versions'] = json_decode(json_encode($data->get('versions')), true);
+        }
+
+        return $result;
     }
 
     /**
      * Get packages
      *
      * @return array
-     * @throws Exceptions\Error
      */
     protected function getPackagistPackages(): array
     {
-        return $this->getInjection('serviceFactory')->create('Store')->getPackages();
+        // prepare result
+        $result = [];
+
+        // find
+        $data = $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->find();
+
+        if (count($data) > 0) {
+            foreach ($data as $row) {
+                $result[$row->get('id')] = $row->toArray();
+                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSystemUpdating(): bool
+    {
+        return $this->getComposerService()->isSystemUpdating();
     }
 
     /**
@@ -733,10 +793,14 @@ class ModuleManager extends \Espo\Core\Services\Base
     }
 
     /**
-     * @return array
+     * @return EntityCollection
      */
-    protected function getComposerDiff(): array
+    protected function getInstalled(): EntityCollection
     {
-        return $this->getComposerService()->getComposerDiff();
+        return $this
+            ->getEntityManager()
+            ->getRepository('TreoStore')
+            ->where(['id' => $this->getMetadata()->getModuleList()])
+            ->find();
     }
 }

@@ -34,55 +34,33 @@
 
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\SelectManagers;
 
 /**
- * CoreUpgrade job
+ * Class TreoStore
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class TreoStore extends \Espo\Core\SelectManagers\Base
 {
     /**
-     * Run cron job
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function run(): bool
+    public function getSelectParams(array $params, $withAcl = false, $checkWherePermission = false)
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
+        // parent
+        $result = parent::getSelectParams($params, $withAcl, $checkWherePermission);
 
-        // send notification about new version of core
-        $this->coreNotification();
+        if (isset($params['isInstalled'])) {
+            // prepare key
+            $key = (!empty($params['isInstalled'])) ? 'id' : 'id!=';
 
-        // send notification about new version of module
-        $this->moduleNotification();
+            // add whereClause
+            $result['whereClause'][] = [
+                $key => $this->getMetadata()->getModuleList()
+            ];
+        }
 
-        return true;
-    }
-
-    /**
-     * Send notification about new version of core
-     */
-    protected function coreNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoUpgrade')->notify();
-    }
-
-    /**
-     * Send notification about new version of module
-     */
-    protected function moduleNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
-
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
+        return $result;
     }
 }

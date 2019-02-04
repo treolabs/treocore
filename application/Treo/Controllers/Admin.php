@@ -41,17 +41,12 @@ use Espo\Core\Exceptions\NotFound;
 /**
  * Controller Admin
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
 class Admin extends \Espo\Controllers\Admin
 {
     /**
-     * Run upgrade action
-     *
-     * @param mixed $params
-     * @param mixed $data
-     *
-     * @throws NotFound
+     * @inheritdoc
      */
     public function postActionRunUpgrade($params, $data)
     {
@@ -59,15 +54,29 @@ class Admin extends \Espo\Controllers\Admin
     }
 
     /**
-     * UploadUpgradePackage action
-     *
-     * @param array $params
-     * @param array $data
-     *
-     * @throws NotFound
+     * @inheritdoc
      */
     public function postActionUploadUpgradePackage($params, $data)
     {
         throw new NotFound();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function postActionClearCache($params)
+    {
+        // refresh
+        $this->refreshStore();
+
+        return parent::postActionClearCache($params);
+    }
+
+    /**
+     * Refresh TreoStore
+     */
+    protected function refreshStore(): void
+    {
+        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
     }
 }

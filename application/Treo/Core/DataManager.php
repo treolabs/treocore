@@ -43,37 +43,21 @@ namespace Treo\Core;
 class DataManager extends \Espo\Core\DataManager
 {
     /**
-     * Rebuild the system with metadata, database and cache clearing
-     *
-     * @param array $entityList
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function rebuild($entityList = null)
+    public function clearCache()
     {
-        // berore rebuild action
-        $entityList = $this->triggered('DataManager', 'beforeRebuild', ['entityList' => $entityList])['entityList'];
+        // refresh Store cache
+        $this->refreshStoreCache();
 
-        // call parent
-        $result = parent::rebuild($entityList);
-
-        // after rebuild action
-        $this->triggered('DataManager', 'afterRebuild', ['entityList' => $entityList]);
-
-        return $result;
+        return parent::clearCache();
     }
 
     /**
-     * Triggered event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
+     * Refresh Store cache
      */
-    protected function triggered(string $target, string $action, array $data = []): array
+    protected function refreshStoreCache(): void
     {
-        return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
+        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
     }
 }

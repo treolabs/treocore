@@ -34,25 +34,17 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core;
-
-use Treo\PHPUnit\Framework\TestCase;
+namespace Treo\Entities;
 
 /**
- * Class DataManagerTest
+ * Class TreoStore
  *
- * @author r.zablodskiy@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class DataManagerTest extends TestCase
+class TreoStore extends \Espo\Core\Templates\Entities\Base
 {
     /**
-     * Test is rebuild method return true
+     * @var string
      */
-    public function testIsRebuildExists()
-    {
-        $service = $this->createMockService(DataManager::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'rebuild'));
-    }
+    protected $entityType = "TreoStore";
 }

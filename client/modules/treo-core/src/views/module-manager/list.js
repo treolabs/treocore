@@ -125,17 +125,33 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         loadStoreModulesList() {
-            this.getCollectionFactory().create('Store', collection => {
+            this.getCollectionFactory().create('TreoStore', collection => {
                 this.storeCollection = collection;
-                collection.maxSize = 200;
-                collection.url = 'Store/action/list';
+                collection.maxSize = 20;
+                collection.data.isInstalled = false;
+
+                this.getHelper().layoutManager.get('TreoStore', 'list', layout => {
+                    let list = [];
+                    layout.forEach(item => {
+                        if (item.name) {
+                            let field = item.name;
+                            let fieldType = this.getMetadata().get(['entityDefs', 'TreoStore', 'fields', field, 'type']);
+                            if (fieldType) {
+                                this.getFieldManager().getAttributeList(fieldType, field).forEach(attribute => {
+                                    list.push(attribute);
+                                });
+                            }
+                        }
+                    });
+                    collection.data.select = list.join(',');
+                    collection.fetch();
+                });
 
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('listStore', 'views/record/list', {
-                        scope: 'Store',
                         collection: collection,
                         el: `${this.options.el} .list-container.modules-store`,
-                        type: 'list',
+                        layoutName: 'list',
                         searchManager: false,
                         selectable: false,
                         checkboxes: false,
@@ -143,15 +159,13 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         checkAllResultDisabled: false,
                         buttonsDisabled: false,
                         paginationEnabled: false,
-                        showCount: false,
-                        showMore: false,
+                        showCount: true,
+                        showMore: true,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/store'
                     }, view => {
                         view.render();
                     });
                 });
-
-                collection.fetch();
             });
         },
 

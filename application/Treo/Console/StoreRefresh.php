@@ -34,55 +34,47 @@
 
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\Console;
 
 /**
- * CoreUpgrade job
+ * Class StoreRefresh
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class StoreRefresh extends AbstractConsole
 {
     /**
-     * Run cron job
+     * Get console command description
      *
-     * @return bool
+     * @return string
      */
-    public function run(): bool
+    public static function getDescription(): string
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
-
-        // send notification about new version of core
-        $this->coreNotification();
-
-        // send notification about new version of module
-        $this->moduleNotification();
-
-        return true;
+        return 'Refresh TreoStore.';
     }
 
     /**
-     * Send notification about new version of core
+     * Run action
+     *
+     * @param array $data
      */
-    protected function coreNotification(): void
+    public function run(array $data): void
     {
-        $this->getServiceFactory()->create('TreoUpgrade')->notify();
+        // refresh
+        $this->refresh();
+
+        self::show('TreoStore refreshed successfully', self::SUCCESS);
     }
 
     /**
-     * Send notification about new version of module
+     * Refresh
      */
-    protected function moduleNotification(): void
+    protected function refresh(): void
     {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
+        // auth
+        (new \Treo\Core\Utils\Auth($this->getContainer()))->useNoAuth();
 
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
+        // refresh
+        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
     }
 }
