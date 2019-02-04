@@ -38,7 +38,7 @@ namespace Treo\Migration;
 use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Version 2.9.0
+ * Version 3.1.0
  *
  * @author r.ratsun@treolabs.com
  */
