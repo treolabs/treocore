@@ -67,22 +67,13 @@ class Upgrade extends AbstractConsole
         // get versions
         $versions = array_column($this->getService()->getVersions(), 'link', 'version');
 
-        // prepare version to
-        $to = (!empty($data['versionTo'])) ? $data['versionTo'] : end(array_keys($versions));
-
-        if (!isset($versions[$to])) {
+        if (!isset($versions[$data['versionTo']])) {
             self::show('No such version for upgrade.', self::ERROR, true);
         }
 
         // upgrade treocore
         $upgradeManager = new UpgradeManager($this->getContainer());
-        $upgradeManager->install(['id' => $this->getService()->downloadPackage($versions[$to])]);
-
-        // call migration
-        $this
-            ->getContainer()
-            ->get('migration')
-            ->run(Migration::CORE_NAME, $this->getConfig()->get('version'), $to);
+        $upgradeManager->install(['id' => $this->getService()->downloadPackage($versions[$data['versionTo']])]);
 
         // render
         self::show('Treo system upgraded successfully.', self::SUCCESS);
