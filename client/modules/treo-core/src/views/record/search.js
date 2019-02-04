@@ -39,10 +39,59 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
         typesWithOneFilter: ['array', 'bool', 'enum', 'multiEnum', 'linkMultiple'],
 
+        hiddenBoolFilterList: [],
+
+        boolFilterData: [],
+
+        data() {
+            let data = Dep.prototype.data.call(this);
+            data.boolFilterListLength = 0;
+            data.boolFilterListComplex = data.boolFilterList.map(item => {
+                let includes = this.hiddenBoolFilterList.includes(item);
+                if (!includes) {
+                    data.boolFilterListLength++;
+                }
+                return {name: item, hidden: includes};
+            });
+            return data;
+        },
+
         setup: function () {
+            this.hiddenBoolFilterList = this.options.hiddenBoolFilterList || this.hiddenBoolFilterList;
+            this.boolFilterData = this.options.boolFilterData || this.boolFilterData;
             Dep.prototype.setup.call(this);
 
             _.extend(Dep.prototype.events, this.newEvents);
+        },
+
+        manageBoolFilters() {
+            (this.boolFilterList || []).forEach(item => {
+                if (this.bool[item] && !this.hiddenBoolFilterList.includes(item)) {
+                    this.currentFilterLabelList.push(this.translate(item, 'boolFilters', this.entityType));
+                }
+            });
+        },
+
+        updateCollection() {
+            this.collection.reset();
+            this.notify('Please wait...');
+            this.listenTo(this.collection, 'sync', function () {
+                this.notify(false);
+            }.bind(this));
+            let where = this.searchManager.getWhere();
+            where.forEach(item => {
+                if (item.type === 'bool') {
+                    let data = {};
+                    item.value.forEach(elem => {
+                        if (elem in this.boolFilterData) {
+                            data[elem] = this.boolFilterData[elem];
+                        }
+                    });
+                    item.data = data;
+                }
+            });
+            this.collection.where = where;
+            this.collection.fetch();
         },
 
         sortAdvanced: function (advanced) {
@@ -205,7 +254,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             if (this.isRendered()) {
                 rendered = true;
                 var div = document.createElement('div');
-                div.className = "filter filter-" + name + " col-sm-4 col-md-3";
+                div.className = "filter filter-" + name;
                 div.setAttribute("data-name", name);
                 var nameIndex = name.split('-')[1];
                 var beforeFilterName = name.split('-')[0] + '-' + (+nameIndex - 1);
@@ -327,7 +376,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
             presetName = presetName || '';
 
-            this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="glyphicon glyphicon-ok pull-right"></span>');
+            this.$el.find('ul.filter-menu a.preset[data-name="'+presetName+'"]').prepend('<span class="fas fa-check pull-right"></span>');
         },
 
         isLeftDropdown() {

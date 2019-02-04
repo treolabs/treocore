@@ -36,8 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\CronManager;
-use Treo\Core\UpgradeManager;
+use Espo\Core\UpgradeManager;
 use Treo\Core\Utils\Mover;
 use Treo\Core\Migration\Migration;
 
@@ -79,71 +78,29 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
-     * Create upgrade job
+     * Run upgrade
      *
      * @param string|null $to
      *
      * @return bool
      * @throws \Espo\Core\Exceptions\Error
      */
-    public function createUpgradeJob(string $to = null): bool
+    public function runUpgrade(string $to): bool
     {
         // prepare available versions
         $versions = array_column($this->getVersions(), 'link', 'version');
-
-        $from = $this->getCurrentVersion();
-
-        // prepare version to
-        if (is_null($to)) {
-            $to = end(array_keys($versions));
-        }
 
         if (!isset($versions[$to]) || empty($package = $this->downloadPackage($versions[$to]))) {
             return false;
         }
 
-        // create job
-        $jobEntity = $this->getEntityManager()->getEntity('Job');
-        $jobEntity->set(
-            [
-                'name'        => 'run-treo-update',
-                'status'      => CronManager::PENDING,
-                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                'serviceName' => 'TreoUpgrade',
-                'method'      => 'runUpgradeJob',
-                'data'        => [
-                    'versionFrom' => $from,
-                    'versionTo'   => $to,
-                    'fileName'    => $package,
-                    'createdById' => $this->getUser()->get('id')
-                ]
-            ]
-        );
-        $this->getEntityManager()->saveEntity($jobEntity);
+        // upgrade treocore
+        $this->coreUpgrade($package, $this->getCurrentVersion(), $to);
+
+        // composer update
+        $this->runUpdate();
 
         return true;
-    }
-
-    /**
-     * Run upgrade core job
-     *
-     * @param array $data
-     */
-    public function runUpgradeJob(array $data): void
-    {
-        if (!empty($versionFrom = $data['versionFrom'])
-            && !empty($versionTo = $data['versionTo'])
-            && !empty($fileName = $data['fileName'])) {
-            // upgrade treocore
-            $upgradeManager = new UpgradeManager($this->getContainer());
-            $upgradeManager->install(['id' => $fileName]);
-
-            // call migration
-            $this
-                ->getContainer()
-                ->get('migration')
-                ->run(Migration::CORE_NAME, $data['versionFrom'], $data['versionTo']);
-        }
     }
 
     /**
@@ -210,6 +167,43 @@ class TreoUpgrade extends AbstractService
             $this->getConfig()->set('notifiedVersion', $version);
             $this->getConfig()->save();
         }
+    }
+
+    /**
+     * Create update log
+     *
+     * @param string $version
+     *
+     * @return array
+     */
+    public function createUpdateLog(string $version): bool
+    {
+        // create composer.json file
+        $this->createComposerJson($version);
+
+        // run validate
+        $this->runValidate();
+
+        return true;
+    }
+
+    /**
+     * Create composer.json file
+     *
+     * @param string $version
+     */
+    protected function createComposerJson(string $version): void
+    {
+        // get content
+        $content = file_get_contents('composer.json');
+
+        // copy
+        file_put_contents("data/cached-composer.json", $content);
+
+        // set version
+        $data = json_decode($content, true);
+        $data['version'] = $version;
+        file_put_contents("composer.json", json_encode($data));
     }
 
     /**
@@ -302,5 +296,63 @@ class TreoUpgrade extends AbstractService
             ->getContainer()
             ->get('language')
             ->translate($key, 'treoNotifications', 'TreoNotification');
+    }
+
+    /**
+     * Get treo packages
+     *
+     * @return array
+     */
+    protected function getTreoPackages(): array
+    {
+        return $this->getContainer()->get('serviceFactory')->create('Store')->getPackages();
+    }
+
+    /**
+     * Run validate
+     */
+    protected function runValidate(): void
+    {
+        $this->getContainer()->get('serviceFactory')->create('Composer')->runValidate();
+    }
+
+    /**
+     * Run update
+     */
+    protected function runUpdate(): void
+    {
+        $this->getContainer()->get('serviceFactory')->create('Composer')->runUpdate();
+    }
+
+    /**
+     * @param string $id
+     * @param string $from
+     * @param string $to
+     */
+    protected function coreUpgrade(string $id, string $from, string $to): void
+    {
+        $upgradeManager = new UpgradeManager($this->getContainer());
+        $upgradeManager->install(['id' => $id]);
+
+        // call migration
+        $this
+            ->getContainer()
+            ->get('migration')
+            ->run(Migration::CORE_NAME, $from, $to);
+
+        // Update composer minimum-stability
+        $this->minimumStability();
+    }
+
+    /**
+     * Update composer minimum-stability
+     */
+    protected function minimumStability(): void
+    {
+        // prepare data
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
+
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }

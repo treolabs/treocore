@@ -63,7 +63,8 @@ We are already working on the following connectors for export channels:
 
 ### Requirements
 
-* PHP 7.1 (with json, openssl, pdo_mysql, zip, gd, mbstring, imap, curl, xml extensions)
+* Linux
+* PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
 ### Documentation
@@ -73,22 +74,28 @@ We are already working on the following connectors for export channels:
 - Documentation for developers is available [here](docs/).
 
 ### Installation
-1. Install [composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) if it needs
-2. Create your TreoPIM project by running:    
-    ```
-    composer create-project treo/treopim my-treopim-project --no-dev
-    ```
-3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
-4. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
-
-### Alternative installation
-1. Download [zip](https://github.com/treolabs/treopim/archive/master.zip) TreoPIM project and unpack it
-2. Go to your project and update dependencies by composer:
+1. Create project:
+   - Download [zip](https://github.com/treolabs/treopim/archive/master.zip) TreoPIM project and unpack it. Then update dependencies:
+       ```
+       /usr/bin/php composer.phar install --no-dev
+       ```
+     OR   
+   - Create your TreoPIM project by running [composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) command:    
+      ```
+      composer create-project treo/treopim my-treopim-project --no-dev
+      ```
+2. Make cron handler file executable:
    ```
-   /usr/bin/php composer.phar install --no-dev
+   chmod +x bin/cron.sh 
    ```
-3. Install TreoPIM by following the TreoPIM installation wizard in web interface.
-4. Configure crontab. Go to http://YOUR_PROJECT/#ScheduledJob for getting instructions
+3. Configure crontab:
+   ```
+   * * * * * cd /var/www/my-treopim-project; ./bin/cron.sh process-treopim /usr/bin/php 
+   ```
+   - **/var/www/my-treopim-project** - path to project root
+   - **process-treopim** - an unique id of process. You should use different process ID if you have few TreoPIM project in one server
+   - **/usr/bin/php** - PHP7.1
+4. Install TreoPIM by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
 ### License
 

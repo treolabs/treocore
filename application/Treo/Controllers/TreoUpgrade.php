@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Controllers;
 
-use Espo\Core\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
 use Treo\Services\TreoUpgrade as Service;
@@ -44,9 +43,9 @@ use Treo\Services\TreoUpgrade as Service;
 /**
  * Controller TreoUpgrade
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class TreoUpgrade extends Base
+class TreoUpgrade extends \Espo\Core\Controllers\Base
 {
 
     /**
@@ -55,7 +54,13 @@ class TreoUpgrade extends Base
      * @ApiRoute(name="/TreoUpgrade/versions")
      * @ApiReturn(sample="[{'version': '1.0.0', 'link': '#'}]")
      *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
      * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
      */
     public function actionVersions($params, $data, Request $request): array
     {
@@ -73,10 +78,18 @@ class TreoUpgrade extends Base
     /**
      * @ApiDescription(description="Run upgrade TreoCore")
      * @ApiMethod(type="POST")
-     * @ApiRoute(name="/TreoUpgrade/upgrade")
+     * @ApiRoute(name="/TreoUpgrade/action/Upgrade")
+     * @ApiBody(sample="{'version': '1.0.0'}")
      * @ApiReturn(sample="'bool'")
      *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
      * @return bool
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
      */
     public function actionUpgrade($params, $data, Request $request): bool
     {
@@ -84,13 +97,44 @@ class TreoUpgrade extends Base
             throw new Exceptions\Forbidden();
         }
 
-        if (!$request->isPost()) {
+        if (!$request->isPost() || empty($data->version)) {
             throw new Exceptions\BadRequest();
         }
 
         return $this
             ->getUpgradeService()
-            ->createUpgradeJob((!empty($data->version)) ? $data->version : null);
+            ->runUpgrade((string)$data->version);
+    }
+
+    /**
+     * @ApiDescription(description="Get update log")
+     * @ApiMethod(type="POST")
+     * @ApiRoute(name="/TreoUpgrade/action/createUpdateLog")
+     * @ApiBody(sample="{'version': '1.0.0'}")
+     * @ApiReturn(sample="'true'")
+     *
+     * @param         $params
+     * @param         $data
+     * @param Request $request
+     *
+     * @return bool
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Error
+     * @throws Exceptions\Forbidden
+     */
+    public function actionCreateUpdateLog($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost() || empty($data->version)) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this
+            ->getUpgradeService()
+            ->createUpdateLog((string)$data->version);
     }
 
     /**

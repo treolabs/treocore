@@ -35,12 +35,21 @@ Espo.define('treo-core:views/modals/select-records', ['class-replace!treo-core:v
 
     return Dep.extend({
 
-        layoutName: "listSmall",
+        boolFilterData: [],
 
         disableSavePreset: false,
 
+        layoutName: "listSmall",
+
+        listLayout: null,
+
+        searchView: 'views/record/search',
+
         setup() {
+            this.boolFilterData = this.options.boolFilterData || this.boolFilterData;
+            this.disableSavePreset = this.options.disableSavePreset || this.disableSavePreset;
             this.layoutName = this.options.layoutName || this.layoutName;
+            this.listLayout = this.options.listLayout || this.listLayout;
             this.rowActionsDisabled = this.options.rowActionsDisabled || this.rowActionsDisabled;
 
             Dep.prototype.setup.call(this);
@@ -66,15 +75,34 @@ Espo.define('treo-core:views/modals/select-records', ['class-replace!treo-core:v
                 searchManager.setPrimary(primaryFilterName);
             }
 
-            this.collection.where = searchManager.getWhere();
+            let where = searchManager.getWhere();
+            where.forEach(item => {
+                if (item.type === 'bool') {
+                    let data = {};
+                    item.value.forEach(elem => {
+                        if (elem in this.boolFilterData) {
+                            data[elem] = this.boolFilterData[elem];
+                        }
+                    });
+                    item.data = data;
+                }
+            });
+            this.collection.where = where;
+
 
             if (this.searchPanel) {
-                this.createView('search', 'views/record/search', {
+                let hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
+                let searchView = this.getMetadata().get(`clientDefs.${this.scope}.recordViews.search`) || this.searchView;
+
+                this.createView('search', searchView, {
                     collection: this.collection,
                     el: this.containerSelector + ' .search-container',
                     searchManager: searchManager,
                     disableSavePreset: this.disableSavePreset,
+                    hiddenBoolFilterList: hiddenBoolFilterList,
+                    boolFilterData: this.boolFilterData
                 }, function (view) {
+                    view.render();
                     this.listenTo(view, 'reset', function () {
                         this.collection.sortBy = this.defaultSortBy;
                         this.collection.asc = this.defaultAsc;

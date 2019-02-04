@@ -35,72 +35,36 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Treo\PHPUnit\Framework\TestCase;
-
 /**
  * Class ComposerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class ComposerTest extends TestCase
+class ComposerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testIsCreateUpdateJobReturnFalse()
+    /**
+     * Test for runValidate method
+     */
+    public function testRunValidateMethod()
     {
-        $service = $this->createMockService(Composer::class, ['insertJob', 'isSystemUpdating']);
-        $service
-            ->expects($this->any())
-            ->method('insertJob')
-            ->willReturn(null);
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
-
         // test
-        $this->assertFalse($service->createUpdateJob());
+        $this->assertTrue($this->createPartialMock(Composer::class, ['filePutContents'])->runValidate());
     }
 
-    public function testIsCreateUpdateJobReturnTrue()
+    /**
+     * Test for runUpdate method
+     */
+    public function testRunUpdateMethod()
     {
-        $service = $this->createMockService(Composer::class, ['insertJob', 'isSystemUpdating']);
-        $service
-            ->expects($this->any())
-            ->method('insertJob')
-            ->willReturn(null);
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
+        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'setComposerUser']);
 
         // test
-        $this->assertTrue($service->createUpdateJob());
-    }
-
-    public function testIsRunUpdateJobReturnTrue()
-    {
-        $service = $this->createMockService(Composer::class, ['runUpdate']);
-        $service
-            ->expects($this->any())
-            ->method('runUpdate')
-            ->willReturn([]);
-
-        // tests
-        $this->assertTrue($service->runUpdateJob(['createdById' => '1']));
-        $this->assertTrue($service->runUpdateJob(['createdById' => '2']));
-        $this->assertTrue($service->runUpdateJob(['createdById' => '2', 'qwe' => 123]));
-    }
-
-    public function testIsRunUpdateMethodExists()
-    {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'runUpdate'));
+        $this->assertTrue($service->runUpdate());
     }
 
     public function testIsCancelChangesMethodExists()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createPartialMock(Composer::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'cancelChanges'));
@@ -108,7 +72,7 @@ class ComposerTest extends TestCase
 
     public function testIsUpdateMethodExists()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createPartialMock(Composer::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'update'));
@@ -116,7 +80,7 @@ class ComposerTest extends TestCase
 
     public function testIsDeleteMethodExists()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createPartialMock(Composer::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'delete'));
@@ -124,7 +88,7 @@ class ComposerTest extends TestCase
 
     public function testIsGetModuleComposerJsonMethodReturnArray()
     {
-        $service = $this->createMockService(Composer::class, ['setModuleComposerJson']);
+        $service = $this->createPartialMock(Composer::class, ['setModuleComposerJson']);
         $service
             ->expects($this->any())
             ->method('setModuleComposerJson')
@@ -141,7 +105,7 @@ class ComposerTest extends TestCase
 
     public function testIsGetModuleStableComposerJsonReturnArray()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createPartialMock(Composer::class, []);
 
         // test
         $this->assertInternalType('array', $service->getModuleStableComposerJson());
@@ -149,91 +113,27 @@ class ComposerTest extends TestCase
 
     public function testIsSetModuleComposerJsonMethodExists()
     {
-        $service = $this->createMockService(Composer::class);
+        $service = $this->createPartialMock(Composer::class, []);
 
         // test
         $this->assertTrue(method_exists($service, 'setModuleComposerJson'));
     }
 
-    public function testIsSaveComposerJsonMethodExists()
+    /**
+     * Test for getComposerDiff method
+     */
+    public function testGetComposerDiffMethod()
     {
-        $service = $this->createMockService(Composer::class);
+        // prepare expected
+        $expected = ['install' => [], 'update' => [], 'delete' => []];
 
-        // test
-        $this->assertTrue(method_exists($service, 'saveComposerJson'));
-    }
-
-    public function testIsStoreComposerLockMethodExists()
-    {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'storeComposerLock'));
-    }
-
-    public function testIsGetComposerLockDiffMethodReturnArray()
-    {
-        $service = $this->createMockService(Composer::class);
-
-        $result = $service->getComposerLockDiff();
-
-        // test 1
-        $this->assertInternalType('array', $result);
-
-        // test 2
-        $this->assertTrue(isset($result['install']));
-
-        // test 3
-        $this->assertTrue(isset($result['update']));
-
-        // test 4
-        $this->assertTrue(isset($result['delete']));
-    }
-
-    public function testIsGetComposerDiffMethodReturnArray()
-    {
-        $service = $this->createMockService(Composer::class, ['getModuleId', 'getModule']);
+        $service = $this->createPartialMock(Composer::class, ['compareComposerSchemas']);
         $service
             ->expects($this->any())
-            ->method('getModuleId')
-            ->willReturn('moduleId');
-        $service
-            ->expects($this->any())
-            ->method('getModule')
-            ->willReturn(['version' => 'some-version']);
-
-        $result = $service->getComposerDiff();
-
-        // test 1
-        $this->assertInternalType('array', $result);
-
-        // test 2
-        $this->assertTrue(isset($result['install']));
-
-        // test 3
-        $this->assertTrue(isset($result['update']));
-
-        // test 4
-        $this->assertTrue(isset($result['delete']));
-    }
-
-    public function testIsUpdateMinimumStabilityMethodReturnTrue()
-    {
-        $service = $this->createMockService(Composer::class, ['filePutContents']);
-        $service
-            ->expects($this->any())
-            ->method('filePutContents')
-            ->willReturn(1);
+            ->method('compareComposerSchemas')
+            ->willReturn($expected);
 
         // test
-        $this->assertTrue($service->updateMinimumStability());
-    }
-
-    public function testIsSystemUpdatingMethodExists()
-    {
-        $service = $this->createMockService(Composer::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'isSystemUpdating'));
+        $this->assertEquals($expected, $service->getComposerDiff());
     }
 }

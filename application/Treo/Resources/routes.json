@@ -8,14 +8,6 @@
     }
   },
   {
-    "route": "/TreoUpgrade/upgrade",
-    "method": "post",
-    "params": {
-      "controller": "TreoUpgrade",
-      "action": "upgrade"
-    }
-  },
-  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {
@@ -61,22 +53,6 @@
     "params": {
       "controller": "ModuleManager",
       "action": "logs"
-    }
-  },
-  {
-    "route": "/Composer/gitAuth",
-    "method": "get",
-    "params": {
-      "controller": "Composer",
-      "action": "getGitAuthData"
-    }
-  },
-  {
-    "route": "/Composer/gitAuth",
-    "method": "put",
-    "params": {
-      "controller": "Composer",
-      "action": "setGitAuthData"
     }
   },
   {

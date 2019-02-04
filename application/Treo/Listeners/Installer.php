@@ -35,12 +35,10 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
-use Treo\Core\Utils\Composer;
-
 /**
  * Installer listener
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Installer extends AbstractListener
 {
@@ -52,24 +50,25 @@ class Installer extends AbstractListener
      */
     public function afterInstallSystem(array $data): array
     {
-        // generate gitlab user
-        $this->generateGitlabUser();
+        // generate Treo ID
+        $this->generateTreoId();
 
         return $data;
     }
 
     /**
-     * Generate gitlab user
+     * Generate Treo ID
      */
-    protected function generateGitlabUser(): void
+    protected function generateTreoId(): void
     {
-        // create composer
-        $composer = new Composer();
+        // generate id
+        $treoId = \Treo\Services\Installer::generateTreoId();
 
-        // generate auth data
-        $authData = $composer->generateAuthData();
+        //set to config
+        $this->getConfig()->set('treoId', $treoId);
+        $this->getConfig()->save();
 
-        // set auth data
-        $composer->setAuthData($authData['username'], $authData['password']);
+        // create repositories file
+        \Treo\Services\Composer::putRepositoryFile($treoId);
     }
 }

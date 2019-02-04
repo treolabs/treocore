@@ -115,16 +115,14 @@ class Application extends \Espo\Core\Portal\Application
      */
     public function runClient()
     {
-        $this->getContainer()->get('clientManager')->display(
-            null,
-            'html/treo-portal.html',
-            [
-                'portalId'        => $this->getPortal()->id,
-                'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-                'year'            => date('Y'),
-                'version'         => $this->getContainer()->get('config')->get('version')
-            ]
-        );
+        // prepare vars
+        $vars = [
+            'portalId'        => $this->getPortal()->id,
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
+        ];
+
+        $this->getContainer()->get('clientManager')->display(null, 'html/portal.html', $vars);
     }
 
     /**

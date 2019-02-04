@@ -10,4 +10,4 @@ then
 fi
 
 # start PHPUnit
-vendor/bin/phpunit --bootstrap bootstrap.php tests
+vendor/bin/phpunit --bootstrap bootstrap.php tests/phpunit/application/Treo

@@ -4,7 +4,11 @@
     "Module Manager": "Modules Manager",
     "Modules": "Modules",
     "Git User": "Git User",
-    "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)"
+    "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)",
+    "log": "log",
+    "Upgrade": "Upgrade",
+    "Validate": "Validate",
+    "progressLog": "Progress Log"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
@@ -20,9 +24,12 @@
     "newVersionIsAvailable": "New Treo System version {latestVersion} is available.",
     "systemAlreadyUpgraded": "TreoCore already upgraded.",
     "upgradeStarted": "Upgrade has been started",
-    "upgradeInProgress": "Upgrade is already in progress",
-    "upgradeFailed": "Upgrading failed. Please, try again",
-    "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details."
+    "upgradeFailed": "Upgrade failed",
+    "upgradeSuccessful": "Upgrade successfully finished",
+    "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details.",
+    "validationStarted": "Validation has been started",
+    "validationFailed": "Validation failed",
+    "validationSuccessful": "Validation successfully finished. Press Apply to run upgrade"
   },
   "layouts": {
     "relationships": "Bottom Panels"

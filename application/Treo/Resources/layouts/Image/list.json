@@ -1,0 +1,27 @@
+[
+  {
+    "name": "name",
+    "link": true
+  },
+  {
+    "name": "imageFile"
+  },
+  {
+    "name": "isLink"
+  },
+  {
+    "name": "alt"
+  },
+  {
+    "name": "mimeType"
+  },
+  {
+    "name": "size"
+  },
+  {
+    "name": "width"
+  },
+  {
+    "name": "height"
+  }
+]

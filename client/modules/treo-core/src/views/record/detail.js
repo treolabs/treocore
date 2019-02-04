@@ -184,11 +184,11 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 if (bottom && bottom.panelList.length) {
                     let html = `` +
                         `<a class="btn btn-link collapsing-button" data-action="collapseAllPanels">` +
-                            `<span class="glyphicon glyphicon-menu-up"></span>` +
+                            `<span class="fas fa-chevron-up"></span>` +
                             `${this.getLanguage().translate('collapseAllPanels', 'labels', 'Global')}` +
                         `</a>` +
                         `<a class="btn btn-link collapsing-button" data-action="expandAllPanels">` +
-                            `<span class="glyphicon glyphicon-menu-down"></span>` +
+                            `<span class="fas fa-chevron-down"></span>` +
                             `${this.getLanguage().translate('expandAllPanels', 'labels', 'Global')}` +
                         `</a>`;
                     view.$el.find('.panel-heading:first').append(html);

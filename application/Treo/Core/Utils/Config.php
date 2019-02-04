@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Module;
 
 /**
  * Class of Config
@@ -64,7 +65,7 @@ class Config extends \Espo\Core\Utils\Config
             $this->modules = [];
 
             // create moduleConfig
-            $moduleConfig = new \Espo\Core\Utils\Module($this->getFileManager());
+            $moduleConfig = $this->getModuleUtil();
 
             $modules = $this->getFileManager()->getFileList("application/Espo/Modules/", false, '', false);
             $toSort = [];
@@ -94,6 +95,16 @@ class Config extends \Espo\Core\Utils\Config
     }
 
     /**
+     * Get module util
+     *
+     * @return Module
+     */
+    protected function getModuleUtil()
+    {
+        return new Module($this->getFileManager());
+    }
+
+    /**
      * Load config
      *
      * @param  boolean $reload
@@ -104,11 +115,6 @@ class Config extends \Espo\Core\Utils\Config
     {
         // load config
         $config = parent::loadConfig($reload);
-
-        // set treo ID
-        if (!isset($config['treoId'])) {
-            $config['treoId'] = $this->getTreoId();
-        }
 
         // inject modules
         $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
@@ -137,16 +143,5 @@ class Config extends \Espo\Core\Utils\Config
         }
 
         return $moduleData;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getTreoId(): string
-    {
-        // get auth data
-        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
-
-        return base64_encode($authData['username'] . '-treo-' . $authData['password']);
     }
 }

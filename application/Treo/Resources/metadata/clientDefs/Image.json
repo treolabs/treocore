@@ -1,0 +1,31 @@
+{
+  "controller": "controllers/record",
+  "boolFilterList": [
+    "onlyMy"
+  ],
+  "iconClass": "far fa-image",
+  "dynamicLogic": {
+    "fields": {
+      "imageLink": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "isLink"
+            }
+          ]
+        }
+      },
+      "imageFile": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isFalse",
+              "attribute": "isLink"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

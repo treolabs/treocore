@@ -35,16 +35,15 @@ declare(strict_types=1);
 
 namespace Treo\Core\Acl;
 
-use Espo\Core\Acl\Base as EspoBase;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 
 /**
  * Class Base
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class Base extends EspoBase
+class Base extends \Espo\Core\Acl\Base
 {
     /**
      * Init
