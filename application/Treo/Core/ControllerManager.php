@@ -54,17 +54,17 @@ class ControllerManager
     /**
      * Precess
      *
-     * @param string  $controllerName
-     * @param string  $actionName
-     * @param array   $params
-     * @param mixed   $data
-     * @param Request $request
-     * @param object  $response
+     * @param string      $controllerName
+     * @param string      $actionName
+     * @param array       $params
+     * @param mixed       $data
+     * @param Request     $request
+     * @param object|null $response
      *
      * @return string
      * @throws NotFound
      */
-    public function process($controllerName, $actionName, $params, $data, $request, $response)
+    public function process($controllerName, $actionName, $params, $data, $request, $response = null)
     {
         // normilizeClassName
         $className = Util::normilizeClassName($controllerName);
