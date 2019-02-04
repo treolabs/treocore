@@ -64,16 +64,12 @@ class ModuleManagerTest extends TestCase
     {
         $service = $this->createMockService(
             ModuleManager::class,
-            ['isSystemUpdating', 'getPackagistPackage', 'getMetadata', 'getComposerService']
+            ['getPackagistPackage', 'getMetadata', 'getComposerService']
         );
 
         $metadata = $this->createMockService(Metadata::class, ['getModule']);
         $composer = $this->createMockService(Composer::class, ['update']);
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
         $service
             ->expects($this->any())
             ->method('getPackagistPackage')
@@ -108,22 +104,6 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is installModule return false
-     */
-    public function testIsInstallModuleReturnFalse()
-    {
-        $service = $this->createMockService(ModuleManager::class, ['isSystemUpdating']);
-
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
-
-        // test
-        $this->assertFalse($service->installModule('id', '1.0.0'));
-    }
-
-    /**
      * Test is installModule throw exception if empty package
      */
     public function testIsInstallModuleThrowExceptionEmptyPackage()
@@ -131,13 +111,8 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getPackagistPackage', 'translateError']
+                ['getPackagistPackage', 'translateError']
             );
-
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
 
             $service
                 ->expects($this->any())
@@ -164,14 +139,10 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getPackagistPackage', 'translateError', 'getMetadata']
+                ['getPackagistPackage', 'translateError', 'getMetadata']
             );
             $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('translateError')
@@ -205,14 +176,10 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getPackagistPackage', 'translateError', 'getMetadata', 'isVersionValid']
+                ['getPackagistPackage', 'translateError', 'getMetadata', 'isVersionValid']
             );
             $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('translateError')
@@ -249,15 +216,11 @@ class ModuleManagerTest extends TestCase
     {
         $service = $this->createMockService(
             ModuleManager::class,
-            ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'getComposerService']
+            ['getMetadata', 'getPackagistPackage', 'getComposerService']
         );
         $metadata = $this->createMockService(Metadata::class, ['getModule']);
         $composer = $this->createMockService(Composer::class, ['update']);
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
         $service
             ->expects($this->any())
             ->method('getMetadata')
@@ -286,22 +249,6 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is updateModule return false
-     */
-    public function testIsUpdateModuleReturnFalse()
-    {
-        $service = $this->createMockService(ModuleManager::class, ['isSystemUpdating']);
-
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
-
-        // test
-        $this->assertFalse($service->updateModule('id', '1.0.0'));
-    }
-
-    /**
      * Test is updateModule throw exception if don't such module
      */
     public function testIsUpdateModuleThrowExceptionNoFindModule()
@@ -309,14 +256,10 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+                ['getMetadata', 'getPackagistPackage', 'translateError']
             );
             $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('getMetadata')
@@ -354,15 +297,11 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+                ['getMetadata', 'getPackagistPackage', 'translateError']
             );
             $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
-            $service
+                $service
                 ->expects($this->any())
                 ->method('getMetadata')
                 ->willReturn($metadata);
@@ -399,14 +338,10 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'getMetadata', 'getPackagistPackage', 'translateError']
+                ['getMetadata', 'getPackagistPackage', 'translateError']
             );
             $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('getMetadata')
@@ -443,15 +378,11 @@ class ModuleManagerTest extends TestCase
     {
         $service = $this->createMockService(
             ModuleManager::class,
-            ['isSystemUpdating', 'isModuleSystem', 'getMetadata', 'getComposerService']
+            ['isModuleSystem', 'getMetadata', 'getComposerService']
         );
         $metadata = $this->createMockService(Metadata::class, ['getModule']);
         $composer = $this->createMockService(Composer::class, ['delete']);
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
         $service
             ->expects($this->any())
             ->method('isModuleSystem')
@@ -480,25 +411,6 @@ class ModuleManagerTest extends TestCase
     }
 
     /**
-     * Test is deleteModule return false
-     */
-    public function testIsDeleteModuleReturnFalse()
-    {
-        $service = $this->createMockService(
-            ModuleManager::class,
-            ['isSystemUpdating']
-        );
-
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
-
-        // test
-        $this->assertFalse($service->deleteModule('id'));
-    }
-
-    /**
      * Test is deleteModule throw exception if system module
      */
     public function testIsDeleteModuleThrowExceptionIsSystemModule()
@@ -506,13 +418,9 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'isModuleSystem', 'translateError']
+                ['isModuleSystem', 'translateError']
             );
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('isModuleSystem')
@@ -534,14 +442,9 @@ class ModuleManagerTest extends TestCase
         try {
             $service = $this->createMockService(
                 ModuleManager::class,
-                ['isSystemUpdating', 'isModuleSystem', 'translateError', 'getMetadata']
+                ['isModuleSystem', 'translateError', 'getMetadata']
             );
-            $metadata = $this->createMockService(Metadata::class, ['getModule']);
 
-            $service
-                ->expects($this->any())
-                ->method('isSystemUpdating')
-                ->willReturn(false);
             $service
                 ->expects($this->any())
                 ->method('isModuleSystem')
@@ -566,17 +469,13 @@ class ModuleManagerTest extends TestCase
     {
         $service = $this->createMockService(
             ModuleManager::class,
-            ['isSystemUpdating', 'getPackagistPackage', 'getComposerService']
+            ['getPackagistPackage', 'getComposerService']
         );
         $composer = $this->createMockService(
             Composer::class,
             ['getModuleComposerJson', 'getModuleStableComposerJson', 'setModuleComposerJson']
         );
 
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
         $service
             ->expects($this->any())
             ->method('getPackagistPackage')
@@ -620,22 +519,7 @@ class ModuleManagerTest extends TestCase
      */
     public function testIsCancelReturnFalse()
     {
-        $service = $this->createMockService(ModuleManager::class, ['isSystemUpdating']);
-
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(true);
-
-        // test 1
-        $this->assertFalse($service->cancel('id'));
-
-        $service = $this->createMockService(ModuleManager::class, ['isSystemUpdating', 'getPackagistPackage']);
-
-        $service
-            ->expects($this->any())
-            ->method('isSystemUpdating')
-            ->willReturn(false);
+        $service = $this->createMockService(ModuleManager::class, ['getPackagistPackage']);
 
         $service
             ->expects($this->any())
@@ -646,7 +530,7 @@ class ModuleManagerTest extends TestCase
                 ]
             );
 
-        // test 2
+        // test 1
         $this->assertFalse($service->cancel('id'));
     }
 

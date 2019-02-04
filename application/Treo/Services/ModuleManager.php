@@ -160,11 +160,6 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function installModule(string $id, string $version = null): bool
     {
-        // is changing blocked?
-        if ($this->isSystemUpdating()) {
-            return false;
-        }
-
         // prepare params
         $packagistPackage = $this->getPackagistPackage($id);
 
@@ -203,11 +198,6 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function updateModule(string $id, string $version): bool
     {
-        // is changing blocked?
-        if ($this->isSystemUpdating()) {
-            return false;
-        }
-
         // prepare params
         $package = $this->getMetadata()->getModule($id);
 
@@ -240,11 +230,6 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function deleteModule(string $id): bool
     {
-        // is changing blocked?
-        if ($this->isSystemUpdating()) {
-            return false;
-        }
-
         // prepare modules
         if ($this->isModuleSystem($id)) {
             throw new Exceptions\Error($this->translateError('isSystem'));
@@ -276,11 +261,6 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function cancel(string $id): bool
     {
-        // is changing blocked?
-        if ($this->isSystemUpdating()) {
-            return false;
-        }
-
         // prepare result
         $result = false;
 
@@ -716,14 +696,6 @@ class ModuleManager extends \Espo\Core\Services\Base
         }
 
         return $result;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isSystemUpdating(): bool
-    {
-        return $this->getComposerService()->isSystemUpdating();
     }
 
     /**
