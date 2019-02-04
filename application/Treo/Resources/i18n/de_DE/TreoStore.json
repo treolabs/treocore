@@ -8,5 +8,8 @@
       "buyable": "buyable",
       "available": "verfügbar"
     }
+  },
+  "labels": {
+    "installModule": "Das Modul installieren"
   }
 }

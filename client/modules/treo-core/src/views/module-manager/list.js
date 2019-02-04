@@ -130,23 +130,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 collection.maxSize = 20;
                 collection.data.isInstalled = false;
 
-                this.getHelper().layoutManager.get('TreoStore', 'list', layout => {
-                    let list = [];
-                    layout.forEach(item => {
-                        if (item.name) {
-                            let field = item.name;
-                            let fieldType = this.getMetadata().get(['entityDefs', 'TreoStore', 'fields', field, 'type']);
-                            if (fieldType) {
-                                this.getFieldManager().getAttributeList(fieldType, field).forEach(attribute => {
-                                    list.push(attribute);
-                                });
-                            }
-                        }
-                    });
-                    collection.data.select = list.join(',');
-                    collection.fetch();
-                });
-
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('listStore', 'views/record/list', {
                         collection: collection,
@@ -166,6 +149,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         view.render();
                     });
                 });
+                collection.fetch();
             });
         },
 
