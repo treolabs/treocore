@@ -58,10 +58,12 @@ class DataManager extends \Espo\Core\DataManager
      */
     protected function refreshStoreCache(): void
     {
-        // auth
-        (new \Treo\Core\Utils\Auth($this->getContainer()))->useNoAuth();
+        if ($this->getContainer()->get("serviceFactory")->checkExists("TreoStore")) {
+            // auth
+            (new \Treo\Core\Utils\Auth($this->getContainer()))->useNoAuth();
 
-        // refresh
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
+            // refresh
+            $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
+        }
     }
 }
