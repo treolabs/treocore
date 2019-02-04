@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 TreoLabs GmbH
+ * Copyright (C) 2017-2019 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -46,11 +46,6 @@ use Espo\Core\Utils\Util;
  */
 class TreoStore extends \Espo\Core\Templates\Services\Base
 {
-    /**
-     * @var string
-     */
-    protected $url = null;
-
     /**
      * Refresh cached data
      */
@@ -156,32 +151,13 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
      */
     protected function getRemotePackages(): string
     {
-        // get auth data
-        $authData = (new \Treo\Core\Utils\Composer())->getAuthData();
-
         // prepare params
         $params = [
             'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'username'      => $authData['username'],
+            'id'            => $this->getConfig()->get('treoId', 'common')
         ];
 
-        return file_get_contents($this->getUrl() . "packages?" . http_build_query($params));
-    }
-
-
-    /**
-     * @return string
-     */
-    protected function getUrl(): string
-    {
-        if (is_null($this->url)) {
-            // get composer.json
-            $json = file_get_contents('composer.json');
-
-            $this->url = Json::decode($json, true)['repositories'][0]['url'] . '/api/v1/';
-        }
-
-        return $this->url;
+        return file_get_contents("https://packagist.treopim.com/api/v1/packages?" . http_build_query($params));
     }
 
     /**
