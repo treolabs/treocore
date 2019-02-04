@@ -34,26 +34,33 @@
 
 declare(strict_types=1);
 
-namespace Treo\Controllers;
+namespace Treo\SelectManagers;
 
 /**
  * Class TreoStore
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class TreoStore extends \Espo\Core\Templates\Controllers\Base
+class TreoStore extends \Espo\Core\SelectManagers\Base
 {
     /**
      * @inheritdoc
      */
-    protected function fetchListParamsFromRequest(&$params, $request, $data)
+    public function getSelectParams(array $params, $withAcl = false, $checkWherePermission = false)
     {
         // parent
-        parent::fetchListParamsFromRequest($params, $request, $data);
+        $result = parent::getSelectParams($params, $withAcl, $checkWherePermission);
 
-        // set isInstalled
-        if (!is_null($request->get('isInstalled'))) {
-            $params['isInstalled'] = ($request->get('isInstalled') === 'true');
+        if (isset($params['isInstalled'])) {
+            // prepare key
+            $key = (!empty($params['isInstalled'])) ? 'id' : 'id!=';
+
+            // add whereClause
+            $result['whereClause'][] = [
+                $key => $this->getMetadata()->getModuleList()
+            ];
         }
+
+        return $result;
     }
 }
