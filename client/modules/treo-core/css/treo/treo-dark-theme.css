@@ -19209,7 +19209,7 @@ ul.dropdown-menu > li.checkbox {
     right: 20px;
     bottom: 20px;
     z-index: 100;
-    font-size: 24px;
+    font-size: 16px;
     width: 40px;
     height: 40px;
     border-radius: 100%;
@@ -19778,26 +19778,29 @@ button.category:focus {
     #header .header-right > li {
         float: right;
         list-style: none;
-        margin: 12px 6px 0;
+        margin: 0;
     }
 
     #header .header-right > li > a {
-        font-size: 18px;
         color: #fff;
         position: relative;
+        display: inline-block;
+        padding: 10px;
+        line-height: 24px;
     }
 
     #header .header-right .notifications-badge-container > .notifications-button > .number-badge {
-        top: -10px;
-        right: -5px;
+        top: 3px;
+        right: 0;
         left: auto;
     }
 
     #header .navbar-header #nav-menu-dropdown {
-        font-size: 18px;
         color: #fff;
-        margin: 11px 0 0 0;
         display: block;
+        width: auto;
+        line-height: 24px;
+        padding: 10px;
     }
 
     #header .navbar-header .menu-container .dropdown-menu {
@@ -19808,11 +19811,11 @@ button.category:focus {
     #header .navbar-header .search-toggle {
         background: transparent;
         color: #fff;
-        font-size: 18px;
+        font-size: 16px;
         border: 0;
         outline: 0;
-        padding: 0;
-        margin: 10px;
+        padding: 10px;
+        margin: 0;
     }
 
     #header .navbar img.logo {
@@ -20708,4 +20711,17 @@ td[data-name="draggableIcon"] {
 
 .bottom .panel .group .list-container {
     border-bottom: 1px solid #ececec;
+}
+
+.field > .list-group > .list-group-item > .delimiter-group.list-group {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.field > .list-group > .list-group-item > .delimiter-group.list-group > .list-group-item {
+    margin: 0;
+}
+
+.field > .list-group > .list-group-item > .delimiter-group.list-group > .list-group-item:last-child {
+    border-bottom-width: 1px;
 }
