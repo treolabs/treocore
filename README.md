@@ -63,7 +63,7 @@ We are already working on the following connectors for export channels:
 
 ### Requirements
 
-* Linux
+* Linux (any distribution)
 * PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
@@ -86,10 +86,10 @@ To create your new TreoPIM application, first make sure you're using PHP 7.1 and
    ```
 3. Configure crontab:
    ```
-   * * * * * cd /var/www/my-treopim-project; ./bin/cron.sh process-treopim /usr/bin/php 
+   * * * * * cd /var/www/my-treopim-project; ./bin/cron.sh process-treopim-1 /usr/bin/php 
    ```
    - **/var/www/my-treopim-project** - path to project root
-   - **process-treopim** - an unique id of process. You should use different process ID if you have few TreoPIM project in one server
+   - **process-treopim-1** - an unique id of process. You should use different process id if you have few TreoPIM project in one server
    - **/usr/bin/php** - PHP7.1
 4. Install TreoPIM by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
