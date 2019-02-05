@@ -160,16 +160,13 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     public function installModule(string $id, string $version = null): bool
     {
-        // prepare params
-        $packagistPackage = $this->getPackagistPackage($id);
-
         // prepare version
         if (empty($version)) {
             $version = '*';
         }
 
         // validation
-        if (empty($packagistPackage)) {
+        if (empty($packagistPackage = $this->getPackagistPackage($id))) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (!empty($this->getMetadata()->getModule($id))) {
