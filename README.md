@@ -80,7 +80,7 @@ We are already working on the following connectors for export channels:
    ```
 2. Create project:
    ```
-   /usr/bin/php composer.phar create-project treo/treopim my-treopim-project --no-dev
+   /usr/bin/php composer.phar create-project treo/treopim my-treopim-project
    ```
 3. Make cron handler file executable:
    ```
