@@ -53,8 +53,8 @@ class Installer extends AbstractListener
         // generate Treo ID
         $this->generateTreoId();
 
-        // clear cache
-        $this->clearCache();
+        // refresh
+        $this->refreshStore();
 
         return $data;
     }
@@ -76,10 +76,10 @@ class Installer extends AbstractListener
     }
 
     /**
-     * Clear cache
+     * Refresh TreoStore
      */
-    protected function clearCache(): void
+    protected function refreshStore(): void
     {
-        $this->getContainer()->get('dataManager')->clearCache();
+        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
     }
 }

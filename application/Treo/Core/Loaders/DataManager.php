@@ -35,23 +35,18 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\DataManager as Instance;
-
 /**
  * DataManager loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class DataManager extends Base
 {
-
     /**
-     * Load DataManager
-     *
-     * @return Instance
+     * @inheritdoc
      */
     public function load()
     {
-        return new Instance($this->getContainer());
+        return new \Espo\Core\DataManager($this->getContainer());
     }
 }

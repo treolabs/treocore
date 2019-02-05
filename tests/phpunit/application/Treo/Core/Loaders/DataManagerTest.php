@@ -36,7 +36,6 @@ namespace Treo\Core\Loaders;
 
 use PHPUnit\Framework\TestCase;
 use Treo\Core\Container;
-use Treo\Core\DataManager as Instance;
 
 /**
  * Class DataManagerTest
@@ -59,6 +58,6 @@ class DataManagerTest extends TestCase
             ->willReturn($container);
 
         // test
-        $this->assertInstanceOf(Instance::class, $mock->load());
+        $this->assertInstanceOf(\Espo\Core\DataManager::class, $mock->load());
     }
 }
