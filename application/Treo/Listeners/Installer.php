@@ -53,6 +53,9 @@ class Installer extends AbstractListener
         // generate Treo ID
         $this->generateTreoId();
 
+        // clear cache
+        $this->clearCache();
+
         return $data;
     }
 
@@ -70,5 +73,13 @@ class Installer extends AbstractListener
 
         // create repositories file
         \Treo\Services\Composer::putRepositoryFile($treoId);
+    }
+
+    /**
+     * Clear cache
+     */
+    protected function clearCache(): void
+    {
+        $this->getContainer()->get('dataManager')->clearCache();
     }
 }
