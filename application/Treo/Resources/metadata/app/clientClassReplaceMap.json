@@ -86,6 +86,9 @@
   "views/admin/layouts/relationships": [
     "treo-core"
   ],
+  "views/fields/array": [
+    "treo-core"
+  ],
   "views/fields/base": [
     "treo-core"
   ],
