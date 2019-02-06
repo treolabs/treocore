@@ -1,8 +1,8 @@
 ## Server Configurations
-TreoPIM can be installed only on Unix-based Systems with configured Apache, Nginx, or IIS server.
+TreoPIM can be installed only on **Unix-based** Systems with configured Apache, Nginx, or IIS server.
 
 #### PHP Requirements
-Requires PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
+Requires **PHP 7.1** (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 
 php.ini settings:
 ```
