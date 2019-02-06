@@ -61,17 +61,19 @@ We are already working on the following connectors for export channels:
 |      ![ystem_oxi](docs/_assets/system_oxid.png)      | OXID eShop | Connector is currently in development |
 |  ![ystem_shopwar](docs/_assets/system_shopware.png)  | Shopware   | Connector is currently in development |
 
-### Requirements
-
-* Linux (any distribution)
-* PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
-* MySQL 5.5.3 or above
-
 ### Documentation
 
 - Documentation for users is available [here](docs/).
-- Documentation for administrators is available [here](docs/).
+- Documentation for administrators is available [here](docs/en/administration/).
 - Documentation for developers is available [here](docs/).
+
+### Requirements
+
+* Unix-based system
+* PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
+* MySQL 5.5.3 or above
+
+See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
 
 ### Installation
 To create your new TreoPIM application, first make sure you're using PHP 7.1 and have [Composer](https://getcomposer.org/) installed. 
