@@ -73,6 +73,8 @@ We are already working on the following connectors for export channels:
 * PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
+See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
+
 ### Installation
 To create your new TreoPIM application, first make sure you're using PHP 7.1 and have [Composer](https://getcomposer.org/) installed. 
 
