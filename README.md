@@ -64,7 +64,7 @@ We are already working on the following connectors for export channels:
 ### Documentation
 
 - Documentation for users is available [here](docs/).
-- Documentation for administrators is available [here](docs/).
+- Documentation for administrators is available [here](docs/en/administration/).
 - Documentation for developers is available [here](docs/).
 
 ### Requirements
