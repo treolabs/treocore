@@ -30,7 +30,7 @@ chmod 775 application/Espo/Modules client/modules;
 ```
 All files should be owned and group-owned by the webserver process. It can be “www-data”, “apache”, “www”, etc.
 
-To set the owner and group-owner got to project root and execute these command in the terminal:
+To set the owner and group-owner go to project root and execute these command in the terminal:
 ```
 chown -R <OWNER>:<GROUP-OWNER> .;
 ```
