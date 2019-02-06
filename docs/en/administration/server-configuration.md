@@ -35,6 +35,23 @@ To set the owner and group-owner got to project root and execute these command i
 chown -R <OWNER>:<GROUP-OWNER> .;
 ```
 
+#### Configure crontab
+1. Make cron handler file executable:
+   ```
+   chmod +x bin/cron.sh 
+   ```  
+2. Open crontab:
+   ```
+   crontab -e
+   ```   
+3. Configure crontab:
+   ```
+   * * * * * cd /var/www/my-treopim-project; ./bin/cron.sh process-treopim-1 /usr/bin/php 
+   ```
+   - **/var/www/my-treopim-project** - path to project root
+   - **process-treopim-1** - an unique id of process. You should use different process id if you have few TreoPIM project in one server
+   - **/usr/bin/php** - PHP7.1
+
 #### Configuration instructions based on your server
 * [Apache server configuration](apache-server-configuration.md)
 * [Nginx server configuration](nginx-server-configuration.md)
