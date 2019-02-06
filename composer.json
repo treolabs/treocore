@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "7.1.*",
+        "php": ">=7.1.0",
         "ext-pdo_mysql": "*",
         "ext-openssl": "*",
         "ext-json": "*",

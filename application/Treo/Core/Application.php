@@ -59,8 +59,8 @@ class Application extends \Espo\Core\Application
         $phpVersion = $versionData[0] . "." . $versionData[1];
 
         // validate PHP version
-        if (!version_compare($phpVersion, $validPhpVersion, '==')) {
-            echo "Invalid PHP version. PHP {$validPhpVersion} is required!";
+        if (version_compare($phpVersion, $validPhpVersion, '<')) {
+            echo "Invalid PHP version. PHP 7.1 or above is required!";
             die();
         }
     }

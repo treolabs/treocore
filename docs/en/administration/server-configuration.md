@@ -2,7 +2,7 @@
 TreoPIM can be installed only on **Unix-based** Systems with configured Apache, Nginx, or IIS server.
 
 #### PHP Requirements
-Requires **PHP 7.1** (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
+Requires **PHP 7.1 or above** (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 
 php.ini settings:
 ```
@@ -50,7 +50,7 @@ chown -R <OWNER>:<GROUP-OWNER> .;
    ```
    - **/var/www/my-treopim-project** - path to project root
    - **process-treopim-1** - an unique id of process. You should use different process id if you have few TreoPIM project in one server
-   - **/usr/bin/php** - PHP7.1
+   - **/usr/bin/php** - PHP7.1 or above
 
 #### Configuration instructions based on your server
 * [Apache server configuration](apache-server-configuration.md)

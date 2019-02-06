@@ -70,13 +70,13 @@ We are already working on the following connectors for export channels:
 ### Requirements
 
 * Unix-based system
-* PHP 7.1 (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
+* PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
 See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
 
 ### Installation
-To create your new TreoPIM application, first make sure you're using PHP 7.1 and have [Composer](https://getcomposer.org/) installed. 
+To create your new TreoPIM application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed. 
 
 1. Create your new project by running:
    ```
@@ -92,7 +92,7 @@ To create your new TreoPIM application, first make sure you're using PHP 7.1 and
    ```
    - **/var/www/my-treopim-project** - path to project root
    - **process-treopim-1** - an unique id of process. You should use different process id if you have few TreoPIM project in one server
-   - **/usr/bin/php** - PHP7.1
+   - **/usr/bin/php** - PHP7.1 or above
 4. Install TreoPIM by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
 ### License
