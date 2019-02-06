@@ -19,7 +19,7 @@ Supports MySQL version 5.5.3 or greater. These are no special peculiarities.
 #### Required Permissions
 The files and directories should have the following permissions:
 * ``/data``, ``/custom``, ``/client/custom`` – should be writable all files, directories and subdirectories (664 for files, 775 for directories, including all subdirectories and files);
-* ``/application/Espo/Modules``, ``/client/modules`` – should be writable the current directory (775 for the current directory, 644 for files, 755 for directories and subdirectories);
+* ``/application``, ``/client`` – should be writable the current directory (775 for the current directory, 644 for files, 755 for directories and subdirectories);
 * All other files and directories should be readable (644 for files, 755 for directories).
 
 To set the permissions go to project root and execute these commands in the terminal:
