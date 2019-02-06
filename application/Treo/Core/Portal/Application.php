@@ -117,9 +117,7 @@ class Application extends \Espo\Core\Portal\Application
     {
         // prepare vars
         $vars = [
-            'portalId'        => $this->getPortal()->id,
-            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-            'year'            => date('Y')
+            'portalId'        => $this->getPortal()->id
         ];
 
         $this->getContainer()->get('clientManager')->display(null, 'html/portal.html', $vars);

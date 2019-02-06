@@ -32,48 +32,54 @@
  * and "TreoPIM" word.
  */
 
-namespace Treo\Core\Loaders;
+declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\ClientManager as Instance;
+namespace Treo\Core\Utils;
+
 use Espo\Core\Utils\ThemeManager;
 
 /**
- * Class ClientManagerTest
+ * Class ClientManager
  *
  * @author r.zablodskiy@treolabs.com
  */
-class ClientManagerTest extends TestCase
+class ClientManager extends \Espo\Core\Utils\ClientManager
 {
     /**
-     * Test load method
+     * @var Metadata
      */
-    public function testLoadMethod()
+    protected $metadata;
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct(Config $config, ThemeManager $themeManager, Metadata $metadata)
     {
-        $mock = $this->createPartialMock(
-            ClientManager::class,
-            ['getConfig', 'getThemeManager', 'getMetadata']
-        );
-        $config = $this->createPartialMock(Config::class, []);
-        $themeManager = $this->createPartialMock(ThemeManager::class, []);
-        $metadata = $this->createPartialMock(Metadata::class, []);
+        $this->metadata = $metadata;
 
-        $mock
-            ->expects($this->any())
-            ->method('getConfig')
-            ->willReturn($config);
-        $mock
-            ->expects($this->any())
-            ->method('getThemeManager')
-            ->willReturn($themeManager);
-        $mock
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
+        parent::__construct($config, $themeManager);
+    }
 
-        // test
-        $this->assertInstanceOf(Instance::class, $mock->load());
+    /**
+     * @inheritdoc
+     */
+    public function display($runScript = null, $htmlFilePath = null, $vars = array())
+    {
+        $vars = array_merge($vars, [
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
+        ]);
+
+        parent::display($runScript, $htmlFilePath, $vars);
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->metadata;
     }
 }
