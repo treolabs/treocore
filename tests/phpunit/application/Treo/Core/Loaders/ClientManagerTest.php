@@ -54,7 +54,7 @@ class ClientManagerTest extends TestCase
     {
         $mock = $this->createPartialMock(
             ClientManager::class,
-            ['getConfig', 'getThemeManager', 'setContainer', 'getContainer']
+            ['getConfig', 'getThemeManager', 'getContainer']
         );
         $config = $this->createPartialMock(Config::class, []);
         $themeManager = $this->createPartialMock(ThemeManager::class, []);

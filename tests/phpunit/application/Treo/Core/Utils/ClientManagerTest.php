@@ -36,36 +36,23 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
+use PHPUnit\Framework\TestCase;
+
 /**
- * Class ClientManager
+ * Class ClientManagerTest
  *
  * @author r.zablodskiy@treolabs.com
  */
-class ClientManager extends \Espo\Core\Utils\ClientManager
+class ClientManagerTest extends TestCase
 {
-    use \Treo\Traits\ContainerTrait;
-
     /**
-     * @inheritdoc
+     * Test is testDisplay method exists
      */
-    public function display($runScript = null, $htmlFilePath = null, $vars = array())
+    public function testIsDisplayExists()
     {
-        $vars['classReplaceMap'] = json_encode($this->getClassReplaceMap());
-        $vars['year'] = date('Y');
+        $mock = $this->createPartialMock(ClientManager::class, []);
 
-        parent::display($runScript, $htmlFilePath, $vars);
-    }
-
-    /**
-     * Get class replace map
-     *
-     * @return array
-     */
-    protected function getClassReplaceMap(): array
-    {
-        return $this
-            ->getContainer()
-            ->get('metadata')
-            ->get(['app', 'clientClassReplaceMap'], []);
+        // test
+        $this->assertTrue(method_exists($mock, 'display'));
     }
 }
