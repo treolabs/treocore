@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Espo\Core\Utils\ThemeManager;
+use Treo\Core\Container;
 
 /**
  * Class ClientManager
@@ -46,19 +46,9 @@ use Espo\Core\Utils\ThemeManager;
 class ClientManager extends \Espo\Core\Utils\ClientManager
 {
     /**
-     * @var Metadata
+     * @var Container
      */
-    protected $metadata;
-
-    /**
-     * @inheritdoc
-     */
-    public function __construct(Config $config, ThemeManager $themeManager, Metadata $metadata)
-    {
-        $this->metadata = $metadata;
-
-        parent::__construct($config, $themeManager);
-    }
+    protected $container;
 
     /**
      * @inheritdoc
@@ -66,7 +56,15 @@ class ClientManager extends \Espo\Core\Utils\ClientManager
     public function display($runScript = null, $htmlFilePath = null, $vars = array())
     {
         $vars = array_merge($vars, [
-            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'classReplaceMap' => json_encode(
+                $this
+                    ->getContainer()
+                    ->get('metadata')
+                    ->get(
+                        ['app', 'clientClassReplaceMap'],
+                        []
+                    )
+            ),
             'year'            => date('Y')
         ]);
 
@@ -74,12 +72,22 @@ class ClientManager extends \Espo\Core\Utils\ClientManager
     }
 
     /**
-     * Get metadata
+     * Set container
      *
-     * @return Metadata
+     * @param Container $container
      */
-    protected function getMetadata(): Metadata
+    public function setContainer(Container $container)
     {
-        return $this->metadata;
+        $this->container = $container;
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        return $this->container;
     }
 }

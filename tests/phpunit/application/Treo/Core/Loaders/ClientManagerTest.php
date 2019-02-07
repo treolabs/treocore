@@ -36,7 +36,7 @@ namespace Treo\Core\Loaders;
 
 use PHPUnit\Framework\TestCase;
 use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
+use Treo\Core\Container;
 use Treo\Core\Utils\ClientManager as Instance;
 use Espo\Core\Utils\ThemeManager;
 
@@ -54,11 +54,11 @@ class ClientManagerTest extends TestCase
     {
         $mock = $this->createPartialMock(
             ClientManager::class,
-            ['getConfig', 'getThemeManager', 'getMetadata']
+            ['getConfig', 'getThemeManager', 'setContainer', 'getContainer']
         );
         $config = $this->createPartialMock(Config::class, []);
         $themeManager = $this->createPartialMock(ThemeManager::class, []);
-        $metadata = $this->createPartialMock(Metadata::class, []);
+        $container = $this->createPartialMock(Container::class, []);
 
         $mock
             ->expects($this->any())
@@ -70,8 +70,8 @@ class ClientManagerTest extends TestCase
             ->willReturn($themeManager);
         $mock
             ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
+            ->method('getContainer')
+            ->willReturn($container);
 
         // test
         $this->assertInstanceOf(Instance::class, $mock->load());
