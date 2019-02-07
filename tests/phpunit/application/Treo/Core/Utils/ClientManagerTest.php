@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,28 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Utils;
 
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\ClientManager as Instance;
-use Espo\Core\Utils\ThemeManager;
+use PHPUnit\Framework\TestCase;
 
 /**
- * ClientManager loader
+ * Class ClientManagerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ClientManager extends Base
+class ClientManagerTest extends TestCase
 {
-
     /**
-     * Load ClientManager
-     *
-     * @return Instance
+     * Test is testDisplay method exists
      */
-    public function load()
+    public function testIsDisplayExists()
     {
-        $instance = new Instance($this->getConfig(), $this->getThemeManager());
+        $mock = $this->createPartialMock(ClientManager::class, []);
 
-        $instance->setContainer($this->getContainer());
-
-        return $instance;
-    }
-
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get theme manager
-     *
-     * @return ThemeManager
-     */
-    protected function getThemeManager()
-    {
-        return $this->getContainer()->get('themeManager');
+        // test
+        $this->assertTrue(method_exists($mock, 'display'));
     }
 }
