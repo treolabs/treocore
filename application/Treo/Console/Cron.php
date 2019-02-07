@@ -42,7 +42,7 @@ use Treo\Core\Utils\Auth;
 /**
  * Cron console
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Cron extends AbstractConsole
 {
@@ -63,14 +63,16 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // auth
-        $this->auth();
+        if (!empty($this->getConfig()->get('isInstalled'))) {
+            // auth
+            $this->auth();
 
-        // run cron jobs
-        $this->runCronManager();
+            // run cron jobs
+            $this->runCronManager();
 
-        // run queue manager
-        $this->runQueueManager();
+            // run queue manager
+            $this->runQueueManager();
+        }
     }
 
     /**
