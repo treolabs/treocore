@@ -54,6 +54,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         inProgress: false,
 
+        exceptions: ['Problem 1', 'exceeded the timeout', 'RuntimeException'],
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -356,6 +358,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
                         this.trigger('composerUpdate:failed');
                         this.notify('Error occurred', 'error');
+                        this.reRender();
                     }
                 });
             };
@@ -370,7 +373,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 window.clearInterval(this.logCheckInterval);
                 this.log = this.log.slice(0, pos);
 
-                if (this.log.indexOf('Problem 1') > -1 || this.log.indexOf('exceeded the timeout') > -1) {
+                if (this.exceptions.find(item => this.log.indexOf(item) > -1)) {
                     this.messageType = 'danger';
                     this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
                     this.trigger('composerUpdate:failed');
