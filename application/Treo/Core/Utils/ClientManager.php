@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,53 +31,41 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
-
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\ClientManager as Instance;
-use Espo\Core\Utils\ThemeManager;
+namespace Treo\Core\Utils;
 
 /**
- * ClientManager loader
+ * Class ClientManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ClientManager extends Base
+class ClientManager extends \Espo\Core\Utils\ClientManager
 {
+    use \Treo\Traits\ContainerTrait;
 
     /**
-     * Load ClientManager
-     *
-     * @return Instance
+     * @inheritdoc
      */
-    public function load()
+    public function display($runScript = null, $htmlFilePath = null, $vars = array())
     {
-        $instance = new Instance($this->getConfig(), $this->getThemeManager());
+        $vars['classReplaceMap'] = json_encode($this->getClassReplaceMap());
+        $vars['year'] = date('Y');
 
-        $instance->setContainer($this->getContainer());
-
-        return $instance;
+        parent::display($runScript, $htmlFilePath, $vars);
     }
 
     /**
-     * Get config
+     * Get class replace map
      *
-     * @return Config
+     * @return array
      */
-    protected function getConfig()
+    protected function getClassReplaceMap(): array
     {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get theme manager
-     *
-     * @return ThemeManager
-     */
-    protected function getThemeManager()
-    {
-        return $this->getContainer()->get('themeManager');
+        return $this
+            ->getContainer()
+            ->get('metadata')
+            ->get(['app', 'clientClassReplaceMap'], []);
     }
 }
