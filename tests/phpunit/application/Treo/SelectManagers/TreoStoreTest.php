@@ -36,49 +36,47 @@ declare(strict_types=1);
 
 namespace Treo\SelectManagers;
 
-use Treo\Core\Utils\Mover;
-
 /**
- * Class TreoStore
+ * Class TreoStoreTest
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class TreoStore extends \Espo\Core\SelectManagers\Base
+class TreoStoreTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @inheritdoc
+     * Test for getSelectParams method
      */
-    public function getSelectParams(array $params, $withAcl = false, $checkWherePermission = false)
+    public function testGetSelectParamsMethod()
     {
-        // parent
-        $result = parent::getSelectParams($params, $withAcl, $checkWherePermission);
+        // create mock
+        $mock = $this->createPartialMock(TreoStore::class, ['getModules']);
+        $mock
+            ->expects($this->any())
+            ->method('getModules')
+            ->willReturn(['module_1', 'module_2']);
 
-        if (isset($params['isInstalled']) && empty($params['isInstalled'])) {
-            $result['whereClause'][] = [
-                'packageId!=' => $this->getModules()
-            ];
-        }
+        // prepare expected
+        $expected = [
+            'joins'                   => [],
+            'leftJoins'               => [],
+            'customJoin'              => null,
+            'whereClause'             => [
+                ['packageId!=' => ['module_1', 'module_2']]
+            ],
+            'additionalSelectColumns' => [],
+            'joinConditions'          => [],
+        ];
 
-        return $result;
-    }
+        // test 1
+        $this->assertEquals($expected, $mock->getSelectParams(['isInstalled' => false]));
 
-    /**
-     * @return array
-     */
-    protected function getModules(): array
-    {
-        $modules = [];
-        foreach (Mover::getModules() as $name) {
-            $modules[] = Mover::TREODIR . "/$name";
-        }
+        // prepare expected
+        $expected['whereClause'] = [];
 
-        if (file_exists('data/composer.json')) {
-            $data = json_decode(file_get_contents('data/composer.json'), true);
-            if (!empty($data['require'])) {
-                $modules = array_merge($modules, array_keys($data['require']));
-            }
-        }
+        // test 2
+        $this->assertEquals($expected, $mock->getSelectParams(['isInstalled' => true]));
 
-        return $modules;
+        // test 3
+        $this->assertEquals($expected, $mock->getSelectParams([]));
     }
 }
