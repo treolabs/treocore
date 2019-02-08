@@ -28,6 +28,11 @@
         "description": "currency"
       },
       {
+        "url": "#Settings/unit",
+        "label": "Unit",
+        "description": "unit"
+      },
+      {
         "url": "#Admin/notifications",
         "label": "Notifications",
         "description": "notifications"

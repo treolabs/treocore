@@ -92,12 +92,32 @@
     "localesFilter": {
       "": "All Locales",
       "showGenericFields": "Show Generic Fields"
+    },
+    "measureSelect": {
+      "length": "Length",
+      "mass": "Mass",
+      "time": "Time",
+      "electricCurrent": "Electric current",
+      "thermodynamicTemperature": "Thermodynamic temperature",
+      "amountOfSubstance": "Amount of substance",
+      "luminousIntensity": "Luminous intensity"
+    },
+    "unitSelect": {
+      "length_m": "Metre",
+      "mass_kg": "Kilogram",
+      "time_s": "Seconds",
+      "electricCurrent_A": "Ampere",
+      "thermodynamicTemperature_K": "Kelvin",
+      "amountOfSubstance_mol": "Mole",
+      "luminousIntensity_cd": "Candela"
     }
   },
   "fields": {
     "ownerUser": "Owner",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "measureSelect": "Measure select",
+    "unitSelect": "Unit select"
   },
   "labels": {
     "status": "Status",
@@ -110,7 +130,9 @@
     "selectedLink": "Select Entity",
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
-    "expandAllPanels": "Expand All"
+    "expandAllPanels": "Expand All",
+    "unitSelection": "Unit Selection",
+    "Abbreviation": "Abbreviation"
   },
   "links": {
     "ownerUser": "Owner"

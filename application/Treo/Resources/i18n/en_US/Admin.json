@@ -8,14 +8,20 @@
     "log": "log",
     "Upgrade": "Upgrade",
     "Validate": "Validate",
-    "progressLog": "Progress Log"
+    "progressLog": "Progress Log",
+    "unit": "Unit",
+    "addOption": "Add option"
+  },
+  "fieldTypes": {
+    "unit": "Unit"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
     "gitAuth": "Read git authentication settings.",
     "modules": "Modules Manager. Here you can install/uninstall modules from remote storage. The dependencies between the modules and the Treo system are supported.",
     "extensions": "Extensions Manager. Here you can install/uninstall extension by zip archive.",
-    "representationSettings": "Representation settings."
+    "representationSettings": "Representation settings.",
+    "unit": "Settings units of measurement"
   },
   "messages": {
     "upgradeVersion": "Treo System will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",

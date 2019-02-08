@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,40 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
+Espo.define('treo-core:views/fields/enum-with-edit-options', 'views/fields/enum',
     Dep => Dep.extend({
 
-        unit() {
-            let model = this.getSettingsModel();
+        editTemplate: 'treo-core:fields/enum-with-edit-options/edit',
 
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
-                });
-            });
-            model.fetch();
+        events: {
+            'click [data-action="editOptions"]': function (e) {
+                this.actionEditOptions();
+            }
         },
 
-    })
-);
+        actionEditOptions() {
+            this.getModelFactory().create(null, model => {
+                model.set({enumOptions: this.params.options});
+
+                this.createView('editOptions', 'treo-core:views/modals/enum-options-edit', {
+                    parentModel: this.model,
+                    model: model,
+                    translates: this.translatedOptions,
+                    editableKey: this.editableKey || this.options.editableKey
+                }, view => {
+                    view.listenTo(view, 'after:save', params => {
+                        this.applyNewOptions(params);
+                    });
+                    view.render();
+                });
+            });
+        },
+
+        applyNewOptions(params) {
+            this.params.options = params.options || [];
+            this.translatedOptions = params.translatedOptions || {};
+            this.trigger('options-updated');
+            this.reRender();
+        }
+
+}));

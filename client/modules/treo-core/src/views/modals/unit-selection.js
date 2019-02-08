@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,52 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
+Espo.define('treo-core:views/modals/unit-selection', 'views/modal',
     Dep => Dep.extend({
 
-        unit() {
-            let model = this.getSettingsModel();
+        template: 'treo-core:modals/unit-selection',
 
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
-                });
-            });
-            model.fetch();
+        buttonList: [
+            {
+                name: 'apply',
+                label: 'Apply',
+                style: 'primary'
+            },
+            {
+                name: 'cancel',
+                label: 'Cancel'
+            }
+        ],
+
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.setupHeader();
+            this.setupUnitConfiguration();
         },
+
+        setupUnitConfiguration() {
+            this.createView('unitsOfMeasure', 'treo-core:views/fields/unit-configuration', {
+                el: `${this.options.el} .field[data-name="unitsOfMeasure"]`,
+                model: this.model,
+                name: 'unitsOfMeasure',
+                mode: 'edit'
+            }, view => view.render());
+        },
+
+        setupHeader() {
+            this.header = this.translate('unitSelection', 'labels', 'Global');
+        },
+
+        actionApply() {
+            let data = {};
+            let unitsOfMeasure = this.getView('unitsOfMeasure');
+            if (unitsOfMeasure) {
+                data = unitsOfMeasure.getView('unitSelect').fetch();
+            }
+            this.trigger('unit-selected', data.unitSelect);
+            this.close();
+        }
 
     })
 );

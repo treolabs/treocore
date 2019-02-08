@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,25 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
+Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
     Dep => Dep.extend({
 
-        unit() {
-            let model = this.getSettingsModel();
+        layoutName: 'unit',
 
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
-                });
-            });
-            model.fetch();
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.listenTo(this.model, 'after:save', () => {
+                let labels = {};
+                debugger;
+                // this.ajaxPostRequest('LabelManager/action/saveLabels', {
+                //     labels: labels,
+                //     language: this.getPreferences().get('language') || this.getConfig().get('language'),
+                //     scope: 'Global'
+                // });
+            }, this);
         },
 
     })
 );
+
