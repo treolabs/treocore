@@ -92,13 +92,13 @@
       "luminousIntensity": "Lichtintensität"
     },
     "unitSelect": {
-      "length_m": "Metre",
-      "mass_kg": "Kilogram",
-      "time_s": "Seconds",
-      "electricCurrent_A": "Ampere",
-      "thermodynamicTemperature_K": "Kelvin",
-      "amountOfSubstance_mol": "Mole",
-      "luminousIntensity_cd": "Candela"
+      "metre": "Metre",
+      "kilogram": "Kilogram",
+      "second": "Second",
+      "ampere": "Ampere",
+      "kelvin": "Kelvin",
+      "mole": "Mole",
+      "candela": "Candela"
     }
   },
   "fields": {
@@ -134,7 +134,8 @@
   },
   "messages": {
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
-    "massUpdateResult": "{count} Einträge werden aktualisiert"
+    "massUpdateResult": "{count} Einträge werden aktualisiert",
+    "isRequiredAndUnique": "{field} Feld ist erforderlich und sollte eindeutig sein."
   },
   "exceptions": {
     "URL is invalid": "Die URL ist ungültig",

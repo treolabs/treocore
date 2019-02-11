@@ -103,13 +103,13 @@
       "luminousIntensity": "Luminous intensity"
     },
     "unitSelect": {
-      "length_m": "Metre",
-      "mass_kg": "Kilogram",
-      "time_s": "Seconds",
-      "electricCurrent_A": "Ampere",
-      "thermodynamicTemperature_K": "Kelvin",
-      "amountOfSubstance_mol": "Mole",
-      "luminousIntensity_cd": "Candela"
+      "metre": "Metre",
+      "kilogram": "Kilogram",
+      "second": "Second",
+      "ampere": "Ampere",
+      "kelvin": "Kelvin",
+      "mole": "Mole",
+      "candela": "Candela"
     }
   },
   "fields": {
@@ -148,7 +148,8 @@
   },
   "messages": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
-    "massUpdateResult": "Updating {count} records"
+    "massUpdateResult": "Updating {count} records",
+    "isRequiredAndUnique": "{field} is required and should be unique."
   },
   "streamMessages": {
     "updateModuleThis": "{user} has updated module",

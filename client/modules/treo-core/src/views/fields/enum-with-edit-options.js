@@ -46,7 +46,7 @@ Espo.define('treo-core:views/fields/enum-with-edit-options', 'views/fields/enum'
             this.getModelFactory().create(null, model => {
                 model.set({enumOptions: this.params.options});
 
-                this.createView('editOptions', 'treo-core:views/modals/enum-options-edit', {
+                this.createView('editOptions', 'treo-core:views/modals/edit-enum-options', {
                     parentModel: this.model,
                     model: model,
                     translates: this.translatedOptions,
@@ -63,7 +63,7 @@ Espo.define('treo-core:views/fields/enum-with-edit-options', 'views/fields/enum'
         applyNewOptions(params) {
             this.params.options = params.options || [];
             this.translatedOptions = params.translatedOptions || {};
-            this.trigger('options-updated');
+            this.trigger('options-updated', params);
             this.reRender();
         }
 

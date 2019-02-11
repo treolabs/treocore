@@ -34,120 +34,116 @@
 Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/array',
     Dep => Dep.extend({
 
+        _timeouts: {},
+
         editTemplate: 'treo-core:settings/fields/array-with-keys/edit',
 
-        notValidKeys: [],
+        maxKeyLength: 6,
+
+        abbreviations: {},
 
         events: _.extend({
             'change .abbreviation': function (e) {
                 let currentTarget = $(e.currentTarget);
-                let previousAbbreviation = currentTarget.parent().data('value');
+                let value = currentTarget.parents('.list-group-item').data('value');
                 let currentAbbreviation = currentTarget.val();
-                this.changeAbbreviation(previousAbbreviation, currentAbbreviation);
+                this.changeAbbreviation(value, currentAbbreviation);
             }
         }, Dep.prototype.events),
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            if (!this.validations.includes('key')) {
-                this.validations.push('key');
+            if (this.options.editableKey) {
+                if (!this.validations.includes('key')) {
+                    this.validations.push('key');
+                }
+                this.setupAbbreviations();
+
+                this.on('customInvalid', value => {
+                    let listItem = this.$el.find(`.list-group-item[data-value="${value}"]`);
+                    listItem.addClass('has-error');
+                    this.$el.one('click', () => {
+                        listItem.removeClass('has-error');
+                    });
+                    this.once('render', () => {
+                        listItem.removeClass('has-error');
+                    });
+                });
             }
         },
 
-        changeAbbreviation(previousAbbreviation, currentAbbreviation) {
-            debugger;
-            if (!currentAbbreviation.length) {
-                return;
+        validate() {
+            for (let i in this.validations) {
+                let method = 'validate' + Espo.Utils.upperCaseFirst(this.validations[i]);
+                if (this[method].call(this)) {
+                    if (!this.options.editableKey) {
+                        this.trigger('invalid');
+                    }
+                    return true;
+                }
             }
+            return false;
+        },
 
-            currentAbbreviation = this.clearValue(currentAbbreviation);
-            currentAbbreviation = this.modifyValue(currentAbbreviation);
+        setupAbbreviations() {
+            let initConfiguration = this.getConfig().get('unitsOfMeasure') || {};
+            let measurement = this.options.parentModel.get('measureSelect');
+            let units = initConfiguration[measurement] || {};
+            Object.keys(units).forEach(unit => this.abbreviations[unit] = units[unit]);
+        },
 
-            this.selected.splice(this.selected.indexOf(previousAbbreviation), 1);
-            this.selected.push(currentAbbreviation);
-
-            this.translatedOptions[currentAbbreviation] = this.translatedOptions[previousAbbreviation];
-            delete this.translatedOptions[previousAbbreviation];
-
-            this.trigger('change');
+        changeAbbreviation(value, currentAbbreviation) {
+            this.abbreviations[value] = currentAbbreviation;
         },
 
         addValue(value) {
             let clearedValue = this.clearValue(value);
-            let modifiedValue = this.modifyValue(clearedValue);
-            this.translatedOptions[modifiedValue] = value;
+            this.translatedOptions[clearedValue] = value;
+            if (this.options.editableKey) {
+                this.abbreviations[clearedValue] = clearedValue.slice(0, 6);
+            }
 
-            Dep.prototype.addValue.call(this, modifiedValue);
+            Dep.prototype.addValue.call(this, clearedValue);
         },
 
         removeValue(value) {
-            debugger;
-            let valueSanitized = this.getHelper().stripTags(value).replace(/"/g, '\\"');
-
-            this.$list.children('[data-value="' + valueSanitized + '"]').remove();
+            this.$list.children(`[data-value="${value}"]`).remove();
             let index = this.selected.indexOf(value);
             this.selected.splice(index, 1);
             delete this.translatedOptions[value];
+            if (this.options.editableKey) {
+                delete this.abbreviations[value];
+            }
             this.trigger('change');
         },
 
         clearValue(value) {
             let cleared = value;
-            if (cleared) {
-                cleared = cleared.replace(/-/g, '').replace(/_/g, '').replace(/[^\w\s]/gi, '').replace(/ (.)/g, (match, g) => g.toUpperCase()).replace(' ', '');
-            }
+            cleared = cleared.toLowerCase().replace(/-/g, '').replace(/_/g, '').replace(/[^\w\s]/gi, '').replace(/ (.)/g, (match, g) => g.toUpperCase()).trim();
             return cleared;
         },
 
-        modifyValue(value) {
-            return `${this.options.parentModel.get('measureSelect')}_${value}`;
-        },
-
-        getAbbreviationFromValue(value) {
-            let result = value;
-            if (value) {
-                let parts = value.split('_').slice(1);
-                result = parts.join('_');
-            }
-            return result;
-        },
-
         getItemHtml(value) {
-            if (this.translatedOptions !== null) {
-                for (let item in this.translatedOptions) {
-                    if (this.translatedOptions[item] === value) {
-                        value = item;
-                        break;
-                    }
-                }
-            }
-
-            value = value.toString();
-
-            let valueSanitized = this.getHelper().stripTags(value).replace(/"/g, '&quot;');
-
-            let label = valueSanitized;
+            let label = value;
             if (this.translatedOptions) {
                 label = ((value in this.translatedOptions) ? this.translatedOptions[value] : label);
-                label = label.toString();
-                label = this.getHelper().stripTags(label);
-                label = label.replace(/"/g, '&quot;');
+                label = this.getHelper().stripTags(label).replace(/"/g, '&quot;');
             }
 
             let html = `
-                    <div class="list-group-item" data-value="${valueSanitized}" style="cursor: default;">
+                    <div class="list-group-item" data-value="${value}" style="cursor: default;">
                         ${label}&nbsp;
-                        <a href="javascript:" class="pull-right" data-value="${valueSanitized}" data-action="removeValue"><span class="fas fa-times"></a>
+                        <a href="javascript:" class="pull-right" data-value="${value}" data-action="removeValue"><span class="fas fa-times"></a>
                     </div>`;
 
             if (this.options.editableKey) {
                 html = `
-                    <div class="list-group-item" data-value="${valueSanitized}" style="cursor: default;">
-                        <a href="javascript:" class="pull-right" data-value="${valueSanitized}" data-action="removeValue"><span class="fas fa-times"></span></a>
+                    <div class="list-group-item" data-value="${value}" style="cursor: default;">
+                        <a href="javascript:" class="pull-right" data-value="${value}" data-action="removeValue"><span class="fas fa-times"></span></a>
                         <span>${label}&nbsp;</span>
                         <div class="key-array-abbreviation">
-                            <label class="control-label">${this.translate('Abbreviation', 'labels', 'Global')}:</label><input class="form-control abbreviation" value="${this.getAbbreviationFromValue(valueSanitized)}" type="text" autocomplete="off">
+                            <label class="control-label">${this.translate('Abbreviation', 'labels', 'Global')}:</label><input class="form-control abbreviation" value="${this.abbreviations[value]}" maxlength="${this.maxKeyLength}" type="text" autocomplete="off">
                         </div>
                     </div>`;
             }
@@ -155,13 +151,73 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
             return html;
         },
 
-        validateKey: function () {
-            if (this.notValidKeys && this.notValidKeys.length > 0) {
-                let msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.translate('Abbreviation', 'labels', 'Global'));
-                this.showValidationMessage(msg, '.list-group-item .abbreviation');
-                return true;
-            }
+        fetchFromDom() {
+            let selected = [];
+            this.$el.find('.list-group .list-group-item').each((i, el) => {
+                let value = $(el).data('value').toString();
+                selected.push(value);
+            });
+            this.selected = selected;
         },
+
+        validateKey: function () {
+            let notValid = false;
+            Object.keys(this.abbreviations).forEach(abbr => {
+                let abbreviations = Espo.Utils.cloneDeep(this.abbreviations);
+                let checkingAbbrValue = abbreviations[abbr];
+                delete abbreviations[abbr];
+                Object.keys(abbreviations).forEach(value => {
+                    let abbrValue = abbreviations[value].trim();
+                    if (!abbrValue.length || abbrValue === checkingAbbrValue) {
+                        notValid = true;
+                        let msg = this.translate('isRequiredAndUnique', 'messages').replace('{field}', this.translate('Abbreviation', 'labels', 'Global'));
+                        this.showValidationMessage(msg, `.list-group-item[data-value="${value}"] .abbreviation`);
+                        this.trigger('customInvalid', value);
+                    }
+                });
+            });
+            return notValid;
+        },
+
+        showValidationMessage: function (message, target) {
+            var $el;
+
+            target = target || '.main-element';
+
+            if (typeof target === 'string' || target instanceof String) {
+                $el = this.$el.find(target);
+            } else {
+                $el = $(target);
+            }
+
+            if (!$el.size() && this.$element) {
+                $el = this.$element;
+            }
+            $el.popover({
+                placement: 'bottom',
+                container: 'body',
+                content: message,
+                trigger: 'manual'
+            }).popover('show');
+
+            $el.closest('.field').one('mousedown click', function () {
+                $el.popover('destroy');
+            });
+
+            this.once('render remove', function () {
+                if ($el) {
+                    $el.popover('destroy');
+                }
+            });
+
+            if (this._timeouts[target]) {
+                clearTimeout(this._timeouts[target]);
+            }
+
+            this._timeouts[target] = setTimeout(function () {
+                $el.popover('destroy');
+            }, 3000);
+        }
 
     })
 );

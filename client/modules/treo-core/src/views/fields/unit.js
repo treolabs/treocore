@@ -64,7 +64,9 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
         },
 
         showUnitSelection() {
-            this.createView('unitSelection', 'treo-core:views/modals/unit-selection', {}, view => {
+            this.createView('unitSelection', 'treo-core:views/modals/unit-selection', {
+                model: this.model
+            }, view => {
                 view.listenTo(view, 'unit-selected', unit => {
                     if (unit) {
                         this.model.set({[this.unitFieldName]: unit});

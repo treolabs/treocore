@@ -36,19 +36,49 @@ Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
 
         layoutName: 'unit',
 
+        initialUnitsOfMeasure: {},
+
         setup() {
             Dep.prototype.setup.call(this);
 
+
+            this.initialUnitsOfMeasure = Espo.Utils.cloneDeep(this.getConfig().get('unitsOfMeasure') || {});
+
             this.listenTo(this.model, 'after:save', () => {
-                let labels = {};
-                debugger;
-                // this.ajaxPostRequest('LabelManager/action/saveLabels', {
-                //     labels: labels,
-                //     language: this.getPreferences().get('language') || this.getConfig().get('language'),
-                //     scope: 'Global'
-                // });
+                this.ajaxPostRequest('LabelManager/action/saveLabels', {
+                    labels: this.getLabelsForSaveFromUnits(),
+                    language: this.getPreferences().get('language') || this.getConfig().get('language'),
+                    scope: 'Global'
+                });
             }, this);
         },
+
+        getLabelsForSaveFromUnits() {
+            let labels = {};
+            let data = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
+            let measurements = this.model.get('unitsOfMeasure') || {};
+            let attrs = {};
+            for (let name in measurements) {
+                if (_.isEqual(measurements[name], data[name])) {
+                    continue;
+                }
+                attrs[name] = data[name];
+            }
+
+            let translates = this.getView('middle').getView('unitsOfMeasure').getTranslations() || {};
+
+            if (Object.keys(attrs).length) {
+                Object.keys(attrs).forEach(attr => {
+                    let measureLabelName = `options[.]measureSelect[.]${attr}`;
+                    labels[measureLabelName] = (translates.measureSelect || {})[attr];
+                    Object.keys(attr).forEach(unit => {
+                        let unitLabelName = `options[.]unitSelect[.]${unit}`;
+                        labels[unitLabelName] = (translates.unitSelect || {})[unit];
+                    });
+                });
+            }
+            return labels;
+        }
 
     })
 );

@@ -31,10 +31,10 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/modals/enum-options-edit', 'views/modal',
+Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
     Dep => Dep.extend({
 
-        template: 'treo-core:modals/enum-options-edit',
+        template: 'treo-core:modals/edit-enum-options',
 
         buttonList: [
             {
@@ -80,8 +80,13 @@ Espo.define('treo-core:views/modals/enum-options-edit', 'views/modal',
                 this.notify('Not valid', 'error');
                 return;
             }
+
             let view = this.getView('enumOptions');
-            this.trigger('after:save', {options: view.selected, translatedOptions: (view.params || {}).translatedOptions});
+            let data = {options: view.selected, translatedOptions: (view.params || {}).translatedOptions};
+            if ((this.editableKey || this.options.editableKey) && view.abbreviations && Espo.Utils.isObject(view.abbreviations)) {
+                data = _.extend(data, {abbreviations: view.abbreviations});
+            }
+            this.trigger('after:save', data);
             this.close();
         },
 
