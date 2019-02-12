@@ -49,6 +49,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
 
         versionList: [],
 
+        exceptions: ['Problem 1', 'exceeded the timeout', 'RuntimeException'],
+
         data: function () {
             return {
                 systemVersion: this.systemVersion,
@@ -182,7 +184,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                 window.clearInterval(this.logCheckInterval);
                 this.log = this.log.slice(0, pos);
 
-                if (this.log.indexOf('Problem 1') > -1 || this.log.indexOf('exceeded the timeout') > -1) {
+                if (this.exceptions.find(item => this.log.indexOf(item) > -1)) {
                     this.messageType = 'danger';
                     if (actionName === 'validateSystem') {
                         this.validationSuccessful = false;
