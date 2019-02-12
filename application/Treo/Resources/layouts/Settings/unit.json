@@ -2,7 +2,7 @@
     {
         "label": "Unit Settings",
         "rows": [
-            [{"name": "unitsOfMeasure", "fullWidth": true}]
+            [{"name": "unitsOfMeasure", "fullWidth": true, "customLabel": ""}]
         ]
     }
 ]

@@ -69,13 +69,24 @@ Espo.define('treo-core:views/modals/unit-selection', 'views/modal',
         },
 
         actionApply() {
-            let data = {};
+            this.trigger('unit-selected', this.getAbbreviationFromUnit());
+            this.close();
+        },
+
+        getAbbreviationFromUnit() {
+            let config = this.getConfig().get('unitsOfMeasure') || {};
+            let abbreviation;
+            let measure;
+            let unit;
             let unitsOfMeasure = this.getView('unitsOfMeasure');
             if (unitsOfMeasure) {
-                data = unitsOfMeasure.getView('unitSelect').fetch();
+                let measureSelect = unitsOfMeasure.getView('measureSelect');
+                measure = (measureSelect.fetch() || {}).measureSelect;
+                let unitSelect = unitsOfMeasure.getView('unitSelect');
+                unit = (unitSelect.fetch() || {}).unitSelect;
+                abbreviation = config[measure][unit];
             }
-            this.trigger('unit-selected', data.unitSelect);
-            this.close();
+            return abbreviation;
         }
 
     })

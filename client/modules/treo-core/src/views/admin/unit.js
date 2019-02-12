@@ -55,29 +55,43 @@ Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
 
         getLabelsForSaveFromUnits() {
             let labels = {};
-            let data = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
-            let measurements = this.model.get('unitsOfMeasure') || {};
+            let attrs = this.getModifiedMeasurements();
+            let translates = this.getTranslations();
+
+            Object.keys(attrs).forEach(attr => {
+                let measureLabelName = `options[.]measureSelect[.]${attr}`;
+                labels[measureLabelName] = (translates.measureSelect || {})[attr];
+                Object.keys(attrs[attr]).forEach(unit => {
+                    let unitLabelName = `options[.]unitSelect[.]${unit}`;
+                    labels[unitLabelName] = (translates.unitSelect || {})[unit];
+                });
+            });
+            return labels;
+        },
+
+        getModifiedMeasurements() {
+            let measurements = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
+            let data = this.model.get('unitsOfMeasure') || {};
             let attrs = {};
-            for (let name in measurements) {
-                if (_.isEqual(measurements[name], data[name])) {
+            for (let name in data) {
+                if (_.isEqual(data[name], measurements[name])) {
                     continue;
                 }
                 attrs[name] = data[name];
             }
+            return attrs;
+        },
 
-            let translates = this.getView('middle').getView('unitsOfMeasure').getTranslations() || {};
-
-            if (Object.keys(attrs).length) {
-                Object.keys(attrs).forEach(attr => {
-                    let measureLabelName = `options[.]measureSelect[.]${attr}`;
-                    labels[measureLabelName] = (translates.measureSelect || {})[attr];
-                    Object.keys(attr).forEach(unit => {
-                        let unitLabelName = `options[.]unitSelect[.]${unit}`;
-                        labels[unitLabelName] = (translates.unitSelect || {})[unit];
-                    });
-                });
+        getTranslations() {
+            let translations = {};
+            let middle = this.getView('middle');
+            if (middle) {
+                let unitsOfMeasure = middle.getView('unitsOfMeasure');
+                if (unitsOfMeasure) {
+                    translations = unitsOfMeasure.getTranslations() || {};
+                }
             }
-            return labels;
+            return translations;
         }
 
     })
