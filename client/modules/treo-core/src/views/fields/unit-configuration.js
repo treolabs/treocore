@@ -46,7 +46,6 @@ Espo.define('treo-core:views/fields/unit-configuration', 'view',
             this.name = this.options.name || this.options.defs.name;
             this.mode = this.options.mode || this.mode;
 
-            this.configurableMode = this.configurableMode || this.model.getFieldParam(this.name, 'configurableMode');
             this.configuration = Espo.Utils.cloneDeep(this.getConfig().get('unitsOfMeasure') || {});
 
             this.getModelFactory().create(null, model => {
@@ -57,18 +56,18 @@ Espo.define('treo-core:views/fields/unit-configuration', 'view',
 
         setupFields() {
             let measurements = Object.keys(this.configuration);
-            let viewName = 'views/fields/enum';
-            if (this.configurableMode) {
-                viewName = 'treo-core:views/fields/enum-with-edit-options';
-                this.model.set({measureSelect: measurements[0], unitSelect: this.getUnits()[0]});
-            }
+            let unitTranslates = this.getUnitsTranslates();
+            let units = Object.keys(unitTranslates);
 
-            this.createView('measureSelect', viewName, {
-                el: `${this.options.el} .field[data-name="measureSelect"]`,
+            this.model.set({measure: measurements[0], unit: units[0]}, {silent: true});
+
+            this.createView('measure', 'treo-core:views/fields/enum-with-edit-options', {
+                el: `${this.options.el} .field[data-name="measure"]`,
                 model: this.model,
-                name: 'measureSelect',
+                name: 'measure',
                 params: {
-                    options: measurements
+                    options: measurements,
+                    translation: 'Global.measure'
                 },
                 mode: 'edit'
             }, view => {
@@ -78,21 +77,24 @@ Espo.define('treo-core:views/fields/unit-configuration', 'view',
                 view.render();
             });
 
-            this.createView('unitSelect', viewName, {
-                el: `${this.options.el} .field[data-name="unitSelect"]`,
+            this.createView('unit', 'treo-core:views/fields/enum-with-edit-options', {
+                el: `${this.options.el} .field[data-name="unit"]`,
                 model: this.model,
-                name: 'unitSelect',
+                name: 'unit',
                 params: {
-                    options: this.getUnits()
+                    options: units,
+                    translatedOptions: unitTranslates
                 },
                 mode: 'edit',
-                editableKey: this.configurableMode
+                editableKey: true
             }, view => {
                 view.listenTo(view, 'options-updated', params => {
                     this.updateConfiguration(view, params);
                 });
-                view.listenTo(this.model, 'change:measureSelect', () => {
-                    view.params.options = this.getUnits();
+                view.listenTo(this.model, 'change:measure', () => {
+                    let translates = this.getUnitsTranslates();
+                    view.translatedOptions = translates;
+                    view.params.options = Object.keys(translates);
                     view.reRender();
                 });
                 view.render();
@@ -101,25 +103,46 @@ Espo.define('treo-core:views/fields/unit-configuration', 'view',
         },
 
         updateConfiguration(view, params) {
-            if (this.configurableMode) {
-                let measurements = Object.keys(this.configuration);
-                if (view.name === 'measureSelect') {
-                    measurements = measurements.concat((view.params.options|| []).filter(item => !measurements.includes(item)));
-                    measurements.forEach(measurement => {
-                        if (!Object.keys(this.configuration).includes(measurement)) {
-                            this.configuration[measurement] = {};
-                        }
-                    });
-                } else {
-                    this.configuration[this.model.get('measureSelect')] = params.abbreviations || {};
+            if (view.name === 'measure') {
+                let previousMeasurements = Object.keys(this.configuration);
+                let currentMeasurements = view.params.options || [];
+                let allMeasurements = _.union(previousMeasurements, currentMeasurements);
+                allMeasurements.forEach(measure => {
+                    if (!currentMeasurements.includes(measure)) {
+                        delete this.configuration[measure];
+                    } else if (!previousMeasurements.includes(measure)) {
+                        this.configuration[measure] = {};
+                    }
+                });
+            } else {
+                let unitList = params.unitSymbols || {};
+                let baseUnit = Object.keys(unitList)[0];
+                let unitRates = {};
+                Object.keys(unitList).forEach(unitSymbol => {
+                    if (unitSymbol !== baseUnit) {
+                        unitRates[unitSymbol] = 1;
+                    }
+                });
+                this.configuration[this.model.get('measure')] = {
+                    unitList: unitList,
+                    baseUnit: baseUnit,
+                    unitRates: unitRates
                 }
             }
+            view.reRender();
+            view.trigger('change');
         },
 
-        getUnits() {
-            let measure = this.model.get('measureSelect') || Object.keys(this.configuration)[0];
-            let units =  this.configuration[measure] || {};
-            return Object.keys(units);
+        getUnitsTranslates() {
+            let translates = {};
+            let measure = this.model.get('measure') || Object.keys(this.configuration)[0];
+            let measureConfig =  this.configuration[measure] || {};
+            let unitList = measureConfig.unitList || {};
+            Object.keys(unitList).forEach(unit => {
+                let units = this.getLanguage().get('Global', 'unit', measure);
+                translates[unit] = Espo.Utils.isObject(units) ? units[unit] : unit;
+            });
+            return translates;
         },
 
         fetch() {
@@ -141,8 +164,8 @@ Espo.define('treo-core:views/fields/unit-configuration', 'view',
 
         getTranslations() {
             return {
-                measureSelect: this.getView('measureSelect').translatedOptions || {},
-                unitSelect: this.getView('unitSelect').translatedOptions || {}
+                measure: this.getView('measure').translatedOptions || {},
+                unit: this.getView('unit').translatedOptions || {}
             }
         }
 

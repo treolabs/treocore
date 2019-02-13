@@ -26,7 +26,6 @@
     },
     "unitsOfMeasure": {
       "type": "unit",
-      "configurableMode": true,
       "view": "treo-core:views/fields/unit-configuration"
     }
   }

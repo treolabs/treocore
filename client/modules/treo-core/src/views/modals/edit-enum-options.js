@@ -67,7 +67,7 @@ Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
                     required: true,
                     noEmptyString: true
                 },
-                editableKey: this.editableKey || this.options.editableKey
+                editableKey: this.options.editableKey
             }, view => view.render());
         },
 
@@ -83,8 +83,8 @@ Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
 
             let view = this.getView('enumOptions');
             let data = {options: view.selected, translatedOptions: (view.params || {}).translatedOptions};
-            if ((this.editableKey || this.options.editableKey) && view.abbreviations && Espo.Utils.isObject(view.abbreviations)) {
-                data = _.extend(data, {abbreviations: view.abbreviations});
+            if (this.options.editableKey && view.unitSymbols && Espo.Utils.isObject(view.unitSymbols)) {
+                data = _.extend(data, {unitSymbols: view.unitSymbols});
             }
             this.trigger('after:save', data);
             this.close();

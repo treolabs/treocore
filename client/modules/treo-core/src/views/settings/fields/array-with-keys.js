@@ -40,14 +40,14 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
 
         maxKeyLength: 6,
 
-        abbreviations: {},
+        unitSymbols: {},
 
         events: _.extend({
-            'change .abbreviation': function (e) {
+            'change .unit-symbol': function (e) {
                 let currentTarget = $(e.currentTarget);
                 let value = currentTarget.parents('.list-group-item').data('value');
-                let currentAbbreviation = currentTarget.val();
-                this.changeAbbreviation(value, currentAbbreviation);
+                let currentUnitSymbol = currentTarget.val();
+                this.changeUnitSymbol(value, currentUnitSymbol);
             }
         }, Dep.prototype.events),
 
@@ -58,8 +58,7 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
                 if (!this.validations.includes('key')) {
                     this.validations.push('key');
                 }
-                this.setupAbbreviations();
-
+                this.setupUnitSymbols();
                 this.on('customInvalid', value => {
                     let listItem = this.$el.find(`.list-group-item[data-value="${value}"]`);
                     listItem.addClass('has-error');
@@ -86,22 +85,22 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
             return false;
         },
 
-        setupAbbreviations() {
-            let initConfiguration = this.getConfig().get('unitsOfMeasure') || {};
-            let measurement = this.options.parentModel.get('measureSelect');
-            let units = initConfiguration[measurement] || {};
-            Object.keys(units).forEach(unit => this.abbreviations[unit] = units[unit]);
+        setupUnitSymbols() {
+            let unitsOfMeasure = this.getConfig().get('unitsOfMeasure') || {};
+            let measure = this.options.parentModel.get('measure');
+            let measureConfig = unitsOfMeasure[measure] || {};
+            this.unitSymbols = measureConfig.unitList || {};
         },
 
-        changeAbbreviation(value, currentAbbreviation) {
-            this.abbreviations[value] = currentAbbreviation;
+        changeUnitSymbol(value, currentUnitSymbol) {
+            this.unitSymbols[value] = currentUnitSymbol;
         },
 
         addValue(value) {
             let clearedValue = this.clearValue(value);
             this.translatedOptions[clearedValue] = value;
             if (this.options.editableKey) {
-                this.abbreviations[clearedValue] = clearedValue.slice(0, 6);
+                this.unitSymbols[clearedValue] = clearedValue.slice(0, 6);
             }
 
             Dep.prototype.addValue.call(this, clearedValue);
@@ -113,7 +112,7 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
             this.selected.splice(index, 1);
             delete this.translatedOptions[value];
             if (this.options.editableKey) {
-                delete this.abbreviations[value];
+                delete this.unitSymbols[value];
             }
             this.trigger('change');
         },
@@ -142,8 +141,8 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
                     <div class="list-group-item" data-value="${value}" style="cursor: default;">
                         <a href="javascript:" class="pull-right" data-value="${value}" data-action="removeValue"><span class="fas fa-times"></span></a>
                         <span>${label}&nbsp;</span>
-                        <div class="key-array-abbreviation">
-                            <label class="control-label">${this.translate('Abbreviation', 'labels', 'Global')}:</label><input class="form-control abbreviation" value="${this.abbreviations[value]}" maxlength="${this.maxKeyLength}" type="text" autocomplete="off">
+                        <div class="key-array-unit-symbol">
+                            <label class="control-label">${this.translate('UnitSymbol', 'labels', 'Global')}:</label><input class="form-control unit-symbol" value="${this.unitSymbols[value]}" maxlength="${this.maxKeyLength}" type="text" autocomplete="off">
                         </div>
                     </div>`;
             }
@@ -161,26 +160,23 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
         },
 
         validateKey: function () {
-            let notValid = false;
-            Object.keys(this.abbreviations).forEach(abbr => {
-                let abbreviations = Espo.Utils.cloneDeep(this.abbreviations);
-                let checkingAbbrValue = abbreviations[abbr];
-                delete abbreviations[abbr];
-                Object.keys(abbreviations).forEach(value => {
-                    let abbrValue = abbreviations[value].trim();
-                    if (!abbrValue.length || abbrValue === checkingAbbrValue) {
-                        notValid = true;
-                        let msg = this.translate('isRequiredAndUnique', 'messages').replace('{field}', this.translate('Abbreviation', 'labels', 'Global'));
-                        this.showValidationMessage(msg, `.list-group-item[data-value="${value}"] .abbreviation`);
-                        this.trigger('customInvalid', value);
-                    }
-                });
+            let validate = false;
+            let counts = {};
+            Object.keys(this.unitSymbols).forEach(value => {
+                let unitSymbol = this.unitSymbols[value].trim();
+                counts[value] = (counts[value] || 0) + 1;
+                if (!unitSymbol.length || counts[value] > 2) {
+                    let msg = this.translate('isRequiredAndUnique', 'messages').replace('{field}', this.translate('UnitSymbol', 'labels', 'Global'));
+                    this.showValidationMessage(msg, `.list-group-item[data-value="${value}"] .unit-symbol`);
+                    this.trigger('customInvalid', value);
+                    validate = true;
+                }
             });
-            return notValid;
+            return validate;
         },
 
         showValidationMessage: function (message, target) {
-            var $el;
+            let $el;
 
             target = target || '.main-element';
 
@@ -200,13 +196,19 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
                 trigger: 'manual'
             }).popover('show');
 
+            let isDestroyed = false;
+
             $el.closest('.field').one('mousedown click', function () {
+                if (isDestroyed) return;
                 $el.popover('destroy');
+                isDestroyed = true;
             });
 
             this.once('render remove', function () {
+                if (isDestroyed) return;
                 if ($el) {
                     $el.popover('destroy');
+                    isDestroyed = true;
                 }
             });
 
@@ -215,7 +217,9 @@ Espo.define('treo-core:views/settings/fields/array-with-keys', 'views/fields/arr
             }
 
             this._timeouts[target] = setTimeout(function () {
+                if (isDestroyed) return;
                 $el.popover('destroy');
+                isDestroyed = true;
             }, 3000);
         }
 

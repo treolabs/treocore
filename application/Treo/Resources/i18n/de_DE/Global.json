@@ -81,23 +81,46 @@
     "localesFilter": {
       "": "Alle Locales",
       "showGenericFields": "Generische Felder anzeigen"
-    },
-    "measureSelect": {
-      "length": "Länge",
-      "mass": "Masse",
-      "time": "Zeit",
-      "electricCurrent": "Elektrischer Strom",
-      "thermodynamicTemperature": "Thermodynamische Temperatur",
-      "amountOfSubstance": "Menge der Substanz",
-      "luminousIntensity": "Lichtintensität"
-    },
-    "unitSelect": {
+    }
+  },
+  "measure": {
+    "length": "Länge",
+    "mass": "Masse",
+    "time": "Zeit",
+    "electricCurrent": "Elektrischer Strom",
+    "thermodynamicTemperature": "Thermodynamische Temperatur",
+    "amountOfSubstance": "Menge der Substanz",
+    "luminousIntensity": "Lichtintensität"
+  },
+  "unit": {
+    "length": {
+      "millimetre": "Millimetre",
+      "centimetre": "Centimetre",
+      "decimetre": "Decimetre",
       "metre": "Metre",
-      "kilogram": "Kilogram",
+      "kilometre": "Kilometre"
+    },
+    "mass": {
+      "milligram": "Milligram",
+      "gram": "Gram",
+      "kilogram": "Kilogram"
+    },
+    "time": {
       "second": "Second",
-      "ampere": "Ampere",
+      "minute": "Minute",
+      "hour": "Hour"
+    },
+    "electricCurrent": {
+      "ampere": "Ampere"
+    },
+    "thermodynamicTemperature": {
       "kelvin": "Kelvin",
-      "mole": "Mole",
+      "degreeCelsius": "Degree Celsius"
+    },
+    "amountOfSubstance": {
+      "mole": "Mole"
+    },
+    "luminousIntensity": {
       "candela": "Candela"
     }
   },
@@ -105,8 +128,8 @@
     "ownerUser": "Besitzer",
     "username": "Benutzername",
     "password": "Passwort",
-    "measureSelect": "Messen auswählen",
-    "unitSelect": "Einheit auswählen"
+    "measure": "Messen",
+    "unit": "Einheit"
   },
   "labels": {
     "status": "Status",
@@ -120,8 +143,7 @@
     "applyRelation": "Beziehung anwenden",
     "collapseAllPanels": "Alle ausblenden",
     "expandAllPanels": "Alle anzeigen",
-    "unitSelection": "Einheitenauswahl",
-    "Abbreviation": "Abkürzung"
+    "UnitSymbol": "Einheitenzeichen"
   },
   "links": {
     "ownerUser": "Besitzer"

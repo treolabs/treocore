@@ -42,16 +42,11 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
 
         listTemplate: 'treo-core:fields/unit/list',
 
-        events: _.extend({
-            'click button[data-action="showUnitSelection"]': function (e) {
-                this.showUnitSelection();
-            }
-        }, Dep.prototype.events),
-
         data() {
             let data = Dep.prototype.data.call(this);
 
             data.unitFieldName = this.unitFieldName;
+            data.unitList = this.unitList;
             data.unitValue = this.model.get(this.unitFieldName);
             data.valueOrUnit = !!(data.value || data.unitValue);
             return data;
@@ -61,20 +56,18 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
             Dep.prototype.setup.call(this);
 
             this.unitFieldName = this.name + 'Unit';
+            this.unitList = this.getUnitList();
         },
 
-        showUnitSelection() {
-            this.createView('unitSelection', 'treo-core:views/modals/unit-selection', {
-                model: this.model
-            }, view => {
-                view.listenTo(view, 'unit-selected', abbr => {
-                    if (abbr) {
-                        this.model.set({[this.unitFieldName]: abbr});
-                        this.trigger('change');
-                    }
-                });
-                view.render();
-            });
+        getUnitList() {
+            let unitList = [];
+            let measure = this.params.measure;
+            if (measure) {
+                let unitsOfMeasure = this.getConfig().get('unitsOfMeasure') || {};
+                let measureConfig = unitsOfMeasure[measure] || {};
+                unitList = measureConfig.unitList || [];
+            }
+            return unitList;
         },
 
         formatNumber(value) {

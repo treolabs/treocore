@@ -92,23 +92,46 @@
     "localesFilter": {
       "": "All Locales",
       "showGenericFields": "Show Generic Fields"
-    },
-    "measureSelect": {
-      "length": "Length",
-      "mass": "Mass",
-      "time": "Time",
-      "electricCurrent": "Electric current",
-      "thermodynamicTemperature": "Thermodynamic temperature",
-      "amountOfSubstance": "Amount of substance",
-      "luminousIntensity": "Luminous intensity"
-    },
-    "unitSelect": {
+    }
+  },
+  "measure": {
+    "length": "Length",
+    "mass": "Mass",
+    "time": "Time",
+    "electricCurrent": "Electric current",
+    "thermodynamicTemperature": "Thermodynamic temperature",
+    "amountOfSubstance": "Amount of substance",
+    "luminousIntensity": "Luminous intensity"
+  },
+  "unit": {
+    "length": {
+      "millimetre": "Millimetre",
+      "centimetre": "Centimetre",
+      "decimetre": "Decimetre",
       "metre": "Metre",
-      "kilogram": "Kilogram",
+      "kilometre": "Kilometre"
+    },
+    "mass": {
+      "milligram": "Milligram",
+      "gram": "Gram",
+      "kilogram": "Kilogram"
+    },
+    "time": {
       "second": "Second",
-      "ampere": "Ampere",
+      "minute": "Minute",
+      "hour": "Hour"
+    },
+    "electricCurrent": {
+      "ampere": "Ampere"
+    },
+    "thermodynamicTemperature": {
       "kelvin": "Kelvin",
-      "mole": "Mole",
+      "degreeCelsius": "Degree Celsius"
+    },
+    "amountOfSubstance": {
+      "mole": "Mole"
+    },
+    "luminousIntensity": {
       "candela": "Candela"
     }
   },
@@ -116,8 +139,8 @@
     "ownerUser": "Owner",
     "username": "Username",
     "password": "Password",
-    "measureSelect": "Measure select",
-    "unitSelect": "Unit select"
+    "measure": "Measure",
+    "unit": "Unit"
   },
   "labels": {
     "status": "Status",
@@ -131,8 +154,7 @@
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
     "expandAllPanels": "Expand All",
-    "unitSelection": "Unit Selection",
-    "Abbreviation": "Abbreviation"
+    "UnitSymbol": "Unit Symbol"
   },
   "links": {
     "ownerUser": "Owner"

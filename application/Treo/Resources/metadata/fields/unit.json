@@ -6,6 +6,12 @@
          "default":false
       },
       {
+         "name": "measure",
+         "type": "enum",
+         "translation": "Global.measure",
+         "view": "treo-core:views/admin/field-manager/fields/measure-options"
+      },
+      {
          "name":"min",
          "type":"float"
       },
@@ -23,13 +29,14 @@
       }
    ],
    "actualFields":[
-      "unit",
-      ""
+      "",
+      "unit"
    ],
    "fields":{
       "unit":{
          "type":"varchar",
-         "disabled": true
+         "disabled": true,
+         "maxLength": 6
       }
    },
    "filter": true,

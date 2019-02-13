@@ -41,40 +41,43 @@ Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
         setup() {
             Dep.prototype.setup.call(this);
 
-
             this.initialUnitsOfMeasure = Espo.Utils.cloneDeep(this.getConfig().get('unitsOfMeasure') || {});
 
             this.listenTo(this.model, 'after:save', () => {
-                this.ajaxPostRequest('LabelManager/action/saveLabels', {
-                    labels: this.getLabelsForSaveFromUnits(),
-                    language: this.getPreferences().get('language') || this.getConfig().get('language'),
-                    scope: 'Global'
-                });
-            }, this);
+                let labels = this.getLabelsForSaveFromUnits();
+                if (Object.keys(labels).length) {
+                    this.ajaxPostRequest('LabelManager/action/saveLabels', {
+                        labels: labels,
+                        language: this.getPreferences().get('language') || this.getConfig().get('language'),
+                        scope: 'Global'
+                    });
+                }
+            });
         },
 
         getLabelsForSaveFromUnits() {
             let labels = {};
-            let attrs = this.getModifiedMeasurements();
+            let measurements = this.getModifiedMeasurements();
             let translates = this.getTranslations();
 
-            Object.keys(attrs).forEach(attr => {
-                let measureLabelName = `options[.]measureSelect[.]${attr}`;
-                labels[measureLabelName] = (translates.measureSelect || {})[attr];
-                Object.keys(attrs[attr]).forEach(unit => {
-                    let unitLabelName = `options[.]unitSelect[.]${unit}`;
-                    labels[unitLabelName] = (translates.unitSelect || {})[unit];
+            Object.keys(measurements).forEach(measureName => {
+                let measureLabelName = `measure[.]${measureName}`;
+                labels[measureLabelName] = (translates.measure || {})[measureName];
+                let unitList = measurements[measureName].unitList || {}
+                Object.keys(unitList).forEach(unitName => {
+                    let unitLabelName = `unit[.]${unitName}`;
+                    labels[unitLabelName] = (translates.unit || {})[unitName];
                 });
             });
             return labels;
         },
 
         getModifiedMeasurements() {
-            let measurements = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
+            let initialUnitsOfMeasure = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
             let data = this.model.get('unitsOfMeasure') || {};
             let attrs = {};
             for (let name in data) {
-                if (_.isEqual(data[name], measurements[name])) {
+                if (_.isEqual(data[name], initialUnitsOfMeasure[name])) {
                     continue;
                 }
                 attrs[name] = data[name];
