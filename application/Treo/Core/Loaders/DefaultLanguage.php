@@ -55,11 +55,21 @@ class DefaultLanguage extends Base
     public function load()
     {
         return new Instance(
-            null,
+            Instance::detectLanguage($this->getConfig()),
             $this->getFileManager(),
             $this->getMetadata(),
             $this->useCache()
         );
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->getContainer()->get('config');
     }
 
     /**
