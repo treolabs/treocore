@@ -142,7 +142,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
                 }
             }
 
-            $this->getEntityManager()->saveEntity($entity);
+            $this->getEntityManager()->saveEntity($entity, ['skipAll' => true]);
         }
     }
 
