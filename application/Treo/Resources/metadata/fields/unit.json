@@ -40,5 +40,8 @@
       }
    },
    "filter": true,
-   "view": "treo-core:views/fields/unit"
+   "view": "treo-core:views/fields/unit",
+   "fieldDefs": {
+      "type": "float"
+   }
 }

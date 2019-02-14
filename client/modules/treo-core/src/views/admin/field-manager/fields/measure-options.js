@@ -43,7 +43,7 @@ Espo.define('treo-core:views/admin/field-manager/fields/measure-options', 'views
         },
 
         setupOptions() {
-            this.params.options = Object.keys(this.getConfig().get('unitsOfMeasure'));
+            this.params.options = Object.keys(this.getConfig().get('unitsOfMeasure') || {});
         },
     })
 );
