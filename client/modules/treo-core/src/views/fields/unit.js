@@ -101,7 +101,7 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
             Dep.prototype.afterRender.call(this);
 
             if (this.mode === 'edit') {
-                this.$unit = this.$el.find('.unit-value');
+                this.$unit = this.$el.find(`[name="${this.unitFieldName}"]`);
                 this.$unit.on('change', function () {
                     this.model.set(this.unitFieldName, this.$unit.val());
                 }.bind(this));
