@@ -51,7 +51,7 @@ Espo.define('treo-core:views/header', 'class-replace!treo-core:views/header', fu
         setup() {
             Dep.prototype.setup.call(this);
 
-            if (this.model && !this.model.isNew() && this.getMetadata().get(['scopes', this.scope, 'advancedFilters'])) {
+            if (this.model && !this.model.isNew() && this.getMetadata().get(['scopes', this.scope, 'customizable'])) {
                 this.createOverviewFilters();
             }
         },
