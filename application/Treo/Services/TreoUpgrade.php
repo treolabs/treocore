@@ -120,8 +120,8 @@ class TreoUpgrade extends AbstractService
         $name = str_replace(".zip", "", end($matches));
 
         // clearing cache
-        if (file_exists($this->packagesPath)) {
-            Mover::deleteDir($this->packagesPath);
+        if (file_exists($this->packagesPath . "/" . $name)) {
+            return $name;
         }
 
         // create upgrade dir
