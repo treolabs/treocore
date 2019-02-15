@@ -17,6 +17,11 @@ php=$2
 $php console.php cron
 
 # call treo-composer
+if [[ ! "$(ps ax | grep treo-upgrade.sh)" =~ "bin/treo-upgrade.sh $id" ]]; then
+    bash ./bin/treo-upgrade.sh $id $php
+fi
+
+# call treo-composer
 if [[ ! "$(ps ax | grep treo-composer.sh)" =~ "bin/treo-composer.sh $id" ]]; then
     bash ./bin/treo-composer.sh $id $php
 fi
