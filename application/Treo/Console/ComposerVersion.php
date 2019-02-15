@@ -36,71 +36,43 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Core\UpgradeManager;
-use Treo\Services\TreoUpgrade;
-use Treo\Core\Migration\Migration;
-
 /**
- * Class Upgrade
+ * Class ComposerVersion
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Upgrade extends AbstractConsole
+class ComposerVersion extends AbstractConsole
 {
     /**
-     * Get console command description
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return "Force upgrading of Treo System.";
+        return 'Set version to composer.json.';
     }
 
     /**
-     * Run action
-     *
-     * @param array $data
+     * @inheritdoc
      */
     public function run(array $data): void
     {
-        // validate action
-        if (!in_array($data['action'], ['--download', '--force'])) {
-            self::show("Invalid 'action' param", self::ERROR);
-            exit(1);
-        }
-
-        // get versions
-        $versions = array_column($this->getService()->getVersions(), 'link', 'version');
-        if (!isset($versions[$data['versionTo']])) {
-            self::show('No such version for upgrade.', self::ERROR);
-            exit(1);
-        }
-
-        // download
         try {
-            $package = $this->getService()->downloadPackage($versions[$data['versionTo']]);
+            $this->setVersion((string)$data['version']);
         } catch (\Exception $e) {
-            self::show("Package downloading failed!", self::ERROR);
+            self::show('composer.json version update failed.', self::ERROR);
             exit(1);
         }
 
-        if ($data['action'] == '--download') {
-            self::show('Upgrade package downloaded successfully.', self::SUCCESS, true);
-        }
-
-        if ($data['action'] == '--force') {
-            $upgradeManager = new UpgradeManager($this->getContainer());
-            $upgradeManager->install(['id' => $package]);
-            self::show('Treo system upgraded successfully.', self::SUCCESS, true);
-        }
+        self::show('composer.json version updated successfully.', self::SUCCESS);
     }
 
     /**
-     * @return TreoUpgrade
+     * @param string $version
      */
-    protected function getService(): TreoUpgrade
+    protected function setVersion(string $version): void
     {
-        return $this->getContainer()->get('serviceFactory')->create('TreoUpgrade');
+        $composer = json_decode(file_get_contents('composer.json'), true);
+        $composer['version'] = $version;
+        file_put_contents('composer.json', json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }
