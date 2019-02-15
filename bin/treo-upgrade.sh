@@ -9,11 +9,8 @@ log="data/treo-upgrade.log"
 currentVersion="3.3.8"
 version="3.3.10"
 
-# start
-echo -e "Core upgrading has been started\n" > $log 2>&1
-
 # download package
-echo "1. Downloading upgrade package" >> $log 2>&1
+echo "1. Downloading upgrade package" > $log 2>&1
 if ! $php console.php upgrade $version --download > /dev/null 2>&1; then
     echo "{{failed}}" >> $log 2>&1
     exit 1
