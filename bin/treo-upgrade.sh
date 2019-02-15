@@ -22,7 +22,9 @@ echo " " >> $log 2>&1
 
 # composer update
 echo "2. Updating dependencies" >> $log 2>&1
+$php composer.phar run-script pre-update-cmd > /dev/null 2>&1
 if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
     echo "{{FAILED}}" >> $log 2>&1
     exit 1
 fi
+echo " " >> $log 2>&1
