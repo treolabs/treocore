@@ -170,43 +170,6 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
-     * Create update log
-     *
-     * @param string $version
-     *
-     * @return array
-     */
-    public function createUpdateLog(string $version): bool
-    {
-        // create composer.json file
-        $this->createComposerJson($version);
-
-        // run validate
-        $this->runValidate();
-
-        return true;
-    }
-
-    /**
-     * Create composer.json file
-     *
-     * @param string $version
-     */
-    protected function createComposerJson(string $version): void
-    {
-        // get content
-        $content = file_get_contents('composer.json');
-
-        // copy
-        file_put_contents("data/cached-composer.json", $content);
-
-        // set version
-        $data = json_decode($content, true);
-        $data['version'] = $version;
-        file_put_contents("composer.json", json_encode($data));
-    }
-
-    /**
      * @return string
      */
     protected function getCurrentVersion(): string
@@ -306,14 +269,6 @@ class TreoUpgrade extends AbstractService
     protected function getTreoPackages(): array
     {
         return $this->getContainer()->get('serviceFactory')->create('Store')->getPackages();
-    }
-
-    /**
-     * Run validate
-     */
-    protected function runValidate(): void
-    {
-        $this->getContainer()->get('serviceFactory')->create('Composer')->runValidate();
     }
 
     /**
