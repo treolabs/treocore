@@ -12,6 +12,7 @@ version="3.3.10"
 # download package
 echo "1. Downloading upgrade package" > $log 2>&1
 if ! $php console.php upgrade $version --download > /dev/null 2>&1; then
+    echo "ERROR" >> $log 2>&1
     echo "{{failed}}" >> $log 2>&1
     exit 1
 fi
