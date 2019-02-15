@@ -64,19 +64,33 @@ class Upgrade extends AbstractConsole
      */
     public function run(array $data): void
     {
+        // validate action
+        if (!in_array($data['action'], ['--download', '--force'])) {
+            self::show("Invalid 'action' param", 0, true);
+        }
+
         // get versions
         $versions = array_column($this->getService()->getVersions(), 'link', 'version');
-
         if (!isset($versions[$data['versionTo']])) {
             self::show('No such version for upgrade.', self::ERROR, true);
         }
 
-        // upgrade treocore
-        $upgradeManager = new UpgradeManager($this->getContainer());
-        $upgradeManager->install(['id' => $this->getService()->downloadPackage($versions[$data['versionTo']])]);
+        // download
+        try {
+            $package = $this->getService()->downloadPackage($versions[$data['versionTo']]);
+        } catch (\Exception $e) {
+            self::show("Package downloading failed!", self::ERROR, true);
+        }
 
-        // render
-        self::show('Treo system upgraded successfully.', self::SUCCESS);
+        if ($data['action'] == '--download') {
+            self::show('Upgrade package downloaded successfully.', self::SUCCESS, true);
+        }
+
+        if ($data['action'] == '--force') {
+            $upgradeManager = new UpgradeManager($this->getContainer());
+            $upgradeManager->install(['id' => $package]);
+            self::show('Treo system upgraded successfully.', self::SUCCESS, true);
+        }
     }
 
     /**

@@ -87,6 +87,10 @@ class TreoUpgrade extends AbstractService
      */
     public function runUpgrade(string $to): bool
     {
+        echo '<pre>';
+        print_r($to);
+        die();
+
         // prepare available versions
         $versions = array_column($this->getVersions(), 'link', 'version');
 
@@ -96,9 +100,6 @@ class TreoUpgrade extends AbstractService
 
         // upgrade treocore
         $this->coreUpgrade($package, $this->getCurrentVersion(), $to);
-
-        // composer update
-        $this->runUpdate();
 
         return true;
     }
@@ -269,14 +270,6 @@ class TreoUpgrade extends AbstractService
     protected function getTreoPackages(): array
     {
         return $this->getContainer()->get('serviceFactory')->create('Store')->getPackages();
-    }
-
-    /**
-     * Run update
-     */
-    protected function runUpdate(): void
-    {
-        $this->getContainer()->get('serviceFactory')->create('Composer')->runUpdate();
     }
 
     /**
