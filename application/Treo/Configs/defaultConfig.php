@@ -104,5 +104,83 @@ return [
     'cronMassUpdateMax'      => 3000, // count of max massUpdate items for CRON
     'developMode'            => false,
     'exportDelimiter'        => ';',
-    'timeZone'               => 'UTC'
+    'timeZone'               => 'UTC',
+    'unitsOfMeasure' => (object) [
+        'length' => (object) [
+            'unitList' => (object) [
+                'millimetre' => 'mm',
+                'centimetre' => 'cm',
+                'decimetre' => 'dm',
+                'metre' => 'm',
+                'kilometre' => 'km'
+            ],
+            'baseUnit' => 'metre',
+            'unitRates' => (object) [
+                'millimetre' => 1,
+                'centimetre' => 1,
+                'decimetre' => 1,
+                'kilometre' => 1
+            ]
+        ],
+        'mass' => (object) [
+            'unitList' => (object) [
+                'milligram' => 'mg',
+                'gram' => 'g',
+                'kilogram' => 'kg'
+            ],
+            'baseUnit' => 'kilogram',
+            'unitRates' => (object) [
+                'milligram' => 1
+            ]
+        ],
+        'time' => (object) [
+            'unitList' => (object) [
+                'second' => 's',
+                'minute' => 'm',
+                'hour' => 'h'
+            ],
+            'baseUnit' => 'second',
+            'unitRates' => (object) [
+                'minute' => 1,
+                'hour' => 1
+            ]
+        ],
+        'electricCurrent' => (object) [
+            'unitList' => (object) [
+                'ampere' => 'A'
+            ],
+            'baseUnit' => 'ampere',
+            'unitRates' => (object) [
+
+            ]
+        ],
+        'thermodynamicTemperature' => (object) [
+            'unitList' => (object) [
+                'kelvin' => 'K',
+                'degreeCelsius' => 'C'
+            ],
+            'baseUnit' => 'kelvin',
+            'unitRates' => (object) [
+                'degreeCelsius' => 1
+            ]
+        ],
+        'amountOfSubstance' => (object) [
+            'unitList' => (object) [
+                'mole' => 'mol'
+            ],
+            'baseUnit' => 'mole',
+            'unitRates' => (object) [
+
+            ]
+        ],
+        'luminousIntensity' => (object) [
+            'unitList' => (object) [
+                'candela' => 'cd'
+            ],
+            'baseUnit' => 'candela',
+            'unitRates' => (object) [
+
+            ]
+        ]
+    ]
 ];
