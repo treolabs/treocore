@@ -5,7 +5,7 @@ php=$2
 
 # prepare file(s) path
 path="data/treo-module-update.txt"
-log="data/composer.log"
+log="data/treo-module-update.log"
 
 while true
 do
@@ -20,9 +20,11 @@ do
        echo "{{error}}" >> $log 2>&1
      else
        $php composer.phar run-script post-update-cmd > /dev/null 2>&1
-       $php console.php composer-log > /dev/null 2>&1
-       echo "{{finished}}" >> $log 2>&1
+       echo "{{success}}" >> $log 2>&1
      fi
+
+     # update stream log
+     $php console.php composer-log > /dev/null 2>&1
    fi
    sleep 1;
 done

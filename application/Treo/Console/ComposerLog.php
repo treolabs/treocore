@@ -71,20 +71,26 @@ class ComposerLog extends AbstractConsole
      */
     protected function stream(): void
     {
-        if (file_exists('data/composer.log')) {
+        // prepare path
+        $path = 'data/treo-module-update.log';
+
+        if (file_exists($path)) {
             // get content
-            $content = str_replace("{{finished}}", "", file_get_contents('data/composer.log'));
+            $content = file_get_contents($path);
+
+            // prepare status
+            $status = 1;
+            if (strpos($content, '{{success}}') !== false) {
+                $status = 0;
+            }
+
+            // prepare content
+            $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
 
             // prepare createdById
             $createdById = 'system';
             if (!empty($this->getConfig()->get('composerUser'))) {
                 $createdById = $this->getConfig()->get('composerUser');
-            }
-
-            // prepare status
-            $status = 1;
-            if (strpos($content, 'postUpdate') !== false) {
-                $status = 0;
             }
 
             // get em
