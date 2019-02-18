@@ -7,7 +7,6 @@
     "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)",
     "log": "log",
     "Upgrade": "Upgrade",
-    "Validate": "Validate",
     "progressLog": "Progress Log"
   },
   "descriptions": {
@@ -27,9 +26,6 @@
     "upgradeFailed": "Upgrade failed",
     "upgradeSuccessful": "Upgrade successfully finished",
     "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details.",
-    "validationStarted": "Validation has been started",
-    "validationFailed": "Validation failed",
-    "validationSuccessful": "Validation successfully finished. Press Apply to run upgrade"
   },
   "layouts": {
     "relationships": "Bottom Panels"
