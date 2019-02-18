@@ -25,7 +25,7 @@
     "upgradeStarted": "Upgrade has been started",
     "upgradeFailed": "Upgrade failed",
     "upgradeSuccessful": "Upgrade successfully finished",
-    "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details.",
+    "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details."
   },
   "layouts": {
     "relationships": "Bottom Panels"

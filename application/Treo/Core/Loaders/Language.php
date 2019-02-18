@@ -56,7 +56,7 @@ class Language extends Base
     public function load()
     {
         return new \Treo\Core\Utils\Language(
-            \Espo\Core\Utils\Language::detectLanguage($this->getConfig(), $this->getPreferences()),
+            \Treo\Core\Utils\Language::detectLanguage($this->getConfig(), $this->getPreferences()),
             $this->getFileManager(),
             $this->getMetadata(),
             $this->getConfig()->get('useCache')
