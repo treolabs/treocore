@@ -14,9 +14,12 @@ do
      # delete file
      rm $path;
 
+     # start
+     echo -e "Modules updating has been started:\n" > $log 2>&1
+
      # composer update
      $php composer.phar run-script pre-update-cmd > /dev/null 2>&1
-     if ! $php composer.phar update --no-dev --no-scripts > $log 2>&1; then
+     if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
        echo "{{error}}" >> $log 2>&1
      else
        $php composer.phar run-script post-update-cmd > /dev/null 2>&1

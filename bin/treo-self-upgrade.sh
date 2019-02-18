@@ -20,8 +20,11 @@ do
      # delete file
      rm $path;
 
+     # start
+     echo -e "Self upgrading has been started:\n" > $log 2>&1
+
      # download package
-     echo "1. Downloading upgrade package" > $log 2>&1
+     echo "1. Downloading upgrade package" >> $log 2>&1
      if ! $php console.php upgrade $to --download > /dev/null 2>&1; then
        echo "ERROR" >> $log 2>&1
        echo "{{error}}" >> $log 2>&1
