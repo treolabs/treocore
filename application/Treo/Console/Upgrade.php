@@ -54,7 +54,7 @@ class Upgrade extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return "Force upgrading of Treo System.";
+        return "Upgrading of Treo Core.";
     }
 
     /**
@@ -66,23 +66,20 @@ class Upgrade extends AbstractConsole
     {
         // validate action
         if (!in_array($data['action'], ['--download', '--force'])) {
-            self::show("Invalid 'action' param", self::ERROR);
-            exit(1);
+            self::show("Invalid 'action' param", self::ERROR, true);
         }
 
         // get versions
         $versions = array_column($this->getService()->getVersions(), 'link', 'version');
         if (!isset($versions[$data['versionTo']])) {
-            self::show('No such version for upgrade.', self::ERROR);
-            exit(1);
+            self::show('No such version for upgrade.', self::ERROR, true);
         }
 
         // download
         try {
             $package = $this->getService()->downloadPackage($versions[$data['versionTo']]);
         } catch (\Exception $e) {
-            self::show("Package downloading failed!", self::ERROR);
-            exit(1);
+            self::show("Package downloading failed!", self::ERROR, true);
         }
 
         if ($data['action'] == '--download') {
@@ -90,8 +87,13 @@ class Upgrade extends AbstractConsole
         }
 
         if ($data['action'] == '--force') {
+            // upgrade
             $upgradeManager = new UpgradeManager($this->getContainer());
             $upgradeManager->install(['id' => $package]);
+
+            // update minimum stability
+            $this->minimumStability();
+
             self::show('Treo system upgraded successfully.', self::SUCCESS, true);
         }
     }
@@ -102,5 +104,16 @@ class Upgrade extends AbstractConsole
     protected function getService(): TreoUpgrade
     {
         return $this->getContainer()->get('serviceFactory')->create('TreoUpgrade');
+    }
+
+    /**
+     * Update composer minimum-stability
+     */
+    protected function minimumStability(): void
+    {
+        // prepare data
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }

@@ -59,11 +59,10 @@ class ComposerVersion extends AbstractConsole
         try {
             $this->setVersion((string)$data['version']);
         } catch (\Exception $e) {
-            self::show('composer.json version update failed.', self::ERROR);
-            exit(1);
+            self::show('composer.json version update failed.', self::ERROR, true);
         }
 
-        self::show('composer.json version updated successfully.', self::SUCCESS);
+        self::show('composer.json version updated successfully.', self::SUCCESS, true);
     }
 
     /**
