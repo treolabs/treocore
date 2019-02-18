@@ -267,9 +267,9 @@ class TreoUpgrade extends AbstractService
      */
     protected function coreUpgrade(string $from, string $to): bool
     {
-        if (!file_exists("data/treo-upgrade.txt")) {
-            file_put_contents("data/treo-upgrade.log", " ");
-            file_put_contents("data/treo-upgrade.txt", "{$from}\n{$to}");
+        if (!file_exists("treo-self-upgrade.txt")) {
+            file_put_contents("data/treo-self-upgrade.log", " ");
+            file_put_contents("data/treo-self-upgrade.txt", "{$from}\n{$to}");
 
             return true;
         }

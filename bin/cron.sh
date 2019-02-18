@@ -16,12 +16,12 @@ php=$2
 # call cron jobs
 $php console.php cron
 
-# call treo-upgrade
-if [[ ! "$(ps ax | grep treo-upgrade.sh)" =~ "bin/treo-upgrade.sh $id" ]]; then
-    bash ./bin/treo-upgrade.sh $id $php
+# self upgrade process
+if [[ ! "$(ps ax | grep treo-self-upgrade.sh)" =~ "bin/treo-self-upgrade.sh $id" ]]; then
+    bash ./bin/treo-self-upgrade.sh $id $php
 fi
 
-# call treo-composer
-if [[ ! "$(ps ax | grep treo-composer.sh)" =~ "bin/treo-composer.sh $id" ]]; then
-    bash ./bin/treo-composer.sh $id $php
-fi
+# module update process
+#if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
+#    bash ./bin/treo-module-update.sh $id $php
+#fi
