@@ -135,9 +135,6 @@ class Composer extends AbstractConsole
             $this->getConfig()->set('composerUser', null);
             $this->getConfig()->save();
 
-            // clearing log
-            file_put_contents($path, " ");
-
             self::show('Log successfully pushed to stream.', self::SUCCESS, true);
         }
 
