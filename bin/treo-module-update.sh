@@ -23,8 +23,8 @@ do
        echo "{{success}}" >> $log 2>&1
      fi
 
-     # update stream log
-     $php console.php composer-log > /dev/null 2>&1
+     # push log to stream
+     $php console.php composer --push-log module-update > /dev/null 2>&1
    fi
    sleep 1;
 done

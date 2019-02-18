@@ -45,6 +45,9 @@ do
          $php composer.phar run-script post-update-cmd > /dev/null 2>&1
          echo -e "OK\n" >> $log 2>&1
          echo "{{success}}" >> $log 2>&1
+
+         # push log to stream
+         $php console.php composer --push-log self-upgrade > /dev/null 2>&1
        fi
      fi
    fi
