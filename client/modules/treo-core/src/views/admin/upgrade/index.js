@@ -166,7 +166,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             let success = this.log.indexOf('{{success}}');
             if (success > -1) {
                 window.clearInterval(this.logCheckInterval);
-                this.log = this.log.slice(0, error);
+                this.log = this.log.slice(0, success);
 
                 location.reload();
             }
