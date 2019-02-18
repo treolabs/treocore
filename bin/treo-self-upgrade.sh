@@ -30,10 +30,10 @@ do
 
        # composer update
        echo "2. Updating dependencies" >> $log 2>&1
-       $php console.php composer-version $to --set > /dev/null 2>&1
+       $php console.php composer --upgrade-core "${from}_${to}" > /dev/null 2>&1
        $php composer.phar run-script pre-update-cmd > /dev/null 2>&1
        if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
-         $php console.php composer-version $from --set > /dev/null 2>&1
+         $php console.php composer --upgrade-core none > /dev/null 2>&1
          echo "{{error}}" >> $log 2>&1
        else
          echo -e "OK\n" >> $log 2>&1
