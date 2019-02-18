@@ -267,25 +267,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * Insert job to DB
-     */
-    protected function insertJob(): void
-    {
-        $jobEntity = $this->getEntityManager()->getEntity('Job');
-        $jobEntity->set(
-            [
-                'name'        => 'run-treo-update',
-                'status'      => CronManager::PENDING,
-                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                'serviceName' => 'Composer',
-                'method'      => 'runUpdateJob',
-                'data'        => ['createdById' => $this->getUser()->get('id')]
-            ]
-        );
-        $this->getEntityManager()->saveEntity($jobEntity);
-    }
-
-    /**
      * Get module data
      *
      * @param string $id

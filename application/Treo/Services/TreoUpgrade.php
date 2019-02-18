@@ -271,6 +271,10 @@ class TreoUpgrade extends AbstractService
             file_put_contents("data/treo-self-upgrade.log", " ");
             file_put_contents("data/treo-self-upgrade.txt", "{$from}\n{$to}");
 
+            // set composer user
+            $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+            $this->getConfig()->save();
+
             return true;
         }
 
