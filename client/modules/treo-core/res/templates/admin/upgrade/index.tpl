@@ -17,11 +17,8 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="button-container">
-                    <button class="btn btn-primary" data-action="validateSystem">
+                    <button class="btn btn-primary" data-action="upgradeSystem">
                         {{translate 'Upgrade' category='labels' scope='Admin'}}
-                    </button>
-                    <button class="btn btn-primary hidden" data-action="upgradeSystem">
-                        {{translate 'Apply' category='labels' scope='Global'}}
                     </button>
                 </div>
             </div>
