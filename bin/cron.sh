@@ -22,6 +22,6 @@ if [[ ! "$(ps ax | grep treo-self-upgrade.sh)" =~ "bin/treo-self-upgrade.sh $id"
 fi
 
 # module update process
-#if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
-#    bash ./bin/treo-module-update.sh $id $php
-#fi
+if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
+    bash ./bin/treo-module-update.sh $id $php
+fi
