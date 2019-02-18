@@ -3,21 +3,22 @@
 # prepare PHP
 php=$2
 
-# prepare log file
+# prepare file(s) path
+path="data/treo-upgrade.txt"
 log="data/treo-upgrade.log"
 
 while true
 do
    # is neet to update composer
-   if [ -f "data/treo-upgrade.txt" ]; then
+   if [ -f $path ]; then
      # get version from
-     from="3.3.8"
+     from=$(sed -n '1p' $path)
 
      #get version to
-     to="3.3.10"
+     to=$(sed -n '2p' $path)
 
      # delete file
-     rm "data/treo-upgrade.txt";
+     rm $path;
 
      # download package
      echo "1. Downloading upgrade package" > $log 2>&1

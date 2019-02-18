@@ -16,7 +16,7 @@ php=$2
 # call cron jobs
 $php console.php cron
 
-# call treo-composer
+# call treo-upgrade
 if [[ ! "$(ps ax | grep treo-upgrade.sh)" =~ "bin/treo-upgrade.sh $id" ]]; then
     bash ./bin/treo-upgrade.sh $id $php
 fi
