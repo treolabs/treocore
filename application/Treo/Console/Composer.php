@@ -37,18 +37,18 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class ComposerVersion
+ * Class Composer
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ComposerVersion extends AbstractConsole
+class Composer extends AbstractConsole
 {
     /**
      * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return 'Set version to composer.json.';
+        return 'Composer actions';
     }
 
     /**
@@ -56,22 +56,24 @@ class ComposerVersion extends AbstractConsole
      */
     public function run(array $data): void
     {
-        try {
-            $this->setVersion((string)$data['version']);
-        } catch (\Exception $e) {
-            self::show('composer.json version update failed.', self::ERROR, true);
+        if ($data['action'] == '--upgrade-core') {
+            if ($data['packageId'] == 'none') {
+                if (file_exists('data/stored-composer.json')) {
+                    file_put_contents('composer.json', file_get_contents('data/stored-composer.json'));
+                }
+                self::show('composer.json restored successfully.', self::SUCCESS, true);
+            }
+
+            // prepare file
+            $file = 'data/upload/upgrades/' . $data['packageId'] . '/files/composer.json';
+            if (!file_exists($file)) {
+                self::show('No such downloaded package!', self::ERROR, true);
+            }
+
+            file_put_contents('data/stored-composer.json', file_get_contents('composer.json'));
+            file_put_contents('composer.json', file_get_contents($file));
+
+            self::show('composer.json updated successfully.', self::SUCCESS, true);
         }
-
-        self::show('composer.json version updated successfully.', self::SUCCESS, true);
-    }
-
-    /**
-     * @param string $version
-     */
-    protected function setVersion(string $version): void
-    {
-        $composer = json_decode(file_get_contents('composer.json'), true);
-        $composer['version'] = $version;
-        file_put_contents('composer.json', json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }
