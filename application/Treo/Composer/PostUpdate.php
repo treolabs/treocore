@@ -281,9 +281,18 @@ class PostUpdate
      */
     protected function triggered(string $target, string $action, array $data = []): void
     {
-        try {
-            $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
-        } catch (\Exception $e) {
+        // prepare php
+        $php = (new \Espo\Core\Utils\System())->getPhpBin();
+
+        foreach ($data as $row) {
+            // prepare json data
+            $jsonData = json_encode(['id' => $row['id']]);
+
+            // prepare command
+            $command = "$php console.php events --call $target $action $jsonData";
+
+            // call event in separate process
+            exec(str_replace('"', '\"', $command));
         }
     }
 }
