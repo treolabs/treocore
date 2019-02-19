@@ -36,44 +36,19 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use PHPUnit\Framework\TestCase;
-use Treo\Core\Utils\Metadata;
-use Espo\Core\Utils\File\Manager;
-use Espo\Core\Utils\Language as Instance;
-
 /**
  * Class DefaultLanguageTest
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun@treolabs.com
  */
-class DefaultLanguageTest extends TestCase
+class DefaultLanguageTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test load method
+     * Test is load method exist
      */
-    public function testLoad()
+    public function testIsLoadMethodExist()
     {
-        $mock = $this->createPartialMock(
-            DefaultLanguage::class,
-            ['getFileManager', 'getMetadata', 'useCache']
-        );
-        $fileManager = $this->createPartialMock(Manager::class, []);
-        $metadata = $this->createPartialMock(Metadata::class, []);
-
-        $mock
-            ->expects($this->any())
-            ->method('getFileManager')
-            ->willReturn($fileManager);
-        $mock
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
-        $mock
-            ->expects($this->any())
-            ->method('useCache')
-            ->willReturn(false);
-
         // test
-        $this->assertInstanceOf(Instance::class, $mock->load());
+        $this->assertTrue(method_exists($this->createPartialMock(DefaultLanguage::class, []), 'load'));
     }
 }

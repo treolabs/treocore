@@ -66,7 +66,7 @@ class Base extends \Espo\Core\Acl\Base
         // prepare data
         $hasOwnerUser = $this
             ->getInjection('metadata')
-            ->get('scopes.' . $entity->getEntityType() . '.hasOwnerUser');
+            ->get('scopes.' . $entity->getEntityType() . '.hasOwner');
         $hasAssignedUser = $this
             ->getInjection('metadata')
             ->get('scopes.' . $entity->getEntityType() . '.hasAssignedUser');
