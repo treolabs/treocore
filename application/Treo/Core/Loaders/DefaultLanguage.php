@@ -35,14 +35,15 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Language as Instance;
 use Espo\Core\Utils\File\Manager;
-use Espo\Core\Utils\Language as Instance;
 
 /**
  * DefaultLanguage loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class DefaultLanguage extends Base
 {

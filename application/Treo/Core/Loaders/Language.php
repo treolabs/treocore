@@ -37,13 +37,14 @@ namespace Treo\Core\Loaders;
 
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Language as Instance;
 use Espo\Entities\Preferences;
 use Espo\Core\Utils\File\Manager;
 
 /**
  * Language loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Language extends Base
 {
@@ -55,8 +56,8 @@ class Language extends Base
      */
     public function load()
     {
-        return new \Treo\Core\Utils\Language(
-            \Espo\Core\Utils\Language::detectLanguage($this->getConfig(), $this->getPreferences()),
+        return new Instance(
+            Instance::detectLanguage($this->getConfig(), $this->getPreferences()),
             $this->getFileManager(),
             $this->getMetadata(),
             $this->getConfig()->get('useCache')
