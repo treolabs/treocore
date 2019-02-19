@@ -74,6 +74,9 @@ class PostUpdate
 
             // drop cache
             $this->clearCache();
+
+            // init events
+            $this->initEvents();
         }
     }
 
@@ -248,5 +251,39 @@ class PostUpdate
     protected function isInstalled(): bool
     {
         return !empty($this->getContainer()->get('config')->get('isInstalled'));
+    }
+
+    /**
+     * Init events
+     */
+    protected function initEvents(): void
+    {
+        // get diff
+        $composerDiff = $this->getComposerLockDiff();
+
+        if (!empty($composerDiff['install'])) {
+            $this->triggered('Composer', 'afterInstallModule', $composerDiff['install']);
+        }
+        if (!empty($composerDiff['update'])) {
+            $this->triggered('Composer', 'afterUpdateModule', $composerDiff['update']);
+        }
+        if (!empty($composerDiff['delete'])) {
+            $this->triggered('Composer', 'afterDeleteModule', $composerDiff['delete']);
+        }
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     */
+    protected function triggered(string $target, string $action, array $data = []): void
+    {
+        try {
+            $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
+        } catch (\Exception $e) {
+        }
     }
 }
