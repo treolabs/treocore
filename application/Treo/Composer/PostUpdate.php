@@ -278,21 +278,34 @@ class PostUpdate
      * @param string $target
      * @param string $action
      * @param array  $data
+     *
+     * @return bool
      */
-    protected function triggered(string $target, string $action, array $data = []): void
+    protected function triggered(string $target, string $action, array $data = []): bool
     {
+        // prepare load order file path
+        $path = 'custom/Espo/Custom/Resources/module.json';
+        if (!file_exists($path)) {
+            return false;
+        }
+
         // prepare php
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
 
-        foreach ($data as $row) {
-            // prepare json data
-            $jsonData = json_encode(['id' => $row['id']]);
+        // prepare ids
+        $ids = array_column($data, 'id');
 
-            // prepare command
-            $command = "$php console.php events --call $target $action $jsonData";
+        // sorting
+        foreach (json_decode(file_get_contents($path), true) as $id => $row) {
+            if (in_array($id, $ids)) {
+                // prepare command
+                $command = "$php console.php events --call $target $action " . json_encode(['id' => $id]);
 
-            // call event in separate process
-            exec(str_replace('"', '\"', $command));
+                // call event in separate process
+                exec(str_replace('"', '\"', $command));
+            }
         }
+
+        return true;
     }
 }
