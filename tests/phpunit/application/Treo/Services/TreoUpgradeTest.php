@@ -98,18 +98,4 @@ class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue(method_exists($this->createPartialMock(TreoUpgrade::class, []), 'notify'));
     }
-
-    /**
-     * Test for createUpdateLog method
-     */
-    public function testCreateUpdateLogMethod()
-    {
-        $service = $this->createPartialMock(TreoUpgrade::class, ['runValidate', 'createComposerJson']);
-
-        // test 1
-        $this->assertTrue($service->createUpdateLog('1.0.0'));
-
-        // test 2
-        $this->assertTrue($service->createUpdateLog('2.0.0'));
-    }
 }

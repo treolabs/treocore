@@ -80,23 +80,31 @@ abstract class AbstractConsole
             // success
             case self::SUCCESS:
                 echo "\033[0;32m{$message}\033[0m" . PHP_EOL;
+                if ($stop) {
+                    exit(0);
+                }
                 break;
             // error
             case self::ERROR:
                 echo "\033[1;31m{$message}\033[0m" . PHP_EOL;
+                if ($stop) {
+                    exit(1);
+                }
                 break;
             // info
             case self::INFO:
                 echo "\033[0;36m{$message}\033[0m" . PHP_EOL;
+                if ($stop) {
+                    exit();
+                }
                 break;
             // default
             default:
                 echo $message . PHP_EOL;
+                if ($stop) {
+                    exit();
+                }
                 break;
-        }
-
-        if ($stop) {
-            die();
         }
     }
 

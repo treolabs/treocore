@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 TreoLabs GmbH
+ * Copyright (C) 2017-2019 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -37,19 +37,19 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class ComposerLogTest
+ * Class ComposergTest
  *
  * @author r.ratsun@treolabs.com
  */
-class ComposerLogTest extends \PHPUnit\Framework\TestCase
+class ComposerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test is getDescription method exists
      */
-    public function testISGetDescriptionExists()
+    public function testIsGetDescriptionExists()
     {
         // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'getDescription'));
+        $this->assertTrue(method_exists($this->createPartialMock(Composer::class, []), 'getDescription'));
     }
 
     /**
@@ -58,6 +58,6 @@ class ComposerLogTest extends \PHPUnit\Framework\TestCase
     public function testIsRunExists()
     {
         // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'run'));
+        $this->assertTrue(method_exists($this->createPartialMock(Composer::class, []), 'run'));
     }
 }

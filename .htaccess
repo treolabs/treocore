@@ -8,6 +8,6 @@ RewriteRule ^ index.php [QSA,L]
   Deny from all
 </FilesMatch>
 
-<FilesMatch "(composer|composer-validate)\.log$">
+<FilesMatch "(treo-module-update|treo-self-upgrade)\.log$">
   Allow from all
 </FilesMatch>

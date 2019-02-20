@@ -50,9 +50,7 @@ class Language extends Base
 {
 
     /**
-     * Load Language
-     *
-     * @return \Espo\Core\Utils\Language
+     * @inheritdoc
      */
     public function load()
     {

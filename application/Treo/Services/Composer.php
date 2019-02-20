@@ -77,19 +77,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * Run validate
-     *
-     * @return bool
-     */
-    public function runValidate(): bool
-    {
-        // create file for treo-composer.sh
-        $this->filePutContents('data/composer-validate.txt', '1');
-
-        return true;
-    }
-
-    /**
      * Run update
      *
      * @return bool
@@ -97,7 +84,7 @@ class Composer extends AbstractService
     public function runUpdate(): bool
     {
         // create file for treo-composer.sh
-        $this->filePutContents('data/composer-update.txt', '1');
+        $this->filePutContents('data/treo-module-update.txt', '1');
 
         // set user to config
         $this->setComposerUser();
@@ -277,25 +264,6 @@ class Composer extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * Insert job to DB
-     */
-    protected function insertJob(): void
-    {
-        $jobEntity = $this->getEntityManager()->getEntity('Job');
-        $jobEntity->set(
-            [
-                'name'        => 'run-treo-update',
-                'status'      => CronManager::PENDING,
-                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                'serviceName' => 'Composer',
-                'method'      => 'runUpdateJob',
-                'data'        => ['createdById' => $this->getUser()->get('id')]
-            ]
-        );
-        $this->getEntityManager()->saveEntity($jobEntity);
     }
 
     /**

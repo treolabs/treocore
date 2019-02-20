@@ -52,7 +52,7 @@ class UpgradeTest extends TestCase
 
         // test
         $this->assertEquals(
-            'Force upgrading of Treo System.',
+            'Upgrading of Treo Core.',
             $service::getDescription()
         );
     }

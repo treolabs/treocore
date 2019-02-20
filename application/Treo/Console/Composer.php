@@ -37,54 +37,85 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * ComposerLog console
+ * Class Composer
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ComposerLog extends AbstractConsole
+class Composer extends AbstractConsole
 {
     /**
-     * Get console command description
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return 'Send composer log to stream.';
+        return 'Composer actions.';
     }
 
     /**
-     * Run action
-     *
-     * @param array $data
+     * @inheritdoc
      */
     public function run(array $data): void
     {
-        // save
-        $this->stream();
-
-        self::show('Composer log successfully saved', self::SUCCESS);
+        switch ($data['action']) {
+            case '--upgrade-core':
+                $this->upgradeCore($data['param1']);
+                break;
+            case '--push-log':
+                $this->pushLog($data['param1']);
+                break;
+        }
     }
 
     /**
-     * Save
+     * @param string $packageId
      */
-    protected function stream(): void
+    protected function upgradeCore(string $packageId): void
     {
-        if (file_exists('data/composer.log')) {
+        if ($packageId == 'none') {
+            if (file_exists('data/stored-composer.json')) {
+                file_put_contents('composer.json', file_get_contents('data/stored-composer.json'));
+            }
+            self::show('composer.json restored successfully.', self::SUCCESS, true);
+        }
+
+        // prepare file
+        $file = "data/upload/upgrades/$packageId/files/composer.json";
+        if (!file_exists($file)) {
+            self::show('No such downloaded package!', self::ERROR, true);
+        }
+
+        file_put_contents('data/stored-composer.json', file_get_contents('composer.json'));
+        file_put_contents('composer.json', file_get_contents($file));
+
+        self::show('composer.json updated successfully.', self::SUCCESS, true);
+    }
+
+    /**
+     * @param string $log
+     */
+    protected function pushLog(string $log): void
+    {
+        // prepare path
+        $path = "data/treo-$log.log";
+
+
+        if (file_exists($path)) {
             // get content
-            $content = str_replace("{{finished}}", "", file_get_contents('data/composer.log'));
+            $content = file_get_contents($path);
+
+            // prepare status
+            $status = 1;
+            if (strpos($content, '{{success}}') !== false) {
+                $status = 0;
+            }
+
+            // prepare content
+            $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
 
             // prepare createdById
             $createdById = 'system';
             if (!empty($this->getConfig()->get('composerUser'))) {
                 $createdById = $this->getConfig()->get('composerUser');
-            }
-
-            // prepare status
-            $status = 1;
-            if (strpos($content, 'postUpdate') !== false) {
-                $status = 0;
             }
 
             // get em
@@ -103,6 +134,10 @@ class ComposerLog extends AbstractConsole
             // unset user
             $this->getConfig()->set('composerUser', null);
             $this->getConfig()->save();
+
+            self::show('Log successfully pushed to stream.', self::SUCCESS, true);
         }
+
+        self::show('No such log file!', self::ERROR, true);
     }
 }

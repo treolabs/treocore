@@ -121,28 +121,13 @@
     "Code is invalid": "Code ist ungültig. Code sollte eindeutig sein. Nur Buchstaben, Zahlen und Char \"_\" erwartet."
   },
   "streamMessages": {
-    "updateModuleThis": "{user} hat das Modul aktualisiert",
-    "installModuleThis": "{user} hat das Modul installiert",
-    "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt",
-    "activateModuleThis": "{user} hat das Modul aktiviert",
-    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
+    "composerUpdateThis": "{user}"
   },
   "streamMessagesMale": {
-    "updateModuleThis": "{user} hat das Modul aktualisiert",
-    "installModuleThis": "{user} hat das Modul installiert",
-    "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt",
-    "activateModuleThis": "{user} hat das Modul aktiviert",
-    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
+    "composerUpdateThis": "{user}"
   },
   "streamMessagesFemale": {
-    "updateModuleThis": "{user} hat das Modul aktualisiert",
-    "installModuleThis": "{user} hat das Modul installiert",
-    "deleteModuleThis": "{user} hat das Modul entfernt",
-    "composerUpdateThis": "{user} hat Update ausgeführt",
-    "activateModuleThis": "{user} hat das Modul aktiviert",
-    "deactivateModuleThis": "{user} hat das Modul deaktiviert"
+    "composerUpdateThis": "{user}"
   },
   "massActions": {
     "massUpdatePartial": "Massenänderung (Teil %s)",
