@@ -83,14 +83,26 @@ class Mover
         // update espo core
         self::updateEspo();
 
+        // prepare path
+        $path = "vendor/" . self::TREODIR;
+
         foreach (self::getModules() as $id => $key) {
             // relocate client
-            self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
-            self::copyDir("vendor/" . self::TREODIR . "/$key/client/modules/", "client/");
+            if (file_exists("$path/$key/client")) {
+                self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
+                self::copyDir("$path/$key/client/modules/", "client/");
+            }
 
             // relocate api
-            self::deleteDir("application/Espo/Modules/{$id}");
-            self::copyDir("vendor/" . self::TREODIR . "/$key/application/Espo/", "application/");
+            if (file_exists("$path/$key/application")) {
+                self::deleteDir("application/Espo/Modules/{$id}");
+                self::copyDir("$path/$key/application/Espo/", "application/");
+            }
+
+            // delete vendor data
+            self::deleteDir("$path/$key/application");
+            self::deleteDir("$path/$key/client");
+            self::deleteDir("$path/$key/docs");
         }
     }
 
