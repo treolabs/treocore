@@ -127,15 +127,8 @@ class Mover
      */
     protected static function updateEspo()
     {
-        // get espo version
-        $espoVersion = json_decode(file_get_contents('composer.json'))->require->{"espocrm/espocrm"};
-
-        $versionFile = 'data/espo-version.json';
-        if (file_exists($versionFile)) {
-            $version = json_decode(file_get_contents($versionFile))->version;
-            if ($version == $espoVersion) {
-                return null;
-            }
+        if (!file_exists('vendor/espocrm/espocrm/application')) {
+            return null;
         }
 
         // delete backend
@@ -158,12 +151,13 @@ class Mover
             self::deleteDir('client/modules/crm');
         }
 
-        // copy
+        // relocate app
         self::copyDir('vendor/espocrm/espocrm/application/Espo/', 'application/');
-        self::copyDir('vendor/espocrm/espocrm/client/', CORE_PATH . "/");
+        self::deleteDir('vendor/espocrm/espocrm/application');
 
-        // set version
-        file_put_contents($versionFile, json_encode(['version' => $espoVersion]));
+        // relocate client
+        self::copyDir('vendor/espocrm/espocrm/client/', CORE_PATH . "/");
+        self::deleteDir('vendor/espocrm/espocrm/client');
     }
 
     /**
