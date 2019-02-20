@@ -141,7 +141,10 @@ class Mover
      */
     protected static function updateEspo()
     {
-        if (!file_exists('vendor/espocrm/espocrm/application')) {
+        // prepare path
+        $path = "vendor/espocrm/espocrm";
+
+        if (!file_exists("$path/application")) {
             return null;
         }
 
@@ -165,13 +168,18 @@ class Mover
             self::deleteDir('client/modules/crm');
         }
 
-        // relocate app
-        self::copyDir('vendor/espocrm/espocrm/application/Espo/', 'application/');
-        self::deleteDir('vendor/espocrm/espocrm/application');
+        // copy app
+        self::copyDir("$path/application/Espo/", 'application/');
 
-        // relocate client
-        self::copyDir('vendor/espocrm/espocrm/client/', CORE_PATH . "/");
-        self::deleteDir('vendor/espocrm/espocrm/client');
+        // copy client
+        self::copyDir("$path/client/", CORE_PATH . "/");
+
+        // delete vendor data
+        foreach (scandir("$path/") as $file) {
+            if (!in_array($file, ['.', '..', 'composer.json'])) {
+                self::deleteDir("$path/$file");
+            }
+        }
     }
 
     /**
