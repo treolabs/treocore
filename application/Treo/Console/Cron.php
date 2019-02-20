@@ -69,14 +69,11 @@ class Cron extends AbstractConsole
 
             // run cron jobs
             $this->runCronManager();
-
-            // run queue manager
-            $this->runQueueManager();
         }
     }
 
     /**
-     * @throws Error
+     * Auth
      */
     protected function auth(): void
     {
@@ -85,18 +82,10 @@ class Cron extends AbstractConsole
     }
 
     /**
-     * @throws Error
+     * Run cron manager
      */
     protected function runCronManager(): void
     {
         $this->getContainer()->get('cronManager')->run();
-    }
-
-    /**
-     * @throws Error
-     */
-    protected function runQueueManager(): void
-    {
-        $this->getContainer()->get('queueManager')->run();
     }
 }
