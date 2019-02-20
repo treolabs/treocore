@@ -20693,23 +20693,25 @@ td[data-name="draggableIcon"] {
     }
 }
 
-.bottom .panel .group {
-    margin-top: -1px;
-    padding: 10px 0;
+.bottom .panel .group-container {
+    margin: -14px;
 }
 
-.bottom .panel .group .group-name {
-    padding: 0 0 5px;
+.bottom .panel .group-container > .group:not(:last-child) {
+    margin-bottom: 20px;
 }
 
-.bottom .panel .group .group-name strong {
-    font-weight: bold;
-    border-bottom: 1px solid #dcdcdc;
-    display: block;
-    padding: 5px 10px;
+.bottom .panel .group-container > .group > .group-name {
+    padding: 10px 0 10px 10px;
+    border-bottom: 1px solid #e8eced;
 }
 
-.bottom .panel .group .list-container {
+.bottom .panel .group-container > .group > .group-name .btn {
+    background-color: #fff;
+    border-width: 0;
+}
+
+.bottom .panel .group-container > .group {
     border-bottom: 1px solid #ececec;
 }
 
