@@ -100,9 +100,11 @@ class Mover
             }
 
             // delete vendor data
-            self::deleteDir("$path/$key/application");
-            self::deleteDir("$path/$key/client");
-            self::deleteDir("$path/$key/docs");
+            foreach (scandir("$path/$key/") as $file) {
+                if (!in_array($file, ['.', '..', 'composer.json'])) {
+                    self::deleteDir("$path/$key/$file");
+                }
+            }
         }
     }
 
