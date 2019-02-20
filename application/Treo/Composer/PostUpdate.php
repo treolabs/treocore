@@ -289,8 +289,14 @@ class PostUpdate
             return false;
         }
 
+        // prepare cli php path
+        $phpPath = 'data/cli-php.txt';
+        if (!file_exists($phpPath)) {
+            return false;
+        }
+
         // prepare php
-        $php = (new \Espo\Core\Utils\System())->getPhpBin();
+        $php = trim(file_get_contents($phpPath));
 
         // prepare ids
         $ids = array_column($data, 'id');
