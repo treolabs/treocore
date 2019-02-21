@@ -6,6 +6,9 @@
     "name": "description"
   },
   {
+    "name": "tags"
+  },
+  {
     "name": "status"
   }
 ]

@@ -1,7 +1,8 @@
 {
   "fields": {
     "status": "Status",
-    "versions": "Versions"
+    "versions": "Versions",
+    "tags": "Tags"
   },
   "options": {
     "status": {

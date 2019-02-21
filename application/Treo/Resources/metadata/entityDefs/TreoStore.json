@@ -39,6 +39,12 @@
     "createdAt": {
       "type": "datetime",
       "readOnly": true
+    },
+    "tags": {
+      "type": "multiEnum",
+      "storeArrayValues": true,
+      "fontSize": 1,
+      "options": []
     }
   },
   "collection": {
