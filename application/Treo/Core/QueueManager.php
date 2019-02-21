@@ -105,7 +105,7 @@ class QueueManager
             }
         }
 
-        if (empty($data)) {
+        if (empty($data) && file_exists($this->path)) {
             unlink($this->path);
         } else {
             file_put_contents($this->path, json_encode(array_values($data)));
