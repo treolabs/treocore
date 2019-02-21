@@ -9,7 +9,6 @@ log="data/treo-module-update.log"
 
 while true
 do
-   # is neet to update composer
    if [ -f $path ]; then
      # delete file
      rm $path;

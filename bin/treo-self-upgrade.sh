@@ -9,7 +9,6 @@ log="data/treo-self-upgrade.log"
 
 while true
 do
-   # is neet to update composer
    if [ -f $path ]; then
      # get version from
      from=$(sed -n '1p' $path)

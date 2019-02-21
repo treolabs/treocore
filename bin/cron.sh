@@ -28,3 +28,8 @@ fi
 if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
     bash ./bin/treo-module-update.sh $id $php
 fi
+
+# queue manager process
+if [[ ! "$(ps ax | grep treo-qm.sh)" =~ "bin/treo-qm.sh $id" ]]; then
+    bash ./bin/treo-qm.sh $id $php
+fi
