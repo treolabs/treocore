@@ -52,4 +52,5 @@ return [
     "migrate <module> <from> <to>"               => Console\Migrate::class,
     "generate apidocs"                           => Console\GenerateApidocs::class,
     "developmod <param>"                         => Console\DevelopMod::class,
+    "qm --run"                                   => Console\QueueManager::class,
 ];

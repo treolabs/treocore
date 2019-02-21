@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -34,23 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
-
-use Treo\PHPUnit\Framework\TestCase;
+namespace Treo\Console;
 
 /**
- * Class HookTest
+ * Class QueueManagerTest
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun@treolabs.com
  */
-class HookTest extends TestCase
+class QueueManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test is afterRemove method exists
+     * Test is getDescription method exists
      */
-    public function testAfterRemove()
+    public function testIsGetDescriptionExists()
     {
         // test
-        $this->assertTrue(method_exists($this->createMockService(Hook::class, []), 'afterRemove'));
+        $this->assertTrue(method_exists($this->createPartialMock(QueueManager::class, []), 'getDescription'));
+    }
+
+    /**
+     * Test is run method exists
+     */
+    public function testIsRunExists()
+    {
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(QueueManager::class, []), 'run'));
     }
 }

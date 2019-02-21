@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
-use Espo\Core\ORM\Entity;
 use Espo\Orm\EntityManager;
 use Treo\Services\QueueManagerServiceInterface;
 
@@ -55,14 +54,6 @@ class QueueManager
      */
     public function run(): bool
     {
-        // update statuses
-        $this->updateStatuses();
-
-        // create cron job if it needs
-        if (!empty($item = $this->getItemToRun())) {
-            $this->createCronJob($item);
-        }
-
         return true;
     }
 
@@ -76,19 +67,12 @@ class QueueManager
      */
     public function push(string $name, string $serviceName, array $data = []): bool
     {
-        // prepare result
-        $result = false;
-
-        if ($this->isService($serviceName)) {
-            $result = $this->createQueueItem($name, $serviceName, $data);
+        // validation
+        if (!$this->isService($serviceName)) {
+            return false;
         }
 
-        // create cron job if it needs
-        if (!empty($item = $this->getItemToRun())) {
-            $this->createCronJob($item);
-        }
-
-        return $result;
+        return $this->createQueueItem($name, $serviceName, $data);
     }
 
     /**
@@ -155,96 +139,6 @@ class QueueManager
         }
 
         return true;
-    }
-
-    /**
-     * @return null|Entity
-     */
-    protected function getItemToRun(): ?Entity
-    {
-        // prepare result
-        $result = null;
-
-        // find
-        $item = $this
-            ->getEntityManager()
-            ->getRepository('QueueItem')
-            ->where(['status' => ['Pending', 'Running']])
-            ->order('sortOrder', false)
-            ->findOne();
-
-        if (!empty($item) && $item->get('status') == 'Pending') {
-            $result = $item;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param Entity $item
-     *
-     * @return Entity
-     * @throws Error
-     */
-    protected function createCronJob(Entity $item): Entity
-    {
-        $job = $this->getEntityManager()->getEntity('Job');
-        $job->set(
-            [
-                'queueItemId' => $item->get('id'),
-                'name'        => $item->get('name'),
-                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                'serviceName' => $item->get('serviceName'),
-                'method'      => 'run',
-                'data'        => $item->get('data')
-            ]
-        );
-        $this->getEntityManager()->saveEntity($job);
-
-        // set Running status for item
-        $item->set('status', 'Running');
-        $this->getEntityManager()->saveEntity($item, ['force' => true]);
-
-        return $job;
-    }
-
-    /**
-     * Update statuses
-     */
-    protected function updateStatuses(): void
-    {
-        $sql
-            = "SELECT
-                      q.id,
-                      j.status
-                    FROM queue_item AS q
-                    LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
-                    WHERE 
-                          q.deleted=0
-                      AND j.status IN ('Success', 'Failed')
-                      AND j.status != q.status         
-                      AND q.status NOT IN ('Canceled','Closed')             
-                    ORDER BY q.sort_order ASC";
-
-        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-        if (!empty($data)) {
-            $sql = '';
-            foreach ($data as $row) {
-                // prepare vars
-                $id = $row['id'];
-                $status = $row['status'];
-
-                $sql .= "UPDATE `queue_item` SET status='{$status}' WHERE id='{$id}';";
-            }
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-        }
     }
 
     /**

@@ -39,7 +39,7 @@ namespace Treo\Listeners;
 /**
  * Class Job
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class Job extends AbstractListener
 {
@@ -67,25 +67,6 @@ class Job extends AbstractListener
 
             // call service method
             $this->controlFollowersJob($entity->get('data'));
-        }
-
-        return ['entity' => $entity, 'options' => $options];
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    public function afterRemove(array $data): array
-    {
-        // prepare data
-        $entity = $data['entity'];
-        $options = $data['options'];
-
-        // for queueItem
-        if (!empty($item = $entity->get('queueItem'))) {
-            $this->getEntityManager()->removeEntity($item, ['force' => true]);
         }
 
         return ['entity' => $entity, 'options' => $options];

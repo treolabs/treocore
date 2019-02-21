@@ -34,45 +34,33 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
-
-use Espo\Core\Exceptions\BadRequest;
-use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
+namespace Treo\Console;
 
 /**
- * QueueItem hook
+ * Class QueueManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Hook extends AbstractHook
+class QueueManager extends AbstractConsole
 {
     /**
-     * @param Entity $entity
-     * @param array  $options
+     * @inheritdoc
      */
-    public function afterRemove(Entity $entity, $options = [])
+    public static function getDescription(): string
     {
-        if (empty($options['force'])) {
-            $this->deleteJob($entity);
-        }
+        return 'Run Queue Manager job.';
     }
 
     /**
-     * @param Entity $entity
+     * @inheritdoc
      */
-    protected function deleteJob(Entity $entity): void
+    public function run(array $data): void
     {
-        $jobs = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(['queueItemId' => $entity->get('id')])
-            ->find();
-
-        if (!empty($jobs)) {
-            foreach ($jobs as $job) {
-                $this->getEntityManager()->removeEntity($job);
-            }
+        try {
+            $this->getContainer()->get('queueManager')->run();
+            self::show('Job successfully finished', self::SUCCESS, true);
+        } catch (\Exception $e) {
+            self::show('Job failed!', self::ERROR, true);
         }
     }
 }
