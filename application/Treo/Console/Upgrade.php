@@ -78,7 +78,7 @@ class Upgrade extends AbstractConsole
         // download
         try {
             $package = $this->getService()->downloadPackage($versions[$data['versionTo']]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             self::show("Package downloading failed!", self::ERROR, true);
         }
 

@@ -123,7 +123,7 @@ class Events extends AbstractConsole
         // prepare json data
         try {
             $jsonData = json_decode($data['jsonData'], true);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $jsonData = [];
         }
 

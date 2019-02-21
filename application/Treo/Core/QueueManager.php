@@ -212,8 +212,8 @@ class QueueManager
         $this->unsetItem($id);
 
         // get item
-        if (empty($item = $this->getEntityManager()->getEntity('QueueItem', $id))) {
-            return true;
+        if (empty($item = $this->getItem($id))) {
+            return false;
         }
 
         // auth
@@ -223,8 +223,11 @@ class QueueManager
         $this->setStatus($item, 'Running');
 
         // service validation
-        if (!$this->isService($item->get('serviceName'))) {
+        if (!$this->isService((string)$item->get('serviceName'))) {
             $this->setStatus($item, 'Failed');
+            $GLOBALS['log']->error("QM failed: No such QM service '" . $item->get('serviceName') . "'");
+
+            return false;
         }
 
         // prepare data
@@ -233,19 +236,16 @@ class QueueManager
             $data = json_decode(json_encode($item->get('data')), true);
         }
 
-        // run
-        $result = true;
         try {
             $this->getServiceFactory()->create($item->get('serviceName'))->run($data);
-        } catch (\Exception $e) {
-            $result = false;
+        } catch (\Throwable $e) {
+            $this->setStatus($item, 'Failed');
+            $GLOBALS['log']->error('QM failed: ' . $e->getMessage() . ' ' . $e->getTraceAsString());
+
+            return false;
         }
 
-        if ($result) {
-            $this->setStatus($item, 'Success');
-        } else {
-            $this->setStatus($item, 'Failed');
-        }
+        $this->setStatus($item, 'Success');
 
         return true;
     }
@@ -258,6 +258,16 @@ class QueueManager
     {
         $item->set('status', $status);
         $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return null|QueueItem
+     */
+    protected function getItem(string $id): ?QueueItem
+    {
+        return $this->getEntityManager()->getRepository('QueueItem')->get($id);
     }
 
     /**
