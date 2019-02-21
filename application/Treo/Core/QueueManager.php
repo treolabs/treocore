@@ -50,10 +50,18 @@ class QueueManager
     use \Treo\Traits\ContainerTrait;
 
     /**
+     * @var string
+     */
+    private $path = 'data/qm-items.json';
+
+    /**
      * @return bool
      */
     public function run(): bool
     {
+        echo '<pre>';
+        print_r('123');
+        die();
         return true;
     }
 
@@ -94,8 +102,19 @@ class QueueManager
                 'sortOrder'   => $this->getNextSortOrder()
             ]
         );
-
         $this->getEntityManager()->saveEntity($item);
+
+        // prepare file data
+        $fileData = [];
+        if (file_exists($this->path)) {
+            $fileData = json_decode(file_get_contents($this->path), true);
+        }
+
+        // push new item
+        $fileData[] = $item->get('id');
+
+        // save
+        file_put_contents($this->path, json_encode($fileData));
 
         return true;
     }
