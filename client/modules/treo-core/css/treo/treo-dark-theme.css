@@ -20727,3 +20727,7 @@ td[data-name="draggableIcon"] {
 .field > .list-group > .list-group-item > .delimiter-group.list-group > .list-group-item:last-child {
     border-bottom-width: 1px;
 }
+
+.lead-container > .edit > .row > .col-md-8 {
+    min-height: auto;
+}
