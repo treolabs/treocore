@@ -141,6 +141,9 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
                     $entity->set('description' . Util::toCamelCase(strtolower($locale), "_", true), $value);
                 }
             }
+            if (!empty($package['tags']) && is_array($package['tags'])) {
+                $entity->set('tags', $package['tags']);
+            }
 
             $this->getEntityManager()->saveEntity($entity, ['skipAll' => true]);
         }
