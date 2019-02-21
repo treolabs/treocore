@@ -56,11 +56,21 @@ class QueueManager extends AbstractConsole
      */
     public function run(array $data): void
     {
-        try {
-            $this->getContainer()->get('queueManager')->run();
-            self::show('Job successfully finished', self::SUCCESS, true);
-        } catch (\Exception $e) {
-            self::show('Job failed!', self::ERROR, true);
-        }
+        // auth
+        $this->auth();
+
+        // run
+        $this->getContainer()->get('queueManager')->run();
+
+        self::show('Queue Manager runned successfully', self::SUCCESS, true);
+    }
+
+    /**
+     * Auth
+     */
+    protected function auth(): void
+    {
+        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
+        $auth->useNoAuth();
     }
 }

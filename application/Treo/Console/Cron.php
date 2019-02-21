@@ -36,9 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Core\Exceptions\Error;
-use Treo\Core\Utils\Auth;
-
 /**
  * Cron console
  *
@@ -77,7 +74,7 @@ class Cron extends AbstractConsole
      */
     protected function auth(): void
     {
-        $auth = new Auth($this->getContainer());
+        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
         $auth->useNoAuth();
     }
 

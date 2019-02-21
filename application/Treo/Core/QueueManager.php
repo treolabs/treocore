@@ -38,12 +38,13 @@ namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Orm\EntityManager;
+use Treo\Entities\QueueItem;
 use Treo\Services\QueueManagerServiceInterface;
 
 /**
  * Class QueueManager
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class QueueManager
 {
@@ -55,14 +56,21 @@ class QueueManager
     private $path = 'data/qm-items.json';
 
     /**
+     * Run
+     *
      * @return bool
+     * @throws Error
      */
     public function run(): bool
     {
-        echo '<pre>';
-        print_r('123');
-        die();
-        return true;
+        // get data
+        $data = $this->getFileData();
+
+        if (!isset($data[0])) {
+            return false;
+        }
+
+        return $this->runJob((string)$data[0]);
     }
 
     /**
@@ -84,6 +92,27 @@ class QueueManager
     }
 
     /**
+     * Unset item
+     *
+     * @param string $id
+     */
+    public function unsetItem(string $id): void
+    {
+        $data = $this->getFileData();
+        foreach ($data as $k => $item) {
+            if ($item == $id) {
+                unset($data[$k]);
+            }
+        }
+
+        if (empty($data)) {
+            unlink($this->path);
+        } else {
+            file_put_contents($this->path, json_encode(array_values($data)));
+        }
+    }
+
+    /**
      * @param string $name
      * @param string $serviceName
      * @param array  $data
@@ -102,13 +131,10 @@ class QueueManager
                 'sortOrder'   => $this->getNextSortOrder()
             ]
         );
-        $this->getEntityManager()->saveEntity($item);
+        $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
 
         // prepare file data
-        $fileData = [];
-        if (file_exists($this->path)) {
-            $fileData = json_decode(file_get_contents($this->path), true);
-        }
+        $fileData = $this->getFileData();
 
         // push new item
         $fileData[] = $item->get('id');
@@ -158,6 +184,76 @@ class QueueManager
         }
 
         return true;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFileData(): array
+    {
+        $data = [];
+        if (file_exists($this->path)) {
+            $data = json_decode(file_get_contents($this->path), true);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     * @throws Error
+     */
+    protected function runJob(string $id): bool
+    {
+        // unset
+        $this->unsetItem($id);
+
+        // get item
+        if (empty($item = $this->getEntityManager()->getEntity('QueueItem', $id))) {
+            return false;
+        }
+
+        // running
+        $this->setStatus($item, 'Running');
+
+        // service validation
+        if (!$this->isService($item->get('serviceName'))) {
+            $this->setStatus($item, 'Failed');
+        }
+
+        // prepare data
+        $data = [];
+        if (!empty($item->get('data'))) {
+            $data = json_decode(json_encode($item->get('data')), true);
+        }
+
+        // run
+        $result = true;
+        try {
+            $this->getServiceFactory()->create($item->get('serviceName'))->run($data);
+        } catch (\Exception $e) {
+            $result = false;
+        }
+
+        if ($result) {
+            $this->setStatus($item, 'Success');
+        } else {
+            $this->setStatus($item, 'Failed');
+        }
+
+        return true;
+    }
+
+    /**
+     * @param QueueItem $item
+     * @param string    $status
+     */
+    protected function setStatus(QueueItem $item, string $status): void
+    {
+        $item->set('status', $status);
+        $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
     }
 
     /**
