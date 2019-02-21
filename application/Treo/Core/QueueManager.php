@@ -128,7 +128,8 @@ class QueueManager
                 'name'        => $name,
                 'serviceName' => $serviceName,
                 'data'        => $data,
-                'sortOrder'   => $this->getNextSortOrder()
+                'sortOrder'   => $this->getNextSortOrder(),
+                'createdById' => $this->getContainer()->get('user')->get('id')
             ]
         );
         $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
@@ -212,8 +213,11 @@ class QueueManager
 
         // get item
         if (empty($item = $this->getEntityManager()->getEntity('QueueItem', $id))) {
-            return false;
+            return true;
         }
+
+        // auth
+        $this->getContainer()->setUser($item->get('createdBy'));
 
         // running
         $this->setStatus($item, 'Running');

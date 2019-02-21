@@ -39,25 +39,21 @@ namespace Treo\Core;
 /**
  * Class QueueManagerTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
 {
     public function testIsRunMethodReturnTrue()
     {
-        $mock = $this->createPartialMock(QueueManager::class, ['updateStatuses', 'getItemToRun', 'createCronJob']);
+        $mock = $this->createPartialMock(QueueManager::class, ['getFileData', 'runJob']);
         $mock
             ->expects($this->any())
-            ->method('updateStatuses')
-            ->willReturn(null);
+            ->method('getFileData')
+            ->willReturn(['1', '2']);
         $mock
             ->expects($this->any())
-            ->method('getItemToRun')
-            ->willReturn(null);
-        $mock
-            ->expects($this->any())
-            ->method('createCronJob')
-            ->willReturn(null);
+            ->method('runJob')
+            ->willReturn(true);
 
         // test
         $this->assertTrue($mock->run());

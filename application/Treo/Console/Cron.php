@@ -60,22 +60,12 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        if (!empty($this->getConfig()->get('isInstalled'))) {
-            // auth
-            $this->auth();
-
-            // run cron jobs
-            $this->runCronManager();
+        if (empty($this->getConfig()->get('isInstalled'))) {
+            exit(1);
         }
-    }
 
-    /**
-     * Auth
-     */
-    protected function auth(): void
-    {
-        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
-        $auth->useNoAuth();
+        // run cron jobs
+        $this->runCronManager();
     }
 
     /**
@@ -83,6 +73,9 @@ class Cron extends AbstractConsole
      */
     protected function runCronManager(): void
     {
+        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
+        $auth->useNoAuth();
+
         $this->getContainer()->get('cronManager')->run();
     }
 }
