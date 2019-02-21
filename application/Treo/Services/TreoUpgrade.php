@@ -147,7 +147,7 @@ class TreoUpgrade extends AbstractService
         // max version
         $version = array_pop(array_column($this->getVersions(), 'version'));
 
-        if ($version != $this->getConfig()->get('notifiedVersion')) {
+        if (!empty($version) && $version != $this->getConfig()->get('notifiedVersion')) {
             // create notification(s)
             $this->notifyAboutNewVersion($version);
 
