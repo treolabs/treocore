@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\CronManager;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 
 /**
@@ -107,9 +107,15 @@ class Composer extends AbstractService
      *
      * @param string $package
      * @param string $version
+     *
+     * @throws Error
      */
     public function update(string $package, string $version): void
     {
+        if (!empty($this->getConfig()->get('isUpdating'))) {
+            throw new Error('System is updating now');
+        }
+
         // get composer.json data
         $data = $this->getModuleComposerJson();
 
@@ -124,9 +130,15 @@ class Composer extends AbstractService
      * Delete composer
      *
      * @param string $package
+     *
+     * @throws Error
      */
     public function delete(string $package): void
     {
+        if (!empty($this->getConfig()->get('isUpdating'))) {
+            throw new Error('System is updating now');
+        }
+
         // get composer.json data
         $data = $this->getModuleComposerJson();
 
