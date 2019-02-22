@@ -47,7 +47,7 @@ class ComposerTest extends \PHPUnit\Framework\TestCase
      */
     public function testRunUpdateMethod()
     {
-        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'setComposerUser']);
+        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'updateConfig']);
 
         // test
         $this->assertTrue($service->runUpdate());

@@ -56,6 +56,10 @@ class Composer extends AbstractConsole
      */
     public function run(array $data): void
     {
+        // update config
+        $this->getConfig()->set('isUpdating', false);
+        $this->getConfig()->save();
+
         switch ($data['action']) {
             case '--upgrade-core':
                 $this->upgradeCore($data['param1']);

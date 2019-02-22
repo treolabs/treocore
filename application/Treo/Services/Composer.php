@@ -86,8 +86,8 @@ class Composer extends AbstractService
         // create file for treo-composer.sh
         $this->filePutContents('data/treo-module-update.txt', '1');
 
-        // set user to config
-        $this->setComposerUser();
+        // update config
+        $this->updateConfig();
 
         return true;
     }
@@ -316,11 +316,12 @@ class Composer extends AbstractService
     }
 
     /**
-     * Set current user to config for composer
+     * Update config
      */
-    protected function setComposerUser(): void
+    protected function updateConfig(): void
     {
         $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        $this->getConfig()->set('isUpdating', true);
         $this->getConfig()->save();
     }
 }
