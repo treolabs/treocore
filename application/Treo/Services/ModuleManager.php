@@ -99,7 +99,8 @@ class ModuleManager extends \Espo\Core\Services\Base
                     'isComposer'         => true,
                     'status'             => $this->getModuleStatus($composerDiff, $id),
                 ];
-                if ($settingVersion = $composerData['require'][$package['name']]) {
+                if ($composerData['require'][$package['name']]) {
+                    $settingVersion = $composerData['require'][$package['name']];
                     $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
                 if (!empty($requireds = $this->getModuleRequireds($id))) {
@@ -131,7 +132,8 @@ class ModuleManager extends \Espo\Core\Services\Base
             if (!empty($package = $this->getPackagistPackage($row['id']))) {
                 $item['name'] = $package['name'];
                 $item['description'] = $package['description'];
-                if (!empty($settingVersion = $composerData['require'][$package['packageId']])) {
+                if (!empty($composerData['require'][$package['packageId']])) {
+                    $settingVersion = $composerData['require'][$package['packageId']];
                     $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
                 }
             }
