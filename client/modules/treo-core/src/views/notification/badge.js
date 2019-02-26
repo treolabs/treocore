@@ -43,14 +43,39 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
         },
 
         checkUpdates: function (isFirstCheck) {
-            if (!this.checkIntervalConditions()) {
+            if (!this.checkIntervalConditions() || this.checkBypass()) {
                 return;
             }
 
-            Dep.prototype.checkUpdates.call(this, isFirstCheck)
+            // get id
+            var userId = this.getUser().id;
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: '../../data/notReadCount.json',
+                cache: false,
+                success: response => {
+                    // prepare count
+                    var count = 0;
+                    if (typeof response[userId] != 'undefined') {
+                        count = response[userId];
+                    }
+
+                    // render
+                    if (count) {
+                        this.showNotRead(count);
+                    } else {
+                        this.hideNotRead();
+                    }
+                }
+            });
         },
 
         checkPopupNotifications: function (name) {
+            // @todo fix it
+            return;
+
             var data = this.popupNotificationsData[name] || {};
             var url = data.url;
             var interval = data.interval;
@@ -80,7 +105,7 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     }, this);
                 }.bind(this));
 
-                jqxhr.always(function() {
+                jqxhr.always(function () {
                     resolve();
                 });
             }.bind(this))).then(function () {
