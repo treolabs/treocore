@@ -34,6 +34,8 @@
 Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
     Dep => Dep.extend({
 
+        template: 'treo-core:admin/unit-edit',
+
         layoutName: 'unit',
 
         initialUnitsOfMeasure: {},
@@ -58,22 +60,24 @@ Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
         getLabelsForSaveFromUnits() {
             let labels = {};
             let measurements = this.getModifiedMeasurements();
-            let translates = this.getTranslations();
 
             Object.keys(measurements).forEach(measureName => {
-                let measureLabelName = `measure[.]${measureName}`;
-                labels[measureLabelName] = (translates.measure || {})[measureName];
-                let unitList = measurements[measureName].unitList || {}
-                Object.keys(unitList).forEach(unitName => {
-                    let unitLabelName = `unit[.]${unitName}`;
-                    labels[unitLabelName] = (translates.unit || {})[unitName];
+                let translates = this.getMeasureTranslations();
+                if (measurements[measureName].saveMeasure) {
+                    let measureLabelName = `measure[.]${measureName}`;
+                    labels[measureLabelName] = translates.measure || measureName;
+                }
+                let unitList = measurements[measureName].unitList || [];
+                unitList.forEach(unitName => {
+                    let unitLabelName = `unit ${measureName}[.]${unitName}`;
+                    labels[unitLabelName] = translates.units[unitName] || unitName;
                 });
             });
             return labels;
         },
 
         getModifiedMeasurements() {
-            let initialUnitsOfMeasure = Espo.Utils.cloneDeep(this.initialUnitsOfMeasure);
+            let initialUnitsOfMeasure = this.initialUnitsOfMeasure;
             let data = this.model.get('unitsOfMeasure') || {};
             let attrs = {};
             for (let name in data) {
@@ -81,20 +85,17 @@ Espo.define('treo-core:views/admin/unit', 'views/settings/record/edit',
                     continue;
                 }
                 attrs[name] = data[name];
+                attrs[name].saveMeasure = !(name in initialUnitsOfMeasure);
             }
             return attrs;
         },
 
-        getTranslations() {
-            let translations = {};
-            let middle = this.getView('middle');
-            if (middle) {
-                let unitsOfMeasure = middle.getView('unitsOfMeasure');
-                if (unitsOfMeasure) {
-                    translations = unitsOfMeasure.getTranslations() || {};
-                }
-            }
-            return translations;
+        getMeasureTranslations(measure) {
+            let globalTranslates = (this.getLanguage().data || {})['Global'] || {};
+            return {
+                measure: globalTranslates['measure'][measure],
+                units: globalTranslates[`unit${measure}`] || {}
+            };
         }
 
     })

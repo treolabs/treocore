@@ -1,5 +1,5 @@
 {{#if valueOrUnit}}
-    <span title="{{value}} {{unitValue}}">{{value}} {{unitValue}}</span>
+    <span title="{{value}} {{unitValueTranslate}}">{{value}} {{unitValueTranslate}}</span>
 {{else}}
     {{translate 'None'}}
 {{/if}}

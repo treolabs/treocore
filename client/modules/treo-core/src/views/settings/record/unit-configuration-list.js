@@ -31,40 +31,47 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/fields/enum-with-edit-options', 'views/fields/enum',
+Espo.define('treo-core:views/settings/record/unit-configuration-list', 'views/record/list',
     Dep => Dep.extend({
 
-        editTemplate: 'treo-core:fields/enum-with-edit-options/edit',
+        actionQuickEditCustom(data) {
+            data = data || {};
+            let id = data.id;
+            if (!id) return;
 
-        events: {
-            'click [data-action="editOptions"]': function (e) {
-                this.actionEditOptions();
+            let model = null;
+            if (this.collection) {
+                model = this.collection.get(id);
             }
-        },
+            if (!data.scope && !model) {
+                return;
+            }
 
-        actionEditOptions() {
-            this.getModelFactory().create(null, model => {
-                model.set({enumOptions: this.params.options});
-
-                this.createView('editOptions', 'treo-core:views/modals/edit-enum-options', {
-                    parentModel: this.model,
-                    model: model,
-                    translates: this.translatedOptions,
-                    editableKey: this.editableKey || this.options.editableKey
-                }, view => {
-                    view.listenTo(view, 'after:save', params => {
-                        this.applyNewOptions(params);
-                    });
-                    view.render();
+            Espo.Ui.notify(this.translate('loading', 'messages'));
+            this.createView('modal', 'treo-core:views/settings/modals/unit-edit', {
+                model: model,
+                id: id
+            }, view => {
+                view.once('after:render', function () {
+                    Espo.Ui.notify(false);
                 });
+
+                this.listenToOnce(view, 'remove', () => {
+                    this.clearView('modal');
+                });
+
+                this.listenToOnce(view, 'after:save', m => {
+                    let model = this.collection.get(m.id);
+                    if (model) {
+                        model.set(m.getClonedAttributes());
+                    }
+                    this.trigger('update-configuration');
+                });
+                view.render();
             });
+
         },
 
-        applyNewOptions(params) {
-            this.params.options = params.options || [];
-            this.translatedOptions = params.translatedOptions || {};
-            this.trigger('options-updated', params);
-            this.reRender();
-        }
+    })
+);
 
-}));

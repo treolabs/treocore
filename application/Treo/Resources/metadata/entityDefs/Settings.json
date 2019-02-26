@@ -25,8 +25,8 @@
       "default": true
     },
     "unitsOfMeasure": {
-      "type": "unit",
-      "view": "treo-core:views/fields/unit-configuration"
+      "type": "jsonObject",
+      "view": "treo-core:views/settings/fields/unit-configuration"
     }
   }
 }

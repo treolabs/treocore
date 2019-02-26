@@ -10,7 +10,8 @@
     "Validate": "Bestätigen",
     "progressLog": "Fortschritte Log",
     "unit": "Maßeinheit",
-    "addOption": "Option hinzufügen"
+    "addOption": "Option hinzufügen",
+    "addMeasureUnit": "Maßeinheit hinzufügen"
   },
   "fieldTypes": {
     "unit": "Maßeinheit"

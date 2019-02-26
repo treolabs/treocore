@@ -47,7 +47,10 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
 
             data.unitFieldName = this.unitFieldName;
             data.unitList = this.unitList;
-            data.unitValue = this.model.get(this.unitFieldName);
+            data.unitListTranslates = this.unitListTranslates;
+            let unitValue = this.model.get(this.unitFieldName);
+            data.unitValue = unitValue;
+            data.unitValueTranslate = this.unitListTranslates[unitValue] || unitValue;
             data.valueOrUnit = !!(data.value || data.unitValue);
             return data;
         },
@@ -57,6 +60,7 @@ Espo.define('treo-core:views/fields/unit', 'views/fields/float',
 
             this.unitFieldName = this.name + 'Unit';
             this.unitList = this.getUnitList();
+            this.unitListTranslates = ((this.getLanguage().data || {}).Global || {})[`unit ${this.params.measure}`] || {};
         },
 
         getUnitList() {

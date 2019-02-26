@@ -31,19 +31,21 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/admin/field-manager/fields/measure-options', 'views/fields/enum',
+Espo.define('treo-core:views/record/row-actions/only-quick-edit', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            if (!this.model.isNew()) {
-                this.setReadOnly();
+        getActionList() {
+            if (this.options.acl.edit) {
+                return [{
+                    action: 'quickEditCustom',
+                    label: 'Edit',
+                    data: {
+                        id: this.model.id,
+                        noFullForm: true
+                    }
+                }];
             }
-        },
+        }
 
-        setupOptions() {
-            this.params.options = Object.keys(Espo.Utils.cloneDeep(this.getConfig().get('unitsOfMeasure') || {}));
-        },
     })
 );

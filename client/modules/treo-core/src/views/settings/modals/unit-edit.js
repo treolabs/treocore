@@ -31,10 +31,12 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
+Espo.define('treo-core:views/settings/modals/unit-edit', 'views/modal',
     Dep => Dep.extend({
 
-        template: 'treo-core:modals/edit-enum-options',
+        template: 'treo-core:settings/modals/unit-edit',
+
+        configuration: {},
 
         buttonList: [
             {
@@ -51,28 +53,46 @@ Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
         setup() {
             Dep.prototype.setup.call(this);
 
+            this.id = this.options.id;
+            this.configuration = this.options.configuration;
+
             this.setupHeader();
+
             this.setupOptionFields();
         },
 
         setupOptionFields() {
-            this.createView('enumOptions', 'treo-core:views/settings/fields/array-with-keys', {
-                el: `${this.options.el} .field[data-name="enumOptions"]`,
+            this.createView('measure', 'views/fields/varchar', {
+                el: `${this.options.el} .field[data-name="measure"]`,
                 model: this.model,
-                parentModel: this.options.parentModel,
-                name: 'enumOptions',
+                name: 'measure',
                 mode: 'edit',
                 params: {
-                    translatedOptions: this.options.translates,
+                    trim: true,
                     required: true,
-                    noEmptyString: true
-                },
-                editableKey: this.options.editableKey
+                    readOnly: !!this.id
+                }
+            }, view => view.render());
+
+            this.createView('units', 'views/fields/array', {
+                el: `${this.options.el} .field[data-name="units"]`,
+                model: this.model,
+                name: 'units',
+                mode: 'edit',
+                params: {
+                    noEmptyString: true,
+                    required: true
+                }
             }, view => view.render());
         },
 
         setupHeader() {
-            this.header = this.translate('edit', 'labels');
+            let measure = this.getLanguage().translate('measure', 'fields', 'Global');
+            if (!this.id) {
+                this.header = `${this.getLanguage().translate('Create', 'labels', 'Global')} ${measure}`;
+            } else {
+                this.header = `${this.getLanguage().translate('Edit')}: ${measure}`;
+            }
         },
 
         actionSave() {
@@ -80,13 +100,7 @@ Espo.define('treo-core:views/modals/edit-enum-options', 'views/modal',
                 this.notify('Not valid', 'error');
                 return;
             }
-
-            let view = this.getView('enumOptions');
-            let data = {options: view.selected, translatedOptions: (view.params || {}).translatedOptions};
-            if (this.options.editableKey && view.unitSymbols && Espo.Utils.isObject(view.unitSymbols)) {
-                data = _.extend(data, {unitSymbols: view.unitSymbols});
-            }
-            this.trigger('after:save', data);
+            this.trigger('after:save', this.model);
             this.close();
         },
 

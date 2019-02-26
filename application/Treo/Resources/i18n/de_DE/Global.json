@@ -84,52 +84,50 @@
     }
   },
   "measure": {
-    "length": "Länge",
-    "mass": "Masse",
-    "time": "Zeit",
-    "electricCurrent": "Elektrischer Strom",
-    "thermodynamicTemperature": "Thermodynamische Temperatur",
-    "amountOfSubstance": "Menge der Substanz",
-    "luminousIntensity": "Lichtintensität"
+    "Length": "Länge",
+    "Mass": "Masse",
+    "Time": "Zeit",
+    "Electric Current": "Elektrischer Strom",
+    "Thermodynamic Temperature": "Thermodynamische Temperatur",
+    "Amount Of Substance": "Menge der Substanz",
+    "Luminous Intensity": "Lichtintensität"
   },
-  "unit": {
-    "length": {
-      "millimetre": "Millimetre",
-      "centimetre": "Centimetre",
-      "decimetre": "Decimetre",
-      "metre": "Metre",
-      "kilometre": "Kilometre"
-    },
-    "mass": {
-      "milligram": "Milligram",
-      "gram": "Gram",
-      "kilogram": "Kilogram"
-    },
-    "time": {
-      "second": "Second",
-      "minute": "Minute",
-      "hour": "Hour"
-    },
-    "electricCurrent": {
-      "ampere": "Ampere"
-    },
-    "thermodynamicTemperature": {
-      "kelvin": "Kelvin",
-      "degreeCelsius": "Degree Celsius"
-    },
-    "amountOfSubstance": {
-      "mole": "Mole"
-    },
-    "luminousIntensity": {
-      "candela": "Candela"
-    }
+  "unit Length": {
+    "mm": "mm",
+    "cm": "cm",
+    "dm": "dm",
+    "m": "m",
+    "km": "km"
+  },
+  "unit Mass": {
+    "mg": "MG",
+    "g": "g",
+    "kg": "kg"
+  },
+  "unit Time": {
+    "s": "s",
+    "m": "m",
+    "h": "h"
+  },
+  "unit Electric Current": {
+    "A": "A"
+  },
+  "unit Thermodynamic Temperature": {
+    "K": "K",
+    "C": "C"
+  },
+  "unit Amount Of Substance": {
+    "mol": "mol"
+  },
+  "unit Luminous Intensity": {
+    "cd": "cd"
   },
   "fields": {
     "ownerUser": "Besitzer",
     "username": "Benutzername",
     "password": "Passwort",
     "measure": "Messen",
-    "unit": "Einheit"
+    "units": "Einheiten"
   },
   "labels": {
     "status": "Status",

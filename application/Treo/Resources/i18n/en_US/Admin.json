@@ -10,7 +10,8 @@
     "Validate": "Validate",
     "progressLog": "Progress Log",
     "unit": "Unit",
-    "addOption": "Add option"
+    "addOption": "Add option",
+    "addMeasureUnit": "Add measure unit"
   },
   "fieldTypes": {
     "unit": "Unit"

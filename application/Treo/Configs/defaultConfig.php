@@ -106,78 +106,79 @@ return [
     'exportDelimiter'        => ';',
     'timeZone'               => 'UTC',
     'unitsOfMeasure' => (object) [
-        'length' => (object) [
-            'unitList' => (object) [
-                'millimetre' => 'mm',
-                'centimetre' => 'cm',
-                'decimetre' => 'dm',
-                'metre' => 'm',
-                'kilometre' => 'km'
+        'Length' => (object) [
+            'unitList' => [
+                0 => 'mm',
+                1 => 'cm',
+                2 => 'dm',
+                3 => 'm',
+                4 => 'km'
             ],
-            'baseUnit' => 'metre',
+            'baseUnit' => 'mm',
             'unitRates' => (object) [
-                'millimetre' => 1,
-                'centimetre' => 1,
-                'decimetre' => 1,
-                'kilometre' => 1
+                'cm' => 1,
+                'dm' => 1,
+                'm' => 1,
+                'km' => 1
             ]
         ],
-        'mass' => (object) [
-            'unitList' => (object) [
-                'milligram' => 'mg',
-                'gram' => 'g',
-                'kilogram' => 'kg'
+        'Mass' => (object) [
+            'unitList' => [
+                0 => 'mg',
+                1 => 'g',
+                2 => 'kg'
             ],
-            'baseUnit' => 'kilogram',
+            'baseUnit' => 'mg',
             'unitRates' => (object) [
-                'milligram' => 1
+                'g' => 1,
+                'kg' => 1
             ]
         ],
-        'time' => (object) [
-            'unitList' => (object) [
-                'second' => 's',
-                'minute' => 'm',
-                'hour' => 'h'
+        'Time' => (object) [
+            'unitList' => [
+                0 => 's',
+                1 => 'm',
+                2 => 'h'
             ],
-            'baseUnit' => 'second',
+            'baseUnit' => 's',
             'unitRates' => (object) [
-                'minute' => 1,
-                'hour' => 1
+                'm' => 1,
+                'h' => 1
             ]
         ],
-        'electricCurrent' => (object) [
-            'unitList' => (object) [
-                'ampere' => 'A'
+        'Electric Current' => (object) [
+            'unitList' => [
+                0 => 'A'
             ],
-            'baseUnit' => 'ampere',
-            'unitRates' => (object) [
-
-            ]
-        ],
-        'thermodynamicTemperature' => (object) [
-            'unitList' => (object) [
-                'kelvin' => 'K',
-                'degreeCelsius' => 'C'
-            ],
-            'baseUnit' => 'kelvin',
-            'unitRates' => (object) [
-                'degreeCelsius' => 1
-            ]
-        ],
-        'amountOfSubstance' => (object) [
-            'unitList' => (object) [
-                'mole' => 'mol'
-            ],
-            'baseUnit' => 'mole',
+            'baseUnit' => 'A',
             'unitRates' => (object) [
 
             ]
         ],
-        'luminousIntensity' => (object) [
-            'unitList' => (object) [
-                'candela' => 'cd'
+        'Thermodynamic Temperature' => (object) [
+            'unitList' => [
+                0 => 'K',
+                1 => 'C'
             ],
-            'baseUnit' => 'candela',
+            'baseUnit' => 'K',
+            'unitRates' => (object) [
+                'C' => 1
+            ]
+        ],
+        'Amount Of Substance' => (object) [
+            'unitList' => [
+                0 => 'mol'
+            ],
+            'baseUnit' => 'mol',
+            'unitRates' => (object) [
+
+            ]
+        ],
+        'Luminous Intensity' => (object) [
+            'unitList' => [
+                0 => 'cd'
+            ],
+            'baseUnit' => 'cd',
             'unitRates' => (object) [
 
             ]

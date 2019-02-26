@@ -1,5 +1,5 @@
 {{#if valueOrUnit}}
-    {{value}} {{unitValue}}
+    {{value}} {{unitValueTranslate}}
 {{else}}
     {{translate 'None'}}
 {{/if}}
