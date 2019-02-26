@@ -53,4 +53,5 @@ return [
     "apidocs --generate"                         => Console\GenerateApidocs::class,
     "developmod <param>"                         => Console\DevelopMod::class,
     "qm --run"                                   => Console\QueueManager::class,
+    "notifications --refresh"                    => Console\Notification::class,
 ];
