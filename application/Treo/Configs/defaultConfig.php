@@ -56,6 +56,7 @@ return [
     'useCache'               => false,
     'applicationName'        => 'TreoPIM',
     'outboundEmailFromName'  => 'TreoPIM',
+    'smtpPort' => 25,
     'languageList'           => [
         'en_US',
         'de_DE'

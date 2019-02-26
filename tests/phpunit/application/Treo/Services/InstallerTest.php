@@ -94,7 +94,7 @@ class InstallerTest extends TestCase
         $expects = [
             [
                 'name' => 'Translate',
-                'validValue' => '7.1',
+                'validValue' => '>=7.1',
                 'value' => '7.1',
                 'isValid' => true
             ],
@@ -135,7 +135,7 @@ class InstallerTest extends TestCase
         $expects = [
             [
                 'name' => 'Translate',
-                'validValue' => '7.1',
+                'validValue' => '>=7.1',
                 'value' => '7.1',
                 'isValid' => true
             ],
@@ -184,7 +184,7 @@ class InstallerTest extends TestCase
         $expects = [
             [
                 'name' => 'Translate',
-                'validValue' => '7.1',
+                'validValue' => '>=7.1',
                 'value' => '7.1',
                 'isValid' => true
             ],

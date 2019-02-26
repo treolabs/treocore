@@ -37,72 +37,32 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * ComposerLog console
+ * Class QueueManager
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ComposerLog extends AbstractConsole
+class QueueManager extends AbstractConsole
 {
     /**
-     * Get console command description
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return 'Send composer log to stream.';
+        return 'Run Queue Manager job.';
     }
 
     /**
-     * Run action
-     *
-     * @param array $data
+     * @inheritdoc
      */
     public function run(array $data): void
     {
-        // save
-        $this->stream();
-
-        self::show('Composer log successfully saved', self::SUCCESS);
-    }
-
-    /**
-     * Save
-     */
-    protected function stream(): void
-    {
-        if (file_exists('data/composer.log')) {
-            // get content
-            $content = str_replace("{{finished}}", "", file_get_contents('data/composer.log'));
-
-            // prepare createdById
-            $createdById = 'system';
-            if (!empty($this->getConfig()->get('composerUser'))) {
-                $createdById = $this->getConfig()->get('composerUser');
-            }
-
-            // prepare status
-            $status = 1;
-            if (strpos($content, 'postUpdate') !== false) {
-                $status = 0;
-            }
-
-            // get em
-            $em = $this->getContainer()->get('entityManager');
-
-            // prepare note
-            $note = $em->getEntity('Note');
-            $note->set('type', 'composerUpdate');
-            $note->set('parentType', 'ModuleManager');
-            $note->set('data', ['status' => $status, 'output' => $content]);
-            $note->set('createdById', $createdById);
-
-            // save
-            $em->saveEntity($note, ['skipCreatedBy' => true]);
-
-            // unset user
-            $this->getConfig()->set('composerUser', null);
-            $this->getConfig()->save();
+        if (empty($this->getConfig()->get('isInstalled'))) {
+            exit(1);
         }
+
+        // run
+        $this->getContainer()->get('queueManager')->run();
+
+        self::show('Queue Manager runned successfully', self::SUCCESS, true);
     }
 }

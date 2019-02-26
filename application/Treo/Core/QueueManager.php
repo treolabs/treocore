@@ -37,33 +37,40 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
-use Espo\Core\ORM\Entity;
 use Espo\Orm\EntityManager;
+use Treo\Entities\QueueItem;
 use Treo\Services\QueueManagerServiceInterface;
 
 /**
  * Class QueueManager
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class QueueManager
 {
     use \Treo\Traits\ContainerTrait;
 
     /**
+     * @var string
+     */
+    private $path = 'data/qm-items.json';
+
+    /**
+     * Run
+     *
      * @return bool
+     * @throws Error
      */
     public function run(): bool
     {
-        // update statuses
-        $this->updateStatuses();
+        // get data
+        $data = $this->getFileData();
 
-        // create cron job if it needs
-        if (!empty($item = $this->getItemToRun())) {
-            $this->createCronJob($item);
+        if (!isset($data[0])) {
+            return false;
         }
 
-        return true;
+        return $this->runJob((string)$data[0]);
     }
 
     /**
@@ -76,19 +83,33 @@ class QueueManager
      */
     public function push(string $name, string $serviceName, array $data = []): bool
     {
-        // prepare result
-        $result = false;
-
-        if ($this->isService($serviceName)) {
-            $result = $this->createQueueItem($name, $serviceName, $data);
+        // validation
+        if (!$this->isService($serviceName)) {
+            return false;
         }
 
-        // create cron job if it needs
-        if (!empty($item = $this->getItemToRun())) {
-            $this->createCronJob($item);
+        return $this->createQueueItem($name, $serviceName, $data);
+    }
+
+    /**
+     * Unset item
+     *
+     * @param string $id
+     */
+    public function unsetItem(string $id): void
+    {
+        $data = $this->getFileData();
+        foreach ($data as $k => $item) {
+            if ($item == $id) {
+                unset($data[$k]);
+            }
         }
 
-        return $result;
+        if (empty($data) && file_exists($this->path)) {
+            unlink($this->path);
+        } else {
+            file_put_contents($this->path, json_encode(array_values($data)));
+        }
     }
 
     /**
@@ -107,11 +128,20 @@ class QueueManager
                 'name'        => $name,
                 'serviceName' => $serviceName,
                 'data'        => $data,
-                'sortOrder'   => $this->getNextSortOrder()
+                'sortOrder'   => $this->getNextSortOrder(),
+                'createdById' => $this->getContainer()->get('user')->get('id')
             ]
         );
+        $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
 
-        $this->getEntityManager()->saveEntity($item);
+        // prepare file data
+        $fileData = $this->getFileData();
+
+        // push new item
+        $fileData[] = $item->get('id');
+
+        // save
+        file_put_contents($this->path, json_encode($fileData));
 
         return true;
     }
@@ -158,93 +188,86 @@ class QueueManager
     }
 
     /**
-     * @return null|Entity
+     * @return array
      */
-    protected function getItemToRun(): ?Entity
+    protected function getFileData(): array
     {
-        // prepare result
-        $result = null;
-
-        // find
-        $item = $this
-            ->getEntityManager()
-            ->getRepository('QueueItem')
-            ->where(['status' => ['Pending', 'Running']])
-            ->order('sortOrder', false)
-            ->findOne();
-
-        if (!empty($item) && $item->get('status') == 'Pending') {
-            $result = $item;
+        $data = [];
+        if (file_exists($this->path)) {
+            $data = json_decode(file_get_contents($this->path), true);
         }
 
-        return $result;
+        return $data;
     }
 
     /**
-     * @param Entity $item
+     * @param string $id
      *
-     * @return Entity
+     * @return bool
      * @throws Error
      */
-    protected function createCronJob(Entity $item): Entity
+    protected function runJob(string $id): bool
     {
-        $job = $this->getEntityManager()->getEntity('Job');
-        $job->set(
-            [
-                'queueItemId' => $item->get('id'),
-                'name'        => $item->get('name'),
-                'executeTime' => (new \DateTime())->format('Y-m-d H:i:s'),
-                'serviceName' => $item->get('serviceName'),
-                'method'      => 'run',
-                'data'        => $item->get('data')
-            ]
-        );
-        $this->getEntityManager()->saveEntity($job);
+        // unset
+        $this->unsetItem($id);
 
-        // set Running status for item
-        $item->set('status', 'Running');
-        $this->getEntityManager()->saveEntity($item, ['force' => true]);
+        // get item
+        if (empty($item = $this->getItem($id))) {
+            return false;
+        }
 
-        return $job;
+        // auth
+        $this->getContainer()->setUser($item->get('createdBy'));
+
+        // running
+        $this->setStatus($item, 'Running');
+
+        // service validation
+        if (!$this->isService((string)$item->get('serviceName'))) {
+            $this->setStatus($item, 'Failed');
+            $GLOBALS['log']->error("QM failed: No such QM service '" . $item->get('serviceName') . "'");
+
+            return false;
+        }
+
+        // prepare data
+        $data = [];
+        if (!empty($item->get('data'))) {
+            $data = json_decode(json_encode($item->get('data')), true);
+        }
+
+        try {
+            $this->getServiceFactory()->create($item->get('serviceName'))->run($data);
+        } catch (\Throwable $e) {
+            $this->setStatus($item, 'Failed');
+            $GLOBALS['log']->error('QM failed: ' . $e->getMessage() . ' ' . $e->getTraceAsString());
+
+            return false;
+        }
+
+        $this->setStatus($item, 'Success');
+
+        return true;
     }
 
     /**
-     * Update statuses
+     * @param QueueItem $item
+     * @param string    $status
      */
-    protected function updateStatuses(): void
+    protected function setStatus(QueueItem $item, string $status): void
     {
-        $sql
-            = "SELECT
-                      q.id,
-                      j.status
-                    FROM queue_item AS q
-                    LEFT JOIN job AS j ON q.id = j.queue_item_id AND j.deleted = 0
-                    WHERE 
-                          q.deleted=0
-                      AND j.status IN ('Success', 'Failed')
-                      AND j.status != q.status         
-                      AND q.status NOT IN ('Canceled','Closed')             
-                    ORDER BY q.sort_order ASC";
+        $item->set('status', $status);
+        $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
+    }
 
-        $sth = $this->getEntityManager()->getPDO()->prepare($sql);
-        $sth->execute();
-        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-        if (!empty($data)) {
-            $sql = '';
-            foreach ($data as $row) {
-                // prepare vars
-                $id = $row['id'];
-                $status = $row['status'];
-
-                $sql .= "UPDATE `queue_item` SET status='{$status}' WHERE id='{$id}';";
-            }
-            $sth = $this
-                ->getEntityManager()
-                ->getPDO()
-                ->prepare($sql);
-            $sth->execute();
-        }
+    /**
+     * @param string $id
+     *
+     * @return null|QueueItem
+     */
+    protected function getItem(string $id): ?QueueItem
+    {
+        return $this->getEntityManager()->getRepository('QueueItem')->get($id);
     }
 
     /**

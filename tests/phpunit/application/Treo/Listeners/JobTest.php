@@ -34,34 +34,19 @@
 
 namespace Treo\Listeners;
 
-use Treo\PHPUnit\Framework\TestCase;
-
 /**
  * Class JobTest
  *
  * @author r.zablodskiy@treolabs.com
  */
-class JobTest extends TestCase
+class JobTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test is beforeSave method exists
      */
     public function testIsBeforeSaveExists()
     {
-        $service = $this->createMockService(Job::class);
-
         // test
-        $this->assertTrue(method_exists($service, 'beforeSave'));
-    }
-
-    /**
-     * Test is afterRemove metho exists
-     */
-    public function testAfterRemove()
-    {
-        $service = $this->createMockService(Job::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'afterRemove'));
+        $this->assertTrue(method_exists($this->createPartialMock(Job::class, []), 'beforeSave'));
     }
 }

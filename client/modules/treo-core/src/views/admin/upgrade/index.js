@@ -45,8 +45,6 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
 
         messageType: null,
 
-        validationSuccessful: false,
-
         versionList: [],
 
         data: function () {
@@ -57,11 +55,8 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
         },
 
         events: {
-            'click button[data-action="validateSystem"]': function () {
-                this.actionUpgradeSystem('validateSystem');
-            },
             'click button[data-action="upgradeSystem"]': function () {
-                this.actionUpgradeSystem('upgradeSystem');
+                this.actionUpgradeSystem();
             },
             'click a[data-action="showLog"]': function () {
                 this.actionShowLog();
@@ -99,12 +94,6 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                     this.logCheckInterval = null;
                 }
             });
-
-            this.listenTo(this.model, 'change:versionToUpgrade', () => {
-                if (this.validationSuccessful) {
-                    this.reRender();
-                }
-            });
         },
 
         createField() {
@@ -121,48 +110,33 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             });
         },
 
-        actionUpgradeSystem(actionName) {
-            let url;
-            let logFile;
-            if (actionName === 'validateSystem') {
-                url = 'TreoUpgrade/action/createUpdateLog';
-                this.messageText = this.translate('validationStarted', 'messages', 'Admin');
-                logFile = 'composer-validate.log';
-            } else if (actionName === 'upgradeSystem') {
-                if (!this.validationSuccessful) {
-                    this.actionFinished(actionName);
-                    return;
-                }
-                url = 'TreoUpgrade/action/Upgrade';
-                this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
-                logFile = 'composer.log';
-            }
-
+        actionUpgradeSystem() {
             this.actionStarted();
-
-            this.ajaxPostRequest(url, {version: this.model.get('versionToUpgrade')}).then(response => {
-                this.messageType = 'success';
+            this.ajaxPostRequest('TreoUpgrade/action/Upgrade', {version: this.model.get('versionToUpgrade')}).then(response => {
                 setTimeout(() => {
-                    this.initLogCheck(actionName, logFile);
+                    this.initLogCheck();
+                    this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
+                    this.messageType = 'success';
                     this.showCurrentStatus(this.messageText, this.messageType);
                 }, 2000);
             }, error => {
+                this.actionFinished();
                 this.messageText = this.getLanguage().translate('Error occurred');
                 this.messageType = 'danger';
                 this.showCurrentStatus(this.messageText, this.messageType);
             });
         },
 
-        initLogCheck(actionName, file) {
+        initLogCheck() {
             let logCheck = () => {
                 $.ajax({
                     type: 'GET',
                     dataType: 'text',
-                    url: `../../data/${file}`,
+                    url: '../../data/treo-self-upgrade.log',
                     cache: false,
                     success: response => {
                         this.log = response;
-                        this.checkLog(actionName);
+                        this.checkLog();
                     },
                     error: xhr => {
                         this.notify('Error occurred', 'error');
@@ -176,78 +150,42 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             logCheck();
         },
 
-        checkLog(actionName) {
-            let pos = this.log.indexOf('{{finished}}');
-            if (pos > -1) {
+        checkLog() {
+            let error = this.log.indexOf('{{error}}');
+            if (error > -1) {
                 window.clearInterval(this.logCheckInterval);
-                this.log = this.log.slice(0, pos);
+                this.log = this.log.slice(0, error);
 
-                if (this.log.indexOf('Problem 1') > -1 || this.log.indexOf('exceeded the timeout') > -1) {
-                    this.messageType = 'danger';
-                    if (actionName === 'validateSystem') {
-                        this.validationSuccessful = false;
-                        this.messageText = this.translate('validationFailed', 'messages', 'Admin');
-                    } else if (actionName === 'upgradeSystem') {
-                        this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
-                    }
-                } else {
-                    this.messageType = 'success';
-                    if (actionName === 'validateSystem') {
-                        this.validationSuccessful = true;
-                        this.messageText = this.translate('validationSuccessful', 'messages', 'Admin');
-                    } else if (actionName === 'upgradeSystem') {
-                        this.messageText = this.translate('upgradeSuccessful', 'messages', 'Admin');
-                        location.reload();
-                    }
-                }
-                this.actionFinished(actionName);
+                this.messageType = 'danger';
+                this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
+
+                this.actionFinished();
                 this.showCurrentStatus(this.messageText, this.messageType);
             }
-            this.trigger('log-updated');
-        },
 
-        toggleButtonDisabling(action, property) {
-            let button = this.$el.find(`button[data-action="${action}"]`);
-            button.prop('disabled', property);
-            if (!property) {
-                button.removeClass('hidden');
+            let success = this.log.indexOf('{{success}}');
+            if (success > -1) {
+                window.clearInterval(this.logCheckInterval);
+                this.log = this.log.slice(0, success);
+
+                location.reload();
             }
-        },
 
-        toggleButtonHiding(action, hide) {
-            let button = this.$el.find(`button[data-action="${action}"]`);
-            hide ? button.addClass('hidden') : button.removeClass('hidden');
+            this.trigger('log-updated');
         },
 
         actionStarted() {
             this.inProgress = true;
-            let select = this.getView('versionToUpgrade');
-            select.$element.prop('disabled', true);
-            this.toggleButtonDisabling('validateSystem', true);
-            this.toggleButtonDisabling('upgradeSystem', true);
+            this.getView('versionToUpgrade').$element.prop('disabled', true);
+            this.$el.find('button[data-action="upgradeSystem"]').prop('disabled', true);
             this.$el.find('.spinner').removeClass('hidden');
             this.$el.find('.progress-status').addClass('hidden');
         },
 
-        actionFinished(actionName) {
+        actionFinished() {
             this.inProgress = false;
-            let select = this.getView('versionToUpgrade');
-            select.$element.prop('disabled', false);
-
-            if (actionName === 'validateSystem') {
-                if (this.validationSuccessful) {
-                    this.toggleButtonHiding('validateSystem', true);
-                    this.toggleButtonDisabling('upgradeSystem', false);
-                } else {
-                    this.toggleButtonDisabling('validateSystem', false);
-                }
-            } else if (actionName === 'upgradeSystem') {
-                if (this.validationSuccessful) {
-                    this.toggleButtonDisabling('upgradeSystem', false);
-                } else {
-                    this.toggleButtonDisabling('validateSystem', false);
-                }
-            }
+            this.getView('versionToUpgrade').$element.prop('disabled', false);
+            this.$el.find('button[data-action="upgradeSystem"]').prop('disabled', false);
             this.$el.find('.spinner').addClass('hidden');
         },
 

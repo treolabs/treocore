@@ -128,14 +128,7 @@ class Application extends \Espo\Core\Application
             $this->runInstallerClient();
         }
 
-        // prepare vars
-        $vars = [
-            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-            'year'            => date('Y')
-        ];
-
-        $this->getContainer()->get('clientManager')->display(null, 'html/main.html', $vars);
-        exit;
+        parent::runClient();
     }
 
     /**
@@ -237,7 +230,6 @@ class Application extends \Espo\Core\Application
         // prepare vars
         $vars = [
             'applicationName' => 'TreoPIM',
-            'year'            => date('Y'),
             'status'          => $result['status'],
             'message'         => $result['message']
         ];

@@ -36,10 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\UpgradeManager;
-use Treo\Core\Utils\Mover;
-use Treo\Core\Migration\Migration;
-
 /**
  * Service TreoUpgrade
  *
@@ -47,11 +43,6 @@ use Treo\Core\Migration\Migration;
  */
 class TreoUpgrade extends AbstractService
 {
-    /**
-     * @var string
-     */
-    private $packagesPath = "data/upload/upgrades";
-
     /**
      * @var null|array
      */
@@ -90,17 +81,11 @@ class TreoUpgrade extends AbstractService
         // prepare available versions
         $versions = array_column($this->getVersions(), 'link', 'version');
 
-        if (!isset($versions[$to]) || empty($package = $this->downloadPackage($versions[$to]))) {
+        if (!isset($versions[$to])) {
             return false;
         }
 
-        // upgrade treocore
-        $this->coreUpgrade($package, $this->getCurrentVersion(), $to);
-
-        // composer update
-        $this->runUpdate();
-
-        return true;
+        return $this->coreUpgrade($this->getCurrentVersion(), $to);
     }
 
     /**
@@ -112,6 +97,9 @@ class TreoUpgrade extends AbstractService
      */
     public function downloadPackage(string $link): ?string
     {
+        // prepare path
+        $packagesPath = "data/upload/upgrades";
+
         // parse link
         $matches = explode("/", $link);
 
@@ -119,18 +107,18 @@ class TreoUpgrade extends AbstractService
         $name = str_replace(".zip", "", end($matches));
 
         // clearing cache
-        if (file_exists($this->packagesPath)) {
-            Mover::deleteDir($this->packagesPath);
+        if (file_exists("$packagesPath/$name")) {
+            return $name;
         }
 
         // create upgrade dir
-        mkdir($this->packagesPath, 0777, true);
+        mkdir($packagesPath, 0777, true);
 
         // prepare extract dir
-        $extractDir = $this->packagesPath . "/{$name}";
+        $extractDir = "$packagesPath/{$name}";
 
         // prepare zip name
-        $zipName = $this->packagesPath . "/{$name}.zip";
+        $zipName = "$packagesPath/{$name}.zip";
 
         // download
         file_put_contents($zipName, fopen($link, 'r'));
@@ -159,7 +147,7 @@ class TreoUpgrade extends AbstractService
         // max version
         $version = array_pop(array_column($this->getVersions(), 'version'));
 
-        if ($version != $this->getConfig()->get('notifiedVersion')) {
+        if (!empty($version) && $version != $this->getConfig()->get('notifiedVersion')) {
             // create notification(s)
             $this->notifyAboutNewVersion($version);
 
@@ -167,43 +155,6 @@ class TreoUpgrade extends AbstractService
             $this->getConfig()->set('notifiedVersion', $version);
             $this->getConfig()->save();
         }
-    }
-
-    /**
-     * Create update log
-     *
-     * @param string $version
-     *
-     * @return array
-     */
-    public function createUpdateLog(string $version): bool
-    {
-        // create composer.json file
-        $this->createComposerJson($version);
-
-        // run validate
-        $this->runValidate();
-
-        return true;
-    }
-
-    /**
-     * Create composer.json file
-     *
-     * @param string $version
-     */
-    protected function createComposerJson(string $version): void
-    {
-        // get content
-        $content = file_get_contents('composer.json');
-
-        // copy
-        file_put_contents("data/cached-composer.json", $content);
-
-        // set version
-        $data = json_decode($content, true);
-        $data['version'] = $version;
-        file_put_contents("composer.json", json_encode($data));
     }
 
     /**
@@ -309,50 +260,24 @@ class TreoUpgrade extends AbstractService
     }
 
     /**
-     * Run validate
-     */
-    protected function runValidate(): void
-    {
-        $this->getContainer()->get('serviceFactory')->create('Composer')->runValidate();
-    }
-
-    /**
-     * Run update
-     */
-    protected function runUpdate(): void
-    {
-        $this->getContainer()->get('serviceFactory')->create('Composer')->runUpdate();
-    }
-
-    /**
-     * @param string $id
      * @param string $from
      * @param string $to
+     *
+     * @return bool
      */
-    protected function coreUpgrade(string $id, string $from, string $to): void
+    protected function coreUpgrade(string $from, string $to): bool
     {
-        $upgradeManager = new UpgradeManager($this->getContainer());
-        $upgradeManager->install(['id' => $id]);
+        if (!file_exists("treo-self-upgrade.txt")) {
+            file_put_contents("data/treo-self-upgrade.log", " ");
+            file_put_contents("data/treo-self-upgrade.txt", "{$from}\n{$to}");
 
-        // call migration
-        $this
-            ->getContainer()
-            ->get('migration')
-            ->run(Migration::CORE_NAME, $from, $to);
+            // set composer user
+            $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+            $this->getConfig()->save();
 
-        // Update composer minimum-stability
-        $this->minimumStability();
-    }
+            return true;
+        }
 
-    /**
-     * Update composer minimum-stability
-     */
-    protected function minimumStability(): void
-    {
-        // prepare data
-        $data = json_decode(file_get_contents('composer.json'), true);
-        $data['minimum-stability'] = (!empty($this->getConfig()->get('developMode'))) ? 'rc' : 'stable';
-
-        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        return false;
     }
 }

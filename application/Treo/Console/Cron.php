@@ -36,13 +36,10 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Core\Exceptions\Error;
-use Treo\Core\Utils\Auth;
-
 /**
  * Cron console
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class Cron extends AbstractConsole
 {
@@ -63,38 +60,22 @@ class Cron extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // auth
-        $this->auth();
+        if (empty($this->getConfig()->get('isInstalled'))) {
+            exit(1);
+        }
 
         // run cron jobs
         $this->runCronManager();
-
-        // run queue manager
-        $this->runQueueManager();
     }
 
     /**
-     * @throws Error
-     */
-    protected function auth(): void
-    {
-        $auth = new Auth($this->getContainer());
-        $auth->useNoAuth();
-    }
-
-    /**
-     * @throws Error
+     * Run cron manager
      */
     protected function runCronManager(): void
     {
-        $this->getContainer()->get('cronManager')->run();
-    }
+        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
+        $auth->useNoAuth();
 
-    /**
-     * @throws Error
-     */
-    protected function runQueueManager(): void
-    {
-        $this->getContainer()->get('queueManager')->run();
+        $this->getContainer()->get('cronManager')->run();
     }
 }

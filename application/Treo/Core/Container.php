@@ -140,6 +140,14 @@ class Container extends \Espo\Core\Container
     /**
      * @inheritdoc
      */
+    protected function loadInternalAclManager()
+    {
+        return parent::loadInternalAclManager();
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function loadConfig()
     {
         return new Config(new FileManager());

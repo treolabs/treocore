@@ -61,7 +61,7 @@ class BaseTest extends TestCase
         $metadata
             ->method('get')
             ->withConsecutive(
-                ['scopes.' . $this->entityType . '.hasOwnerUser']
+                ['scopes.' . $this->entityType . '.hasOwner']
             )->willReturnOnConsecutiveCalls(true);
 
         $service = $this->createMockService(Base::class, ['getInjection']);
@@ -91,7 +91,7 @@ class BaseTest extends TestCase
         $metadata
             ->method('get')
             ->withConsecutive(
-                ['scopes.' . $this->entityType . '.hasOwnerUser'],
+                ['scopes.' . $this->entityType . '.hasOwner'],
                 ['scopes.' . $this->entityType . '.hasAssignedUser']
             )->willReturnOnConsecutiveCalls(false, true);
         $service = $this->createMockService(Base::class, ['getInjection']);
@@ -121,7 +121,7 @@ class BaseTest extends TestCase
         $metadata
             ->method('get')
             ->withConsecutive(
-                ['scopes.' . $this->entityType . '.hasOwnerUser'],
+                ['scopes.' . $this->entityType . '.hasOwner'],
                 ['scopes.' . $this->entityType . '.hasAssignedUser']
             )->willReturnOnConsecutiveCalls(false, false);
         $service = $this->createMockService(Base::class, ['getInjection']);
@@ -155,7 +155,7 @@ class BaseTest extends TestCase
         $metadata
             ->method('get')
             ->withConsecutive(
-                ['scopes.' . $this->entityType . '.hasOwnerUser'],
+                ['scopes.' . $this->entityType . '.hasOwner'],
                 ['scopes.' . $this->entityType . '.hasAssignedUser']
             )->willReturnOnConsecutiveCalls(false, false);
         $service = $this->createMockService(Base::class, ['getInjection']);
@@ -196,7 +196,7 @@ class BaseTest extends TestCase
         $metadata
             ->method('get')
             ->withConsecutive(
-                ['scopes.' . $this->entityType . '.hasOwnerUser'],
+                ['scopes.' . $this->entityType . '.hasOwner'],
                 ['scopes.' . $this->entityType . '.hasAssignedUser']
             )->willReturnOnConsecutiveCalls(false, false);
         $service = $this->createMockService(Base::class, ['getInjection']);

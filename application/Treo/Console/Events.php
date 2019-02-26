@@ -60,6 +60,21 @@ class Events extends AbstractConsole
      */
     public function run(array $data): void
     {
+        if (empty($data)) {
+            $this->showEvents();
+            exit(0);
+        }
+
+        if (!empty($data['target'])) {
+            $this->callEvent($data);
+        }
+    }
+
+    /**
+     * Show all events
+     */
+    protected function showEvents(): void
+    {
         if (!empty($files = $this->getDirFiles('application/Espo'))) {
             $classes = [];
             $tmp = [];
@@ -98,6 +113,24 @@ class Events extends AbstractConsole
         // render
         self::show('Triggered events:', self::INFO);
         echo self::arrayToTable($result, ['CLASS NAME', 'TARGET', 'ACTION', 'DATA']);
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function callEvent(array $data): void
+    {
+        // prepare json data
+        try {
+            $jsonData = json_decode($data['jsonData'], true);
+        } catch (\Throwable $e) {
+            $jsonData = [];
+        }
+
+        // triggered
+        $this->getContainer()->get('eventManager')->triggered($data['target'], $data['action'], $jsonData);
+
+        self::show('Event triggered successfully.', self::SUCCESS, true);
     }
 
     /**

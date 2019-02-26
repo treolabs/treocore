@@ -83,14 +83,28 @@ class Mover
         // update espo core
         self::updateEspo();
 
+        // prepare path
+        $path = "vendor/" . self::TREODIR;
+
         foreach (self::getModules() as $id => $key) {
             // relocate client
-            self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
-            self::copyDir("vendor/" . self::TREODIR . "/$key/client/modules/", "client/");
+            if (file_exists("$path/$key/client")) {
+                self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
+                self::copyDir("$path/$key/client/modules/", "client/");
+            }
 
             // relocate api
-            self::deleteDir("application/Espo/Modules/{$id}");
-            self::copyDir("vendor/" . self::TREODIR . "/$key/application/Espo/", "application/");
+            if (file_exists("$path/$key/application")) {
+                self::deleteDir("application/Espo/Modules/{$id}");
+                self::copyDir("$path/$key/application/Espo/", "application/");
+            }
+
+            // delete vendor data
+            foreach (scandir("$path/$key/") as $file) {
+                if (!in_array($file, ['.', '..', 'composer.json'])) {
+                    self::deleteDir("$path/$key/$file");
+                }
+            }
         }
     }
 
@@ -127,15 +141,11 @@ class Mover
      */
     protected static function updateEspo()
     {
-        // get espo version
-        $espoVersion = json_decode(file_get_contents('composer.json'))->require->{"espocrm/espocrm"};
+        // prepare path
+        $path = "vendor/espocrm/espocrm";
 
-        $versionFile = 'data/espo-version.json';
-        if (file_exists($versionFile)) {
-            $version = json_decode(file_get_contents($versionFile))->version;
-            if ($version == $espoVersion) {
-                return null;
-            }
+        if (!file_exists("$path/application")) {
+            return null;
         }
 
         // delete backend
@@ -158,12 +168,18 @@ class Mover
             self::deleteDir('client/modules/crm');
         }
 
-        // copy
-        self::copyDir('vendor/espocrm/espocrm/application/Espo/', 'application/');
-        self::copyDir('vendor/espocrm/espocrm/client/', CORE_PATH . "/");
+        // copy app
+        self::copyDir("$path/application/Espo/", 'application/');
 
-        // set version
-        file_put_contents($versionFile, json_encode(['version' => $espoVersion]));
+        // copy client
+        self::copyDir("$path/client/", CORE_PATH . "/");
+
+        // delete vendor data
+        foreach (scandir("$path/") as $file) {
+            if (!in_array($file, ['.', '..', 'composer.json'])) {
+                self::deleteDir("$path/$file");
+            }
+        }
     }
 
     /**

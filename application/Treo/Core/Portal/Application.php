@@ -111,21 +111,6 @@ class Application extends \Espo\Core\Portal\Application
     }
 
     /**
-     * Run client
-     */
-    public function runClient()
-    {
-        // prepare vars
-        $vars = [
-            'portalId'        => $this->getPortal()->id,
-            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
-            'year'            => date('Y')
-        ];
-
-        $this->getContainer()->get('clientManager')->display(null, 'html/portal.html', $vars);
-    }
-
-    /**
      * Init container
      */
     protected function initContainer()

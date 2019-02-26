@@ -107,37 +107,6 @@ class TreoUpgrade extends \Espo\Core\Controllers\Base
     }
 
     /**
-     * @ApiDescription(description="Get update log")
-     * @ApiMethod(type="POST")
-     * @ApiRoute(name="/TreoUpgrade/action/createUpdateLog")
-     * @ApiBody(sample="{'version': '1.0.0'}")
-     * @ApiReturn(sample="'true'")
-     *
-     * @param         $params
-     * @param         $data
-     * @param Request $request
-     *
-     * @return bool
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\Error
-     * @throws Exceptions\Forbidden
-     */
-    public function actionCreateUpdateLog($params, $data, Request $request): bool
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw new Exceptions\Forbidden();
-        }
-
-        if (!$request->isPost() || empty($data->version)) {
-            throw new Exceptions\BadRequest();
-        }
-
-        return $this
-            ->getUpgradeService()
-            ->createUpdateLog((string)$data->version);
-    }
-
-    /**
      * Get upgrade service
      *
      * @return Service

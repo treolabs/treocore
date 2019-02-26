@@ -3,11 +3,11 @@
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
  * TreoPIM is EspoCRM-based Open Source Product Information Management application.
- * Copyright (C) 2017-2018 TreoLabs GmbH
+ * Copyright (C) 2017-2019 TreoLabs GmbH
  * Website: http://www.treopim.com
  *
  * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -34,30 +34,25 @@
 
 declare(strict_types=1);
 
-namespace Treo\Console;
+namespace Treo\Core\Utils;
+
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class ComposerLogTest
+ * Class ClientManagerTest
  *
- * @author r.ratsun@treolabs.com
+ * @author r.zablodskiy@treolabs.com
  */
-class ComposerLogTest extends \PHPUnit\Framework\TestCase
+class ClientManagerTest extends TestCase
 {
     /**
-     * Test is getDescription method exists
+     * Test is testDisplay method exists
      */
-    public function testISGetDescriptionExists()
+    public function testIsDisplayExists()
     {
-        // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'getDescription'));
-    }
+        $mock = $this->createPartialMock(ClientManager::class, []);
 
-    /**
-     * Test is run method exists
-     */
-    public function testIsRunExists()
-    {
         // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cron::class, []), 'run'));
+        $this->assertTrue(method_exists($mock, 'display'));
     }
 }

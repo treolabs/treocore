@@ -34,56 +34,49 @@
 
 declare(strict_types=1);
 
-namespace Treo\Listeners;
-
-use Espo\Core\Exceptions\Error;
+namespace Treo\SelectManagers;
 
 /**
- * Class Notification
+ * Class TreoStoreTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Notification extends AbstractListener
+class TreoStoreTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * Test for getSelectParams method
      */
-    public function afterActionNotReadCount(array $data): array
+    public function testGetSelectParamsMethod()
     {
-        // show message if cron is not running
-        if ($this->cronIsNotRunning()) {
-            // prepare message
-            $message = $this
-                ->getLanguage()
-                ->translate('cronIsNotRunning', 'messages', 'Admin');
+        // create mock
+        $mock = $this->createPartialMock(TreoStore::class, ['getModules']);
+        $mock
+            ->expects($this->any())
+            ->method('getModules')
+            ->willReturn(['module_1', 'module_2']);
 
-            throw new Error($message);
-        }
+        // prepare expected
+        $expected = [
+            'joins'                   => [],
+            'leftJoins'               => [],
+            'customJoin'              => null,
+            'whereClause'             => [
+                ['packageId!=' => ['module_1', 'module_2']]
+            ],
+            'additionalSelectColumns' => [],
+            'joinConditions'          => [],
+        ];
 
-        return $data;
-    }
+        // test 1
+        $this->assertEquals($expected, $mock->getSelectParams(['isInstalled' => false]));
 
-    /**
-     * @return bool
-     */
-    protected function cronIsNotRunning(): bool
-    {
-        // prepare result
-        $result = false;
+        // prepare expected
+        $expected['whereClause'] = [];
 
-        // get cache data
-        $data = $this
-            ->getContainer()
-            ->get('fileManager')
-            ->getPhpContents('data/cache/application/cronLastRunTime.php');
+        // test 2
+        $this->assertEquals($expected, $mock->getSelectParams(['isInstalled' => true]));
 
-        if (is_array($data) && !empty($data['time'])) {
-            $result = (time() - $data['time']) > 300;
-        }
-
-        return $result;
+        // test 3
+        $this->assertEquals($expected, $mock->getSelectParams([]));
     }
 }

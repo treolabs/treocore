@@ -39,49 +39,63 @@ namespace Treo\Core;
 /**
  * Class QueueManagerTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
 {
+    /**
+     * Test is run method return true
+     */
     public function testIsRunMethodReturnTrue()
     {
-        $mock = $this->createPartialMock(QueueManager::class, ['updateStatuses', 'getItemToRun', 'createCronJob']);
+        $mock = $this->createPartialMock(QueueManager::class, ['getFileData', 'runJob']);
         $mock
             ->expects($this->any())
-            ->method('updateStatuses')
-            ->willReturn(null);
+            ->method('getFileData')
+            ->willReturn(['1', '2']);
         $mock
             ->expects($this->any())
-            ->method('getItemToRun')
-            ->willReturn(null);
-        $mock
-            ->expects($this->any())
-            ->method('createCronJob')
-            ->willReturn(null);
+            ->method('runJob')
+            ->willReturn(true);
 
         // test
         $this->assertTrue($mock->run());
     }
 
+    /**
+     * Test is run method return false
+     */
+    public function testIsRunMethodReturnFalse()
+    {
+        $mock = $this->createPartialMock(QueueManager::class, ['getFileData', 'runJob']);
+        $mock
+            ->expects($this->any())
+            ->method('getFileData')
+            ->willReturn([]);
+
+        // test 1
+        $this->assertFalse($mock->run());
+
+        $mock = $this->createPartialMock(QueueManager::class, ['getFileData', 'runJob']);
+        $mock
+            ->expects($this->any())
+            ->method('getFileData')
+            ->willReturn(['1']);
+        $mock
+            ->expects($this->any())
+            ->method('runJob')
+            ->willReturn(false);
+
+        // test 2
+        $this->assertFalse($mock->run());
+    }
+
+    /**
+     * Test is push method return true
+     */
     public function testIsPushMethodReturnTrue()
     {
-        // prepare methods
-        $methods = [
-            'isService',
-            'getItemToRun',
-            'createQueueItem',
-            'createCronJob'
-        ];
-
-        $mock = $this->createPartialMock(QueueManager::class, $methods);
-        $mock
-            ->expects($this->any())
-            ->method('getItemToRun')
-            ->willReturn(null);
-        $mock
-            ->expects($this->any())
-            ->method('createCronJob')
-            ->willReturn(null);
+        $mock = $this->createPartialMock(QueueManager::class, ['isService', 'createQueueItem']);
         $mock
             ->expects($this->any())
             ->method('isService')
@@ -98,25 +112,12 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
         $this->assertTrue($mock->push('name', 'service1'));
     }
 
+    /**
+     * Test is push method return false
+     */
     public function testIsPushMethodReturnFalse()
     {
-        // prepare methods
-        $methods = [
-            'isService',
-            'getItemToRun',
-            'createQueueItem',
-            'createCronJob'
-        ];
-
-        $mock = $this->createPartialMock(QueueManager::class, $methods);
-        $mock
-            ->expects($this->any())
-            ->method('getItemToRun')
-            ->willReturn(null);
-        $mock
-            ->expects($this->any())
-            ->method('createCronJob')
-            ->willReturn(null);
+        $mock = $this->createPartialMock(QueueManager::class, ['isService', 'createQueueItem']);
 
         // clonning mock
         $mock1 = clone $mock;
@@ -131,5 +132,14 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
         $mock1->expects($this->any())->method('createQueueItem')->willReturn(false);
         $this->assertFalse($mock1->push('name', 'service1', ['some-data' => 1]));
         $this->assertFalse($mock1->push('name', 'service1'));
+    }
+
+    /**
+     * Test is unsetItem method exists
+     */
+    public function testIsUnsetItemMethodExists()
+    {
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(QueueManager::class, []), 'unsetItem'));
     }
 }

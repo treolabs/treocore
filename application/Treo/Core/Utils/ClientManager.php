@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -34,45 +34,38 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\QueueItem;
-
-use Espo\Core\Exceptions\BadRequest;
-use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
+namespace Treo\Core\Utils;
 
 /**
- * QueueItem hook
+ * Class ClientManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class Hook extends AbstractHook
+class ClientManager extends \Espo\Core\Utils\ClientManager
 {
+    use \Treo\Traits\ContainerTrait;
+
     /**
-     * @param Entity $entity
-     * @param array  $options
+     * @inheritdoc
      */
-    public function afterRemove(Entity $entity, $options = [])
+    public function display($runScript = null, $htmlFilePath = null, $vars = array())
     {
-        if (empty($options['force'])) {
-            $this->deleteJob($entity);
-        }
+        $vars['classReplaceMap'] = json_encode($this->getClassReplaceMap());
+        $vars['year'] = date('Y');
+
+        parent::display($runScript, $htmlFilePath, $vars);
     }
 
     /**
-     * @param Entity $entity
+     * Get class replace map
+     *
+     * @return array
      */
-    protected function deleteJob(Entity $entity): void
+    protected function getClassReplaceMap(): array
     {
-        $jobs = $this
-            ->getEntityManager()
-            ->getRepository('Job')
-            ->where(['queueItemId' => $entity->get('id')])
-            ->find();
-
-        if (!empty($jobs)) {
-            foreach ($jobs as $job) {
-                $this->getEntityManager()->removeEntity($job);
-            }
-        }
+        return $this
+            ->getContainer()
+            ->get('metadata')
+            ->get(['app', 'clientClassReplaceMap'], []);
     }
 }

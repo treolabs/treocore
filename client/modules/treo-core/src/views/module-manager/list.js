@@ -344,7 +344,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 $.ajax({
                     type: 'GET',
                     dataType: 'text',
-                    url: `../../data/composer.log`,
+                    url: `../../data/treo-module-update.log`,
                     cache: false,
                     success: response => {
                         this.log = response;
@@ -356,6 +356,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
                         this.trigger('composerUpdate:failed');
                         this.notify('Error occurred', 'error');
+                        this.reRender();
                     }
                 });
             };
@@ -365,20 +366,24 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         checkLog() {
-            let pos = this.log.indexOf('{{finished}}');
-            if (pos > -1) {
+            let error = this.log.indexOf('{{error}}');
+            if (error > -1) {
                 window.clearInterval(this.logCheckInterval);
-                this.log = this.log.slice(0, pos);
+                this.log = this.log.slice(0, error);
 
-                if (this.log.indexOf('Problem 1') > -1 || this.log.indexOf('exceeded the timeout') > -1) {
-                    this.messageType = 'danger';
-                    this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
-                    this.trigger('composerUpdate:failed');
-                    this.actionFinished();
-                } else {
-                    location.reload();
-                }
+                this.messageType = 'danger';
+                this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
+                this.trigger('composerUpdate:failed');
+                this.actionFinished();
                 this.showCurrentStatus(this.messageText, this.messageType);
+            }
+
+            let success = this.log.indexOf('{{success}}');
+            if (success > -1) {
+                window.clearInterval(this.logCheckInterval);
+                this.log = this.log.slice(0, success);
+
+                location.reload();
             }
             this.trigger('log-updated');
         },

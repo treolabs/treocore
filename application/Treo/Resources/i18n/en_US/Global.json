@@ -172,28 +172,13 @@
     "isRequiredAndUnique": "{field} is required and should be unique."
   },
   "streamMessages": {
-    "updateModuleThis": "{user} has updated module",
-    "installModuleThis": "{user} has installed module",
-    "deleteModuleThis": "{user} has removed module",
-    "composerUpdateThis": "{user} has run update",
-    "activateModuleThis": "{user} has activated module",
-    "deactivateModuleThis": "{user} has deactivated module"
+    "composerUpdateThis": "{user}"
   },
   "streamMessagesMale": {
-    "updateModuleThis": "{user} has updated module",
-    "installModuleThis": "{user} has installed module",
-    "deleteModuleThis": "{user} has removed module",
-    "composerUpdateThis": "{user} has run update",
-    "activateModuleThis": "{user} has activated module",
-    "deactivateModuleThis": "{user} has deactivated module"
+    "composerUpdateThis": "{user}"
   },
   "streamMessagesFemale": {
-    "updateModuleThis": "{user} has updated module",
-    "installModuleThis": "{user} has installed module",
-    "deleteModuleThis": "{user} has removed module",
-    "composerUpdateThis": "{user} has run update",
-    "activateModuleThis": "{user} has activated module",
-    "deactivateModuleThis": "{user} has deactivated module"
+    "composerUpdateThis": "{user}"
   },
   "massActions": {
     "massUpdatePartial": "Mass Update (Part %s)",

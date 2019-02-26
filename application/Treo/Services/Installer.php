@@ -86,9 +86,9 @@ class Installer extends AbstractService
             $phpVersion = self::prepareVersion(phpversion());
             $result[] = [
                 'name'       => $this->translate('phpVersion', 'requirements', 'Installer'),
-                'validValue' => $data['phpVersion'],
+                'validValue' => ">=" . $data['phpVersion'],
                 'value'      => $phpVersion,
-                'isValid'    => version_compare($phpVersion, $data['phpVersion'], '==')
+                'isValid'    => version_compare($phpVersion, $data['phpVersion'], '>=')
             ];
 
             // for php extensions

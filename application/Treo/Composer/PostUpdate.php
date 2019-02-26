@@ -74,6 +74,9 @@ class PostUpdate
 
             // drop cache
             $this->clearCache();
+
+            // init events
+            $this->initEvents();
         }
     }
 
@@ -248,5 +251,67 @@ class PostUpdate
     protected function isInstalled(): bool
     {
         return !empty($this->getContainer()->get('config')->get('isInstalled'));
+    }
+
+    /**
+     * Init events
+     */
+    protected function initEvents(): void
+    {
+        // get diff
+        $composerDiff = $this->getComposerLockDiff();
+
+        if (!empty($composerDiff['install'])) {
+            $this->triggered('Composer', 'afterInstallModule', $composerDiff['install']);
+        }
+        if (!empty($composerDiff['update'])) {
+            $this->triggered('Composer', 'afterUpdateModule', $composerDiff['update']);
+        }
+        if (!empty($composerDiff['delete'])) {
+            $this->triggered('Composer', 'afterDeleteModule', $composerDiff['delete']);
+        }
+    }
+
+    /**
+     * Triggered event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return bool
+     */
+    protected function triggered(string $target, string $action, array $data = []): bool
+    {
+        // prepare load order file path
+        $path = 'custom/Espo/Custom/Resources/module.json';
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        // prepare cli php path
+        $phpPath = 'data/cli-php.txt';
+        if (!file_exists($phpPath)) {
+            return false;
+        }
+
+        // prepare php
+        $php = trim(file_get_contents($phpPath));
+
+        // prepare ids
+        $ids = array_column($data, 'id');
+
+        // sorting
+        foreach (json_decode(file_get_contents($path), true) as $id => $row) {
+            if (in_array($id, $ids)) {
+                // prepare command
+                $command = "$php console.php events --call $target $action " . json_encode(['id' => $id]);
+
+                // call event in separate process
+                exec(str_replace('"', '\"', $command));
+            }
+        }
+
+        return true;
     }
 }
