@@ -31,7 +31,7 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:views/record/row-actions/only-quick-edit', 'views/record/row-actions/default',
+Espo.define('treo-core:views/settings/record/row-actions/only-quick-edit', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
         getActionList() {

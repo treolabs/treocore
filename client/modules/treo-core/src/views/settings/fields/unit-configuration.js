@@ -98,7 +98,7 @@ Espo.define('treo-core:views/settings/fields/unit-configuration', 'view',
                 showMore: false,
                 checkAllResultDisabled: true,
                 buttonsDisabled: true,
-                rowActionsView: 'treo-core:views/record/row-actions/only-quick-edit'
+                rowActionsView: 'treo-core:views/setting/record/row-actions/only-quick-edit'
             }, view => {
                 view.listenTo(view, 'update-configuration', () => this.trigger('update-configuration'));
                 view.render();
