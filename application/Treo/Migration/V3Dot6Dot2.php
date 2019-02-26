@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -30,47 +31,30 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-Espo.define('treo-core:views/settings/record/unit-configuration-list', 'views/record/list',
-    Dep => Dep.extend({
+namespace Treo\Migration;
 
-        actionQuickEditCustom(data) {
-            data = data || {};
-            let id = data.id;
-            if (!id) return;
+use Treo\Core\Migration\AbstractMigration;
 
-            let model = null;
-            if (this.collection) {
-                model = this.collection.get(id);
-            }
-            if (!data.scope && !model) {
-                return;
-            }
-
-            Espo.Ui.notify(this.translate('loading', 'messages'));
-            this.createView('modal', 'treo-core:views/settings/modals/unit-edit', {
-                model: model,
-                id: id
-            }, view => {
-                view.once('after:render', function () {
-                    Espo.Ui.notify(false);
-                });
-
-                this.listenToOnce(view, 'remove', () => {
-                    this.clearView('modal');
-                });
-
-                this.listenToOnce(view, 'after:save', m => {
-                    let model = this.collection.get(m.id);
-                    if (model) {
-                        model.set(m.getClonedAttributes());
-                    }
-                    this.trigger('update-configuration');
-                });
-                view.render();
-            });
-        },
-
-    })
-);
-
+/**
+ * Version 3.6.2
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class V3Dot6Dot2 extends AbstractMigration
+{
+    /**
+     * Up to current
+     */
+    public function up(): void
+    {
+        $config = $this->getConfig();
+        $unitsOfMeasure = $config->get('unitsOfMeasure');
+        if (empty($unitsOfMeasure)) {
+            $defaultConfig = $config->getDefaults();
+            $config->set('unitsOfMeasure', $defaultConfig['unitsOfMeasure']);
+            $config->save();
+        }
+    }
+}

@@ -98,10 +98,10 @@
     "Length": "Length",
     "Mass": "Mass",
     "Time": "Time",
-    "Electric Current": "Electric current",
-    "Thermodynamic Temperature": "Thermodynamic temperature",
-    "Amount Of Substance": "Amount of substance",
-    "Luminous Intensity": "Luminous intensity"
+    "Electric Current": "Electric Current",
+    "Thermodynamic Temperature": "Thermodynamic Temperature",
+    "Amount Of Substance": "Amount Of Substance",
+    "Luminous Intensity": "Luminous Intensity"
   },
   "unit Length": {
     "mm": "mm",
