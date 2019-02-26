@@ -7,9 +7,7 @@
     "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)",
     "log": "log",
     "Upgrade": "Upgrade",
-
     "Validate": "Validate",
-    "progressLog": "Progress Log",
     "unit": "Unit",
     "addOption": "Add option",
     "addMeasureUnit": "Add measure unit",

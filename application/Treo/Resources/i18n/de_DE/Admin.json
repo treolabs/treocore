@@ -11,8 +11,7 @@
     "progressLog": "Fortschritte Log",
     "unit": "Maßeinheit",
     "addOption": "Option hinzufügen",
-    "addMeasureUnit": "Maßeinheit hinzufügen",
-    "progressLog": "Fortschritte Log"
+    "addMeasureUnit": "Maßeinheit hinzufügen"
   },
   "fieldTypes": {
     "unit": "Maßeinheit"
