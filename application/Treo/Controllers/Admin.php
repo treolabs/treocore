@@ -46,6 +46,14 @@ use Espo\Core\Exceptions\NotFound;
 class Admin extends \Espo\Controllers\Admin
 {
     /**
+     * @throws NotFound
+     */
+    public function actionNotFound()
+    {
+        throw new NotFound();
+    }
+
+    /**
      * @inheritdoc
      */
     public function postActionRunUpgrade($params, $data)
