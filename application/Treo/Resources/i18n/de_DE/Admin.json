@@ -22,7 +22,7 @@
     "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die Treo System Dateien sowie die Datenbank zu sichern.",
     "newVersionIsAvailable": "Neue Treo System Version {latestVersion} ist verfügbar.",
     "systemAlreadyUpgraded": "TreoCore ist schon aktualisiert.",
-    "upgradeStarted": "Das Upgrade wurde gestartet",
+    "upgradeInProgress": "Das Upgrade wurde gestartet",
     "upgradeFailed": "Upgrade fehlgeschlagen",
     "upgradeSuccessful": "Upgrade erfolgreich abgeschlossen",
     "cronIsNotRunning": "Cron-Jobs laufen nicht. Einzelheiten finden Sie unter <a href=\"/#ScheduledJob\">Geplante Jobs</a>."

@@ -96,6 +96,18 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             });
         },
 
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.getConfig().get('isUpdating') && (this.versionList || []).length) {
+                this.initLogCheck();
+                this.actionStarted();
+                this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
+                this.messageType = 'success';
+                this.showCurrentStatus(this.messageText, this.messageType);
+            }
+        },
+
         createField() {
             this.createView('versionToUpgrade', 'views/fields/enum', {
                 model: this.model,
@@ -115,7 +127,7 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             this.ajaxPostRequest('TreoUpgrade/action/Upgrade', {version: this.model.get('versionToUpgrade')}).then(response => {
                 setTimeout(() => {
                     this.initLogCheck();
-                    this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
+                    this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
                     this.messageType = 'success';
                     this.showCurrentStatus(this.messageText, this.messageType);
                 }, 2000);
