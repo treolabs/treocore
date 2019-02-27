@@ -31,67 +31,54 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Listeners;
+namespace Treo\Console;
 
 /**
- * Installer listener
+ * Class KillProcess
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Installer extends AbstractListener
+class KillProcess extends AbstractConsole
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function afterInstallSystem(array $data): array
+    public static function getDescription(): string
     {
-        // generate Treo ID
-        $this->generateTreoId();
-
-        // refresh
-        $this->refreshStore();
-
-        // create files in data dir
-        $this->createDataFiles();
-
-        return $data;
+        return 'Process killer.';
     }
 
     /**
-     * Generate Treo ID
+     * @inheritdoc
      */
-    protected function generateTreoId(): void
+    public function run(array $data): void
     {
-        // generate id
-        $treoId = \Treo\Services\Installer::generateTreoId();
+        switch ($data['id']) {
+            case "treo-self-upgrade":
+                file_put_contents('data/kill-treo-self-upgrade.txt', '1');
+                self::show("Process 'treo-self-upgrade' killed successfully", self::SUCCESS, true);
 
-        //set to config
-        $this->getConfig()->set('treoId', $treoId);
-        $this->getConfig()->save();
+                break;
+            case "treo-module-update":
+                file_put_contents('data/kill-treo-module-update.txt', '1');
+                self::show("Process 'treo-module-update' killed successfully", self::SUCCESS, true);
 
-        // create repositories file
-        \Treo\Services\Composer::putRepositoryFile($treoId);
-    }
+                break;
+            case "treo-qm":
+                file_put_contents('data/kill-treo-qm.txt', '1');
+                self::show("Process 'treo-qm' killed successfully", self::SUCCESS, true);
 
-    /**
-     * Refresh TreoStore
-     */
-    protected function refreshStore(): void
-    {
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
-    }
+                break;
+            case "treo-notification":
+                file_put_contents('data/kill-treo-notification.txt', '1');
+                self::show("Process 'treo-notification' killed successfully", self::SUCCESS, true);
 
-    /**
-     * Create needed files in data directory
-     */
-    protected function createDataFiles(): void
-    {
-        file_put_contents('data/notReadCount.json', '{}');
-        file_put_contents('data/popupNotifications.json', '{}');
+                break;
+        }
+
+        self::show('No such process!', self::ERROR, true);
     }
 }

@@ -6,9 +6,16 @@ php=$2
 # prepare file(s) path
 path="data/treo-module-update.txt"
 log="data/treo-module-update.log"
+killer="data/kill-treo-module-update.txt"
 
 while true
 do
+   # kill process if it needs
+   if [ -f $killer ]; then
+     rm $killer;
+     exit 1;
+   fi
+
    if [ -f $path ]; then
      # delete file
      rm $path;
@@ -28,5 +35,6 @@ do
      # push log to stream
      $php console.php composer --push-log module-update > /dev/null 2>&1
    fi
+
    sleep 1;
 done

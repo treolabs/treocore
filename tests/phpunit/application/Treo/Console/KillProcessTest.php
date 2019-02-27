@@ -31,67 +31,33 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Listeners;
+namespace Treo\Console;
 
 /**
- * Installer listener
+ * Class KillProcessTest
  *
  * @author r.ratsun@treolabs.com
  */
-class Installer extends AbstractListener
+class KillProcessTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * Test is getDescription method exists
      */
-    public function afterInstallSystem(array $data): array
+    public function testIsGetDescriptionExists()
     {
-        // generate Treo ID
-        $this->generateTreoId();
-
-        // refresh
-        $this->refreshStore();
-
-        // create files in data dir
-        $this->createDataFiles();
-
-        return $data;
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(KillProcess::class, []), 'getDescription'));
     }
 
     /**
-     * Generate Treo ID
+     * Test is run method exists
      */
-    protected function generateTreoId(): void
+    public function testIsRunExists()
     {
-        // generate id
-        $treoId = \Treo\Services\Installer::generateTreoId();
-
-        //set to config
-        $this->getConfig()->set('treoId', $treoId);
-        $this->getConfig()->save();
-
-        // create repositories file
-        \Treo\Services\Composer::putRepositoryFile($treoId);
-    }
-
-    /**
-     * Refresh TreoStore
-     */
-    protected function refreshStore(): void
-    {
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
-    }
-
-    /**
-     * Create needed files in data directory
-     */
-    protected function createDataFiles(): void
-    {
-        file_put_contents('data/notReadCount.json', '{}');
-        file_put_contents('data/popupNotifications.json', '{}');
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(KillProcess::class, []), 'run'));
     }
 }

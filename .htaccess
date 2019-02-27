@@ -8,6 +8,6 @@ RewriteRule ^ index.php [QSA,L]
   Deny from all
 </FilesMatch>
 
-<FilesMatch "(treo-module-update|treo-self-upgrade)\.log$">
+<FilesMatch "(treo-module-update\.log|treo-self-upgrade\.log|notReadCount\.json|popupNotifications\.json)$">
   Allow from all
 </FilesMatch>
