@@ -72,6 +72,11 @@ class KillProcess extends AbstractConsole
                 self::show("Process 'treo-qm' killed successfully", self::SUCCESS, true);
 
                 break;
+            case "treo-notification":
+                file_put_contents('data/kill-treo-notification.txt', '1');
+                self::show("Process 'treo-notification' killed successfully", self::SUCCESS, true);
+
+                break;
         }
 
         self::show('No such process!', self::ERROR, true);
