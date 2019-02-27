@@ -60,16 +60,19 @@ class Notification extends AbstractConsole
             exit(1);
         }
 
-        // refresh
-        $this->refresh();
+        // refresh notReadCount
+        $this->notReadCount();
+
+        // refresh popupNotifications
+        $this->popupNotifications();
 
         self::show('Users notifications cache refreshed successfully', self::SUCCESS, true);
     }
 
     /**
-     * Refresh
+     * Refresh notReadCount
      */
-    protected function refresh(): void
+    protected function notReadCount(): void
     {
         // prepare sql
         $sql
@@ -97,6 +100,39 @@ class Notification extends AbstractConsole
 
             // set to file
             file_put_contents('data/notReadCount.json', json_encode($content));
+        }
+    }
+
+    /**
+     * Refresh popupNotifications
+     */
+    protected function popupNotifications(): void
+    {
+        // get users
+        $sth = $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getPDO()
+            ->prepare("SELECT id FROM user WHERE deleted=0 AND is_active=1 AND user_name!='system'");
+        $sth->execute();
+        $users = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!empty($users)) {
+            // auth
+            $auth = new \Treo\Core\Utils\Auth($this->getContainer());
+            $auth->useNoAuth();
+
+            // create service
+            $service = $this->getContainer()->get('serviceFactory')->create('Activities');
+
+            // prepare content
+            $content = [];
+            foreach ($users as $row) {
+                $content[$row['id']] = $service->getPopupNotifications($row['id']);
+            }
+
+            // set to file
+            file_put_contents('data/popupNotifications.json', json_encode($content));
         }
     }
 }
