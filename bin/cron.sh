@@ -33,3 +33,8 @@ fi
 if [[ ! "$(ps ax | grep treo-qm.sh)" =~ "bin/treo-qm.sh $id" ]]; then
     bash ./bin/treo-qm.sh $id $php
 fi
+
+# notification process
+if [[ ! "$(ps ax | grep treo-notification.sh)" =~ "bin/treo-notification.sh $id" ]]; then
+    bash ./bin/treo-notification.sh $id $php
+fi

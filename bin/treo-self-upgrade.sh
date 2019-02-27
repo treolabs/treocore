@@ -6,9 +6,16 @@ php=$2
 # prepare file(s) path
 path="data/treo-self-upgrade.txt"
 log="data/treo-self-upgrade.log"
+killer="data/kill-treo-self-upgrade.txt"
 
 while true
 do
+   # kill process if it needs
+   if [ -f $killer ]; then
+     rm $killer;
+     exit 1;
+   fi
+
    if [ -f $path ]; then
      # get version from
      from=$(sed -n '1p' $path)
@@ -52,5 +59,6 @@ do
      # push log to stream
      $php console.php composer --push-log self-upgrade > /dev/null 2>&1
    fi
+
    sleep 1;
 done

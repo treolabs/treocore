@@ -48,9 +48,11 @@ return [
     "cron"                                       => Console\Cron::class,
     "events"                                     => Console\Events::class,
     "events --call <target> <action> <jsonData>" => Console\Events::class,
-    "store refresh"                              => Console\StoreRefresh::class,
+    "store --refresh"                            => Console\StoreRefresh::class,
     "migrate <module> <from> <to>"               => Console\Migrate::class,
-    "generate apidocs"                           => Console\GenerateApidocs::class,
+    "apidocs --generate"                         => Console\GenerateApidocs::class,
     "developmod <param>"                         => Console\DevelopMod::class,
     "qm --run"                                   => Console\QueueManager::class,
+    "notifications --refresh"                    => Console\Notification::class,
+    "kill process <id>"                          => Console\KillProcess::class,
 ];

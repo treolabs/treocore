@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,52 +32,53 @@
  * and "TreoPIM" word.
  */
 
-namespace Treo\Listeners;
+declare(strict_types=1);
 
-use Espo\Core\Exceptions\Error;
-use Treo\Core\Utils\Language;
-use Treo\PHPUnit\Framework\TestCase;
+namespace Treo\Console;
 
 /**
- * Class NotificationTest
+ * Class KillProcess
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class NotificationTest extends TestCase
+class KillProcess extends AbstractConsole
 {
     /**
-     * Test is afterActionNotReadCount throw exception
+     * @inheritdoc
      */
-    public function testIsAfterActionNotReadCountThrowException()
+    public static function getDescription(): string
     {
-        try {
-            $translateText
-                = 'Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details.';
+        return 'Process killer.';
+    }
 
-            $service = $this->createMockService(Notification::class, ['cronIsNotRunning', 'getLanguage']);
-            $language = $this->createMockService(Language::class, ['translate']);
+    /**
+     * @inheritdoc
+     */
+    public function run(array $data): void
+    {
+        switch ($data['id']) {
+            case "treo-self-upgrade":
+                file_put_contents('data/kill-treo-self-upgrade.txt', '1');
+                self::show("Process 'treo-self-upgrade' killed successfully", self::SUCCESS, true);
 
-            $language
-                ->expects($this->any())
-                ->method('translate')
-                ->willReturn($translateText);
+                break;
+            case "treo-module-update":
+                file_put_contents('data/kill-treo-module-update.txt', '1');
+                self::show("Process 'treo-module-update' killed successfully", self::SUCCESS, true);
 
-            $service
-                ->expects($this->any())
-                ->method('cronIsNotRunning')
-                ->willReturn(true);
-            $service
-                ->expects($this->any())
-                ->method('getLanguage')
-                ->willReturn($language);
+                break;
+            case "treo-qm":
+                file_put_contents('data/kill-treo-qm.txt', '1');
+                self::show("Process 'treo-qm' killed successfully", self::SUCCESS, true);
 
-            $service->afterActionNotReadCount([]);
-        } catch (\Exception $e) {
-            // test 1
-            $this->assertInstanceOf(Error::class, $e);
+                break;
+            case "treo-notification":
+                file_put_contents('data/kill-treo-notification.txt', '1');
+                self::show("Process 'treo-notification' killed successfully", self::SUCCESS, true);
 
-            // test 2
-            $this->assertEquals($translateText, $e->getMessage());
+                break;
         }
+
+        self::show('No such process!', self::ERROR, true);
     }
 }

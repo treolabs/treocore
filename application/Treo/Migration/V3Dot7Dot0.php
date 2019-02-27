@@ -33,63 +33,21 @@
  */
 declare(strict_types=1);
 
-namespace Treo\Listeners;
+namespace Treo\Migration;
+
+use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Installer listener
+ * Version 3.7.0
  *
  * @author r.ratsun@treolabs.com
  */
-class Installer extends AbstractListener
+class V3Dot7Dot0 extends AbstractMigration
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * Up to current
      */
-    public function afterInstallSystem(array $data): array
-    {
-        // generate Treo ID
-        $this->generateTreoId();
-
-        // refresh
-        $this->refreshStore();
-
-        // create files in data dir
-        $this->createDataFiles();
-
-        return $data;
-    }
-
-    /**
-     * Generate Treo ID
-     */
-    protected function generateTreoId(): void
-    {
-        // generate id
-        $treoId = \Treo\Services\Installer::generateTreoId();
-
-        //set to config
-        $this->getConfig()->set('treoId', $treoId);
-        $this->getConfig()->save();
-
-        // create repositories file
-        \Treo\Services\Composer::putRepositoryFile($treoId);
-    }
-
-    /**
-     * Refresh TreoStore
-     */
-    protected function refreshStore(): void
-    {
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
-    }
-
-    /**
-     * Create needed files in data directory
-     */
-    protected function createDataFiles(): void
+    public function up(): void
     {
         file_put_contents('data/notReadCount.json', '{}');
         file_put_contents('data/popupNotifications.json', '{}');

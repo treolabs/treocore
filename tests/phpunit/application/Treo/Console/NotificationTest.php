@@ -34,56 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Treo\Listeners;
-
-use Espo\Core\Exceptions\Error;
+namespace Treo\Console;
 
 /**
- * Class Notification
+ * Class NotificationTest
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun@treolabs.com
  */
-class Notification extends AbstractListener
+class NotificationTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
-     * @param array $data
-     *
-     * @return array
+     * Test is getDescription method exists
      */
-    public function afterActionNotReadCount(array $data): array
+    public function testIsGetDescriptionExists()
     {
-        // show message if cron is not running
-        if ($this->cronIsNotRunning()) {
-            // prepare message
-            $message = $this
-                ->getLanguage()
-                ->translate('cronIsNotRunning', 'messages', 'Admin');
-
-            throw new Error($message);
-        }
-
-        return $data;
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(Notification::class, []), 'getDescription'));
     }
 
     /**
-     * @return bool
+     * Test is run method exists
      */
-    protected function cronIsNotRunning(): bool
+    public function testIsRunExists()
     {
-        // prepare result
-        $result = false;
-
-        // get cache data
-        $data = $this
-            ->getContainer()
-            ->get('fileManager')
-            ->getPhpContents('data/cache/application/cronLastRunTime.php');
-
-        if (is_array($data) && !empty($data['time'])) {
-            $result = (time() - $data['time']) > 300;
-        }
-
-        return $result;
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(Notification::class, []), 'run'));
     }
 }

@@ -47,12 +47,40 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                 return;
             }
 
-            Dep.prototype.checkUpdates.call(this, isFirstCheck)
+            if (this.checkBypass()) {
+                return;
+            }
+
+            $.ajax('../../data/notReadCount.json?time=' + $.now()).done(function (response) {
+                // prepare count
+                var count = 0;
+                if (typeof response[this.getUser().id] != 'undefined') {
+                    count = response[this.getUser().id];
+                }
+
+                if (!isFirstCheck && count > this.unreadCount) {
+
+                    var blockPlayNotificationSound = localStorage.getItem('blockPlayNotificationSound');
+                    if (!blockPlayNotificationSound) {
+                        this.playSound();
+                        localStorage.setItem('blockPlayNotificationSound', true);
+                        setTimeout(function () {
+                            delete localStorage['blockPlayNotificationSound'];
+                        }, this.notificationsCheckInterval * 1000);
+                    }
+                }
+                this.unreadCount = count;
+                if (count) {
+                    this.showNotRead(count);
+                } else {
+                    this.hideNotRead();
+                }
+            }.bind(this));
         },
 
         checkPopupNotifications: function (name) {
             var data = this.popupNotificationsData[name] || {};
-            var url = data.url;
+            var url = '../../data/popupNotifications.json?time=' + $.now();
             var interval = data.interval;
             var disabled = data.disabled || false;
 
@@ -74,7 +102,13 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     return;
                 }
 
-                var jqxhr = $.ajax(url).done(function (list) {
+                var jqxhr = $.ajax(url).done(function (response) {
+                    // prepare list
+                    var list = [];
+                    if (typeof response[this.getUser().id] != 'undefined') {
+                        list = response[this.getUser().id];
+                    }
+
                     list.forEach(function (d) {
                         this.showPopupNotification(name, d, isFirstCheck);
                     }, this);

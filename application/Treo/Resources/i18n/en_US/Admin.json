@@ -24,8 +24,7 @@
     "systemAlreadyUpgraded": "TreoCore already upgraded.",
     "upgradeInProgress": "Upgrade in progress",
     "upgradeFailed": "Upgrade failed",
-    "upgradeSuccessful": "Upgrade successfully finished",
-    "cronIsNotRunning": "Cron jobs are not running. Go to the <a href=\"/#ScheduledJob\">Scheduled Jobs</a> for details."
+    "upgradeSuccessful": "Upgrade successfully finished"
   },
   "layouts": {
     "relationships": "Bottom Panels"

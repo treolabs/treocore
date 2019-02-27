@@ -1,5 +1,21 @@
 [
   {
+    "route": "/Notification/action/notReadCount",
+    "method": "get",
+    "params": {
+      "controller": "Admin",
+      "action": "notFound"
+    }
+  },
+  {
+    "route": "/Activities/action/popupNotifications",
+    "method": "get",
+    "params": {
+      "controller": "Admin",
+      "action": "notFound"
+    }
+  },
+  {
     "route": "/TreoUpgrade/versions",
     "method": "get",
     "params": {
