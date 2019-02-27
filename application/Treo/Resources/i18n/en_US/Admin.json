@@ -22,7 +22,7 @@
     "upgradeBackup": "We recommend making a backup of your Treo System files and data before upgrading.",
     "newVersionIsAvailable": "New Treo System version {latestVersion} is available.",
     "systemAlreadyUpgraded": "TreoCore already upgraded.",
-    "upgradeInProgress": "Upgrade in progress",
+    "upgradeStarted": "Upgrade has been started",
     "upgradeFailed": "Upgrade failed",
     "upgradeSuccessful": "Upgrade successfully finished"
   },
