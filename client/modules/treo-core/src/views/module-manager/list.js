@@ -54,15 +54,41 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         inProgress: false,
 
+        data() {
+            return {
+                disabledRunUpdateButton: this.getConfig().get('isUpdating')
+            }
+        },
+
         setup() {
             Dep.prototype.setup.call(this);
 
+            this.wait(true);
+            this.getConfig().fetch({
+                success: () => {
+                    this.wait(false);
+                }
+            });
+
             this.listenToOnce(this, 'remove', () => {
+                if (this.logCheckInterval) {
+                    window.clearInterval(this.logCheckInterval);
+                    this.logCheckInterval = null;
+                }
+
                 if (this.configCheckInterval) {
                     window.clearInterval(this.configCheckInterval);
                     this.configCheckInterval = null;
                 }
             });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.getConfig().get('isUpdating')) {
+                this.initConfigCheck();
+            }
         },
 
         loadList() {
@@ -116,6 +142,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             });
                             this.toggleActionButton('cancelUpdate', showCancelAction);
                         });
+                        this.listenToOnce(view, 'after:render', () => {
+                            this.installedCollection.trigger('disableActions', this.getConfig().get('isUpdating'));
+                        });
                         view.render();
                     });
                 });
@@ -146,6 +175,9 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         showMore: true,
                         rowActionsView: 'treo-core:views/module-manager/record/row-actions/store'
                     }, view => {
+                        this.listenToOnce(view, 'after:render', () => {
+                            this.storeCollection.trigger('disableActions', this.getConfig().get('isUpdating'));
+                        });
                         view.render();
                     });
                 });
@@ -170,6 +202,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         actionInstallModule(data) {
+            if (this.getConfig().get('isUpdating')) {
+                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                return;
+            }
+
             if (!data.id || !data.mode) {
                 return;
             }
@@ -219,6 +256,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         actionRemoveModule(data) {
+            if (this.getConfig().get('isUpdating')) {
+                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                return;
+            }
+
             if (!data.id) {
                 return;
             }
@@ -236,6 +278,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         actionCancelModule(data) {
+            if (this.getConfig().get('isUpdating')) {
+                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                return;
+            }
+
             if (!data.id || !data.status) {
                 return;
             }
@@ -282,7 +329,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.notify(this.translate('updateStarted', 'labels', 'ModuleManager'), 'success');
                     setTimeout(() => {
                         this.initLogCheck();
-                        this.messageText = this.translate('upgradeStarted', 'messages', 'Admin');
+                        this.messageText = this.translate('updateInProgress', 'labels', 'ModuleManager');
                         this.messageType = 'success';
                         this.showCurrentStatus(this.messageText, this.messageType);
                     }, 2000);
@@ -327,16 +374,6 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         disableActionButton(action, disabled) {
             let button = this.$el.find(`.detail-button-container button[data-action="${action}"]`);
             button.prop('disabled', disabled);
-        },
-
-        reloadPage(timeout) {
-            if (timeout && typeof timeout === 'number') {
-                setTimeout(function () {
-                    window.location.reload(true);
-                }, timeout);
-            } else {
-                window.location.reload(true);
-            }
         },
 
         initLogCheck() {
@@ -390,6 +427,8 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionStarted() {
             this.inProgress = true;
+            this.installedCollection.trigger('disableActions', true);
+            this.storeCollection.trigger('disableActions', true);
 
             this.disableActionButton('runUpdate', true);
             this.disableActionButton('cancelUpdate', true);
@@ -398,14 +437,18 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionFinished() {
             this.inProgress = false;
+            this.installedCollection.trigger('disableActions', false);
+            this.storeCollection.trigger('disableActions', false);
 
             this.disableActionButton('runUpdate', false);
             this.disableActionButton('cancelUpdate', false);
             this.$el.find('.spinner').addClass('hidden');
         },
 
-        showCurrentStatus(text, type) {
-            text = text + ` (<a href="javascript:" class="action" data-action="showLog">${this.translate('log', 'labels', 'Admin')}</a>)`;
+        showCurrentStatus(text, type, hideLog) {
+            if (!hideLog) {
+                text = text + ` (<a href="javascript:" class="action" data-action="showLog">${this.translate('log', 'labels', 'Admin')}</a>)`;
+            }
             let el = this.$el.find('.progress-status');
             el.removeClass();
             el.addClass('progress-status text-' + type);
@@ -431,6 +474,36 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 messageType: this.messageType
             }
         },
+
+        initConfigCheck() {
+            let check = () => {
+                this.getConfig().fetch({
+                    success: (config) => {
+                        let isUpdating = !!config.get('isUpdating');
+                        if (!isUpdating) {
+                            this.getUser().fetch().then(() => {
+                                window.clearInterval(this.configCheckInterval);
+                                this.configCheckInterval = null;
+                                this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
+                                this.trigger('composerUpdate:failed');
+                            });
+                        } else {
+                            this.messageText = this.translate('updateInProgress', 'labels', 'ModuleManager');
+                            this.messageType = 'success';
+                            this.showCurrentStatus(this.messageText, this.messageType, true);
+                        }
+                        this.disableActionButton('runUpdate', isUpdating);
+                        this.disableActionButton('cancelUpdate', isUpdating);
+
+                        this.installedCollection.trigger('disableActions', isUpdating);
+                        this.storeCollection.trigger('disableActions', isUpdating);
+                    }
+                });
+            };
+            window.clearInterval(this.configCheckInterval);
+            this.configCheckInterval = window.setInterval(check, 1000);
+            check();
+        }
 
     })
 );

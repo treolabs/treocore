@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\CronManager;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 
 /**
@@ -83,11 +83,11 @@ class Composer extends AbstractService
      */
     public function runUpdate(): bool
     {
+        // update config
+        $this->updateConfig();
+
         // create file for treo-composer.sh
         $this->filePutContents('data/treo-module-update.txt', '1');
-
-        // set user to config
-        $this->setComposerUser();
 
         return true;
     }
@@ -107,9 +107,15 @@ class Composer extends AbstractService
      *
      * @param string $package
      * @param string $version
+     *
+     * @throws Error
      */
     public function update(string $package, string $version): void
     {
+        if (!empty($this->getConfig()->get('isUpdating'))) {
+            throw new Error('System is updating now');
+        }
+
         // get composer.json data
         $data = $this->getModuleComposerJson();
 
@@ -124,9 +130,15 @@ class Composer extends AbstractService
      * Delete composer
      *
      * @param string $package
+     *
+     * @throws Error
      */
     public function delete(string $package): void
     {
+        if (!empty($this->getConfig()->get('isUpdating'))) {
+            throw new Error('System is updating now');
+        }
+
         // get composer.json data
         $data = $this->getModuleComposerJson();
 
@@ -193,6 +205,16 @@ class Composer extends AbstractService
     public function getComposerDiff(): array
     {
         return $this->compareComposerSchemas();
+    }
+
+    /**
+     * Update config
+     */
+    public function updateConfig(): void
+    {
+        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        $this->getConfig()->set('isUpdating', true);
+        $this->getConfig()->save();
     }
 
     /**
@@ -313,14 +335,5 @@ class Composer extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * Set current user to config for composer
-     */
-    protected function setComposerUser(): void
-    {
-        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
-        $this->getConfig()->save();
     }
 }

@@ -43,11 +43,22 @@ namespace Treo\Services;
 class ComposerTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * Test is updateConfig method exists
+     */
+    public function testIsUpdateConfigMethodExists()
+    {
+        $service = $this->createPartialMock(Composer::class, []);
+
+        // test
+        $this->assertTrue(method_exists($service, 'updateConfig'));
+    }
+
+    /**
      * Test for runUpdate method
      */
     public function testRunUpdateMethod()
     {
-        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'setComposerUser']);
+        $service = $this->createPartialMock(Composer::class, ['filePutContents', 'updateConfig']);
 
         // test
         $this->assertTrue($service->runUpdate());

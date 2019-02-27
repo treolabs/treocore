@@ -93,7 +93,20 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                     window.clearInterval(this.logCheckInterval);
                     this.logCheckInterval = null;
                 }
+
+                if (this.configCheckInterval) {
+                    window.clearInterval(this.configCheckInterval);
+                    this.configCheckInterval = null;
+                }
             });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.getConfig().get('isUpdating')) {
+                this.initConfigCheck();
+            }
         },
 
         createField() {
@@ -216,6 +229,26 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                 messageType: this.messageType
             }
         },
+
+        initConfigCheck() {
+            let check = () => {
+                this.getConfig().fetch({
+                    success: (config) => {
+                        let isUpdating = !!config.get('isUpdating');
+                        if (!isUpdating) {
+                            this.getUser().fetch().then(() => {
+                                window.clearInterval(this.configCheckInterval);
+                                this.configCheckInterval = null;
+                                this.notify(this.translate('updateFailed', 'messages', 'Admin'), 'danger');
+                            });
+                        }
+                    }
+                });
+            };
+            window.clearInterval(this.configCheckInterval);
+            this.configCheckInterval = window.setInterval(check, 1000);
+            check();
+        }
 
     });
 });
