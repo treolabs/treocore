@@ -34,25 +34,33 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-use Treo\Console;
+/**
+ * Class Process
+ *
+ * @author r.ratsun <r.ratsun@treolabs.com>
+ */
+class Process extends AbstractConsole
+{
+    /**
+     * @inheritdoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Process killer.';
+    }
 
-return [
-    "list"                                       => Console\ListCommand::class,
-    "composer <action> <param1>"                 => Console\Composer::class,
-    "upgrade <versionTo> <action>"               => Console\Upgrade::class,
-    "clear cache"                                => Console\ClearCache::class,
-    "cleanup"                                    => Console\Cleanup::class,
-    "rebuild"                                    => Console\Rebuild::class,
-    "cron"                                       => Console\Cron::class,
-    "events"                                     => Console\Events::class,
-    "events --call <target> <action> <jsonData>" => Console\Events::class,
-    "store --refresh"                            => Console\StoreRefresh::class,
-    "migrate <module> <from> <to>"               => Console\Migrate::class,
-    "apidocs --generate"                         => Console\GenerateApidocs::class,
-    "developmod <param>"                         => Console\DevelopMod::class,
-    "qm --run"                                   => Console\QueueManager::class,
-    "notifications --refresh"                    => Console\Notification::class,
-    "kill process --all"                         => Console\Process::class,
-];
+    /**
+     * @inheritdoc
+     */
+    public function run(array $data): void
+    {
+        // kill
+        file_put_contents('data/kill-treo-self-upgrade.txt', '1');
+        file_put_contents('data/kill-treo-module-update.txt', '1');
+        file_put_contents('data/kill-treo-qm.txt', '1');
+
+        self::show('Processes killed successfully', self::SUCCESS, true);
+    }
+}
