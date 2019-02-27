@@ -329,7 +329,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     this.notify(this.translate('updateStarted', 'labels', 'ModuleManager'), 'success');
                     setTimeout(() => {
                         this.initLogCheck();
-                        this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
+                        this.messageText = this.translate('updateInProgress', 'messages', 'ModuleManager');
                         this.messageType = 'success';
                         this.showCurrentStatus(this.messageText, this.messageType);
                     }, 2000);
@@ -488,7 +488,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                                 this.trigger('composerUpdate:failed');
                             });
                         } else {
-                            this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
+                            this.messageText = this.translate('updateInProgress', 'messages', 'ModuleManager');
                             this.messageType = 'success';
                             this.showCurrentStatus(this.messageText, this.messageType, true);
                         }
