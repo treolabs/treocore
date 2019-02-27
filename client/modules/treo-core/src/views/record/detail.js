@@ -244,6 +244,9 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 scope: this.scope,
                 el: el + ' .panel-navigation',
             }, function (view) {
+                this.listenTo(this, 'after:set-detail-mode', () => {
+                    view.reRender();
+                });
                 view.render();
             });
         },
