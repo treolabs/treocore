@@ -268,13 +268,11 @@ class TreoUpgrade extends AbstractService
     protected function coreUpgrade(string $from, string $to): bool
     {
         if (!file_exists("treo-self-upgrade.txt")) {
+            // update config
+            $this->getContainer()->get('serviceFactory')->create('Composer')->updateConfig();
+
             file_put_contents("data/treo-self-upgrade.log", " ");
             file_put_contents("data/treo-self-upgrade.txt", "{$from}\n{$to}");
-
-            // update config
-            $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
-            $this->getConfig()->set('isUpdating', true);
-            $this->getConfig()->save();
 
             return true;
         }

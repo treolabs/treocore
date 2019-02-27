@@ -83,11 +83,11 @@ class Composer extends AbstractService
      */
     public function runUpdate(): bool
     {
-        // create file for treo-composer.sh
-        $this->filePutContents('data/treo-module-update.txt', '1');
-
         // update config
         $this->updateConfig();
+
+        // create file for treo-composer.sh
+        $this->filePutContents('data/treo-module-update.txt', '1');
 
         return true;
     }
@@ -208,6 +208,16 @@ class Composer extends AbstractService
     }
 
     /**
+     * Update config
+     */
+    public function updateConfig(): void
+    {
+        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        $this->getConfig()->set('isUpdating', true);
+        $this->getConfig()->save();
+    }
+
+    /**
      * @return array
      */
     protected function compareComposerSchemas(): array
@@ -325,15 +335,5 @@ class Composer extends AbstractService
         }
 
         return $result;
-    }
-
-    /**
-     * Update config
-     */
-    protected function updateConfig(): void
-    {
-        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
-        $this->getConfig()->set('isUpdating', true);
-        $this->getConfig()->save();
     }
 }
