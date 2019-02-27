@@ -218,6 +218,7 @@ class QueueManager
 
         // auth
         $this->getContainer()->setUser($item->get('createdBy'));
+        $this->getEntityManager()->setUser($item->get('createdBy'));
 
         // running
         $this->setStatus($item, 'Running');
