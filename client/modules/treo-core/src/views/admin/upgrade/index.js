@@ -93,18 +93,19 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                     window.clearInterval(this.logCheckInterval);
                     this.logCheckInterval = null;
                 }
+
+                if (this.configCheckInterval) {
+                    window.clearInterval(this.configCheckInterval);
+                    this.configCheckInterval = null;
+                }
             });
         },
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            if (this.getConfig().get('isUpdating') && (this.versionList || []).length) {
-                this.initLogCheck();
-                this.actionStarted();
-                this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
-                this.messageType = 'success';
-                this.showCurrentStatus(this.messageText, this.messageType);
+            if (this.getConfig().get('isUpdating')) {
+                this.initConfigCheck();
             }
         },
 
@@ -201,8 +202,10 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
             this.$el.find('.spinner').addClass('hidden');
         },
 
-        showCurrentStatus(text, type) {
-            text = text + ` (<a href="javascript:" class="action" data-action="showLog">${this.translate('log', 'labels', 'Admin')}</a>)`;
+        showCurrentStatus(text, type, hideLog) {
+            if (!hideLog) {
+                text = text + ` (<a href="javascript:" class="action" data-action="showLog">${this.translate('log', 'labels', 'Admin')}</a>)`;
+            }
             let el = this.$el.find('.progress-status');
             el.removeClass();
             el.addClass('progress-status text-' + type);
@@ -228,6 +231,32 @@ Espo.define('treo-core:views/admin/upgrade/index', 'class-replace!treo-core:view
                 messageType: this.messageType
             }
         },
+
+        initConfigCheck() {
+            let check = () => {
+                this.getConfig().fetch({
+                    success: (config) => {
+                        let isUpdating = !!config.get('isUpdating');
+                        if (!isUpdating) {
+                            this.getUser().fetch().then(() => {
+                                window.clearInterval(this.configCheckInterval);
+                                this.configCheckInterval = null;
+                                this.notify(this.translate('updateFailed', 'messages', 'Admin'), 'danger');
+                            });
+                        } else {
+                            this.messageText = this.translate('upgradeInProgress', 'messages', 'Admin');
+                            this.messageType = 'success';
+                            this.showCurrentStatus(this.messageText, this.messageType, true);
+                        }
+                        this.getView('versionToUpgrade').$element.prop('disabled', isUpdating);
+                        this.$el.find('button[data-action="upgradeSystem"]').prop('disabled', isUpdating);
+                    }
+                });
+            };
+            window.clearInterval(this.configCheckInterval);
+            this.configCheckInterval = window.setInterval(check, 1000);
+            check();
+        }
 
     });
 });
