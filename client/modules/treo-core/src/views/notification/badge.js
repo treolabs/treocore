@@ -50,38 +50,28 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
             // get id
             var userId = this.getUser().id;
 
-            $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                url: '../../data/notReadCount.json',
-                cache: false,
-                success: response => {
-                    // prepare count
-                    var count = 0;
-                    if (typeof response[userId] != 'undefined') {
-                        count = response[userId];
-                    }
-
-                    // render
-                    if (count) {
-                        this.showNotRead(count);
-                    } else {
-                        this.hideNotRead();
-                    }
+            $.ajax('../../data/notReadCount.json?time=' + $.now()).done(function (response) {
+                // prepare count
+                var count = 0;
+                if (typeof response[userId] != 'undefined') {
+                    count = response[userId];
                 }
-            });
+
+                if (count) {
+                    this.showNotRead(count);
+                } else {
+                    this.hideNotRead();
+                }
+            }.bind(this));
         },
 
         checkPopupNotifications: function (name) {
-            // @todo fix it
-            return true;
-
             var data = this.popupNotificationsData[name] || {};
-            var url = data.url;
             var interval = data.interval;
             var disabled = data.disabled || false;
+            var userId = this.getUser().id;
 
-            if (disabled || !url || !interval) return;
+            if (disabled || !interval) return;
 
             var isFirstCheck = false;
             if (this.popupCheckIteration == 0) {
@@ -99,7 +89,13 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     return;
                 }
 
-                var jqxhr = $.ajax(url).done(function (list) {
+                var jqxhr = $.ajax('../../data/popupNotifications.json?time=' + $.now()).done(function (response) {
+                    // prepare list
+                    var list = [];
+                    if (typeof response[userId] != 'undefined') {
+                        list = response[userId];
+                    }
+
                     list.forEach(function (d) {
                         this.showPopupNotification(name, d, isFirstCheck);
                     }, this);

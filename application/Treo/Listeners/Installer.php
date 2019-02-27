@@ -92,5 +92,6 @@ class Installer extends AbstractListener
     protected function createDataFiles(): void
     {
         file_put_contents('data/notReadCount.json', '{}');
+        file_put_contents('data/popupNotifications.json', '{}');
     }
 }

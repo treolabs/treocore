@@ -50,5 +50,6 @@ class V3Dot7Dot0 extends AbstractMigration
     public function up(): void
     {
         file_put_contents('data/notReadCount.json', '{}');
+        file_put_contents('data/popupNotifications.json', '{}');
     }
 }
