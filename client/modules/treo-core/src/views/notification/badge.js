@@ -44,19 +44,32 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
 
         checkUpdates: function (isFirstCheck) {
             if (!this.checkIntervalConditions()) {
-                return true;
+                return;
             }
 
-            // get id
-            var userId = this.getUser().id;
+            if (this.checkBypass()) {
+                return;
+            }
 
             $.ajax('../../data/notReadCount.json?time=' + $.now()).done(function (response) {
                 // prepare count
                 var count = 0;
-                if (typeof response[userId] != 'undefined') {
-                    count = response[userId];
+                if (typeof response[this.getUser().id] != 'undefined') {
+                    count = response[this.getUser().id];
                 }
 
+                if (!isFirstCheck && count > this.unreadCount) {
+
+                    var blockPlayNotificationSound = localStorage.getItem('blockPlayNotificationSound');
+                    if (!blockPlayNotificationSound) {
+                        this.playSound();
+                        localStorage.setItem('blockPlayNotificationSound', true);
+                        setTimeout(function () {
+                            delete localStorage['blockPlayNotificationSound'];
+                        }, this.notificationsCheckInterval * 1000);
+                    }
+                }
+                this.unreadCount = count;
                 if (count) {
                     this.showNotRead(count);
                 } else {
@@ -67,11 +80,11 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
 
         checkPopupNotifications: function (name) {
             var data = this.popupNotificationsData[name] || {};
+            var url = '../../data/popupNotifications.json?time=' + $.now();
             var interval = data.interval;
             var disabled = data.disabled || false;
-            var userId = this.getUser().id;
 
-            if (disabled || !interval) return;
+            if (disabled || !url || !interval) return;
 
             var isFirstCheck = false;
             if (this.popupCheckIteration == 0) {
@@ -89,11 +102,11 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     return;
                 }
 
-                var jqxhr = $.ajax('../../data/popupNotifications.json?time=' + $.now()).done(function (response) {
+                var jqxhr = $.ajax(url).done(function (response) {
                     // prepare list
                     var list = [];
-                    if (typeof response[userId] != 'undefined') {
-                        list = response[userId];
+                    if (typeof response[this.getUser().id] != 'undefined') {
+                        list = response[this.getUser().id];
                     }
 
                     list.forEach(function (d) {
@@ -101,7 +114,7 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     }, this);
                 }.bind(this));
 
-                jqxhr.always(function () {
+                jqxhr.always(function() {
                     resolve();
                 });
             }.bind(this))).then(function () {
