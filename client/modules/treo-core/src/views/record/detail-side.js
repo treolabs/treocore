@@ -137,34 +137,15 @@ Espo.define('treo-core:views/record/detail-side', 'class-replace!treo-core:views
         },
 
         setupDefaultPanel() {
-            // prepare vars
-            let metadata = this.getMetadata();
-            let scope = this.scope;
+            this.defaultPanelDefs = Espo.Utils.cloneDeep(this.defaultPanelDefs);
 
-            // prepare field list
-            let fieldList = [];
-            this.defaultPanelDefs.options.fieldList.forEach(fieldDefs => {
-                if (typeof fieldDefs.name !== 'undefined') {
-                    if (metadata.get('scopes.' + scope + '.hasOwner') && fieldDefs.name === 'ownerUser') {
-                        fieldList.push(fieldDefs);
-                    }
-                    if (metadata.get('scopes.' + scope + '.hasAssignedUser') && fieldDefs.name === ':assignedUser') {
-                        if (this.model.hasField('assignedUsers')) {
-                            fieldDefs.name = 'assignedUsers';
-                            if (!this.model.getFieldParam('assignedUsers', 'view')) {
-                                fieldDefs.view = 'views/fields/assigned-users';
-                            }
-                        }
-                        fieldList.push(fieldDefs);
-                    }
-                    if (metadata.get('scopes.' + scope + '.hasTeam') && fieldDefs.name === 'teams') {
-                        fieldList.push(fieldDefs);
-                    }
-                }
+            let scopeDefs = this.getMetadata().get(['scopes', this.scope]) || {};
+
+            this.defaultPanelDefs.options.fieldList = this.defaultPanelDefs.options.fieldList.filter(fieldDefs => {
+                return (scopeDefs.hasOwner && fieldDefs.name === 'ownerUser')
+                    || (scopeDefs.hasAssignedUser && fieldDefs.name === ':assignedUser')
+                    || (scopeDefs.hasTeam && fieldDefs.name === 'teams');
             });
-
-            // set new field list
-            this.defaultPanelDefs.options.fieldList = fieldList;
 
             let hasAnyField = (this.defaultPanelDefs.options.fieldList || []).some(fieldDefs => this.model.hasLink(fieldDefs.name));
             if (this.mode === 'detail' || hasAnyField) {
