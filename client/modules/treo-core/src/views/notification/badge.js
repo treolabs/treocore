@@ -43,8 +43,8 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
         },
 
         checkUpdates: function (isFirstCheck) {
-            if (!this.checkIntervalConditions() || this.checkBypass()) {
-                return;
+            if (!this.checkIntervalConditions()) {
+                return true;
             }
 
             // get id
@@ -74,7 +74,7 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
 
         checkPopupNotifications: function (name) {
             // @todo fix it
-            return;
+            return true;
 
             var data = this.popupNotificationsData[name] || {};
             var url = data.url;
