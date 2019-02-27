@@ -34,25 +34,30 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-use Treo\Console;
+/**
+ * Class KillProcessTest
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class KillProcessTest extends \PHPUnit\Framework\TestCase
+{
+    /**
+     * Test is getDescription method exists
+     */
+    public function testIsGetDescriptionExists()
+    {
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(KillProcess::class, []), 'getDescription'));
+    }
 
-return [
-    "list"                                       => Console\ListCommand::class,
-    "composer <action> <param1>"                 => Console\Composer::class,
-    "upgrade <versionTo> <action>"               => Console\Upgrade::class,
-    "clear cache"                                => Console\ClearCache::class,
-    "cleanup"                                    => Console\Cleanup::class,
-    "rebuild"                                    => Console\Rebuild::class,
-    "cron"                                       => Console\Cron::class,
-    "events"                                     => Console\Events::class,
-    "events --call <target> <action> <jsonData>" => Console\Events::class,
-    "store --refresh"                            => Console\StoreRefresh::class,
-    "migrate <module> <from> <to>"               => Console\Migrate::class,
-    "apidocs --generate"                         => Console\GenerateApidocs::class,
-    "developmod <param>"                         => Console\DevelopMod::class,
-    "qm --run"                                   => Console\QueueManager::class,
-    "notifications --refresh"                    => Console\Notification::class,
-    "kill process <id>"                          => Console\KillProcess::class,
-];
+    /**
+     * Test is run method exists
+     */
+    public function testIsRunExists()
+    {
+        // test
+        $this->assertTrue(method_exists($this->createPartialMock(KillProcess::class, []), 'run'));
+    }
+}

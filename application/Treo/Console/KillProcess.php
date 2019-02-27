@@ -37,11 +37,11 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class Process
+ * Class KillProcess
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Process extends AbstractConsole
+class KillProcess extends AbstractConsole
 {
     /**
      * @inheritdoc
@@ -56,11 +56,24 @@ class Process extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // kill
-        file_put_contents('data/kill-treo-self-upgrade.txt', '1');
-        file_put_contents('data/kill-treo-module-update.txt', '1');
-        file_put_contents('data/kill-treo-qm.txt', '1');
+        switch ($data['id']) {
+            case "treo-self-upgrade":
+                file_put_contents('data/kill-treo-self-upgrade.txt', '1');
+                self::show("Process 'treo-self-upgrade' killed successfully", self::SUCCESS, true);
 
-        self::show('Processes killed successfully', self::SUCCESS, true);
+                break;
+            case "treo-module-update":
+                file_put_contents('data/kill-treo-module-update.txt', '1');
+                self::show("Process 'treo-module-update' killed successfully", self::SUCCESS, true);
+
+                break;
+            case "treo-qm":
+                file_put_contents('data/kill-treo-qm.txt', '1');
+                self::show("Process 'treo-qm' killed successfully", self::SUCCESS, true);
+
+                break;
+        }
+
+        self::show('No such process!', self::ERROR, true);
     }
 }
