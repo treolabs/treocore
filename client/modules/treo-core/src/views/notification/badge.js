@@ -51,7 +51,8 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                 return;
             }
 
-            $.ajax('../../data/notReadCount.json?time=' + $.now()).done(function (response) {
+            let url = 'data/notReadCount.json?time=' + $.now();
+            $.ajax(url, {local: true}).done(function (response) {
                 // prepare count
                 var count = 0;
                 if (typeof response[this.getUser().id] != 'undefined') {
@@ -80,7 +81,7 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
 
         checkPopupNotifications: function (name) {
             var data = this.popupNotificationsData[name] || {};
-            var url = '../../data/popupNotifications.json?time=' + $.now();
+            var url = 'data/popupNotifications.json?time=' + $.now();
             var interval = data.interval;
             var disabled = data.disabled || false;
 
@@ -101,8 +102,7 @@ Espo.define('treo-core:views/notification/badge', 'class-replace!treo-core:views
                     resolve();
                     return;
                 }
-
-                var jqxhr = $.ajax(url).done(function (response) {
+                var jqxhr = $.ajax(url, {local: true}).done(function (response) {
                     // prepare list
                     var list = [];
                     if (typeof response[this.getUser().id] != 'undefined') {
