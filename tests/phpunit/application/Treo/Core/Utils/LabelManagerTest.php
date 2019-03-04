@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,27 +31,39 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Utils;
 
-use Treo\Core\InjectableFactory as Instance;
+use PHPUnit\Framework\TestCase;
 
 /**
- * InjectableFactory loader
+ * Class LabelManagerTest
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class InjectableFactory extends Base
+class LabelManagerTest extends TestCase
 {
+    /**
+     * Test is getScopeData method exist
+     */
+    public function testIsGetScopeDataExist()
+    {
+        $mock = $this->createPartialMock(LabelManager::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'getScopeData'));
+    }
 
     /**
-     * Load InjectableFactory
-     *
-     * @return Instance
+     * Test is saveLabels method exist
      */
-    public function load()
+    public function testIsSaveLabelExist()
     {
-        return new Instance($this->getContainer());
+        $mock = $this->createPartialMock(LabelManager::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'saveLabels'));
     }
 }

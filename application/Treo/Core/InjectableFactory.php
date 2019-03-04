@@ -17,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,27 +31,30 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
-
-use Treo\Core\InjectableFactory as Instance;
+namespace Treo\Core;
 
 /**
- * InjectableFactory loader
+ * Class InjectableFactory
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.zablodskiy@treolabs.com
  */
-class InjectableFactory extends Base
+class InjectableFactory extends \Espo\Core\InjectableFactory
 {
-
     /**
-     * Load InjectableFactory
-     *
-     * @return Instance
+     * @inheritdoc
      */
-    public function load()
+    public function createByClassName($className)
     {
-        return new Instance($this->getContainer());
+        if (strpos($className, 'Espo\\') !== false) {
+            $treoClassName = str_replace('Espo\\', 'Treo\\', $className);
+
+            if (class_exists($treoClassName)) {
+                $className = $treoClassName;
+            }
+        }
+        return parent::createByClassName($className);
     }
 }
