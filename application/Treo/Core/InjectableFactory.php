@@ -34,25 +34,27 @@
 
 declare(strict_types=1);
 
-namespace Treo\Controllers;
-
-use PHPUnit\Framework\TestCase;
+namespace Treo\Core;
 
 /**
- * Class LabelManagerTest
+ * Class InjectableFactory
  *
  * @author r.zablodskiy@treolabs.com
  */
-class LabelManagerTest extends TestCase
+class InjectableFactory extends \Espo\Core\InjectableFactory
 {
     /**
-     * Test is postActionGetScopeData method exist
+     * @inheritdoc
      */
-    public function testIsPostActionGetScopeDataExist()
+    public function createByClassName($className)
     {
-        $mock = $this->createPartialMock(LabelManager::class, []);
+        if (strpos($className, 'Espo') !== false) {
+            $treoClassName = str_replace('Espo', 'Treo', $className);
 
-        // test
-        $this->assertTrue(method_exists($mock, 'postActionGetScopeData'));
+            if (class_exists($treoClassName)) {
+                $className = $treoClassName;
+            }
+        }
+        return parent::createByClassName($className);
     }
 }

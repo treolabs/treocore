@@ -34,34 +34,22 @@
 
 declare(strict_types=1);
 
-namespace Treo\Controllers;
+namespace Treo\Core;
 
-use Espo\Core\Exceptions\BadRequest;
+use Treo\PHPUnit\Framework\TestCase;
 
 /**
- * Class LabelManager
+ * Class InjectableFactory
  *
  * @author r.zablodskiy@treolabs.com
  */
-class LabelManager extends \Espo\Controllers\LabelManager
+class InjectableFactoryTest extends TestCase
 {
-    /**
-     * @inheritdoc
-     */
-    public function postActionGetScopeData($params, $data, $request)
+    public function testIsCreateByClassNameExists()
     {
-        if (empty($data->scope) || empty($data->language)) {
-            throw new BadRequest();
-        }
-        return $this->getLabelManager()->getScopeData($data->language, $data->scope);
-    }
-    /**
-     * Get injectableFactory
-     *
-     * @return \Treo\Core\Utils\LabelManager
-     */
-    protected function getLabelManager(): \Treo\Core\Utils\LabelManager
-    {
-        return $this->getContainer()->get('labelManager');
+        $mock = $this->createPartialMock(InjectableFactory::class, []);
+
+        // test
+        $this->assertTrue(method_exists($mock, 'createByClassName'));
     }
 }

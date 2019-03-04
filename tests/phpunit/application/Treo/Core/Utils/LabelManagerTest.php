@@ -46,116 +46,24 @@ use PHPUnit\Framework\TestCase;
 class LabelManagerTest extends TestCase
 {
     /**
-     * Test getScopeData method
+     * Test is getScopeData method exist
      */
-    public function testGetScopeDataMethod()
+    public function testIsGetScopeDataExist()
     {
-        $mock = $this->createPartialMock(LabelManager::class, ['getLanguage']);
-        $language = $this->createPartialMock(Language::class, ['get']);
+        $mock = $this->createPartialMock(LabelManager::class, []);
 
-        $language
-            ->expects($this->any())
-            ->method('get')
-            ->willReturn([]);
-        $mock
+        // test
+        $this->assertTrue(method_exists($mock, 'getScopeData'));
+    }
 
-            ->expects($this->any())
-            ->method('getLanguage')
-            ->willReturn($language);
+    /**
+     * Test is saveLabels method exist
+     */
+    public function testIsSaveLabelExist()
+    {
+        $mock = $this->createPartialMock(LabelManager::class, []);
 
-        // test 1
-        $this->assertEquals((object)[], $mock->getScopeData('en_US', 'Test'));
-
-        $mock = $this->createPartialMock(
-            LabelManager::class,
-            ['getLanguage', 'getEntityLabels', 'getOptionsLabels', 'getScopeNames']
-        );
-        $language = $this->createPartialMock(Language::class, ['get']);
-
-        $language
-            ->expects($this->any())
-            ->method('get')
-            ->willReturn([
-                'fields' => [
-                    'field1' => 'field1Label'
-                ],
-                'links' => [
-                    'link1' => 'link1Label'
-                ],
-                'options' => [
-                    'field3' => 'field3Link'
-                ]
-            ]);
-
-        $mock
-            ->expects($this->any())
-            ->method('getLanguage')
-            ->willReturn($language);
-        $mock
-            ->expects($this->any())
-            ->method('getEntityLabels')
-            ->willReturn([
-                'fields' => [
-                    'field1' => 'field1Label',
-                    'field2' => 'field2Label'
-                ],
-                'links' => [
-                    'link1' => 'link1Label',
-                    'link2' => 'link2Label'
-                ],
-                'options' => [
-                    'field3' => 'field3Link'
-                ]
-            ]);
-        $mock
-            ->expects($this->any())
-            ->method('getOptionsLabels')
-            ->willReturn([
-                'fields' => [
-                    'field1' => 'field1Label',
-                    'field2' => 'field2Label'
-                ],
-                'links' => [
-                    'link1' => 'link1Label',
-                    'link2' => 'link2Label'
-                ],
-                'options' => [
-                    'field3' => 'field3Link',
-                    'field4' => 'field4Link'
-                ]
-            ]);
-        $mock
-            ->expects($this->any())
-            ->method('getScopeNames')
-            ->willReturn([
-                'fields' => [
-                    'field1' => 'field1Label',
-                    'field2' => 'field2Label'
-                ],
-                'links' => [
-                    'link1' => 'link1Label',
-                    'link2' => 'link2Label'
-                ],
-                'options' => [
-                    'field3' => 'field3Link',
-                    'field4' => 'field4Link'
-                ]
-            ]);
-
-        // test 2
-        $expects = [
-            'fields' => [
-                'fields[.]field1' => 'field1Label',
-                'fields[.]field2' => 'field2Label'
-            ],
-            'links' => [
-                'links[.]link1' => 'link1Label',
-                'links[.]link2' => 'link2Label'
-            ],
-            'options' => [
-                'options[.]field3' => 'field3Link',
-                'options[.]field4' => 'field4Link'
-            ]];
-        $this->assertEquals($expects, $mock->getScopeData('en_US', 'Test'));
+        // test
+        $this->assertTrue(method_exists($mock, 'saveLabels'));
     }
 }

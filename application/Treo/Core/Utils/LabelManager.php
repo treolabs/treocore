@@ -31,10 +31,11 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+
 declare(strict_types=1);
+
 namespace Treo\Core\Utils;
-use Espo\Core\Utils\File\Manager;
-use Treo\Traits\ContainerTrait;
+
 /**
  * Class LabelManager
  *
@@ -42,83 +43,27 @@ use Treo\Traits\ContainerTrait;
  */
 class LabelManager extends \Espo\Core\Utils\LabelManager
 {
-    use ContainerTrait;
     /**
      * @inheritdoc
      */
     public function getScopeData($language, $scope)
     {
-        $data = $this->getLanguage()->get($scope);
+        $languageObj = new Language($language, $this->getFileManager(), $this->getMetadata());
+
+        $data = $languageObj->get($scope);
+
         if (empty($data)) {
             return (object) [];
         }
-        $data = $this->getEntityLabels($data, $scope);
-        $data = $this->getOptionsLabels($data, $scope);
-        $data = $this->getScopeNames($data, $scope);
-        foreach ($data as $key => $value) {
-            if (empty($value)) {
-                unset($data[$key]);
-            }
-        }
-        $finalData = array();
-        foreach ($data as $category => $item) {
-            if (in_array($scope . '.' . $category, $this->ignoreList)) {
-                continue;
-            }
-            foreach ($item as $key => $categoryItem) {
-                if (is_array($categoryItem)) {
-                    foreach ($categoryItem as $subKey => $subItem) {
-                        $finalData[$category][$category .'[.]' . $key .'[.]' . $subKey] = $subItem;
-                    }
-                } else {
-                    $finalData[$category][$category .'[.]' . $key] = $categoryItem;
-                }
-            }
-        }
-        return $finalData;
-    }
-    /**
-     * @inheritdoc
-     */
-    protected function getFileManager(): Manager
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-    /**
-     * @inheritdoc
-     */
-    protected function getMetadata(): Metadata
-    {
-        return $this->getContainer()->get('metadata');
-    }
-    /**
-     * Get language
-     *
-     * @return Language
-     */
-    protected function getLanguage(): Language
-    {
-        return $this->getContainer()->get('language');
-    }
-    /**
-     * Get entity labels
-     *
-     * @param array $data
-     * @param string $scope
-     *
-     * @return array
-     *
-     * @throws \Espo\Core\Exceptions\Error
-     */
-    protected function getEntityLabels(array $data, string $scope): array
-    {
+
         if ($this->getMetadata()->get(['scopes', $scope, 'entity'])) {
+
             if (empty($data['fields'])) {
                 $data['fields'] = array();
             }
             foreach ($this->getMetadata()->get(['entityDefs', $scope, 'fields']) as $field => $item) {
                 if (!array_key_exists($field, $data['fields'])) {
-                    $data['fields'][$field] = $this->getLanguage()->get('Global.fields.' . $field);
+                    $data['fields'][$field] = $languageObj->get('Global.fields.' . $field);
                     if (is_null($data['fields'][$field])) {
                         $data['fields'][$field] = '';
                     }
@@ -129,12 +74,13 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
             }
             foreach ($this->getMetadata()->get(['entityDefs', $scope, 'links']) as $link => $item) {
                 if (!array_key_exists($link, $data['links'])) {
-                    $data['links'][$link] = $this->getLanguage()->get('Global.links.' . $link);
+                    $data['links'][$link] = $languageObj->get('Global.links.' . $link);
                     if (is_null($data['links'][$link])) {
                         $data['links'][$link] = '';
                     }
                 }
             }
+
             if (empty($data['labels'])) {
                 $data['labels'] = array();
             }
@@ -142,22 +88,9 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
                 $data['labels']['Create ' . $scope] = '';
             }
         }
-        return $data;
-    }
-    /**
-     * Get entity fields options labels
-     *
-     * @param array $data
-     * @param string $scope
-     *
-     * @return array
-     */
-    protected function getOptionsLabels(array $data, string $scope): array
-    {
+
         foreach ($this->getMetadata()->get(['entityDefs', $scope, 'fields'], []) as $field => $item) {
-            if (!$this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'])) {
-                continue;
-            }
+            if (!$this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'])) continue;
             $optionsData = array();
             $optionList = $this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'], []);
             if (!array_key_exists('options', $data)) {
@@ -167,9 +100,7 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
                 $data['options'][$field] = array();
             }
             foreach ($optionList as $option) {
-                if (empty($option)) {
-                    continue;
-                }
+                if (empty($option)) continue;
                 $optionsData[$option] = $option;
                 if (array_key_exists($option, $data['options'][$field])) {
                     if (!empty($data['options'][$field][$option])) {
@@ -179,18 +110,7 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
             }
             $data['options'][$field] = $optionsData;
         }
-        return $data;
-    }
-    /**
-     * Get scope names
-     *
-     * @param array $data
-     * @param string $scope
-     *
-     * @return array
-     */
-    protected function getScopeNames(array $data, string $scope): array
-    {
+
         if ($scope === 'Global') {
             if (empty($data['scopeNames'])) {
                 $data['scopeNames'] = array();
@@ -209,6 +129,91 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
                 }
             }
         }
-        return $data;
+
+        foreach ($data as $key => $value) {
+            if (empty($value)) {
+                unset($data[$key]);
+            }
+        }
+
+        $finalData = array();
+
+        foreach ($data as $category => $item) {
+            if (in_array($scope . '.' . $category, $this->ignoreList)) continue;
+            foreach ($item as $key => $categoryItem) {
+                if (is_array($categoryItem)) {
+                    foreach ($categoryItem as $subKey => $subItem) {
+                        $finalData[$category][$category .'[.]' . $key .'[.]' . $subKey] = $subItem;
+                    }
+                } else {
+                    $finalData[$category][$category .'[.]' . $key] = $categoryItem;
+                }
+            }
+        }
+
+        return $finalData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveLabels($language, $scope, $labels)
+    {
+        $languageObj = new Language($language, $this->getFileManager(), $this->getMetadata());
+        $languageOriginalObj = new Language($language, $this->getFileManager(), $this->getMetadata(), false, true);
+
+        $returnDataHash = array();
+
+        foreach ($labels as $key => $value) {
+            $arr = explode('[.]', $key);
+            $category = $arr[0];
+            $name = $arr[1];
+
+            $setPath = [$scope, $category, $name];
+
+            $setValue = null;
+
+            if (count($arr) == 2) {
+                if ($value !== '') {
+                    $languageObj->set($scope, $category, $name, $value);
+                    $setValue = $value;
+                } else {
+                    $setValue = $languageOriginalObj->get(implode('.', [$scope, $category, $name]));
+                    if (is_null($setValue) && $scope !== 'Global') {
+                        $setValue = $languageOriginalObj->get(implode('.', ['Global', $category, $name]));
+                    }
+                    $languageObj->delete($scope, $category, $name);
+                }
+            } else if (count($arr) == 3) {
+                $name = $arr[1];
+                $attribute = $arr[2];
+                $data = $languageObj->get($scope . '.' . $category . '.' . $name);
+
+                $setPath[] = $attribute;
+
+                if (is_array($data)) {
+                    if ($value !== '') {
+                        $data[$attribute] = $value;
+                        $setValue = $value;
+                    } else {
+                        $dataOriginal = $languageOriginalObj->get($scope . '.' . $category . '.' . $name);
+                        if (is_array($dataOriginal) && isset($dataOriginal[$attribute])) {
+                            $data[$attribute] = $dataOriginal[$attribute];
+                            $setValue = $dataOriginal[$attribute];
+                        }
+                    }
+                    $languageObj->set($scope, $category, $name, $data);
+                }
+            }
+
+            if (!is_null($setValue)) {
+                $frontKey = implode('[.]', $setPath);
+                $returnDataHash[$frontKey] = $setValue;
+            }
+        }
+
+        $languageObj->save();
+
+        return $returnDataHash;
     }
 }
