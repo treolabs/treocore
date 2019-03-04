@@ -48,8 +48,8 @@ class InjectableFactory extends \Espo\Core\InjectableFactory
      */
     public function createByClassName($className)
     {
-        if (strpos($className, 'Espo') !== false) {
-            $treoClassName = str_replace('Espo', 'Treo', $className);
+        if (strpos($className, 'Espo\\') !== false) {
+            $treoClassName = str_replace('Espo\\', 'Treo\\', $className);
 
             if (class_exists($treoClassName)) {
                 $className = $treoClassName;
