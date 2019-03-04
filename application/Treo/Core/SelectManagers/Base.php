@@ -147,4 +147,16 @@ class Base extends \Espo\Core\SelectManagers\Base
             return true;
         }
     }
+
+    /**
+     * OnlyActive filter
+     *
+     * @param array $result
+     */
+    protected function boolFilterOnlyActive(&$result)
+    {
+        $result['whereClause'][] = [
+            'isActive' => true
+        ];
+    }
 }

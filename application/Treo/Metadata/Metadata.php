@@ -314,6 +314,13 @@ class Metadata extends AbstractMetadata
      */
     protected function addOnlyActiveFilter(array $data): array
     {
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($row['fields']['isActive']['type']) && $row['fields']['isActive']['type'] == 'bool') {
+                // push
+                $data['clientDefs'][$entity]['boolFilterList'][] = 'onlyActive';
+            }
+        }
+
         return $data;
     }
 }
