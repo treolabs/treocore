@@ -142,5 +142,8 @@
     "removePartial": "Remove (Part %s)",
     "addRelation": "Add relation",
     "removeRelation": "Remove relation"
+  },
+  "boolFilters": {
+    "onlyActive": "Only Active"
   }
 }
