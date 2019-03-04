@@ -77,6 +77,9 @@ class Metadata extends AbstractMetadata
         // delete espo scheduled jobs
         $data = $this->deleteEspoScheduledJobs($data);
 
+        // add onlyActive bool filter
+        $data = $this->addOnlyActiveFilter($data);
+
         return $data;
     }
 
@@ -301,6 +304,16 @@ class Metadata extends AbstractMetadata
             }
         }
 
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function addOnlyActiveFilter(array $data): array
+    {
         return $data;
     }
 }
