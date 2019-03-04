@@ -57,7 +57,6 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
         }
 
         if ($this->getMetadata()->get(['scopes', $scope, 'entity'])) {
-
             if (empty($data['fields'])) {
                 $data['fields'] = array();
             }
@@ -90,7 +89,9 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
         }
 
         foreach ($this->getMetadata()->get(['entityDefs', $scope, 'fields'], []) as $field => $item) {
-            if (!$this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'])) continue;
+            if (!$this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'])) {
+                continue;
+            }
             $optionsData = array();
             $optionList = $this->getMetadata()->get(['entityDefs', $scope, 'fields', $field, 'options'], []);
             if (!array_key_exists('options', $data)) {
@@ -100,7 +101,9 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
                 $data['options'][$field] = array();
             }
             foreach ($optionList as $option) {
-                if (empty($option)) continue;
+                if (empty($option)) {
+                    continue;
+                }
                 $optionsData[$option] = $option;
                 if (array_key_exists($option, $data['options'][$field])) {
                     if (!empty($data['options'][$field][$option])) {
@@ -139,7 +142,9 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
         $finalData = array();
 
         foreach ($data as $category => $item) {
-            if (in_array($scope . '.' . $category, $this->ignoreList)) continue;
+            if (in_array($scope . '.' . $category, $this->ignoreList)) {
+                continue;
+            }
             foreach ($item as $key => $categoryItem) {
                 if (is_array($categoryItem)) {
                     foreach ($categoryItem as $subKey => $subItem) {
@@ -184,7 +189,7 @@ class LabelManager extends \Espo\Core\Utils\LabelManager
                     }
                     $languageObj->delete($scope, $category, $name);
                 }
-            } else if (count($arr) == 3) {
+            } elseif (count($arr) == 3) {
                 $name = $arr[1];
                 $attribute = $arr[2];
                 $data = $languageObj->get($scope . '.' . $category . '.' . $name);
