@@ -352,8 +352,8 @@ class RestApiDocs extends Base
                     // prepare response
                     $response = $this->getEntityFields($row['sample'], $entity, $route, $method);
                     try {
-                        $decoded = json_decode($response);
-                        $preparedResponse = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                        $decoded = json_decode(str_replace("'", '"', $response));
+                        $response = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
                     } catch (\Throwable $e) {
                     }
 
@@ -469,9 +469,17 @@ class RestApiDocs extends Base
             // prepare method
             $method = $docs["ApiMethod"][0]["type"];
 
+            // prepare body
+            $body = $this->getEntityFields($sample, $entity, $route, $method, true);
+            try {
+                $decoded = json_decode(str_replace("'", '"', $body));
+                $body = json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            } catch (\Throwable $e) {
+            }
+
             $content = [
                 '{{ elt_id }}' => $id,
-                '{{ body }}'   => $this->getEntityFields($sample, $entity, $route, $method, true)
+                '{{ body }}'   => $body
             ];
             $result = strtr($this->getTemplateContent('Parts/sample-post-body'), $content);
         }
