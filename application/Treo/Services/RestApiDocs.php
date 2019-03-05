@@ -349,9 +349,21 @@ class RestApiDocs extends Base
                     // prepare method
                     $method = $docs['ApiMethod'][0]['type'];
 
+                    // prepare response
+                    $response = $this->getEntityFields($row['sample'], $entity, $route, $method);
+                    try {
+                        $decoded = json_decode($response);
+                        $preparedResponse = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                    } catch (\Throwable $e) {
+                    }
+
+                    if (!empty($preparedResponse)) {
+                        $response = $preparedResponse;
+                    }
+
                     $tr = [
                         '{{ elt_id }}'   => $counter,
-                        '{{ response }}' => $this->getEntityFields($row['sample'], $entity, $route, $method)
+                        '{{ response }}' => $response
                     ];
 
                     // push data
@@ -667,7 +679,7 @@ class RestApiDocs extends Base
                             break;
                         case 'int':
                             $result[$name] = [
-                                'type'     => 'integer',
+                                'type'     => 'int',
                                 'required' => !empty($row['required'])
                             ];
                             break;
@@ -730,11 +742,58 @@ class RestApiDocs extends Base
     {
         // prepare sample
         if (is_string($sample) && strpos($sample, '{entityDeff}') !== false) {
+            // get config
+            $inputLanguageList = $this->getConfig()->get('inputLanguageList');
+
             // get entity defs
-            $entityDeffs = $this->getResponseEntityData($entity);
+            $entityDeffs = [];
+            foreach ($this->getMetadata()->get("entityDefs.$entity.fields") as $field => $row) {
+                // set id
+                $entityDeffs['id'] = 'string';
+
+                // set deleted
+                $entityDeffs['deleted'] = 'bool';
+
+                if (empty($row['notStorable'])) {
+                    switch ($row['type']) {
+                        case 'link':
+                            $entityDeffs[$field . 'Id'] = 'string';
+                            break;
+                        case 'linkMultiple':
+                            break;
+                        case 'varcharMultiLang':
+                        case 'textMultiLang':
+                            $entityDeffs[$field] = 'string';
+                            if (!empty($inputLanguageList)) {
+                                foreach ($inputLanguageList as $locale) {
+                                    // prepare locale
+                                    $locale = ucfirst(Util::toCamelCase(strtolower($locale)));
+
+                                    $entityDeffs[$field . $locale] = 'string';
+                                }
+                            }
+                            break;
+                        case 'bool':
+                            $entityDeffs[$field] = 'bool';
+                            break;
+                        case 'int':
+                            $entityDeffs[$field] = 'int';
+                            break;
+                        case 'float':
+                            $entityDeffs[$field] = 'float';
+                            break;
+                        case 'varchar':
+                        case 'text':
+                        case 'wysiwyg':
+                            $entityDeffs[$field] = 'string';
+                            break;
+                    }
+                }
+            }
 
             if ($method !== 'GET') {
                 unset($entityDeffs['id']);
+                unset($entityDeffs['deleted']);
             }
 
             // if action getDuplicateAttributes replace parameter key
