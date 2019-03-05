@@ -771,6 +771,7 @@ class RestApiDocs extends Base
                             break;
                         case 'varcharMultiLang':
                         case 'textMultiLang':
+                        case 'enumMultiLang':
                             $entityDeffs[$field] = 'string';
                             if (!empty($inputLanguageList)) {
                                 foreach ($inputLanguageList as $locale) {
@@ -791,9 +792,16 @@ class RestApiDocs extends Base
                             $entityDeffs[$field] = 'float';
                             break;
                         case 'varchar':
+                        case 'enum':
                         case 'text':
                         case 'wysiwyg':
                             $entityDeffs[$field] = 'string';
+                            break;
+                        case 'array':
+                            $entityDeffs[$field] = 'array';
+                            break;
+                        case 'jsonObject':
+                            $entityDeffs[$field] = 'json';
                             break;
                     }
                 }
