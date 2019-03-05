@@ -48,6 +48,16 @@ Espo.define('treo-core:views/header', 'class-replace!treo-core:views/header', fu
             }
         ],
 
+        events: _.extend({
+            'click a:not([data-action])': function(e){
+                let path = e.currentTarget.getAttribute("href");
+                e.preventDefault();
+                this.getRouter().checkConfirmLeaveOut(function () {
+                    this.getRouter().navigate(path, {trigger: true});
+                }.bind(this), this, false);
+            }
+        }, Dep.prototype.events),
+
         setup() {
             Dep.prototype.setup.call(this);
 
