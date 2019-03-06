@@ -66,7 +66,7 @@
 </div>
 
 <div class="advanced-filters-bar" style="margin-bottom: 12px;"></div>
-<div class="row advanced-filters grid-auto-fill-sm" style=" display: flex; flex-wrap: wrap;">
+<div class="row advanced-filters grid-auto-fill-sm">
     {{#each filterDataList}}
     <div class="filter filter-{{name}} col-sm-4 col-md-3" data-name="{{name}}">
         {{{var key ../this}}}
