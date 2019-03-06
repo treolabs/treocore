@@ -38,7 +38,7 @@ Espo.define('treo-core:views/fields/email', 'class-replace!treo-core:views/field
         validateEmailData: function () {
             var data = this.model.get(this.dataFieldName);
             if (data && data.length) {
-                var re = /\S+@+\S+/;
+                var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 var notValid = false;
                 data.forEach(function (row, i) {
                     var emailAddress = row.emailAddress;
