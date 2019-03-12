@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\ORM\DB;
 
+use Espo\ORM\IEntity;
 use Treo\Core\EventManager;
 
 /**
@@ -46,9 +47,9 @@ use Treo\Core\EventManager;
 class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
 {
     /**
-     * @var EventManager|null
+     * @var EventManager
      */
-    protected $eventManager = null;
+    protected $eventManager;
 
     /**
      * @param EventManager $eventManager
@@ -63,14 +64,62 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
     }
 
     /**
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
+     * @inheritdoc
      */
-    protected function triggered(string $target, string $action, array $data = []): array
+    public function addRelation(IEntity $entity, $relationName, $id = null, $relEntity = null, $data = null)
     {
-        return $this->eventManager->triggered($target, $action, $data);
+        // prepare event data
+        $e = [
+            'entity'       => $entity,
+            'relationName' => $relationName,
+            'id'           => $id,
+            'relEntity'    => $relEntity,
+            'data'         => $data,
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeAddRelation', $e);
+
+        // exec
+        $e['result'] = parent::addRelation($e['entity'], $e['relationName'], $e['id'], $e['relEntity'], $e['data']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterAddRelation', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeRelation(IEntity $entity, $relationName, $id = null, $all = false, IEntity $relEntity = null)
+    {
+        // prepare event data
+        $e = [
+            'entity'       => $entity,
+            'relationName' => $relationName,
+            'id'           => $id,
+            'all'          => $all,
+            'relEntity'    => $relEntity,
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeRemoveRelation', $e);
+
+        // exec
+        $e['result'] = parent::removeRelation($e['entity'], $e['relationName'], $e['id'], $e['all'], $e['relEntity']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterRemoveRelation', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @return EventManager
+     */
+    protected function getEventManager(): EventManager
+    {
+        return $this->eventManager;
     }
 }
