@@ -37,7 +37,6 @@ declare(strict_types=1);
 namespace Treo\ORM\DB;
 
 use Espo\ORM\IEntity;
-use Treo\Core\EventManager;
 
 /**
  * Class MysqlMapper
@@ -46,21 +45,31 @@ use Treo\Core\EventManager;
  */
 class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
 {
-    /**
-     * @var EventManager
-     */
-    protected $eventManager;
+    use \Treo\Traits\EventManagerTrait;
 
     /**
-     * @param EventManager $eventManager
-     *
-     * @return MysqlMapper
+     * @inheritdoc
      */
-    public function setEventManager(EventManager $eventManager): MysqlMapper
+    public function updateRelation(IEntity $entity, $relationName, $id, $columnData)
     {
-        $this->eventManager = $eventManager;
+        // prepare event data
+        $e = [
+            'entity'       => $entity,
+            'relationName' => $relationName,
+            'id'           => $id,
+            'columnData'   => $columnData
+        ];
 
-        return $this;
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeUpdateRelation', $e);
+
+        // exec
+        $e['result'] = parent::updateRelation($e['entity'], $e['relationName'], $e['id'], $e['columnData']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterUpdateRelation', $e);
+
+        return $e['result'];
     }
 
     /**
@@ -72,7 +81,7 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
         $e = [
             'entity'       => $entity,
             'relationName' => $relationName,
-            'params'       => $params,
+            'params'       => $params
         ];
 
         // triggered
@@ -98,7 +107,7 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
             'relationName' => $relationName,
             'id'           => $id,
             'relEntity'    => $relEntity,
-            'data'         => $data,
+            'data'         => $data
         ];
 
         // triggered
@@ -124,7 +133,7 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
             'relationName' => $relationName,
             'id'           => $id,
             'all'          => $all,
-            'relEntity'    => $relEntity,
+            'relEntity'    => $relEntity
         ];
 
         // triggered
@@ -203,13 +212,5 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
         $this->getEventManager()->triggered('Mapper', 'afterDelete', $e);
 
         return $e['result'];
-    }
-
-    /**
-     * @return EventManager
-     */
-    protected function getEventManager(): EventManager
-    {
-        return $this->eventManager;
     }
 }
