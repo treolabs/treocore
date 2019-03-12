@@ -66,6 +66,30 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
     /**
      * @inheritdoc
      */
+    public function massRelate(IEntity $entity, $relationName, array $params = [])
+    {
+        // prepare event data
+        $e = [
+            'entity'       => $entity,
+            'relationName' => $relationName,
+            'params'       => $params,
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeMassRelate', $e);
+
+        // exec
+        $e['result'] = parent::massRelate($e['entity'], $e['relationName'], $e['params']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterMassRelate', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function addRelation(IEntity $entity, $relationName, $id = null, $relEntity = null, $data = null)
     {
         // prepare event data
@@ -111,6 +135,72 @@ class MysqlMapper extends \Espo\ORM\DB\MysqlMapper
 
         // triggered
         $this->getEventManager()->triggered('Mapper', 'afterRemoveRelation', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function insert(IEntity $entity)
+    {
+        // prepare event data
+        $e = [
+            'entity' => $entity
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeInsert', $e);
+
+        // exec
+        $e['result'] = parent::insert($e['entity']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterInsert', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function update(IEntity $entity)
+    {
+        // prepare event data
+        $e = [
+            'entity' => $entity
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeUpdate', $e);
+
+        // exec
+        $e['result'] = parent::update($e['entity']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterUpdate', $e);
+
+        return $e['result'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete(IEntity $entity)
+    {
+        // prepare event data
+        $e = [
+            'entity' => $entity
+        ];
+
+        // triggered
+        $e = $this->getEventManager()->triggered('Mapper', 'beforeDelete', $e);
+
+        // exec
+        $e['result'] = parent::delete($e['entity']);
+
+        // triggered
+        $this->getEventManager()->triggered('Mapper', 'afterDelete', $e);
 
         return $e['result'];
     }
