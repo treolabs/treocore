@@ -111,14 +111,17 @@ class EventManager
 
             $listeners = [];
             foreach ($dirs as $dir) {
-                foreach (scandir(CORE_PATH . "/application/" . $dir) as $file) {
-                    if (!in_array($file, ['.', '..'])) {
-                        // prepare name
-                        $name = str_replace(".php", "", $file);
-                        // prepare class name
-                        $className = "\\" . str_replace("/", "\\", $dir) . "\\" . $name;
-                        if (class_exists($className)) {
-                            $listeners[$name][] = $className;
+                $dirPath = CORE_PATH . "/application/" . $dir;
+                if (file_exists($dirPath) && is_dir($dirPath)) {
+                    foreach (scandir($dirPath) as $file) {
+                        if (!in_array($file, ['.', '..'])) {
+                            // prepare name
+                            $name = str_replace(".php", "", $file);
+                            // prepare class name
+                            $className = "\\" . str_replace("/", "\\", $dir) . "\\" . $name;
+                            if (class_exists($className)) {
+                                $listeners[$name][] = $className;
+                            }
                         }
                     }
                 }
