@@ -209,7 +209,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                     let nextFilter = $(filters[index + 1]);
                     let nextName = nextFilter.data('name');
                     let nextLabel = nextFilter.find('label.control-label');
-                    if (this.checkFieldsEqual(prevName, nextName)) {
+                    if (prevName.split('-')[0] === nextName.split('-')[0]) {
                         nextLabel.text('OR ' + this.getFilterName(nextName));
                     } else {
                         nextLabel.text('AND ' + this.getFilterName(nextName));
@@ -218,28 +218,12 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             });
         },
 
-        checkFieldsEqual(first, second) {
-            let check = false;
-            let prevView = this.getView('filter-' + first);
-            let nextView = this.getView('filter-' + second);
-            if (prevView && prevView.options.isImport && nextView && nextView.options.isImport) {
-                let fullNamePrev = first.split('-')[0] + ' ' + prevView.options.params.importJobDate;
-                let fullNameNext = second.split('-')[0] + ' ' + nextView.options.params.importJobDate;
-                check = fullNamePrev === fullNameNext;
-            } else if (first.split('-')[0] === second.split('-')[0]) {
-                check = true;
-            }
-            return check;
-        },
-
         getFilterName(filter) {
             let name = '';
             let nextView = this.getView('filter-' + filter);
             if (nextView) {
-                if (nextView.options.isAttribute) {
-                    name = nextView.options.label;
-                } else if (nextView.options.isImport) {
-                    name = nextView.options.params.label + ' ' + nextView.options.params.importJobDate;
+                if (nextView.options.params.isAttribute) {
+                    name = nextView.options.params.label;
                 } else {
                     name = this.translate(nextView.generalName, 'fields', this.scope);
                 }
