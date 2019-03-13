@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Layouts;
 
+use Espo\Entities\User;
+
 /**
  * Preferences layout
  *
@@ -115,7 +117,14 @@ class Preferences extends AbstractLayout
 
         foreach ($data as $panelKey => $panel) {
             if ($panel['name'] == 'notifications') {
-                $data[$panelKey]['rows'] = array_merge($data[$panelKey]['rows'], $this->notification);
+                // check is admin user
+                if ($this->getUser()->isAdmin()) {
+                    // add notifications
+                    $data[$panelKey]['rows'] = array_merge($data[$panelKey]['rows'], $this->notification);
+                } else {
+                    // remove panel from layout
+                    array_splice($data, $panelKey, 1);
+                }
             }
         }
 
@@ -136,5 +145,15 @@ class Preferences extends AbstractLayout
         }
 
         return $data;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    protected function getUser(): User
+    {
+        return $this->getContainer()->get('user');
     }
 }
