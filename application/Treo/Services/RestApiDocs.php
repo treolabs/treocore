@@ -755,7 +755,7 @@ class RestApiDocs extends Base
 
             // get entity defs
             $entityDeffs = [];
-            foreach ($this->getMetadata()->get("entityDefs.$entity.fields") as $field => $row) {
+            foreach ($this->getMetadata()->get("entityDefs.$entity.fields", []) as $field => $row) {
                 // set id
                 $entityDeffs['id'] = 'string';
 
