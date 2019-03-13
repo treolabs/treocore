@@ -20758,3 +20758,11 @@ select {
     background-size: 12px;
     padding-right: 20px !important;
 }
+
+@media screen and (max-width: 768px)  {
+    @supports (-webkit-overflow-scrolling: touch) {
+        #header .navbar-collapse, #header .menu {
+            padding-bottom: 80px;
+        }
+    }
+}

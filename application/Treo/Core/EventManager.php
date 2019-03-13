@@ -36,13 +36,12 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Treo\Listeners\AbstractCommonListener;
 use Treo\Listeners\AbstractListener;
 
 /**
  * EventManager class
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class EventManager
 {
@@ -65,14 +64,15 @@ class EventManager
     public function triggered(string $target, string $action, array $data = []): array
     {
         foreach ($this->getClassNames($target) as $className) {
-            if (class_exists($className)) {
-                if (!empty($listener = $this->getListener($className)) && method_exists($listener, $action)) {
-                    // call
-                    $result = $listener->{$action}($data);
+            // create listener
+            $listener = $this->getListener($className);
 
-                    // check if exists result and update data
-                    $data = isset($result) ? $result : $data;
-                }
+            if (method_exists($listener, $action)) {
+                // call
+                $result = $listener->{$action}($data);
+
+                // check if exists result and update data
+                $data = isset($result) ? $result : $data;
             }
         }
 
@@ -82,17 +82,12 @@ class EventManager
     /**
      * @param string $className
      *
-     * @return null|AbstractListener
+     * @return AbstractListener
      */
-    protected function getListener(string $className): ?AbstractListener
+    protected function getListener(string $className): AbstractListener
     {
         if (!isset($this->listeners[$className])) {
-            $this->listeners[$className] = null;
-            $listener = new $className();
-            if ($listener instanceof AbstractListener) {
-                $listener->setContainer($this->getContainer());
-                $this->listeners[$className] = $listener;
-            }
+            $this->listeners[$className] = (new $className())->setContainer($this->getContainer());
         }
 
         return $this->listeners[$className];
@@ -105,20 +100,39 @@ class EventManager
      */
     protected function getClassNames(string $target): array
     {
-        // prepare classes
-        $classes = ["Treo\\Listeners\\$target"];
-        foreach ($this->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Listeners\\$target";
+        // prepare path
+        $path = "data/cache/listeners.json";
+
+        if (!file_exists($path)) {
+            $dirs = ["Treo/Listeners"];
+            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
+                $dirs[] = "Espo/Modules/$module/Listeners";
+            }
+
+            $listeners = [];
+            foreach ($dirs as $dir) {
+                $dirPath = CORE_PATH . "/application/" . $dir;
+                if (file_exists($dirPath) && is_dir($dirPath)) {
+                    foreach (scandir($dirPath) as $file) {
+                        if (!in_array($file, ['.', '..'])) {
+                            // prepare name
+                            $name = str_replace(".php", "", $file);
+                            // prepare class name
+                            $className = "\\" . str_replace("/", "\\", $dir) . "\\" . $name;
+                            if (class_exists($className)) {
+                                $listeners[$name][] = $className;
+                            }
+                        }
+                    }
+                }
+            }
+
+            file_put_contents($path, json_encode($listeners, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
-        return $classes;
-    }
+        // get data
+        $data = json_decode(file_get_contents($path), true);
 
-    /**
-     * @return array
-     */
-    protected function getModuleList(): array
-    {
-        return $this->getContainer()->get('metadata')->getModuleList();
+        return (isset($data[$target])) ? $data[$target] : [];
     }
 }
