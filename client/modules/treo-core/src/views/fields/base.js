@@ -35,6 +35,8 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
 
     return Dep.extend({
 
+        isDestroyed: false,
+
         inlineEditSave: function () {
             var data = this.fetch();
 
@@ -80,6 +82,53 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
             });
             this.inlineEditClose(true);
         },
+
+        showValidationMessage: function (message, target) {
+            var $el;
+
+            target = target || '.main-element';
+
+            if (typeof target === 'string' || target instanceof String) {
+                $el = this.$el.find(target);
+            } else {
+                $el = $(target);
+            }
+
+            if (!$el.size() && this.$element) {
+                $el = this.$element;
+            }
+            $el.popover({
+                placement: 'bottom',
+                container: 'body',
+                content: message,
+                trigger: 'manual'
+            }).popover('show');
+
+            $el.closest('.field').one('mousedown click', function () {
+                if (this.isDestroyed) return;
+                $el.popover('destroy');
+                this.isDestroyed = true;
+            });
+
+            this.once('render remove', function () {
+                if (this.isDestroyed) return;
+                if ($el) {
+                    $el.popover('destroy');
+                    this.isDestroyed = true;
+                }
+            });
+
+            if (this._timeout) {
+                clearTimeout(this._timeout);
+            }
+
+            this._timeout = setTimeout(function () {
+                if (this.isDestroyed) return;
+                $el.popover('destroy');
+                this.isDestroyed = true;
+            }, this.VALIDATION_POPOVER_TIMEOUT);
+        },
+
 
     })
 });
