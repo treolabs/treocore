@@ -1,4 +1,7 @@
 {
+  "acl": [
+    "treo-core"
+  ],
   "app": [
     "treo-core"
   ],
