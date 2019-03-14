@@ -112,7 +112,9 @@ class TreoUpgrade extends AbstractService
         }
 
         // create upgrade dir
-        mkdir($packagesPath, 0777, true);
+        if (!file_exists($packagesPath)) {
+            mkdir($packagesPath, 0777, true);
+        }
 
         // prepare extract dir
         $extractDir = "$packagesPath/{$name}";
