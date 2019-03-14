@@ -34,6 +34,7 @@
 
 namespace Treo\Layouts;
 
+use Espo\Entities\User;
 use Treo\PHPUnit\Framework\TestCase;
 
 /**
@@ -182,9 +183,76 @@ class PreferencesTest extends TestCase
             ]
         ];
 
+        $service = $this->createPartialMock(Preferences::class, ['getUser']);
+
+        $user = $this->createPartialMock(User::class, ['isAdmin']);
+        $user
+            ->expects($this->any())
+            ->method('isAdmin')
+            ->willReturn(true);
+
+        $service
+            ->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
+
         $this->assertEquals($expected, $service->layoutDetail($testData));
 
         // test 3
+        $expected = [
+            [
+                'name' => 'Test',
+                'rows' => [
+                    [
+                        [
+                            'name' => 'dateFormat'
+                        ],
+                        [
+                            'name' => 'timeZone'
+                        ],
+                    ],
+                    [
+                        [
+                            'name' => 'timeFormat'
+                        ],
+                        [
+                            'name' => 'weekStart'
+                        ],
+                    ],
+                    [
+                        [
+                            'name' => 'decimalMark'
+                        ],
+                        [
+                            'name' => 'thousandSeparator'
+                        ],
+                    ],
+                    [
+                        [
+                            'name' => 'language'
+                        ],
+                        [
+                        ],
+                    ],
+                ]
+            ]
+        ];
+        $service = $this->createPartialMock(Preferences::class, ['getUser']);
+
+        $user = $this->createPartialMock(User::class, ['isAdmin']);
+        $user
+            ->expects($this->any())
+            ->method('isAdmin')
+            ->willReturn(false);
+
+        $service
+            ->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->assertEquals($expected, $service->layoutDetail($testData));
+
+        // test 4
         $testData = [];
 
         $this->assertEquals($testData, $service->layoutDetail($testData));
