@@ -20770,3 +20770,7 @@ select {
         }
     }
 }
+
+.list > table tr.ui-sortable-helper {
+    background-color: #f3f3f3
+}
