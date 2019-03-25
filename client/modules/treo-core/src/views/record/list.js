@@ -385,8 +385,13 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             let selectList = [];
             if (this.scope && !this.getMetadata().get(['clientDefs', this.scope, 'disabledSelectList'])) {
                 selectList = Dep.prototype.fetchAttributeListFromLayout.call(this);
+                selectList = this.modifyAttributeList(selectList);
             }
             return selectList;
+        },
+
+        modifyAttributeList(attributeList) {
+            return _.union(attributeList, this.getMetadata().get(['clientDefs', this.scope, 'additionalSelectAttributes']));
         },
 
         massActionMassUpdate: function () {
