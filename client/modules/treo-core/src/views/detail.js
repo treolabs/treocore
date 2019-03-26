@@ -123,5 +123,17 @@ Espo.define('treo-core:views/detail', 'class-replace!treo-core:views/detail',
             }.bind(this));
         },
 
+        getPanelView(name) {
+            let panelView;
+            let recordView = this.getView('record');
+            if (recordView) {
+                let bottomView = recordView.getView('bottom');
+                if (bottomView) {
+                    panelView = bottomView.getView(name)
+                }
+            }
+            return panelView;
+        }
+
     })
 );
