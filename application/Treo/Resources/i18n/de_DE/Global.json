@@ -177,5 +177,8 @@
     "removePartial": "Löschen (Teil %s)",
     "addRelation": "Beziehung hinzufügen",
     "removeRelation": "Beziehung entfernen"
+  },
+  "boolFilters": {
+    "onlyActive": "Nur aktiv"
   }
 }

@@ -110,7 +110,7 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                      var a = [];
                      var value = defs.value || {};
                      for (var n in value) {
-                         a.push(this.getWherePart(n, _.extend({}, value[n], {isAttribute: defs.isAttribute, isImport: defs.isImport})));
+                         a.push(this.getWherePart(n, _.extend({}, value[n], {fieldParams: {isAttribute: defs.isAttribute}})));
                      }
                      return {
                          type: type,
@@ -134,10 +134,9 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                  } else {
                      value = defs.value;
                      return {
-                         isAttribute: defs.isAttribute,
-                         isImport: defs.isImport,
+                         isAttribute: (defs.fieldParams || {}).isAttribute,
                          type: type,
-                         attribute: defs.isImport ? undefined : attribute,
+                         attribute: attribute,
                          value: value
                      };
                  }

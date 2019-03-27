@@ -112,7 +112,9 @@ class TreoUpgrade extends AbstractService
         }
 
         // create upgrade dir
-        mkdir($packagesPath, 0777, true);
+        if (!file_exists($packagesPath)) {
+            mkdir($packagesPath, 0777, true);
+        }
 
         // prepare extract dir
         $extractDir = "$packagesPath/{$name}";
@@ -268,12 +270,11 @@ class TreoUpgrade extends AbstractService
     protected function coreUpgrade(string $from, string $to): bool
     {
         if (!file_exists("treo-self-upgrade.txt")) {
+            // update config
+            $this->getContainer()->get('serviceFactory')->create('Composer')->updateConfig();
+
             file_put_contents("data/treo-self-upgrade.log", " ");
             file_put_contents("data/treo-self-upgrade.txt", "{$from}\n{$to}");
-
-            // set composer user
-            $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
-            $this->getConfig()->save();
 
             return true;
         }

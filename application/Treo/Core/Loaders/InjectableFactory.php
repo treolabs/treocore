@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\InjectableFactory as Instance;
+use Treo\Core\InjectableFactory as Instance;
 
 /**
  * InjectableFactory loader

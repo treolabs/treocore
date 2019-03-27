@@ -56,6 +56,9 @@ class Installer extends AbstractListener
         // refresh
         $this->refreshStore();
 
+        // create files in data dir
+        $this->createDataFiles();
+
         return $data;
     }
 
@@ -81,5 +84,14 @@ class Installer extends AbstractListener
     protected function refreshStore(): void
     {
         $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
+    }
+
+    /**
+     * Create needed files in data directory
+     */
+    protected function createDataFiles(): void
+    {
+        file_put_contents('data/notReadCount.json', '{}');
+        file_put_contents('data/popupNotifications.json', '{}');
     }
 }

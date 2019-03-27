@@ -77,6 +77,9 @@ class Metadata extends AbstractMetadata
         // delete espo scheduled jobs
         $data = $this->deleteEspoScheduledJobs($data);
 
+        // add onlyActive bool filter
+        $data = $this->addOnlyActiveFilter($data);
+
         return $data;
     }
 
@@ -298,6 +301,23 @@ class Metadata extends AbstractMetadata
         foreach (self::$jobs as $job) {
             if (isset($data['entityDefs']['ScheduledJob']['jobs'][$job])) {
                 unset($data['entityDefs']['ScheduledJob']['jobs'][$job]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function addOnlyActiveFilter(array $data): array
+    {
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($row['fields']['isActive']['type']) && $row['fields']['isActive']['type'] == 'bool') {
+                // push
+                $data['clientDefs'][$entity]['boolFilterList'][] = 'onlyActive';
             }
         }
 

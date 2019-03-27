@@ -37,6 +37,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
 
         template: 'treo-core:record/bottom',
 
+        panelHeadingTemplate: 'treo-core:record/panel-heading',
+
         events: _.extend({
             'click span.collapser[data-action="collapsePanel"]': function (e) {
                 this.collapseBottomPanel($(e.currentTarget).data('panel'));
@@ -209,37 +211,60 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
             this.sortPanelList();
 
             this.panelList.forEach(function (p) {
-                var name = p.name;
-                this.createView(name, p.view, {
-                    model: this.model,
-                    panelName: name,
-                    el: this.options.el + ' .panel[data-name="' + name + '"] > .panel-body',
-                    defs: p,
-                    mode: this.mode,
-                    recordHelper: this.recordHelper,
-                    inlineEditDisabled: this.inlineEditDisabled,
-                    readOnly: this.readOnly,
-                    disabled: p.hidden || false,
-                    recordViewObject: this.recordViewObject
-                }, function (view) {
-                    if ('getActionList' in view) {
-                        p.actionList = this.filterActions(view.getActionList());
-                    }
-                    if ('getButtonList' in view) {
-                        p.buttonList = this.filterActions(view.getButtonList());
-                    }
-
-                    if (view.titleHtml) {
-                        p.titleHtml = view.titleHtml;
-                    }
-
-                    if (p.label) {
-                        p.title = this.translate(p.label, 'labels', this.scope);
-                    } else {
-                        p.title = view.title;
-                    }
-                }, this);
+                this.createPanelView(p);
             }, this);
+        },
+
+        createPanelView(p, callback) {
+            let name = p.name;
+            this.createView(name, p.view, {
+                model: this.model,
+                panelName: name,
+                el: this.options.el + ' .panel[data-name="' + name + '"] > .panel-body',
+                defs: p,
+                mode: this.mode,
+                recordHelper: this.recordHelper,
+                inlineEditDisabled: this.inlineEditDisabled,
+                readOnly: this.readOnly,
+                disabled: p.hidden || false,
+                recordViewObject: this.recordViewObject
+            }, function (view) {
+                if ('getActionList' in view) {
+                    p.actionList = this.filterActions(view.getActionList());
+                }
+                if ('getButtonList' in view) {
+                    p.buttonList = this.filterActions(view.getButtonList());
+                }
+
+                if (view.titleHtml) {
+                    p.titleHtml = view.titleHtml;
+                }
+
+                if (p.label) {
+                    p.title = this.translate(p.label, 'labels', this.scope);
+                } else {
+                    p.title = view.title;
+                }
+
+                this.listenTo(view, 'panel:rebuild', defs => {
+                    this.clearView(defs.name);
+                    this.createPanelView(defs, (view, pDefs) => {
+                        this.rebuildPanelHeading(pDefs);
+                        view.render();
+                    });
+                });
+
+                if (callback) {
+                    callback(view ,p);
+                }
+            }, this);
+        },
+
+        rebuildPanelHeading(defs) {
+            let panelHeading = this.$el.find(`.panel[data-name="${defs.name}"] > .panel-heading`);
+            this._templator.getTemplate(this.panelHeadingTemplate, {}, false, template => {
+                panelHeading.html(this._renderer.render(template, defs));
+            });
         },
 
         setupOptionalPanels() {

@@ -48,7 +48,16 @@ Espo.define('treo-core:views/record/panel-navigation', 'view',
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.panelList = this.options.panelList || this.panelList;
+            this.panelList = this.options.panelList;
+
+            this.listenTo(this.model, 'change', () => {
+                this.setPanelList();
+                this.reRender();
+            });
+        },
+
+        setPanelList() {
+            this.panelList = this.options.panelList.filter(panel => !panel.hidden);
         },
 
         data() {

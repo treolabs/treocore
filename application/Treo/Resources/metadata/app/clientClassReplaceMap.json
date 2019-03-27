@@ -1,4 +1,7 @@
 {
+  "acl": [
+    "treo-core"
+  ],
   "app": [
     "treo-core"
   ],
@@ -153,6 +156,12 @@
     "treo-core"
   ],
   "views/scheduled-job/list": [
+    "treo-core"
+  ],
+  "views/fields/email": [
+    "treo-core"
+  ],
+  "views/import/index": [
     "treo-core"
   ]
 }

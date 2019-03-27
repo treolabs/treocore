@@ -129,7 +129,8 @@ class QueueManager
                 'serviceName' => $serviceName,
                 'data'        => $data,
                 'sortOrder'   => $this->getNextSortOrder(),
-                'createdById' => $this->getContainer()->get('user')->get('id')
+                'createdById' => $this->getContainer()->get('user')->get('id'),
+                'createdAt'   => date("Y-m-d H:i:s")
             ]
         );
         $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
@@ -218,6 +219,7 @@ class QueueManager
 
         // auth
         $this->getContainer()->setUser($item->get('createdBy'));
+        $this->getEntityManager()->setUser($item->get('createdBy'));
 
         // running
         $this->setStatus($item, 'Running');
