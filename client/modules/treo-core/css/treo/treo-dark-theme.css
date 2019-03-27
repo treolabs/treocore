@@ -20774,3 +20774,8 @@ select {
 .list > table tr.ui-sortable-helper {
     background-color: #f3f3f3
 }
+
+.filter-menu .dropdown-menu > li > a {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
