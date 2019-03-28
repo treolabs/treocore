@@ -48,7 +48,7 @@ Espo.define('treo-core:views/record/panel-navigation', 'view',
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.panelList = this.options.panelList;
+            this.setPanelList();
 
             this.listenTo(this.model, 'change', () => {
                 this.setPanelList();
