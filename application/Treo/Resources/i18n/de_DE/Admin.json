@@ -7,14 +7,22 @@
     "availableVersions": "Version zum Upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">einzelheiten</a>)",
     "log": "log",
     "Upgrade": "Aktualisierung",
-    "progressLog": "Fortschritte Log"
+    "Validate": "Bestätigen",
+    "progressLog": "Fortschritte Log",
+    "unit": "Maßeinheit",
+    "addOption": "Option hinzufügen",
+    "addMeasureUnit": "Maßeinheit hinzufügen"
+  },
+  "fieldTypes": {
+    "unit": "Maßeinheit"
   },
   "descriptions": {
     "upgrade": "Treo System aktualisieren.",
     "gitAuth": "Git authentifizierungseinstellungen.",
     "modules": "Modulmanager. Hier können Sie Module aus dem Remote-Speicher installieren / deinstallieren. Die Abhängigkeiten zwischen den Modulen und dem Treo-System werden unterstützt.",
     "extensions": "Erweiterungsmanager. Hier können Sie die Erweiterung per Zip-Archiv installieren / deinstallieren.",
-    "representationSettings": "Representation settings."
+    "representationSettings": "Representation settings.",
+    "unit": "Einstellungen Maßeinheiten"
   },
   "messages": {
     "upgradeVersion": "Ihr Treo System wird nun auf Version <strong>{version}</strong> aktualisiert. Dies kann einige Zeit dauern.",

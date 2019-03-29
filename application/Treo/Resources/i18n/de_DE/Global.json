@@ -83,10 +83,51 @@
       "showGenericFields": "Generische Felder anzeigen"
     }
   },
+  "measure": {
+    "Length": "Länge",
+    "Mass": "Masse",
+    "Time": "Zeit",
+    "Electric Current": "Elektrischer Strom",
+    "Thermodynamic Temperature": "Thermodynamische Temperatur",
+    "Amount Of Substance": "Menge der Substanz",
+    "Luminous Intensity": "Lichtintensität"
+  },
+  "unit Length": {
+    "mm": "mm",
+    "cm": "cm",
+    "dm": "dm",
+    "m": "m",
+    "km": "km"
+  },
+  "unit Mass": {
+    "mg": "MG",
+    "g": "g",
+    "kg": "kg"
+  },
+  "unit Time": {
+    "s": "s",
+    "m": "m",
+    "h": "h"
+  },
+  "unit Electric Current": {
+    "A": "A"
+  },
+  "unit Thermodynamic Temperature": {
+    "K": "K",
+    "C": "C"
+  },
+  "unit Amount Of Substance": {
+    "mol": "mol"
+  },
+  "unit Luminous Intensity": {
+    "cd": "cd"
+  },
   "fields": {
     "ownerUser": "Besitzer",
     "username": "Benutzername",
-    "password": "Passwort"
+    "password": "Passwort",
+    "measure": "Messen",
+    "units": "Einheiten"
   },
   "labels": {
     "status": "Status",
@@ -99,7 +140,8 @@
     "selectedLink": "Wählen Sie Entität",
     "applyRelation": "Beziehung anwenden",
     "collapseAllPanels": "Alle ausblenden",
-    "expandAllPanels": "Alle anzeigen"
+    "expandAllPanels": "Alle anzeigen",
+    "UnitSymbol": "Einheitenzeichen"
   },
   "links": {
     "ownerUser": "Besitzer"
@@ -112,7 +154,8 @@
   },
   "messages": {
     "successAndReload": "Die Änderungen wurden gespeichert. Die Seite wird in {value} Sekunden neu geladen.",
-    "massUpdateResult": "{count} Einträge werden aktualisiert"
+    "massUpdateResult": "{count} Einträge werden aktualisiert",
+    "isRequiredAndUnique": "{field} Feld ist erforderlich und sollte eindeutig sein."
   },
   "exceptions": {
     "URL is invalid": "Die URL ist ungültig",
