@@ -82,9 +82,9 @@ To create your new TreoPIM application, first make sure you're using PHP 7.1 or 
    ```
    composer create-project treo/treopim my-treopim-project
    ```
-2. Make cron handler file executable:
+2. Make bash files executable:
    ```
-   chmod +x bin/cron.sh 
+   chmod +x bin/*
    ```
 3. Configure crontab:
    ```
