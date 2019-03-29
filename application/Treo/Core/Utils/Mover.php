@@ -62,10 +62,6 @@ class Mover
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $row) {
-                if ($row == 'espocrm') {
-                    $result['Crm'] = $row;
-                    continue;
-                }
                 $composerFile = "{$path}/{$row}/composer.json";
                 if (file_exists($composerFile)) {
                     $composerData = json_decode(file_get_contents($composerFile), true);
