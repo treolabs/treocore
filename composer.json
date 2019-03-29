@@ -38,7 +38,8 @@
     "zbateson/mail-mime-parser": "0.4.8",
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.1.0",
-    "espocrm/espocrm": "5.4.5",
+    "treolabs/espocore": "*",
+    "treo-module/espocrm": "*",
     "treo-module/pim": "*"
   },
   "minimum-stability": "stable",

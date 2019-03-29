@@ -62,6 +62,10 @@ class Mover
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $row) {
+                if ($row == 'espocrm') {
+                    $result['Crm'] = $row;
+                    continue;
+                }
                 $composerFile = "{$path}/{$row}/composer.json";
                 if (file_exists($composerFile)) {
                     $composerData = json_decode(file_get_contents($composerFile), true);
@@ -142,7 +146,7 @@ class Mover
     protected static function updateEspo()
     {
         // prepare path
-        $path = "vendor/espocrm/espocrm";
+        $path = "vendor/treolabs/espocore";
 
         if (!file_exists("$path/application")) {
             return null;
@@ -155,7 +159,6 @@ class Mover
                     self::deleteDir('application/Espo/' . $dir);
                 }
             }
-            self::deleteDir('application/Espo/Modules/Crm');
         }
 
         // delete frontend
@@ -165,7 +168,6 @@ class Mover
                     self::deleteDir('client/' . $dir);
                 }
             }
-            self::deleteDir('client/modules/crm');
         }
 
         // copy app
@@ -212,8 +214,10 @@ class Mover
         }
 
         $name[0] = strtolower($name[0]);
-        return preg_replace_callback('/([A-Z])/', function ($matches) use ($symbol) {
+        return preg_replace_callback(
+            '/([A-Z])/', function ($matches) use ($symbol) {
             return $symbol . strtolower($matches[1]);
-        }, $name);
+        }, $name
+        );
     }
 }
