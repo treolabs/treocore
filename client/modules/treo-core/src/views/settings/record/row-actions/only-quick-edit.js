@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,21 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
+Espo.define('treo-core:views/settings/record/row-actions/only-quick-edit', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
-        unit() {
-            let model = this.getSettingsModel();
-
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
-                });
-            });
-            model.fetch();
-        },
+        getActionList() {
+            if (this.options.acl.edit) {
+                return [{
+                    action: 'quickEditCustom',
+                    label: 'Edit',
+                    data: {
+                        id: this.model.id,
+                        noFullForm: true
+                    }
+                }];
+            }
+        }
 
     })
 );

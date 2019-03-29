@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,22 +31,46 @@
  * and "TreoPIM" word.
  */
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
+Espo.define('treo-core:views/settings/record/unit-configuration-list', 'views/record/list',
     Dep => Dep.extend({
 
-        unit() {
-            let model = this.getSettingsModel();
+        actionQuickEditCustom(data) {
+            data = data || {};
+            let id = data.id;
+            if (!id) return;
 
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
+            let model = null;
+            if (this.collection) {
+                model = this.collection.get(id);
+            }
+            if (!data.scope && !model) {
+                return;
+            }
+
+            Espo.Ui.notify(this.translate('loading', 'messages'));
+            this.createView('modal', 'treo-core:views/settings/modals/unit-edit', {
+                model: model,
+                id: id
+            }, view => {
+                view.once('after:render', function () {
+                    Espo.Ui.notify(false);
                 });
+
+                this.listenToOnce(view, 'remove', () => {
+                    this.clearView('modal');
+                });
+
+                this.listenToOnce(view, 'after:save', m => {
+                    let model = this.collection.get(m.id);
+                    if (model) {
+                        model.set(m.getClonedAttributes());
+                    }
+                    this.trigger('update-configuration');
+                });
+                view.render();
             });
-            model.fetch();
         },
 
     })
 );
+

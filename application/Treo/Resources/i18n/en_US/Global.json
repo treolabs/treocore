@@ -94,10 +94,51 @@
       "showGenericFields": "Show Generic Fields"
     }
   },
+  "measure": {
+    "Length": "Length",
+    "Mass": "Mass",
+    "Time": "Time",
+    "Electric Current": "Electric Current",
+    "Thermodynamic Temperature": "Thermodynamic Temperature",
+    "Amount Of Substance": "Amount Of Substance",
+    "Luminous Intensity": "Luminous Intensity"
+  },
+  "unit Length": {
+    "mm": "mm",
+    "cm": "cm",
+    "dm": "dm",
+    "m": "m",
+    "km": "km"
+  },
+  "unit Mass": {
+    "mg": "mg",
+    "g": "g",
+    "kg": "kg"
+  },
+  "unit Time": {
+    "s": "s",
+    "m": "m",
+    "h": "h"
+  },
+  "unit Electric Current": {
+    "A": "A"
+  },
+  "unit Thermodynamic Temperature": {
+    "K": "K",
+    "C": "C"
+  },
+  "unit Amount Of Substance": {
+    "mol": "mol"
+  },
+  "unit Luminous Intensity": {
+    "cd": "cd"
+  },
   "fields": {
     "ownerUser": "Owner",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "measure": "Measure",
+    "units": "Units"
   },
   "labels": {
     "status": "Status",
@@ -110,7 +151,8 @@
     "selectedLink": "Select Entity",
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
-    "expandAllPanels": "Expand All"
+    "expandAllPanels": "Expand All",
+    "UnitSymbol": "Unit Symbol"
   },
   "links": {
     "ownerUser": "Owner"
@@ -126,7 +168,8 @@
   },
   "messages": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",
-    "massUpdateResult": "Updating {count} records"
+    "massUpdateResult": "Updating {count} records",
+    "isRequiredAndUnique": "{field} is required and should be unique."
   },
   "streamMessages": {
     "composerUpdateThis": "{user}"

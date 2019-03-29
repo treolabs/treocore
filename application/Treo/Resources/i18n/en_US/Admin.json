@@ -7,14 +7,22 @@
     "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)",
     "log": "log",
     "Upgrade": "Upgrade",
+    "Validate": "Validate",
+    "unit": "Unit",
+    "addOption": "Add option",
+    "addMeasureUnit": "Add measure unit",
     "progressLog": "Progress Log"
+  },
+  "fieldTypes": {
+    "unit": "Unit"
   },
   "descriptions": {
     "upgrade": "Upgrade Treo System.",
     "gitAuth": "Read git authentication settings.",
     "modules": "Modules Manager. Here you can install/uninstall modules from remote storage. The dependencies between the modules and the Treo system are supported.",
     "extensions": "Extensions Manager. Here you can install/uninstall extension by zip archive.",
-    "representationSettings": "Representation settings."
+    "representationSettings": "Representation settings.",
+    "unit": "Settings units of measurement"
   },
   "messages": {
     "upgradeVersion": "Treo System will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",

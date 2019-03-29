@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoPIM.
  *
  * EspoCRM - Open Source CRM application.
@@ -16,7 +17,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -30,23 +31,30 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoPIM" word.
  */
+declare(strict_types=1);
 
-Espo.define('treo-core:controllers/settings', 'controllers/admin',
-    Dep => Dep.extend({
+namespace Treo\Migration;
 
-        unit() {
-            let model = this.getSettingsModel();
+use Treo\Core\Migration\AbstractMigration;
 
-            model.once('sync', () => {
-                model.id = '1';
-                this.main('views/settings/edit', {
-                    model: model,
-                    headerTemplate: 'treo-core:admin/settings/headers/unit',
-                    recordView: 'treo-core:views/admin/unit'
-                });
-            });
-            model.fetch();
-        },
-
-    })
-);
+/**
+ * Version 3.6.2
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class V3Dot6Dot2 extends AbstractMigration
+{
+    /**
+     * Up to current
+     */
+    public function up(): void
+    {
+        $config = $this->getConfig();
+        $unitsOfMeasure = $config->get('unitsOfMeasure');
+        if (empty($unitsOfMeasure)) {
+            $defaultConfig = $config->getDefaults();
+            $config->set('unitsOfMeasure', $defaultConfig['unitsOfMeasure']);
+            $config->save();
+        }
+    }
+}
