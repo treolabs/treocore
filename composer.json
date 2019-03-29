@@ -1,6 +1,6 @@
 {
   "name": "treo/treopim",
-  "version": "3.9.9",
+  "version": "3.11.0",
   "description": "TreoPIM. Open source PIM application.",
   "homepage": "https://treopim.com",
   "license": "GPL-3.0-only",
@@ -39,7 +39,6 @@
     "phpoffice/phpexcel": "1.8.1",
     "phpoffice/phpspreadsheet": "1.1.0",
     "treolabs/espocore": "*",
-    "treo-module/espocrm": "*",
     "treo-module/pim": "*"
   },
   "minimum-stability": "stable",
