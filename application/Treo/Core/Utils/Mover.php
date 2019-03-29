@@ -205,15 +205,11 @@ class Mover
             foreach ($name as &$value) {
                 $value = static::fromCamelCase($value, $symbol);
             }
-
             return $name;
         }
-
         $name[0] = strtolower($name[0]);
-        return preg_replace_callback(
-            '/([A-Z])/', function ($matches) use ($symbol) {
+        return preg_replace_callback('/([A-Z])/', function ($matches) use ($symbol) {
             return $symbol . strtolower($matches[1]);
-        }, $name
-        );
+        }, $name);
     }
 }
