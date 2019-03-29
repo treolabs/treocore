@@ -142,7 +142,7 @@ class Mover
     protected static function updateEspo()
     {
         // prepare path
-        $path = "vendor/espocrm/espocrm";
+        $path = "vendor/treolabs/espocore";
 
         if (!file_exists("$path/application")) {
             return null;
@@ -155,7 +155,6 @@ class Mover
                     self::deleteDir('application/Espo/' . $dir);
                 }
             }
-            self::deleteDir('application/Espo/Modules/Crm');
         }
 
         // delete frontend
@@ -165,7 +164,6 @@ class Mover
                     self::deleteDir('client/' . $dir);
                 }
             }
-            self::deleteDir('client/modules/crm');
         }
 
         // copy app
@@ -207,10 +205,8 @@ class Mover
             foreach ($name as &$value) {
                 $value = static::fromCamelCase($value, $symbol);
             }
-
             return $name;
         }
-
         $name[0] = strtolower($name[0]);
         return preg_replace_callback('/([A-Z])/', function ($matches) use ($symbol) {
             return $symbol . strtolower($matches[1]);
