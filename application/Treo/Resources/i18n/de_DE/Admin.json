@@ -1,4 +1,7 @@
 {
+  "fields": {
+    "dataUrl": "Daten Url"
+  },
   "labels": {
     "Extras": "Extras",
     "Module Manager": "Modulmanager",
@@ -35,6 +38,14 @@
     "upgradeSuccessful": "Upgrade erfolgreich abgeschlossen"
   },
   "layouts": {
-    "relationships": "Unterer Paneele"
+    "relationships": "Unterer Paneele",
+    "detailSmallPortal": "Detail (Klein, Portal)",
+    "listForContact": "List (für Contact)",
+    "listSmallPortal": "List (Klein, Portal)"
+  },
+  "logicalOperators": {
+    "and": "UND",
+    "not": "NIHT",
+    "or": "ODER"
   }
 }

@@ -1,4 +1,7 @@
 {
+  "labels": {
+    "Type": "Typ"
+  },
   "messages": {
     "defaultValidationFailed": "Der Standardwert darf keine Sonderzeichen enthalten"
   }

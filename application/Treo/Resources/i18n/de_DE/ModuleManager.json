@@ -20,7 +20,7 @@
     "requiredTranslates": "Erforderlich",
     "availableVersions": "Verfügbare Versionen",
     "currentVersion": "Aktuelle Version",
-    "isActive": "Ist aktiv",
+    "isActive": "Aktiv",
     "required": "Erforderlich"
   },
   "exceptions": {
@@ -69,7 +69,8 @@
     "username": "Benutzername",
     "settedModuleForInstalling": "Das Modul wurde für die Installation eingerichtet",
     "settedModuleForRemoving": "Das Modul wurde zum Entfernen eingerichtet",
-    "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet"
+    "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet",
+    "installModule": "das Modul"
   },
   "messages": {
     "Module '<strong>%s</strong>' updated from '%s' to '%s'. <a href=\"/#ModuleManager/list\">Details</a>": "Das Modul '<strong>%s</strong>' wurde von '%s' auf '%s' aktualisiert. <a href=\"/#ModuleManager/list\">Einzelheiten</a>",

@@ -81,6 +81,9 @@
     "localesFilter": {
       "": "Alle Locales",
       "showGenericFields": "Generische Felder anzeigen"
+    },
+    "phoneNumber": {
+      "Other": "Andere Nummer"
     }
   },
   "measure": {
