@@ -70,6 +70,12 @@ class Cmd
         // relocate files
         self::relocateFiles();
 
+        // delete old module.json
+        $path = 'custom/Espo/Custom/Resources/module.json';
+        if (file_exists($path) && empty(json_decode(file_get_contents($path)))) {
+            unlink($path);
+        }
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
