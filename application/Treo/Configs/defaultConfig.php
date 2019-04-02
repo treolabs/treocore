@@ -54,8 +54,8 @@ return [
     'decimalMark'            => '.',
     'thousandSeparator'      => ',',
     'useCache'               => false,
-    'applicationName'        => 'TreoPIM',
-    'outboundEmailFromName'  => 'TreoPIM',
+    'applicationName'        => 'TreoCORE',
+    'outboundEmailFromName'  => 'TreoCORE',
     'smtpPort' => 25,
     'languageList'           => [
         'en_US',
@@ -97,7 +97,7 @@ return [
     'theme'                  => 'TreoDarkTheme',
     'dashboardLayout'        => [
         (object)[
-            'name'   => 'My TreoPIM',
+            'name'   => 'My TreoCORE',
             'layout' => []
         ]
     ],
