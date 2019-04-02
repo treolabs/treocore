@@ -1,7 +1,7 @@
 {
-  "name": "treo/treopim",
-  "version": "3.11.3",
-  "description": "TreoPIM. Open source PIM application.",
+  "name": "treolabs/treocore",
+  "version": "3.12.0",
+  "description": "TreoCORE. Open source application.",
   "homepage": "https://treopim.com",
   "license": "GPL-3.0-only",
   "authors": [
@@ -22,8 +22,7 @@
     "ext-curl": "*",
     "ext-exif": "*",
     "wikimedia/composer-merge-plugin": "1.4.1",
-    "treolabs/espocore": "^1.1.0",
-    "treo-module/pim": "*"
+    "treolabs/espocore": "^1.1.0"
   },
   "minimum-stability": "stable",
   "extra": {

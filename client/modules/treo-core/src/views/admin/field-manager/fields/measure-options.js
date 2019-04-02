@@ -1,22 +1,22 @@
 /*
- * This file is part of EspoCRM and/or TreoPIM.
+ * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoPIM is EspoCRM-based Open Source Product Information Management application.
+ * TreoCore is EspoCRM-based Open Source application.
  * Copyright (C) 2017-2019 TreoLabs GmbH
- * Website: http://www.treopim.com
+ * Website: https://treolabs.com
  *
- * TreoPIM as well as EspoCRM is free software: you can redistribute it and/or modify
+ * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
+ * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -28,7 +28,7 @@
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
+ * and "TreoCore" word.
  */
 
 Espo.define('treo-core:views/admin/field-manager/fields/measure-options', 'views/fields/enum',
