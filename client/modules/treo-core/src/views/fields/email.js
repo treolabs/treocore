@@ -1,5 +1,5 @@
 /*
- * This file is part of EspoCRM and/or TreoPIM.
+ * This file is part of EspoCRM and/or TreoCORE.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
@@ -16,7 +16,7 @@
  *
  * TreoPIM as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License

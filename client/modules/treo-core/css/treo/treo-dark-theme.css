@@ -1,5 +1,5 @@
-/*!
- * This file is part of EspoCRM and/or TreoPIM.
+/*
+ * This file is part of EspoCRM and/or TreoCORE.
  *
  * EspoCRM - Open Source CRM application.
  * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
@@ -31,11 +31,6 @@
  * and "TreoPIM" word.
  */
 
-/*!
- * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- *//*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 html {
     font-family: sans-serif;
     -ms-text-size-adjust: 100%;
@@ -8444,15 +8439,6 @@ button.close {
     content: "\f134"
 }
 
-/*!
- * Datepicker for Bootstrap
- *
- * Copyright 2012 Stefan Petre
- * Improvements by Andrew Rowls
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- */
 .datepicker {
     padding: 4px;
     direction: ltr
