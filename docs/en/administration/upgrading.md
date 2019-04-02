@@ -2,7 +2,7 @@
 
 TreoPIM system provides two ways of upgrading – from user interface and terminal.
 
-####Upgrade from UI
+#### Upgrade from UI
 
 Steps to upgrade your TreoPIM using UI:
 
@@ -26,7 +26,7 @@ Steps to upgrade your TreoPIM using UI:
 
     After successful upgrading current user will be logout from system.
 
-####Upgrade from CLI
+#### Upgrade from CLI
 Command to run system upgrading from terminal:
 ```
 php console.php upgrade <versionTo> <action>
