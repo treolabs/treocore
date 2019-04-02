@@ -68,32 +68,9 @@ return [
     'defaultCurrency'        => 'EUR',
     'baseCurrency'           => 'EUR',
     'authenticationMethod'   => 'Espo',
-    'globalSearchEntityList' =>
-        [
-            'Account',
-            'Contact',
-            'Lead',
-            'Opportunity',
-        ],
-    'tabList'                => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Product',
-        6 => 'ProductFamily'
-    ],
-    'quickCreateList'        => [
-        0 => 'Association',
-        1 => 'Attribute',
-        2 => 'AttributeGroup',
-        3 => 'Brand',
-        4 => 'Category',
-        5 => 'Channel',
-        6 => 'Product',
-        7 => 'ProductFamily'
-    ],
+    'globalSearchEntityList' => [],
+    'tabList'                => [],
+    'quickCreateList'        => [],
     'theme'                  => 'TreoDarkTheme',
     'dashboardLayout'        => [
         (object)[
