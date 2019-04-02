@@ -179,7 +179,9 @@ class Composer extends AbstractService
         $result = [];
 
         if (file_exists($this->moduleStableComposer)) {
-            $result = Json::decode(file_get_contents($this->moduleStableComposer), true);
+            if (!empty($content = file_get_contents($this->moduleStableComposer))) {
+                $result = Json::decode($content, true);
+            }
         }
 
         return $result;
