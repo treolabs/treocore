@@ -6,9 +6,9 @@
  * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoCore is EspoCRM-based Open Source Product Information Management application.
+ * TreoCore is EspoCRM-based Open Source application.
  * Copyright (C) 2017-2019 TreoLabs GmbH
- * Website: http://www.treopim.com
+ * Website: https://treolabs.com
  *
  * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
+ * and "TreoCore" word.
  */
 
 use Treo\Core\Application as App;
