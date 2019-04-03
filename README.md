@@ -1,4 +1,21 @@
-# TreoCore
+## What is TreoCore?
+TreoCore is an open-source software ecosystem developed by TreoLabs GmbH, made for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM etc.). TreoCore is distributed under GPLv3 License and is free. It has a lot of features right out-of-the box and thus is an excellent tool for cost-effective and timely application development.
+
+TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture and flexible data model based on configurable entities and relations. You can organize any data and related business processes directly in TreoCore, many of them by simple and user-friendly configuration.
+
+## For whom?
+TreoCore is the best fit **for businesses**, who want to:
+* solve custom business problems
+* store data and organize business processes
+* set up and use a middleware to connect with third-party systems
+* create added value and best experience for your employees, customers and partners
+* extend the functionality of the existing software infrastructure
+
+## Which Applications based on TreoCore are available?
+* TreoPIM
+* TreoCRM
+
+Both applications can be used in a single instance and can be extended with numerous modules.
 
 ### Documentation
 
