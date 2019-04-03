@@ -52,11 +52,6 @@ use Treo\Core\Utils\Mover;
 class ModuleManager extends \Treo\Services\AbstractService
 {
     /**
-     * @var string
-     */
-    protected $moduleJsonPath = 'custom/Espo/Custom/Resources/module.json';
-
-    /**
      * @var array
      */
     protected $moduleRequireds = [];
@@ -384,36 +379,6 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         return $this->moduleRequireds[$moduleId];
-    }
-
-    /**
-     * Is module has requireds
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     */
-    protected function hasRequireds(string $moduleId): bool
-    {
-        // prepare result
-        $result = false;
-
-        // is module requireds by another modules
-        if (empty($this->getModuleConfigData("{$moduleId}.disabled"))) {
-            foreach ($this->getMetadata()->getModuleList() as $module) {
-                // get module requireds
-                $requireds = $this->getModuleRequireds($module);
-
-                if (isset($requireds) && in_array($moduleId, $requireds)) {
-                    // prepare result
-                    $result = true;
-
-                    break;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
