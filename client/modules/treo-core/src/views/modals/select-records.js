@@ -89,6 +89,7 @@ Espo.define('treo-core:views/modals/select-records', ['class-replace!treo-core:v
             });
             this.collection.where = where;
 
+            this.collection.whereAdditional = this.options.whereAdditional || [];
 
             if (this.searchPanel) {
                 let hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
