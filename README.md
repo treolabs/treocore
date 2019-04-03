@@ -1,3 +1,9 @@
+# TreoCore
+
+### Documentation
+
+- Documentation for administrators is available [here](docs/en/administration/).
+
 ### Requirements
 
 * Unix-based system
