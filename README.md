@@ -19,20 +19,25 @@ Both applications can be used in a single instance and can be extended with nume
 
 ### What is on board?
 
-| Feature                     | Description                                                                                                                                         |
-|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Dashboards                  | Use multiple dashboards to control all main activities in the system.                                                                               |
-| Module Manager              | It allows to install or to update any module directly from the administration panel, just choose the version you want to use.                       |
-| Entity Manager              | You can configure the data model directly from the administration panel, create new or edit existing entities and set relations of different types. |
-| Dynamic field logic         | You can configure the conditions that make some fields invisible, read-only or editable.                                                            |
-| Layout manager              | Use it to configure any User Interface in the system or to show up the panels for related entities, via drag-and-drop.                              |
-| Label manager               | You can edit any label in the system, in all languages you want to use.                                                                             |
-| Configurable navigation     | Use drag-and-drop functionality to set a navigation as you wish, also separately for each user, if needed.                                          |
-| Scheduled Jobs              | You can configure, which jobs should be run by cron and at what schedule.                                                                           |
-| Notifications               | Set up a system or e-mail notifications for different events in the system.                                                                         |
-| Data import and Export      | You can import or export any data to any and from any entity in the system, even those you have just created.                                       |
-| Advanced mass updates       | Choose the entries to be updated, set the new values and do a bulk update.                                                                          |
-| Advanced search and filters | You can configure the filters and search criteria as you wish, and save them, if you want to use this saved filter later.                           |
+| Feature                                     | Description                                                                                                                                             |
+|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dashboards                                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
+| Module Manager                              | It allows to install or to update any module directly from the administration panel, just choose the version you want to use.                           |
+| Entity Manager                              | You can configure the data model directly from the administration panel, create new or edit existing entities and set relations of different types.     |
+| Dynamic field logic                         | You can configure the conditions that make some fields invisible, read-only or editable.                                                                |
+| Layout manager                              | Use it to configure any User Interface in the system or to show up the panels for related entities, via drag-and-drop.                                  |
+| Label manager                               | You can edit any label in the system, in all languages you want to use.                                                                                 |
+| Configurable navigation                     | Use drag-and-drop functionality to set a navigation as you wish, also separately for each user, if needed.                                              |
+| Scheduled Jobs                              | You can configure, which jobs should be run by cron and at what schedule.                                                                               |
+| Notifications                               | Set up a system or e-mail notifications for different events in the system.                                                                             |
+| Data import and Export                      | You can import or export any data to any and from any entity in the system, even those you have just created.                                           |
+| Advanced mass updates                       | Choose the entries to be updated, set the new values and do a bulk update.                                                                              |
+| Advanced search and filters                 | You can configure the filters and search criteria as you wish, and save them, if you want to use this saved filter later.                               |
+| Portals                                     | Use this additional layer to give access to third parties to your system. Use portal roles to restrict their access.                                    |
+| Change Log and Stream                       | See all changes to the entries (who, old and new value, when) and add your own notices with a timestamp and attachments.                                |
+| Queue Manager                               | Use it if you want to run or control processes in the background.                                                                                       |
+| Access Control Lists (ACL)                  | Enterprise Level ACL based on Teams and Roles, with access level (own, team, all). You are able to edit the permissions even for each field separately. |
+| REST API                                    | Integrate it with any third-party software, fully automated.                                                                                            |
 
 ### Documentation
 
