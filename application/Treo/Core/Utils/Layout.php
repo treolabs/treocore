@@ -202,7 +202,7 @@ class Layout extends \Espo\Core\Utils\Layout
                 case 'listSmall':
                     foreach ($data as $key => $row) {
                         if (isset($row['name']) && !in_array($row['name'], $fields)) {
-                            unset($data[$key]);
+                            array_splice($data, $key, 1);
                         }
                     }
 
