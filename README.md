@@ -3,7 +3,7 @@ TreoCore is an open-source software ecosystem developed by TreoLabs GmbH, made f
 
 TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture and flexible data model based on configurable entities and relations. You can organize any data and related business processes directly in TreoCore, many of them by simple and user-friendly configuration.
 
-## For whom?
+### For whom?
 TreoCore is the best fit **for businesses**, who want to:
 * solve custom business problems
 * store data and organize business processes
@@ -11,11 +11,28 @@ TreoCore is the best fit **for businesses**, who want to:
 * create added value and best experience for your employees, customers and partners
 * extend the functionality of the existing software infrastructure
 
-## Which Applications based on TreoCore are available?
+### Which Applications based on TreoCore are available?
 * TreoPIM
 * TreoCRM
 
 Both applications can be used in a single instance and can be extended with numerous modules.
+
+### What is on board?
+
+| Feature                     | Description                                                                                                                                         |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dashboards                  | Use multiple dashboards to control all main activities in the system.                                                                               |
+| Module Manager              | It allows to install or to update any module directly from the administration panel, just choose the version you want to use.                       |
+| Entity Manager              | You can configure the data model directly from the administration panel, create new or edit existing entities and set relations of different types. |
+| Dynamic field logic         | You can configure the conditions that make some fields invisible, read-only or editable.                                                            |
+| Layout manager              | Use it to configure any User Interface in the system or to show up the panels for related entities, via drag-and-drop.                              |
+| Label manager               | You can edit any label in the system, in all languages you want to use.                                                                             |
+| Configurable navigation     | Use drag-and-drop functionality to set a navigation as you wish, also separately for each user, if needed.                                          |
+| Scheduled Jobs              | You can configure, which jobs should be run by cron and at what schedule.                                                                           |
+| Notifications               | Set up a system or e-mail notifications for different events in the system.                                                                         |
+| Data import and Export      | You can import or export any data to any and from any entity in the system, even those you have just created.                                       |
+| Advanced mass updates       | Choose the entries to be updated, set the new values and do a bulk update.                                                                          |
+| Advanced search and filters | You can configure the filters and search criteria as you wish, and save them, if you want to use this saved filter later.                           |
 
 ### Documentation
 
