@@ -328,46 +328,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * Update module(s) load order
-     *
-     * @return bool
-     */
-    public function updateLoadOrder(): bool
-    {
-        // delete old
-        if (file_exists($this->moduleJsonPath)) {
-            unlink($this->moduleJsonPath);
-        }
-
-        // reload modules
-        $this->getMetadata()->init(true);
-
-        // prepare data
-        $data = [];
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $data[$module] = [
-                'order' => $this->createModuleLoadOrder($module)
-            ];
-        }
-
-        return $this->putContentsJson($this->moduleJsonPath, $data);
-    }
-
-    /**
-     * Clear module data from "module.json" file
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function clearModuleData(string $id): void
-    {
-        $this
-            ->getFileManager()
-            ->unsetContents($this->moduleJsonPath, $id);
-    }
-
-    /**
      * Get module status
      *
      * @param array  $diff
@@ -411,35 +371,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * Create module load order
-     *
-     * @param string $moduleId
-     *
-     * @return int
-     */
-    protected function createModuleLoadOrder(string $moduleId): int
-    {
-        // get default order
-        $order = $this->getMetadata()->getModuleConfigData("{$moduleId}.order");
-
-        if (empty($order)) {
-            $order = 10;
-        }
-
-        if (!empty($requireds = $this->getModuleRequireds($moduleId))) {
-            foreach ($requireds as $require) {
-                $requireMax = $this->createModuleLoadOrder($require);
-                if ($requireMax > $order) {
-                    $order = $requireMax;
-                }
-            }
-            $order = $order + 10;
-        }
-
-        return $order;
-    }
-
-    /**
      * Get module requireds
      *
      * @param string $moduleId
@@ -449,23 +380,7 @@ class ModuleManager extends \Treo\Services\AbstractService
     protected function getModuleRequireds(string $moduleId): array
     {
         if (!isset($this->moduleRequireds[$moduleId])) {
-            // prepare result
-            $this->moduleRequireds[$moduleId] = [];
-
-            if (!empty($package = $this->getMetadata()->getModule($moduleId))) {
-                if (!empty($composerRequire = $package['require']) && is_array($composerRequire)) {
-                    // get treo modules
-                    $treoModule = Mover::getModules();
-
-                    foreach ($composerRequire as $key => $version) {
-                        if (preg_match_all("/^(" . Mover::TREODIR . "\/)(.*)$/", $key, $matches)) {
-                            if (!empty($matches[2][0])) {
-                                $this->moduleRequireds[$moduleId][] = array_flip($treoModule)[$matches[2][0]];
-                            }
-                        }
-                    }
-                }
-            }
+            $this->moduleRequireds[$moduleId] = \Treo\Composer\PostUpdate::getModuleRequireds($moduleId);
         }
 
         return $this->moduleRequireds[$moduleId];

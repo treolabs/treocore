@@ -48,29 +48,104 @@ class PostUpdate
 {
     use \Treo\Traits\ContainerTrait;
 
+    const MODULE_ORDER = 'custom/Espo/Custom/Resources/module.json';
+
+    /**
+     * Update modules load order
+     */
+    public static function updateLoadOrder(): void
+    {
+        // prepare path
+        $path = self::MODULE_ORDER;
+
+        // delete old
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // prepare modules dir path
+        $modulesPath = "application/Espo/Modules";
+
+        // prepare data
+        $data = [];
+        if (file_exists($modulesPath) && is_dir($modulesPath) && !empty($modules = scandir($modulesPath))) {
+            foreach ($modules as $module) {
+                if (!empty($order = self::createModuleLoadOrder($module))) {
+                    $data[$module] = [
+                        'order' => $order
+                    ];
+                }
+            }
+        }
+
+        if (!empty($data)) {
+            // create dir
+            if (!file_exists('custom/Espo/Custom/Resources')) {
+                mkdir('custom/Espo/Custom/Resources', 0777, true);
+            }
+
+            file_put_contents($path, json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        }
+    }
+
+
+    /**
+     * Get module requireds
+     *
+     * @param string $moduleId
+     *
+     * @return array
+     */
+    public static function getModuleRequireds(string $moduleId): array
+    {
+        // prepare result
+        $result = [];
+
+        if (!file_exists("composer.lock")) {
+            return $result;
+        }
+
+        foreach (json_decode(file_get_contents("composer.lock"), true) as $package) {
+            if (!empty($package['extra']['treoId'])
+                && $moduleId == $package['extra']['treoId']
+                && !empty($package['require'])
+                && is_array($package['require'])) {
+                // get treo modules
+                $treoModule = Mover::getModules();
+
+                foreach ($package['require'] as $key => $version) {
+                    if (preg_match_all("/^(" . Mover::TREODIR . "\/)(.*)$/", $key, $matches)) {
+                        if (!empty($matches[2][0])) {
+                            $result[] = array_flip($treoModule)[$matches[2][0]];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Run
      */
     public function run(): void
     {
         if ($this->isInstalled()) {
+            // delete modules
+            $this->deleteModules();
+
             // rebuild
             $this->rebuild();
 
             // loggout all users
             $this->logoutAll();
 
-            // update module file for load order
-            $this->updateModulesLoadOrder();
-
             // save stable-composer.json file
             $this->saveStableComposerJson();
 
             // run migrations
             $this->runMigrations();
-
-            // delete modules
-            $this->deleteModules();
 
             // drop cache
             $this->clearCache();
@@ -86,15 +161,10 @@ class PostUpdate
     protected function deleteModules(): void
     {
         if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['delete'])) {
-            // create service
-            $service = $this->getContainer()->get('serviceFactory')->create('ModuleManager');
             foreach ($composerDiff['delete'] as $row) {
-                // clear module activation and sort order data
-                $service->clearModuleData($row['id']);
-
-                // delete dir
                 Mover::delete([$row['id'] => $row['package']]);
             }
+            self::updateLoadOrder();
         }
     }
 
@@ -128,20 +198,6 @@ class PostUpdate
             ->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
 
         $sth->execute();
-    }
-
-    /**
-     * Update module(s) load order
-     *
-     * @return bool
-     */
-    protected function updateModulesLoadOrder(): bool
-    {
-        return $this
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('ModuleManager')
-            ->updateLoadOrder();
     }
 
     /**
@@ -284,7 +340,7 @@ class PostUpdate
     protected function triggered(string $target, string $action, array $data = []): bool
     {
         // prepare load order file path
-        $path = 'custom/Espo/Custom/Resources/module.json';
+        $path = self::MODULE_ORDER;
         if (!file_exists($path)) {
             return false;
         }
@@ -313,5 +369,34 @@ class PostUpdate
         }
 
         return true;
+    }
+
+    protected static function createModuleLoadOrder(string $moduleId): int
+    {
+        // prepare path
+        $path = "application/Espo/Modules/$moduleId/Resources/module.json";
+
+        if (!file_exists($path)) {
+            return 0;
+        }
+
+        // get default order
+        $order = (int)json_decode(file_get_contents($path))->order;
+
+        if (empty($order)) {
+            $order = 10;
+        }
+
+        if (!empty($requireds = self::getModuleRequireds($moduleId))) {
+            foreach ($requireds as $require) {
+                $requireMax = self::createModuleLoadOrder($require);
+                if ($requireMax > $order) {
+                    $order = $requireMax;
+                }
+            }
+            $order = $order + 10;
+        }
+
+        return $order;
     }
 }
