@@ -69,7 +69,7 @@ TreoCore was created based on EspoCRM. It uses:
 TreoCore has a REST API and can be integrated with any third-party system. You can also use import and export functions or use our modules (import feeds and export feeds) to get even more flexibility.
 
 ### Documentation
-
+- We are working on documentation. The current version is available [here](https://treopim.com/help)
 - Documentation for administrators is available [here](docs/en/administration/).
 
 ### Requirements
@@ -101,9 +101,10 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
 4. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
 ### License
-
 TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
 
 ### Support
 
-TreoCore is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
+- TreoCore is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
+- Feel free to join [our Community](https://community.treolabs.com/)
+- To contact us please visit [our Website](https://treolabs.com/)
