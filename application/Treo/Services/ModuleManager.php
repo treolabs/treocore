@@ -49,7 +49,7 @@ use Treo\Core\Utils\Mover;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ModuleManager extends \Espo\Core\Services\Base
+class ModuleManager extends \Treo\Services\AbstractService
 {
     /**
      * @var string
@@ -368,25 +368,6 @@ class ModuleManager extends \Espo\Core\Services\Base
     }
 
     /**
-     * Init
-     */
-    protected function init()
-    {
-        parent::init();
-        /**
-         * Add dependencies
-         */
-        $this->addDependencyList(
-            [
-                'metadata',
-                'language',
-                'fileManager',
-                'serviceFactory'
-            ]
-        );
-    }
-
-    /**
      * Get module status
      *
      * @param array  $diff
@@ -591,7 +572,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getMetadata(): Metadata
     {
-        return $this->getInjection('metadata');
+        return $this->getContainer()->get('metadata');
     }
 
     /**
@@ -601,7 +582,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getLanguage(): Language
     {
-        return $this->getInjection('language');
+        return $this->getContainer()->get('language');
     }
 
     /**
@@ -611,7 +592,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getFileManager(): FileManager
     {
-        return $this->getInjection('fileManager');
+        return $this->getContainer()->get('fileManager');
     }
 
     /**
@@ -621,7 +602,7 @@ class ModuleManager extends \Espo\Core\Services\Base
      */
     protected function getComposerService(): Composer
     {
-        return $this->getInjection('serviceFactory')->create('Composer');
+        return $this->getContainer()->get('serviceFactory')->create('Composer');
     }
 
     /**
