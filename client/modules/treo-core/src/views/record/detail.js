@@ -94,14 +94,23 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, field, fieldView));
                     fieldView.langFieldNameList = langFieldNameList;
                     fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, name, fieldView);
-                    !fieldView.langFieldNameList.length && fieldView.hideMainOption ? fieldView.hide() : fieldView.show();
+                    this.controlFieldVisibility(fieldView, !fieldView.langFieldNameList.length && fieldView.hideMainOption);
                     fieldView.reRender();
                 } else {
-                    actualFields.every(field => this.checkFieldValue(currentFieldFilter, field, fieldView)) ? fieldView.show() : fieldView.hide();
+                    this.controlFieldVisibility(fieldView, !actualFields.every(field => this.checkFieldValue(currentFieldFilter, field, fieldView)));
                 }
             });
 
             this.model.trigger('overview-filters-applied');
+        },
+
+        controlFieldVisibility(field, condition) {
+            if (condition) {
+                field.hide();
+                field.overviewFiltersHidden = true;
+            } else if (field.overviewFiltersHidden) {
+                field.show();
+            }
         },
 
         checkFieldValue(currentFieldFilter, field, fieldView) {

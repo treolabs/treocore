@@ -20817,3 +20817,7 @@ select {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.hidden-cell .inherited-info {
+    display: none !important;
+}
