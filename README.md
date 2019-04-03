@@ -39,6 +39,35 @@ Both applications can be used in a single instance and can be extended with nume
 | Access Control Lists (ACL)                  | Enterprise Level ACL based on Teams and Roles, with access level (own, team, all). You are able to edit the permissions even for each field separately. |
 | REST API                                    | Integrate it with any third-party software, fully automated.                                                                                            |
 
+### What are the advantages of using it?
+* Really quick time to market and low implementation costs!
+* Configurable, flexible and customizable
+* Free - 100% open source, licensed under GPLv3
+* REST API
+* Web-based and platform independent
+* Based on modern technologies
+* Good code quality
+* Service-oriented architecture (SOA)
+* Responsive and user-friendly UI
+* Configurable (entities, relations, layouts, labels, navigation)
+* Extensible with modules
+* Very fast
+* Easy to maintain and support
+* Many out-of-the-box features
+* Best for Rapid Application Development
+
+### What technologies is it based on?
+TreoCore was created based on EspoCRM. It uses:
+
+* PHP7 - pure PHP, without any frameworks to achieve the best possible performance,
+* backbone.js - framework for SPA Frontend,
+* Composer - dependency manager for PHP,
+* Some libraries from Zend Framework 3,
+* MySQL 5.
+
+### Integrations
+TreoCore has a REST API and can be integrated with any third-party system. You can also use import and export functions or use our modules (import feeds and export feeds) to get even more flexibility.
+
 ### Documentation
 
 - Documentation for administrators is available [here](docs/en/administration/).
@@ -67,7 +96,7 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
    * * * * * cd /var/www/my-treocore-project; ./bin/cron.sh process-treocore-1 /usr/bin/php 
    ```
    - **/var/www/my-treocore-project** - path to project root
-   - **process-treocore-1** - an unique id of process. You should use different process id if you have few TreoPIM project in one server
+   - **process-treocore-1** - an unique id of process. You should use different process id if you have few TreoCore project in one server
    - **/usr/bin/php** - PHP7.1 or above
 4. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
