@@ -67,6 +67,12 @@ class Composer extends AbstractConsole
             case '--push-log':
                 $this->pushLog($data['param1']);
                 break;
+            case 'require':
+                $this->requireCommand($data['param1']);
+                break;
+            case 'remove':
+                $this->removeCommand($data['param1']);
+                break;
         }
     }
 
@@ -143,5 +149,55 @@ class Composer extends AbstractConsole
         }
 
         self::show('No such log file!', self::ERROR, true);
+    }
+
+    /**
+     * @param string $repo
+     *
+     * @return bool
+     */
+    protected function requireCommand(string $repo): bool
+    {
+        // prepare path
+        $path = "data/composer.json";
+
+        // prepare data
+        $data = [];
+        if (file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
+        }
+
+        $data['require'][$repo] = "*";
+
+        file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        self::show("$repo added to composer.json", self::SUCCESS, true);
+
+        return true;
+    }
+
+    /**
+     * @param string $repo
+     */
+    protected function removeCommand(string $repo): void
+    {
+        // prepare path
+        $path = "data/composer.json";
+
+        // prepare data
+        $data = [];
+        if (file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
+        }
+
+        if (isset($data['require'][$repo])) {
+            unset($data['require'][$repo]);
+
+            file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            self::show("$repo removed from composer.json", self::SUCCESS, true);
+        }
+
+        self::show("No such dependency", self::INFO, true);
     }
 }
