@@ -108,43 +108,6 @@ class Notification extends AbstractConsole
      */
     protected function popupNotifications(): void
     {
-        // prepare content
-        $content = [];
-
-        if (!empty($users = $this->getPopupNotificationsUsers())) {
-            // auth
-            $auth = new \Treo\Core\Utils\Auth($this->getContainer());
-            $auth->useNoAuth();
-
-            // create service
-            $service = $this->getContainer()->get('serviceFactory')->create('Activities');
-
-            // prepare content
-            foreach ($users as $userId) {
-                $content[$userId] = $service->getPopupNotifications($userId);
-            }
-        }
-
-        // set to file
-        file_put_contents('data/popupNotifications.json', json_encode($content));
-    }
-
-    protected function getPopupNotificationsUsers(): array
-    {
-        // get users
-        $sth = $this
-            ->getContainer()
-            ->get('entityManager')
-            ->getPDO()
-            ->prepare("SELECT user_id FROM reminder WHERE type='Popup' AND deleted=0");
-        $sth->execute();
-        $data = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-        $result = [];
-        if (!empty($data)) {
-            $result = array_unique(array_column($data, 'user_id'));
-        }
-
-        return $result;
+        return;
     }
 }
