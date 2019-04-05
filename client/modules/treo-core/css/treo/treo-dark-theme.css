@@ -20818,6 +20818,12 @@ select {
     overflow: hidden;
 }
 
-.hidden-cell .inherited-info {
+.hidden-cell .lock-link,
+.hidden-cell .unlock-link {
     display: none !important;
+}
+
+.lock-link,
+.unlock-link {
+    padding-left: 5px;
 }
