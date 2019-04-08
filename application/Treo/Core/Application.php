@@ -70,19 +70,8 @@ class Application extends \Espo\Core\Application
      */
     public function isInstalled()
     {
-        // prepare config path
-        $path = 'data/config.php';
-
-        if (!file_exists($path)) {
-            // get default data
-            $data = include 'application/Treo/Configs/defaultConfig.php';
-
-            // prepare salt
-            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
-
-            // create config
-            $this->getContainer()->get('fileManager')->putPhpContents($path, $data, true);
-        }
+        // copy config if it needs
+        \Treo\Composer\PostUpdate::copyDefaultConfig();
 
         return parent::isInstalled();
     }

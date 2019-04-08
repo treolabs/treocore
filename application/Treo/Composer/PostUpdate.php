@@ -51,6 +51,26 @@ class PostUpdate
     const MODULE_ORDER = 'custom/Espo/Custom/Resources/module.json';
 
     /**
+     * Copy default config
+     */
+    public static function copyDefaultConfig(): void
+    {
+        // prepare config path
+        $path = 'data/config.php';
+
+        if (!file_exists($path)) {
+            // get default data
+            $data = include 'application/Treo/Configs/defaultConfig.php';
+
+            // prepare salt
+            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+
+            // create config
+            file_put_contents($path, "<?php\nreturn " . self::varExport($data) . ";\n?>");
+        }
+    }
+
+    /**
      * Update modules load order
      */
     public static function updateLoadOrder(): void
@@ -398,5 +418,37 @@ class PostUpdate
         }
 
         return $order;
+    }
+
+    /**
+     * @param     $variable
+     * @param int $level
+     *
+     * @return mixed|string
+     */
+    protected static function varExport($variable, $level = 0)
+    {
+        $tab = '';
+        $tabElement = '    ';
+        for ($i = 0; $i <= $level; $i++) {
+            $tab .= $tabElement;
+        }
+        $prevTab = substr($tab, 0, strlen($tab) - strlen($tabElement));
+
+        if ($variable instanceof \StdClass) {
+            $result = "(object) " . self::varExport(get_object_vars($variable), $level);
+        } else {
+            if (is_array($variable)) {
+                $array = array();
+                foreach ($variable as $key => $value) {
+                    $array[] = var_export($key, true) . " => " . self::varExport($value, $level + 1);
+                }
+                $result = "[\n" . $tab . implode(",\n" . $tab, $array) . "\n" . $prevTab . "]";
+            } else {
+                $result = var_export($variable, true);
+            }
+        }
+
+        return $result;
     }
 }

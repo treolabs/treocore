@@ -70,6 +70,9 @@ class Cmd
         // relocate files
         self::relocateFiles();
 
+        // copy default config
+        PostUpdate::copyDefaultConfig();
+
         // update load order
         PostUpdate::updateLoadOrder();
 

@@ -127,6 +127,11 @@ class EventManager
                 }
             }
 
+            // create dir if it needs
+            if (!file_exists("data/cache")) {
+                mkdir("data/cache", 0777, true);
+            }
+
             file_put_contents($path, json_encode($listeners, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
