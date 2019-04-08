@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Treo\Core\ServiceFactory;
+
 /**
  * Class Notification
  *
@@ -116,12 +118,13 @@ class Notification extends AbstractConsole
             $auth = new \Treo\Core\Utils\Auth($this->getContainer());
             $auth->useNoAuth();
 
-            // create service
-            $service = $this->getContainer()->get('serviceFactory')->create('Activities');
-
-            // prepare content
-            foreach ($users as $userId) {
-                $content[$userId] = $service->getPopupNotifications($userId);
+            if ($this->getServiceFactory()->checkExists('Activities')) {
+                // create service
+                $service = $this->getServiceFactory()->create('Activities');
+                // prepare content
+                foreach ($users as $userId) {
+                    $content[$userId] = $service->getPopupNotifications($userId);
+                }
             }
         }
 
@@ -146,5 +149,15 @@ class Notification extends AbstractConsole
         }
 
         return $result;
+    }
+
+    /**
+     * Get service factory
+     *
+     * @return ServiceFactory
+     */
+    protected function getServiceFactory(): ServiceFactory
+    {
+        return $this->getContainer()->get('serviceFactory');
     }
 }
