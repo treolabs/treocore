@@ -1,0 +1,34 @@
+{
+  "fields": {
+    "password": {
+      "exportDisabled": true
+    },
+    "passwordConfirm": {
+      "exportDisabled": true
+    },
+    "token": {
+      "exportDisabled": true
+    },
+    "authTokenId": {
+      "exportDisabled": true
+    },
+    "authLogRecordId": {
+      "exportDisabled": true
+    },
+    "ipAddress": {
+      "exportDisabled": true
+    },
+    "acceptanceStatus": {
+      "exportDisabled": true
+    },
+    "acceptanceStatusMeetings": {
+      "exportDisabled": true
+    },
+    "acceptanceStatusCalls": {
+      "exportDisabled": true
+    },
+    "lastAccess": {
+      "exportDisabled": true
+    }
+  }
+}

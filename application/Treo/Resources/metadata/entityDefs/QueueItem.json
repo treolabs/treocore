@@ -46,11 +46,9 @@
       "type": "jsonObject",
       "notStorable": true,
       "layoutDetailDisabled": true,
-      "layoutDetailSmallDisabled": true,
       "layoutFiltersDisabled": true,
       "layoutMassUpdateDisabled": true,
-      "layoutListDisabled": true,
-      "layoutListSmallDisabled": true
+      "layoutListDisabled": true
     },
     "createdAt": {
       "type": "datetime",
