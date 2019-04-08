@@ -32,7 +32,7 @@
  * and "TreoCore" word.
  */
 
-namespace Espo\Modules\Crm\Entities;
+namespace Treo\Entities;
 
 class Reminder extends \Espo\Core\ORM\Entity
 {
