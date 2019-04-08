@@ -1,4 +1,7 @@
 {
+    "links": {
+        "sentBy": "Gesendet von"
+    },
     "messages": {
         "testEmailSubject": "TreoCRM: Test Email"
     }
