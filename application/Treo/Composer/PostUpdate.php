@@ -71,6 +71,16 @@ class PostUpdate
     }
 
     /**
+     * Save stable-composer.json file
+     */
+    public static function saveStableComposerJson(): void
+    {
+        if (file_exists('data/composer.json')) {
+            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
+        }
+    }
+
+    /**
      * Update modules load order
      */
     public static function updateLoadOrder(): void
@@ -161,9 +171,6 @@ class PostUpdate
             // loggout all users
             $this->logoutAll();
 
-            // save stable-composer.json file
-            $this->saveStableComposerJson();
-
             // run migrations
             $this->runMigrations();
 
@@ -220,13 +227,6 @@ class PostUpdate
         $sth->execute();
     }
 
-    /**
-     * Save stable-composer.json file
-     */
-    protected function saveStableComposerJson(): void
-    {
-        file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
-    }
 
     /**
      * Run migrations

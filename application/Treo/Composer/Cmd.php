@@ -76,6 +76,9 @@ class Cmd
         // update load order
         PostUpdate::updateLoadOrder();
 
+        // save stable-composer.json file
+        PostUpdate::saveStableComposerJson();
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
