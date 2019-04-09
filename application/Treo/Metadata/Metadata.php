@@ -247,12 +247,14 @@ class Metadata extends AbstractMetadata
             if (isset($data['scopes'][$entity]['hasTasks']) && $data['scopes'][$entity]['hasTasks'] === false) {
                 // remove from entityList
                 $entityList = [];
-                foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
-                    if ($entity != $item) {
-                        $entityList[] = $item;
+                if (!empty($data['entityDefs']['Task']['fields']['parent']['entityList'])) {
+                    foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
+                        if ($entity != $item) {
+                            $entityList[] = $item;
+                        }
                     }
+                    $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
                 }
-                $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
 
                 // remove from client defs
                 if (isset($data['clientDefs'][$entity]['sidePanels'])) {
