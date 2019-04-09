@@ -46,13 +46,19 @@ class Manager extends \Espo\Core\Utils\File\Manager
     /**
      * @inheritdoc
      */
-    public function putContents($path, $data, $flags = 0)
+    public function wrapForDataExport($content, $withObjects = false)
     {
-        // config cannot be empty and always should be an array
-        if ($path == 'data/config.php' && (empty($data) || !is_array($data))) {
+        if (!isset($content)) {
             return false;
         }
 
-        return parent::putContents($path, $data, $flags);
+        // prepare data
+        $data = (!$withObjects) ? var_export($content, true) : $this->varExport($content);
+
+        if ($data == '1') {
+            return false;
+        }
+
+        return "<?php\nreturn {$data};\n?>";
     }
 }
