@@ -218,7 +218,7 @@ class Application extends \Espo\Core\Application
 
         // prepare vars
         $vars = [
-            'applicationName' => 'TreoPIM',
+            'applicationName' => 'TreoCore',
             'status'          => $result['status'],
             'message'         => $result['message']
         ];
