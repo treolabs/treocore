@@ -48,14 +48,14 @@ class Manager extends \Espo\Core\Utils\File\Manager
      */
     public function wrapForDataExport($content, $withObjects = false)
     {
-        if (!isset($content)) {
+        if (!isset($content) || !is_array($content)) {
             return false;
         }
 
         // prepare data
         $data = (!$withObjects) ? var_export($content, true) : $this->varExport($content);
 
-        if ($data == '1') {
+        if ($data == '1' || $data == '0') {
             return false;
         }
 
