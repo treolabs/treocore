@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Utils\File\Manager as FileManager;
+use Treo\Core\Utils\File\Manager as FileManager;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
 
