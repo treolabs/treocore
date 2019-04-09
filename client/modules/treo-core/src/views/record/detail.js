@@ -78,7 +78,6 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             let fields = this.getFieldViews();
             Object.keys(fields).forEach(name => {
                 let fieldView = fields[name];
-                let actualFields = this.getFieldManager().getActualAttributeList(fieldView.model.getFieldType(name), name);
                 if (
                     currentLocaleFilter !== null
                     &&
@@ -97,11 +96,23 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     this.controlFieldVisibility(fieldView, !fieldView.langFieldNameList.length && fieldView.hideMainOption);
                     fieldView.reRender();
                 } else {
-                    this.controlFieldVisibility(fieldView, !actualFields.every(field => this.checkFieldValue(currentFieldFilter, field, fieldView)));
+                    let actualFields = this.getFieldManager().getActualAttributeList(fieldView.model.getFieldType(name), name);
+                    let actualFieldValues = actualFields.map(field => fieldView.model.get(field));
+                    actualFieldValues = actualFieldValues.concat(this.getAlternativeValues(fieldView));
+                    let hide = !actualFieldValues.every(value => this.checkFieldValue(currentFieldFilter, value, fieldView.isRequired()));
+                    this.controlFieldVisibility(fieldView, hide);
                 }
             });
 
             this.model.trigger('overview-filters-applied');
+        },
+
+        getAlternativeValues(fieldView) {
+            let values = [];
+            if (fieldView.name === 'image') {
+                values.push(fieldView.urlImage);
+            }
+            return values;
         },
 
         controlFieldVisibility(field, condition) {
@@ -113,13 +124,13 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             }
         },
 
-        checkFieldValue(currentFieldFilter, field, fieldView) {
+        checkFieldValue(currentFieldFilter, value, required) {
             let check = !currentFieldFilter;
             if (currentFieldFilter === 'empty') {
-                check = fieldView.model.get(field) === null || fieldView.model.get(field) === '';
+                check = value === null || value === '' || (Array.isArray(value) && !value.length);
             }
             if (currentFieldFilter === 'emptyAndRequired') {
-                check = (fieldView.model.get(field) === null || fieldView.model.get(field) === '') && fieldView.isRequired();
+                check = (value === null || value === '' || (Array.isArray(value) && !value.length)) && required;
             }
             return check;
         },
