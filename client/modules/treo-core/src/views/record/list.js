@@ -276,8 +276,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             });
         },
 
-        _convertLayout: function (listLayout, model) {
+        filterListLayout: function (listLayout) {
             if (this.options.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
+                listLayout = Espo.Utils.cloneDeep(listLayout);
                 listLayout.unshift({
                     widthPx: '40',
                     align: 'center',
@@ -288,7 +289,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 });
             }
 
-            return Dep.prototype._convertLayout.call(this, listLayout, model)
+            return Dep.prototype.filterListLayout.call(this, listLayout)
         },
 
         _getHeaderDefs() {
