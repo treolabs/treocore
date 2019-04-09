@@ -42,6 +42,8 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
 
         storageKey: null,
 
+        fieldModel: null,
+
         events: _.extend({
             'click .action[data-action="saveFilter"]': function (e) {
                 let el = $(e.currentTarget);
@@ -79,6 +81,10 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
             this.modelKey = this.options.modelKey || this.modelKey;
             this.setDataToModel({[this.name]: this.selected});
 
+            this.getModelFactory().create(null, model => {
+                this.fieldModel = model;
+            });
+
             this.listenTo(this, 'after:render', () => {
                 this.options.hidden ? this.hide() : this.show();
                 this.createFields();
@@ -92,13 +98,13 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
                     let dataKeys = this.getFieldManager().getActualAttributeList(option.type, option.name);
                     dataKeys.forEach(key => {
                         let value = typeof views[key] !== 'undefined' ? views[key] : option.default;
-                        this.setDataToModel({[key]: value});
+                        this.setDataToModel({[key]: value}, true);
                     });
 
                     let view = option.view || this.getFieldManager().getFieldView(option.type) || 'views/fields/base';
                     this.createView(option.name, view, {
                         el: `${this.options.el} .dropdown-enum-menu li a .field[data-name="${option.name}"]`,
-                        model: this.model,
+                        model: this.fieldModel,
                         name: option.name,
                         inlineEditDisabled: true,
                         mode: 'edit',
@@ -138,7 +144,7 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
                     if (field) {
                         let fieldData = field.fetch();
                         this.setDataToModel(fieldData);
-                        currentFilterData.views = _.extend(currentFilterData.views, fieldData);
+                        currentFilterData.views = _.extend({}, currentFilterData.views, fieldData);
                     }
                 }
                 this.getStorage().set(this.storageKey, this.scope, _.extend(previousFilters, {[this.name]: currentFilterData}));
@@ -149,13 +155,16 @@ Espo.define('treo-core:views/fields/dropdown-enum', 'view',
             this.model.trigger('overview-filters-changed');
         },
 
-        setDataToModel(data) {
+        setDataToModel(data, isField) {
             if (Espo.Utils.isObject(data)) {
                 Object.keys(data).forEach(item => {
                     if (this.modelKey) {
                         this.model[this.modelKey] = _.extend({}, this.model[this.modelKey] , {[item]: data[item]});
                     } else {
                         this.model.set({[item]: data[item]}, {silent: true});
+                    }
+                    if (isField) {
+                        this.fieldModel.set({[item]: data[item]}, {silent: true});
                     }
                 });
             }
