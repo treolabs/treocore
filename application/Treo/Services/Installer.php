@@ -121,7 +121,7 @@ class Installer extends AbstractService
                     'name'       => $this->translate($setting, 'requirements', 'Installer'),
                     'validValue' => '>= ' . $value,
                     'value'      => $systemValue,
-                    'isValid'    => ($preparedSystemValue >= $preparedValue || empty($systemValue))
+                    'isValid'    => ($preparedSystemValue >= $preparedValue || in_array($systemValue, [0, -1]))
                 ];
             }
 
