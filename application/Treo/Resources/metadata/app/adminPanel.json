@@ -28,7 +28,7 @@
         "description": "currency"
       },
       {
-        "url": "#Settings/unit",
+        "url": "#Unit/view",
         "label": "Unit",
         "description": "unit"
       },
