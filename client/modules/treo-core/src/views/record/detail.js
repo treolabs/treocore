@@ -90,9 +90,9 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                     let hiddenLocales = currentLocaleFilter ? this.getConfig().get('inputLanguageList').filter(lang => lang !== currentLocaleFilter) : [];
                     fieldView.setHiddenLocales(hiddenLocales);
                     let langFieldNameList = fieldView.getLangFieldNameList();
-                    langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, field, fieldView));
+                    langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, fieldView.model.get(field), fieldView));
                     fieldView.langFieldNameList = langFieldNameList;
-                    fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, name, fieldView);
+                    fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, fieldView.model.get(name), fieldView);
                     this.controlFieldVisibility(fieldView, !fieldView.langFieldNameList.length && fieldView.hideMainOption);
                     fieldView.reRender();
                 } else {
