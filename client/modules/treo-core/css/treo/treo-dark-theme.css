@@ -20827,3 +20827,12 @@ select {
 .unlock-link {
     padding-left: 5px;
 }
+
+.attribute-cell .inline-remove-link {
+    padding-left: 5px;
+    padding-top: 1px;
+}
+
+.attribute-cell .inline-last-changes-link {
+    padding-left: 5px;
+}
