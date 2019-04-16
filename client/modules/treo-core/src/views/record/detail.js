@@ -51,6 +51,13 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
         setup: function () {
             Dep.prototype.setup.call(this);
 
+            if (this.collection) {
+                this.stopListening(this.model, 'destroy');
+                this.listenTo(this.model, 'destroy', function () {
+                    this.collection.fetch();
+                }, this);
+            }
+
             $(window).on('keydown', e => {
                 if (e.keyCode === 69 && e.ctrlKey && !$('body').hasClass('modal-open')) {
                     this.hotKeyEdit(e);
