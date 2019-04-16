@@ -52,7 +52,7 @@ class ListCommand extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Show all existiong command and them descriptions.';
+        return 'Show all existing commands and their descriptions.';
     }
 
     /**
