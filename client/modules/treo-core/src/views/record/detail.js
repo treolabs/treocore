@@ -60,7 +60,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 }
             });
 
-            if (!this.model.isNew() && this.getMetadata().get(['scopes', this.scope, 'advancedFilters'])) {
+            if (!this.model.isNew() && (this.type === 'detail' || this.type === 'edit') && this.getMetadata().get(['scopes', this.scope, 'advancedFilters'])) {
                 this.listenTo(this, 'after:render', () => {
                     this.applyOverviewFilters();
                 });
