@@ -9,8 +9,7 @@
     "status": "Status",
     "settingVersion": "Setting Version",
     "currentVersion": "Current Version",
-    "availableVersions": "Available Versions",
-    "requiredTranslates": "Required"
+    "availableVersions": "Available Versions"
   },
   "options": {
     "status": {

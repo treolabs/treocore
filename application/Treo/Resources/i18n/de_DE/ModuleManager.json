@@ -17,7 +17,6 @@
   "fields": {
     "status": "Status",
     "settingVersion": "Version einstellen",
-    "requiredTranslates": "Erforderlich",
     "availableVersions": "Verfügbare Versionen",
     "currentVersion": "Aktuelle Version",
     "isActive": "Aktiv",

@@ -44,17 +44,6 @@ use Treo\PHPUnit\Framework\TestCase;
 class ListCommandTest extends TestCase
 {
     /**
-     * Test getDescription method
-     */
-    public function testGetDescriptionMethod()
-    {
-        $service = $this->createMockService(ListCommand::class);
-
-        // test
-        $this->assertEquals('Show all existiong command and them descriptions.', $service::getDescription());
-    }
-
-    /**
      * Test is rin method exists
      */
     public function testIsRunExists()

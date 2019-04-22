@@ -16,10 +16,5 @@
   {
     "name": "currentVersion",
     "notSortable": true
-  },
-  {
-    "name": "requiredTranslates",
-    "notSortable": true,
-    "width": 15
   }
 ]

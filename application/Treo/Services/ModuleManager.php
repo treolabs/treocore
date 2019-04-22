@@ -89,7 +89,6 @@ class ModuleManager extends \Treo\Services\AbstractService
                     'currentVersion'     => $package['version'],
                     'versions'           => json_decode(json_encode($item->get('versions')), true),
                     'required'           => [],
-                    'requiredTranslates' => [],
                     'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
                     'isComposer'         => true,
                     'status'             => $this->getModuleStatus($composerDiff, $id),
@@ -97,16 +96,6 @@ class ModuleManager extends \Treo\Services\AbstractService
                 if ($composerData['require'][$package['name']]) {
                     $settingVersion = $composerData['require'][$package['name']];
                     $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
-                }
-                if (!empty($requireds = $this->getModuleRequireds($id))) {
-                    $result['list'][$id]['required'] = $requireds;
-                    foreach ($requireds as $required) {
-                        $pRequired = $this
-                            ->getMetadata()
-                            ->getModule($required);
-                        $result['list'][$id]['requiredTranslates'][] = $this
-                            ->packageTranslate($pRequired['extra']['name']);
-                    }
                 }
             }
         }
@@ -363,22 +352,6 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         return false;
-    }
-
-    /**
-     * Get module requireds
-     *
-     * @param string $moduleId
-     *
-     * @return array
-     */
-    protected function getModuleRequireds(string $moduleId): array
-    {
-        if (!isset($this->moduleRequireds[$moduleId])) {
-            $this->moduleRequireds[$moduleId] = \Treo\Composer\PostUpdate::getModuleRequireds($moduleId);
-        }
-
-        return $this->moduleRequireds[$moduleId];
     }
 
     /**
