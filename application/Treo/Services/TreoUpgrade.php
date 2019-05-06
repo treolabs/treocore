@@ -182,7 +182,14 @@ class TreoUpgrade extends AbstractService
      */
     protected function readJsonData(string $path): array
     {
-        return json_decode(file_get_contents($path), true);
+        // prepare result
+        $result = [];
+
+        if (!empty($content = file_get_contents($path)) && is_string($content)) {
+            $result = json_decode($content, true);
+        }
+
+        return $result;
     }
 
     /**
