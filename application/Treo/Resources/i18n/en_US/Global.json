@@ -1,13 +1,11 @@
 {
   "scopeNames": {
     "QueueItem": "Queue Item",
-    "TreoStore": "Store",
-    "Image": "Image"
+    "TreoStore": "Store"
   },
   "scopeNamesPlural": {
     "QueueItem": "Queue Manager",
-    "TreoStore": "Store",
-    "Image": "Images"
+    "TreoStore": "Store"
   },
   "options": {
     "language": {
