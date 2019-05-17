@@ -51,12 +51,27 @@ if (!empty($_GET['entryPoint'])) {
     exit;
 }
 
+// prepare uri
+$uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : null;
+
 if (!empty($id = PortalApp::getCallingPortalId())) {
     // create portal app
     $app = new PortalApp($id);
-} elseif (!empty($uri = $_SERVER['REQUEST_URI']) && $uri != '/') {
+} elseif (!empty($uri) && $uri != '/') {
+    // return client files form microservices
+    if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
+        if (strpos($matches[1][0], '.css') !== false) {
+            header('Content-Type: text/css');
+        } elseif (strpos($matches[1][0], '.js') !== false) {
+            header('Content-Type: application/javascript');
+        }
+        // @todo finish it in the future
+//        echo file_get_contents(CORE_PATH . '/data/client/' . $matches[1][0]);
+//        exit;
+    }
+
     // if images path than call showImage
-    if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', explode("?", $uri)[0], $matches)) {
+    if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
         $app->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
     }
 
