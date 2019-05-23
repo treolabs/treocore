@@ -17,7 +17,7 @@
  *
  * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -34,14 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Treo\Migration;
+namespace Treo\Migrations\TreoCore;
+
+use Treo\Core\Migration\AbstractMigration;
 
 /**
  * Migration class for version 3.13.4
  *
  * @author r.zablodskiy@treolabs.com
  */
-class V3Dot13Dot4 extends \Treo\Core\Migration\AbstractMigration
+class V3Dot13Dot4 extends AbstractMigration
 {
     /**
      * Up to current
