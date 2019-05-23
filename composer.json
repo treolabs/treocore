@@ -1,6 +1,6 @@
 {
   "name": "treolabs/treocore",
-  "version": "3.14.0",
+  "version": "3.14.1",
   "description": "TreoCORE. Open source application.",
   "homepage": "https://treopim.com",
   "license": "GPL-3.0-only",
@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "php": ">=7.1.0",
+    "php": "^7.1",
     "ext-pdo_mysql": "*",
     "ext-openssl": "*",
     "ext-json": "*",

@@ -129,12 +129,13 @@ class ControllerManager
 
         // triggered before action
         $event = $this->triggered(
-            $controllerName,
-            'before' . ucfirst($primaryActionMethodName),
+            'beforeAction',
             [
-                'params'  => $params,
-                'data'    => $data,
-                'request' => $request,
+                'controller' => $controllerName,
+                'action'     => 'before' . ucfirst($primaryActionMethodName),
+                'params'     => $params,
+                'data'       => $data,
+                'request'    => $request,
             ]
         );
 
@@ -147,13 +148,14 @@ class ControllerManager
 
         // triggered after action
         $event = $this->triggered(
-            $controllerName,
-            'after' . ucfirst($primaryActionMethodName),
+            'afterAction',
             [
-                'params'  => $params,
-                'data'    => $data,
-                'request' => $request,
-                'result'  => $result
+                'controller' => $controllerName,
+                'action'     => 'after' . ucfirst($primaryActionMethodName),
+                'params'     => $params,
+                'data'       => $data,
+                'request'    => $request,
+                'result'     => $result
             ]
         );
 
@@ -174,17 +176,16 @@ class ControllerManager
     /**
      * Triggered event
      *
-     * @param string $target
      * @param string $action
      * @param array  $data
      *
      * @return array
      */
-    protected function triggered(string $target, string $action, array $data = []): array
+    protected function triggered(string $action, array $data = []): array
     {
         return $this
             ->getContainer()
             ->get('eventManager')
-            ->triggered($target, $action, $data);
+            ->triggered('Controller', $action, $data);
     }
 }
