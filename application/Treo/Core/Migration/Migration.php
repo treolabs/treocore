@@ -39,13 +39,11 @@ namespace Treo\Core\Migration;
 /**
  * Migration
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class Migration
 {
     use \Treo\Traits\ContainerTrait;
-
-    const CORE_NAME = 'TreoCore';
 
     /**
      * Migrate action
@@ -88,36 +86,32 @@ class Migration
 
         // prepare increment
         if ($keyFrom < $keyTo) {
-            $method = 'up';
+            // go UP
+            foreach ($data as $className) {
+                if ($from != $className && in_array($className, $migrations)) {
+                    // prepare class name
+                    $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
+
+                    $class = new $className();
+                    if ($class instanceof AbstractMigration) {
+                        $class->setContainer($this->getContainer());
+                        $class->up();
+                    }
+                }
+            }
         } else {
-            $method = 'down';
+            // go DOWN
+            foreach (array_reverse($data) as $className) {
+                if ($to != $className && in_array($className, $migrations)) {
+                    // prepare class name
+                    $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
 
-            $data = array_reverse($data);
-        }
-
-        $isAllowed = false;
-        foreach ($data as $className) {
-            if ($from == $className) {
-                $isAllowed = true;
-            }
-
-            if ($from != $className && $isAllowed && in_array($className, $migrations)) {
-                // prepare class name
-                if ($module == self::CORE_NAME) {
-                    $className = sprintf('Treo\Migration\%s', $className);
-                } else {
-                    $className = sprintf('Espo\Modules\%s\Migration\%s', $module, $className);
+                    $class = new $className();
+                    if ($class instanceof AbstractMigration) {
+                        $class->setContainer($this->getContainer());
+                        $class->down();
+                    }
                 }
-
-                $class = new $className();
-                if ($class instanceof AbstractMigration) {
-                    $class->setContainer($this->getContainer());
-                    $class->{$method}();
-                }
-            }
-
-            if ($to == $className) {
-                $isAllowed = false;
             }
         }
     }
@@ -157,11 +151,7 @@ class Migration
         $result = [];
 
         // prepare path
-        if ($module == self::CORE_NAME) {
-            $path = 'application/Treo/Migration/';
-        } else {
-            $path = sprintf('application/Espo/Modules/%s/Migration/', $module);
-        }
+        $path = sprintf('data/migrations/%s/', $module);
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $file) {

@@ -39,6 +39,9 @@
     "psr-0": {
       "": "application/",
       "Espo\\Custom": "custom/"
+    },
+    "psr-4": {
+      "Treo\\Migrations\\": "data/migrations/"
     }
   },
   "scripts": {
