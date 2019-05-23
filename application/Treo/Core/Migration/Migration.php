@@ -87,8 +87,8 @@ class Migration
         // prepare increment
         if ($keyFrom < $keyTo) {
             // go UP
-            foreach ($data as $className) {
-                if ($from != $className && in_array($className, $migrations)) {
+            foreach ($data as $k => $className) {
+                if ($k >= $keyFrom && $keyTo >= $k && $from != $className && in_array($className, $migrations)) {
                     // prepare class name
                     $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
 
@@ -101,8 +101,8 @@ class Migration
             }
         } else {
             // go DOWN
-            foreach (array_reverse($data) as $className) {
-                if ($to != $className && in_array($className, $migrations)) {
+            foreach (array_reverse($data, true) as $k => $className) {
+                if ($k >= $keyTo && $keyFrom >= $k && $to != $className && in_array($className, $migrations)) {
                     // prepare class name
                     $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
 
