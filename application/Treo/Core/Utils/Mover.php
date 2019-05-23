@@ -93,6 +93,9 @@ class Mover
                 self::copyDir("$path/$key/client/modules/", "client/");
             }
 
+            // copy migrations
+            self::copyMigrations("$path/$key/migrations", "data/migrations/{$id}");
+
             // relocate api
             if (file_exists("$path/$key/application")) {
                 self::deleteDir("application/Espo/Modules/{$id}");
@@ -211,5 +214,33 @@ class Mover
         return preg_replace_callback('/([A-Z])/', function ($matches) use ($symbol) {
             return $symbol . strtolower($matches[1]);
         }, $name);
+    }
+
+    /**
+     * Copy package migration files
+     */
+    protected static function copyMigrations(string $src, string $dest)
+    {
+        if (file_exists($src) && is_dir($src)) {
+            // create dir
+            if (!file_exists($dest)) {
+                mkdir($dest);
+            }
+
+            foreach (scandir($src) as $file) {
+                // skip
+                if (in_array($file, ['.', '..'])) {
+                    continue 1;
+                }
+
+                // delete old
+                if (file_exists("$dest/$file")) {
+                    unlink("$dest/$file");
+                }
+
+                // copy
+                copy("$src/$file", "$dest/$file");
+            }
+        }
     }
 }
