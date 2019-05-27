@@ -53,7 +53,7 @@ class EventManager
     private $listeners = [];
 
     /**
-     * Triggered an event
+     * Dispatch an event
      *
      * @param string $target
      * @param string $action
@@ -61,7 +61,7 @@ class EventManager
      *
      * @return array
      */
-    public function triggered(string $target, string $action, array $data = []): array
+    public function dispatch(string $target, string $action, array $data = []): array
     {
         foreach ($this->getClassNames($target) as $className) {
             // create listener
@@ -77,6 +77,21 @@ class EventManager
         }
 
         return $data;
+    }
+
+    /**
+     * Triggered an event
+     *
+     * @param string $target
+     * @param string $action
+     * @param array  $data
+     *
+     * @return array
+     * @deprecated
+     */
+    public function triggered(string $target, string $action, array $data = []): array
+    {
+        return $this->dispatch($target, $action, $data);
     }
 
     /**
