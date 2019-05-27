@@ -1,6 +1,6 @@
 {
   "name": "treolabs/treocore",
-  "version": "3.14.3",
+  "version": "3.14.4",
   "description": "TreoCORE. Open source application.",
   "homepage": "https://treopim.com",
   "license": "GPL-3.0-only",
@@ -22,7 +22,7 @@
     "ext-curl": "*",
     "ext-exif": "*",
     "wikimedia/composer-merge-plugin": "1.4.1",
-    "treolabs/espocore": "^1.2.0"
+    "treolabs/espocore": "^1.5.3"
   },
   "minimum-stability": "stable",
   "extra": {
