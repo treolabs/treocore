@@ -48,21 +48,6 @@ class EntityManager extends \Espo\Core\ORM\EntityManager
     /**
      * @inheritdoc
      */
-    public function getMapper($name)
-    {
-        // get mapper
-        $mapper = parent::getMapper($name);
-
-        if ($mapper instanceof MysqlMapper) {
-            $mapper->setEventManager($this->getContainer()->get('eventManager'));
-        }
-
-        return $mapper;
-    }
-
-    /**
-     * @inheritdoc
-     */
     protected function getMapperClassName($name)
     {
         $className = null;
