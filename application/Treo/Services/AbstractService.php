@@ -37,6 +37,7 @@ namespace Treo\Services;
 use Espo\Entities\User;
 use Espo\Core\Utils\Config;
 use Espo\Orm\EntityManager;
+use Treo\Core\EventManager\Event;
 
 /**
  * AbstractService class
@@ -97,20 +98,20 @@ abstract class AbstractService
     }
 
     /**
-     * Triggered event
+     * Dispatch an event
      *
      * @param string $target
      * @param string $action
-     * @param array  $data
+     * @param Event  $event
      *
      * @return array
      */
-    protected function triggered(string $target, string $action, array $data = []): array
+    protected function dispatch(string $target, string $action, Event $event)
     {
-        return $this
+        $this
             ->getContainer()
             ->get('eventManager')
-            ->triggered($target, $action, $data);
+            ->dispatch($target, $action, $event);
     }
 
     /**

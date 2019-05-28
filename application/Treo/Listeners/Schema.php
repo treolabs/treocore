@@ -36,26 +36,24 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Treo\Core\EventManager\Event;
+
 /**
  * Class Schema
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
 class Schema extends AbstractListener
 {
     /**
      * Prepare entityDefs before rebuild action
      *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeRebuild(array $data): array
+    public function beforeRebuild(Event $event)
     {
         // prepare LONGTEXT default
-        $data = $this->prepareLongTextDefault($data);
-
-        return $data;
+        $this->prepareLongTextDefault($event);
     }
 
     /**
@@ -79,15 +77,13 @@ class Schema extends AbstractListener
     /**
      * Prepare LONGTEXT default value
      *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    protected function prepareLongTextDefault(array $data): array
+    protected function prepareLongTextDefault(Event $event)
     {
-        $data['queries'] = $this->prepareCommentDefaultValue($data['queries']);
+        $queries = $this->prepareCommentDefaultValue($event->getArgument('queries'));
 
-        foreach ($data['queries'] as $key => $query) {
+        foreach ($queries as $key => $query) {
             // prepare fields
             $fields = [];
             while (preg_match_all(
@@ -115,14 +111,13 @@ class Schema extends AbstractListener
 
             if (!empty($tableName) && !empty($fields)) {
                 foreach ($fields as $field => $value) {
-                    $data['queries'][$key]
+                    $queries[$key]
                         .= ";UPDATE {$tableName} SET {$field}='{$this->parseDefaultValue($value)}'
                          WHERE {$field} IS NULL";
                 }
             }
         }
-
-        return $data;
+        $event->setArgument('queries', $queries);
     }
 
     /**

@@ -630,7 +630,7 @@ class InstallerTest extends TestCase
 
         $service = $this->createMockService(
             Installer::class,
-            ['createFakeSystemUser', 'createSuperAdminUser', 'triggered', 'getComposerVersion']
+            ['createFakeSystemUser', 'createSuperAdminUser', 'dispatch', 'getComposerVersion']
         );
         $user = $this->createMockService(User::class, ['toArray']);
 
@@ -644,7 +644,7 @@ class InstallerTest extends TestCase
             ->willReturn($user);
         $service
             ->expects($this->any())
-            ->method('triggered')
+            ->method('dispatch')
             ->willReturn([]);
         $service
             ->expects($this->any())

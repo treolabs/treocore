@@ -37,23 +37,22 @@ declare(strict_types=1);
 namespace Treo\Listeners;
 
 use Treo\Core\Utils\Metadata;
+use Treo\Core\EventManager\Event;
 
 /**
- * ActionHistoryRecord listener
+ * Class ActionHistoryRecordController
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class ActionHistoryRecord extends AbstractListener
+class ActionHistoryRecordController extends AbstractListener
 {
     /**
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeActionList(array $data): array
+    public function beforeActionList(Event $event)
     {
         // get where
-        $where = $data['request']->get('where', []);
+        $where = $event->getArgument('request')->get('where', []);
 
         // get scopes
         $scopes = $this
@@ -68,9 +67,7 @@ class ActionHistoryRecord extends AbstractListener
         ];
 
         // set where
-        $data['request']->setQuery('where', $where);
-
-        return $data;
+        $event->getArgument('request')->setQuery('where', $where);
     }
 
     /**

@@ -36,12 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Treo\Core\EventManager\Event;
+
 /**
- * EntityManager listener
+ * Class EntityManagerController
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class EntityManager extends AbstractListener
+class EntityManagerController extends AbstractListener
 {
     /**
      * @var array
@@ -49,32 +51,24 @@ class EntityManager extends AbstractListener
     protected $scopesConfig = null;
 
     /**
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterActionCreateEntity(array $data): array
+    public function afterActionCreateEntity(Event $event)
     {
         // update scopes
-        $this->updateScope(get_object_vars($data['data']));
+        $this->updateScope(get_object_vars($event->getArgument('data')));
 
-        if ($data['result']) {
+        if ($event->getArgument('result')) {
             $this->getContainer()->get('dataManager')->rebuild();
         }
-
-        return $data;
     }
 
     /**
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterActionUpdateEntity(array $data): array
+    public function afterActionUpdateEntity(Event $event)
     {
-        $this->afterActionCreateEntity($data);
-
-        return $data;
+        $this->afterActionCreateEntity($event);
     }
 
     /**

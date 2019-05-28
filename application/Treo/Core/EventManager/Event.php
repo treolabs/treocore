@@ -53,7 +53,7 @@ class Event
      *
      * @param array $arguments
      */
-    public function __construct(array $arguments)
+    public function __construct(array $arguments = [])
     {
         $this->arguments = $arguments;
     }

@@ -31,78 +31,54 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Listeners;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Utils\Util;
+use Treo\Core\EventManager\Event;
 
 /**
- * FieldManager listener
+ * Class FieldManagerController
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class FieldManager extends AbstractListener
+class FieldManagerController extends AbstractListener
 {
     /**
-     * Before create
-     *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforePostActionCreate(array $data): array
+    public function beforePostActionCreate(Event $event)
     {
         // is default value valid ?
-        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
-
-        return $data;
+        $this->isDefaultValueValid($event->getArgument('data')->type, $event->getArgument('data')->default);
     }
 
     /**
-     * Before update
-     *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforePatchActionUpdate(array $data): array
+    public function beforePatchActionUpdate(Event $event)
     {
-        // is default value valid ?
-        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
-
-        return $data;
+        $this->beforePostActionCreate($event);
     }
 
     /**
-     * Before update
-     *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforePutActionUpdate(array $data): array
+    public function beforePutActionUpdate(Event $event)
     {
-        // is default value valid ?
-        $this->isDefaultValueValid($data['data']->type, $data['data']->default);
-
-        return $data;
+        $this->beforePostActionCreate($event);
     }
 
     /**
-     * Before entity field delete by EntityManager
-     *
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeDeleteActionDelete(array $data): array
+    public function beforeDeleteActionDelete(Event $event)
     {
         // delete columns from DB
-        $this->deleteColumns($data['params']['scope'], $data['params']['name']);
-
-        return $data;
+        $this->deleteColumns($event->getArgument('params')['scope'], $event->getArgument('params')['name']);
     }
 
     /**

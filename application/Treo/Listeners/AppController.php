@@ -32,58 +32,65 @@
  * and "TreoCore" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Listeners;
 
-use Treo\Core\Slim\Http\Request;
-use Treo\Core\Utils\Metadata;
-use Treo\PHPUnit\Framework\TestCase;
+use Espo\Entities\Preferences;
+use Espo\ORM\Entity;
+use Treo\Core\EventManager\Event;
 
 /**
- * Class ActionHistoryRecordTest
+ * Class AppController
  *
- * @author r.zablodskiy@treolabs.com
+ * @author y.haiduchyk <y.haiduchyk@treolabs.com>
  */
-class ActionHistoryRecordTest extends TestCase
+class AppController extends AbstractListener
 {
+
     /**
-     * Test is beforeActionList method exists
+     * After action user
+     * (change language)
+     *
+     * @param Event $event
      */
-    public function testIsBeforeActionListExists()
+    public function afterActionUser(Event $event)
     {
-        $service = $this->createMockService(ActionHistoryRecord::class, ['getMetadata']);
-        $request = $this->createMockService(Request::class, ['get', 'setQuery']);
-        $metadata = $this->createMockService(Metadata::class, ['get']);
+        $result = $event->getArgument('result');
+        $language = $event->getArgument('request')->get('language');
+        $currentLanguage = $result['language'] ?? '';
 
-        $metadata
-            ->expects($this->any())
-            ->method('get')
-            ->willReturn([]);
+        if (!empty($result['user']) && !empty($language) && $currentLanguage !== $language) {
+            /** @var Entity $preferences */
+            $preferences = $this->getPreferences();
 
-        $service
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($metadata);
+            // change language for user
+            $preferences->set('language', $language);
+            $this->saveEntity($preferences);
 
-        $request
-            ->expects($this->any())
-            ->method('get')
-            ->willReturn([]);
-        $request
-            ->expects($this->any())
-            ->method('setQuery')
-            ->willReturn($request);
+            $result['language'] = $language;
 
-        $testData = [
-            'request' => $request,
-            'data' => [],
-            'params' => []
-        ];
-
-        // test
-        $result = $service->beforeActionList($testData);
-
-        foreach (array_keys($testData) as $key) {
-            $this->assertArrayHasKey($key, $result);
+            $event->setArgument('result', $result);
         }
+    }
+
+    /**
+     * Get preferences
+     *
+     * @return Preferences
+     */
+    protected function getPreferences(): Preferences
+    {
+        return $this->getContainer()->get('Preferences');
+    }
+
+    /**
+     * Save entity
+     *
+     * @param Entity $entity
+     */
+    protected function saveEntity(Entity $entity): void
+    {
+        $this->getEntityManager()->saveEntity($entity);
     }
 }

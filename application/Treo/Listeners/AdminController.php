@@ -32,25 +32,40 @@
  * and "TreoCore" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Listeners;
 
-use Treo\PHPUnit\Framework\TestCase;
+use Treo\Core\EventManager\Event;
 
 /**
- * Class InstallerTest
+ * Class AdminController
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class InstallerTest extends TestCase
+class AdminController extends AbstractListener
 {
     /**
-     * Test is afterInstallSystem method exists
+     * @param Event $event
      */
-    public function testIsAfterInstallSystemExists()
+    public function afterActionJobs(Event $event)
     {
-        $service = $this->createMockService(Installer::class);
+        if (!empty($event->getArgument('result'))) {
+            $result = [];
+            foreach ($event->getArgument('result') as $item) {
+                if (!in_array($item, \Treo\Metadata\Metadata::$jobs)) {
+                    $result[] = $item;
+                }
+            }
+            $event->setArgument('result', $result);
+        }
+    }
 
-        // test
-        $this->assertTrue(method_exists($service, 'afterInstallSystem'));
+    /**
+     * @param Event $event
+     */
+    public function afterActionAdminNotificationList(Event $event)
+    {
+        $event->setArgument('result', []);
     }
 }

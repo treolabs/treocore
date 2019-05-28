@@ -35,6 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Treo\Core\EventManager\Event;
+
 /**
  * Installer listener
  *
@@ -44,11 +46,9 @@ class Installer extends AbstractListener
 {
 
     /**
-     * @param array $data
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterInstallSystem(array $data): array
+    public function afterInstallSystem(Event $event)
     {
         // generate Treo ID
         $this->generateTreoId();
@@ -58,8 +58,6 @@ class Installer extends AbstractListener
 
         // create files in data dir
         $this->createDataFiles();
-
-        return $data;
     }
 
     /**

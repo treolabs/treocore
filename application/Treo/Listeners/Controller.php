@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Treo\Core\EventManager\Event;
+
 /**
  * Class Controller
  *
@@ -44,28 +46,24 @@ namespace Treo\Listeners;
 class Controller extends AbstractListener
 {
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeAction(array $event): array
+    public function beforeAction(Event $event)
     {
-        return $this
+        $this
             ->getContainer()
             ->get('eventManager')
-            ->triggered($event['controller'], $event['action'], $event);
+            ->dispatch($event->getArgument('controller') . 'Controller', $event->getArgument('action'), $event);
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterAction(array $event): array
+    public function afterAction(Event $event)
     {
-        return $this
+        $this
             ->getContainer()
             ->get('eventManager')
-            ->triggered($event['controller'], $event['action'], $event);
+            ->dispatch($event->getArgument('controller') . 'Controller', $event->getArgument('action'), $event);
     }
 }

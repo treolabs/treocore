@@ -44,6 +44,7 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Language;
+use Treo\Core\EventManager\Event;
 
 /**
  * Service Installer
@@ -344,14 +345,7 @@ class Installer extends AbstractService
                 // save config
                 $this->getConfig()->save();
 
-                $this->triggered(
-                    'Installer',
-                    'afterInstallSystem',
-                    [
-                        'user'    => $user->toArray(),
-                        'version' => $this->getComposerVersion(),
-                    ]
-                );
+                $this->dispatch('Installer', 'afterInstallSystem', new Event());
             } catch (\Exception $e) {
                 // prepare result
                 $result = [

@@ -32,25 +32,53 @@
  * and "TreoCore" word.
  */
 
+declare(strict_types=1);
+
 namespace Treo\Listeners;
 
-use Treo\PHPUnit\Framework\TestCase;
+use Treo\Core\EventManager\Event;
 
 /**
- * Class SchemaTest
+ * Class JobController
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class SchemaTest extends TestCase
+class JobController extends AbstractListener
 {
     /**
-     * Test is beforeRebuild method exists
+     * @param Event $event
      */
-    public function testIsBeforeRebuildExists()
+    public function beforeSave(Event $event)
     {
-        $service = $this->createMockService(Schema::class);
+        // prepare data
+        $entity = $event->get('entity');
 
-        // test
-        $this->assertTrue(method_exists($service, 'beforeRebuild'));
+        // set scheduledJobId to data
+        if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
+            $entity->set('targetType', 'ScheduledJob');
+            $entity->set('targetId', $scheduledJobId);
+        }
+
+        // skip saving for Stream action
+        if ($entity->get('serviceName') == 'Stream' && $entity->get('methodName') == 'controlFollowersJob') {
+            // for skip saving
+            $entity->setIsSaved(true);
+
+            // call service method
+            $this->controlFollowersJob($entity->get('data'));
+        }
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function controlFollowersJob(array $data): void
+    {
+        // prepare input
+        $input = new \stdClass();
+        $input->entityId = $data['entityId'];
+        $input->entityType = $data['entityType'];
+
+        $this->getContainer()->get('serviceFactory')->create('Stream')->controlFollowersJob($input);
     }
 }

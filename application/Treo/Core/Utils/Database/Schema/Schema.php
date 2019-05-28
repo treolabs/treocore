@@ -35,8 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils\Database\Schema;
 
-use Espo\Core\Exceptions\Error;
 use Treo\Traits\ContainerTrait;
+use Treo\Core\EventManager\Event;
 
 /**
  * Class Schema
@@ -79,7 +79,9 @@ class Schema extends \Espo\Core\Utils\Database\Schema\Schema
         $queries = $this->getDiffSql($currentSchema, $metadataSchema);
 
         // berore rebuild action
-        $queries = $this->triggered('Schema', 'beforeRebuild', ['queries' => $queries])['queries'];
+        $queries = $this
+            ->dispatch('Schema', 'beforeRebuild', new Event(['queries' => $queries]))
+            ->getArgument('queries');
 
         // run rebuild
         $result = true;
@@ -98,26 +100,24 @@ class Schema extends \Espo\Core\Utils\Database\Schema\Schema
         $this->executeRebuildActions('afterRebuild');
 
         // after rebuild action
-        $result = $this->triggered(
-            'Schema',
-            'afterRebuild',
-            ['result' => (bool)$result, 'queries' => $queries]
-        )['result'];
+        $result = $this
+            ->dispatch('Schema', 'afterRebuild', new Event(['result' => (bool)$result, 'queries' => $queries]))
+            ->getArgument('result');
 
         return $result;
     }
 
     /**
-     * Triggered event
+     * Dispatch an event
      *
      * @param string $target
      * @param string $action
-     * @param array  $data
+     * @param Event  $event
      *
-     * @return array
+     * @return mixed
      */
-    protected function triggered(string $target, string $action, array $data = []): array
+    protected function dispatch(string $target, string $action, Event $event)
     {
-        return $this->getContainer()->get('eventManager')->triggered($target, $action, $data);
+        return $this->getContainer()->get('eventManager')->dispatch($target, $action, $event);
     }
 }

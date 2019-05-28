@@ -41,6 +41,7 @@ use Espo\Core\Exceptions\NotFound;
 use Slim\Http\Request;
 use StdClass;
 use Treo\Traits\ContainerTrait;
+use Treo\Core\EventManager\Event;
 
 /**
  * ControllerManager class
@@ -127,40 +128,28 @@ class ControllerManager
             $controller->$beforeMethodName($params, $data, $request, $response);
         }
 
-        // triggered before action
-        $event = $this->triggered(
+        // dispatch an event
+        $this->dispatch(
             'beforeAction',
-            [
-                'controller' => $controllerName,
-                'action'     => 'before' . ucfirst($primaryActionMethodName),
-                'params'     => $params,
-                'data'       => $data,
-                'request'    => $request,
-            ]
+            $controllerName,
+            'before' . ucfirst($primaryActionMethodName),
+            $params,
+            $data,
+            $request
         );
-
-        // prepare input data
-        $params = (isset($event['params'])) ? $event['params'] : $params;
-        $data = (isset($event['data'])) ? $event['data'] : $data;
-        $request = (isset($event['request'])) ? $event['request'] : $request;
 
         $result = $controller->$primaryActionMethodName($params, $data, $request, $response);
 
-        // triggered after action
-        $event = $this->triggered(
+        // dispatch an event
+        $this->dispatch(
             'afterAction',
-            [
-                'controller' => $controllerName,
-                'action'     => 'after' . ucfirst($primaryActionMethodName),
-                'params'     => $params,
-                'data'       => $data,
-                'request'    => $request,
-                'result'     => $result
-            ]
+            $controllerName,
+            'after' . ucfirst($primaryActionMethodName),
+            $params,
+            $data,
+            $request,
+            $result
         );
-
-        // prepare result
-        $result = (isset($event['result'])) ? $event['result'] : $result;
 
         if (method_exists($controller, $afterMethodName)) {
             $controller->$afterMethodName($params, $data, $request, $response);
@@ -174,18 +163,49 @@ class ControllerManager
     }
 
     /**
-     * Triggered event
-     *
      * @param string $action
-     * @param array  $data
-     *
-     * @return array
+     * @param string $controller
+     * @param string $method
+     * @param mixed  $params
+     * @param mixed  $data
+     * @param mixed  $request
+     * @param mixed  $result
      */
-    protected function triggered(string $action, array $data = []): array
-    {
-        return $this
+    protected function dispatch(
+        string $action,
+        string $controller,
+        string $method,
+        &$params,
+        &$data,
+        $request,
+        &$result = null
+    ): void {
+        // prepare arguments
+        $arguments = [
+            'controller' => $controller,
+            'action'     => $method,
+            'params'     => $params,
+            'data'       => $data,
+            'request'    => $request
+        ];
+        if (!is_null($result)) {
+            $arguments['result'] = $result;
+        }
+
+        // create an event
+        $event = new Event($arguments);
+
+        // dispatch an event
+        $this
             ->getContainer()
             ->get('eventManager')
-            ->triggered('Controller', $action, $data);
+            ->dispatch('Controller', $action, $event);
+
+        // set data
+        $params = $event->getArgument('params');
+        $data = $event->getArgument('data');
+        if (!is_null($result)) {
+            $result = $event->getArgument('result');
+        }
     }
 }
