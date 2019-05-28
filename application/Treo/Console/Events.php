@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Treo\Core\EventManager\Event;
+
 /**
  * Events console
  *
@@ -127,8 +129,10 @@ class Events extends AbstractConsole
             $jsonData = [];
         }
 
-        // triggered
-        $this->getContainer()->get('eventManager')->triggered($data['target'], $data['action'], $jsonData);
+        $this
+            ->getContainer()
+            ->get('eventManager')
+            ->dispatch($data['target'], $data['action'], new Event($jsonData));
 
         self::show('Event triggered successfully.', self::SUCCESS, true);
     }

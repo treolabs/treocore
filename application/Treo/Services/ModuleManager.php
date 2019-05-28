@@ -394,19 +394,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * Triggered event
-     *
-     * @param string $action
-     * @param array  $data
-     *
-     * @return void
-     */
-    protected function triggeredEvent(string $action, array $data = [])
-    {
-        $this->triggered('ModuleManager', $action, $data);
-    }
-
-    /**
      * Get module config data
      *
      * @param string $key

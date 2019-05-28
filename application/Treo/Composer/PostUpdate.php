@@ -338,13 +338,13 @@ class PostUpdate
         $composerDiff = $this->getComposerLockDiff();
 
         if (!empty($composerDiff['install'])) {
-            $this->triggered('Composer', 'afterInstallModule', $composerDiff['install']);
+            $this->dispatch('Composer', 'afterInstallModule', $composerDiff['install']);
         }
         if (!empty($composerDiff['update'])) {
-            $this->triggered('Composer', 'afterUpdateModule', $composerDiff['update']);
+            $this->dispatch('Composer', 'afterUpdateModule', $composerDiff['update']);
         }
         if (!empty($composerDiff['delete'])) {
-            $this->triggered('Composer', 'afterDeleteModule', $composerDiff['delete']);
+            $this->dispatch('Composer', 'afterDeleteModule', $composerDiff['delete']);
         }
     }
 
@@ -357,7 +357,7 @@ class PostUpdate
      *
      * @return bool
      */
-    protected function triggered(string $target, string $action, array $data = []): bool
+    protected function dispatch(string $target, string $action, array $data = []): bool
     {
         // prepare load order file path
         $path = self::MODULE_ORDER;
