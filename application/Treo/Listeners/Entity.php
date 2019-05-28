@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Listeners;
 
 use Espo\ORM\Entity as OrmEntity;
+use Treo\Core\EventManager\Event;
 
 /**
  * Class Entity
@@ -46,273 +47,306 @@ use Espo\ORM\Entity as OrmEntity;
 class Entity extends AbstractListener
 {
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeSave(array $event): array
+    public function beforeSave(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'beforeSave', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeSave', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->getEntityManager()
                 ->getHookManager()
-                ->process($event['entityType'], 'beforeSave', $event['entity'], $event['options']);
+                ->process(
+                    $event->getArgument('entityType'),
+                    'beforeSave',
+                    $event->getArgument('entity'),
+                    $event->getArgument('options')
+                );
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterSave(array $event): array
+    public function afterSave(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'afterSave', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterSave', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->getEntityManager()
                 ->getHookManager()
-                ->process($event['entityType'], 'afterSave', $event['entity'], $event['options']);
+                ->process(
+                    $event->getArgument('entityType'),
+                    'afterSave',
+                    $event->getArgument('entity'),
+                    $event->getArgument('options')
+                );
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeRemove(array $event): array
+    public function beforeRemove(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'beforeRemove', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRemove', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->getEntityManager()
                 ->getHookManager()
-                ->process($event['entityType'], 'beforeRemove', $event['entity'], $event['options']);
+                ->process(
+                    $event->getArgument('entityType'),
+                    'beforeRemove',
+                    $event->getArgument('entity'),
+                    $event->getArgument('options')
+                );
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterRemove(array $event): array
+    public function afterRemove(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'afterRemove', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRemove', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->getEntityManager()
                 ->getHookManager()
-                ->process($event['entityType'], 'afterRemove', $event['entity'], $event['options']);
+                ->process(
+                    $event->getArgument('entityType'),
+                    'afterRemove',
+                    $event->getArgument('entity'),
+                    $event->getArgument('options')
+                );
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeMassRelate(array $event): array
+    public function beforeMassRelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'beforeMassRelate', $event);
-
-        return $event;
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeMassRelate', $event);
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterMassRelate(array $event): array
+    public function afterMassRelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'afterMassRelate', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterMassRelate', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
             $hookData = [
-                'relationName'   => $event['relationName'],
-                'relationParams' => $event['relationParams']
+                'relationName'   => $event->getArgument('relationName'),
+                'relationParams' => $event->getArgument('relationParams')
             ];
             $this
                 ->getEntityManager()
                 ->getHookManager()
-                ->process($event['entityType'], 'afterMassRelate', $event['entity'], $event['options'], $hookData);
+                ->process(
+                    $event->getArgument('entityType'),
+                    'afterMassRelate',
+                    $event->getArgument('entity'),
+                    $event->getArgument('options'),
+                    $hookData
+                );
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeRelate(array $event): array
+    public function beforeRelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'beforeRelate', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRelate', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
-            $foreign = $event['foreign'];
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $foreign = $event->getArgument('foreign');
             if ($foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity($event['entity'], $event['relationName'], (string)$foreign);
+                $foreign = $this->findForeignEntity(
+                    $event->getArgument('entity'),
+                    $event->getArgument('relationName'),
+                    (string)$foreign
+                );
             }
 
             if ($foreign instanceof OrmEntity) {
                 $hookData = [
-                    'relationName'  => $event['relationName'],
-                    'relationData'  => $event['relationData'],
+                    'relationName'  => $event->getArgument('relationName'),
+                    'relationData'  => $event->getArgument('relationData'),
                     'foreignEntity' => $foreign
                 ];
                 $this
                     ->getEntityManager()
                     ->getHookManager()
-                    ->process($event['entityType'], 'beforeRelate', $event['entity'], $event['options'], $hookData);
+                    ->process(
+                        $event->getArgument('entityType'),
+                        'beforeRelate',
+                        $event->getArgument('entity'),
+                        $event->getArgument('options'),
+                        $hookData
+                    );
             }
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterRelate(array $event): array
+    public function afterRelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'afterRelate', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRelate', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
-            $foreign = $event['foreign'];
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $foreign = $event->getArgument('foreign');
             if ($foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity($event['entity'], $event['relationName'], (string)$foreign);
+                $foreign = $this->findForeignEntity(
+                    $event->getArgument('entity'),
+                    $event->getArgument('relationName'),
+                    (string)$foreign
+                );
             }
 
             if ($foreign instanceof OrmEntity) {
                 $hookData = [
-                    'relationName'  => $event['relationName'],
-                    'relationData'  => $event['relationData'],
+                    'relationName'  => $event->getArgument('relationName'),
+                    'relationData'  => $event->getArgument('relationData'),
                     'foreignEntity' => $foreign
                 ];
                 $this
                     ->getEntityManager()
                     ->getHookManager()
-                    ->process($event['entityType'], 'afterRelate', $event['entity'], $event['options'], $hookData);
+                    ->process(
+                        $event->getArgument('entityType'),
+                        'afterRelate',
+                        $event->getArgument('entity'),
+                        $event->getArgument('options'),
+                        $hookData
+                    );
             }
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function beforeUnrelate(array $event): array
+    public function beforeUnrelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'beforeUnrelate', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeUnrelate', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
-            $foreign = $event['foreign'];
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
+            $foreign = $event->getArgument('foreign');
             if ($foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity($event['entity'], $event['relationName'], (string)$foreign);
+                $foreign = $this->findForeignEntity(
+                    $event->getArgument('entity'),
+                    $event->getArgument('relationName'),
+                    (string)$foreign
+                );
             }
 
             if ($foreign instanceof OrmEntity) {
                 $hookData = [
-                    'relationName'  => $event['relationName'],
+                    'relationName'  => $event->getArgument('relationName'),
                     'foreignEntity' => $foreign
                 ];
                 $this
                     ->getEntityManager()
                     ->getHookManager()
-                    ->process($event['entityType'], 'beforeUnrelate', $event['entity'], $event['options'], $hookData);
+                    ->process(
+                        $event->getArgument('entityType'),
+                        'beforeUnrelate',
+                        $event->getArgument('entity'),
+                        $event->getArgument('options'),
+                        $hookData
+                    );
             }
         }
-
-        return $event;
     }
 
     /**
-     * @param array $event
-     *
-     * @return array
+     * @param Event $event
      */
-    public function afterUnrelate(array $event): array
+    public function afterUnrelate(Event $event)
     {
         // dispatch an event
-        $this->dispatch($event['entityType'] . 'Entity', 'afterUnrelate', $event);
+        $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterUnrelate', $event);
 
         /**
          * @deprecated it will be removed soon
          */
-        if (empty($event['hooksDisabled']) && empty($event['options']['skipHooks'])) {
-            $foreign = $event['foreign'];
+        if (empty($event->getArgument('hooksDisabled'))
+            && empty($event->getArgument('options')['skipHooks'])) {
+            $foreign = $event->getArgument('foreign');
             if ($foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity($event['entity'], $event['relationName'], (string)$foreign);
+                $foreign = $this->findForeignEntity(
+                    $event->getArgument('entity'),
+                    $event->getArgument('relationName'),
+                    (string)$foreign
+                );
             }
 
             if ($foreign instanceof OrmEntity) {
                 $hookData = [
-                    'relationName'  => $event['relationName'],
+                    'relationName'  => $event->getArgument('relationName'),
                     'foreignEntity' => $foreign
                 ];
                 $this
                     ->getEntityManager()
                     ->getHookManager()
-                    ->process($event['entityType'], 'afterUnrelate', $event['entity'], $event['options'], $hookData);
+                    ->process(
+                        $event->getArgument('entityType'),
+                        'afterUnrelate',
+                        $event->getArgument('entity'),
+                        $event->getArgument('options'),
+                        $hookData
+                    );
             }
         }
-
-        return $event;
     }
 
     /**
@@ -335,12 +369,10 @@ class Entity extends AbstractListener
     /**
      * @param string $target
      * @param string $action
-     * @param array  $data
-     *
-     * @return array
+     * @param Event  $event
      */
-    protected function dispatch(string $target, string $action, array $data): array
+    protected function dispatch(string $target, string $action, Event $event)
     {
-        return $this->getContainer()->get('eventManager')->dispatch($target, $action, $data);
+        $this->getContainer()->get('eventManager')->dispatch($target, $action, $event);
     }
 }

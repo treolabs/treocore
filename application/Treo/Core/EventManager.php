@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Treo\Core\EventManager\Event;
 use Treo\Listeners\AbstractListener;
 
 /**
@@ -57,11 +58,33 @@ class EventManager
      *
      * @param string $target
      * @param string $action
+     * @param Event  $event
+     *
+     * @return Event
+     */
+    public function dispatch(string $target, string $action, Event $event): Event
+    {
+        foreach ($this->getClassNames($target) as $className) {
+            $listener = $this->getListener($className);
+            if (method_exists($listener, $action)) {
+                $listener->{$action}($event);
+            }
+        }
+
+        return $event;
+    }
+
+    /**
+     * Deprecated!!! It will be removed soon
+     *
+     * @param string $target
+     * @param string $action
      * @param array  $data
      *
      * @return array
+     * @deprecated
      */
-    public function dispatch(string $target, string $action, array $data = []): array
+    public function triggered(string $target, string $action, array $data = []): array
     {
         foreach ($this->getClassNames($target) as $className) {
             // create listener
@@ -77,21 +100,6 @@ class EventManager
         }
 
         return $data;
-    }
-
-    /**
-     * Triggered an event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     * @deprecated
-     */
-    public function triggered(string $target, string $action, array $data = []): array
-    {
-        return $this->dispatch($target, $action, $data);
     }
 
     /**
