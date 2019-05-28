@@ -10,7 +10,7 @@
     "Validate": "Validate",
     "unit": "Unit",
     "addOption": "Add option",
-    "addMeasureUnit": "Add measure unit",
+    "addMeasureUnit": "Add measurement unit",
     "progressLog": "Progress Log"
   },
   "fieldTypes": {
@@ -29,7 +29,7 @@
     "upgradeDone": "Treo System has been upgraded to version <strong>{version}</strong>.",
     "upgradeBackup": "We recommend making a backup of your Treo System files and data before upgrading.",
     "newVersionIsAvailable": "New Treo System version {latestVersion} is available.",
-    "systemAlreadyUpgraded": "TreoCore already upgraded.",
+    "systemAlreadyUpgraded": "TreoCore is up-to-date.",
     "upgradeStarted": "Upgrade has been started",
     "upgradeFailed": "Upgrade failed",
     "upgradeSuccessful": "Upgrade successfully finished"

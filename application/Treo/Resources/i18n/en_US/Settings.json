@@ -5,7 +5,7 @@
     "isStreamPanelFirst": "Is stream panel first",
     "notificationNewModuleVersionDisabled": "Send notification when new module version is available",
     "notificationNewSystemVersionDisabled": "Send notification when new system version is available",
-    "notificationInstallDeleteModuleDisabled": "Send notification when module is install / delete",
+    "notificationInstallDeleteModuleDisabled": "Send notification when module is installed / deleted",
     "unitsOfMeasure": "Units Of Measure"
   },
   "tooltips": {
