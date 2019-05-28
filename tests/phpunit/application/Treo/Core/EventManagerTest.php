@@ -46,13 +46,13 @@ use Treo\PHPUnit\Framework\TestCase;
 class EventManagerTest extends TestCase
 {
     /**
-     * Test is triggered method exists
+     * Test is dispatch method exists
      */
-    public function testIsTriggeredExists()
+    public function testIsDispatchExists()
     {
         $service = $this->createMockService(EventManager::class);
 
         // test
-        $this->assertTrue(method_exists($service, 'triggered'));
+        $this->assertTrue(method_exists($service, 'dispatch'));
     }
 }

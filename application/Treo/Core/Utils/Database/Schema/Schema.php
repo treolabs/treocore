@@ -60,11 +60,9 @@ class Schema extends \Espo\Core\Utils\Database\Schema\Schema
         $currentSchema = $this->getCurrentSchema();
 
         // get entityDefs
-        $entityDefs = $this->triggered(
-            'Schema',
-            'prepareEntityDefsBeforeRebuild',
-            ['data' => $this->ormMetadata->getData()]
-        )['data'];
+        $entityDefs = $this
+            ->dispatch('Schema', 'prepareEntityDefsBeforeRebuild', new Event(['data' => $this->ormMetadata->getData()]))
+            ->getArgument('data');
 
         // get metadata schema
         $metadataSchema = $this->schemaConverter->process($entityDefs, $entityList);

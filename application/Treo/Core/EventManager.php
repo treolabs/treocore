@@ -75,34 +75,6 @@ class EventManager
     }
 
     /**
-     * Deprecated!!! It will be removed soon
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     * @deprecated
-     */
-    public function triggered(string $target, string $action, array $data = []): array
-    {
-        foreach ($this->getClassNames($target) as $className) {
-            // create listener
-            $listener = $this->getListener($className);
-
-            if (method_exists($listener, $action)) {
-                // call
-                $result = $listener->{$action}($data);
-
-                // check if exists result and update data
-                $data = isset($result) ? $result : $data;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * @param string $className
      *
      * @return AbstractListener
