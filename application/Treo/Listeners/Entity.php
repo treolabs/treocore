@@ -198,7 +198,7 @@ class Entity extends AbstractListener
          */
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $foreign = $event->getArgument('foreign');
-            if ($foreign instanceof OrmEntity) {
+            if (!$foreign instanceof OrmEntity) {
                 $foreign = $this->findForeignEntity(
                     $event->getArgument('entity'),
                     $event->getArgument('relationName'),
@@ -239,7 +239,7 @@ class Entity extends AbstractListener
          */
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $foreign = $event->getArgument('foreign');
-            if ($foreign instanceof OrmEntity) {
+            if (!$foreign instanceof OrmEntity) {
                 $foreign = $this->findForeignEntity(
                     $event->getArgument('entity'),
                     $event->getArgument('relationName'),
@@ -281,7 +281,7 @@ class Entity extends AbstractListener
         if (empty($event->getArgument('hooksDisabled'))
             && empty($event->getArgument('options')['skipHooks'])) {
             $foreign = $event->getArgument('foreign');
-            if ($foreign instanceof OrmEntity) {
+            if (!$foreign instanceof OrmEntity) {
                 $foreign = $this->findForeignEntity(
                     $event->getArgument('entity'),
                     $event->getArgument('relationName'),
@@ -322,7 +322,7 @@ class Entity extends AbstractListener
         if (empty($event->getArgument('hooksDisabled'))
             && empty($event->getArgument('options')['skipHooks'])) {
             $foreign = $event->getArgument('foreign');
-            if ($foreign instanceof OrmEntity) {
+            if (!$foreign instanceof OrmEntity) {
                 $foreign = $this->findForeignEntity(
                     $event->getArgument('entity'),
                     $event->getArgument('relationName'),
