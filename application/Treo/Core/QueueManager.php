@@ -85,7 +85,7 @@ class QueueManager
     public function push(string $name, string $serviceName, array $data = [], int $stream = 0): bool
     {
         // validation
-        if (!$this->isService($serviceName)) {
+        if (!$this->isService($serviceName) || $stream < 0 || $stream > 9) {
             return false;
         }
 
@@ -133,6 +133,7 @@ class QueueManager
             [
                 'name'        => $name,
                 'serviceName' => $serviceName,
+                'stream'      => $stream,
                 'data'        => $data,
                 'sortOrder'   => $this->getNextSortOrder(),
                 'createdById' => $this->getContainer()->get('user')->get('id'),

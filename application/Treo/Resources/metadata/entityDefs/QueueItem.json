@@ -11,6 +11,11 @@
       "required": true,
       "readOnly": true
     },
+    "stream": {
+      "type": "int",
+      "required": true,
+      "default": 0
+    },
     "data": {
       "type": "jsonObject",
       "readOnly": true

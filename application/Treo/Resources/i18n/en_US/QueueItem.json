@@ -1,6 +1,7 @@
 {
   "fields": {
     "serviceName": "Service",
+    "stream": "Queue",
     "data": "Data",
     "sortOrder": "Sort order",
     "status": "Status"

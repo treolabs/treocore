@@ -54,7 +54,7 @@ class QueueItem extends \Espo\Core\Templates\Repositories\Base
 
         // unset
         if (in_array($entity->get('status'), ['Canceled', 'Closed'])) {
-            $this->unsetItem((string)$entity->get('id'));
+            $this->unsetItem((int)$entity->get('stream'), (string)$entity->get('id'));
         }
     }
 
@@ -67,7 +67,7 @@ class QueueItem extends \Espo\Core\Templates\Repositories\Base
         parent::afterRemove($entity, $options);
 
         // unset
-        $this->unsetItem((string)$entity->get('id'));
+        $this->unsetItem((int)$entity->get('stream'), (string)$entity->get('id'));
     }
 
     /**
@@ -82,10 +82,11 @@ class QueueItem extends \Espo\Core\Templates\Repositories\Base
     }
 
     /**
+     * @param int    $stream
      * @param string $id
      */
-    protected function unsetItem(string $id): void
+    protected function unsetItem(int $stream, string $id): void
     {
-        $this->getInjection('queueManager')->unsetItem($id);
+        $this->getInjection('queueManager')->unsetItem($stream, $id);
     }
 }
