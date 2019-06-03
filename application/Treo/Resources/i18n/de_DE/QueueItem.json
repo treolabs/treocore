@@ -1,7 +1,7 @@
 {
   "fields": {
     "serviceName": "Bedienung",
-    "stream": "Queue",
+    "stream": "Strom",
     "data": "Daten",
     "sortOrder": "Sortierreihenfolge",
     "status": "Status"
