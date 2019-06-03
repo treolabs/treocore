@@ -61,7 +61,7 @@ class QueueManager extends AbstractConsole
         }
 
         // run
-        $this->getContainer()->get('queueManager')->run();
+        $this->getContainer()->get('queueManager')->run((int)$data['stream']);
 
         self::show('Queue Manager runned successfully', self::SUCCESS, true);
     }

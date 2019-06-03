@@ -48,7 +48,7 @@ class KillProcess extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Process killer.';
+        return 'Processes killer.';
     }
 
     /**
@@ -56,29 +56,7 @@ class KillProcess extends AbstractConsole
      */
     public function run(array $data): void
     {
-        switch ($data['id']) {
-            case "treo-self-upgrade":
-                file_put_contents('data/kill-treo-self-upgrade.txt', '1');
-                self::show("Process 'treo-self-upgrade' killed successfully", self::SUCCESS, true);
-
-                break;
-            case "treo-module-update":
-                file_put_contents('data/kill-treo-module-update.txt', '1');
-                self::show("Process 'treo-module-update' killed successfully", self::SUCCESS, true);
-
-                break;
-            case "treo-qm":
-                file_put_contents('data/kill-treo-qm.txt', '1');
-                self::show("Process 'treo-qm' killed successfully", self::SUCCESS, true);
-
-                break;
-            case "treo-notification":
-                file_put_contents('data/kill-treo-notification.txt', '1');
-                self::show("Process 'treo-notification' killed successfully", self::SUCCESS, true);
-
-                break;
-        }
-
-        self::show('No such process!', self::ERROR, true);
+        file_put_contents('data/process-kill.txt', '1');
+        self::show("Processes killed successfully", self::SUCCESS, true);
     }
 }

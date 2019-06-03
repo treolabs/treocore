@@ -7,6 +7,11 @@ if [ $# -ne 2 ]
     exit 1;
 fi
 
+# remove processes killer
+if [ -f "data/process-kill.txt" ]; then
+  rm "data/process-kill.txt";
+fi
+
 # prepare process id
 id=$1
 
@@ -32,10 +37,15 @@ if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $i
 fi
 
 # queue manager process
-if [[ ! "$(ps ax | grep treo-qm.sh)" =~ "bin/treo-qm.sh $id" ]]; then
-    chmod +x bin/treo-qm.sh
-    setsid ./bin/treo-qm.sh $id $php >/dev/null 2>&1 &
-fi
+stream=0
+while [ $stream -lt 10 ]
+do
+  if [[ ! "$(ps ax | grep treo-qm.sh)" =~ "bin/treo-qm.sh $id $stream" ]]; then
+    setsid ./bin/treo-qm.sh $id $stream $php >/dev/null 2>&1 &
+  fi
+
+  (( stream++ ))
+done
 
 # notification process
 if [[ ! "$(ps ax | grep treo-notification.sh)" =~ "bin/treo-notification.sh $id" ]]; then

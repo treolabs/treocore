@@ -59,7 +59,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         // test
-        $this->assertTrue($mock->run());
+        $this->assertTrue($mock->run(0));
     }
 
     /**
@@ -74,7 +74,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
             ->willReturn([]);
 
         // test 1
-        $this->assertFalse($mock->run());
+        $this->assertFalse($mock->run(0));
 
         $mock = $this->createPartialMock(QueueManager::class, ['getFileData', 'runJob']);
         $mock
@@ -87,7 +87,7 @@ class QueueManagerTest extends \Treo\PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         // test 2
-        $this->assertFalse($mock->run());
+        $this->assertFalse($mock->run(0));
     }
 
     /**

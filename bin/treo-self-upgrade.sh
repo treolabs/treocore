@@ -6,13 +6,11 @@ php=$2
 # prepare file(s) path
 path="data/treo-self-upgrade.txt"
 log="data/treo-self-upgrade.log"
-killer="data/kill-treo-self-upgrade.txt"
 
 while true
 do
-   # kill process if it needs
-   if [ -f $killer ]; then
-     rm $killer;
+    # exit
+   if [ -f "data/process-kill.txt" ]; then
      exit 1;
    fi
 

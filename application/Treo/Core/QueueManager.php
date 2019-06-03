@@ -53,62 +53,67 @@ class QueueManager
     /**
      * @var string
      */
-    private $path = 'data/qm-items.json';
+    private $path = 'data/qm-items-%s.json';
 
     /**
-     * Run
+     * @param int $stream
      *
      * @return bool
      * @throws Error
      */
-    public function run(): bool
+    public function run(int $stream): bool
     {
         // get data
-        $data = $this->getFileData();
+        $data = $this->getFileData($stream);
 
         if (!isset($data[0])) {
             return false;
         }
 
-        return $this->runJob((string)$data[0]);
+        return $this->runJob($stream, (string)$data[0]);
     }
 
     /**
      * @param string $name
      * @param string $serviceName
      * @param array  $data
+     * @param int    $stream
      *
      * @return bool
      * @throws Error
      */
-    public function push(string $name, string $serviceName, array $data = []): bool
+    public function push(string $name, string $serviceName, array $data = [], int $stream = 0): bool
     {
         // validation
         if (!$this->isService($serviceName)) {
             return false;
         }
 
-        return $this->createQueueItem($name, $serviceName, $data);
+        return $this->createQueueItem($name, $serviceName, $data, $stream);
     }
 
     /**
      * Unset item
      *
+     * @param int    $stream
      * @param string $id
      */
-    public function unsetItem(string $id): void
+    public function unsetItem(int $stream, string $id): void
     {
-        $data = $this->getFileData();
+        $data = $this->getFileData($stream);
         foreach ($data as $k => $item) {
             if ($item == $id) {
                 unset($data[$k]);
             }
         }
 
-        if (empty($data) && file_exists($this->path)) {
-            unlink($this->path);
+        // prepare path
+        $path = sprintf($this->path, $stream);
+
+        if (empty($data) && file_exists($path)) {
+            unlink($path);
         } else {
-            file_put_contents($this->path, json_encode(array_values($data)));
+            file_put_contents($path, json_encode(array_values($data)));
         }
     }
 
@@ -116,11 +121,12 @@ class QueueManager
      * @param string $name
      * @param string $serviceName
      * @param array  $data
+     * @param int    $stream
      *
      * @return bool
      * @throws Error
      */
-    protected function createQueueItem(string $name, string $serviceName, array $data = []): bool
+    protected function createQueueItem(string $name, string $serviceName, array $data, int $stream): bool
     {
         $item = $this->getEntityManager()->getEntity('QueueItem');
         $item->set(
@@ -136,13 +142,16 @@ class QueueManager
         $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
 
         // prepare file data
-        $fileData = $this->getFileData();
+        $fileData = $this->getFileData($stream);
 
         // push new item
         $fileData[] = $item->get('id');
 
+        // prepare path
+        $path = sprintf($this->path, $stream);
+
         // save
-        file_put_contents($this->path, json_encode($fileData));
+        file_put_contents($path, json_encode($fileData));
 
         return true;
     }
@@ -189,28 +198,35 @@ class QueueManager
     }
 
     /**
+     * @param int $stream
+     *
      * @return array
      */
-    protected function getFileData(): array
+    protected function getFileData(int $stream): array
     {
         $data = [];
-        if (file_exists($this->path)) {
-            $data = json_decode(file_get_contents($this->path), true);
+
+        // prepare path
+        $path = sprintf($this->path, $stream);
+
+        if (file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
         }
 
         return $data;
     }
 
     /**
+     * @param int    $stream
      * @param string $id
      *
      * @return bool
      * @throws Error
      */
-    protected function runJob(string $id): bool
+    protected function runJob(int $stream, string $id): bool
     {
         // unset
-        $this->unsetItem($id);
+        $this->unsetItem($stream, $id);
 
         // get item
         if (empty($item = $this->getItem($id))) {

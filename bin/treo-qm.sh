@@ -1,21 +1,20 @@
 #!/bin/bash
 
-# prepare PHP
-php=$2
+# prepare stream
+stream=$2
 
-# prepare file(s) path
-killer="data/kill-treo-qm.txt"
+# prepare PHP
+php=$3
 
 while true
 do
-    # kill process if it needs
-   if [ -f $killer ]; then
-     rm $killer;
+    # exit
+   if [ -f "data/process-kill.txt" ]; then
      exit 1;
    fi
 
-   if [ -f "data/qm-items.json" ]; then
-     $php console.php qm --run > /dev/null 2>&1
+   if [ -f "data/qm-items-$stream.json" ]; then
+     $php console.php qm $stream --run > /dev/null 2>&1
    fi
 
    sleep 1;

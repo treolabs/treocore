@@ -52,7 +52,7 @@ return [
     "migrate <module> <from> <to>"               => Console\Migrate::class,
     "apidocs --generate"                         => Console\GenerateApidocs::class,
     "developmod <param>"                         => Console\DevelopMod::class,
-    "qm --run"                                   => Console\QueueManager::class,
+    "qm <stream> --run"                          => Console\QueueManager::class,
     "notifications --refresh"                    => Console\Notification::class,
-    "kill process <id>"                          => Console\KillProcess::class,
+    "kill processes"                             => Console\KillProcess::class,
 ];

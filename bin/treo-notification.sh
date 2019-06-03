@@ -3,14 +3,10 @@
 # prepare PHP
 php=$2
 
-# prepare file(s) path
-killer="data/kill-treo-notification.txt"
-
 while true
 do
-    # kill process if it needs
-   if [ -f $killer ]; then
-     rm $killer;
+   # exit
+   if [ -f "data/process-kill.txt" ]; then
      exit 1;
    fi
 

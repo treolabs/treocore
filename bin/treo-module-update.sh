@@ -6,13 +6,11 @@ php=$2
 # prepare file(s) path
 path="data/treo-module-update.txt"
 log="data/treo-module-update.log"
-killer="data/kill-treo-module-update.txt"
 
 while true
 do
-   # kill process if it needs
-   if [ -f $killer ]; then
-     rm $killer;
+   # exit
+   if [ -f "data/process-kill.txt" ]; then
      exit 1;
    fi
 
