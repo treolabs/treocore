@@ -34,23 +34,24 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Composer;
 
-use Treo\Console;
+/**
+ * Class AbstractEvent
+ *
+ * @author r.ratsun <r.ratsun@gmail.com>
+ */
+abstract class AbstractEvent
+{
+    use \Treo\Traits\ContainerTrait;
 
-return [
-    "list"                                       => Console\ListCommand::class,
-    "composer <action> <param1>"                 => Console\Composer::class,
-    "upgrade <versionTo> <action>"               => Console\Upgrade::class,
-    "clear cache"                                => Console\ClearCache::class,
-    "cleanup"                                    => Console\Cleanup::class,
-    "rebuild"                                    => Console\Rebuild::class,
-    "cron"                                       => Console\Cron::class,
-    "store --refresh"                            => Console\StoreRefresh::class,
-    "migrate <module> <from> <to>"               => Console\Migrate::class,
-    "apidocs --generate"                         => Console\GenerateApidocs::class,
-    "developmod <param>"                         => Console\DevelopMod::class,
-    "qm <stream> --run"                          => Console\QueueManager::class,
-    "notifications --refresh"                    => Console\Notification::class,
-    "kill processes"                             => Console\KillProcess::class,
-];
+    /**
+     * After module install event
+     */
+    abstract public function afterInstall(): void;
+
+    /**
+     * After module delete event
+     */
+    abstract public function afterDelete(): void;
+}

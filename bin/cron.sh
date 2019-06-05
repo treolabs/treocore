@@ -18,9 +18,6 @@ id=$1
 # prepare PHP
 php=$2
 
-# set php
-echo "$php" > "data/cli-php.txt"
-
 # call cron jobs
 $php console.php cron
 

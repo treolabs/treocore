@@ -1,6 +1,6 @@
 {
   "name": "treolabs/treocore",
-  "version": "3.17.0",
+  "version": "3.18.0",
   "description": "TreoCORE. Open source application.",
   "homepage": "https://treopim.com",
   "license": "GPL-3.0-only",
@@ -41,7 +41,8 @@
       "Espo\\Custom": "custom/"
     },
     "psr-4": {
-      "Treo\\Migrations\\": "data/migrations/"
+      "Treo\\Migrations\\": "data/migrations/",
+      "Treo\\ModuleManagerEvents\\": "data/module-manager-events/"
     }
   },
   "scripts": {

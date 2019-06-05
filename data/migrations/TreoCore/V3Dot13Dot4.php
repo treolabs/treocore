@@ -46,7 +46,7 @@ use Treo\Core\Migration\AbstractMigration;
 class V3Dot13Dot4 extends AbstractMigration
 {
     /**
-     * Up to current
+     * @inheritdoc
      */
     public function up(): void
     {

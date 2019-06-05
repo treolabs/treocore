@@ -337,60 +337,44 @@ class PostUpdate
         // get diff
         $composerDiff = $this->getComposerLockDiff();
 
+        // call afterInstall event
         if (!empty($composerDiff['install'])) {
-            $this->dispatch('Composer', 'afterInstallModule', $composerDiff['install']);
+            foreach ($composerDiff['install'] as $row) {
+                $this->callEvent($row['id'], 'afterInstall');
+            }
         }
-        if (!empty($composerDiff['update'])) {
-            $this->dispatch('Composer', 'afterUpdateModule', $composerDiff['update']);
-        }
+
+        // call afterDelete event
         if (!empty($composerDiff['delete'])) {
-            $this->dispatch('Composer', 'afterDeleteModule', $composerDiff['delete']);
+            foreach ($composerDiff['delete'] as $row) {
+                $this->callEvent($row['id'], 'afterDelete');
+            }
         }
     }
 
     /**
-     * Triggered event
-     *
-     * @param string $target
+     * @param string $module
      * @param string $action
-     * @param array  $data
-     *
-     * @return bool
      */
-    protected function dispatch(string $target, string $action, array $data = []): bool
+    protected function callEvent(string $module, string $action): void
     {
-        // prepare load order file path
-        $path = self::MODULE_ORDER;
-        if (!file_exists($path)) {
-            return false;
-        }
+        // prepare class name
+        $className = '\\Treo\\ModuleManagerEvents\\%s\\Event';
 
-        // prepare cli php path
-        $phpPath = 'data/cli-php.txt';
-        if (!file_exists($phpPath)) {
-            return false;
-        }
-
-        // prepare php
-        $php = trim(file_get_contents($phpPath));
-
-        // prepare ids
-        $ids = array_column($data, 'id');
-
-        // sorting
-        foreach (json_decode(file_get_contents($path), true) as $id => $row) {
-            if (in_array($id, $ids)) {
-                // prepare command
-                $command = "$php console.php events --call $target $action " . json_encode(['id' => $id]);
-
-                // call event in separate process
-                exec(str_replace('"', '\"', $command));
+        $class = sprintf($className, $module);
+        if (class_exists($class)) {
+            $class = new $class();
+            if ($class instanceof AbstractEvent) {
+                $class->setContainer($this->getContainer())->{$action}();
             }
         }
-
-        return true;
     }
 
+    /**
+     * @param string $moduleId
+     *
+     * @return int
+     */
     protected static function createModuleLoadOrder(string $moduleId): int
     {
         // prepare path

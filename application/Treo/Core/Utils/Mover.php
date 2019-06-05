@@ -87,25 +87,31 @@ class Mover
         $path = "vendor/" . self::TREODIR;
 
         foreach (self::getModules() as $id => $key) {
+            // prepare full path
+            $fullPath = "$path/$key";
+
             // relocate client
-            if (file_exists("$path/$key/client")) {
+            if (file_exists("$fullPath/client")) {
                 self::deleteDir("client/modules/" . self::fromCamelCase($id, '-'));
                 self::copyDir("$path/$key/client/modules/", "client/");
             }
 
+            // copy event
+            self::copyEvent("$fullPath/Event.php", $id);
+
             // copy migrations
-            self::copyMigrations("$path/$key/migrations", "data/migrations/{$id}");
+            self::copyMigrations("$fullPath/migrations", "data/migrations/{$id}");
 
             // relocate api
-            if (file_exists("$path/$key/application")) {
+            if (file_exists("$fullPath/application")) {
                 self::deleteDir("application/Espo/Modules/{$id}");
-                self::copyDir("$path/$key/application/Espo/", "application/");
+                self::copyDir("$fullPath/application/Espo/", "application/");
             }
 
             // delete vendor data
-            foreach (scandir("$path/$key/") as $file) {
+            foreach (scandir("$fullPath/") as $file) {
                 if (!in_array($file, ['.', '..', 'composer.json'])) {
-                    self::deleteDir("$path/$key/$file");
+                    self::deleteDir("$fullPath/$file");
                 }
             }
         }
@@ -217,7 +223,40 @@ class Mover
     }
 
     /**
+     * Copy package event file
+     *
+     * @param string $src
+     * @param string $module
+     */
+    protected static function copyEvent(string $src, string $module)
+    {
+        if (file_exists($src)) {
+            // prepare dest
+            $dest = "data/module-manager-events/{$module}";
+
+            // create dir
+            if (!file_exists($dest)) {
+                mkdir($dest, 0777, true);
+            }
+
+            // prepare dest
+            $dest .= "/Event.php";
+
+            // delete old
+            if (file_exists($dest)) {
+                unlink($dest);
+            }
+
+            // copy
+            copy($src, $dest);
+        }
+    }
+
+    /**
      * Copy package migration files
+     *
+     * @param string $src
+     * @param string $dest
      */
     protected static function copyMigrations(string $src, string $dest)
     {

@@ -32,36 +32,26 @@
  * and "TreoCore" word.
  */
 
-namespace Treo\Console;
+declare(strict_types=1);
 
-use Treo\PHPUnit\Framework\TestCase;
+namespace Treo\Migrations\TreoCore;
+
+use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Class EventsTest
+ * Migration class for version 3.18.0
  *
- * @author r.zablodskiy@treolabs.com
+ * @author r.ratsun@treolabs.com
  */
-class EventsTest extends TestCase
+class V3Dot18Dot0 extends AbstractMigration
 {
     /**
-     * Test getDescription method
+     * @inheritdoc
      */
-    public function testGetDescriptionMethod()
+    public function up(): void
     {
-        $service = $this->createMockService(Events::class);
-
-        // test
-        $this->assertEquals('Show all triggered events.', $service::getDescription());
-    }
-
-    /**
-     * Test is run method exists
-     */
-    public function testIsRunExists()
-    {
-        $service = $this->createMockService(Events::class);
-
-        // test
-        $this->assertTrue(method_exists($service, 'run'));
+        if (file_exists('data/cli-php.txt')) {
+            unlink('data/cli-php.txt');
+        }
     }
 }
