@@ -44,16 +44,6 @@ namespace Treo\Metadata;
 class Metadata extends AbstractMetadata
 {
     /**
-     * @var array
-     */
-    public static $jobs = ['Dummy', 'CheckNewVersion', 'CheckNewExtensionVersion'];
-
-    /**
-     * @var array
-     */
-    protected $allowedTheme = ['TreoDarkTheme'];
-
-    /**
      * Modify
      *
      * @param array $data
@@ -70,12 +60,6 @@ class Metadata extends AbstractMetadata
 
         // delete tasks
         $data = $this->deleteTasks($data);
-
-        // set allowed themes
-        $data = $this->setAllowedTheme($data);
-
-        // delete espo scheduled jobs
-        $data = $this->deleteEspoScheduledJobs($data);
 
         // add onlyActive bool filter
         $data = $this->addOnlyActiveFilter($data);
@@ -268,41 +252,6 @@ class Metadata extends AbstractMetadata
                         $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
                     }
                 }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Set allowed theme
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function setAllowedTheme(array $data): array
-    {
-        foreach ($data['themes'] as $themeName => $themeData) {
-            // check is theme allowed
-            if (!in_array($themeName, $this->allowedTheme)) {
-                unset($data['themes'][$themeName]);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function deleteEspoScheduledJobs(array $data): array
-    {
-        foreach (self::$jobs as $job) {
-            if (isset($data['entityDefs']['ScheduledJob']['jobs'][$job])) {
-                unset($data['entityDefs']['ScheduledJob']['jobs'][$job]);
             }
         }
 

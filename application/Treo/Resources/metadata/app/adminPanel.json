@@ -67,11 +67,6 @@
         "url": "#ModuleManager/list",
         "label": "Modules",
         "description": "modules"
-      },
-      {
-        "url": "#Admin/extensions",
-        "label": "Extensions",
-        "description": "extensions"
       }
     ],
     "order": 5
