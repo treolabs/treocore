@@ -62,6 +62,9 @@
   "views/record/list": [
     "treo-core"
   ],
+  "views/record/panels/bottom": [
+    "treo-core"
+  ],
   "views/record/panels/relationship": [
     "treo-core"
   ],
