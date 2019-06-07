@@ -83,7 +83,7 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 * [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
 
 ### Installation
-> Installation guide is based on **linux mint OS**.<br/>Of course, you can use any unix-based system, but make sure that your OS supported following commands.<br/>
+> Installation guide is based on **linux mint OS**. Of course, you can use any unix-based system, but make sure that your OS supported following commands.<br/>
 
 To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed.
 
@@ -101,7 +101,7 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
    ```
    sudo chmod +x my-treocore-project/bin/cron.sh
    ```
-4. Configure crontab.<br/> First, you should configure crontab for **www-data** user by running:
+4. Configure crontab. First, you should configure crontab for **www-data** user by running:
    ```
    sudo crontab -u www-data -e
    ```
