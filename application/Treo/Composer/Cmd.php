@@ -58,8 +58,8 @@ class Cmd
      */
     public static function postInstall(): void
     {
-        // relocate files
-        self::relocateFiles();
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
     }
 
     /**
@@ -67,8 +67,8 @@ class Cmd
      */
     public static function postUpdate(): void
     {
-        // relocate files
-        self::relocateFiles();
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
         // copy default config
         PostUpdate::copyDefaultConfig();
@@ -87,19 +87,5 @@ class Cmd
         include "bootstrap.php";
 
         return (new \Treo\Core\Application())->getContainer();
-    }
-
-
-    /**
-     * Relocate files
-     */
-    protected static function relocateFiles(): void
-    {
-        if (!defined('CORE_PATH')) {
-            // define gloabal variables
-            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-            \Treo\Core\Utils\Mover::updateEspo();
-        }
     }
 }
