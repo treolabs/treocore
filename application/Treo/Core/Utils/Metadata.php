@@ -37,9 +37,10 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Metadata as Base;
-use Espo\Core\Utils\Module;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Util;
-use Treo\Core\Utils\File\Unifier;
+use Espo\Core\Utils\DataUtil;
+use Treo\Core\ModuleManager;
 
 /**
  * Metadata class
@@ -49,34 +50,18 @@ use Treo\Core\Utils\File\Unifier;
 class Metadata extends Base
 {
     /**
-     * @var Unifier
+     * @var ModuleManager
      */
-    protected $unifier;
-
-    /**
-     * @var Unifier
-     */
-    protected $objUnifier;
-
-    /**
-     * @var Module
-     */
-    protected $moduleConfig = null;
+    private $moduleManager;
 
     /**
      * @inheritdoc
      */
-    public function init($reload = false)
+    public function __construct(FileManager $fileManager, ModuleManager $moduleManager, bool $useCache)
     {
-        parent::init($reload);
-    }
+        parent::__construct($fileManager, $useCache);
 
-    /**
-     * @inheritdoc
-     */
-    public function getAllForFrontend($reload = false)
-    {
-        return parent::getAllForFrontend();
+        $this->moduleManager = $moduleManager;
     }
 
     /**
@@ -105,42 +90,60 @@ class Metadata extends Base
         return $path;
     }
 
+    /**
+     * @param bool $reload
+     */
+    protected function objInit($reload = false)
+    {
+        if (!$this->useCache) {
+            $reload = true;
+        }
+
+        if (file_exists($this->objCacheFile) && !$reload) {
+            $this->objData = $this->getFileManager()->getPhpContents($this->objCacheFile);
+        } else {
+            $this->objData = $this->addAdditionalFieldsObj($this->composeMetadata());
+
+            if ($this->useCache) {
+                $isSaved = $this->getFileManager()->putPhpContents($this->objCacheFile, $this->objData, true);
+                if ($isSaved === false) {
+                    $GLOBALS['log']->emergency('Metadata:objInit() - metadata has not been saved to a cache file');
+                }
+            }
+        }
+    }
 
     /**
-     * Get module config
+     * Compose metadata
      *
-     * @return Module
+     * @return \stdClass
      */
-    protected function getModuleConfig(): Module
+    private function composeMetadata()
     {
-        if (!isset($this->moduleConfig)) {
-            $this->moduleConfig = new Module($this->getFileManager(), $this->useCache);
+        // load espo
+        $content = $this->unify('application/Espo/Resources/metadata');
+
+        // load treo
+        $content = DataUtil::merge($content, $this->unify('application/Treo/Resources/metadata'));
+
+        // load modules
+        foreach ($this->moduleManager->getModules() as $module) {
+            $content = DataUtil::merge($content, $module->getMetadata());
         }
 
-        return $this->moduleConfig;
+        // load custom
+        $content = DataUtil::merge($content, $this->unify('custom/Espo/Custom/Resources/metadata'));
+
+        return $content;
     }
 
     /**
-     * @inheritdoc
+     * @param string $path
+     *
+     * @return \stdClass
      */
-    protected function getUnifier()
+    private function unify(string $path): \stdClass
     {
-        if (!isset($this->unifier)) {
-            $this->unifier = new Unifier($this->getFileManager(), $this, false);
-        }
-
-        return $this->unifier;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getObjUnifier()
-    {
-        if (!isset($this->objUnifier)) {
-            $this->objUnifier = new Unifier($this->getFileManager(), $this, true);
-        }
-
-        return $this->objUnifier;
+        return $this->getObjUnifier()->unify('metadata', ['corePath' => $path], true);
     }
 }

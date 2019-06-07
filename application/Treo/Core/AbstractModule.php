@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Utils\File\Unifier;
+
 /**
  * Class AbstractModule
  *
@@ -54,6 +56,11 @@ abstract class AbstractModule
     private $rootPath;
 
     /**
+     * @var Container
+     */
+    private $container;
+
+    /**
      * Get module load order
      *
      * @return int
@@ -63,11 +70,13 @@ abstract class AbstractModule
     /**
      * AbstractModule constructor.
      *
-     * @param string $rootPath
+     * @param string    $rootPath
+     * @param Container $container
      */
-    public function __construct(string $rootPath)
+    public function __construct(string $rootPath, Container $container)
     {
         $this->rootPath = $rootPath;
+        $this->container = $container;
     }
 
     /**
@@ -84,5 +93,33 @@ abstract class AbstractModule
         }
 
         return $result;
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return \stdClass
+     */
+    public function getMetadata()
+    {
+        return $this->getObjUnifier()->unify('metadata', ['corePath' => $this->rootPath . 'Resources/metadata'], true);
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * @return Unifier
+     */
+    protected function getObjUnifier(): Unifier
+    {
+        return new Unifier($this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'), true);
     }
 }

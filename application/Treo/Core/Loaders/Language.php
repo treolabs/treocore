@@ -37,7 +37,7 @@ namespace Treo\Core\Loaders;
 
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\Language as Instance;
+use Espo\Core\Utils\Language as Instance;
 use Espo\Entities\Preferences;
 use Espo\Core\Utils\File\Manager;
 
@@ -48,7 +48,6 @@ use Espo\Core\Utils\File\Manager;
  */
 class Language extends Base
 {
-
     /**
      * @inheritdoc
      */

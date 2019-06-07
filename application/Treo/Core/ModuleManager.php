@@ -106,20 +106,12 @@ class ModuleManager
                         // prepare root path
                         $rootPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
 
-                        $this->modules[$className] = new $className($rootPath);
+                        $this->modules[$className] = new $className($rootPath, $this->container);
                     }
                 }
             }
         }
 
         return $this->modules;
-    }
-
-    /**
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
     }
 }

@@ -94,12 +94,6 @@
         "name",
         "deleted"
       ]
-    },
-    "assignedUser": {
-      "columns": [
-        "assignedUserId",
-        "deleted"
-      ]
     }
   }
 }

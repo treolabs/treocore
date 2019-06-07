@@ -158,13 +158,11 @@ class Container extends \Espo\Core\Container
      */
     protected function loadMetadata()
     {
-        // create metadata
-        $metadata = new Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
+        return new Metadata(
+            $this->get('fileManager'),
+            $this->get('moduleManager'),
+            $this->get('config')->get('useCache')
+        );
     }
 
     /**
@@ -181,6 +179,14 @@ class Container extends \Espo\Core\Container
     protected function loadFileManager()
     {
         return parent::loadFileManager();
+    }
+
+    /**
+     * Load module manager
+     */
+    protected function loadModuleManager()
+    {
+        return new ModuleManager($this);
     }
 
     /**
