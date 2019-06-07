@@ -132,6 +132,8 @@ class Application extends \Espo\Core\Application
                     header('Content-Type: text/css');
                 } elseif (strpos($file, '.js') !== false) {
                     header('Content-Type: application/javascript');
+                } elseif (strpos($file, '.json') !== false) {
+                    header('Content-Type: application/json');
                 }
                 echo file_get_contents($path);
                 exit;
