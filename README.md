@@ -102,7 +102,7 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
    sudo chmod +x my-treocore-project/bin/cron.sh
    ```
 4. Configure crontab:
-   1. crontab shuld be configured for **www-data** user. You can do it by running:
+   1. crontab should be configured for **www-data** user. You can do it by running:
       ```
       sudo crontab -u www-data -e
       ```
