@@ -48,22 +48,6 @@ class AdminController extends AbstractListener
     /**
      * @param Event $event
      */
-    public function afterActionJobs(Event $event)
-    {
-        if (!empty($event->getArgument('result'))) {
-            $result = [];
-            foreach ($event->getArgument('result') as $item) {
-                if (!in_array($item, \Treo\Metadata\Metadata::$jobs)) {
-                    $result[] = $item;
-                }
-            }
-            $event->setArgument('result', $result);
-        }
-    }
-
-    /**
-     * @param Event $event
-     */
     public function afterActionAdminNotificationList(Event $event)
     {
         $event->setArgument('result', []);
