@@ -43,7 +43,7 @@ use Espo\Core\Utils\PasswordHash;
 use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Language;
+use Espo\Core\Utils\Language;
 use Treo\Core\EventManager\Event;
 
 /**

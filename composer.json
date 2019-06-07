@@ -48,7 +48,6 @@
     }
   },
   "scripts": {
-    "post-install-cmd": "Treo\\Composer\\Cmd::postInstall",
     "pre-update-cmd": "Treo\\Composer\\Cmd::preUpdate",
     "post-update-cmd": "Treo\\Composer\\Cmd::postUpdate"
   },

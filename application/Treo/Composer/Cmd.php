@@ -54,15 +54,6 @@ class Cmd
     }
 
     /**
-     * After install
-     */
-    public static function postInstall(): void
-    {
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-    }
-
-    /**
      * After update
      */
     public static function postUpdate(): void

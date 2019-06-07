@@ -53,15 +53,6 @@ class CmdTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test is postInstall method exists
-     */
-    public function testIsPostInstallExists()
-    {
-        // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cmd::class, []), 'postInstall'));
-    }
-
-    /**
      * Test is postUpdate method exists
      */
     public function testIsPostUpdateExists()
