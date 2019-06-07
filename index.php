@@ -58,16 +58,9 @@ if (!empty($id = PortalApp::getCallingPortalId())) {
     // create portal app
     $app = new PortalApp($id);
 } elseif (!empty($uri) && $uri != '/') {
-    // return client files form microservices
+    // print module client file
     if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
-        if (strpos($matches[1][0], '.css') !== false) {
-            header('Content-Type: text/css');
-        } elseif (strpos($matches[1][0], '.js') !== false) {
-            header('Content-Type: application/javascript');
-        }
-        // @todo finish it in the future
-//        echo file_get_contents(CORE_PATH . '/data/client/' . $matches[1][0]);
-//        exit;
+        $app->printModuleClientFile($matches[1][0]);
     }
 
     // if images path than call showImage

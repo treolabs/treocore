@@ -121,6 +121,29 @@ class Application extends \Espo\Core\Application
     }
 
     /**
+     * @param string $file
+     */
+    public function printModuleClientFile(string $file)
+    {
+        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
+            $path = $module->getClientPath() . $file;
+            if (file_exists($path)) {
+                if (strpos($file, '.css') !== false) {
+                    header('Content-Type: text/css');
+                } elseif (strpos($file, '.js') !== false) {
+                    header('Content-Type: application/javascript');
+                }
+                echo file_get_contents($path);
+                exit;
+            }
+        }
+
+        // show 404
+        header("HTTP/1.0 404 Not Found");
+        exit;
+    }
+
+    /**
      * @inheritdoc
      */
     public function runClearCache()

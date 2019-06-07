@@ -37,7 +37,10 @@
   },
   "autoload": {
     "psr-0": {
-      "": "application/",
+      "": [
+        "application/",
+        "modules/"
+      ],
       "Espo\\Custom": "custom/"
     },
     "psr-4": {
