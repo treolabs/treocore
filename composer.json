@@ -21,8 +21,7 @@
     "ext-xml": "*",
     "ext-curl": "*",
     "ext-exif": "*",
-    "wikimedia/composer-merge-plugin": "1.4.1",
-    "treolabs/espocore": "~1.7.1"
+    "wikimedia/composer-merge-plugin": "1.4.1"
   },
   "minimum-stability": "stable",
   "extra": {
