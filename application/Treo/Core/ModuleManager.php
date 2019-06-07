@@ -34,72 +34,71 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Utils;
-
-use Espo\Core\Utils\Route as Base;
-use Espo\Core\Utils\Config;
-use Espo\Core\Utils\Metadata;
-use Espo\Core\Utils\File\Manager as FileManager;
-use Treo\Core\ModuleManager;
+namespace Treo\Core;
 
 /**
- * Class Route
+ * Class ModuleManager
  *
- * @author r.ratsun r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Route extends Base
+class ModuleManager
 {
     /**
-     * @var ModuleManager
+     * @var Container
      */
-    private $moduleManager;
+    private $container;
 
     /**
-     * @inheritdoc
+     * @var array|null
      */
-    public function __construct(
-        Config $config,
-        Metadata $metadata,
-        FileManager $fileManager,
-        ModuleManager $moduleManager
-    ) {
-        // call parent
-        parent::__construct($config, $metadata, $fileManager);
+    private $modules = null;
 
-        $this->moduleManager = $moduleManager;
+    /**
+     * @var string
+     */
+    private $path = 'data/cache/modules.json';
+
+    /**
+     * ModuleManager constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
     }
 
     /**
-     * @inheritdoc
+     * Get modules
+     *
+     * @return array
      */
-    protected function unify()
+    public function getModules(): array
     {
-        // for custom
-        $data = $this->getAddData([], $this->paths['customPath']);
+        if (is_null($this->modules)) {
+            $this->modules = [];
 
-        // for module
-        $moduleData = [];
-        foreach ($this->getModuleManager()->getModules() as $module) {
-            foreach ($module->getRoutes() as $row) {
-                $moduleData[$row['method'] . $row['route']] = $row;
+            if (file_exists($this->path)) {
+                // parse file
+                $data = json_decode(file_get_contents($this->path), true);
+
+                foreach ($data as $className) {
+                    // prepare root path
+                    $rootPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
+
+                    $this->modules[$className] = new $className($rootPath);
+                }
             }
         }
-        $data = array_merge($data, array_values($moduleData));
 
-        // for treo core
-        $data = $this->getAddData($data, 'application/Treo/Resources/routes.json');
-
-        // for core
-        $data = $this->getAddData($data, $this->paths['corePath']);
-
-        return $data;
+        return $this->modules;
     }
 
     /**
-     * @return ModuleManager
+     * @return Container
      */
-    protected function getModuleManager(): ModuleManager
+    protected function getContainer(): Container
     {
-        return $this->moduleManager;
+        return $this->container;
     }
 }

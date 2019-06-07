@@ -42,7 +42,6 @@ use Espo\Core\Exceptions;
 use Espo\ORM\EntityCollection;
 use Slim\Http\Request;
 use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\Mover;
 
 /**
  * ModuleManager service

@@ -34,72 +34,24 @@
 
 declare(strict_types=1);
 
-namespace Treo\Composer;
+namespace Treo\Core\Loaders;
 
-use Treo\Core\Container;
+use Treo\Core\ModuleManager as Instance;
 
 /**
- * Class Cmd
+ * Class ModuleManager
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Cmd
+class ModuleManager extends Base
 {
     /**
-     * Before update
+     * Load ModuleManager
+     *
+     * @return Instance
      */
-    public static function preUpdate(): void
+    public function load()
     {
-        (new PreUpdate())->run();
-    }
-
-    /**
-     * After install
-     */
-    public static function postInstall(): void
-    {
-        // relocate files
-        self::relocateFiles();
-    }
-
-    /**
-     * After update
-     */
-    public static function postUpdate(): void
-    {
-        // relocate files
-        self::relocateFiles();
-
-        // copy default config
-        PostUpdate::copyDefaultConfig();
-
-        // save stable-composer.json file
-        PostUpdate::saveStableComposerJson();
-
-        (new PostUpdate())->setContainer(self::getContainer())->run();
-    }
-
-    /**
-     * @return Container
-     */
-    protected static function getContainer(): Container
-    {
-        include "bootstrap.php";
-
-        return (new \Treo\Core\Application())->getContainer();
-    }
-
-
-    /**
-     * Relocate files
-     */
-    protected static function relocateFiles(): void
-    {
-        if (!defined('CORE_PATH')) {
-            // define gloabal variables
-            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-            \Treo\Core\Utils\Mover::updateEspo();
-        }
+        return new Instance($this->getContainer());
     }
 }

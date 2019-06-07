@@ -170,7 +170,8 @@ class Application extends \Espo\Core\Application
         $routes = new \Treo\Core\Utils\Route(
             $this->getConfig(),
             $this->getMetadata(),
-            $this->getContainer()->get('fileManager')
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('moduleManager')
         );
 
         return $routes->getAll();

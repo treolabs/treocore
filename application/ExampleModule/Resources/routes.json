@@ -1,0 +1,10 @@
+[
+  {
+    "route": "/ExampleModule/foo",
+    "method": "get",
+    "params": {
+      "controller": "ExampleModule",
+      "action": "foo"
+    }
+  }
+]
