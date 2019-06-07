@@ -85,20 +85,20 @@ class PostUpdate
     public function run(): void
     {
         if ($this->isInstalled()) {
+            // logout all users
+            $this->logoutAll();
+
             // rebuild
             $this->rebuild();
 
-            // loggout all users
-            $this->logoutAll();
+            // init events
+            $this->initEvents();
 
             // run migrations
             $this->runMigrations();
 
             // drop cache
             $this->clearCache();
-
-            // init events
-            $this->initEvents();
         }
     }
 
