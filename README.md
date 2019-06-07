@@ -83,7 +83,7 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 * [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
 
 ### Installation
-Installation guide is based on linux mint OS, but you can use any unix-based system you want, just modify linux command for your OS.
+Installation guide is based on **linux mint OS**, but you can use any unix-based system you want, just modify linux command for your OS.
 To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed. 
 
 1. Create your new project by running:
