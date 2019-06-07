@@ -54,11 +54,6 @@ class ModuleManager
     private $modules = null;
 
     /**
-     * @var string
-     */
-    private $path = 'data/cache/modules.json';
-
-    /**
      * Prepare version
      *
      * @param string $version
@@ -92,12 +87,11 @@ class ModuleManager
 
             // parse data
             $data = [];
-            if (file_exists($this->path)) {
-                $data = json_decode(file_get_contents($this->path), true);
+            foreach (['data/modules.json', 'data/cache/modules.json'] as $path) {
+                if (file_exists($path)) {
+                    $data = array_merge($data, json_decode(file_get_contents($path), true));
+                }
             }
-
-            // @todo remove it
-            $data[] = "\\ExampleModule\\Module";
 
             // load modules
             if (!empty($data)) {

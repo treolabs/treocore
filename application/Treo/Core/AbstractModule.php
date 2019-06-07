@@ -85,7 +85,7 @@ abstract class AbstractModule
     public function getRoutes(): array
     {
         // prepare file
-        $file = $this->rootPath . 'Resources/routes.json';
+        $file = $this->getSrcPath() . 'Resources/routes.json';
 
         $result = [];
         if (file_exists($file)) {
@@ -102,7 +102,9 @@ abstract class AbstractModule
      */
     public function getMetadata()
     {
-        return $this->getObjUnifier()->unify('metadata', ['corePath' => $this->rootPath . 'Resources/metadata'], true);
+        return $this
+            ->getObjUnifier()
+            ->unify('metadata', ['corePath' => $this->getSrcPath() . 'Resources/metadata'], true);
     }
 
     /**
@@ -121,5 +123,15 @@ abstract class AbstractModule
     protected function getObjUnifier(): Unifier
     {
         return new Unifier($this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'), true);
+    }
+
+    /**
+     * Get src path
+     *
+     * @return string
+     */
+    protected function getSrcPath(): string
+    {
+        return $this->rootPath . 'src/';
     }
 }
