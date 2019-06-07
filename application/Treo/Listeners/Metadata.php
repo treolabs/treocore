@@ -34,26 +34,21 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Listeners;
 
-use Espo\Core\Loaders\Base;
-use Treo\Core\EventManager as Instance;
+use Treo\Core\EventManager\Event;
 
 /**
- * EventManager loader
+ * Class Metadata
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class EventManager extends Base
+class Metadata extends AbstractListener
 {
-
     /**
-     * Load EventManager
-     *
-     * @return Instance
+     * @param Event $event
      */
-    public function load()
+    public function modify(Event $event)
     {
-        return (new Instance())->setContainer($this->getContainer());
     }
 }

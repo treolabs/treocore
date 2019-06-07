@@ -41,6 +41,8 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\DataUtil;
 use Treo\Core\ModuleManager;
+use Treo\Core\EventManager\Manager as EventManager;
+use Treo\Core\EventManager\Event;
 
 /**
  * Metadata class
@@ -55,13 +57,42 @@ class Metadata extends Base
     private $moduleManager;
 
     /**
-     * @inheritdoc
+     * @var EventManager
      */
-    public function __construct(FileManager $fileManager, ModuleManager $moduleManager, bool $useCache)
-    {
+    private $eventManager;
+
+    /**
+     * Metadata constructor.
+     *
+     * @param FileManager   $fileManager
+     * @param ModuleManager $moduleManager
+     * @param EventManager  $eventManager
+     * @param bool          $useCache
+     */
+    public function __construct(
+        FileManager $fileManager,
+        ModuleManager $moduleManager,
+        EventManager $eventManager,
+        bool $useCache
+    ) {
         parent::__construct($fileManager, $useCache);
 
         $this->moduleManager = $moduleManager;
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function init($reload = false)
+    {
+        parent::init($reload);
+
+        // dispatch an event
+        $this->data = $this
+            ->getEventManager()
+            ->dispatch('Metadata', 'modify', new Event(['data' => $this->data]))
+            ->getArgument('data');
     }
 
     /**
@@ -145,5 +176,13 @@ class Metadata extends Base
     private function unify(string $path): \stdClass
     {
         return $this->getObjUnifier()->unify('metadata', ['corePath' => $path], true);
+    }
+
+    /**
+     * @return EventManager
+     */
+    private function getEventManager(): EventManager
+    {
+        return $this->eventManager;
     }
 }

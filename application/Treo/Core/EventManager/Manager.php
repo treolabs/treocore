@@ -34,17 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core;
+namespace Treo\Core\EventManager;
 
-use Treo\Core\EventManager\Event;
 use Treo\Listeners\AbstractListener;
 
 /**
- * EventManager class
+ * Manager class
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class EventManager
+class Manager
 {
     use \Treo\Traits\ContainerTrait;
 

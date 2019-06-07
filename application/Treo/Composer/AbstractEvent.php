@@ -39,7 +39,7 @@ namespace Treo\Composer;
 /**
  * Class AbstractEvent
  *
- * @author r.ratsun <r.ratsun@gmail.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 abstract class AbstractEvent
 {
