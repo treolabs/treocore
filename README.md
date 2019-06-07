@@ -74,7 +74,7 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 
 ### Requirements
 
-* Unix-based system. Linux mint recommend
+* Unix-based system. Linux Mint recommend
 * PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
@@ -83,7 +83,7 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 * [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
 
 ### Installation
-> Installation guide is based on **linux mint OS**. Of course, you can use any unix-based system, but make sure that your OS supported following commands.<br/>
+> Installation guide is based on **linux Mint OS**. Of course, you can use any unix-based system, but make sure that your OS supports the following commands.<br/>
 
 To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed.
 
@@ -110,10 +110,10 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
       ```
       * * * * * cd /var/www/my-treocore-project; ./bin/cron.sh process-treocore /usr/bin/php 
       ```
-      >**/var/www/my-treocore-project** - path to project root <br/>
-      >**process-treocore** - an unique id of process. You should use different process id if you have few TreoCore project in one server<br/>
+      >**/var/www/my-treocore-project** - path to the project root <br/>
+      >**process-treocore** - a unique id of process. You should use a different process id if you have several TreoCore projects in one server<br/>
       >**/usr/bin/php** - PHP7.1 or above
-5. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
+5. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
 
 ### License
 TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
