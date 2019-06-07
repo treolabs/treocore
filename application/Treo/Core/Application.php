@@ -128,12 +128,33 @@ class Application extends \Espo\Core\Application
         foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
             $path = $module->getClientPath() . $file;
             if (file_exists($path)) {
-                if (strpos($file, '.css') !== false) {
-                    header('Content-Type: text/css');
-                } elseif (strpos($file, '.js') !== false) {
-                    header('Content-Type: application/javascript');
-                } elseif (strpos($file, '.json') !== false) {
-                    header('Content-Type: application/json');
+                $parts = explode(".", $path);
+
+                switch (array_pop($parts)) {
+                    case 'css':
+                        header('Content-Type: text/css');
+                        break;
+                    case 'js':
+                        header('Content-Type: application/javascript');
+                        break;
+                    case 'json':
+                        header('Content-Type: application/json');
+                        break;
+                    case 'png':
+                        header('Content-Type: image/png');
+                        break;
+                    case 'jpeg':
+                        header('Content-Type: image/jpeg');
+                        break;
+                    case 'jpg':
+                        header('Content-Type: image/jpg');
+                        break;
+                    case 'gif':
+                        header('Content-Type: image/gif');
+                        break;
+                    case 'ico':
+                        header('Content-Type: image/vnd.microsoft.icon');
+                        break;
                 }
                 echo file_get_contents($path);
                 exit;
