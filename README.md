@@ -74,31 +74,44 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 
 ### Requirements
 
-* Unix-based system
+* Unix-based system. Linux mint recommend
 * PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
-See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
+### Configuration instructions based on your server
+* [Apache server configuration](docs/en/administration/apache-server-configuration.md)
+* [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
 
 ### Installation
+Installation guide is based on linux mint OS, but you can use any unix-based system you want, just modify linux command for your OS.
 To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed. 
 
 1. Create your new project by running:
    ```
    composer create-project treolabs/treocore my-treocore-project
    ```
-2. Make cron handler files executable:
+   **my-treocore-project** - project name
+   
+2. Change recursively the user and group ownership for project files. It is important for code generation mechanism
    ```
-   chmod +x bin/cron.sh 
+   sudo chown -R www-data:www-data my-treocore-project/
    ```
-3. Configure crontab:
+3. Make cron handler files executable:
+   ```
+   sudo chmod +x my-treocore-project/bin/cron.sh
+   ```
+4. Configure crontab. First, you should configure crontab for **www-data** user by running:
+   ```
+   sudo crontab -u www-data -e
+   ```
+   Than, just configure crontab:
    ```
    * * * * * cd /var/www/my-treocore-project; ./bin/cron.sh process-treocore /usr/bin/php 
    ```
    - **/var/www/my-treocore-project** - path to project root
    - **process-treocore** - an unique id of process. You should use different process id if you have few TreoCore project in one server
    - **/usr/bin/php** - PHP7.1 or above
-4. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
+5. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
 ### License
 TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
