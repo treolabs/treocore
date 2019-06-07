@@ -59,6 +59,18 @@ class ModuleManager
     private $path = 'data/cache/modules.json';
 
     /**
+     * Prepare version
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    public static function prepareVersion(string $version): string
+    {
+        return str_replace('v', '', $version);
+    }
+
+    /**
      * ModuleManager constructor.
      *
      * @param Container $container
@@ -78,15 +90,24 @@ class ModuleManager
         if (is_null($this->modules)) {
             $this->modules = [];
 
+            // parse data
+            $data = [];
             if (file_exists($this->path)) {
-                // parse file
                 $data = json_decode(file_get_contents($this->path), true);
+            }
 
+            // @todo remove it
+            $data[] = "\\ExampleModule\\Module";
+
+            // load modules
+            if (!empty($data)) {
                 foreach ($data as $className) {
-                    // prepare root path
-                    $rootPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
+                    if (property_exists($className, 'isTreoModule')) {
+                        // prepare root path
+                        $rootPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
 
-                    $this->modules[$className] = new $className($rootPath);
+                        $this->modules[$className] = new $className($rootPath);
+                    }
                 }
             }
         }

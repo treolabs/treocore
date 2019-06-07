@@ -36,25 +36,18 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Metadata as Base;
 use Espo\Core\Utils\Module;
 use Espo\Core\Utils\Util;
 use Treo\Core\Utils\File\Unifier;
-use Treo\Metadata\AbstractMetadata;
 
 /**
  * Metadata class
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Metadata extends \Espo\Core\Utils\Metadata
+class Metadata extends Base
 {
-
-    /**
-     * Traits
-     */
-    use \Treo\Traits\ContainerTrait;
-
     /**
      * @var Unifier
      */
@@ -66,176 +59,24 @@ class Metadata extends \Espo\Core\Utils\Metadata
     protected $objUnifier;
 
     /**
-     * @var object
-     */
-    protected $fileManager;
-
-    /**
      * @var Module
      */
     protected $moduleConfig = null;
 
     /**
-     * @var object
-     */
-    protected $metadataHelper;
-
-    /**
-     * @var array
-     */
-    protected $deletedData = [];
-
-    /**
-     * @var array
-     */
-    protected $changedData = [];
-
-    /**
-     * @var array|null
-     */
-    protected $composerLockData = null;
-
-    /**
-     * Prepare version
-     *
-     * @param string $version
-     *
-     * @return string
-     */
-    public static function prepareVersion(string $version): string
-    {
-        return str_replace('v', '', $version);
-    }
-
-    /**
-     * Get Module List
-     *
-     * @return array
-     */
-    public function getModuleList()
-    {
-        return $this->getContainer()->get('config')->getModules();
-    }
-
-    /**
-     * Get module config data
-     *
-     * @param string $module
-     *
-     * @return mixed
-     */
-    public function getModuleConfigData(string $module)
-    {
-        return $this->getModuleConfig()->get($module);
-    }
-
-    /**
-     * Get module data (from composer.lock)
-     *
-     * @param string $id
-     *
-     * @return array
-     */
-    public function getModule(string $id): array
-    {
-        // prepare result
-        $result = [];
-
-        if (is_null($this->composerLockData)) {
-            // load composer lock
-            $this->loadComposerLock();
-        }
-
-        if (!empty($packages = $this->composerLockData['packages'])) {
-            foreach ($packages as $package) {
-                if (!empty($package['extra']['treoId']) && $id == $package['extra']['treoId']) {
-                    // prepare version
-                    $package['version'] = self::prepareVersion($package['version']);
-
-                    // prepare result
-                    $result = $package;
-
-                    break;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Init metadata
-     *
-     * @param  boolean $reload
-     *
-     * @return void
+     * @inheritdoc
      */
     public function init($reload = false)
     {
-        // call parent init
         parent::init($reload);
-
-        // modify metadata by modules
-        $this->data = $this->modulesModification($this->data);
     }
 
     /**
-     * Get all metadata for frontend
-     *
-     * @param bool $reload
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getAllForFrontend($reload = false): array
+    public function getAllForFrontend($reload = false)
     {
-        $data = parent::getAllForFrontend();
-
-        $data = Json::decode(JSON::encode($data), true);
-
-        return $this->modulesModification($data);
-    }
-
-    /**
-     * Drop metadata cache
-     */
-    public function dropCache(): void
-    {
-        if (file_exists($this->cacheFile)) {
-            unlink($this->cacheFile);
-        }
-    }
-
-    /**
-     * Get additional field lists
-     *
-     * @param string $scope
-     * @param string $field
-     *
-     * @return array
-     */
-    public function getFieldList(string $scope, string $field): array
-    {
-        // prepare result
-        $result = [];
-
-        // get field data
-        $fieldData = $this->get("entityDefs.$scope.fields.$field");
-
-        if (!empty($fieldData)) {
-            // prepare result
-            $result[$field] = $fieldData;
-
-            $additionalFields = $this
-                ->getMetadataHelper()
-                ->getAdditionalFieldList($field, $fieldData, $this->get("fields"));
-
-            if (!empty($additionalFields)) {
-                // prepare result
-                $result = $result + $additionalFields;
-            }
-        }
-
-        return $result;
+        return parent::getAllForFrontend();
     }
 
     /**
@@ -264,59 +105,6 @@ class Metadata extends \Espo\Core\Utils\Metadata
         return $path;
     }
 
-    /**
-     * Modify metadata by modules
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function modulesModification(array $data): array
-    {
-        // prepare classes
-        $classes = [
-            'Treo\Metadata\Metadata'
-        ];
-
-        // parse modules
-        foreach ($this->getModuleList() as $module) {
-            $className = sprintf('Espo\Modules\%s\Metadata\Metadata', $module);
-            if (class_exists($className)) {
-                $classes[] = $className;
-            }
-        }
-
-        foreach ($classes as $className) {
-            $metadata = new $className();
-            if ($metadata instanceof AbstractMetadata) {
-                // set container
-                $metadata->setContainer($this->getContainer());
-
-                // modify data
-                $data = $metadata->modify($data);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Clear metadata variables when reload meta
-     *
-     * @return void
-     */
-    protected function clearVars()
-    {
-        // call parent
-        parent::clearVars();
-
-        // reload modules
-        $this->getContainer()->get('config')->getModules(true);
-
-        // clear module config
-        $this->moduleConfig = null;
-    }
-
 
     /**
      * Get module config
@@ -330,24 +118,6 @@ class Metadata extends \Espo\Core\Utils\Metadata
         }
 
         return $this->moduleConfig;
-    }
-
-
-    /**
-     * Load composer lock data
-     */
-    protected function loadComposerLock(): void
-    {
-        // prepare data
-        $this->composerLockData = [];
-
-        // prepare composerLock
-        $composerLock = 'composer.lock';
-
-        if (file_exists($composerLock)) {
-            // prepare data
-            $this->composerLockData = Json::decode(file_get_contents($composerLock), true);
-        }
     }
 
     /**

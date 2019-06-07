@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\Utils\Metadata;
+use Treo\Core\ModuleManager;
 
 /**
  * Class PostUpdate
@@ -149,8 +149,8 @@ class PostUpdate
                     ->getModule($row['id']);
 
                 // prepare data
-                $from = Metadata::prepareVersion($row['from']);
-                $to = Metadata::prepareVersion($package['version']);
+                $from = ModuleManager::prepareVersion($row['from']);
+                $to = ModuleManager::prepareVersion($package['version']);
 
                 // run migration
                 $this->getContainer()->get('migration')->run($row['id'], $from, $to);
