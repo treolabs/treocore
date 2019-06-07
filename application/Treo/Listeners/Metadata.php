@@ -50,5 +50,230 @@ class Metadata extends AbstractListener
      */
     public function modify(Event $event)
     {
+        // get data
+        $data = $event->getArgument('data');
+
+        // add owner
+        $data = $this->addOwner($data);
+
+        // delete activities
+        $data = $this->deleteActivities($data);
+
+        // delete tasks
+        $data = $this->deleteTasks($data);
+
+        // add onlyActive bool filter
+        $data = $this->addOnlyActiveFilter($data);
+
+        // set data
+        $event->setArgument('data', $data);
+    }
+
+    /**
+     * Add owner, assigned user, team if it needs
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function addOwner(array $data): array
+    {
+        foreach ($data['scopes'] as $scope => $row) {
+            // for owner user
+            if (!empty($row['hasOwner'])) {
+                if (empty($data['entityDefs'][$scope]['fields']['ownerUser'])) {
+                    $data['entityDefs'][$scope]['fields']['ownerUser'] = [
+                        "type"     => "link",
+                        "required" => true,
+                        "view"     => "views/fields/owner-user"
+                    ];
+                }
+                if (empty($data['entityDefs'][$scope]['links']['ownerUser'])) {
+                    $data['entityDefs'][$scope]['links']['ownerUser'] = [
+                        "type"   => "belongsTo",
+                        "entity" => "User"
+                    ];
+                }
+                if (empty($data['entityDefs'][$scope]['indexes']['ownerUser'])) {
+                    $data['entityDefs'][$scope]['indexes']['ownerUser'] = [
+                        "columns" => [
+                            "ownerUserId",
+                            "deleted"
+                        ]
+                    ];
+                }
+            }
+
+            // for assigned user
+            if (!empty($row['hasAssignedUser'])) {
+                if (empty($data['entityDefs'][$scope]['fields']['assignedUser'])) {
+                    $data['entityDefs'][$scope]['fields']['assignedUser'] = [
+                        "type"     => "link",
+                        "required" => true,
+                        "view"     => "views/fields/owner-user"
+                    ];
+                }
+                if (empty($data['entityDefs'][$scope]['links']['assignedUser'])) {
+                    $data['entityDefs'][$scope]['links']['assignedUser'] = [
+                        "type"   => "belongsTo",
+                        "entity" => "User"
+                    ];
+                }
+                if (empty($data['entityDefs'][$scope]['indexes']['assignedUser'])) {
+                    $data['entityDefs'][$scope]['indexes']['assignedUser'] = [
+                        "columns" => [
+                            "assignedUserId",
+                            "deleted"
+                        ]
+                    ];
+                }
+            }
+
+            // for teams
+            if (!empty($row['hasTeam'])) {
+                if (empty($data['entityDefs'][$scope]['fields']['teams'])) {
+                    $data['entityDefs'][$scope]['fields']['teams'] = [
+                        "type" => "linkMultiple",
+                        "view" => "views/fields/teams"
+                    ];
+                }
+                if (empty($data['entityDefs'][$scope]['links']['teams'])) {
+                    $data['entityDefs'][$scope]['links']['teams'] = [
+                        "type"                        => "hasMany",
+                        "entity"                      => "Team",
+                        "relationName"                => "EntityTeam",
+                        "layoutRelationshipsDisabled" => true
+                    ];
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Remove field from index
+     *
+     * @param array  $indexes
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    protected function removeFieldFromIndex(array $indexes, string $fieldName): array
+    {
+        foreach ($indexes as $indexName => $fields) {
+            // search field in index
+            $key = array_search($fieldName, $fields['columns']);
+            // remove field if exists
+            if ($key !== false) {
+                unset($indexes[$indexName]['columns'][$key]);
+            }
+        }
+
+        return $indexes;
+    }
+
+
+    /**
+     * Delete activities
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function deleteActivities(array $data): array
+    {
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (empty($data['scopes'][$entity]['hasActivities'])) {
+                // remove from entityList
+                $entityList = [];
+                if (!empty($data['entityDefs']['Meeting']['fields']['parent']['entityList'])) {
+                    foreach ($data['entityDefs']['Meeting']['fields']['parent']['entityList'] as $item) {
+                        if ($entity != $item) {
+                            $entityList[] = $item;
+                        }
+                    }
+                }
+                $data['entityDefs']['Meeting']['fields']['parent']['entityList'] = $entityList;
+
+                // delete from side panel
+                foreach (['detail', 'detailSmall'] as $panel) {
+                    if (!empty($data['clientDefs'][$entity]['sidePanels'][$panel])) {
+                        $sidePanelsData = [];
+                        foreach ($data['clientDefs'][$entity]['sidePanels'][$panel] as $k => $item) {
+                            if (!in_array($item['name'], ['activities', 'history'])) {
+                                $sidePanelsData[] = $item;
+                            }
+                        }
+                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                    }
+                }
+
+                // delete link
+                if (isset($data['entityDefs'][$entity]['links']['meetings'])
+                    && !in_array($entity, ['User'])) {
+                    unset($data['entityDefs'][$entity]['links']['meetings']);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Delete tasks
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function deleteTasks(array $data): array
+    {
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($data['scopes'][$entity]['hasTasks']) && $data['scopes'][$entity]['hasTasks'] === false) {
+                // remove from entityList
+                $entityList = [];
+                if (isset($data['entityDefs']['Task']['fields']['parent']['entityList'])) {
+                    foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
+                        if ($entity != $item) {
+                            $entityList[] = $item;
+                        }
+                    }
+                    $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
+                }
+
+                // remove from client defs
+                if (isset($data['clientDefs'][$entity]['sidePanels'])) {
+                    foreach ($data['clientDefs'][$entity]['sidePanels'] as $panel => $rows) {
+                        $sidePanelsData = [];
+                        foreach ($rows as $k => $row) {
+                            if ($row['name'] != 'tasks') {
+                                $sidePanelsData[] = $row;
+                            }
+                        }
+                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function addOnlyActiveFilter(array $data): array
+    {
+        foreach ($data['entityDefs'] as $entity => $row) {
+            if (isset($row['fields']['isActive']['type']) && $row['fields']['isActive']['type'] == 'bool') {
+                // push
+                $data['clientDefs'][$entity]['boolFilterList'][] = 'onlyActive';
+            }
+        }
+
+        return $data;
     }
 }
