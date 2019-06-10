@@ -136,10 +136,10 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
         }
 
         // load Modules
-        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-            if (!empty($data = $this->getDirServices("application/Espo/Modules/$module/Services"))) {
+        foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
+            if (!empty($data = $this->getDirServices($module->getAppPath() . "Services"))) {
                 foreach ($data as $name) {
-                    $this->services[$name] = "\\Espo\\Modules\\$module\\Services\\$name";
+                    $this->services[$name] = "\\" . $module->getName() . "\\Services\\$name";
                 }
             }
         }

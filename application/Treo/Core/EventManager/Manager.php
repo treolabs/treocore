@@ -102,24 +102,11 @@ class Manager
             $listeners = [];
 
             // for core
-            $dirPath = CORE_PATH . "/application/Treo/Listeners";
-            if (file_exists($dirPath) && is_dir($dirPath)) {
-                foreach (scandir($dirPath) as $file) {
-                    if (!in_array($file, ['.', '..'])) {
-                        // prepare name
-                        $name = str_replace(".php", "", $file);
-
-                        // push
-                        $listeners[$name][] = "\\Treo\\Listeners\\" . $name;
-                    }
-                }
-            }
+            $this->parseDir("Treo", CORE_PATH . "/application/Treo/Listeners", $listeners);
 
             // for modules
             foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
-                foreach ($module->getListeners() as $target => $className) {
-                    $listeners[$target][] = $className;
-                }
+                $this->parseDir($module->getName(), $module->getAppPath() . "Listeners", $listeners);
             }
 
             // create dir if it needs
@@ -134,5 +121,25 @@ class Manager
         $data = json_decode(file_get_contents($path), true);
 
         return (isset($data[$target])) ? $data[$target] : [];
+    }
+
+    /**
+     * @param string $id
+     * @param string $dirPath
+     * @param array  $listeners
+     */
+    private function parseDir(string $id, string $dirPath, array &$listeners): void
+    {
+        if (file_exists($dirPath) && is_dir($dirPath)) {
+            foreach (scandir($dirPath) as $file) {
+                if (!in_array($file, ['.', '..'])) {
+                    // prepare name
+                    $name = str_replace(".php", "", $file);
+
+                    // push
+                    $listeners[$name][] = "\\" . $id . "\\Listeners\\" . $name;
+                }
+            }
+        }
     }
 }

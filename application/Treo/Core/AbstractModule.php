@@ -145,31 +145,6 @@ abstract class AbstractModule
     }
 
     /**
-     * Get listeners
-     *
-     * @return array
-     */
-    public function getListeners(): array
-    {
-        // prepare result
-        $result = [];
-
-        $dirPath = $this->getAppPath() . "Listeners";
-        if (file_exists($dirPath) && is_dir($dirPath)) {
-            foreach (scandir($dirPath) as $file) {
-                if (!in_array($file, ['.', '..'])) {
-                    // prepare name
-                    $name = str_replace(".php", "", $file);
-
-                    $result[$name] = "\\" . $this->getName() . "\\Listeners\\" . $name;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get container
      *
      * @return Container
