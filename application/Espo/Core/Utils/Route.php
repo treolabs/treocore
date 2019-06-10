@@ -122,6 +122,16 @@ class Route
         // for custom
         $data = $this->getAddData([], $this->paths['customPath']);
 
+        // for module
+        $moduleData = [];
+        foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
+            $modulePath = str_replace('application/Espo/Modules/{*}', $moduleName, $this->paths['modulePath']);
+            foreach ($this->getAddData([], $modulePath) as $row) {
+                $moduleData[$row['method'].$row['route']] = $row;
+            }
+        }
+        $data = array_merge($data, array_values($moduleData));
+
         // for core
         $data = $this->getAddData($data, $this->paths['corePath']);
 

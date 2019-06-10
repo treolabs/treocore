@@ -451,6 +451,13 @@ class Converter
     {
         $customTables = $this->loadData($this->tablePaths['corePath']);
 
+        if (!empty($this->tablePaths['modulePath'])) {
+            foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
+                $modulePath = str_replace('application/Espo/Modules/{*}', $moduleName, $this->tablePaths['modulePath']);
+                $customTables = Util::merge($customTables, $this->loadData($modulePath));
+            }
+        }
+
         if (!empty($this->tablePaths['customPath'])) {
             $customTables = Util::merge($customTables, $this->loadData($this->tablePaths['customPath']));
         }

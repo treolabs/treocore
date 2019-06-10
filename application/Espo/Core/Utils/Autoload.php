@@ -107,6 +107,11 @@ class Autoload
     {
         $data = $this->loadData($this->paths['corePath']);
 
+        foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
+            $modulePath = str_replace('application/Espo/Modules/{*}', $moduleName, $this->paths['modulePath']);
+            $data = array_merge($data, $this->loadData($modulePath));
+        }
+
         $data = array_merge($data, $this->loadData($this->paths['customPath']));
 
         return $data;

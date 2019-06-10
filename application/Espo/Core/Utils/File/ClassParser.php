@@ -97,6 +97,14 @@ class ClassParser
         } else {
             $data = $this->getClassNameHash($paths['corePath']);
 
+            if (isset($paths['modulePath'])) {
+                foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
+                    $path = str_replace('application/Espo/Modules/{*}', $moduleName, $paths['modulePath']);
+
+                    $data = array_merge($data, $this->getClassNameHash($path));
+                }
+            }
+
             if (isset($paths['customPath'])) {
                 $data = array_merge($data, $this->getClassNameHash($paths['customPath']));
             }
