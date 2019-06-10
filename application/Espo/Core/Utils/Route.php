@@ -122,16 +122,6 @@ class Route
         // for custom
         $data = $this->getAddData([], $this->paths['customPath']);
 
-        // for module
-        $moduleData = [];
-        foreach ($this->getMetadata()->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            foreach ($this->getAddData([], $modulePath) as $row) {
-                $moduleData[$row['method'].$row['route']] = $row;
-            }
-        }
-        $data = array_merge($data, array_values($moduleData));
-
         // for core
         $data = $this->getAddData($data, $this->paths['corePath']);
 

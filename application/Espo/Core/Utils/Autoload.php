@@ -107,11 +107,6 @@ class Autoload
     {
         $data = $this->loadData($this->paths['corePath']);
 
-        foreach ($this->getMetadata()->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            $data = array_merge($data, $this->loadData($modulePath));
-        }
-
         $data = array_merge($data, $this->loadData($this->paths['customPath']));
 
         return $data;

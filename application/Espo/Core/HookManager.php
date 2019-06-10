@@ -87,9 +87,8 @@ class HookManager
 
         $data = $this->getHookData($this->paths['customPath']);
 
-        foreach ($metadata->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            $data = $this->getHookData($modulePath, $data);
+        foreach ($metadata->getModules() as $module) {
+            $data = $this->getHookData($module->getAppPath() . 'Hooks', $data);
         }
 
         $data = $this->getHookData($this->paths['corePath'], $data);

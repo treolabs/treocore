@@ -64,25 +64,6 @@ class FileUnifier
     {
         $data = $this->loadData($paths['corePath']);
 
-        if (!empty($paths['modulePath'])) {
-            $moduleDir = strstr($paths['modulePath'], '{*}', true);
-            $moduleList = isset($this->metadata) ? $this->getMetadata()->getModuleList() : $this->getFileManager()->getFileList($moduleDir, false, '', false);
-
-            foreach ($moduleList as $moduleName) {
-                $moduleFilePath = str_replace('{*}', $moduleName, $paths['modulePath']);
-
-                if ($isReturnModuleNames) {
-                    if (!isset($data[$moduleName])) {
-                        $data[$moduleName] = array();
-                    }
-                    $data[$moduleName] = Util::merge($data[$moduleName], $this->loadData($moduleFilePath));
-                    continue;
-                }
-
-                $data = Util::merge($data, $this->loadData($moduleFilePath));
-            }
-        }
-
         if (!empty($paths['customPath'])) {
             $data = Util::merge($data, $this->loadData($paths['customPath']));
         }

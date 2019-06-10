@@ -114,8 +114,8 @@ class EntityManager
         if (class_exists($controllerClassName)) {
             return true;
         } else {
-            foreach ($this->getMetadata()->getModuleList() as $moduleName) {
-                $controllerClassName = '\\Espo\\Modules\\' . $moduleName . '\\Controllers\\' . Util::normilizeClassName($name);
+            foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
+                $controllerClassName = '\\' . $moduleName . '\\Controllers\\' . Util::normilizeClassName($name);
                 if (class_exists($controllerClassName)) {
                     return true;
                 }

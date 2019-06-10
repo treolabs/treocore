@@ -35,16 +35,15 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\HookManager as Instance;
+use Espo\Core\HookManager as Instance;
 
 /**
  * HookManager loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class HookManager extends Base
 {
-
     /**
      * Load HookManager
      *

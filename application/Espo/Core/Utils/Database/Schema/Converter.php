@@ -451,16 +451,6 @@ class Converter
     {
         $customTables = $this->loadData($this->tablePaths['corePath']);
 
-        if (!empty($this->tablePaths['modulePath'])) {
-            $moduleDir = strstr($this->tablePaths['modulePath'], '{*}', true);
-            $moduleList = isset($this->metadata) ? $this->getMetadata()->getModuleList() : $this->getFileManager()->getFileList($moduleDir, false, '', false);
-
-            foreach ($moduleList as $moduleName) {
-                $modulePath = str_replace('{*}', $moduleName, $this->tablePaths['modulePath']);
-                $customTables = Util::merge($customTables, $this->loadData($modulePath));
-            }
-        }
-
         if (!empty($this->tablePaths['customPath'])) {
             $customTables = Util::merge($customTables, $this->loadData($this->tablePaths['customPath']));
         }

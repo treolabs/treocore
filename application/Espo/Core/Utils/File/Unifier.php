@@ -73,22 +73,6 @@ class Unifier
     {
         $content = $this->unifySingle($paths['corePath'], $name, $recursively);
 
-        if (!empty($paths['modulePath'])) {
-            $customDir = strstr($paths['modulePath'], '{*}', true);
-
-            $moduleList = isset($this->metadata) ? $this->getMetadata()->getModuleList() : $this->getFileManager()->getFileList($customDir, false, '', false);
-
-            foreach ($moduleList as $moduleName) {
-                $curPath = str_replace('{*}', $moduleName, $paths['modulePath']);
-
-                if ($this->useObjects) {
-                    $content = Utils\DataUtil::merge($content, $this->unifySingle($curPath, $name, $recursively, $moduleName));
-                } else {
-                    $content = Utils\Util::merge($content, $this->unifySingle($curPath, $name, $recursively, $moduleName));
-                }
-            }
-        }
-
         if (!empty($paths['customPath'])) {
             if ($this->useObjects) {
                 $content = Utils\DataUtil::merge($content, $this->unifySingle($paths['customPath'], $name, $recursively));

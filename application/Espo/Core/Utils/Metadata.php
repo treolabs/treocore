@@ -61,8 +61,6 @@ class Metadata
         'customPath' => 'custom/Espo/Custom/Resources/metadata',
     );
 
-    private $moduleList = null;
-
     protected $frontendHiddenPathList = [
         ['app', 'formula', 'functionClassNameMap'],
         ['app', 'fileStorage', 'implementationClassNameMap'],
@@ -565,43 +563,6 @@ class Metadata
     }
 
     /**
-     * Load modules
-     *
-     * @return void
-     */
-    protected function loadModuleList()
-    {
-        $modules = $this->getFileManager()->getFileList($this->pathToModules, false, '', false);
-
-        $modulesToSort = array();
-        if (is_array($modules)) {
-            foreach ($modules as $moduleName) {
-                if (!empty($moduleName) && !isset($modulesToSort[$moduleName])) {
-                    $modulesToSort[$moduleName] = $this->getModuleConfig()->get($moduleName . '.order', $this->defaultModuleOrder);
-                }
-            }
-        }
-
-        array_multisort(array_values($modulesToSort), SORT_ASC, array_keys($modulesToSort), SORT_ASC, $modulesToSort);
-
-        $this->moduleList = array_keys($modulesToSort);
-    }
-
-    /**
-     * Get Module List
-     *
-     * @return array
-     */
-    public function getModuleList()
-    {
-        if (!isset($this->moduleList)) {
-            $this->loadModuleList();
-        }
-
-        return $this->moduleList;
-    }
-
-    /**
      * Get module name if it's a custom module or empty string for core entity
      *
      * @param string $scopeName
@@ -642,6 +603,5 @@ class Metadata
     protected function clearVars()
     {
         $this->data = null;
-        $this->moduleList = null;
     }
 }
