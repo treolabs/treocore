@@ -84,21 +84,42 @@ class PostUpdate
      */
     public static function updateModulesList(): void
     {
-        // compose installed modules
-        $modules = [];
-        foreach (self::getComposerLockTreoPackages("composer.lock") as $row) {
-            // prepare module name
-            $moduleName = $row['extra']['treoId'];
+        file_put_contents('data/modules.json', json_encode(self::getModules()));
+    }
 
+    /**
+     * Copy module event class
+     */
+    public static function copyModuleEvent(): void
+    {
+        foreach (self::getModules() as $module) {
             // prepare class name
-            $className = "\\$moduleName\\Module";
+            $className = "\\" . $module . "\\Event";
 
-            $modules[$moduleName] = $className::getLoadOrder();
+            if (class_exists($className)) {
+                // get src
+                $src = (new \ReflectionClass($className))->getFileName();
+
+                // prepare dest
+                $dest = "data/module-manager-events/{$module}";
+
+                // create dir
+                if (!file_exists($dest)) {
+                    mkdir($dest, 0777, true);
+                }
+
+                // prepare dest
+                $dest .= "/Event.php";
+
+                // delete old
+                if (file_exists($dest)) {
+                    unlink($dest);
+                }
+
+                // copy
+                copy($src, $dest);
+            }
         }
-        asort($modules);
-
-        // save modules
-        file_put_contents('data/modules.json', json_encode(array_keys($modules)));
     }
 
     /**
@@ -329,5 +350,27 @@ class PostUpdate
         }
 
         return $result;
+    }
+
+    /**
+     * Get installed modules
+     *
+     * @return array
+     */
+    private static function getModules(): array
+    {
+        $modules = [];
+        foreach (self::getComposerLockTreoPackages("composer.lock") as $row) {
+            // prepare module name
+            $moduleName = $row['extra']['treoId'];
+
+            // prepare class name
+            $className = "\\$moduleName\\Module";
+
+            $modules[$moduleName] = $className::getLoadOrder();
+        }
+        asort($modules);
+
+        return array_keys($modules);
     }
 }
