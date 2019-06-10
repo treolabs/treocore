@@ -102,7 +102,7 @@ class ModuleManager
                         // prepare app path
                         $appPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
 
-                        $this->modules[$module] = new $className($appPath, $this->container);
+                        $this->modules[$module] = new $className($module, $appPath, $this->container);
                     }
                 }
             }

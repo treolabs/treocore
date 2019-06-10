@@ -53,6 +53,11 @@ abstract class AbstractModule
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var string
+     */
     private $appPath;
 
     /**
@@ -70,11 +75,13 @@ abstract class AbstractModule
     /**
      * AbstractModule constructor.
      *
+     * @param string    $name
      * @param string    $appPath
      * @param Container $container
      */
-    public function __construct(string $appPath, Container $container)
+    public function __construct(string $name, string $appPath, Container $container)
     {
+        $this->name = $name;
         $this->appPath = $appPath;
         $this->container = $container;
     }
@@ -106,6 +113,16 @@ abstract class AbstractModule
     }
 
     /**
+     * Get module name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * Get client path
      *
      * @return string
@@ -125,6 +142,31 @@ abstract class AbstractModule
         return $this
             ->getObjUnifier()
             ->unify('metadata', ['corePath' => $this->getAppPath() . 'Resources/metadata'], true);
+    }
+
+    /**
+     * Get listeners
+     *
+     * @return array
+     */
+    public function getListeners(): array
+    {
+        // prepare result
+        $result = [];
+
+        $dirPath = $this->getAppPath() . "Listeners";
+        if (file_exists($dirPath) && is_dir($dirPath)) {
+            foreach (scandir($dirPath) as $file) {
+                if (!in_array($file, ['.', '..'])) {
+                    // prepare name
+                    $name = str_replace(".php", "", $file);
+
+                    $result[$name] = "\\" . $this->getName() . "\\Listeners\\" . $name;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

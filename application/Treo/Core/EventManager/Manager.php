@@ -98,26 +98,27 @@ class Manager
         $path = "data/cache/listeners.json";
 
         if (!file_exists($path)) {
-            $dirs = ["Treo/Listeners"];
-            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-                $dirs[] = "Espo/Modules/$module/Listeners";
+            // prepare listeners
+            $listeners = [];
+
+            // for core
+            $dirPath = CORE_PATH . "/application/Treo/Listeners";
+            if (file_exists($dirPath) && is_dir($dirPath)) {
+                foreach (scandir($dirPath) as $file) {
+                    if (!in_array($file, ['.', '..'])) {
+                        // prepare name
+                        $name = str_replace(".php", "", $file);
+
+                        // push
+                        $listeners[$name][] = "\\Treo\\Listeners\\" . $name;
+                    }
+                }
             }
 
-            $listeners = [];
-            foreach ($dirs as $dir) {
-                $dirPath = CORE_PATH . "/application/" . $dir;
-                if (file_exists($dirPath) && is_dir($dirPath)) {
-                    foreach (scandir($dirPath) as $file) {
-                        if (!in_array($file, ['.', '..'])) {
-                            // prepare name
-                            $name = str_replace(".php", "", $file);
-                            // prepare class name
-                            $className = "\\" . str_replace("/", "\\", $dir) . "\\" . $name;
-                            if (class_exists($className)) {
-                                $listeners[$name][] = $className;
-                            }
-                        }
-                    }
+            // for modules
+            foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
+                foreach ($module->getListeners() as $target => $className) {
+                    $listeners[$target][] = $className;
                 }
             }
 
