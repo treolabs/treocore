@@ -90,7 +90,7 @@ class Migration
             foreach ($data as $k => $className) {
                 if ($k >= $keyFrom && $keyTo >= $k && $from != $className && in_array($className, $migrations)) {
                     // prepare class name
-                    $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
+                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
 
                     $class = new $className();
                     if ($class instanceof AbstractMigration) {
@@ -104,7 +104,7 @@ class Migration
             foreach (array_reverse($data, true) as $k => $className) {
                 if ($k >= $keyTo && $keyFrom >= $k && $to != $className && in_array($className, $migrations)) {
                     // prepare class name
-                    $className = sprintf('Treo\Migrations\%s\%s', $module, $className);
+                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
 
                     $class = new $className();
                     if ($class instanceof AbstractMigration) {

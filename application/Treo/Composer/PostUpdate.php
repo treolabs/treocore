@@ -266,7 +266,7 @@ class PostUpdate
     protected function callEvent(string $module, string $action): void
     {
         // prepare class name
-        $className = '\\Treo\\ModuleManagerEvents\\%s\\Event';
+        $className = '\\%s\\Event';
 
         $class = sprintf($className, $module);
         if (class_exists($class)) {
