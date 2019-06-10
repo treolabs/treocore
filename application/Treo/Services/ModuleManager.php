@@ -591,7 +591,7 @@ class ModuleManager extends \Treo\Services\AbstractService
         return $this
             ->getEntityManager()
             ->getRepository('TreoStore')
-            ->where(['id' => $this->getMetadata()->getModuleList()])
+            ->where(['id' => array_keys($this->getMetadata()->getModules())])
             ->find();
     }
 }

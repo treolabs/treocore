@@ -122,6 +122,32 @@ class Metadata extends Base
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getScopePath($scopeName, $delim = '/')
+    {
+        $moduleName = $this->getScopeModuleName($scopeName);
+
+        $path = ($moduleName !== false) ? $moduleName : 'Espo';
+
+        if ($delim != '/') {
+            $path = str_replace('/', $delim, $path);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Get modules
+     *
+     * @return array
+     */
+    public function getModules(): array
+    {
+        return $this->moduleManager->getModules();
+    }
+
+    /**
      * @param bool $reload
      */
     protected function objInit($reload = false)
@@ -158,7 +184,7 @@ class Metadata extends Base
         $content = DataUtil::merge($content, $this->unify('application/Treo/Resources/metadata'));
 
         // load modules
-        foreach ($this->moduleManager->getModules() as $module) {
+        foreach ($this->getModules() as $module) {
             $content = DataUtil::merge($content, $module->getMetadata());
         }
 

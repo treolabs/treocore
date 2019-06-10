@@ -110,4 +110,22 @@ class ModuleManager
 
         return $this->modules;
     }
+
+    /**
+     * Get module
+     *
+     * @param string $id
+     *
+     * @return AbstractModule|null
+     */
+    public function getModule(string $id): ?AbstractModule
+    {
+        foreach ($this->getModules() as $name => $module) {
+            if ($name == $id) {
+                return $module;
+            }
+        }
+
+        return null;
+    }
 }

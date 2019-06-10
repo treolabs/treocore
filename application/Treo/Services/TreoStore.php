@@ -174,7 +174,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
         // find
         $data = $this
             ->getRepository()
-            ->where(['id' => $this->getInjection('metadata')->getModuleList()])
+            ->where(['id' => array_keys($this->getInjection('metadata')->getModules())])
             ->find();
 
         if (count($data) > 0) {

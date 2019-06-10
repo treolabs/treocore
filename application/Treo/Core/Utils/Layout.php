@@ -99,9 +99,9 @@ class Layout extends \Espo\Core\Utils\Layout
 
         // from modules data
         if (empty($data)) {
-            foreach ($this->getMetadata()->getModuleList() as $module) {
+            foreach ($this->getMetadata()->getModules() as $module) {
                 // prepare file path
-                $filePath = $this->concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
+                $filePath = $this->concatPath($module->getAppPath() . 'Resources/layouts', $scope);
                 $fileFullPath = $this->concatPath($filePath, $name . '.json');
                 if (file_exists($fileFullPath)) {
                     // get file data
@@ -226,8 +226,8 @@ class Layout extends \Espo\Core\Utils\Layout
         $classes = [
             "Treo\\Layouts\\$scope"
         ];
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Layouts\\$scope";
+        foreach ($this->getMetadata()->getModules() as $id => $module) {
+            $classes[] = "\\$id\\Layouts\\$scope";
         }
 
         // modify data

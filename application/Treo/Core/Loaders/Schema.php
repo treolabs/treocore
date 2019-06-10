@@ -39,7 +39,7 @@ use Treo\Core\Utils\Database\Schema\Converter;
 use Treo\Core\Utils\Database\Schema\Schema as Instance;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\File\ClassParser;
+use Espo\Core\Utils\File\ClassParser;
 use Espo\Core\Utils\File\Manager;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Metadata\OrmMetadata;
