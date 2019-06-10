@@ -95,12 +95,14 @@ class ModuleManager
 
             // load modules
             if (!empty($data)) {
-                foreach ($data as $className) {
+                foreach ($data as $module) {
+                    // prepare class name
+                    $className = "\\$module\\Module";
                     if (property_exists($className, 'isTreoModule')) {
-                        // prepare root path
-                        $rootPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
+                        // prepare app path
+                        $appPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
 
-                        $this->modules[$className] = new $className($rootPath, $this->container);
+                        $this->modules[$module] = new $className($appPath, $this->container);
                     }
                 }
             }

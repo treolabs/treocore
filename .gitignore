@@ -9,3 +9,4 @@
 !/data/migrations/TreoCore/*
 /vendor/
 /composer.lock
+/modules/
