@@ -54,13 +54,10 @@
     "psr-0": {
       "": [
         "application/",
-        "modules/"
+        "data/migrations/",
+        "data/module-manager-events/"
       ],
       "Espo\\Custom": "custom/"
-    },
-    "psr-4": {
-      "Treo\\Migrations\\": "data/migrations/",
-      "Treo\\ModuleManagerEvents\\": "data/module-manager-events/"
     }
   },
   "scripts": {
