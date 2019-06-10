@@ -34,24 +34,25 @@
 
 declare(strict_types=1);
 
-namespace Treo\Migrations\TreoCore;
+namespace Treo\Migrations;
 
 use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Migration class for version 3.18.0
+ * Migration class for version 3.13.4
  *
- * @author r.ratsun@treolabs.com
+ * @author r.zablodskiy@treolabs.com
  */
-class V3Dot18Dot0 extends AbstractMigration
+class V3Dot13Dot4 extends AbstractMigration
 {
     /**
      * @inheritdoc
      */
     public function up(): void
     {
-        if (file_exists('data/cli-php.txt')) {
-            unlink('data/cli-php.txt');
-        }
+        $defaultMeasure = $this->getConfig()->getDefaults()['unitsOfMeasure'];
+
+        $this->getConfig()->set('unitsOfMeasure', $defaultMeasure);
+        $this->getConfig()->save();
     }
 }

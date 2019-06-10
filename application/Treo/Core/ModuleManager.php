@@ -85,12 +85,13 @@ class ModuleManager
         if (is_null($this->modules)) {
             $this->modules = [];
 
+            // prepare path
+            $path = 'data/modules.json';
+
             // parse data
             $data = [];
-            foreach (['data/modules.json', 'data/cache/modules.json'] as $path) {
-                if (file_exists($path)) {
-                    $data = array_merge($data, json_decode(file_get_contents($path), true));
-                }
+            if (file_exists($path)) {
+                $data = array_merge($data, json_decode(file_get_contents($path), true));
             }
 
             // load modules

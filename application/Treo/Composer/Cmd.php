@@ -67,6 +67,9 @@ class Cmd
         // save stable-composer.json file
         PostUpdate::saveStableComposerJson();
 
+        // update modules list
+        PostUpdate::updateModulesList();
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 

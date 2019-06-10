@@ -80,6 +80,28 @@ class PostUpdate
     }
 
     /**
+     * Update modules list
+     */
+    public static function updateModulesList(): void
+    {
+        // compose installed modules
+        $modules = [];
+        foreach (self::getComposerLockTreoPackages("composer.lock") as $row) {
+            // prepare module name
+            $moduleName = $row['extra']['treoId'];
+
+            // prepare class name
+            $className = "\\$moduleName\\Module";
+
+            $modules[$moduleName] = $className::getLoadOrder();
+        }
+        asort($modules);
+
+        // save modules
+        file_put_contents('data/modules.json', json_encode(array_keys($modules)));
+    }
+
+    /**
      * Run
      */
     public function run(): void
@@ -173,8 +195,8 @@ class PostUpdate
         ];
 
         // prepare data
-        $oldData = $this->getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = $this->getComposerLockTreoPackages("composer.lock");
+        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
+        $newData = self::getComposerLockTreoPackages("composer.lock");
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
@@ -209,7 +231,7 @@ class PostUpdate
      *
      * @return array
      */
-    protected function getComposerLockTreoPackages(string $path): array
+    protected static function getComposerLockTreoPackages(string $path): array
     {
         // prepare result
         $result = [];

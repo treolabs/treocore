@@ -6,7 +6,7 @@
 !/custom/.htaccess
 /data/*
 !/data/.htaccess
-!/data/migrations/TreoCore/*
+!/data/migrations/Treo/*
 /vendor/
 /composer.lock
 /modules/
