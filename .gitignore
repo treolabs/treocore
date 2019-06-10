@@ -2,11 +2,11 @@
 /nb_metadata
 
 /apidocs/index.html
-/custom/*
-!/custom/.htaccess
-/data/*
-!/data/.htaccess
-!/data/migrations/Treo/*
-/vendor/
 /composer.lock
+/custom/
+!/custom/.htaccess
+/data/
+!/data/.htaccess
+!/data/migrations/
 /modules/
+/vendor/
