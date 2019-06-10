@@ -34,23 +34,23 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core;
+namespace Treo\Core\EventManager;
 
 use Treo\PHPUnit\Framework\TestCase;
 
 /**
- * Class EventManagerTest
+ * Class ManagerTest
  *
  * @author r.zablodskiy@zinitsolutions.com
  */
-class EventManagerTest extends TestCase
+class ManagerTest extends TestCase
 {
     /**
      * Test is dispatch method exists
      */
     public function testIsDispatchExists()
     {
-        $service = $this->createMockService(EventManager::class);
+        $service = $this->createMockService(Manager::class);
 
         // test
         $this->assertTrue(method_exists($service, 'dispatch'));

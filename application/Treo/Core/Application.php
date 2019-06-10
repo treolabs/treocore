@@ -36,15 +36,16 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Application as Base;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
 
 /**
  * Class Application
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Application extends \Espo\Core\Application
+class Application extends Base
 {
     /**
      * Is PHP version valid ?
@@ -164,30 +165,6 @@ class Application extends \Espo\Core\Application
         // show 404
         header("HTTP/1.0 404 Not Found");
         exit;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function runClearCache()
-    {
-        // blocked parent method
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function runRebuild()
-    {
-        // blocked parent method
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function runCron()
-    {
-        // blocked parent method
     }
 
     /**

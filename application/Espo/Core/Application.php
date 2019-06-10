@@ -137,32 +137,6 @@ class Application
         }
     }
 
-    public function runCron()
-    {
-        if ($this->getConfig()->get('cronDisabled')) {
-            $GLOBALS['log']->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
-            return;
-        }
-
-        $auth = $this->createAuth();
-        $auth->useNoAuth();
-
-        $cronManager = new \Espo\Core\CronManager($this->container);
-        $cronManager->run();
-    }
-
-    public function runRebuild()
-    {
-        $dataManager = $this->getContainer()->get('dataManager');
-        $dataManager->rebuild();
-    }
-
-    public function runClearCache()
-    {
-        $dataManager = $this->getContainer()->get('dataManager');
-        $dataManager->clearCache();
-    }
-
     public function isInstalled()
     {
         $config = $this->getConfig();
