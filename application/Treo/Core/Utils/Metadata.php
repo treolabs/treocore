@@ -84,20 +84,6 @@ class Metadata extends Base
     /**
      * @inheritdoc
      */
-    public function init($reload = false)
-    {
-        parent::init($reload);
-
-        // dispatch an event
-        $this->data = $this
-            ->getEventManager()
-            ->dispatch('Metadata', 'modify', new Event(['data' => $this->data]))
-            ->getArgument('data');
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getEntityPath($entityName, $delim = '\\')
     {
         $path = implode($delim, ['Treo', 'Entities', Util::normilizeClassName(ucfirst($entityName))]);
@@ -168,6 +154,12 @@ class Metadata extends Base
                 }
             }
         }
+
+        // dispatch an event
+        $this->objData = (object)$this
+            ->getEventManager()
+            ->dispatch('Metadata', 'modify', new Event(['data' => json_decode(json_encode($this->objData), true)]))
+            ->getArgument('data');
     }
 
     /**
