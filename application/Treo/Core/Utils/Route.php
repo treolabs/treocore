@@ -78,13 +78,9 @@ class Route extends Base
         $data = $this->getAddData([], $this->paths['customPath']);
 
         // for module
-        $moduleData = [];
         foreach ($this->getModuleManager()->getModules() as $module) {
-            foreach ($module->getRoutes() as $row) {
-                $moduleData[$row['method'] . $row['route']] = $row;
-            }
+            $data = $this->getAddData($data, $module->getAppPath() . 'Resources/routes.json');
         }
-        $data = array_merge($data, array_values($moduleData));
 
         // for treo core
         $data = $this->getAddData($data, 'application/Treo/Resources/routes.json');

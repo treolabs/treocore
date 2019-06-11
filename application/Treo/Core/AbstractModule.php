@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Utils\File\Unifier;
-
 /**
  * Class AbstractModule
  *
@@ -87,19 +85,13 @@ abstract class AbstractModule
     }
 
     /**
-     * @return array
+     * Get module name
+     *
+     * @return string
      */
-    public function getRoutes(): array
+    public function getName(): string
     {
-        // prepare file
-        $file = $this->getAppPath() . 'Resources/routes.json';
-
-        $result = [];
-        if (file_exists($file)) {
-            $result = json_decode(file_get_contents($file), true);
-        }
-
-        return $result;
+        return $this->name;
     }
 
     /**
@@ -113,16 +105,6 @@ abstract class AbstractModule
     }
 
     /**
-     * Get module name
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
      * Get client path
      *
      * @return string
@@ -133,16 +115,6 @@ abstract class AbstractModule
     }
 
     /**
-     * Get metadata
-     *
-     * @return \stdClass
-     */
-    public function getMetadata()
-    {
-        return $this->getObjUnifier()->unify('metadata', $this->getAppPath() . 'Resources/metadata', true);
-    }
-
-    /**
      * Get container
      *
      * @return Container
@@ -150,13 +122,5 @@ abstract class AbstractModule
     protected function getContainer(): Container
     {
         return $this->container;
-    }
-
-    /**
-     * @return Unifier
-     */
-    protected function getObjUnifier(): Unifier
-    {
-        return new Unifier($this->getContainer()->get('fileManager'), $this->getContainer()->get('metadata'), true);
     }
 }

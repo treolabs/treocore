@@ -185,7 +185,7 @@ class Metadata extends Base
 
         // load modules
         foreach ($this->getModules() as $module) {
-            $content = DataUtil::merge($content, $module->getMetadata());
+            $content = DataUtil::merge($content, $this->unify($module->getAppPath() . 'Resources/metadata'));
         }
 
         // load custom
