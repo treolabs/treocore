@@ -59,11 +59,6 @@ abstract class AbstractModule
     private $appPath;
 
     /**
-     * @var Container
-     */
-    private $container;
-
-    /**
      * Get module load order
      *
      * @return int
@@ -75,13 +70,11 @@ abstract class AbstractModule
      *
      * @param string    $name
      * @param string    $appPath
-     * @param Container $container
      */
-    public function __construct(string $name, string $appPath, Container $container)
+    public function __construct(string $name, string $appPath)
     {
         $this->name = $name;
         $this->appPath = $appPath;
-        $this->container = $container;
     }
 
     /**
@@ -112,15 +105,5 @@ abstract class AbstractModule
     public function getClientPath(): string
     {
         return dirname($this->getAppPath()) . '/client/';
-    }
-
-    /**
-     * Get container
-     *
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
     }
 }
