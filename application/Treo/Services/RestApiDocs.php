@@ -169,7 +169,7 @@ class RestApiDocs extends Base
         if (!class_exists($controllerClassName)) {
             $moduleName = $this->getMetadata()->getScopeModuleName($controller);
             if ($moduleName) {
-                $controllerClassName = '\\Espo\\Modules\\' . $moduleName . '\\Controllers\\' .
+                $controllerClassName = '\\' . $moduleName . '\\Controllers\\' .
                     Util::normilizeClassName($controller);
             }
         }

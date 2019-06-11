@@ -1013,7 +1013,7 @@ class EntityManager
         if (!empty($templateDefs['module'])) {
             $templateModuleName = $templateDefs['module'];
             $normalizedTemplateModuleName = Util::normilizeClassName($templateModuleName);
-            $className = '\\Espo\\Modules\\'.$normalizedTemplateModuleName.'\\Core\\Utils\\EntityManager\\Hooks\\' . $type . 'Type';
+            $className = '\\'.$normalizedTemplateModuleName.'\\Core\\Utils\\EntityManager\\Hooks\\' . $type . 'Type';
         }
 
 

@@ -41,9 +41,9 @@ class AclManager
 
     private $metadata;
 
-    private $implementationHashMap = array();
+    protected $implementationHashMap = array();
 
-    private $tableHashMap = array();
+    protected $tableHashMap = array();
 
     protected $tableClassName = '\\Espo\\Core\\Acl\\Table';
 

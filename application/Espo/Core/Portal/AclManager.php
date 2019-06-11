@@ -52,7 +52,7 @@ class AclManager extends \Espo\Core\AclManager
             if (!class_exists($className)) {
                 $moduleName = $this->getMetadata()->getScopeModuleName($scope);
                 if ($moduleName) {
-                    $className = '\\Espo\\Modules\\' . $moduleName . '\\AclPortal\\' . $normalizedName;
+                    $className = '\\' . $moduleName . '\\AclPortal\\' . $normalizedName;
                 } else {
                     $className = '\\Espo\\AclPortal\\' . $normalizedName;
                 }
