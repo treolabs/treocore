@@ -139,9 +139,7 @@ abstract class AbstractModule
      */
     public function getMetadata()
     {
-        return $this
-            ->getObjUnifier()
-            ->unify('metadata', ['corePath' => $this->getAppPath() . 'Resources/metadata'], true);
+        return $this->getObjUnifier()->unify('metadata', $this->getAppPath() . 'Resources/metadata', true);
     }
 
     /**
