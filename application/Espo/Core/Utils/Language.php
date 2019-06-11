@@ -45,7 +45,7 @@ class Language
      *
      * @var array
      */
-    private $data = array();
+    protected $data = array();
 
     private $deletedData = array();
 

@@ -201,7 +201,7 @@ class Metadata extends Base
      */
     private function unify(string $path): \stdClass
     {
-        return $this->getObjUnifier()->unify('metadata', ['corePath' => $path], true);
+        return $this->getObjUnifier()->unify('metadata', $path, true);
     }
 
     /**

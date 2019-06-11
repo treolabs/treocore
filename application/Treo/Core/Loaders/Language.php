@@ -37,7 +37,7 @@ namespace Treo\Core\Loaders;
 
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
-use Espo\Core\Utils\Language as Instance;
+use Treo\Core\Utils\Language as Instance;
 use Espo\Entities\Preferences;
 use Espo\Core\Utils\File\Manager;
 

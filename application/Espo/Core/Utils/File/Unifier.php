@@ -64,13 +64,17 @@ class Unifier
      * Unite file content to the file
      *
      * @param  string  $name
-     * @param  array  $paths
+     * @param  array|string  $paths
      * @param  boolean $recursively Note: only for first level of sub directory, other levels of sub directories will be ignored
      *
-     * @return array
+     * @return mixed
      */
     public function unify($name, $paths, $recursively = false)
     {
+        if (is_string($paths)) {
+            return $this->unifySingle($paths, $name, $recursively);
+        }
+
         $content = $this->unifySingle($paths['corePath'], $name, $recursively);
 
         if (!empty($paths['customPath'])) {
