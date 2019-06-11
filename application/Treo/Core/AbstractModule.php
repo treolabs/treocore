@@ -51,12 +51,12 @@ abstract class AbstractModule
     /**
      * @var string
      */
-    private $name;
+    private $appPath;
 
     /**
-     * @var string
+     * @var array
      */
-    private $appPath;
+    private $package;
 
     /**
      * Get module load order
@@ -68,23 +68,14 @@ abstract class AbstractModule
     /**
      * AbstractModule constructor.
      *
-     * @param string    $name
-     * @param string    $appPath
+     * @param string $name
+     * @param string $appPath
+     * @param array  $package
      */
-    public function __construct(string $name, string $appPath)
+    public function __construct(string $appPath, array $package)
     {
-        $this->name = $name;
         $this->appPath = $appPath;
-    }
-
-    /**
-     * Get module name
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        $this->package = $package;
     }
 
     /**
@@ -105,5 +96,53 @@ abstract class AbstractModule
     public function getClientPath(): string
     {
         return dirname($this->getAppPath()) . '/client/';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSystem(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComposerName(): string
+    {
+        return (!empty($this->package['name'])) ? (string)$this->package['name'] : "-";
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        if (!empty($this->package['extra']['name']['default'])) {
+            return (string)$this->package['extra']['name']['default'];
+        }
+
+        return "";
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        if (!empty($this->package['extra']['description']['default'])) {
+            return (string)$this->package['extra']['description']['default'];
+        }
+
+        return "";
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return (!empty($this->package['version'])) ? $this->package['version'] : "";
     }
 }

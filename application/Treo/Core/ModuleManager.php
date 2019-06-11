@@ -103,7 +103,7 @@ class ModuleManager
                         // prepare app path
                         $appPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
 
-                        $this->modules[$module] = new $className($module, $appPath);
+                        $this->modules[$module] = new $className($appPath, $this->getPackage($module));
                     }
                 }
             }
@@ -128,5 +128,29 @@ class ModuleManager
         }
 
         return null;
+    }
+
+    /**
+     * Get composer package
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    private function getPackage(string $id): array
+    {
+        $path = 'composer.lock';
+        if (file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
+            if (!empty($packages = $data['packages'])) {
+                foreach ($packages as $package) {
+                    if (!empty($package['extra']['treoId']) && $package['extra']['treoId'] == $id) {
+                        return $package;
+                    }
+                }
+            }
+        }
+
+        return [];
     }
 }

@@ -232,18 +232,20 @@ class PostUpdate
     {
         if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['update'])) {
             foreach ($composerDiff['update'] as $row) {
-                // get package
-                $package = $this
+                // get module
+                $module = $this
                     ->getContainer()
-                    ->get('metadata')
+                    ->get('moduleManager')
                     ->getModule($row['id']);
 
-                // prepare data
-                $from = ModuleManager::prepareVersion($row['from']);
-                $to = ModuleManager::prepareVersion($package['version']);
+                if (!empty($module)) {
+                    // prepare data
+                    $from = ModuleManager::prepareVersion($row['from']);
+                    $to = ModuleManager::prepareVersion($module->getVersion());
 
-                // run migration
-                $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+                    // run migration
+                    $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+                }
             }
         }
     }

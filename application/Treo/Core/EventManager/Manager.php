@@ -105,8 +105,8 @@ class Manager
             $this->parseDir("Treo", CORE_PATH . "/application/Treo/Listeners", $listeners);
 
             // for modules
-            foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
-                $this->parseDir($module->getName(), $module->getAppPath() . "Listeners", $listeners);
+            foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
+                $this->parseDir($id, $module->getAppPath() . "Listeners", $listeners);
             }
 
             // create dir if it needs
