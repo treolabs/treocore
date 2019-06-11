@@ -72,7 +72,7 @@ class Application extends Base
     public function isInstalled()
     {
         // copy config if it needs
-        \Treo\Composer\PostUpdate::copyDefaultConfig();
+        $this->copyDefaultConfig();
 
         return parent::isInstalled();
     }
@@ -249,5 +249,28 @@ class Application extends Base
 
         $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
         exit;
+    }
+
+    /**
+     * Copy default config
+     */
+    private function copyDefaultConfig(): void
+    {
+        // prepare config path
+        $path = 'data/config.php';
+
+        if (!file_exists($path)) {
+            // get default data
+            $data = include 'application/Treo/Configs/defaultConfig.php';
+
+            // prepare salt
+            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+
+            // get content
+            $content = "<?php\nreturn " . $this->getContainer()->get('fileManager')->varExport($data) . ";\n?>";
+
+            // create config
+            file_put_contents($path, $content);
+        }
     }
 }

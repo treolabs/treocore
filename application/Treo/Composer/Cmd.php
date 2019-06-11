@@ -53,7 +53,7 @@ class Cmd
         if (file_exists("data/old-composer.lock")) {
             unlink("data/old-composer.lock");
         }
-        
+
         if (file_exists("composer.lock")) {
             copy("composer.lock", "data/old-composer.lock");
         }
@@ -66,21 +66,6 @@ class Cmd
     {
         // define gloabal variables
         define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-        // copy default config
-        PostUpdate::copyDefaultConfig();
-
-        // save stable-composer.json file
-        PostUpdate::saveStableComposerJson();
-
-        // update modules list
-        PostUpdate::updateModulesList();
-
-        // copy modules event
-        PostUpdate::copyModulesEvent();
-
-        // copy modules migrations
-        PostUpdate::copyModulesMigrations();
 
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }

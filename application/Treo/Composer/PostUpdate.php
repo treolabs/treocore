@@ -47,126 +47,25 @@ class PostUpdate
 {
     use \Treo\Traits\ContainerTrait;
 
-    const MODULE_ORDER = 'custom/Espo/Custom/Resources/module.json';
-
     /**
-     * Copy default config
+     * PostUpdate constructor.
      */
-    public static function copyDefaultConfig(): void
+    public function __construct()
     {
-        // prepare config path
-        $path = 'data/config.php';
+        // save stable-composer.json file
+        self::saveStableComposerJson();
 
-        if (!file_exists($path)) {
-            // get default data
-            $data = include 'application/Treo/Configs/defaultConfig.php';
+        // update modules list
+        self::updateModulesList();
 
-            // prepare salt
-            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+        // copy modules event
+        self::copyModulesEvent();
 
-            // create config
-            file_put_contents($path, "<?php\nreturn " . self::varExport($data) . ";\n?>");
-        }
-    }
+        // copy modules migrations
+        self::copyModulesMigrations();
 
-    /**
-     * Save stable-composer.json file
-     */
-    public static function saveStableComposerJson(): void
-    {
-        if (file_exists('data/composer.json')) {
-            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
-        }
-    }
-
-    /**
-     * Update modules list
-     */
-    public static function updateModulesList(): void
-    {
-        file_put_contents('data/modules.json', json_encode(self::getModules()));
-    }
-
-    /**
-     * Copy modules event class
-     */
-    public static function copyModulesEvent(): void
-    {
-        foreach (self::getModules() as $module) {
-            // prepare class name
-            $className = "\\" . $module . "\\Event";
-
-            if (class_exists($className)) {
-                // get src
-                $src = (new \ReflectionClass($className))->getFileName();
-
-                // prepare dest
-                $dest = "data/module-manager-events/{$module}";
-
-                // create dir
-                if (!file_exists($dest)) {
-                    mkdir($dest, 0777, true);
-                }
-
-                // prepare dest
-                $dest .= "/Event.php";
-
-                // delete old
-                if (file_exists($dest)) {
-                    unlink($dest);
-                }
-
-                // copy
-                copy($src, $dest);
-            }
-        }
-    }
-
-    /**
-     * Copy modules migrations classes
-     */
-    public static function copyModulesMigrations(): void
-    {
-        // prepare data
-        $data = [];
-
-        // @todo remove in in next release
-        $data['Treo'] = 'application/Treo/Migrations';
-
-        foreach (self::getModules() as $id) {
-            // prepare src
-            $src = dirname((new \ReflectionClass("\\$id\\Module"))->getFileName()) . '/Migrations';
-
-            if (file_exists($src) && is_dir($src)) {
-                $data[$id] = $src;
-            }
-        }
-
-        // copy
-        foreach ($data as $id => $src) {
-            // prepare dest
-            $dest = "data/migrations/{$id}/Migrations";
-
-            // create dir
-            if (!file_exists($dest)) {
-                mkdir($dest, 0777, true);
-            }
-
-            foreach (scandir($src) as $file) {
-                // skip
-                if (in_array($file, ['.', '..'])) {
-                    continue 1;
-                }
-
-                // delete old
-                if (file_exists("$dest/$file")) {
-                    unlink("$dest/$file");
-                }
-
-                // copy
-                copy("$src/$file", "$dest/$file");
-            }
-        }
+        // drop cache
+        self::rrmdir('data/cache');
     }
 
     /**
@@ -186,18 +85,7 @@ class PostUpdate
 
             // run migrations
             $this->runMigrations();
-
-            // drop cache
-            $this->clearCache();
         }
-    }
-
-    /**
-     * Drop cache
-     */
-    protected function clearCache(): void
-    {
-        $this->getContainer()->get('dataManager')->clearCache();
     }
 
     /**
@@ -370,38 +258,6 @@ class PostUpdate
     }
 
     /**
-     * @param     $variable
-     * @param int $level
-     *
-     * @return mixed|string
-     */
-    protected static function varExport($variable, $level = 0)
-    {
-        $tab = '';
-        $tabElement = '    ';
-        for ($i = 0; $i <= $level; $i++) {
-            $tab .= $tabElement;
-        }
-        $prevTab = substr($tab, 0, strlen($tab) - strlen($tabElement));
-
-        if ($variable instanceof \StdClass) {
-            $result = "(object) " . self::varExport(get_object_vars($variable), $level);
-        } else {
-            if (is_array($variable)) {
-                $array = array();
-                foreach ($variable as $key => $value) {
-                    $array[] = var_export($key, true) . " => " . self::varExport($value, $level + 1);
-                }
-                $result = "[\n" . $tab . implode(",\n" . $tab, $array) . "\n" . $prevTab . "]";
-            } else {
-                $result = var_export($variable, true);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get installed modules
      *
      * @return array
@@ -421,5 +277,125 @@ class PostUpdate
         asort($modules);
 
         return array_keys($modules);
+    }
+
+    /**
+     * Save stable-composer.json file
+     */
+    private static function saveStableComposerJson(): void
+    {
+        if (file_exists('data/composer.json')) {
+            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
+        }
+    }
+
+    /**
+     * Update modules list
+     */
+    private static function updateModulesList(): void
+    {
+        file_put_contents('data/modules.json', json_encode(self::getModules()));
+    }
+
+    /**
+     * Copy modules event class
+     */
+    private static function copyModulesEvent(): void
+    {
+        foreach (self::getModules() as $module) {
+            // prepare class name
+            $className = "\\" . $module . "\\Event";
+
+            if (class_exists($className)) {
+                // get src
+                $src = (new \ReflectionClass($className))->getFileName();
+
+                // prepare dest
+                $dest = "data/module-manager-events/{$module}";
+
+                // create dir
+                if (!file_exists($dest)) {
+                    mkdir($dest, 0777, true);
+                }
+
+                // prepare dest
+                $dest .= "/Event.php";
+
+                // delete old
+                if (file_exists($dest)) {
+                    unlink($dest);
+                }
+
+                // copy
+                copy($src, $dest);
+            }
+        }
+    }
+
+    /**
+     * Copy modules migrations classes
+     */
+    private static function copyModulesMigrations(): void
+    {
+        // prepare data
+        $data = [];
+
+        // @todo remove in in next release
+        $data['Treo'] = 'application/Treo/Migrations';
+
+        foreach (self::getModules() as $id) {
+            // prepare src
+            $src = dirname((new \ReflectionClass("\\$id\\Module"))->getFileName()) . '/Migrations';
+
+            if (file_exists($src) && is_dir($src)) {
+                $data[$id] = $src;
+            }
+        }
+
+        // copy
+        foreach ($data as $id => $src) {
+            // prepare dest
+            $dest = "data/migrations/{$id}/Migrations";
+
+            // create dir
+            if (!file_exists($dest)) {
+                mkdir($dest, 0777, true);
+            }
+
+            foreach (scandir($src) as $file) {
+                // skip
+                if (in_array($file, ['.', '..'])) {
+                    continue 1;
+                }
+
+                // delete old
+                if (file_exists("$dest/$file")) {
+                    unlink("$dest/$file");
+                }
+
+                // copy
+                copy("$src/$file", "$dest/$file");
+            }
+        }
+    }
+
+    /**
+     * @param string $dir
+     */
+    private static function rrmdir(string $dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (is_dir($dir . "/" . $object)) {
+                        self::rrmdir($dir . "/" . $object);
+                    } else {
+                        unlink($dir . "/" . $object);
+                    }
+                }
+            }
+            rmdir($dir);
+        }
     }
 }
