@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core\ModuleManager;
 
-use Treo\Core\Container;
-
 /**
  * Class Manager
  *
@@ -45,11 +43,6 @@ use Treo\Core\Container;
  */
 class Manager
 {
-    /**
-     * @var Container
-     */
-    private $container;
-
     /**
      * @var array|null
      */
@@ -65,16 +58,6 @@ class Manager
     public static function prepareVersion(string $version): string
     {
         return str_replace('v', '', $version);
-    }
-
-    /**
-     * ModuleManager constructor.
-     *
-     * @param Container $container
-     */
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
     }
 
     /**
