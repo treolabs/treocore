@@ -70,8 +70,11 @@ class Cmd
         // update modules list
         PostUpdate::updateModulesList();
 
-        // copy module event
-        PostUpdate::copyModuleEvent();
+        // copy modules event
+        PostUpdate::copyModulesEvent();
+
+        // copy modules migrations
+        PostUpdate::copyModulesMigrations();
 
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }

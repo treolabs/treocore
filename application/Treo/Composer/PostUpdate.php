@@ -88,9 +88,9 @@ class PostUpdate
     }
 
     /**
-     * Copy module event class
+     * Copy modules event class
      */
-    public static function copyModuleEvent(): void
+    public static function copyModulesEvent(): void
     {
         foreach (self::getModules() as $module) {
             // prepare class name
@@ -118,6 +118,41 @@ class PostUpdate
 
                 // copy
                 copy($src, $dest);
+            }
+        }
+    }
+
+    /**
+     * Copy modules migrations classes
+     */
+    public static function copyModulesMigrations(): void
+    {
+        foreach (self::getModules() as $module) {
+            // prepare src
+            $src = dirname((new \ReflectionClass("\\$module\\Module"))->getFileName()) . '/Migrations';
+
+            // prepare dest
+            $dest = "data/migrations/{$module}/Migrations";
+
+            if (file_exists($src) && is_dir($src)) {
+                // create dir
+                if (!file_exists($dest)) {
+                    mkdir($dest, 0777, true);
+                }
+                foreach (scandir($src) as $file) {
+                    // skip
+                    if (in_array($file, ['.', '..'])) {
+                        continue 1;
+                    }
+
+                    // delete old
+                    if (file_exists("$dest/$file")) {
+                        unlink("$dest/$file");
+                    }
+
+                    // copy
+                    copy("$src/$file", "$dest/$file");
+                }
             }
         }
     }
