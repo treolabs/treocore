@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application;
 use Treo\Core\Container;
 
 /**
@@ -64,9 +65,6 @@ class Cmd
      */
     public static function postUpdate(): void
     {
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
@@ -77,6 +75,9 @@ class Cmd
     {
         include "bootstrap.php";
 
-        return (new \Treo\Core\Application())->getContainer();
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
+        return (new Application())->getContainer();
     }
 }
