@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Treo\Composer;
+namespace Treo\Core\ModuleManager;
 
 /**
  * Class AbstractEvent

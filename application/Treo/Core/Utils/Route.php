@@ -40,7 +40,7 @@ use Espo\Core\Utils\Route as Base;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Treo\Core\ModuleManager;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
 
 /**
  * Class Route

@@ -50,7 +50,13 @@ class Cmd
      */
     public static function preUpdate(): void
     {
-        (new PreUpdate())->run();
+        if (file_exists("data/old-composer.lock")) {
+            unlink("data/old-composer.lock");
+        }
+        
+        if (file_exists("composer.lock")) {
+            copy("composer.lock", "data/old-composer.lock");
+        }
     }
 
     /**

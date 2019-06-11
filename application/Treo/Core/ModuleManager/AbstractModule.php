@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core;
+namespace Treo\Core\ModuleManager;
 
 /**
  * Class AbstractModule

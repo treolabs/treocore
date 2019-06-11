@@ -40,6 +40,7 @@ use Treo\Core\Utils\File\Manager as FileManager;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
 use Treo\Core\EventManager\Manager as EventManager;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
 
 /**
  * Class Container

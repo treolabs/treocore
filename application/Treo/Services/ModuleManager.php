@@ -38,7 +38,7 @@ namespace Treo\Services;
 
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
-use Treo\Core\ModuleManager as TreoModuleManager;
+use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 
 /**
  * ModuleManager service

@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\ModuleManager;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
 
 /**
  * Class PostUpdate

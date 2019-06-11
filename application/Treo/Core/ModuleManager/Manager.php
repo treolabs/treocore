@@ -34,14 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core;
+namespace Treo\Core\ModuleManager;
+
+use Treo\Core\Container;
 
 /**
- * Class ModuleManager
+ * Class Manager
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ModuleManager
+class Manager
 {
     /**
      * @var Container
