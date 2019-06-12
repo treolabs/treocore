@@ -55,8 +55,29 @@ class TreoStore extends Base
 
         if (isset($params['isInstalled']) && empty($params['isInstalled'])) {
             $result['whereClause'][] = [
-                'id!=' => array_keys($this->getMetadata()->getModules())
+                'id!='        => array_keys($this->getMetadata()->getModules()),
+                'packageId!=' => $this->getComposerModules()
             ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    private function getComposerModules(): array
+    {
+        $data = $this
+            ->getEntityManager()
+            ->getContainer()
+            ->get('serviceFactory')
+            ->create('Composer')
+            ->getModuleComposerJson();
+
+        $result = [];
+        if (isset($data['require'])) {
+            $result = array_keys($data['require']);
         }
 
         return $result;
