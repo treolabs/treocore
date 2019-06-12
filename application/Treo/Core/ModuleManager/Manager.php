@@ -122,6 +122,7 @@ class Manager
                         }
 
                         $this->modules[$module] = new $className(
+                            $module,
                             $modulePath,
                             $this->getPackage($module),
                             $this->container
