@@ -88,6 +88,41 @@ abstract class AbstractModule
     protected $objUnifier;
 
     /**
+     * @var array
+     */
+    protected $servicePath = ['app/Services'];
+
+    /**
+     * @var array
+     */
+    protected $listenerPath = ['app/Listeners'];
+
+    /**
+     * @var array
+     */
+    protected $hookPath = ['app/Hooks'];
+
+    /**
+     * @var array
+     */
+    protected $metadataPath = ['app/Resources/metadata'];
+
+    /**
+     * @var array
+     */
+    protected $layoutPath = ['app/Resources/layouts'];
+
+    /**
+     * @var array
+     */
+    protected $routePath = ['app/Resources/routes.json'];
+
+    /**
+     * @var array
+     */
+    protected $translatePath = ['app/Resources/i18n'];
+
+    /**
      * Get module load order
      *
      * @return int
@@ -182,13 +217,15 @@ abstract class AbstractModule
         // prepare result
         $result = [];
 
-        // prepare path
-        $path = $this->path . 'Services';
+        foreach ($this->servicePath as $path) {
+            // prepare path
+            $path = $this->path . $path;
 
-        if (is_dir($path)) {
-            foreach (scandir($path) as $item) {
-                if (preg_match_all('/^(.*)\.php$/', $item, $matches)) {
-                    $result[$matches[1][0]] = "\\" . $this->id . "\\Services\\" . $matches[1][0];
+            if (is_dir($path)) {
+                foreach (scandir($path) as $item) {
+                    if (preg_match_all('/^(.*)\.php$/', $item, $matches)) {
+                        $result[$matches[1][0]] = "\\" . $this->id . "\\Services\\" . $matches[1][0];
+                    }
                 }
             }
         }
@@ -203,12 +240,12 @@ abstract class AbstractModule
      */
     public function loadMetadata(\stdClass &$data)
     {
-        // load module metadata
-        $metadata = $this
-            ->getObjUnifier()
-            ->unify('metadata', $this->path . 'app/Resources/metadata', true);
-
-        $data = DataUtil::merge($data, $metadata);
+        foreach ($this->metadataPath as $path) {
+            $metadata = $this
+                ->getObjUnifier()
+                ->unify('metadata', $this->path . $path, true);
+            $data = DataUtil::merge($data, $metadata);
+        }
     }
 
     /**
@@ -223,16 +260,18 @@ abstract class AbstractModule
         // load layout class
         $layout = (new Layout($this->container))->load();
 
-        // prepare file path
-        $filePath = $layout->concatPath($this->path . 'app/Resources/layouts', $scope);
-        $fileFullPath = $layout->concatPath($filePath, $name . '.json');
+        foreach ($this->layoutPath as $path) {
+            // prepare file path
+            $filePath = $layout->concatPath($this->path . $path, $scope);
+            $fileFullPath = $layout->concatPath($filePath, $name . '.json');
 
-        if (file_exists($fileFullPath)) {
-            // get file data
-            $fileData = $this->container->get('fileManager')->getContents($fileFullPath);
+            if (file_exists($fileFullPath)) {
+                // get file data
+                $fileData = $this->container->get('fileManager')->getContents($fileFullPath);
 
-            // prepare data
-            $data = array_merge_recursive($data, Json::decode($fileData, true));
+                // prepare data
+                $data = array_merge_recursive($data, Json::decode($fileData, true));
+            }
         }
     }
 
@@ -251,7 +290,9 @@ abstract class AbstractModule
             $this->container->get('moduleManager')
         );
 
-        $data = $route->getAddData($data, $this->path . 'app/Resources/routes.json');
+        foreach ($this->routePath as $path) {
+            $data = $route->getAddData($data, $this->path . $path);
+        }
     }
 
     /**
@@ -261,17 +302,19 @@ abstract class AbstractModule
      */
     public function loadListeners(array &$listeners)
     {
-        // prepare path
-        $dirPath = $this->path . 'app/Listeners';
+        foreach ($this->listenerPath as $path) {
+            // prepare path
+            $dirPath = $this->path . $path;
 
-        if (file_exists($dirPath) && is_dir($dirPath)) {
-            foreach (scandir($dirPath) as $file) {
-                if (!in_array($file, ['.', '..'])) {
-                    // prepare name
-                    $name = str_replace(".php", "", $file);
+            if (file_exists($dirPath) && is_dir($dirPath)) {
+                foreach (scandir($dirPath) as $file) {
+                    if (!in_array($file, ['.', '..'])) {
+                        // prepare name
+                        $name = str_replace(".php", "", $file);
 
-                    // push
-                    $listeners[$name][] = "\\" . $this->id . "\\Listeners\\" . $name;
+                        // push
+                        $listeners[$name][] = "\\" . $this->id . "\\Listeners\\" . $name;
+                    }
                 }
             }
         }
@@ -284,7 +327,9 @@ abstract class AbstractModule
      */
     public function loadTranslates(array &$data)
     {
-        $data = Util::merge($data, $this->getUnifier()->unify('i18n', $this->path . 'app/Resources/i18n', true));
+        foreach ($this->translatePath as $path) {
+            $data = Util::merge($data, $this->getUnifier()->unify('i18n', $this->path . $path, true));
+        }
     }
 
     /**
@@ -297,7 +342,9 @@ abstract class AbstractModule
         // load hook manager
         $hookManager = (new HookManager($this->container))->load();
 
-        $data = $hookManager->getHookData($this->path . 'app/Hooks', $data);
+        foreach ($this->hookPath as $path) {
+            $data = $hookManager->getHookData($this->path . $path, $data);
+        }
     }
 
     /**
