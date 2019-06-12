@@ -38,7 +38,7 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\FieldManager as EspoFieldManager;
 use Espo\Core\Utils\Metadata\Helper as MetadataHelper;
-use Espo\Core\Utils\Language;
+use Treo\Core\Utils\Language;
 use Espo\Core\Utils\FieldManager\Hooks\Base as BaseHook;
 use Treo\Core\Utils\Metadata;
 use Treo\Traits\ContainerTrait;

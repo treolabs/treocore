@@ -43,7 +43,7 @@ use Espo\Core\Utils\PasswordHash;
 use Treo\Core\Utils\Util;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
-use Espo\Core\Utils\Language;
+use Treo\Core\Utils\Language;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -747,7 +747,7 @@ class Installer extends AbstractService
     /**
      * @return Language
      */
-    protected function getLanguage(): Language
+    protected function getLanguage()
     {
         return new Language(
             $this->getConfig()->get('language'),

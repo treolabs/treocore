@@ -38,7 +38,7 @@ namespace Treo\Listeners;
 
 use Espo\Core\Services\Base as BaseService;
 use Espo\Core\ORM\EntityManager;
-use Espo\Core\Utils\Language;
+use Treo\Core\Utils\Language;
 use Treo\Services\AbstractService;
 use Treo\Core\Utils\Config;
 
