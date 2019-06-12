@@ -106,7 +106,7 @@ class Manager
 
             // for modules
             foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
-                $this->parseDir($id, $module->getAppPath() . "Listeners", $listeners);
+                $module->loadListeners($listeners);
             }
 
             // create dir if it needs

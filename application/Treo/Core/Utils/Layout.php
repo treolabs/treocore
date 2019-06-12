@@ -99,7 +99,7 @@ class Layout extends \Espo\Core\Utils\Layout
 
         // from modules data
         foreach ($this->getMetadata()->getModules() as $module) {
-            $data = $module->loadLayouts($scope, $name, $data);
+            $module->loadLayouts($scope, $name, $data);
         }
 
         // from treo core data
@@ -257,7 +257,7 @@ class Layout extends \Espo\Core\Utils\Layout
      *
      * @return string
      */
-    protected function concatPath($folderPath, $filePath = null)
+    public function concatPath($folderPath, $filePath = null)
     {
         // for portal
         if ($this->isPortal()) {

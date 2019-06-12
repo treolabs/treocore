@@ -61,7 +61,7 @@ class Language extends Base
 
             // load modules
             foreach ($this->getMetadata()->getModules() as $module) {
-                $fullData = Util::merge($fullData, $this->unify($module->getAppPath() . 'Resources/i18n'));
+                $module->loadTranslates($fullData);
             }
 
             // load custom

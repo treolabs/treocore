@@ -138,7 +138,7 @@ class Route
         return $data;
     }
 
-    protected function getAddData($currData, $routeFile)
+    public function getAddData($currData, $routeFile)
     {
         if (file_exists($routeFile)) {
             $content = $this->getFileManager()->getContents($routeFile);

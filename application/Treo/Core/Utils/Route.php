@@ -79,7 +79,7 @@ class Route extends Base
 
         // for module
         foreach ($this->getModuleManager()->getModules() as $module) {
-            $data = $this->getAddData($data, $module->getAppPath() . 'Resources/routes.json');
+            $module->loadRoutes($data);
         }
 
         // for treo core

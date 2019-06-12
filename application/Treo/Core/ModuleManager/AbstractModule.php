@@ -36,6 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Core\ModuleManager;
 
+use Espo\Core\Utils\DataUtil;
+use Espo\Core\Utils\File\Unifier;
+use Treo\Core\Container;
+use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Route;
+use Treo\Core\Loaders\Layout;
+
 /**
  * Class AbstractModule
  *
@@ -51,12 +59,32 @@ abstract class AbstractModule
     /**
      * @var string
      */
-    private $appPath;
+    protected $id;
+
+    /**
+     * @var string
+     */
+    protected $path;
 
     /**
      * @var array
      */
-    private $package;
+    protected $package;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * @var Unifier
+     */
+    protected $unifier;
+
+    /**
+     * @var Unifier
+     */
+    protected $objUnifier;
 
     /**
      * Get module load order
@@ -68,24 +96,26 @@ abstract class AbstractModule
     /**
      * AbstractModule constructor.
      *
-     * @param string $name
-     * @param string $appPath
-     * @param array  $package
+     * @param string    $id
+     * @param string    $path
+     * @param array     $package
+     * @param Container $container
      */
-    public function __construct(string $appPath, array $package)
-    {
-        $this->appPath = $appPath;
+    public function __construct(
+        string $id,
+        string $path,
+        array $package,
+        Container $container
+    ) {
+        $this->id = $id;
+        $this->path = $path;
         $this->package = $package;
+        $this->container = $container;
     }
 
-    /**
-     * Get application path
-     *
-     * @return string
-     */
-    public function getAppPath(): string
+    public function getAppPath()
     {
-        return $this->appPath;
+        return $this->path . 'app/';
     }
 
     /**
@@ -95,7 +125,7 @@ abstract class AbstractModule
      */
     public function getClientPath(): string
     {
-        return dirname($this->getAppPath()) . '/client/';
+        return $this->path . 'client/';
     }
 
     /**
@@ -144,5 +174,152 @@ abstract class AbstractModule
     public function getVersion(): string
     {
         return (!empty($this->package['version'])) ? $this->package['version'] : "";
+    }
+
+    /**
+     * Load module services
+     *
+     * @return array
+     */
+    public function loadServices(): array
+    {
+        // prepare result
+        $result = [];
+
+        // prepare path
+        $path = $this->path . 'Services';
+
+        if (is_dir($path)) {
+            foreach (scandir($path) as $item) {
+                if (preg_match_all('/^(.*)\.php$/', $item, $matches)) {
+                    $result[$matches[1][0]] = "\\" . $this->id . "\\Services\\" . $matches[1][0];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Load module metadata
+     *
+     * @param \stdClass $data
+     */
+    public function loadMetadata(\stdClass &$data)
+    {
+        // load module metadata
+        $metadata = $this
+            ->getObjUnifier()
+            ->unify('metadata', $this->path . 'app/Resources/metadata', true);
+
+        $data = DataUtil::merge($data, $metadata);
+    }
+
+    /**
+     * Load module layouts
+     *
+     * @param string $scope
+     * @param string $name
+     * @param array  $data
+     */
+    public function loadLayouts(string $scope, string $name, array &$data)
+    {
+        // load layout class
+        $layout = (new Layout($this->container))->load();
+
+        // prepare file path
+        $filePath = $layout->concatPath($this->path . 'app/Resources/layouts', $scope);
+        $fileFullPath = $layout->concatPath($filePath, $name . '.json');
+
+        if (file_exists($fileFullPath)) {
+            // get file data
+            $fileData = $this->container->get('fileManager')->getContents($fileFullPath);
+
+            // prepare data
+            $data = array_merge_recursive($data, Json::decode($fileData, true));
+        }
+    }
+
+    /**
+     * Load module routes
+     *
+     * @param array $data
+     */
+    public function loadRoutes(array &$data)
+    {
+        // create route class
+        $route = new Route(
+            $this->container->get('config'),
+            $this->container->get('metadata'),
+            $this->container->get('fileManager'),
+            $this->container->get('moduleManager')
+        );
+
+        $data = $route->getAddData($data, $this->path . 'app/Resources/routes.json');
+    }
+
+    /**
+     * Load module listeners
+     *
+     * @param array $listeners
+     */
+    public function loadListeners(array &$listeners)
+    {
+        // prepare path
+        $dirPath = $this->path . 'app/Listeners';
+
+        if (file_exists($dirPath) && is_dir($dirPath)) {
+            foreach (scandir($dirPath) as $file) {
+                if (!in_array($file, ['.', '..'])) {
+                    // prepare name
+                    $name = str_replace(".php", "", $file);
+
+                    // push
+                    $listeners[$name][] = "\\" . $this->id . "\\Listeners\\" . $name;
+                }
+            }
+        }
+    }
+
+    /**
+     * Load module translates
+     *
+     * @param array $data
+     */
+    public function loadTranslates(array &$data)
+    {
+        $data = Util::merge($data, $this->getUnifier()->unify('i18n', $this->path . 'app/Resources/i18n', true));
+    }
+
+    /**
+     * @return Unifier
+     */
+    protected function getUnifier(): Unifier
+    {
+        if (!isset($this->unifier)) {
+            $this->unifier = new Unifier(
+                $this->container->get('fileManager'),
+                $this->container->get('metadata'),
+                false
+            );
+        }
+
+        return $this->unifier;
+    }
+
+    /**
+     * @return Unifier
+     */
+    protected function getObjUnifier(): Unifier
+    {
+        if (!isset($this->objUnifier)) {
+            $this->objUnifier = new Unifier(
+                $this->container->get('fileManager'),
+                $this->container->get('metadata'),
+                true
+            );
+        }
+
+        return $this->objUnifier;
     }
 }

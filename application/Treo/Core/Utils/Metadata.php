@@ -198,7 +198,7 @@ class Metadata extends Base
 
         // load modules
         foreach ($this->getModules() as $module) {
-            $content = $module->loadMetadata($content);
+            $module->loadMetadata($content);
         }
 
         // load custom
