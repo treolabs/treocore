@@ -38,7 +38,7 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Metadata as Base;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Espo\Core\Utils\DataUtil;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\EventManager\Manager as EventManager;

@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Treo\Layouts\AbstractLayout;
 use Treo\Core\Portal\Container as PortalContainer;
 

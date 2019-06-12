@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Treo\Core\Container;
 
 /**

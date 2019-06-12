@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Composer;
 
 use Treo\Core\ModuleManager\Manager as ModuleManager;
+use Treo\Core\Utils\Util;
 
 /**
  * Class PostUpdate
@@ -65,7 +66,7 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
-        self::rrmdir('data/cache');
+        Util::removedir('data/cache');
     }
 
     /**
@@ -376,26 +377,6 @@ class PostUpdate
                 // copy
                 copy("$src/$file", "$dest/$file");
             }
-        }
-    }
-
-    /**
-     * @param string $dir
-     */
-    private static function rrmdir(string $dir)
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($dir . "/" . $object)) {
-                        self::rrmdir($dir . "/" . $object);
-                    } else {
-                        unlink($dir . "/" . $object);
-                    }
-                }
-            }
-            rmdir($dir);
         }
     }
 }
