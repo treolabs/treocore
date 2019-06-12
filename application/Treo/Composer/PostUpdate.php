@@ -36,8 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\Mover;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
+use Treo\Core\Utils\Util;
 
 /**
  * Class PostUpdate
@@ -48,112 +48,25 @@ class PostUpdate
 {
     use \Treo\Traits\ContainerTrait;
 
-    const MODULE_ORDER = 'custom/Espo/Custom/Resources/module.json';
-
     /**
-     * Copy default config
+     * PostUpdate constructor.
      */
-    public static function copyDefaultConfig(): void
+    public function __construct()
     {
-        // prepare config path
-        $path = 'data/config.php';
+        // save stable-composer.json file
+        self::saveStableComposerJson();
 
-        if (!file_exists($path)) {
-            // get default data
-            $data = include 'application/Treo/Configs/defaultConfig.php';
+        // update modules list
+        self::updateModulesList();
 
-            // prepare salt
-            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+        // copy modules event
+        self::copyModulesEvent();
 
-            // create config
-            file_put_contents($path, "<?php\nreturn " . self::varExport($data) . ";\n?>");
-        }
-    }
+        // copy modules migrations
+        self::copyModulesMigrations();
 
-    /**
-     * Save stable-composer.json file
-     */
-    public static function saveStableComposerJson(): void
-    {
-        if (file_exists('data/composer.json')) {
-            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
-        }
-    }
-
-    /**
-     * Update modules load order
-     */
-    public static function updateLoadOrder(): void
-    {
-        // prepare path
-        $path = self::MODULE_ORDER;
-
-        // delete old
-        if (file_exists($path)) {
-            unlink($path);
-        }
-
-        // prepare modules dir path
-        $modulesPath = "application/Espo/Modules";
-
-        // prepare data
-        $data = [];
-        if (file_exists($modulesPath) && is_dir($modulesPath) && !empty($modules = scandir($modulesPath))) {
-            foreach ($modules as $module) {
-                if (!empty($order = self::createModuleLoadOrder($module))) {
-                    $data[$module] = [
-                        'order' => $order
-                    ];
-                }
-            }
-        }
-
-        if (!empty($data)) {
-            // create dir
-            if (!file_exists('custom/Espo/Custom/Resources')) {
-                mkdir('custom/Espo/Custom/Resources', 0777, true);
-            }
-
-            file_put_contents($path, json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-        }
-    }
-
-
-    /**
-     * Get module requireds
-     *
-     * @param string $moduleId
-     *
-     * @return array
-     */
-    public static function getModuleRequireds(string $moduleId): array
-    {
-        // prepare result
-        $result = [];
-
-        if (!file_exists("composer.lock")) {
-            return $result;
-        }
-
-        foreach (json_decode(file_get_contents("composer.lock"), true) as $package) {
-            if (!empty($package['extra']['treoId'])
-                && $moduleId == $package['extra']['treoId']
-                && !empty($package['require'])
-                && is_array($package['require'])) {
-                // get treo modules
-                $treoModule = Mover::getModules();
-
-                foreach ($package['require'] as $key => $version) {
-                    if (preg_match_all("/^(" . Mover::TREODIR . "\/)(.*)$/", $key, $matches)) {
-                        if (!empty($matches[2][0])) {
-                            $result[] = array_flip($treoModule)[$matches[2][0]];
-                        }
-                    }
-                }
-            }
-        }
-
-        return $result;
+        // drop cache
+        Util::removedir('data/cache');
     }
 
     /**
@@ -162,45 +75,18 @@ class PostUpdate
     public function run(): void
     {
         if ($this->isInstalled()) {
-            // delete modules
-            $this->deleteModules();
+            // logout all users
+            $this->logoutAll();
 
             // rebuild
             $this->rebuild();
 
-            // loggout all users
-            $this->logoutAll();
+            // init events
+            $this->initEvents();
 
             // run migrations
             $this->runMigrations();
-
-            // drop cache
-            $this->clearCache();
-
-            // init events
-            $this->initEvents();
         }
-    }
-
-    /**
-     * Delete modules
-     */
-    protected function deleteModules(): void
-    {
-        if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['delete'])) {
-            foreach ($composerDiff['delete'] as $row) {
-                Mover::delete([$row['id'] => $row['package']]);
-            }
-            self::updateLoadOrder();
-        }
-    }
-
-    /**
-     * Drop cache
-     */
-    protected function clearCache(): void
-    {
-        $this->getContainer()->get('dataManager')->clearCache();
     }
 
     /**
@@ -235,18 +121,20 @@ class PostUpdate
     {
         if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['update'])) {
             foreach ($composerDiff['update'] as $row) {
-                // get package
-                $package = $this
+                // get module
+                $module = $this
                     ->getContainer()
-                    ->get('metadata')
+                    ->get('moduleManager')
                     ->getModule($row['id']);
 
-                // prepare data
-                $from = Metadata::prepareVersion($row['from']);
-                $to = Metadata::prepareVersion($package['version']);
+                if (!empty($module)) {
+                    // prepare data
+                    $from = ModuleManager::prepareVersion($row['from']);
+                    $to = ModuleManager::prepareVersion($module->getVersion());
 
-                // run migration
-                $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+                    // run migration
+                    $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+                }
             }
         }
     }
@@ -266,8 +154,8 @@ class PostUpdate
         ];
 
         // prepare data
-        $oldData = $this->getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = $this->getComposerLockTreoPackages("composer.lock");
+        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
+        $newData = self::getComposerLockTreoPackages("composer.lock");
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
@@ -302,7 +190,7 @@ class PostUpdate
      *
      * @return array
      */
-    protected function getComposerLockTreoPackages(string $path): array
+    protected static function getComposerLockTreoPackages(string $path): array
     {
         // prepare result
         $result = [];
@@ -359,7 +247,7 @@ class PostUpdate
     protected function callEvent(string $module, string $action): void
     {
         // prepare class name
-        $className = '\\Treo\\ModuleManagerEvents\\%s\\Event';
+        $className = '\\%s\\Event';
 
         $class = sprintf($className, $module);
         if (class_exists($class)) {
@@ -371,68 +259,124 @@ class PostUpdate
     }
 
     /**
-     * @param string $moduleId
+     * Get installed modules
      *
-     * @return int
+     * @return array
      */
-    protected static function createModuleLoadOrder(string $moduleId): int
+    private static function getModules(): array
     {
-        // prepare path
-        $path = "application/Espo/Modules/$moduleId/Resources/module.json";
+        $modules = [];
+        foreach (self::getComposerLockTreoPackages("composer.lock") as $row) {
+            // prepare module name
+            $moduleName = $row['extra']['treoId'];
 
-        if (!file_exists($path)) {
-            return 0;
+            // prepare class name
+            $className = "\\$moduleName\\Module";
+
+            $modules[$moduleName] = $className::getLoadOrder();
         }
+        asort($modules);
 
-        // get default order
-        $order = (int)json_decode(file_get_contents($path))->order;
-
-        if (empty($order)) {
-            $order = 10;
-        }
-
-        if (!empty($requireds = self::getModuleRequireds($moduleId))) {
-            foreach ($requireds as $require) {
-                $requireMax = self::createModuleLoadOrder($require);
-                if ($requireMax > $order) {
-                    $order = $requireMax;
-                }
-            }
-            $order = $order + 10;
-        }
-
-        return $order;
+        return array_keys($modules);
     }
 
     /**
-     * @param     $variable
-     * @param int $level
-     *
-     * @return mixed|string
+     * Save stable-composer.json file
      */
-    protected static function varExport($variable, $level = 0)
+    private static function saveStableComposerJson(): void
     {
-        $tab = '';
-        $tabElement = '    ';
-        for ($i = 0; $i <= $level; $i++) {
-            $tab .= $tabElement;
+        if (file_exists('data/composer.json')) {
+            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
         }
-        $prevTab = substr($tab, 0, strlen($tab) - strlen($tabElement));
+    }
 
-        if ($variable instanceof \StdClass) {
-            $result = "(object) " . self::varExport(get_object_vars($variable), $level);
-        } else {
-            if (is_array($variable)) {
-                $array = array();
-                foreach ($variable as $key => $value) {
-                    $array[] = var_export($key, true) . " => " . self::varExport($value, $level + 1);
+    /**
+     * Update modules list
+     */
+    private static function updateModulesList(): void
+    {
+        file_put_contents('data/modules.json', json_encode(self::getModules()));
+    }
+
+    /**
+     * Copy modules event class
+     */
+    private static function copyModulesEvent(): void
+    {
+        foreach (self::getModules() as $module) {
+            // prepare class name
+            $className = "\\" . $module . "\\Event";
+
+            if (class_exists($className)) {
+                // get src
+                $src = (new \ReflectionClass($className))->getFileName();
+
+                // prepare dest
+                $dest = "data/module-manager-events/{$module}";
+
+                // create dir
+                if (!file_exists($dest)) {
+                    mkdir($dest, 0777, true);
                 }
-                $result = "[\n" . $tab . implode(",\n" . $tab, $array) . "\n" . $prevTab . "]";
-            } else {
-                $result = var_export($variable, true);
+
+                // prepare dest
+                $dest .= "/Event.php";
+
+                // delete old
+                if (file_exists($dest)) {
+                    unlink($dest);
+                }
+
+                // copy
+                copy($src, $dest);
+            }
+        }
+    }
+
+    /**
+     * Copy modules migrations classes
+     */
+    private static function copyModulesMigrations(): void
+    {
+        // prepare data
+        $data = [];
+
+        // @todo remove in in next release
+        $data['Treo'] = 'application/Treo/Migrations';
+
+        foreach (self::getModules() as $id) {
+            // prepare src
+            $src = dirname((new \ReflectionClass("\\$id\\Module"))->getFileName()) . '/Migrations';
+
+            if (file_exists($src) && is_dir($src)) {
+                $data[$id] = $src;
             }
         }
 
-        return $result;
+        // copy
+        foreach ($data as $id => $src) {
+            // prepare dest
+            $dest = "data/migrations/{$id}/Migrations";
+
+            // create dir
+            if (!file_exists($dest)) {
+                mkdir($dest, 0777, true);
+            }
+
+            foreach (scandir($src) as $file) {
+                // skip
+                if (in_array($file, ['.', '..'])) {
+                    continue 1;
+                }
+
+                // delete old
+                if (file_exists("$dest/$file")) {
+                    unlink("$dest/$file");
+                }
+
+                // copy
+                copy("$src/$file", "$dest/$file");
+            }
+        }
     }
 }

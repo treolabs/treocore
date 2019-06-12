@@ -39,6 +39,8 @@ namespace Treo\Core;
 use Treo\Core\Utils\File\Manager as FileManager;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
+use Treo\Core\EventManager\Manager as EventManager;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
 
 /**
  * Class Container
@@ -158,13 +160,12 @@ class Container extends \Espo\Core\Container
      */
     protected function loadMetadata()
     {
-        // create metadata
-        $metadata = new Metadata($this->get('fileManager'), $this->get('config')->get('useCache'));
-
-        // set container
-        $metadata->setContainer($this);
-
-        return $metadata;
+        return new Metadata(
+            $this->get('fileManager'),
+            $this->get('moduleManager'),
+            $this->get('eventManager'),
+            $this->get('config')->get('useCache')
+        );
     }
 
     /**
@@ -181,6 +182,26 @@ class Container extends \Espo\Core\Container
     protected function loadFileManager()
     {
         return parent::loadFileManager();
+    }
+
+    /**
+     * Load module manager
+     *
+     * @return ModuleManager
+     */
+    protected function loadModuleManager(): ModuleManager
+    {
+        return new ModuleManager($this);
+    }
+
+    /**
+     * Load EventManager
+     *
+     * @return EventManager
+     */
+    protected function loadEventManager(): EventManager
+    {
+        return (new EventManager())->setContainer($this);
     }
 
     /**

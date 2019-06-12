@@ -36,112 +36,20 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Espo\Core\Utils\Util;
-use Espo\Core\Utils\Module;
+use Espo\Core\Utils\Config as Base;
 
 /**
  * Class of Config
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Config extends \Espo\Core\Utils\Config
+class Config extends Base
 {
-    /**
-     * @var null|array
-     */
-    protected $modules = null;
-
-    /**
-     * Get modules
-     *
-     * @param bool $force
-     *
-     * @return array
-     */
-    public function getModules(bool $force = false): array
-    {
-        if (is_null($this->modules) || $force) {
-            // prepare result
-            $this->modules = [];
-
-            // create moduleConfig
-            $moduleConfig = $this->getModuleUtil();
-
-            $modules = $this->getFileManager()->getFileList("application/Espo/Modules/", false, '', false);
-            $toSort = [];
-            if (is_array($modules)) {
-                foreach ($modules as $moduleName) {
-                    if (!empty($moduleName) && !isset($toSort[$moduleName])) {
-                        $toSort[$moduleName] = $moduleConfig->get($moduleName . '.order', 10);
-                    }
-                }
-            }
-
-            array_multisort(array_values($toSort), SORT_ASC, array_keys($toSort), SORT_ASC, $toSort);
-
-            // prepare result
-            $this->modules = array_keys($toSort);
-        }
-
-        return $this->modules;
-    }
-
     /**
      * @inheritdoc
      */
     public function getDefaults()
     {
         return array_merge(parent::getDefaults(), include "application/Treo/Configs/defaultConfig.php");
-    }
-
-    /**
-     * Get module util
-     *
-     * @return Module
-     */
-    protected function getModuleUtil()
-    {
-        return new Module($this->getFileManager());
-    }
-
-    /**
-     * Load config
-     *
-     * @param  boolean $reload
-     *
-     * @return array
-     */
-    protected function loadConfig($reload = false)
-    {
-        // load config
-        $config = parent::loadConfig($reload);
-
-        // inject modules
-        $config = Util::merge(['modules' => $this->getModulesConfig()], $config);
-
-        return $config;
-    }
-
-    /**
-     * Load module config
-     *
-     * @return array
-     */
-    protected function getModulesConfig(): array
-    {
-        // prepare result
-        $moduleData = [];
-
-        foreach ($this->getModules() as $module) {
-            $filePath = "application/Espo/Modules/$module/Configs/ModuleConfig.php";
-            if (file_exists($filePath)) {
-                $moduleConfigData = include $filePath;
-                if (!empty($moduleConfigData) && is_array($moduleConfigData)) {
-                    $moduleData = Util::merge($moduleData, $moduleConfigData);
-                }
-            }
-        }
-
-        return $moduleData;
     }
 }

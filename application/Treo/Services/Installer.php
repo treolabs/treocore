@@ -40,7 +40,7 @@ use Espo\Core\Exceptions;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\PasswordHash;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Espo\Entities\User;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Language;
@@ -747,7 +747,7 @@ class Installer extends AbstractService
     /**
      * @return Language
      */
-    protected function getLanguage(): Language
+    protected function getLanguage()
     {
         return new Language(
             $this->getConfig()->get('language'),

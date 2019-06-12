@@ -36,30 +36,22 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\Utils\Language;
-use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Exceptions;
-use Espo\ORM\EntityCollection;
 use Slim\Http\Request;
-use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\Mover;
+use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 
 /**
  * ModuleManager service
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ModuleManager extends \Treo\Services\AbstractService
+class ModuleManager extends AbstractService
 {
-    /**
-     * @var array
-     */
-    protected $moduleRequireds = [];
-
     /**
      * Get list
      *
      * @return array
+     * @throws Exceptions\Error
      */
     public function getList(): array
     {
@@ -76,27 +68,29 @@ class ModuleManager extends \Treo\Services\AbstractService
         $composerDiff = $this->getComposerService()->getComposerDiff();
 
         // for installed modules
-        foreach ($this->getInstalled() as $item) {
-            // prepare id
-            $id = $item->get('id');
+        foreach ($this->getInstalledModules() as $id => $module) {
+            $result['list'][$id] = [
+                'id'             => $id,
+                'name'           => (empty($module->getName())) ? $id : $module->getName(),
+                'description'    => $module->getDescription(),
+                'settingVersion' => '*',
+                'currentVersion' => $module->getVersion(),
+                'versions'       => [],
+                'required'       => [],
+                'isSystem'       => $module->isSystem(),
+                'isComposer'     => !empty($module->getVersion()),
+                'status'         => $this->getModuleStatus($composerDiff, $id),
+            ];
 
-            if (!empty($package = $this->getMetadata()->getModule($id))) {
-                $result['list'][$id] = [
-                    'id'                 => $id,
-                    'name'               => $item->get('name'),
-                    'description'        => $item->get('description'),
-                    'settingVersion'     => '*',
-                    'currentVersion'     => $package['version'],
-                    'versions'           => json_decode(json_encode($item->get('versions')), true),
-                    'required'           => [],
-                    'isSystem'           => !empty($this->getModuleConfigData("{$id}.isSystem")),
-                    'isComposer'         => true,
-                    'status'             => $this->getModuleStatus($composerDiff, $id),
-                ];
-                if ($composerData['require'][$package['name']]) {
-                    $settingVersion = $composerData['require'][$package['name']];
-                    $result['list'][$id]['settingVersion'] = Metadata::prepareVersion($settingVersion);
-                }
+            // set available versions
+            if (!empty($package = $this->getPackage($id))) {
+                $result['list'][$id]['versions'] = json_decode(json_encode($package->get('versions')), true);
+            }
+
+            // set settingVersion
+            if ($composerData['require'][$module->getComposerName()]) {
+                $settingVersion = $composerData['require'][$module->getComposerName()];
+                $result['list'][$id]['settingVersion'] = TreoModuleManager::prepareVersion($settingVersion);
             }
         }
 
@@ -113,12 +107,19 @@ class ModuleManager extends \Treo\Services\AbstractService
                 "isComposer"     => true,
                 "status"         => 'install'
             ];
-            if (!empty($package = $this->getPackagistPackage($row['id']))) {
-                $item['name'] = $package['name'];
-                $item['description'] = $package['description'];
-                if (!empty($composerData['require'][$package['packageId']])) {
-                    $settingVersion = $composerData['require'][$package['packageId']];
-                    $item['settingVersion'] = Metadata::prepareVersion($settingVersion);
+
+            // get package
+            if (!empty($package = $this->getPackage($row['id']))) {
+                // set name
+                $item['name'] = $package->get('name');
+
+                // set description
+                $item['description'] = $package->get('description');
+
+                // set settingVersion
+                if (!empty($composerData['require'][$package->get('packageId')])) {
+                    $settingVersion = $composerData['require'][$package->get('packageId')];
+                    $item['settingVersion'] = TreoModuleManager::prepareVersion($settingVersion);
                 }
             }
             // push
@@ -152,10 +153,10 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         // validation
-        if (empty($packagistPackage = $this->getPackagistPackage($id))) {
+        if (empty($package = $this->getPackage($id))) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
-        if (!empty($this->getMetadata()->getModule($id))) {
+        if (!empty($this->getInstalledModule($id))) {
             throw new Exceptions\Error($this->translateError('Such module is already installed'));
         }
         if (!$this->isVersionValid($version)) {
@@ -163,9 +164,7 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         // update composer.json
-        $this
-            ->getComposerService()
-            ->update($packagistPackage['packageId'], $version);
+        $this->getComposerService()->update($package->get('packageId'), $version);
 
         return true;
     }
@@ -182,10 +181,10 @@ class ModuleManager extends \Treo\Services\AbstractService
     public function updateModule(string $id, string $version): bool
     {
         // prepare params
-        $package = $this->getMetadata()->getModule($id);
+        $package = $this->getInstalledModule($id);
 
         // validation
-        if (empty($this->getPackagistPackage($id))) {
+        if (empty($this->getPackage($id))) {
             throw new Exceptions\Error($this->translateError('No such module'));
         }
         if (empty($package)) {
@@ -196,9 +195,7 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         // update composer.json
-        $this
-            ->getComposerService()
-            ->update($package['name'], $version);
+        $this->getComposerService()->update($package->getComposerName(), $version);
 
         return true;
     }
@@ -213,13 +210,13 @@ class ModuleManager extends \Treo\Services\AbstractService
      */
     public function deleteModule(string $id): bool
     {
+        // get module
+        $package = $this->getInstalledModule($id);
+
         // prepare modules
-        if ($this->isModuleSystem($id)) {
+        if ($package->isSystem($id)) {
             throw new Exceptions\Error($this->translateError('isSystem'));
         }
-
-        // prepare params
-        $package = $this->getMetadata()->getModule($id);
 
         // validation
         if (empty($package)) {
@@ -227,9 +224,7 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         // update composer.json
-        $this
-            ->getComposerService()
-            ->delete($package['name']);
+        $this->getComposerService()->delete($package->getComposerName());
 
         return true;
     }
@@ -248,9 +243,10 @@ class ModuleManager extends \Treo\Services\AbstractService
         $result = false;
 
         // get package
-        $package = $this->getPackagistPackage($id);
+        if (!empty($package = $this->getPackage($id))) {
+            // get name
+            $name = $package->get('packageId');
 
-        if (!empty($name = $package['packageId'])) {
             // get data
             $composerData = $this->getComposerService()->getModuleComposerJson();
             $composerStableData = $this->getComposerService()->getModuleStableComposerJson();
@@ -333,28 +329,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * Is module system ?
-     *
-     * @param string $moduleId
-     *
-     * @return bool
-     * @throws Exceptions\Error
-     */
-    protected function isModuleSystem(string $moduleId): bool
-    {
-        // is system module ?
-        if (!empty($this->getModuleConfigData("{$moduleId}.isSystem"))) {
-            throw new Exceptions\Error(
-                $this
-                    ->getLanguage()
-                    ->translate('isSystem', 'exceptions', 'ModuleManager')
-            );
-        }
-
-        return false;
-    }
-
-    /**
      * Translate error
      *
      * @param string $key
@@ -363,7 +337,7 @@ class ModuleManager extends \Treo\Services\AbstractService
      */
     protected function translateError(string $key): string
     {
-        return $this->getLanguage()->translate($key, 'exceptions', 'ModuleManager');
+        return $this->getContainer()->get('language')->translate($key, 'exceptions', 'ModuleManager');
     }
 
     /**
@@ -394,48 +368,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * Get module config data
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    protected function getModuleConfigData(string $key)
-    {
-        return $this->getMetadata()->getModuleConfigData($key);
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata(): Metadata
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Get language
-     *
-     * @return Language
-     */
-    protected function getLanguage(): Language
-    {
-        return $this->getContainer()->get('language');
-    }
-
-    /**
-     * Get File Manager
-     *
-     * @return FileManager
-     */
-    protected function getFileManager(): FileManager
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
      * Get Composer service
      *
      * @return Composer
@@ -443,79 +375,6 @@ class ModuleManager extends \Treo\Services\AbstractService
     protected function getComposerService(): Composer
     {
         return $this->getContainer()->get('serviceFactory')->create('Composer');
-    }
-
-    /**
-     * @param array  $field
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function packageTranslate(array $field, string $default = ''): string
-    {
-        // get current language
-        $currentLang = $this->getLanguage()->getLanguage();
-
-        $result = $default;
-        if (!empty($field[$currentLang])) {
-            $result = $field[$currentLang];
-        } elseif ($field['default']) {
-            $result = $field['default'];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get packages
-     *
-     * @param string $id
-     *
-     * @return array
-     */
-    protected function getPackagistPackage(string $id): array
-    {
-        // prepare result
-        $result = [];
-
-        $data = $this
-            ->getEntityManager()
-            ->getRepository('TreoStore')
-            ->where(['id' => $id])
-            ->findOne();
-
-        if (!empty($data)) {
-            $result = $data->toArray();
-            $result['versions'] = json_decode(json_encode($data->get('versions')), true);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get packages
-     *
-     * @return array
-     */
-    protected function getPackagistPackages(): array
-    {
-        // prepare result
-        $result = [];
-
-        // find
-        $data = $this
-            ->getEntityManager()
-            ->getRepository('TreoStore')
-            ->find();
-
-        if (count($data) > 0) {
-            foreach ($data as $row) {
-                $result[$row->get('id')] = $row->toArray();
-                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -537,19 +396,6 @@ class ModuleManager extends \Treo\Services\AbstractService
         }
 
         return ($a < $b) ? -1 : 1;
-    }
-
-    /**
-     * Put JSON content to file
-     *
-     * @param string $moduleJsonPath
-     * @param array  $data
-     *
-     * @return bool
-     */
-    protected function putContentsJson(string $moduleJsonPath, array $data): bool
-    {
-        return $this->getFileManager()->putContentsJson($moduleJsonPath, $data);
     }
 
     /**
@@ -585,14 +431,29 @@ class ModuleManager extends \Treo\Services\AbstractService
     }
 
     /**
-     * @return EntityCollection
+     * @return array
      */
-    protected function getInstalled(): EntityCollection
+    private function getInstalledModules(): array
     {
-        return $this
-            ->getEntityManager()
-            ->getRepository('TreoStore')
-            ->where(['id' => $this->getMetadata()->getModuleList()])
-            ->find();
+        return $this->getContainer()->get('moduleManager')->getModules();
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getInstalledModule(string $id)
+    {
+        return $this->getContainer()->get('moduleManager')->getModule($id);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return mixed
+     * @throws Exceptions\Error
+     */
+    private function getPackage(string $id)
+    {
+        return $this->getEntityManager()->getEntity('TreoStore', $id);
     }
 }

@@ -38,7 +38,7 @@ namespace Treo\Services;
 
 use Treo\Core\Utils\Config;
 use Espo\Core\Exceptions;
-use Treo\Core\Utils\Language;
+use Espo\Core\Utils\Language;
 use Espo\Entities\User;
 use Treo\PHPUnit\Framework\TestCase;
 

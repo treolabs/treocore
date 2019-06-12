@@ -36,15 +36,16 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Application as Base;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
 
 /**
  * Class Application
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Application extends \Espo\Core\Application
+class Application extends Base
 {
     /**
      * Is PHP version valid ?
@@ -71,7 +72,7 @@ class Application extends \Espo\Core\Application
     public function isInstalled()
     {
         // copy config if it needs
-        \Treo\Composer\PostUpdate::copyDefaultConfig();
+        $this->copyDefaultConfig();
 
         return parent::isInstalled();
     }
@@ -121,27 +122,49 @@ class Application extends \Espo\Core\Application
     }
 
     /**
-     * @inheritdoc
+     * @param string $file
      */
-    public function runClearCache()
+    public function printModuleClientFile(string $file)
     {
-        // blocked parent method
-    }
+        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
+            $path = $module->getClientPath() . $file;
+            if (file_exists($path)) {
+                $parts = explode(".", $path);
 
-    /**
-     * @inheritdoc
-     */
-    public function runRebuild()
-    {
-        // blocked parent method
-    }
+                switch (array_pop($parts)) {
+                    case 'css':
+                        header('Content-Type: text/css');
+                        break;
+                    case 'js':
+                        header('Content-Type: application/javascript');
+                        break;
+                    case 'json':
+                        header('Content-Type: application/json');
+                        break;
+                    case 'png':
+                        header('Content-Type: image/png');
+                        break;
+                    case 'jpeg':
+                        header('Content-Type: image/jpeg');
+                        break;
+                    case 'jpg':
+                        header('Content-Type: image/jpg');
+                        break;
+                    case 'gif':
+                        header('Content-Type: image/gif');
+                        break;
+                    case 'ico':
+                        header('Content-Type: image/vnd.microsoft.icon');
+                        break;
+                }
+                echo file_get_contents($path);
+                exit;
+            }
+        }
 
-    /**
-     * @inheritdoc
-     */
-    public function runCron()
-    {
-        // blocked parent method
+        // show 404
+        header("HTTP/1.0 404 Not Found");
+        exit;
     }
 
     /**
@@ -170,7 +193,8 @@ class Application extends \Espo\Core\Application
         $routes = new \Treo\Core\Utils\Route(
             $this->getConfig(),
             $this->getMetadata(),
-            $this->getContainer()->get('fileManager')
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('moduleManager')
         );
 
         return $routes->getAll();
@@ -225,5 +249,28 @@ class Application extends \Espo\Core\Application
 
         $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
         exit;
+    }
+
+    /**
+     * Copy default config
+     */
+    private function copyDefaultConfig(): void
+    {
+        // prepare config path
+        $path = 'data/config.php';
+
+        if (!file_exists($path)) {
+            // get default data
+            $data = include 'application/Treo/Configs/defaultConfig.php';
+
+            // prepare salt
+            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+
+            // get content
+            $content = "<?php\nreturn " . $this->getContainer()->get('fileManager')->varExport($data) . ";\n?>";
+
+            // create config
+            file_put_contents($path, $content);
+        }
     }
 }

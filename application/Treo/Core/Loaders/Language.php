@@ -48,7 +48,6 @@ use Espo\Core\Utils\File\Manager;
  */
 class Language extends Base
 {
-
     /**
      * @inheritdoc
      */

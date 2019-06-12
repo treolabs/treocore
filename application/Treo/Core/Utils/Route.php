@@ -36,13 +36,39 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
+use Espo\Core\Utils\Route as Base;
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\File\Manager as FileManager;
+use Treo\Core\ModuleManager\Manager as ModuleManager;
+
 /**
  * Class Route
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class Route extends \Espo\Core\Utils\Route
+class Route extends Base
 {
+    /**
+     * @var ModuleManager
+     */
+    private $moduleManager;
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct(
+        Config $config,
+        Metadata $metadata,
+        FileManager $fileManager,
+        ModuleManager $moduleManager
+    ) {
+        // call parent
+        parent::__construct($config, $metadata, $fileManager);
+
+        $this->moduleManager = $moduleManager;
+    }
+
     /**
      * @inheritdoc
      */
@@ -52,14 +78,9 @@ class Route extends \Espo\Core\Utils\Route
         $data = $this->getAddData([], $this->paths['customPath']);
 
         // for module
-        $moduleData = [];
-        foreach ($this->getMetadata()->getModuleList() as $moduleName) {
-            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
-            foreach ($this->getAddData([], $modulePath) as $row) {
-                $moduleData[$row['method'] . $row['route']] = $row;
-            }
+        foreach ($this->getModuleManager()->getModules() as $module) {
+            $module->loadRoutes($data);
         }
-        $data = array_merge($data, array_values($moduleData));
 
         // for treo core
         $data = $this->getAddData($data, 'application/Treo/Resources/routes.json');
@@ -68,5 +89,13 @@ class Route extends \Espo\Core\Utils\Route
         $data = $this->getAddData($data, $this->paths['corePath']);
 
         return $data;
+    }
+
+    /**
+     * @return ModuleManager
+     */
+    protected function getModuleManager(): ModuleManager
+    {
+        return $this->moduleManager;
     }
 }

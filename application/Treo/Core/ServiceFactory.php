@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Espo\Core\Exceptions\Error;
 
 /**
@@ -136,11 +136,9 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
         }
 
         // load Modules
-        foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-            if (!empty($data = $this->getDirServices("application/Espo/Modules/$module/Services"))) {
-                foreach ($data as $name) {
-                    $this->services[$name] = "\\Espo\\Modules\\$module\\Services\\$name";
-                }
+        foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
+            foreach ($module->loadServices() as $name => $className) {
+                $this->services[$name] = $className;
             }
         }
 

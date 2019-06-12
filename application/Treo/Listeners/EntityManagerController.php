@@ -121,16 +121,6 @@ class EntityManagerController extends AbstractListener
         if (is_null($this->scopesConfig)) {
             // prepare result
             $this->scopesConfig = include 'application/Treo/Configs/Scopes.php';
-
-            foreach ($this->getContainer()->get('metadata')->getModuleList() as $module) {
-                // prepare file
-                $file = sprintf('application/Espo/Modules/%s/Configs/Scopes.php', $module);
-
-                if (file_exists($file)) {
-                    $data = include $file;
-                    $this->scopesConfig = array_merge_recursive($this->scopesConfig, $data);
-                }
-            }
         }
 
         return $this->scopesConfig;

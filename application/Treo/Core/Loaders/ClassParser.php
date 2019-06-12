@@ -31,23 +31,20 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\Utils\File\Manager;
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\File\ClassParser as Instance;
+use Espo\Core\Utils\File\ClassParser as Instance;
 
 /**
- * ClassParser loader
+ * Class ClassParser
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class ClassParser extends Base
 {
-
     /**
      * Load ClassParser
      *
@@ -55,36 +52,10 @@ class ClassParser extends Base
      */
     public function load()
     {
-        return new Instance($this->getFileManager(), $this->getConfig(), $this->getMetadata());
-    }
-
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        return new Instance(
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('metadata')
+        );
     }
 }

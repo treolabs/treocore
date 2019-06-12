@@ -60,28 +60,4 @@ class ApplicationTest extends TestCase
         // test 1
         $this->assertTrue(method_exists($service, 'runClient'));
     }
-
-    public function testIsRunClearCacheMethodExists()
-    {
-        $service = $this->createMockService(Application::class);
-
-        // test 1
-        $this->assertTrue(method_exists($service, 'runClearCache'));
-    }
-
-    public function testIsRunRebuildMethodExists()
-    {
-        $service = $this->createMockService(Application::class);
-
-        // test 1
-        $this->assertTrue(method_exists($service, 'runRebuild'));
-    }
-
-    public function testIsRunCronMethodExists()
-    {
-        $service = $this->createMockService(Application::class);
-
-        // test 1
-        $this->assertTrue(method_exists($service, 'runCron'));
-    }
 }

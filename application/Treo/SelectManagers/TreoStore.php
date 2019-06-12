@@ -36,14 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\SelectManagers;
 
-use Treo\Core\Utils\Mover;
+use Espo\Core\SelectManagers\Base;
 
 /**
  * Class TreoStore
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class TreoStore extends \Espo\Core\SelectManagers\Base
+class TreoStore extends Base
 {
     /**
      * @inheritdoc
@@ -55,30 +55,10 @@ class TreoStore extends \Espo\Core\SelectManagers\Base
 
         if (isset($params['isInstalled']) && empty($params['isInstalled'])) {
             $result['whereClause'][] = [
-                'packageId!=' => $this->getModules()
+                'id!=' => array_keys($this->getMetadata()->getModules())
             ];
         }
 
         return $result;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getModules(): array
-    {
-        $modules = [];
-        foreach (Mover::getModules() as $name) {
-            $modules[] = Mover::TREODIR . "/$name";
-        }
-
-        if (file_exists('data/composer.json')) {
-            $data = json_decode(file_get_contents('data/composer.json'), true);
-            if (!empty($data['require'])) {
-                $modules = array_merge($modules, array_keys($data['require']));
-            }
-        }
-
-        return $modules;
     }
 }

@@ -36,29 +36,70 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils;
 
-use Treo\Core\Utils\File\Unifier;
+use Espo\Core\Utils\Language as Base;
+use Espo\Core\Exceptions\Error;
 
 /**
  * Class Language
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Language extends \Espo\Core\Utils\Language
+class Language extends Base
 {
     /**
-     * @var null|Unifier
+     * @inheritdoc
      */
-    protected $treoUnifier = null;
-
-    /**
-     * @return Unifier
-     */
-    protected function getUnifier()
+    protected function init($reload = false)
     {
-        if (is_null($this->treoUnifier)) {
-            $this->treoUnifier = new Unifier($this->getFileManager(), $this->getMetadata());
+        if ($reload || !file_exists($this->getLangCacheFile()) || !$this->useCache) {
+            // load espo
+            $fullData = $this->unify('application/Espo/Resources/i18n');
+
+            // load treo
+            $fullData = Util::merge($fullData, $this->unify('application/Treo/Resources/i18n'));
+
+            // load modules
+            foreach ($this->getMetadata()->getModules() as $module) {
+                $module->loadTranslates($fullData);
+            }
+
+            // load custom
+            if (!$this->noCustom) {
+                $fullData = Util::merge($fullData, $this->unify('custom/Espo/Custom/Resources/i18n'));
+            }
+
+            $result = true;
+            foreach ($fullData as $i18nName => $i18nData) {
+                if ($i18nName != $this->defaultLanguage) {
+                    $i18nData = Util::merge($fullData[$this->defaultLanguage], $i18nData);
+                }
+
+                $this->data[$i18nName] = $i18nData;
+
+                if ($this->useCache) {
+                    $i18nCacheFile = str_replace('{*}', $i18nName, $this->cacheFile);
+                    $result &= $this->getFileManager()->putPhpContents($i18nCacheFile, $i18nData);
+                }
+            }
+
+            if ($result == false) {
+                throw new Error('Language::init() - Cannot save data to a cache');
+            }
         }
 
-        return $this->treoUnifier;
+        $currentLanguage = $this->getLanguage();
+        if (empty($this->data[$currentLanguage])) {
+            $this->data[$currentLanguage] = $this->getFileManager()->getPhpContents($this->getLangCacheFile());
+        }
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    private function unify(string $path): array
+    {
+        return $this->getUnifier()->unify('i18n', $path, true);
     }
 }

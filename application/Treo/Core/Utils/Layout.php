@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Treo\Layouts\AbstractLayout;
 use Treo\Core\Portal\Container as PortalContainer;
 
@@ -98,19 +98,8 @@ class Layout extends \Espo\Core\Utils\Layout
         }
 
         // from modules data
-        if (empty($data)) {
-            foreach ($this->getMetadata()->getModuleList() as $module) {
-                // prepare file path
-                $filePath = $this->concatPath(str_replace('{*}', $module, $this->paths['modulePath']), $scope);
-                $fileFullPath = $this->concatPath($filePath, $name . '.json');
-                if (file_exists($fileFullPath)) {
-                    // get file data
-                    $fileData = $this->getFileManager()->getContents($fileFullPath);
-
-                    // prepare data
-                    $data = array_merge_recursive($data, Json::decode($fileData, true));
-                }
-            }
+        foreach ($this->getMetadata()->getModules() as $module) {
+            $module->loadLayouts($scope, $name, $data);
         }
 
         // from treo core data
@@ -226,8 +215,8 @@ class Layout extends \Espo\Core\Utils\Layout
         $classes = [
             "Treo\\Layouts\\$scope"
         ];
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $classes[] = "Espo\\Modules\\$module\\Layouts\\$scope";
+        foreach ($this->getMetadata()->getModules() as $id => $module) {
+            $classes[] = "\\$id\\Layouts\\$scope";
         }
 
         // modify data
@@ -268,7 +257,7 @@ class Layout extends \Espo\Core\Utils\Layout
      *
      * @return string
      */
-    protected function concatPath($folderPath, $filePath = null)
+    public function concatPath($folderPath, $filePath = null)
     {
         // for portal
         if ($this->isPortal()) {

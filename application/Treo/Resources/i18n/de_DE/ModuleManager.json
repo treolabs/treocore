@@ -1,19 +1,4 @@
 {
-  "moduleNames": {
-    "TreoCore": "TreoCRM",
-    "ActivitiesTasks": "Termin- und Aufgabenverwaltung",
-    "ColoredFields": "farbiges Auswahl- und Mehrfachauswahlfeld",
-    "Export": "Exportprofil",
-    "Import": "Importprofil",
-    "NavMenu": "zweistufige Navigation"
-  },
-  "moduleDescriptions": {
-    "TreoCore": "-",
-    "Export": "benutzerfreundlicher Mechanismus für Datenexport",
-    "Import": "benutzerfreundlicher Mechanismus für Datenimport",
-    "NavMenu": "zweistufige Navigation für TreoCRM",
-    "Revisions": "das Modul stellt benutzerfreundliche Interfaces die Ansicht von geänderten Entity-Feldern mit der Möglichkeit, die Grundwerte wiederherzustellen."
-  },
   "fields": {
     "status": "Status",
     "settingVersion": "Version einstellen",

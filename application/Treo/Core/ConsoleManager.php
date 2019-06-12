@@ -139,17 +139,7 @@ class ConsoleManager
      */
     protected function loadRoutes(): array
     {
-        // prepare result
-        $result = include 'application/Treo/Configs/Console.php';
-
-        foreach ($this->getMetadata()->getModuleList() as $module) {
-            $path = sprintf(self::$configPath, $module);
-            if (file_exists($path)) {
-                $result = array_merge($result, include $path);
-            }
-        }
-
-        return $result;
+        return include 'application/Treo/Configs/Console.php';
     }
 
     /**

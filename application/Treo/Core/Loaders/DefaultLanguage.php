@@ -47,7 +47,6 @@ use Espo\Core\Utils\File\Manager;
  */
 class DefaultLanguage extends Base
 {
-
     /**
      * Load DefaultLanguage
      *

@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application;
 use Treo\Core\Container;
 
 /**
@@ -50,16 +51,13 @@ class Cmd
      */
     public static function preUpdate(): void
     {
-        (new PreUpdate())->run();
-    }
+        if (file_exists("data/old-composer.lock")) {
+            unlink("data/old-composer.lock");
+        }
 
-    /**
-     * After install
-     */
-    public static function postInstall(): void
-    {
-        // relocate files
-        self::relocateFiles();
+        if (file_exists("composer.lock")) {
+            copy("composer.lock", "data/old-composer.lock");
+        }
     }
 
     /**
@@ -67,18 +65,6 @@ class Cmd
      */
     public static function postUpdate(): void
     {
-        // relocate files
-        self::relocateFiles();
-
-        // copy default config
-        PostUpdate::copyDefaultConfig();
-
-        // update load order
-        PostUpdate::updateLoadOrder();
-
-        // save stable-composer.json file
-        PostUpdate::saveStableComposerJson();
-
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
@@ -89,20 +75,9 @@ class Cmd
     {
         include "bootstrap.php";
 
-        return (new \Treo\Core\Application())->getContainer();
-    }
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
-
-    /**
-     * Relocate files
-     */
-    protected static function relocateFiles(): void
-    {
-        if (!defined('CORE_PATH')) {
-            // define gloabal variables
-            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-            \Treo\Core\Utils\Mover::update();
-        }
+        return (new Application())->getContainer();
     }
 }

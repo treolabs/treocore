@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\Core\Services\Base;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Treo\Documentator\Extractor;
 use Treo\Core\Utils\Metadata;
@@ -169,7 +169,7 @@ class RestApiDocs extends Base
         if (!class_exists($controllerClassName)) {
             $moduleName = $this->getMetadata()->getScopeModuleName($controller);
             if ($moduleName) {
-                $controllerClassName = '\\Espo\\Modules\\' . $moduleName . '\\Controllers\\' .
+                $controllerClassName = '\\' . $moduleName . '\\Controllers\\' .
                     Util::normilizeClassName($controller);
             }
         }

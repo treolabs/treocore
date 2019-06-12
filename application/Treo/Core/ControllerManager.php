@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Espo\Core\Exceptions\NotFound;
 use Slim\Http\Request;
@@ -70,8 +70,10 @@ class ControllerManager
         // normilizeClassName
         $className = Util::normilizeClassName($controllerName);
 
-        // find controller classname
+        // for custom
         $controllerClassName = "\\Espo\\Custom\\Controllers\\$className";
+
+        // for Modules
         if (!class_exists($controllerClassName)) {
             // get module name
             $moduleName = $this
@@ -79,16 +81,21 @@ class ControllerManager
                 ->get('metadata')
                 ->getScopeModuleName($controllerName);
 
-            if ($moduleName) {
-                $controllerClassName = "\\Espo\\Modules\\$moduleName\\Controllers\\$className";
+            if (!empty($moduleName)) {
+                $controllerClassName = "\\$moduleName\\Controllers\\$className";
             }
         }
+
+        // for Treo
         if (!class_exists($controllerClassName)) {
             $controllerClassName = "\\Treo\\Controllers\\$className";
         }
+
+        // for Espo
         if (!class_exists($controllerClassName)) {
             $controllerClassName = "\\Espo\\Controllers\\$className";
         }
+
         if (!class_exists($controllerClassName)) {
             throw new NotFound("Controller '$controllerName' is not found");
         }

@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 
 /**
  * Class TreoStore
@@ -105,7 +105,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
         parent::init();
 
         $this->addDependency('language');
-        $this->addDependency('metadata');
+        $this->addDependency('moduleManager');
     }
 
     /**
@@ -174,7 +174,7 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
         // find
         $data = $this
             ->getRepository()
-            ->where(['id' => $this->getInjection('metadata')->getModuleList()])
+            ->where(['id' => $this->getModules()])
             ->find();
 
         if (count($data) > 0) {
@@ -230,5 +230,15 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
                 }
             }
         }
+    }
+
+    /**
+     * Get modules
+     *
+     * @return array
+     */
+    private function getModules(): array
+    {
+        return array_keys($this->getInjection('moduleManager')->getModules());
     }
 }

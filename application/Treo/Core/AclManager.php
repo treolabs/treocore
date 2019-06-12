@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 
 /**
  * Class AclManager
@@ -67,7 +67,7 @@ class AclManager extends \Espo\Core\AclManager
             if (!class_exists($className)) {
                 $moduleName = $this->getMetadata()->getScopeModuleName($scope);
                 if ($moduleName) {
-                    $className = '\\Espo\\Modules\\' . $moduleName . '\\Acl\\' . $normalizedName;
+                    $className = '\\' . $moduleName . '\\Acl\\' . $normalizedName;
                 }
                 if (!class_exists($className)) {
                     $className = '\\Treo\\Acl\\' . $normalizedName;
