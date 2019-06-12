@@ -91,12 +91,6 @@ class Install extends \Espo\Core\Upgrades\Actions\Base
         $this->deleteFiles('vendor');
         $this->copyFiles('vendor');
 
-        if (!isset($data['skipSystemRebuild']) || !$data['skipSystemRebuild']) {
-            if (!$this->systemRebuild()) {
-                $this->throwErrorAndRemovePackage('Error occurred while EspoCRM rebuild.');
-            }
-        }
-
         //afterInstallFiles
         if (!$this->copyFiles('after')) {
             $this->throwErrorAndRemovePackage('Cannot copy afterInstall files.');
