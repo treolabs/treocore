@@ -36,6 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Core\ModuleManager;
 
+use Espo\Core\Exceptions\Error;
+use Treo\Core\Container;
+
 /**
  * Class Manager
  *
@@ -47,6 +50,11 @@ class Manager
      * @var array|null
      */
     private $modules = null;
+
+    /**
+     * @var Container
+     */
+    private $container;
 
     /**
      * Prepare version
@@ -61,9 +69,21 @@ class Manager
     }
 
     /**
+     * Manager constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * Get modules
      *
      * @return array
+     * @throws Error
+     * @throws \ReflectionException
      */
     public function getModules(): array
     {
@@ -85,10 +105,27 @@ class Manager
                     // prepare class name
                     $className = "\\$module\\Module";
                     if (property_exists($className, 'isTreoModule')) {
-                        // prepare app path
-                        $appPath = dirname((new \ReflectionClass($className))->getFileName()) . '/';
+                        // prepare base path
+                        $path = (new \ReflectionClass($className))->getFileName();
 
-                        $this->modules[$module] = new $className($appPath, $this->getPackage($module));
+                        // get module path
+                        $modulePath = '';
+                        while (empty($modulePath)) {
+                            $path = dirname($path);
+                            if (file_exists($path . "/composer.json")) {
+                                $modulePath = $path . "/";
+                            }
+
+                            if ($path == '/') {
+                                throw new Error('Error at modules loader');
+                            }
+                        }
+
+                        $this->modules[$module] = new $className(
+                            $modulePath,
+                            $this->getPackage($module),
+                            $this->container
+                        );
                     }
                 }
             }
