@@ -39,6 +39,7 @@ namespace Treo\Core\Utils;
 use Espo\Core\Utils\Metadata as Base;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Json;
 use Espo\Core\Utils\DataUtil;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\EventManager\Manager as EventManager;
@@ -134,6 +135,33 @@ class Metadata extends Base
     }
 
     /**
+     * @inheritdoc
+     */
+    public function init($reload = false)
+    {
+        parent::init($reload);
+
+        $this->data = $this
+            ->getEventManager()
+            ->dispatch('Metadata', 'modify', new Event(['data' => $this->data]))
+            ->getArgument('data');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAllForFrontend($reload = false)
+    {
+        $data = parent::getAllForFrontend();
+
+        return $this
+            ->getEventManager()
+            ->dispatch('Metadata', 'modify', new Event(['data' => Util::objectToArray($data)]))
+            ->getArgument('data');
+    }
+
+
+    /**
      * @param bool $reload
      */
     protected function objInit($reload = false)
@@ -154,12 +182,6 @@ class Metadata extends Base
                 }
             }
         }
-
-        // dispatch an event
-        $this->objData = (object)$this
-            ->getEventManager()
-            ->dispatch('Metadata', 'modify', new Event(['data' => json_decode(json_encode($this->objData), true)]))
-            ->getArgument('data');
     }
 
     /**
