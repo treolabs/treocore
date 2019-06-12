@@ -243,9 +243,10 @@ class ModuleManager extends AbstractService
         $result = false;
 
         // get package
-        $package = $this->getPackage($id);
+        if (!empty($package = $this->getPackage($id))) {
+            // get name
+            $name = $package->get('packageId');
 
-        if (!empty($name = $package['packageId'])) {
             // get data
             $composerData = $this->getComposerService()->getModuleComposerJson();
             $composerStableData = $this->getComposerService()->getModuleStableComposerJson();
