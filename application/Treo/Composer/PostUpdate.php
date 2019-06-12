@@ -38,6 +38,7 @@ namespace Treo\Composer;
 
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\Utils\Util;
+use Treo\Core\ModuleManager\AbstractEvent;
 
 /**
  * Class PostUpdate
