@@ -78,7 +78,7 @@ class ModuleManager extends AbstractService
                 'versions'       => [],
                 'required'       => [],
                 'isSystem'       => $module->isSystem(),
-                'isComposer'     => true,
+                'isComposer'     => !empty($module->getVersion()),
                 'status'         => $this->getModuleStatus($composerDiff, $id),
             ];
 
