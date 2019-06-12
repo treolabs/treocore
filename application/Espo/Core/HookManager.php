@@ -88,7 +88,7 @@ class HookManager
         $data = $this->getHookData($this->paths['customPath']);
 
         foreach ($metadata->getModules() as $module) {
-            $data = $this->getHookData($module->getAppPath() . 'Hooks', $data);
+            $module->loadHooks($data);
         }
 
         $data = $this->getHookData($this->paths['corePath'], $data);
@@ -141,7 +141,7 @@ class HookManager
      *
      * @return array
      */
-    protected function getHookData($hookDirs, array $hookData = array())
+    public function getHookData($hookDirs, array $hookData = array())
     {
         if (is_string($hookDirs)) {
             $hookDirs = (array) $hookDirs;

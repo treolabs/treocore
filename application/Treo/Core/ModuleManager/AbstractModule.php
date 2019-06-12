@@ -43,6 +43,7 @@ use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Util;
 use Treo\Core\Utils\Route;
 use Treo\Core\Loaders\Layout;
+use Treo\Core\Loaders\HookManager;
 
 /**
  * Class AbstractModule
@@ -111,11 +112,6 @@ abstract class AbstractModule
         $this->path = $path;
         $this->package = $package;
         $this->container = $container;
-    }
-
-    public function getAppPath()
-    {
-        return $this->path . 'app/';
     }
 
     /**
@@ -289,6 +285,19 @@ abstract class AbstractModule
     public function loadTranslates(array &$data)
     {
         $data = Util::merge($data, $this->getUnifier()->unify('i18n', $this->path . 'app/Resources/i18n', true));
+    }
+
+    /**
+     * Load module hooks
+     *
+     * @param array $data
+     */
+    public function loadHooks(array &$data)
+    {
+        // load hook manager
+        $hookManager = (new HookManager($this->container))->load();
+
+        $data = $hookManager->getHookData($this->path . 'app/Hooks', $data);
     }
 
     /**
