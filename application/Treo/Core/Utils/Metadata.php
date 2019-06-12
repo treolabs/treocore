@@ -39,7 +39,6 @@ namespace Treo\Core\Utils;
 use Espo\Core\Utils\Metadata as Base;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Util;
-use Espo\Core\Utils\Json;
 use Espo\Core\Utils\DataUtil;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\EventManager\Manager as EventManager;
@@ -199,7 +198,7 @@ class Metadata extends Base
 
         // load modules
         foreach ($this->getModules() as $module) {
-            $content = DataUtil::merge($content, $this->unify($module->getAppPath() . 'Resources/metadata'));
+            $content = $module->loadMetadata($content);
         }
 
         // load custom
