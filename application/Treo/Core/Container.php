@@ -191,7 +191,7 @@ class Container extends \Espo\Core\Container
      */
     protected function loadModuleManager(): ModuleManager
     {
-        return new ModuleManager();
+        return new ModuleManager($this);
     }
 
     /**
