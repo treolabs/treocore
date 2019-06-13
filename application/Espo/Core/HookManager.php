@@ -33,9 +33,9 @@ use \Espo\Core\Exceptions\Error,
 
 class HookManager
 {
-    private $container;
+    protected $container;
 
-    private $data;
+    protected $data;
 
     private $hookListHash = array();
 
@@ -87,8 +87,9 @@ class HookManager
 
         $data = $this->getHookData($this->paths['customPath']);
 
-        foreach ($metadata->getModules() as $module) {
-            $module->loadHooks($data);
+        foreach ($metadata->getModuleList() as $moduleName) {
+            $modulePath = str_replace('{*}', $moduleName, $this->paths['modulePath']);
+            $data = $this->getHookData($modulePath, $data);
         }
 
         $data = $this->getHookData($this->paths['corePath'], $data);
@@ -141,7 +142,7 @@ class HookManager
      *
      * @return array
      */
-    public function getHookData($hookDirs, array $hookData = array())
+    protected function getHookData($hookDirs, array $hookData = array())
     {
         if (is_string($hookDirs)) {
             $hookDirs = (array) $hookDirs;
@@ -163,9 +164,6 @@ class HookManager
                         $className = Util::getClassName($hookFilePath);
 
                         $classMethods = get_class_methods($className);
-                        if (!is_array($classMethods)){
-                            continue 1;
-                        }
                         $hookMethods = array_diff($classMethods, $this->ignoredMethodList);
 
                         foreach($hookMethods as $hookType) {

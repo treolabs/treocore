@@ -156,6 +156,9 @@ class Application extends Base
                     case 'ico':
                         header('Content-Type: image/vnd.microsoft.icon');
                         break;
+                    case 'svg':
+                        header('Content-type: image/svg+xml');
+                        break;
                 }
                 echo file_get_contents($path);
                 exit;

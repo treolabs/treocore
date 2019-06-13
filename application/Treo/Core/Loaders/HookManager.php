@@ -35,8 +35,6 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\HookManager as Instance;
-
 /**
  * HookManager loader
  *
@@ -45,12 +43,10 @@ use Espo\Core\HookManager as Instance;
 class HookManager extends Base
 {
     /**
-     * Load HookManager
-     *
-     * @return Instance
+     * @inheritdoc
      */
     public function load()
     {
-        return (new Instance($this->getContainer()));
+        return new \Treo\Core\HookManager($this->getContainer());
     }
 }

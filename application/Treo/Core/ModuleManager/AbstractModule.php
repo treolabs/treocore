@@ -123,6 +123,16 @@ abstract class AbstractModule
     protected $translatePath = ['app/Resources/i18n'];
 
     /**
+     * @var null
+     */
+    private $hookManager = null;
+
+    /**
+     * @var null
+     */
+    private $routeUtil = null;
+
+    /**
      * Get module load order
      *
      * @return int
@@ -282,16 +292,8 @@ abstract class AbstractModule
      */
     public function loadRoutes(array &$data)
     {
-        // create route class
-        $route = new Route(
-            $this->container->get('config'),
-            $this->container->get('metadata'),
-            $this->container->get('fileManager'),
-            $this->container->get('moduleManager')
-        );
-
         foreach ($this->routePath as $path) {
-            $data = $route->getAddData($data, $this->path . $path);
+            $data = $this->getRouteUtil()->getAddData($data, $this->path . $path);
         }
     }
 
@@ -339,11 +341,8 @@ abstract class AbstractModule
      */
     public function loadHooks(array &$data)
     {
-        // load hook manager
-        $hookManager = (new HookManager($this->container))->load();
-
         foreach ($this->hookPath as $path) {
-            $data = $hookManager->getHookData($this->path . $path, $data);
+            $data = $this->getHookManager()->getModuleHookData($this->path . $path, $this->id, $data);
         }
     }
 
@@ -377,5 +376,34 @@ abstract class AbstractModule
         }
 
         return $this->objUnifier;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getHookManager()
+    {
+        if (is_null($this->hookManager)) {
+            $this->hookManager = (new HookManager($this->container))->load();
+        }
+
+        return $this->hookManager;
+    }
+
+    /**
+     * @return Route
+     */
+    protected function getRouteUtil(): Route
+    {
+        if (is_null($this->routeUtil)) {
+            $this->routeUtil = new Route(
+                $this->container->get('config'),
+                $this->container->get('metadata'),
+                $this->container->get('fileManager'),
+                $this->container->get('moduleManager')
+            );
+        }
+
+        return $this->routeUtil;
     }
 }
