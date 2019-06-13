@@ -364,6 +364,11 @@ class PostUpdate
                 mkdir($dest, 0777, true);
             }
 
+            // skip
+            if (file_exists($src) || !is_dir($src)) {
+                continue 1;
+            }
+
             foreach (scandir($src) as $file) {
                 // skip
                 if (in_array($file, ['.', '..'])) {
