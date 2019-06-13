@@ -327,6 +327,7 @@ class Composer extends AbstractService
         $data = $this
             ->getEntityManager()
             ->getRepository('TreoStore')
+            ->order('id', true)
             ->find();
 
         if (count($data) > 0) {
