@@ -81,7 +81,9 @@ class Manager
     protected function getListener(string $className): AbstractListener
     {
         if (!isset($this->listeners[$className])) {
-            $this->listeners[$className] = (new $className())->setContainer($this->getContainer());
+            if (class_exists($className)) {
+                $this->listeners[$className] = (new $className())->setContainer($this->getContainer());
+            }
         }
 
         return $this->listeners[$className];
@@ -102,7 +104,10 @@ class Manager
             $listeners = [];
 
             // for core
-            $this->parseDir("Treo", CORE_PATH . "/application/Treo/Listeners", $listeners);
+            $corePath = CORE_PATH . "/application/Treo/Listeners";
+            if (file_exists($corePath)) {
+                $this->parseDir("Treo", CORE_PATH . "/application/Treo/Listeners", $listeners);
+            }
 
             // for modules
             foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
