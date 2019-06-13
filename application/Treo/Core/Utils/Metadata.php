@@ -73,7 +73,7 @@ class Metadata extends Base
         FileManager $fileManager,
         ModuleManager $moduleManager,
         EventManager $eventManager,
-        bool $useCache
+        bool $useCache = false
     ) {
         parent::__construct($fileManager, $useCache);
 
