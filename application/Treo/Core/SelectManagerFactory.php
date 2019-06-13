@@ -77,7 +77,7 @@ class SelectManagerFactory
         if (!class_exists($className)) {
             $moduleName = $this->container->get('metadata')->getScopeModuleName($entityType);
             if ($moduleName) {
-                $className = '\\Espo\\Modules\\' . $moduleName . '\\SelectManagers\\' . $normalizedName;
+                $className = '\\' . $moduleName . '\\SelectManagers\\' . $normalizedName;
             }
             if (!class_exists($className)) {
                 $className = '\\Treo\\SelectManagers\\' . $normalizedName;
