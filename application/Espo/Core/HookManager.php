@@ -163,6 +163,9 @@ class HookManager
                         $className = Util::getClassName($hookFilePath);
 
                         $classMethods = get_class_methods($className);
+                        if (!is_array($classMethods)){
+                            continue 1;
+                        }
                         $hookMethods = array_diff($classMethods, $this->ignoredMethodList);
 
                         foreach($hookMethods as $hookType) {
