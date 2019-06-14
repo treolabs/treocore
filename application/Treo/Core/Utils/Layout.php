@@ -97,8 +97,8 @@ class Layout extends \Espo\Core\Utils\Layout
         // prepare data
         $data = [];
 
-        // from core data
-        $filePath = $this->concatPath($this->paths['corePath'], $scope);
+        // from treo core data
+        $filePath = $this->concatPath('application/Treo/Resources/layouts', $scope);
         $fileFullPath = $this->concatPath($filePath, $name . '.json');
         if (file_exists($fileFullPath)) {
             // get file data
@@ -108,10 +108,9 @@ class Layout extends \Espo\Core\Utils\Layout
             $data = Json::decode($fileData, true);
         }
 
-        // from treo core data
+        // from espo core data
         if (empty($data)) {
-            // prepare file path
-            $filePath = $this->concatPath('application/Treo/Resources/layouts', $scope);
+            $filePath = $this->concatPath($this->paths['corePath'], $scope);
             $fileFullPath = $this->concatPath($filePath, $name . '.json');
             if (file_exists($fileFullPath)) {
                 // get file data
