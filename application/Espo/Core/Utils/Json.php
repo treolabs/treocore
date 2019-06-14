@@ -34,7 +34,7 @@ class Json
     /**
      * JSON encode a string
      *
-     * @param string $value
+     * @param mixed $value
      * @param int $options Default 0
      * @return string
      */

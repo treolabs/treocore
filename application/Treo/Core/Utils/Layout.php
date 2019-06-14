@@ -56,7 +56,7 @@ class Layout extends \Espo\Core\Utils\Layout
      * @param string $scope
      * @param string $name
      *
-     * @return json
+     * @return json|string
      */
     public function get($scope, $name)
     {
@@ -77,29 +77,35 @@ class Layout extends \Espo\Core\Utils\Layout
         // remove fields from layout if this fields not exist in metadata
         $layout = $this->disableNotExistingFields($scope, $name, $layout);
 
-        // modify layouts
-        $layout = $this->modifyLayouts($scope, $name, $layout);
-
         return Json::encode($layout);
     }
 
+    /**
+     * @param string $scope
+     * @param string $name
+     *
+     * @return array
+     */
     protected function compose(string $scope, string $name): array
     {
-        // prepare data
-        $data = [];
-
         // from custom data
         $fileFullPath = $this->concatPath($this->getLayoutPath($scope, true), $name . '.json');
         if (file_exists($fileFullPath)) {
+            return Json::decode($this->getFileManager()->getContents($fileFullPath), true);
+        }
+
+        // prepare data
+        $data = [];
+
+        // from core data
+        $filePath = $this->concatPath($this->paths['corePath'], $scope);
+        $fileFullPath = $this->concatPath($filePath, $name . '.json');
+        if (file_exists($fileFullPath)) {
+            // get file data
             $fileData = $this->getFileManager()->getContents($fileFullPath);
 
             // prepare data
-            $data = array_merge_recursive($data, Json::decode($fileData, true));
-        }
-
-        // from modules data
-        foreach ($this->getMetadata()->getModules() as $module) {
-            $module->loadLayouts($scope, $name, $data);
+            $data = Json::decode($fileData, true);
         }
 
         // from treo core data
@@ -116,18 +122,9 @@ class Layout extends \Espo\Core\Utils\Layout
             }
         }
 
-        // from core data
-        if (empty($data)) {
-            // prepare file path
-            $filePath = $this->concatPath($this->paths['corePath'], $scope);
-            $fileFullPath = $this->concatPath($filePath, $name . '.json');
-            if (file_exists($fileFullPath)) {
-                // get file data
-                $fileData = $this->getFileManager()->getContents($fileFullPath);
-
-                // prepare data
-                $data = Json::decode($fileData, true);
-            }
+        // from modules data
+        foreach ($this->getMetadata()->getModules() as $module) {
+            $module->loadLayouts($scope, $name, $data);
         }
 
         // default
@@ -196,45 +193,6 @@ class Layout extends \Espo\Core\Utils\Layout
                     }
 
                     break;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param string $scope
-     * @param string $name
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function modifyLayouts(string $scope, string $name, array $data): array
-    {
-        // prepare classes
-        $classes = [
-            "Treo\\Layouts\\$scope"
-        ];
-        foreach ($this->getMetadata()->getModules() as $id => $module) {
-            $classes[] = "\\$id\\Layouts\\$scope";
-        }
-
-        // modify data
-        foreach ($classes as $className) {
-            if (class_exists($className)) {
-                // create class
-                $layout = new $className();
-
-                // set container
-                if ($layout instanceof AbstractLayout) {
-                    $layout->setContainer($this->getContainer());
-                }
-
-                // call method
-                $method = 'layout' . ucfirst($name);
-                if (method_exists($layout, $method)) {
-                    $data = $layout->{$method}($data);
-                }
             }
         }
 
