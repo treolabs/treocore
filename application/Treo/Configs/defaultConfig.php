@@ -53,7 +53,7 @@ return [
     'lastViewedCount'        => 20,
     'decimalMark'            => '.',
     'thousandSeparator'      => ',',
-    'useCache'               => false,
+    'useCache'               => true,
     'applicationName'        => 'TreoCore',
     'outboundEmailFromName'  => 'TreoCore',
     'smtpPort' => 25,
