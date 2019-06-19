@@ -89,6 +89,9 @@
   "views/admin/field-manager/list": [
     "treo-core"
   ],
+  "views/admin/field-manager/fields/options": [
+    "treo-core"
+  ],
   "views/admin/layouts/relationships": [
     "treo-core"
   ],
