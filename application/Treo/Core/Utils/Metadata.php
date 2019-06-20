@@ -86,9 +86,11 @@ class Metadata extends Base
      */
     public function getEntityPath($entityName, $delim = '\\')
     {
-        $path = implode($delim, ['Treo', 'Entities', Util::normilizeClassName(ucfirst($entityName))]);
+        $path = parent::getEntityPath($entityName, $delim);
+
+        // for espo classes
         if (!class_exists($path)) {
-            $path = parent::getEntityPath($entityName, $delim);
+            $path = implode($delim, ['Espo', 'Entities', Util::normilizeClassName(ucfirst($entityName))]);
         }
 
         return $path;
@@ -99,9 +101,11 @@ class Metadata extends Base
      */
     public function getRepositoryPath($entityName, $delim = '\\')
     {
-        $path = implode($delim, ['Treo', 'Repositories', Util::normilizeClassName(ucfirst($entityName))]);
+        $path = parent::getRepositoryPath($entityName, $delim);
+
+        // for espo classes
         if (!class_exists($path)) {
-            $path = parent::getRepositoryPath($entityName, $delim);
+            $path = implode($delim, ['Espo', 'Repositories', Util::normilizeClassName(ucfirst($entityName))]);
         }
 
         return $path;
@@ -114,7 +118,7 @@ class Metadata extends Base
     {
         $moduleName = $this->getScopeModuleName($scopeName);
 
-        $path = ($moduleName !== false) ? $moduleName : 'Espo';
+        $path = ($moduleName !== false) ? $moduleName : 'Treo';
 
         if ($delim != '/') {
             $path = str_replace('/', $delim, $path);
