@@ -118,6 +118,11 @@ class Metadata extends Base
     {
         $moduleName = $this->getScopeModuleName($scopeName);
 
+        // set treo name
+        if ($moduleName == 'TreoCore'){
+            $moduleName = 'Treo';
+        }
+
         $path = ($moduleName !== false) ? $moduleName : 'Treo';
 
         if ($delim != '/') {
