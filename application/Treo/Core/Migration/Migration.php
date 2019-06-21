@@ -151,7 +151,7 @@ class Migration
         $result = [];
 
         // prepare path
-        $path = sprintf('data/migrations/%s/', $module);
+        $path = sprintf('data/migrations/%s/Migrations/', $module);
 
         if (file_exists($path) && is_dir($path)) {
             foreach (scandir($path) as $file) {

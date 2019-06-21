@@ -48,7 +48,7 @@ do
          # upgrade
          echo "3. Upgrading core" >> $log 2>&1
          $php console.php upgrade $to --force > /dev/null 2>&1
-         $php console.php migrate TreoCore $from $to > /dev/null 2>&1
+         $php console.php migrate Treo $from $to > /dev/null 2>&1
          $php composer.phar run-script post-update-cmd > /dev/null 2>&1
          echo -e "OK\n" >> $log 2>&1
          echo "{{success}}" >> $log 2>&1
