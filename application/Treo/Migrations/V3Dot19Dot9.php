@@ -26,17 +26,29 @@ use Treo\Core\Migration\AbstractMigration;
 use Treo\Core\Utils\Util;
 
 /**
- * Migration class for version 3.19.8
+ * Migration class for version 3.19.9
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot19Dot8 extends AbstractMigration
+class V3Dot19Dot9 extends AbstractMigration
 {
     /**
      * @inheritdoc
      */
     public function up(): void
     {
+        // refresh all processes
+        file_put_contents("data/process-kill.txt", '1');
+
+        // delete api dir
+        Util::removedir('application/Espo/Modules');
+
+        // delete client dir
+        foreach (scandir('client/modules') as $module) {
+            if (!in_array($module, ['.', '..', 'treo-core'])) {
+                Util::removedir('client/modules/' . $module);
+            }
+        }
     }
 
     /**

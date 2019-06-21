@@ -342,8 +342,8 @@ class PostUpdate
         // prepare data
         $data = [];
 
-        // @todo remove in in next release
-        $data['Treo'] = 'application/Treo/Migrations';
+        // @todo remove in next release
+        $data['Treo'] = CORE_PATH . '/application/Treo/Migrations';
 
         foreach (self::getModules() as $id) {
             // prepare src
@@ -365,7 +365,7 @@ class PostUpdate
             }
 
             // skip
-            if (file_exists($src) || !is_dir($src)) {
+            if (!file_exists($src) || !is_dir($src)) {
                 continue 1;
             }
 

@@ -65,6 +65,9 @@ class Cmd
      */
     public static function postUpdate(): void
     {
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
@@ -74,9 +77,6 @@ class Cmd
     protected static function getContainer(): Container
     {
         include "bootstrap.php";
-
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
 
         return (new Application())->getContainer();
     }
