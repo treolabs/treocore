@@ -7,5 +7,5 @@
 !/custom/.htaccess
 /data/
 !/data/.htaccess
-/modules/
+/modules
 /vendor/
