@@ -203,14 +203,6 @@ class EntityManager
         $templateNamespace = "\Espo\Core\Templates";
         $templatePath = "application/Espo/Core/Templates";
 
-        $templateModuleName = null;
-        if (!empty($templateDefs['module'])) {
-            $templateModuleName = $templateDefs['module'];
-            $normalizedTemplateModuleName = Util::normilizeClassName($templateModuleName);
-            $templateNamespace = "\Espo\Modules\\{$normalizedTemplateModuleName}\Core\Templates";
-            $templatePath = "application/Espo/Modules/".$normalizedTemplateModuleName."/Core/Templates";
-        }
-
         $contents = "<" . "?" . "php\n\n".
             "namespace Espo\Custom\Entities;\n\n".
             "class {$normalizedName} extends {$templateNamespace}\Entities\\{$type}\n".
