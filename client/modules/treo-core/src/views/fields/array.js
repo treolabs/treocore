@@ -42,5 +42,48 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
             });
         },
 
+        getItemHtml: function (value) {
+            if (this.translatedOptions != null) {
+                for (var item in this.translatedOptions) {
+                    if (this.translatedOptions[item] == value) {
+                        value = item;
+                        break;
+                    }
+                }
+            }
+
+            value = value.toString();
+
+            var valueSanitized = this.getHelper().stripTags(value);
+            var valueSanitized = valueSanitized.replace(/"/g, '&quot;');
+            valueSanitized = valueSanitized.replace(/\\/g, '&bsol;');
+
+            var label = valueSanitized;
+            if (this.translatedOptions) {
+                label = ((value in this.translatedOptions) ? this.translatedOptions[value] : label);
+                label = label.toString();
+                label = this.getHelper().stripTags(label);
+                label = label.replace(/"/g, '&quot;');
+                label = label.replace(/\\/g, '&bsol;');
+            }
+
+            var html = '<div class="list-group-item" data-value="' + valueSanitized + '" style="cursor: default;">' + label +
+                '&nbsp;<a href="javascript:" class="pull-right" data-value="' + valueSanitized + '" data-action="removeValue"><span class="fas fa-times"></a>' +
+                '</div>';
+
+            return html;
+        },
+
+        removeValue: function (value) {
+            var valueSanitized = this.getHelper().stripTags(value).replace(/\\/g, '\\\\');
+            valueSanitized = valueSanitized.replace(/"/g, '\\"');
+
+            this.$list.children('[data-value="' + valueSanitized + '"]').remove();
+            var index = this.selected.indexOf(value);
+            this.selected.splice(index, 1);
+            this.trigger('change');
+        },
+
+
     })
 );
