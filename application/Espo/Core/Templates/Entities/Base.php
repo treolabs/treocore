@@ -27,10 +27,17 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+declare(strict_types=1);
+
 namespace Espo\Core\Templates\Entities;
 
-class Base extends \Espo\Core\ORM\Entity
+use Espo\Core\ORM\Entity;
+
+/**
+ * Class Base
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class Base extends Entity
 {
-
 }
-

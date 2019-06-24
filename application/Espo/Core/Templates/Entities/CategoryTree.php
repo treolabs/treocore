@@ -27,10 +27,17 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+declare(strict_types=1);
+
 namespace Espo\Core\Templates\Entities;
 
-class CategoryTree extends \Espo\Core\Entities\CategoryTreeItem
+use Espo\Core\Entities\CategoryTreeItem;
+
+/**
+ * Class CategoryTree
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class CategoryTree extends CategoryTreeItem
 {
-
 }
-
