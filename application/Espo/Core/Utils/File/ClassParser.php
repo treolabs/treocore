@@ -95,16 +95,23 @@ class ClassParser
         if ($cacheFile && file_exists($cacheFile) && $this->getConfig()->get('useCache')) {
             $data = $this->getFileManager()->getPhpContents($cacheFile);
         } else {
-            $data = $this->getClassNameHash($paths['corePath']);
+            // load Treo
+            $data = $this->getClassNameHash(str_replace('application/Espo', 'application/Treo', $paths['corePath']));
 
+            // load Espo
+            $data = array_merge($data, $this->getClassNameHash($paths['corePath']));
+
+            // load modules
             if (isset($paths['modulePath'])) {
-                foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
-                    $path = str_replace('application/Espo/Modules/{*}', $moduleName, $paths['modulePath']);
-
-                    $data = array_merge($data, $this->getClassNameHash($path));
+                foreach ($this->getMetadata()->getModules() as $module) {
+                    $data = array_merge(
+                        $data,
+                        $module->getClassNameHash(str_replace("application/Espo/Modules/{*}/", '', $paths['modulePath']))
+                    );
                 }
             }
 
+            // load custom
             if (isset($paths['customPath'])) {
                 $data = array_merge($data, $this->getClassNameHash($paths['customPath']));
             }

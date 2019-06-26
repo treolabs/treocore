@@ -298,6 +298,34 @@ abstract class AbstractModule
     }
 
     /**
+     * Get className hash
+     *
+     * @param string $classesDir
+     *
+     * @return array
+     */
+    public function getClassNameHash(string $classesDir): array
+    {
+        // get files
+        $fileList = $this
+            ->container
+            ->get('fileManager')
+            ->getFileList($this->path . 'app/' . $classesDir, false, '\.php$', true);
+
+        $result = [];
+        if (!empty($fileList)) {
+            foreach ($fileList as $item) {
+                // prepare classname
+                $className = str_replace('.php', '', $item);
+
+                $result[$className] = "\\" . $this->id . "\\$classesDir\\$className";
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @return Unifier
      */
     protected function getUnifier(): Unifier
