@@ -36,14 +36,16 @@ declare(strict_types=1);
 
 namespace Treo\Core\Portal;
 
+use Espo\Core\Portal\Application as Base;
 use Espo\Core\Utils\Json;
+use Treo\Core\Utils\Route;
 
 /**
  * Class Application
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class Application extends \Espo\Core\Portal\Application
+class Application extends Base
 {
     const CONFIG_PATH = 'data/portals.json';
 
@@ -123,7 +125,7 @@ class Application extends \Espo\Core\Portal\Application
      */
     protected function getRouteList()
     {
-        $routes = new \Treo\Core\Utils\Route(
+        $routes = new Route(
             $this->getContainer()->get('config'),
             $this->getMetadata(),
             $this->getContainer()->get('fileManager'),

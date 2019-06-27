@@ -39,6 +39,7 @@ namespace Treo\Core;
 use Espo\Core\Application as Base;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
+use Treo\Core\Utils\Route;
 
 /**
  * Class Application
@@ -193,7 +194,7 @@ class Application extends Base
      */
     protected function getRouteList()
     {
-        $routes = new \Treo\Core\Utils\Route(
+        $routes = new Route(
             $this->getConfig(),
             $this->getMetadata(),
             $this->getContainer()->get('fileManager'),
