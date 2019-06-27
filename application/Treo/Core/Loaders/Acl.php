@@ -53,7 +53,10 @@ class Acl extends Base
      */
     public function load()
     {
-        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Acl');
+        $className = $this
+            ->getContainer()
+            ->get('metadata')
+            ->get('app.serviceContainer.classNames.acl', '\\Espo\\Core\\Acl');
 
         return new $className($this->getAclManager(), $this->getUser());
     }

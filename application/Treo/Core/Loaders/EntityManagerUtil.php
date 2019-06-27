@@ -27,10 +27,20 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Loaders;
+declare(strict_types=1);
 
+namespace Treo\Core\Loaders;
+
+/**
+ * Class EntityManagerUtil
+ *
+ * @author r.ratsun@treolabs.com
+ */
 class EntityManagerUtil extends Base
 {
+    /**
+     * @inheritDoc
+     */
     public function load()
     {
         $entityManager = new \Espo\Core\Utils\EntityManager(
@@ -44,4 +54,3 @@ class EntityManagerUtil extends Base
         return $entityManager;
     }
 }
-

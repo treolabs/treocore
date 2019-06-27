@@ -29,7 +29,7 @@
 
 namespace Espo\Core\EntryPoints;
 
-use \Espo\Core\Container;
+use \Treo\Core\Container;
 
 use \Espo\Core\Exceptions\Forbidden;
 

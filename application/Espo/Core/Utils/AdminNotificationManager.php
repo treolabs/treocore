@@ -36,7 +36,7 @@ class AdminNotificationManager
 {
     private $container;
 
-    public function __construct(\Espo\Core\Container $container)
+    public function __construct(\Treo\Core\Container $container)
     {
         $this->container = $container;
     }

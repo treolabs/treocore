@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Container as Base;
 use Espo\Core\AclManager;
 use Espo\Entities\User;
 use Espo\Core\Utils\Log;
@@ -54,7 +53,7 @@ use Treo\Core\Utils\Metadata;
  *
  * @author r.ratsun@treolabs.com
  */
-class Container extends Base
+class Container
 {
     /**
      * @var array
@@ -105,7 +104,7 @@ class Container extends Base
      *
      * @param string $name
      *
-     * @return void
+     * @throws \ReflectionException
      */
     protected function load(string $name): void
     {
@@ -122,15 +121,7 @@ class Container extends Base
             }
 
             if (!isset($className) || !class_exists($className)) {
-                $className = '\Espo\Custom\Core\Loaders\\' . ucfirst($name);
-
-                if (!class_exists($className)) {
-                    $className = '\Treo\Core\Loaders\\' . ucfirst($name);
-                }
-
-                if (!class_exists($className)) {
-                    $className = '\Espo\Core\Loaders\\' . ucfirst($name);
-                }
+                $className = '\Treo\Core\Loaders\\' . ucfirst($name);
             }
 
             if (class_exists($className)) {
@@ -157,6 +148,16 @@ class Container extends Base
         // load
         $this->load($name);
 
+        return $this;
+    }
+
+    /**
+     * Load container
+     *
+     * @return Container
+     */
+    protected function loadContainer(): Container
+    {
         return $this;
     }
 

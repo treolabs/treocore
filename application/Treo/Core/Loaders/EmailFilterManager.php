@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of EspoCRM and/or TreoCore.
+/************************************************************************
+ * This file is part of EspoCRM.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoCore is EspoCRM-based Open Source application.
- * Copyright (C) 2017-2019 TreoLabs GmbH
- * Website: https://treolabs.com
- *
- * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
+ * EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
+ * EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,30 +24,29 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoCore" word.
- */
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
+ ************************************************************************/
 
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
 /**
- * Container loader
+ * Class EmailFilterManager
  *
- * @author     r.ratsun <r.ratsun@zinitsolutions.com>
- * @deprecated used in old classes. We will remove it soon
+ * @author r.ratsun@treolabs.com
  */
-class Container extends Base
+class EmailFilterManager extends Base
 {
-
     /**
-     * Load
-     *
-     * @return \Espo\Core\Container
+     * @inheritDoc
      */
     public function load()
     {
-        return $this->getContainer();
+        $emailFilterManager = new \Espo\Core\Utils\EmailFilterManager(
+            $this->getContainer()->get('entityManager')
+        );
+
+        return $emailFilterManager;
     }
 }

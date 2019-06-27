@@ -29,6 +29,8 @@
 
 namespace Espo\Core;
 
+use Treo\Core\Container;
+
 class DataManager
 {
     private $container;

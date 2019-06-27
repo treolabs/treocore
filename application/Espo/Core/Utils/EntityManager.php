@@ -34,7 +34,7 @@ use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Forbidden;
 use \Espo\Core\Exceptions\Conflict;
 use \Espo\Core\Utils\Json;
-use \Espo\Core\Container;
+use \Treo\Core\Container;
 
 class EntityManager
 {

@@ -29,15 +29,25 @@
 
 declare(strict_types=1);
 
-namespace Espo\Core;
+namespace Treo\Core\Loaders;
 
 /**
- * Class Container
+ * Class FormulaManager
  *
  * @author r.ratsun@treolabs.com
- * @deprecated
  */
-class Container
+class FormulaManager extends Base
 {
-}
+    /**
+     * @inheritDoc
+     */
+    public function load()
+    {
+        $formulaManager = new \Espo\Core\Formula\Manager(
+            $this->getContainer(),
+            $this->getContainer()->get('metadata')
+        );
 
+        return $formulaManager;
+    }
+}

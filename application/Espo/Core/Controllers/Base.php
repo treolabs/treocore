@@ -28,7 +28,7 @@
  ************************************************************************/
 
 namespace Espo\Core\Controllers;
-use \Espo\Core\Container;
+use \Treo\Core\Container;
 use \Espo\Core\ServiceFactory;
 use \Espo\Core\Utils\Util;
 

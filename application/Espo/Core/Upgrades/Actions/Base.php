@@ -86,7 +86,7 @@ abstract class Base
 
     protected $vendorDirName = 'vendor';
 
-    public function __construct(\Espo\Core\Container $container, \Espo\Core\Upgrades\ActionManager $actionManager)
+    public function __construct(\Treo\Core\Container $container, \Espo\Core\Upgrades\ActionManager $actionManager)
     {
         $this->container = $container;
         $this->actionManager = $actionManager;
