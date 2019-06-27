@@ -36,8 +36,11 @@ declare(strict_types=1);
 
 namespace Treo\Core\Portal;
 
-use Espo\Core\Portal\Application as Base;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Forbidden;
+use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Json;
+use Treo\Core\Application as Base;
 use Treo\Core\Utils\Route;
 
 /**
@@ -48,6 +51,11 @@ use Treo\Core\Utils\Route;
 class Application extends Base
 {
     const CONFIG_PATH = 'data/portals.json';
+
+    /**
+     * @var object
+     */
+    protected $portal;
 
     /**
      * @var null|array
@@ -113,9 +121,65 @@ class Application extends Base
     }
 
     /**
-     * Init container
+     * Application constructor.
+     *
+     * @param string $portalId
+     *
+     * @throws Error
+     * @throws Forbidden
+     * @throws NotFound
      */
-    protected function initContainer()
+    public function __construct(string $portalId)
+    {
+        date_default_timezone_set('UTC');
+
+        $this->initContainer();
+
+        if (empty($portalId)) {
+            throw new Error("Portal id was not passed to ApplicationPortal.");
+        }
+
+        $GLOBALS['log'] = $this->getContainer()->get('log');
+
+        $portal = $this->getContainer()->get('entityManager')->getEntity('Portal', $portalId);
+
+        if (!$portal) {
+            $portal = $this
+                ->getContainer()
+                ->get('entityManager')
+                ->getRepository('Portal')
+                ->where(['customId' => $portalId])
+                ->findOne();
+        }
+
+        if (!$portal) {
+            throw new NotFound();
+        }
+        if (!$portal->get('isActive')) {
+            throw new Forbidden("Portal is not active.");
+        }
+
+        $this->portal = $portal;
+
+        $this->getContainer()->setPortal($portal);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function runClient()
+    {
+        $this
+            ->getContainer()
+            ->get('clientManager')
+            ->display(null, 'html/portal.html', ['portalId' => $this->getPortal()->id]);
+        exit;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function initContainer(): void
     {
         $this->container = new Container();
     }
@@ -144,5 +208,15 @@ class Application extends Base
         }
 
         return $routeList;
+    }
+
+    /**
+     * Get portal
+     *
+     * @return mixed
+     */
+    protected function getPortal()
+    {
+        return $this->portal;
     }
 }

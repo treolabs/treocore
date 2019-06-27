@@ -36,18 +36,25 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Application as Base;
+use Espo\Core\Utils\Api\Auth as ApiAuth;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
 use Treo\Core\Utils\Route;
+use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Config;
 
 /**
  * Class Application
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Application extends Base
+class Application
 {
+    /**
+     * @var Container
+     */
+    protected $container;
+
     /**
      * Is PHP version valid ?
      */
@@ -68,14 +75,58 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
+     * Application constructor.
      */
-    public function isInstalled()
+    public function __construct()
+    {
+        date_default_timezone_set('UTC');
+
+        $this->initContainer();
+
+        $GLOBALS['log'] = $this->getContainer()->get('log');
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     */
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * Get slim
+     *
+     * @return mixed
+     */
+    public function getSlim()
+    {
+        return $this->container->get('slim');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    public function getMetadata(): Metadata
+    {
+        return $this->container->get('metadata');
+    }
+
+    /**
+     * Is installed
+     *
+     * @return bool
+     */
+    public function isInstalled(): bool
     {
         // copy config if it needs
         $this->copyDefaultConfig();
 
-        return parent::isInstalled();
+        return file_exists($this->getConfig()->getConfigPath()) && $this->getConfig()->get('isInstalled');
     }
 
     /**
@@ -97,20 +148,22 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
+     * Run api
      */
-    public function run($name = 'default')
+    public function run()
     {
         // for installer
         if (!$this->isInstalled()) {
             $this->runInstallerApi();
         }
 
-        parent::run($name);
+        $this->routeHooks();
+        $this->initRoutes();
+        $this->getSlim()->run();
     }
 
     /**
-     * @inheritdoc
+     * Run client
      */
     public function runClient()
     {
@@ -119,10 +172,118 @@ class Application extends Base
             $this->runInstallerClient();
         }
 
-        parent::runClient();
+        $this->getContainer()->get('clientManager')->display();
+        exit;
     }
 
     /**
+     * Run entry point
+     *
+     * @param string $entryPoint
+     * @param array  $data
+     * @param bool   $final
+     */
+    public function runEntryPoint(string $entryPoint, $data = [], $final = false)
+    {
+        if (empty($entryPoint)) {
+            throw new \Error();
+        }
+
+        $slim = $this->getSlim();
+        $container = $this->getContainer();
+
+        $slim->any('.*', function () {
+        });
+
+        $entryPointManager = new \Espo\Core\EntryPointManager($container);
+
+        try {
+            $authRequired = $entryPointManager->checkAuthRequired($entryPoint);
+            $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
+            if ($authRequired && !$authNotStrict) {
+                if (!$final && $portalId = $this->detectedPortalId()) {
+                    $app = new \Espo\Core\Portal\Application($portalId);
+                    $app->setBasePath($this->getBasePath());
+                    $app->runEntryPoint($entryPoint, $data, true);
+                    exit;
+                }
+            }
+            $auth = new \Espo\Core\Utils\Auth($this->container, $authNotStrict);
+            $apiAuth = new \Espo\Core\Utils\Api\Auth($auth, $authRequired, true);
+            $slim->add($apiAuth);
+
+            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+                $entryPointManager->run($entryPoint, $data);
+            });
+
+            $slim->run();
+        } catch (\Exception $e) {
+            $container->get('output')->processError($e->getMessage(), $e->getCode(), true, $e);
+        }
+    }
+
+    /**
+     * Set base path
+     *
+     * @param string $basePath
+     *
+     * @return Application
+     */
+    public function setBasePath(string $basePath): Application
+    {
+        $this->getContainer()->get('clientManager')->setBasePath($basePath);
+
+        return $this;
+    }
+
+    /**
+     * Get base path
+     *
+     * @return string
+     */
+    public function getBasePath(): string
+    {
+        return $this->getContainer()->get('clientManager')->getBasePath();
+    }
+
+    /**
+     * Detect portal id
+     *
+     * @return mixed
+     */
+    public function detectedPortalId()
+    {
+        if (!empty($_GET['portalId'])) {
+            return $_GET['portalId'];
+        }
+        if (!empty($_COOKIE['auth-token'])) {
+            $token = $this
+                ->getContainer()
+                ->get('entityManager')
+                ->getRepository('AuthToken')->where(['token' => $_COOKIE['auth-token']])->findOne();
+
+            if ($token && $token->get('portalId')) {
+                return $token->get('portalId');
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Setup system user
+     */
+    public function setupSystemUser(): void
+    {
+        $user = $this->getContainer()->get('entityManager')->getEntity('User', 'system');
+        $user->set('isAdmin', true);
+        $this->getContainer()->setUser($user);
+        $this->getContainer()->get('entityManager')->setUser($user);
+    }
+
+    /**
+     * Print modules client files
+     *
      * @param string $file
      */
     public function printModuleClientFile(string $file)
@@ -172,9 +333,9 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
+     * Init container
      */
-    protected function initContainer()
+    protected function initContainer(): void
     {
         $this->container = new Container();
     }
@@ -190,7 +351,9 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
+     * Get route list
+     *
+     * @return mixed
      */
     protected function getRouteList()
     {
@@ -253,6 +416,128 @@ class Application extends Base
 
         $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
         exit;
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * @param $auth
+     *
+     * @return ApiAuth
+     */
+    protected function createApiAuth($auth): ApiAuth
+    {
+        return new ApiAuth($auth);
+    }
+
+    /**
+     * Route hooks
+     */
+    protected function routeHooks()
+    {
+        $container = $this->getContainer();
+        $slim = $this->getSlim();
+
+        try {
+            $auth = $this->createAuth();
+        } catch (\Exception $e) {
+            $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
+        }
+
+        $apiAuth = $this->createApiAuth($auth);
+
+        $this->getSlim()->add($apiAuth);
+        $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
+            $route = $slim->router()->getCurrentRoute();
+            $conditions = $route->getConditions();
+
+            if (isset($conditions['useController']) && $conditions['useController'] == false) {
+                return;
+            }
+
+            $routeOptions = call_user_func($route->getCallable());
+            $routeKeys = is_array($routeOptions) ? array_keys($routeOptions) : array();
+
+            if (!in_array('controller', $routeKeys, true)) {
+                return $container->get('output')->render($routeOptions);
+            }
+
+            $params = $route->getParams();
+            $data = $slim->request()->getBody();
+
+            foreach ($routeOptions as $key => $value) {
+                if (strstr($value, ':')) {
+                    $paramName = str_replace(':', '', $value);
+                    $value = $params[$paramName];
+                }
+                $controllerParams[$key] = $value;
+            }
+
+            $params = array_merge($params, $controllerParams);
+
+            $controllerName = ucfirst($controllerParams['controller']);
+
+            if (!empty($controllerParams['action'])) {
+                $actionName = $controllerParams['action'];
+            } else {
+                $httpMethod = strtolower($slim->request()->getMethod());
+                $crudList = $container->get('config')->get('crud');
+                $actionName = $crudList[$httpMethod];
+            }
+
+            try {
+                $controllerManager = $this->getContainer()->get('controllerManager');
+                $result = $controllerManager
+                    ->process($controllerName, $actionName, $params, $data, $slim->request(), $slim->response());
+                $container->get('output')->render($result);
+            } catch (\Exception $e) {
+                $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
+            }
+        });
+
+        $this->getSlim()->hook('slim.after.router', function () use (&$slim) {
+            $slim->contentType('application/json');
+
+            $res = $slim->response();
+            $res->header('Expires', '0');
+            $res->header('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
+            $res->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+            $res->header('Pragma', 'no-cache');
+        });
+    }
+
+    /**
+     * Init routes
+     */
+    protected function initRoutes()
+    {
+        $crudList = array_keys($this->getConfig()->get('crud'));
+
+        foreach ($this->getRouteList() as $route) {
+            $method = strtolower($route['method']);
+            if (!in_array($method, $crudList) && $method !== 'options') {
+                $message = "Route: Method [$method] does not exist. Please check your route [" . $route['route'] . "]";
+
+                $GLOBALS['log']->error($message);
+                continue;
+            }
+
+            $currentRoute = $this->getSlim()->$method($route['route'], function () use ($route) {
+                return $route['params'];
+            });
+
+            if (isset($route['conditions'])) {
+                $currentRoute->conditions($route['conditions']);
+            }
+        }
     }
 
     /**
