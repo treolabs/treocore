@@ -36,7 +36,8 @@ if (substr(php_sapi_name(), 0, 3) != 'cli') {
     die("Cron can be run only via CLI");
 }
 
-include "bootstrap.php";
+// autoload
+require_once "vendor/autoload.php";
 
 // define gloabal variables
 define('CORE_PATH', __DIR__);

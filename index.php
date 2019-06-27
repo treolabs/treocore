@@ -32,45 +32,11 @@
  * and "TreoCore" word.
  */
 
-use Treo\Core\Application as App;
-use Treo\Core\Portal\Application as PortalApp;
-
-include "bootstrap.php";
+// autoload
+require_once "vendor/autoload.php";
 
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
-// check PHP version
-App::isPhpVersionValid();
-
-// create  app
-$app = new App();
-
-if (!empty($_GET['entryPoint'])) {
-    $app->runEntryPoint($_GET['entryPoint']);
-    exit;
-}
-
-// prepare uri
-$uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : null;
-
-if (!empty($id = PortalApp::getCallingPortalId())) {
-    // create portal app
-    $app = new PortalApp($id);
-} elseif (!empty($uri) && $uri != '/') {
-    // print module client file
-    if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
-        $app->printModuleClientFile($matches[1][0]);
-    }
-
-    // if images path than call showImage
-    if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
-        $app->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
-    }
-
-    // show 404
-    header("HTTP/1.0 404 Not Found");
-    exit;
-}
-
-$app->runClient();
+// run
+(new \Treo\Core\Application())->run();
