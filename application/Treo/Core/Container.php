@@ -65,7 +65,7 @@ class Container
      *
      * @param string $name
      *
-     * @return mixed|null
+     * @return mixed
      */
     public function get(string $name)
     {
@@ -111,7 +111,7 @@ class Container
         // prepare load method
         $loadMethod = 'load' . ucfirst($name);
 
-        if (in_array($loadMethod, $this->getContainerLoaders())) {
+        if (method_exists($this, $loadMethod)) {
             $obj = $this->$loadMethod();
             $this->data[$name] = $obj;
         } else {
@@ -169,7 +169,9 @@ class Container
     protected function loadInternalAclManager()
     {
         // get class name
-        $className = $this->get('metadata')->get('app.serviceContainer.classNames.acl', AclManager::class);
+        $className = $this
+            ->get('metadata')
+            ->get('app.serviceContainer.classNames.acl', AclManager::class);
 
         return new $className($this->get('container'));
     }
@@ -258,28 +260,5 @@ class Container
     protected function loadEventManager(): EventManager
     {
         return (new EventManager())->setContainer($this);
-    }
-
-    /**
-     * Get container loaders
-     *
-     * @param string $name
-     *
-     * @return array
-     * @throws \ReflectionException
-     */
-    protected function getContainerLoaders(string $name = self::class): array
-    {
-        // prepare result
-        $result = [];
-
-        $container = new \ReflectionClass($name);
-        foreach ($container->getMethods() as $m) {
-            if ($m->class == $name && preg_match("/^load(.*)$/", $m->name) && $m->name != 'load') {
-                $result[] = $m->name;
-            }
-        }
-
-        return $result;
     }
 }

@@ -142,12 +142,4 @@ class Container extends Base
             $this->get('portal')
         );
     }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getContainerLoaders(string $name = null): array
-    {
-        return array_merge(parent::getContainerLoaders(), parent::getContainerLoaders(self::class));
-    }
 }
