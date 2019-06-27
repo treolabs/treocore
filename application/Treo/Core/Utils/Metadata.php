@@ -168,6 +168,36 @@ class Metadata extends Base
             ->getArgument('data');
     }
 
+    /**
+     * Get additional field lists
+     *
+     * @param string $scope
+     * @param string $field
+     *
+     * @return array
+     */
+    public function getFieldList(string $scope, string $field): array
+    {
+        // prepare result
+        $result = [];
+
+        // get field data
+        $fieldData = $this->get("entityDefs.$scope.fields.$field");
+
+        if (!empty($fieldData)) {
+            // prepare result
+            $result[$field] = $fieldData;
+
+            $additionalFields = $this
+                ->getMetadataHelper()
+                ->getAdditionalFieldList($field, $fieldData, $this->get("fields"));
+            if (!empty($additionalFields)) {
+                // prepare result
+                $result = $result + $additionalFields;
+            }
+        }
+        return $result;
+    }
 
     /**
      * @param bool $reload
