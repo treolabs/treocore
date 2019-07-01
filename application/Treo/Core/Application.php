@@ -208,6 +208,9 @@ class Application
             $this->runInstallerApi();
         }
 
+        // prepare base route
+        $baseRoute = '/api/v1';
+
         // for portal api
         if (preg_match_all('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri, $matches)) {
             // set portal container
@@ -221,10 +224,13 @@ class Application
 
             // set portal
             $this->getContainer()->setPortal($portal);
+
+            // prepare base route
+            $baseRoute = '/api/v1/portal-access';
         }
 
         $this->routeHooks();
-        $this->initRoutes();
+        $this->initRoutes($baseRoute);
         $this->getSlim()->run();
         exit;
     }
@@ -318,14 +324,6 @@ class Application
         try {
             $authRequired = $entryPointManager->checkAuthRequired($entryPoint);
             $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
-//            if ($authRequired && !$authNotStrict) {
-//                if (!$final && $portalId = $this->detectedPortalId()) {
-//                    $app = new \Espo\Core\Portal\Application($portalId);
-//                    $app->setBasePath($this->getBasePath());
-//                    $app->runEntryPoint($entryPoint, $data, true);
-//                    exit;
-//                }
-//            }
             $auth = new \Espo\Core\Utils\Auth($this->container, $authNotStrict);
             $apiAuth = new \Espo\Core\Utils\Api\Auth($auth, $authRequired, true);
             $slim->add($apiAuth);
@@ -615,8 +613,10 @@ class Application
 
     /**
      * Init routes
+     *
+     * @param string $baseRoute
      */
-    protected function initRoutes()
+    protected function initRoutes(string $baseRoute)
     {
         $crudList = array_keys($this->getConfig()->get('crud'));
 
@@ -629,7 +629,7 @@ class Application
                 continue;
             }
 
-            $currentRoute = $this->getSlim()->$method('/api/v1' . $route['route'], function () use ($route) {
+            $currentRoute = $this->getSlim()->$method($baseRoute . $route['route'], function () use ($route) {
                 return $route['params'];
             });
 
