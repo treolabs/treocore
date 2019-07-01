@@ -10,7 +10,7 @@ do
      exit 1;
    fi
 
-   $php console.php notifications --refresh > /dev/null 2>&1
+   $php index.php notifications --refresh > /dev/null 2>&1
 
    sleep 5;
 done

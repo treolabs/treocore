@@ -38,5 +38,12 @@ require_once "vendor/autoload.php";
 // define gloabal variables
 define('CORE_PATH', __DIR__);
 
+// create app
+$app = new \Treo\Core\Application();
+
 // run
-(new \Treo\Core\Application())->run();
+if (substr(php_sapi_name(), 0, 3) != 'cli') {
+    $app->run();
+} else {
+    $app->runConsole($argv);
+}

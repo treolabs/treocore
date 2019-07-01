@@ -1,7 +1,6 @@
 .idea/
 /nb_metadata
 
-/apidocs/index.html
 /composer.lock
 /custom/
 !/custom/.htaccess

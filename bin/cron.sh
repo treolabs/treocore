@@ -19,7 +19,7 @@ id=$1
 php=$2
 
 # call cron jobs
-$php console.php cron
+$php index.php cron
 
 # self upgrade process
 if [[ ! "$(ps ax | grep treo-self-upgrade.sh)" =~ "bin/treo-self-upgrade.sh $id" ]]; then

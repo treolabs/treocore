@@ -37,10 +37,10 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\Core\Services\Base;
-use Treo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
 use Treo\Documentator\Extractor;
 use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Util;
 
 /**
  * RestApiDocs service
@@ -95,6 +95,16 @@ class RestApiDocs extends Base
     {
         // prepare result
         $result = false;
+
+        // prepare dir
+        $dir = 'apidocs';
+
+        if (file_exists($dir)) {
+            Util::removedir($dir);
+        }
+
+        // create dir
+        mkdir($dir, 0777, true);
 
         if (!empty($html = $this->getHtml())) {
             $result = $this->setToFile($html);
