@@ -124,7 +124,7 @@ Espo.define('treo-core:views/fields/multi-enum', 'class-replace!treo-core:views/
         },
 
         fetch() {
-            let data = Dep.prototype.setup.call(this);
+            let data = Dep.prototype.fetch.call(this);
             data[this.name] = data[this.name].map(item => item.replace(/-quote-/g, '"').replace(/-backslash-/g, '\\'));
             return data;
         },
