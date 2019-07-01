@@ -42,10 +42,10 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
             });
         },
 
-        getItemHtml: function (value) {
+        getItemHtml(value) {
             if (this.translatedOptions != null) {
-                for (var item in this.translatedOptions) {
-                    if (this.translatedOptions[item] == value) {
+                for (let item in this.translatedOptions) {
+                    if (this.translatedOptions[item] === value) {
                         value = item;
                         break;
                     }
@@ -54,36 +54,33 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
 
             value = value.toString();
 
-            var valueSanitized = this.getHelper().stripTags(value);
-            var valueSanitized = valueSanitized.replace(/"/g, '&quot;');
-            valueSanitized = valueSanitized.replace(/\\/g, '&bsol;');
+            let valueSanitized = this.getHelper().stripTags(value);
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
 
-            var label = valueSanitized;
+            let label = valueSanitized.replace(/"/g, '&quot;').replace(/\\/g, '&bsol;');
             if (this.translatedOptions) {
                 label = ((value in this.translatedOptions) ? this.translatedOptions[value] : label);
                 label = label.toString();
                 label = this.getHelper().stripTags(label);
-                label = label.replace(/"/g, '&quot;');
-                label = label.replace(/\\/g, '&bsol;');
+                label = label.replace(/"/g, '&quot;').replace(/\\/g, '&bsol;');
             }
 
-            var html = '<div class="list-group-item" data-value="' + valueSanitized + '" style="cursor: default;">' + label +
-                '&nbsp;<a href="javascript:" class="pull-right" data-value="' + valueSanitized + '" data-action="removeValue"><span class="fas fa-times"></a>' +
-                '</div>';
-
-            return html;
+            return `
+                <div class="list-group-item" data-value="${valueInternal}" style="cursor: default;">
+                    ${label}&nbsp;
+                    <a href="javascript:" class="pull-right" data-value="${valueInternal}" data-action="removeValue"><span class="fas fa-times"></a>
+                </div>`;
         },
 
-        removeValue: function (value) {
-            var valueSanitized = this.getHelper().stripTags(value).replace(/\\/g, '\\\\');
-            valueSanitized = valueSanitized.replace(/"/g, '\\"');
+        removeValue(value) {
+            let valueSanitized = this.getHelper().stripTags(value);
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
 
-            this.$list.children('[data-value="' + valueSanitized + '"]').remove();
-            var index = this.selected.indexOf(value);
+            this.$list.children(`[data-value="${valueInternal}"]`).remove();
+            let index = this.selected.indexOf(value);
             this.selected.splice(index, 1);
             this.trigger('change');
-        },
-
+        }
 
     })
 );

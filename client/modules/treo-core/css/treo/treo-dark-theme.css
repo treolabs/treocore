@@ -15353,11 +15353,11 @@ ul.dropdown-menu > li.checkbox:last-child {
 }
 
 .field .link-container .list-group-item:last-child {
-    border-bottom-width: 0
+    margin-bottom: -1px;
 }
 
 .field .link-container .list-group-item > div {
-    margin: -3px 0 -3px
+    margin: 0;
 }
 
 .field .link-container .list-group-item > div > div {
@@ -20604,7 +20604,7 @@ td[data-name="draggableIcon"] {
 }
 
 .field .attribute-type-value.disable-multi-lang a.remove-icon {
-    margin-top: 10px;
+    margin-top: 13px;
 }
 
 .field .attribute-type-value .option-group {

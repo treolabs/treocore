@@ -107,6 +107,9 @@
   "views/fields/link-parent": [
     "treo-core"
   ],
+  "views/fields/multi-enum": [
+    "treo-core"
+  ],
   "views/fields/owner-user": [
     "treo-core"
   ],

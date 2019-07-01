@@ -35,32 +35,29 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
 
     return Dep.extend({
 
-        getItemHtml: function (value) {
-            var valueSanitized = this.getHelper().stripTags(value);
-            var translatedValue = this.translatedOptions[value] || valueSanitized;
+        getItemHtml(value) {
+            let valueSanitized = this.getHelper().stripTags(value);
+            let translatedValue = this.translatedOptions[value] || valueSanitized;
 
-            translatedValue = translatedValue.replace(/"/g, '&quot;');
-            translatedValue = translatedValue.replace(/\\/g, '&bsol;');
+            translatedValue = translatedValue.replace(/"/g, '&quot;').replace(/\\/g, '&bsol;');
 
-            var valueInternal = valueSanitized.replace(/"/g, '-quote-');
-            valueInternal = valueInternal.replace(/\\/g, '-backslash-');
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
 
-            var html = '' +
-            '<div class="list-group-item link-with-role form-inline" data-value="' + valueInternal + '">' +
-                '<div class="pull-left" style="width: 92%; display: inline-block;">' +
-                    '<input name="translatedValue" data-value="' + valueInternal + '" class="role form-control input-sm pull-right" value="'+translatedValue+'">' +
-                    '<div>' + valueSanitized + '</div>' +
-                '</div>' +
-                '<div style="width: 8%; display: inline-block; vertical-align: top;">' +
-                    '<a href="javascript:" class="pull-right" data-value="' + valueInternal + '" data-action="removeValue"><span class="fas fa-times"></a>' +
-                '</div><br style="clear: both;" />' +
-            '</div>';
-
-            return html;
+            return `
+                <div class="list-group-item link-with-role form-inline" data-value="${valueInternal}">
+                    <div class="pull-left" style="width: 92%; display: inline-block;">
+                        <input name="translatedValue" data-value="${valueInternal}" class="role form-control input-sm pull-right" value="${translatedValue}">
+                        <div>${translatedValue}</div>
+                    </div>
+                    <div style="width: 8%; display: inline-block;">
+                        <a href="javascript:" class="pull-right" data-value="${valueInternal}" data-action="removeValue"><span class="fas fa-times"></a>
+                    </div>
+                    <br style="clear: both;" />
+                </div>`;
         },
 
-        fetch: function () {
-            var data = Arr.prototype.fetch.call(this);
+        fetch() {
+            let data = Arr.prototype.fetch.call(this);
 
             if (!data[this.name].length) {
                 data[this.name] = false;
@@ -69,16 +66,12 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
             }
 
             data.translatedOptions = {};
-            (data[this.name] || []).forEach(function (value) {
-                var valueSanitized = this.getHelper().stripTags(value);
-                var valueInternal = valueSanitized.replace(/"/g, '-quote-');
-                valueInternal = valueInternal.replace(/\\/g, '-backslash-');
-                var translatedValue = this.$el.find('input[name="translatedValue"][data-value="'+valueInternal+'"]').val() || value;
-
-                translatedValue = translatedValue.toString();
-
-                data.translatedOptions[value] = translatedValue;
-            }, this);
+            (data[this.name] || []).forEach(value => {
+                let valueSanitized = this.getHelper().stripTags(value);
+                let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
+                let translatedValue = this.$el.find('input[name="translatedValue"][data-value="'+valueInternal+'"]').val() || value;
+                data.translatedOptions[value] = translatedValue.toString();
+            });
 
             return data;
         }
