@@ -212,7 +212,10 @@ class Application
         $baseRoute = '/api/v1';
 
         // for portal api
-        if (preg_match_all('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri, $matches)) {
+        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri)) {
+            // parse uri
+            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
+
             // set portal container
             $this->container = new \Treo\Core\Portal\Container();
 
@@ -220,7 +223,7 @@ class Application
             $portal = $this
                 ->getContainer()
                 ->get('entityManager')
-                ->getEntity('Portal', $matches[1][0]);
+                ->getEntity('Portal', $matches[0]);
 
             // set portal
             $this->getContainer()->setPortal($portal);
