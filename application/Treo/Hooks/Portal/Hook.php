@@ -148,7 +148,7 @@ class Hook extends AbstractHook
         }
 
         // get all urls
-        $urls = App::getUrlFileData();
+        $urls = App::getPortalUrlFileData();
 
         // validate by unique
         if (in_array($url, $urls)) {
@@ -169,13 +169,13 @@ class Hook extends AbstractHook
     {
         if (!empty($url = $entity->get('url'))) {
             // get urls
-            $urls = App::getUrlFileData();
+            $urls = App::getPortalUrlFileData();
 
             // push
             $urls[$entity->get('id')] = $url;
 
             // save
-            App::saveUrlFile($urls);
+            App::savePortalUrlFile($urls);
         }
     }
 
@@ -187,14 +187,14 @@ class Hook extends AbstractHook
     protected function unsetUrl(Entity $entity): void
     {
         // get urls
-        $urls = App::getUrlFileData();
+        $urls = App::getPortalUrlFileData();
 
         if (isset($urls[$entity->get('id')])) {
             // delete
             unset($urls[$entity->get('id')]);
 
             // save
-            App::saveUrlFile($urls);
+            App::savePortalUrlFile($urls);
         }
     }
 }

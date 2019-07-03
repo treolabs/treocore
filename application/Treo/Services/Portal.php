@@ -91,7 +91,7 @@ class Portal extends \Espo\Services\Record
     protected function getUrls(): array
     {
         if (is_null($this->urls)) {
-            $this->urls = App::getUrlFileData();
+            $this->urls = App::getPortalUrlFileData();
         }
 
         return $this->urls;

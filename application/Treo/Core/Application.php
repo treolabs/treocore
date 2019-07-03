@@ -70,11 +70,11 @@ class Application
     protected $portal = null;
 
     /**
-     * Get url config file data
+     * Get portals url config file data
      *
      * @return array
      */
-    public static function getUrlFileData(): array
+    public static function getPortalUrlFileData(): array
     {
         if (is_null(self::$urls)) {
             // prepare result
@@ -92,15 +92,13 @@ class Application
     }
 
     /**
-     * Set data to url config file
+     * Set data to portal url config file
      *
      * @param array $data
      */
-    public static function saveUrlFile(array $data): void
+    public static function savePortalUrlFile(array $data): void
     {
-        $file = fopen(self::CONFIG_PATH, "w");
-        fwrite($file, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        fclose($file);
+        file_put_contents(self::CONFIG_PATH, Json::encode($data));
     }
 
     /**
@@ -354,41 +352,6 @@ class Application
     }
 
     /**
-     * Set base path
-     *
-     * @param string $basePath
-     *
-     * @return Application
-     */
-    public function setBasePath(string $basePath): Application
-    {
-        $this->getContainer()->get('clientManager')->setBasePath($basePath);
-
-        return $this;
-    }
-
-    /**
-     * Get base path
-     *
-     * @return string
-     */
-    public function getBasePath(): string
-    {
-        return $this->getContainer()->get('clientManager')->getBasePath();
-    }
-
-    /**
-     * Setup system user
-     */
-    public function setupSystemUser(): void
-    {
-        $user = $this->getContainer()->get('entityManager')->getEntity('User', 'system');
-        $user->set('isAdmin', true);
-        $this->getContainer()->setUser($user);
-        $this->getContainer()->get('entityManager')->setUser($user);
-    }
-
-    /**
      * Print modules client files
      *
      * @param string $file
@@ -437,16 +400,6 @@ class Application
         // show 404
         header("HTTP/1.0 404 Not Found");
         exit;
-    }
-
-    /**
-     * Create auth
-     *
-     * @return Auth
-     */
-    protected function createAuth()
-    {
-        return new Auth($this->getContainer());
     }
 
     /**
@@ -543,16 +496,6 @@ class Application
     }
 
     /**
-     * @param $auth
-     *
-     * @return ApiAuth
-     */
-    protected function createApiAuth($auth): ApiAuth
-    {
-        return new ApiAuth($auth);
-    }
-
-    /**
      * Route hooks
      */
     protected function routeHooks()
@@ -561,12 +504,12 @@ class Application
         $slim = $this->getSlim();
 
         try {
-            $auth = $this->createAuth();
+            $auth = new Auth($container);
         } catch (\Exception $e) {
             $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
         }
 
-        $apiAuth = $this->createApiAuth($auth);
+        $apiAuth = new ApiAuth($auth);
 
         $this->getSlim()->add($apiAuth);
         $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
@@ -693,8 +636,8 @@ class Application
         // prepare url
         $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-        if (in_array($url, self::getUrlFileData())) {
-            $result = array_search($url, self::getUrlFileData());
+        if (in_array($url, self::getPortalUrlFileData())) {
+            $result = array_search($url, self::getPortalUrlFileData());
         }
 
         return $result;

@@ -4,10 +4,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 
 # Prevent direct access to certain files
-<FilesMatch ^(auth\.json)$>
-  Deny from all
-</FilesMatch>
-
 <FilesMatch "(treo-module-update\.log|treo-self-upgrade\.log|notReadCount\.json|popupNotifications\.json)$">
   Allow from all
 </FilesMatch>
