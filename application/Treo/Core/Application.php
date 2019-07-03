@@ -125,7 +125,7 @@ class Application
         $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
 
         // for api
-        if (preg_match('/^\/api\/v1\/(.*)$/', $uri)) {
+        if (preg_match('/^\/api\/(.*)$/', $uri)) {
             $this->runApi($uri);
         }
 
@@ -159,26 +159,6 @@ class Application
     public function getContainer(): Container
     {
         return $this->container;
-    }
-
-    /**
-     * Get slim
-     *
-     * @return mixed
-     */
-    public function getSlim()
-    {
-        return $this->container->get('slim');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    public function getMetadata(): Metadata
-    {
-        return $this->container->get('metadata');
     }
 
     /**
@@ -626,6 +606,26 @@ class Application
             // create config
             file_put_contents($path, $content);
         }
+    }
+
+    /**
+     * Get slim
+     *
+     * @return mixed
+     */
+    protected function getSlim()
+    {
+        return $this->getContainer()->get('slim');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->getContainer()->get('metadata');
     }
 
     /**
