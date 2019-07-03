@@ -76,7 +76,7 @@ class Cmd
      */
     protected static function getContainer(): Container
     {
-        include "bootstrap.php";
+        require_once 'vendor/autoload.php';
 
         return (new Application())->getContainer();
     }

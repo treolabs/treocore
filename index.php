@@ -33,7 +33,7 @@
  */
 
 // autoload
-require_once "vendor/autoload.php";
+require_once 'vendor/autoload.php';
 
 // define gloabal variables
 define('CORE_PATH', __DIR__);
