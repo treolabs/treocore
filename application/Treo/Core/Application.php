@@ -585,13 +585,21 @@ class Application
     private function copyDefaultConfig(): void
     {
         // create data dir
-        $dir = 'data';
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777);
+        if (!file_exists('data')) {
+            mkdir('data', 0777);
+            // create htaccess
+            file_put_contents('data/.htaccess', 'Deny from all');
+        }
+
+        // create custom dir
+        if (!file_exists('custom')) {
+            mkdir('custom', 0777);
+            // create htaccess
+            file_put_contents('custom/.htaccess', 'Deny from all');
         }
 
         // prepare config path
-        $path = $dir . '/config.php';
+        $path = 'data/config.php';
 
         if (!file_exists($path)) {
             // get default data
