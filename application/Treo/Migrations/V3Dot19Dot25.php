@@ -53,6 +53,7 @@ class V3Dot19Dot25 extends AbstractMigration
     {
         file_put_contents('data/.htaccess', 'Deny from all');
         file_put_contents('custom/.htaccess', 'Deny from all');
+        file_put_contents('data/process-kill.txt', '1');
     }
 
     /**
