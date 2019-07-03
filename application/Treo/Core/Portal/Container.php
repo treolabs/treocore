@@ -38,8 +38,8 @@ namespace Treo\Core\Portal;
 
 use Espo\Entities\Portal;
 use Espo\Core\AclManager;
-use Espo\Core\Portal\AclManager as PortalAclManager;
 use Espo\Core\Portal\Acl as PortalAcl;
+use Espo\Core\Portal\AclManager as PortalAclManager;
 use Espo\Core\Portal\Utils\ThemeManager;
 use Treo\Core\Container as Base;
 
