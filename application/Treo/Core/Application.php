@@ -256,6 +256,12 @@ class Application
             exit;
         }
 
+        // prepare client vars
+        $vars = [
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
+        ];
+
         if (!empty($portalId = $this->getPortalIdForClient())) {
             // set portal container
             $this->container = new \Treo\Core\Portal\Container();
@@ -270,11 +276,14 @@ class Application
                 // set portal
                 $this->getContainer()->setPortal($portal);
 
+                // prepare client vars
+                $vars['portalId'] = $portalId;
+
                 // load client
                 $this
                     ->getContainer()
                     ->get('clientManager')
-                    ->display(null, 'html/portal.html', ['portalId' => $portalId]);
+                    ->display(null, 'client/html/portal.html', $vars);
                 exit;
             }
 
@@ -299,7 +308,10 @@ class Application
             exit;
         }
 
-        $this->getContainer()->get('clientManager')->display();
+        $this
+            ->getContainer()
+            ->get('clientManager')
+            ->display(null, 'client/html/main.html', $vars);
         exit;
     }
 
@@ -511,10 +523,12 @@ class Application
         $vars = [
             'applicationName' => 'TreoCore',
             'status'          => $result['status'],
-            'message'         => $result['message']
+            'message'         => $result['message'],
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
         ];
 
-        $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
+        $this->getContainer()->get('clientManager')->display(null, 'client/html/installation.html', $vars);
         exit;
     }
 

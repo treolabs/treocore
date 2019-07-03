@@ -35,7 +35,7 @@ namespace Espo\Core\Loaders;
  * Class Base
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
- * @deprecated
+ * @deprecated remove it soon
  */
 abstract class Base extends \Treo\Core\Loaders\Base
 {

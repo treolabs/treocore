@@ -35,7 +35,7 @@ namespace Espo\Core;
  * Class Container
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
- * @deprecated
+ * @deprecated remove it soon
  */
 class Container extends \Treo\Core\Container
 {
