@@ -38,7 +38,6 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Metadata as Base;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Treo\Core\Utils\Util;
 use Espo\Core\Utils\DataUtil;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\EventManager\Manager as EventManager;
@@ -147,25 +146,7 @@ class Metadata extends Base
      */
     public function init($reload = false)
     {
-        parent::init($reload);
-
-        $this->data = $this
-            ->getEventManager()
-            ->dispatch('Metadata', 'modify', new Event(['data' => $this->data]))
-            ->getArgument('data');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAllForFrontend($reload = false)
-    {
-        $data = parent::getAllForFrontend();
-
-        return $this
-            ->getEventManager()
-            ->dispatch('Metadata', 'modify', new Event(['data' => Util::objectToArray($data)]))
-            ->getArgument('data');
+        $this->data = json_decode(json_encode($this->getObjData($reload)), true);
     }
 
     /**
@@ -204,46 +185,51 @@ class Metadata extends Base
      */
     protected function objInit($reload = false)
     {
+        // prepare reload
         if (!$this->useCache) {
             $reload = true;
         }
 
-        if (file_exists($this->objCacheFile) && !$reload) {
-            $this->objData = $this->getFileManager()->getPhpContents($this->objCacheFile);
+        // prepare cache file
+        $cacheFile = 'data/cache/metadata.json';
+
+        if (!$reload && file_exists($cacheFile)) {
+            $this->objData = json_decode(file_get_contents($cacheFile));
         } else {
-            $this->objData = $this->addAdditionalFieldsObj($this->composeMetadata());
+            // load espo
+            $content = $this->unify('application/Espo/Resources/metadata');
+
+            // load treo
+            $content = DataUtil::merge($content, $this->unify('application/Treo/Resources/metadata'));
+
+            // load modules
+            foreach ($this->getModules() as $module) {
+                $module->loadMetadata($content);
+            }
+
+            // load custom
+            $content = DataUtil::merge($content, $this->unify('custom/Espo/Custom/Resources/metadata'));
+
+            $this->objData = $this->addAdditionalFieldsObj($content);
 
             if ($this->useCache) {
-                $isSaved = $this->getFileManager()->putPhpContents($this->objCacheFile, $this->objData, true);
-                if ($isSaved === false) {
-                    $GLOBALS['log']->emergency('Metadata:objInit() - metadata has not been saved to a cache file');
+                // create cache dir
+                if (!file_exists('data/cache')) {
+                    mkdir('data/cache');
                 }
+
+                // create metadata cache file
+                file_put_contents($cacheFile, json_encode($this->objData));
             }
         }
-    }
 
-    /**
-     * Compose metadata
-     *
-     * @return \stdClass
-     */
-    private function composeMetadata()
-    {
-        // load espo
-        $content = $this->unify('application/Espo/Resources/metadata');
+        // dispatch an event
+        $event = $this
+            ->getEventManager()
+            ->dispatch('Metadata', 'modify', new Event(['data' => json_decode(json_encode($this->objData), true)]));
 
-        // load treo
-        $content = DataUtil::merge($content, $this->unify('application/Treo/Resources/metadata'));
-
-        // load modules
-        foreach ($this->getModules() as $module) {
-            $module->loadMetadata($content);
-        }
-
-        // load custom
-        $content = DataUtil::merge($content, $this->unify('custom/Espo/Custom/Resources/metadata'));
-
-        return $content;
+        // set object data
+        $this->objData = json_decode(json_encode($event->getArgument('data')));
     }
 
     /**

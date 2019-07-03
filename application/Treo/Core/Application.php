@@ -131,8 +131,24 @@ class Application
             $this->runApi($uri);
         }
 
+        if (!empty($uri) && $uri != '/') {
+            // print module client file
+            if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
+                $this->printModuleClientFile($matches[1][0]);
+            }
+
+            // if images path than call showImage
+            if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
+                $this->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
+            }
+
+            // show 404
+            header("HTTP/1.0 404 Not Found");
+            exit;
+        }
+
         // for client
-        $this->runClient($uri);
+        $this->runClient();
     }
 
     /**
@@ -211,10 +227,8 @@ class Application
 
     /**
      * Run client
-     *
-     * @param string $uri
      */
-    protected function runClient(string $uri)
+    protected function runClient()
     {
         // for installer
         if (!$this->isInstalled()) {
@@ -245,22 +259,6 @@ class Application
                 ->getContainer()
                 ->get('clientManager')
                 ->display(null, 'client/html/portal.html', $vars);
-            exit;
-        }
-
-        if (!empty($uri) && $uri != '/') {
-            // print module client file
-            if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
-                $this->printModuleClientFile($matches[1][0]);
-            }
-
-            // if images path than call showImage
-            if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
-                $this->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
-            }
-
-            // show 404
-            header("HTTP/1.0 404 Not Found");
             exit;
         }
 
