@@ -196,17 +196,8 @@ class Application
             // parse uri
             $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
 
-            // set portal container
-            $this->container = new PortalContainer();
-
-            // find portal
-            $portal = $this
-                ->getContainer()
-                ->get('entityManager')
-                ->getEntity('Portal', $matches[0]);
-
-            // set portal
-            $this->getContainer()->setPortal($portal);
+            // init portal container
+            $this->initPortalContainer($matches[0]);
 
             // prepare base route
             $baseRoute = '/api/v1/portal-access';
@@ -243,32 +234,17 @@ class Application
         ];
 
         if (!empty($portalId = $this->getPortalIdForClient())) {
-            // set portal container
-            $this->container = new PortalContainer();
+            // init portal container
+            $this->initPortalContainer($portalId);
 
-            // find portal
-            $portal = $this
+            // prepare client vars
+            $vars['portalId'] = $portalId;
+
+            // load client
+            $this
                 ->getContainer()
-                ->get('entityManager')
-                ->getEntity('Portal', $portalId);
-
-            if ($portal && $portal->get('isActive')) {
-                // set portal
-                $this->getContainer()->setPortal($portal);
-
-                // prepare client vars
-                $vars['portalId'] = $portalId;
-
-                // load client
-                $this
-                    ->getContainer()
-                    ->get('clientManager')
-                    ->display(null, 'client/html/portal.html', $vars);
-                exit;
-            }
-
-            // show 404
-            header("HTTP/1.0 404 Not Found");
+                ->get('clientManager')
+                ->display(null, 'client/html/portal.html', $vars);
             exit;
         }
 
@@ -326,8 +302,8 @@ class Application
 
         // for portal
         if (!empty($portalId)) {
-            $this->container = new PortalContainer();
-            $this->getContainer()->setPortal($this->getPortal((string)$portalId));
+            // init portal container
+            $this->initPortalContainer((string)$portalId);
         }
 
         $slim = $this->getSlim();
@@ -685,13 +661,24 @@ class Application
     /**
      * @param string $portalId
      *
-     * @return Portal|null
+     * @throws \Exception
      */
-    private function getPortal(string $portalId): ?Portal
+    private function initPortalContainer(string $portalId): void
     {
-        return $this
+        // set portal container
+        $this->container = new PortalContainer();
+
+        // find portal
+        $portal = $this
             ->getContainer()
             ->get('entityManager')
             ->getEntity('Portal', $portalId);
+
+        if (!empty($portal) && $portal->get('isActive')) {
+            // set portal
+            $this->getContainer()->setPortal($portal);
+        } else {
+            throw new \Exception('No such portal');
+        }
     }
 }
