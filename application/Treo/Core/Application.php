@@ -38,12 +38,14 @@ namespace Treo\Core;
 
 use Espo\Core\Utils\Api\Auth as ApiAuth;
 use Espo\Core\Utils\Json;
+use Espo\Core\EntryPointManager;
 use Espo\Entities\Portal;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
 use Treo\Core\Utils\Route;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
+use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class Application
@@ -195,7 +197,7 @@ class Application
             $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
 
             // set portal container
-            $this->container = new \Treo\Core\Portal\Container();
+            $this->container = new PortalContainer();
 
             // find portal
             $portal = $this
@@ -242,7 +244,7 @@ class Application
 
         if (!empty($portalId = $this->getPortalIdForClient())) {
             // set portal container
-            $this->container = new \Treo\Core\Portal\Container();
+            $this->container = new PortalContainer();
 
             // find portal
             $portal = $this
@@ -298,12 +300,34 @@ class Application
      *
      * @param string $entryPoint
      * @param array  $data
-     * @param bool   $final
      */
-    protected function runEntryPoint(string $entryPoint, $data = [], $final = false)
+    protected function runEntryPoint(string $entryPoint, $data = [])
     {
         if (empty($entryPoint)) {
             throw new \Error();
+        }
+
+        // get portal id
+        $portalId = null;
+        if (!empty($_GET['portalId'])) {
+            $portalId = $_GET['portalId'];
+        }
+        if (!empty($_COOKIE['auth-token'])) {
+            $token = $this
+                ->getContainer()
+                ->get('entityManager')
+                ->getRepository('AuthToken')
+                ->where(['token' => $_COOKIE['auth-token']])
+                ->findOne();
+            if ($token && $token->get('portalId')) {
+                $portalId = $token->get('portalId');
+            }
+        }
+
+        // for portal
+        if (!empty($portalId)) {
+            $this->container = new PortalContainer();
+            $this->getContainer()->setPortal($this->getPortal((string)$portalId));
         }
 
         $slim = $this->getSlim();
@@ -312,13 +336,14 @@ class Application
         $slim->any('.*', function () {
         });
 
-        $entryPointManager = new \Espo\Core\EntryPointManager($container);
+        // create entryPointManager
+        $entryPointManager = new EntryPointManager($container);
 
         try {
             $authRequired = $entryPointManager->checkAuthRequired($entryPoint);
             $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
-            $auth = new \Espo\Core\Utils\Auth($this->container, $authNotStrict);
-            $apiAuth = new \Espo\Core\Utils\Api\Auth($auth, $authRequired, true);
+            $auth = new Auth($this->container, $authNotStrict);
+            $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
             $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
@@ -655,5 +680,18 @@ class Application
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $portalId
+     *
+     * @return Portal|null
+     */
+    private function getPortal(string $portalId): ?Portal
+    {
+        return $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getEntity('Portal', $portalId);
     }
 }
