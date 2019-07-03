@@ -1,8 +1,9 @@
 .idea/
 /nb_metadata
 
-/composer.lock
+/apidocs/
 /custom/
+/composer.lock
 /data/
 /modules/
 /vendor/

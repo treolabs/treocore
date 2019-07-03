@@ -604,8 +604,14 @@ class Application
      */
     private function copyDefaultConfig(): void
     {
+        // create data dir
+        $dir = 'data';
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777);
+        }
+
         // prepare config path
-        $path = 'data/config.php';
+        $path = $dir . '/config.php';
 
         if (!file_exists($path)) {
             // get default data
