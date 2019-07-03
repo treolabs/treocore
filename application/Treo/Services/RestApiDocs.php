@@ -99,12 +99,10 @@ class RestApiDocs extends Base
         // prepare dir
         $dir = 'apidocs';
 
-        if (file_exists($dir)) {
-            Util::removedir($dir);
-        }
-
         // create dir
-        mkdir($dir, 0777, true);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777);
+        }
 
         if (!empty($html = $this->getHtml())) {
             $result = $this->setToFile($html);
