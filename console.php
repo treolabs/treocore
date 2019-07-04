@@ -32,4 +32,5 @@
  * and "TreoCore" word.
  */
 
+// @todo remove this file from 3.20.3 and above
 include 'index.php';
