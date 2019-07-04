@@ -20850,3 +20850,8 @@ select {
 #general-container div#navbar div.navbar div.logo-centr-inner a.logo img {
     margin: 10px auto 7px;
 }
+
+.list .ui-sortable-helper td.cell {
+    display: inline-block;
+    float: left;
+}
