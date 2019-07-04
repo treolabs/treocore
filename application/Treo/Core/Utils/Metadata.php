@@ -61,6 +61,11 @@ class Metadata extends Base
     private $eventManager;
 
     /**
+     * @var string
+     */
+    private $treoCacheFile = 'data/cache/metadata.json';
+
+    /**
      * Metadata constructor.
      *
      * @param FileManager   $fileManager
@@ -78,6 +83,22 @@ class Metadata extends Base
 
         $this->moduleManager = $moduleManager;
         $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCached()
+    {
+        if (!$this->useCache) {
+            return false;
+        }
+
+        if (file_exists($this->treoCacheFile)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -190,11 +211,8 @@ class Metadata extends Base
             $reload = true;
         }
 
-        // prepare cache file
-        $cacheFile = 'data/cache/metadata.json';
-
-        if (!$reload && file_exists($cacheFile)) {
-            $this->objData = json_decode(file_get_contents($cacheFile));
+        if (!$reload && file_exists($this->treoCacheFile)) {
+            $this->objData = json_decode(file_get_contents($this->treoCacheFile));
         } else {
             // load espo
             $content = $this->unify('application/Espo/Resources/metadata');
@@ -219,7 +237,7 @@ class Metadata extends Base
                 }
 
                 // create metadata cache file
-                file_put_contents($cacheFile, json_encode($this->objData));
+                file_put_contents($this->treoCacheFile, json_encode($this->objData));
             }
         }
 
