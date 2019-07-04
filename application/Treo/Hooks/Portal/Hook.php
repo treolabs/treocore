@@ -39,7 +39,7 @@ namespace Treo\Hooks\Portal;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
 use Treo\Core\Hooks\AbstractHook;
-use Treo\Core\Portal\Application as PortalApp;
+use Treo\Core\Application as App;
 
 /**
  * Portal hook
@@ -148,7 +148,7 @@ class Hook extends AbstractHook
         }
 
         // get all urls
-        $urls = PortalApp::getUrlFileData();
+        $urls = App::getPortalUrlFileData();
 
         // validate by unique
         if (in_array($url, $urls)) {
@@ -169,13 +169,13 @@ class Hook extends AbstractHook
     {
         if (!empty($url = $entity->get('url'))) {
             // get urls
-            $urls = PortalApp::getUrlFileData();
+            $urls = App::getPortalUrlFileData();
 
             // push
             $urls[$entity->get('id')] = $url;
 
             // save
-            PortalApp::saveUrlFile($urls);
+            App::savePortalUrlFile($urls);
         }
     }
 
@@ -187,14 +187,14 @@ class Hook extends AbstractHook
     protected function unsetUrl(Entity $entity): void
     {
         // get urls
-        $urls = PortalApp::getUrlFileData();
+        $urls = App::getPortalUrlFileData();
 
         if (isset($urls[$entity->get('id')])) {
             // delete
             unset($urls[$entity->get('id')]);
 
             // save
-            PortalApp::saveUrlFile($urls);
+            App::savePortalUrlFile($urls);
         }
     }
 }

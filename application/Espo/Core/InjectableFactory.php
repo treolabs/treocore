@@ -30,6 +30,7 @@
 namespace Espo\Core;
 
 use \Espo\Core\Exceptions\Error;
+use Treo\Core\Container;
 
 class InjectableFactory
 {

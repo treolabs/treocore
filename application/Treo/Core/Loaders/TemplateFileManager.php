@@ -27,17 +27,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Loaders;
+declare(strict_types=1);
 
-class EmailFilterManager extends Base
+namespace Treo\Core\Loaders;
+
+/**
+ * Class TemplateFileManager
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class TemplateFileManager extends Base
 {
+    /**
+     * @inheritDoc
+     */
     public function load()
     {
-        $emailFilterManager = new \Espo\Core\Utils\EmailFilterManager(
-            $this->getContainer()->get('entityManager')
+        $templateFileManager = new \Espo\Core\Utils\TemplateFileManager(
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('metadata')
         );
 
-        return $emailFilterManager;
+        return $templateFileManager;
     }
 }
-

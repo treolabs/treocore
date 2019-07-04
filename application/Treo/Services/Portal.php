@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Services;
 
 use Espo\ORM\Entity;
-use Treo\Core\Portal\Application as PortalApp;
+use Treo\Core\Application as App;
 
 /**
  * Portal service
@@ -91,7 +91,7 @@ class Portal extends \Espo\Services\Record
     protected function getUrls(): array
     {
         if (is_null($this->urls)) {
-            $this->urls = PortalApp::getUrlFileData();
+            $this->urls = App::getPortalUrlFileData();
         }
 
         return $this->urls;

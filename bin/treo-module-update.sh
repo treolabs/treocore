@@ -31,7 +31,7 @@ do
      fi
 
      # push log to stream
-     $php console.php composer --push-log module-update > /dev/null 2>&1
+     $php index.php composer --push-log module-update > /dev/null 2>&1
    fi
 
    sleep 1;

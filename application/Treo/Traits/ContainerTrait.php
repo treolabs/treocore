@@ -36,12 +36,12 @@ declare(strict_types=1);
 
 namespace Treo\Traits;
 
-use Espo\Core\Container;
+use Treo\Core\Container;
 
 /**
  * Class ContainerTrait
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 trait ContainerTrait
 {

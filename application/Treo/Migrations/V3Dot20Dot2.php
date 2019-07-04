@@ -6,9 +6,9 @@
  * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * TreoCore is EspoCRM-based Open Source Product Information Management application.
+ * TreoCore is EspoCRM-based Open Source application.
  * Copyright (C) 2017-2019 TreoLabs GmbH
- * Website: http://www.treopim.com
+ * Website: https://treolabs.com
  *
  * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,37 @@
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
- * and "TreoPIM" word.
+ * and "TreoCore" word.
  */
 
-chdir(dirname(__FILE__));
-set_include_path(dirname(__FILE__));
+declare(strict_types=1);
 
-require_once "vendor/autoload.php";
+namespace Treo\Migrations;
+
+use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Utils\Util;
+
+/**
+ * Migration class for version 3.20.2
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class V3Dot20Dot2 extends AbstractMigration
+{
+    /**
+     * @inheritdoc
+     */
+    public function up(): void
+    {
+        file_put_contents('data/.htaccess', 'Deny from all');
+        file_put_contents('custom/.htaccess', 'Deny from all');
+        file_put_contents('data/process-kill.txt', '1');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function down(): void
+    {
+    }
+}

@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\Loaders\Base;
 use Treo\Core\Migration\Migration as Instance;
 
 /**

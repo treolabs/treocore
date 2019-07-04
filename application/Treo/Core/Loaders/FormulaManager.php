@@ -27,41 +27,27 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\EntryPoints;
+declare(strict_types=1);
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\BadRequest;
+namespace Treo\Core\Loaders;
 
-class Portal extends \Espo\Core\EntryPoints\Base
+/**
+ * Class FormulaManager
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class FormulaManager extends Base
 {
-    public static $authRequired = false;
-
-    public function run($data = array())
+    /**
+     * @inheritDoc
+     */
+    public function load()
     {
-        if (!empty($_GET['id'])) {
-            $id = $_GET['id'];
-        } else if (!empty($data['id'])) {
-            $id = $data['id'];
-        } else {
-            $url = $_SERVER['REQUEST_URI'];
-            $id = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
+        $formulaManager = new \Espo\Core\Formula\Manager(
+            $this->getContainer(),
+            $this->getContainer()->get('metadata')
+        );
 
-            if (!isset($id)) {
-                $url = $_SERVER['REDIRECT_URL'];
-                $id = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
-            }
-
-            if (!$id) {
-                $id = $this->getConfig()->get('defaultPortalId');
-            }
-            if (!$id) {
-                throw new NotFound();
-            }
-        }
-
-        $application = new \Espo\Core\Portal\Application($id);
-        $application->setBasePath($this->getContainer()->get('clientManager')->getBasePath());
-        $application->runClient();
+        return $formulaManager;
     }
 }

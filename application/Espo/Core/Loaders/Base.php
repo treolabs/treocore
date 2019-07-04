@@ -27,19 +27,16 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+declare(strict_types=1);
+
 namespace Espo\Core\Loaders;
 
-abstract class Base implements \Espo\Core\Interfaces\Loader
+/**
+ * Class Base
+ *
+ * @author r.ratsun <r.ratsun@treolabs.com>
+ * @deprecated remove it soon
+ */
+abstract class Base extends \Treo\Core\Loaders\Base
 {
-    private $container;
-
-    public function __construct(\Espo\Core\Container $container)
-    {
-        $this->container = $container;
-    }
-
-    protected function getContainer()
-    {
-        return $this->container;
-    }
 }

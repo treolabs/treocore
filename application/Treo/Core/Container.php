@@ -36,18 +36,24 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Treo\Core\Utils\File\Manager as FileManager;
-use Treo\Core\Utils\Metadata;
-use Treo\Core\Utils\Config;
+use Espo\Core\AclManager;
+use Espo\Entities\User;
+use Espo\Core\Utils\Log;
+use Espo\Core\Utils\Log\Monolog\Handler\RotatingFileHandler;
+use Espo\Core\Utils\Log\Monolog\Handler\StreamHandler;
+use Monolog\ErrorHandler;
 use Treo\Core\EventManager\Manager as EventManager;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
+use Treo\Core\Utils\Config;
+use Treo\Core\Utils\File\Manager as FileManager;
+use Treo\Core\Utils\Metadata;
 
 /**
  * Class Container
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class Container extends \Espo\Core\Container
+class Container
 {
     /**
      * @var array
@@ -55,9 +61,13 @@ class Container extends \Espo\Core\Container
     protected $data = [];
 
     /**
-     * @inheritdoc
+     * Get class
+     *
+     * @param string $name
+     *
+     * @return mixed
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (empty($this->data[$name])) {
             $this->load($name);
@@ -70,7 +80,19 @@ class Container extends \Espo\Core\Container
     }
 
     /**
-     * @inheritdoc
+     * Set User
+     *
+     * @param User $user
+     */
+    public function setUser(User $user): Container
+    {
+        $this->set('user', $user);
+
+        return $this;
+    }
+
+    /**
+     * Set class
      */
     protected function set($name, $obj)
     {
@@ -80,16 +102,16 @@ class Container extends \Espo\Core\Container
     /**
      * Load
      *
-     * @param $name
+     * @param string $name
      *
-     * @return null
+     * @throws \ReflectionException
      */
-    protected function load($name)
+    protected function load(string $name): void
     {
         // prepare load method
         $loadMethod = 'load' . ucfirst($name);
 
-        if (in_array($loadMethod, $this->getContainerLoaders())) {
+        if (method_exists($this, $loadMethod)) {
             $obj = $this->$loadMethod();
             $this->data[$name] = $obj;
         } else {
@@ -99,15 +121,7 @@ class Container extends \Espo\Core\Container
             }
 
             if (!isset($className) || !class_exists($className)) {
-                $className = '\Espo\Custom\Core\Loaders\\' . ucfirst($name);
-
-                if (!class_exists($className)) {
-                    $className = '\Treo\Core\Loaders\\' . ucfirst($name);
-                }
-
-                if (!class_exists($className)) {
-                    $className = '\Espo\Core\Loaders\\' . ucfirst($name);
-                }
+                $className = '\Treo\Core\Loaders\\' . ucfirst($name);
             }
 
             if (class_exists($className)) {
@@ -115,8 +129,6 @@ class Container extends \Espo\Core\Container
                 $this->data[$name] = $loadClass->load();
             }
         }
-
-        return null;
     }
 
     /**
@@ -140,15 +152,34 @@ class Container extends \Espo\Core\Container
     }
 
     /**
-     * @inheritdoc
+     * Load container
+     *
+     * @return Container
      */
-    protected function loadInternalAclManager()
+    protected function loadContainer(): Container
     {
-        return parent::loadInternalAclManager();
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * Load internal ACL manager
+     *
+     * @return mixed
+     */
+    protected function loadInternalAclManager()
+    {
+        // get class name
+        $className = $this
+            ->get('metadata')
+            ->get('app.serviceContainer.classNames.acl', AclManager::class);
+
+        return new $className($this->get('container'));
+    }
+
+    /**
+     * Load config
+     *
+     * @return Config
      */
     protected function loadConfig()
     {
@@ -156,9 +187,11 @@ class Container extends \Espo\Core\Container
     }
 
     /**
-     * @inheritdoc
+     * Load metadata
+     *
+     * @return Metadata
      */
-    protected function loadMetadata()
+    protected function loadMetadata(): Metadata
     {
         return new Metadata(
             $this->get('fileManager'),
@@ -169,19 +202,44 @@ class Container extends \Espo\Core\Container
     }
 
     /**
-     * @inheritdoc
+     * Load Log
+     *
+     * @return Log
+     * @throws \Exception
      */
-    protected function loadLog()
+    protected function loadLog(): Log
     {
-        return parent::loadLog();
+        $config = $this->get('config');
+
+        $path = $config->get('logger.path', 'data/logs/espo.log');
+        $rotation = $config->get('logger.rotation', true);
+
+        $log = new Log('Espo');
+        $levelCode = $log->getLevelCode($config->get('logger.level', 'WARNING'));
+
+        if ($rotation) {
+            $maxFileNumber = $config->get('logger.maxFileNumber', 30);
+            $handler = new RotatingFileHandler($path, $maxFileNumber, $levelCode);
+        } else {
+            $handler = new StreamHandler($path, $levelCode);
+        }
+        $log->pushHandler($handler);
+
+        $errorHandler = new ErrorHandler($log);
+        $errorHandler->registerExceptionHandler(null, false);
+        $errorHandler->registerErrorHandler(array(), false);
+
+        return $log;
     }
 
     /**
-     * @inheritdoc
+     * Load file manager
+     *
+     * @return FileManager
      */
-    protected function loadFileManager()
+    protected function loadFileManager(): FileManager
     {
-        return parent::loadFileManager();
+        return new FileManager($this->get('config'));
     }
 
     /**
@@ -202,28 +260,5 @@ class Container extends \Espo\Core\Container
     protected function loadEventManager(): EventManager
     {
         return (new EventManager())->setContainer($this);
-    }
-
-    /**
-     * Get container loaders
-     *
-     * @param string $name
-     *
-     * @return array
-     * @throws \ReflectionException
-     */
-    protected function getContainerLoaders(string $name = self::class): array
-    {
-        // prepare result
-        $result = [];
-
-        $container = new \ReflectionClass($name);
-        foreach ($container->getMethods() as $m) {
-            if ($m->class == $name && preg_match("/^load(.*)$/", $m->name) && $m->name != 'load') {
-                $result[] = $m->name;
-            }
-        }
-
-        return $result;
     }
 }

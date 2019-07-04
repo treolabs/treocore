@@ -37,19 +37,27 @@ declare(strict_types=1);
 namespace Treo\Core\Portal;
 
 use Espo\Entities\Portal;
+use Espo\Core\AclManager;
+use Espo\Core\Portal\Acl as PortalAcl;
+use Espo\Core\Portal\AclManager as PortalAclManager;
 use Espo\Core\Portal\Utils\ThemeManager;
+use Treo\Core\Container as Base;
 
 /**
  * Class Container
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Container extends \Treo\Core\Container
+class Container extends Base
 {
     /**
+     * Set portal
+     *
      * @param Portal $portal
+     *
+     * @return Container
      */
-    public function setPortal(Portal $portal)
+    public function setPortal(Portal $portal): Container
     {
         $this->set('portal', $portal);
 
@@ -85,6 +93,8 @@ class Container extends \Treo\Core\Container
         foreach ($data as $attribute => $value) {
             $this->get('config')->set($attribute, $value, true);
         }
+
+        return $this;
     }
 
     /**
@@ -92,8 +102,12 @@ class Container extends \Treo\Core\Container
      */
     protected function loadAclManager()
     {
-        $className = $this->getServiceClassName('aclManager', '\\Espo\\Core\\Portal\\AclManager');
-        $mainClassName = $this->getServiceMainClassName('aclManager', '\\Espo\\Core\\AclManager');
+        // get metadata
+        $metadata = $this->get('metadata');
+
+        // prepare class names
+        $className = $metadata->get('app.serviceContainerPortal.classNames.aclManager', PortalAclManager::class);
+        $mainClassName = $metadata->get('app.serviceContainer.classNames.aclManager', AclManager::class);
 
         $obj = new $className($this);
         $obj->setMainManager(new $mainClassName($this));
@@ -106,7 +120,11 @@ class Container extends \Treo\Core\Container
      */
     protected function loadAcl()
     {
-        $className = $this->getServiceClassName('acl', '\\Espo\\Core\\Portal\\Acl');
+        // prepare class name
+        $className = $this
+            ->get('metadata')
+            ->get('app.serviceContainerPortal.classNames.acl', PortalAcl::class);
+
         return new $className(
             $this->get('aclManager'),
             $this->get('user')
@@ -123,41 +141,5 @@ class Container extends \Treo\Core\Container
             $this->get('metadata'),
             $this->get('portal')
         );
-    }
-
-    /**
-     * @param string $name
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function getServiceClassName($name, $default)
-    {
-        $metadata = $this->get('metadata');
-        $className = $metadata->get('app.serviceContainerPortal.classNames.' . $name, $default);
-
-        return $className;
-    }
-
-    /**
-     * @param string $name
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function getServiceMainClassName($name, $default)
-    {
-        $metadata = $this->get('metadata');
-        $className = $metadata->get('app.serviceContainer.classNames.' . $name, $default);
-
-        return $className;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getContainerLoaders(string $name = null): array
-    {
-        return array_merge(parent::getContainerLoaders(), parent::getContainerLoaders(self::class));
     }
 }

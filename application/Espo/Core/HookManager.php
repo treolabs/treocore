@@ -30,6 +30,7 @@
 namespace Espo\Core;
 use \Espo\Core\Exceptions\Error,
     \Espo\Core\Utils\Util;
+use Treo\Core\Container;
 
 class HookManager
 {

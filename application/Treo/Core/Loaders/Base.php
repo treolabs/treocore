@@ -31,29 +31,41 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\Loaders\Base as EspoBase;
+use Espo\Core\Interfaces\Loader;
+use Treo\Core\Container;
 
 /**
  * Base loader class
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-abstract class Base extends EspoBase
+abstract class Base implements Loader
 {
     /**
-     * Get service class name
-     *
-     * @param string $name
-     * @param string $default
-     *
-     * @return string
+     * @var Container
      */
-    protected function getServiceClassName($name, $default)
+    private $container;
+
+    /**
+     * Base constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
     {
-        return $this->getContainer()->get('metadata')->get('app.serviceContainer.classNames.' . $name, $default);
+        $this->container = $container;
+    }
+
+    /**
+     * @return Container
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
     }
 }

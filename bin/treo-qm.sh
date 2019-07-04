@@ -14,7 +14,7 @@ do
    fi
 
    if [ -f "data/qm-items-$stream.json" ]; then
-     $php console.php qm $stream --run > /dev/null 2>&1
+     $php index.php qm $stream --run > /dev/null 2>&1
    fi
 
    sleep 1;

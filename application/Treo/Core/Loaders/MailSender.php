@@ -54,7 +54,11 @@ class MailSender extends Base
      */
     public function load()
     {
-        $className = $this->getServiceClassName('mailSernder', '\\Espo\\Core\\Mail\\Sender');
+        $className = $this
+            ->getContainer()
+            ->get('metadata')
+            ->get('app.serviceContainer.classNames.mailSernder', '\\Espo\\Core\\Mail\\Sender');
+
         return $this->getMailSender($className);
     }
 

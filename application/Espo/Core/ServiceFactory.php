@@ -31,6 +31,7 @@ namespace Espo\Core;
 use \Espo\Core\Exceptions\Error;
 
 use \Espo\Core\Utils\Util;
+use Treo\Core\Container;
 
 class ServiceFactory
 {

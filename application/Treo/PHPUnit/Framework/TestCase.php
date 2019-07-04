@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\PHPUnit\Framework;
 
-use Espo\Core\Container;
+use Treo\Core\Container;
 use Espo\Core\Utils\Config;
 
 /**

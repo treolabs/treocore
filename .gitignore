@@ -1,11 +1,9 @@
 .idea/
 /nb_metadata
 
-/apidocs/index.html
-/composer.lock
+/apidocs/
 /custom/
-!/custom/.htaccess
+/composer.lock
 /data/
-!/data/.htaccess
-/modules
+/modules/
 /vendor/

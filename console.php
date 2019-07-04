@@ -32,14 +32,4 @@
  * and "TreoCore" word.
  */
 
-if (substr(php_sapi_name(), 0, 3) != 'cli') {
-    die("Cron can be run only via CLI");
-}
-
-include "bootstrap.php";
-
-// define gloabal variables
-define('CORE_PATH', __DIR__);
-
-$app = new \Treo\Core\Application();
-$app->runConsole($argv);
+include 'index.php';

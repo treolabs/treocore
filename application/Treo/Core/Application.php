@@ -36,45 +36,119 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Espo\Core\Application as Base;
+use Espo\Core\Utils\Api\Auth as ApiAuth;
+use Espo\Core\Utils\Json;
+use Espo\Core\EntryPointManager;
+use Espo\Entities\Portal;
 use Treo\Services\Installer;
 use Treo\Core\Utils\Auth;
+use Treo\Core\Utils\Route;
+use Treo\Core\Utils\Metadata;
+use Treo\Core\Utils\Config;
+use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class Application
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Application extends Base
+class Application
 {
+    const CONFIG_PATH = 'data/portals.json';
+
     /**
-     * Is PHP version valid ?
+     * @var null|array
      */
-    public static function isPhpVersionValid()
+    protected static $urls = null;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * @var Portal|null
+     */
+    protected $portal = null;
+
+    /**
+     * Get portals url config file data
+     *
+     * @return array
+     */
+    public static function getPortalUrlFileData(): array
     {
-        // prepare data
-        $validPhpVersion = '7.1';
+        if (is_null(self::$urls)) {
+            // prepare result
+            self::$urls = [];
 
-        // prepare PHP version
-        $versionData = explode(".", phpversion());
-        $phpVersion = $versionData[0] . "." . $versionData[1];
-
-        // validate PHP version
-        if (version_compare($phpVersion, $validPhpVersion, '<')) {
-            echo "Invalid PHP version. PHP 7.1 or above is required!";
-            die();
+            if (file_exists(self::CONFIG_PATH)) {
+                $json = file_get_contents(self::CONFIG_PATH);
+                if (!empty($json)) {
+                    self::$urls = Json::decode($json, true);
+                }
+            }
         }
+
+        return self::$urls;
     }
 
     /**
-     * @inheritdoc
+     * Set data to portal url config file
+     *
+     * @param array $data
      */
-    public function isInstalled()
+    public static function savePortalUrlFile(array $data): void
     {
-        // copy config if it needs
-        $this->copyDefaultConfig();
+        file_put_contents(self::CONFIG_PATH, Json::encode($data));
+    }
 
-        return parent::isInstalled();
+    /**
+     * Application constructor.
+     */
+    public function __construct()
+    {
+        // set timezone
+        date_default_timezone_set('UTC');
+
+        // set container
+        $this->container = new Container();
+
+        // set log
+        $GLOBALS['log'] = $this->getContainer()->get('log');
+    }
+
+    /**
+     * Run App
+     */
+    public function run()
+    {
+        // prepare uri
+        $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
+
+        // for api
+        if (preg_match('/^\/api\/(.*)$/', $uri)) {
+            $this->runApi($uri);
+        }
+
+        if (!empty($uri) && $uri != '/') {
+            // print module client file
+            if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
+                $this->printModuleClientFile($matches[1][0]);
+            }
+
+            // if images path than call showImage
+            if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
+                $this->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
+            }
+
+            // show 404
+            header("HTTP/1.0 404 Not Found");
+            exit;
+        }
+
+        // for client
+        $this->runClient();
     }
 
     /**
@@ -96,35 +170,172 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
+     * Get container
+     *
+     * @return Container
      */
-    public function run($name = 'default')
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * Is installed
+     *
+     * @return bool
+     */
+    public function isInstalled(): bool
+    {
+        // copy config if it needs
+        $this->copyDefaultConfig();
+
+        return file_exists($this->getConfig()->getConfigPath()) && $this->getConfig()->get('isInstalled');
+    }
+
+    /**
+     * Run API
+     *
+     * @param string $uri
+     */
+    protected function runApi(string $uri)
     {
         // for installer
         if (!$this->isInstalled()) {
             $this->runInstallerApi();
         }
 
-        parent::run($name);
+        // prepare base route
+        $baseRoute = '/api/v1';
+
+        // for portal api
+        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri)) {
+            // parse uri
+            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
+
+            // init portal container
+            $this->initPortalContainer($matches[0]);
+
+            // prepare base route
+            $baseRoute = '/api/v1/portal-access';
+        }
+
+        $this->routeHooks();
+        $this->initRoutes($baseRoute);
+        $this->getSlim()->run();
+        exit;
     }
 
     /**
-     * @inheritdoc
+     * Run client
      */
-    public function runClient()
+    protected function runClient()
     {
         // for installer
         if (!$this->isInstalled()) {
             $this->runInstallerClient();
         }
 
-        parent::runClient();
+        // for entryPoint
+        if (!empty($_GET['entryPoint'])) {
+            $this->runEntryPoint($_GET['entryPoint']);
+            exit;
+        }
+
+        // prepare client vars
+        $vars = [
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
+        ];
+
+        if (!empty($portalId = $this->getPortalIdForClient())) {
+            // init portal container
+            $this->initPortalContainer($portalId);
+
+            // prepare client vars
+            $vars['portalId'] = $portalId;
+
+            // load client
+            $this
+                ->getContainer()
+                ->get('clientManager')
+                ->display(null, 'client/html/portal.html', $vars);
+            exit;
+        }
+
+        $this
+            ->getContainer()
+            ->get('clientManager')
+            ->display(null, 'client/html/main.html', $vars);
+        exit;
     }
 
     /**
+     * Run entry point
+     *
+     * @param string $entryPoint
+     * @param array  $data
+     */
+    protected function runEntryPoint(string $entryPoint, $data = [])
+    {
+        if (empty($entryPoint)) {
+            throw new \Error();
+        }
+
+        // get portal id
+        $portalId = null;
+        if (!empty($_GET['portalId'])) {
+            $portalId = $_GET['portalId'];
+        }
+        if (!empty($_COOKIE['auth-token'])) {
+            $token = $this
+                ->getContainer()
+                ->get('entityManager')
+                ->getRepository('AuthToken')
+                ->where(['token' => $_COOKIE['auth-token']])
+                ->findOne();
+            if ($token && $token->get('portalId')) {
+                $portalId = $token->get('portalId');
+            }
+        }
+
+        // for portal
+        if (!empty($portalId)) {
+            // init portal container
+            $this->initPortalContainer((string)$portalId);
+        }
+
+        $slim = $this->getSlim();
+        $container = $this->getContainer();
+
+        $slim->any('.*', function () {
+        });
+
+        // create entryPointManager
+        $entryPointManager = new EntryPointManager($container);
+
+        try {
+            $authRequired = $entryPointManager->checkAuthRequired($entryPoint);
+            $authNotStrict = $entryPointManager->checkNotStrictAuth($entryPoint);
+            $auth = new Auth($this->container, $authNotStrict);
+            $apiAuth = new ApiAuth($auth, $authRequired, true);
+            $slim->add($apiAuth);
+
+            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+                $entryPointManager->run($entryPoint, $data);
+            });
+
+            $slim->run();
+        } catch (\Exception $e) {
+            $container->get('output')->processError($e->getMessage(), $e->getCode(), true, $e);
+        }
+    }
+
+    /**
+     * Print modules client files
+     *
      * @param string $file
      */
-    public function printModuleClientFile(string $file)
+    protected function printModuleClientFile(string $file)
     {
         foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
             $path = $module->getClientPath() . $file;
@@ -171,36 +382,33 @@ class Application extends Base
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function initContainer()
-    {
-        $this->container = new Container();
-    }
-
-    /**
-     * Create auth
+     * Get route list
      *
-     * @return Auth
-     */
-    protected function createAuth()
-    {
-        return new Auth($this->getContainer());
-    }
-
-    /**
-     * @inheritdoc
+     * @return mixed
      */
     protected function getRouteList()
     {
-        $routes = new \Treo\Core\Utils\Route(
+        $routes = new Route(
             $this->getConfig(),
             $this->getMetadata(),
             $this->getContainer()->get('fileManager'),
             $this->getContainer()->get('moduleManager')
         );
+        $routeList = $routes->getAll();
 
-        return $routes->getAll();
+        if (!empty($this->getContainer()->get('portal'))) {
+            foreach ($routeList as $i => $route) {
+                if (isset($route['route'])) {
+                    if ($route['route']{0} !== '/') {
+                        $route['route'] = '/' . $route['route'];
+                    }
+                    $route['route'] = '/:portalId' . $route['route'];
+                }
+                $routeList[$i] = $route;
+            }
+        }
+
+        return $routeList;
     }
 
     /**
@@ -247,11 +455,127 @@ class Application extends Base
         $vars = [
             'applicationName' => 'TreoCore',
             'status'          => $result['status'],
-            'message'         => $result['message']
+            'message'         => $result['message'],
+            'classReplaceMap' => json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap'], [])),
+            'year'            => date('Y')
         ];
 
-        $this->getContainer()->get('clientManager')->display(null, 'html/installation.html', $vars);
+        $this->getContainer()->get('clientManager')->display(null, 'client/html/installation.html', $vars);
         exit;
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->getContainer()->get('config');
+    }
+
+    /**
+     * Route hooks
+     */
+    protected function routeHooks()
+    {
+        $container = $this->getContainer();
+        $slim = $this->getSlim();
+
+        try {
+            $auth = new Auth($container);
+        } catch (\Exception $e) {
+            $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
+        }
+
+        $apiAuth = new ApiAuth($auth);
+
+        $this->getSlim()->add($apiAuth);
+        $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
+            $route = $slim->router()->getCurrentRoute();
+            $conditions = $route->getConditions();
+
+            if (isset($conditions['useController']) && $conditions['useController'] == false) {
+                return;
+            }
+
+            $routeOptions = call_user_func($route->getCallable());
+            $routeKeys = is_array($routeOptions) ? array_keys($routeOptions) : array();
+
+            if (!in_array('controller', $routeKeys, true)) {
+                return $container->get('output')->render($routeOptions);
+            }
+
+            $params = $route->getParams();
+            $data = $slim->request()->getBody();
+
+            foreach ($routeOptions as $key => $value) {
+                if (strstr($value, ':')) {
+                    $paramName = str_replace(':', '', $value);
+                    $value = $params[$paramName];
+                }
+                $controllerParams[$key] = $value;
+            }
+
+            $params = array_merge($params, $controllerParams);
+
+            $controllerName = ucfirst($controllerParams['controller']);
+
+            if (!empty($controllerParams['action'])) {
+                $actionName = $controllerParams['action'];
+            } else {
+                $httpMethod = strtolower($slim->request()->getMethod());
+                $crudList = $container->get('config')->get('crud');
+                $actionName = $crudList[$httpMethod];
+            }
+
+            try {
+                $controllerManager = $this->getContainer()->get('controllerManager');
+                $result = $controllerManager
+                    ->process($controllerName, $actionName, $params, $data, $slim->request(), $slim->response());
+                $container->get('output')->render($result);
+            } catch (\Exception $e) {
+                $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
+            }
+        });
+
+        $this->getSlim()->hook('slim.after.router', function () use (&$slim) {
+            $slim->contentType('application/json');
+
+            $res = $slim->response();
+            $res->header('Expires', '0');
+            $res->header('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
+            $res->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+            $res->header('Pragma', 'no-cache');
+        });
+    }
+
+    /**
+     * Init routes
+     *
+     * @param string $baseRoute
+     */
+    protected function initRoutes(string $baseRoute)
+    {
+        $crudList = array_keys($this->getConfig()->get('crud'));
+
+        foreach ($this->getRouteList() as $route) {
+            $method = strtolower($route['method']);
+            if (!in_array($method, $crudList) && $method !== 'options') {
+                $message = "Route: Method [$method] does not exist. Please check your route [" . $route['route'] . "]";
+
+                $GLOBALS['log']->error($message);
+                continue;
+            }
+
+            $currentRoute = $this->getSlim()->$method($baseRoute . $route['route'], function () use ($route) {
+                return $route['params'];
+            });
+
+            if (isset($route['conditions'])) {
+                $currentRoute->conditions($route['conditions']);
+            }
+        }
     }
 
     /**
@@ -259,6 +583,20 @@ class Application extends Base
      */
     private function copyDefaultConfig(): void
     {
+        // create data dir
+        if (!file_exists('data')) {
+            mkdir('data', 0777);
+            // create htaccess
+            file_put_contents('data/.htaccess', 'Deny from all');
+        }
+
+        // create custom dir
+        if (!file_exists('custom')) {
+            mkdir('custom', 0777);
+            // create htaccess
+            file_put_contents('custom/.htaccess', 'Deny from all');
+        }
+
         // prepare config path
         $path = 'data/config.php';
 
@@ -274,6 +612,71 @@ class Application extends Base
 
             // create config
             file_put_contents($path, $content);
+        }
+    }
+
+    /**
+     * Get slim
+     *
+     * @return mixed
+     */
+    protected function getSlim()
+    {
+        return $this->getContainer()->get('slim');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * @return string
+     */
+    private function getPortalIdForClient(): string
+    {
+        // prepare result
+        $result = '';
+
+        // prepare protocol
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+        // prepare url
+        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        if (in_array($url, self::getPortalUrlFileData())) {
+            $result = array_search($url, self::getPortalUrlFileData());
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $portalId
+     *
+     * @throws \Exception
+     */
+    private function initPortalContainer(string $portalId): void
+    {
+        // set portal container
+        $this->container = new PortalContainer();
+
+        // find portal
+        $portal = $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getEntity('Portal', $portalId);
+
+        if (!empty($portal) && $portal->get('isActive')) {
+            // set portal
+            $this->getContainer()->setPortal($portal);
+        } else {
+            throw new \Exception('No such portal');
         }
     }
 }
