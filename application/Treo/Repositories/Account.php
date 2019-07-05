@@ -48,13 +48,29 @@ class Account extends \Espo\Core\ORM\Repositories\RDB
         }
     }
 
+    protected function afterRemove(Entity $entity, array $options = [])
+    {
+        $contacts = $entity->get('contacts');
+        foreach ($contacts as $contact){
+            $this->removeAccountIdContact($entity, $contact);
+        }
+        parent::afterRemove($entity,$options);
+    }
+
     protected function afterUnrelateContacts(Entity $entity, $foreign, array $options = array())
     {
         if (!($foreign instanceof Entity)) return;
+        $this->removeAccountIdContact($entity, $foreign);
+    }
 
-        if ($foreign->get('accountId') && $foreign->get('accountId') === $entity->id) {
-            $foreign->set('accountId', null);
-            $this->getEntityManager()->saveEntity($foreign);
+    /**
+     * @param Entity $account
+     * @param Entity $contact
+     */
+    private function removeAccountIdContact(Entity $account, Entity $contact): void {
+        if ($contact->get('accountId') && $contact->get('accountId') === $account->id) {
+            $contact->set('accountId', null);
+            $this->getEntityManager()->saveEntity($contact);
         }
     }
 }
