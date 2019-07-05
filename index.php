@@ -32,6 +32,12 @@
  * and "TreoCore" word.
  */
 
+// change directory
+chdir(dirname(__FILE__));
+
+// set the include_path
+set_include_path(dirname(__FILE__));
+
 // autoload
 require_once 'vendor/autoload.php';
 
