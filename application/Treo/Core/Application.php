@@ -420,7 +420,7 @@ class Application
         $request = $this->getSlim()->request();
 
         // prepare action
-        $action = str_replace("/Installer/", "", $request->getPathInfo());
+        $action = str_replace("/api/v1/Installer/", "", $request->getPathInfo());
 
         // call controller
         $result = $this
@@ -583,20 +583,6 @@ class Application
      */
     private function copyDefaultConfig(): void
     {
-        // create data dir
-        if (!file_exists('data')) {
-            mkdir('data', 0777);
-            // create htaccess
-            file_put_contents('data/.htaccess', 'Deny from all');
-        }
-
-        // create custom dir
-        if (!file_exists('custom')) {
-            mkdir('custom', 0777);
-            // create htaccess
-            file_put_contents('custom/.htaccess', 'Deny from all');
-        }
-
         // prepare config path
         $path = 'data/config.php';
 

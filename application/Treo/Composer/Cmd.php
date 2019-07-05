@@ -51,12 +51,28 @@ class Cmd
      */
     public static function preUpdate(): void
     {
-        if (file_exists("data/old-composer.lock")) {
-            unlink("data/old-composer.lock");
+        // create data dir
+        if (!file_exists('data')) {
+            mkdir('data', 0777);
+            // create htaccess
+            file_put_contents('data/.htaccess', 'Deny from all');
         }
 
-        if (file_exists("composer.lock")) {
-            copy("composer.lock", "data/old-composer.lock");
+        // create custom dir
+        if (!file_exists('custom')) {
+            mkdir('custom', 0777);
+            // create htaccess
+            file_put_contents('custom/.htaccess', 'Deny from all');
+        }
+
+        // delete old composer lock file
+        if (file_exists('data/old-composer.lock')) {
+            unlink('data/old-composer.lock');
+        }
+
+        // copy composer lock file
+        if (file_exists('composer.lock')) {
+            copy('composer.lock', 'data/old-composer.lock');
         }
     }
 
