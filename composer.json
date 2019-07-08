@@ -1,8 +1,7 @@
 {
   "name": "treolabs/treocore",
-  "version": "3.20.2",
   "description": "TreoCORE. Open source application.",
-  "homepage": "https://treopim.com",
+  "homepage": "https://treolabs.com",
   "license": "GPL-3.0-only",
   "authors": [
     {
@@ -36,37 +35,12 @@
     "php-mime-mail-parser/php-mime-mail-parser": "2.10.0",
     "zbateson/mail-mime-parser": "0.4.8",
     "phpoffice/phpexcel": "1.8.1",
-    "phpoffice/phpspreadsheet": "1.1.0",
-    "wikimedia/composer-merge-plugin": "1.4.1"
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "merge-plugin": {
-      "include": [
-        "data/composer.json",
-        "data/repositories.json",
-        "data/dev-composer.json"
-      ]
-    }
+    "phpoffice/phpspreadsheet": "1.1.0"
   },
   "autoload": {
-    "psr-0": {
-      "": [
-        "application/",
-        "data/migrations/",
-        "data/module-manager-events/"
-      ],
-      "Espo\\Custom": "custom/"
+    "psr-4": {
+      "Espo\\": "app/Espo/",
+      "Treo\\": "app/Treo/"
     }
-  },
-  "scripts": {
-    "pre-update-cmd": "Treo\\Composer\\Cmd::preUpdate",
-    "post-update-cmd": "Treo\\Composer\\Cmd::postUpdate"
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://packagist.treopim.com/packages.json?id=public"
-    }
-  ]
+  }
 }

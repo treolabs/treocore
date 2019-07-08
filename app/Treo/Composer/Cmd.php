@@ -81,10 +81,10 @@ class Cmd
      */
     public static function postUpdate(): void
     {
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-
-        (new PostUpdate())->setContainer(self::getContainer())->run();
+//        // define gloabal variables
+//        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+//
+//        (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
     /**
