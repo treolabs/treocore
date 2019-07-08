@@ -77,6 +77,11 @@ class Application
     protected $clientPortalId = null;
 
     /**
+     * @var string
+     */
+    protected $clientPath;
+
+    /**
      * Get portals url config file data
      *
      * @return array
@@ -121,6 +126,9 @@ class Application
 
         // set log
         $GLOBALS['log'] = $this->getContainer()->get('log');
+
+        // prepare client path
+        $this->clientPath = dirname(dirname(dirname(__DIR__))) . '/client/';
     }
 
     /**
@@ -263,14 +271,14 @@ class Application
             $this
                 ->getContainer()
                 ->get('clientManager')
-                ->display(null, 'client/html/portal.html', $vars);
+                ->display(null, $this->clientPath . 'html/portal.html', $vars);
             exit;
         }
 
         $this
             ->getContainer()
             ->get('clientManager')
-            ->display(null, 'client/html/main.html', $vars);
+            ->display(null, $this->clientPath . 'html/main.html', $vars);
         exit;
     }
 
@@ -342,8 +350,15 @@ class Application
      */
     protected function printModuleClientFile(string $file)
     {
-        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
-            $path = $module->getClientPath() . $file;
+        // prepare pathes
+        $pathes = [];
+        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module){
+            $pathes[] = $module->getClientPath();
+        }
+        $pathes[] = $this->clientPath;
+
+        foreach ($pathes as $path) {
+            $path = $path . $file;
             if (file_exists($path)) {
                 $parts = explode(".", $path);
 
@@ -465,7 +480,7 @@ class Application
             'year'            => date('Y')
         ];
 
-        $this->getContainer()->get('clientManager')->display(null, 'client/html/installation.html', $vars);
+        $this->getContainer()->get('clientManager')->display(null, $this->clientPath . 'html/installation.html', $vars);
         exit;
     }
 
