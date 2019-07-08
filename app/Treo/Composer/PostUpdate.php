@@ -91,6 +91,9 @@ class PostUpdate
             // run migrations
             $this->runMigrations();
         }
+
+        // store composer.lock file
+        self::storeComposerLock();
     }
 
     /**
@@ -183,9 +186,6 @@ class PostUpdate
                 ];
             }
         }
-
-        // store composer.lock file
-        self::storeComposerLock();
 
         return $result;
     }
