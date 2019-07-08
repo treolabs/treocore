@@ -51,20 +51,6 @@ class Cmd
      */
     public static function preUpdate(): void
     {
-        // create data dir
-        if (!file_exists('data')) {
-            mkdir('data', 0777);
-            // create htaccess
-            file_put_contents('data/.htaccess', 'Deny from all');
-        }
-
-        // create custom dir
-        if (!file_exists('custom')) {
-            mkdir('custom', 0777);
-            // create htaccess
-            file_put_contents('custom/.htaccess', 'Deny from all');
-        }
-
         // delete old composer lock file
         if (file_exists('data/old-composer.lock')) {
             unlink('data/old-composer.lock');
