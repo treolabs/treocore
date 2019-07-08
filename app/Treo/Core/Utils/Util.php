@@ -66,4 +66,36 @@ class Util extends Base
             rmdir($dir);
         }
     }
+
+    /**
+     * Copy dir recursively
+     *
+     * @param string $src
+     * @param string $dest
+     *
+     * @return mixed
+     */
+    public static function copydir(string $src, string $dest)
+    {
+        if (!is_dir($src)) {
+            return false;
+        }
+
+        if (!is_dir($dest)) {
+            if (!mkdir($dest)) {
+                return false;
+            }
+        }
+
+        $i = new \DirectoryIterator($src);
+        foreach ($i as $f) {
+            if ($f->isFile()) {
+                copy($f->getRealPath(), "$dest/" . $f->getFilename());
+            } else {
+                if (!$f->isDot() && $f->isDir()) {
+                    self::copydir($f->getRealPath(), "$dest/$f");
+                }
+            }
+        }
+    }
 }
