@@ -41,9 +41,6 @@ set_include_path(dirname(__FILE__));
 // autoload
 require_once 'vendor/autoload.php';
 
-// define gloabal variables
-define('CORE_PATH', __DIR__);
-
 // create app
 $app = new \Treo\Core\Application();
 
