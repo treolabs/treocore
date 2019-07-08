@@ -66,9 +66,20 @@ class Table extends \Espo\Core\Acl\Table
         return $this->portal;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function initCacheFilePath()
     {
-        $this->cacheFilePath = 'data/cache/application/acl-portal/'.$this->getPortal()->id.'/' . $this->getUser()->id . '.php';
+        // prepare portal cache dir
+        $dir = 'data/cache/acl/portal/' . $this->getPortal()->id;
+
+        // create cache dir
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $this->cacheFilePath = $dir . '/' . $this->getUser()->id . '.json';
     }
 
     protected function getRoleList()

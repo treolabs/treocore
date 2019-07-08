@@ -72,6 +72,11 @@ class Application
     protected $portal = null;
 
     /**
+     * @var string|null
+     */
+    protected $clientPortalId = null;
+
+    /**
      * Get portals url config file data
      *
      * @return array
@@ -131,7 +136,7 @@ class Application
             $this->runApi($uri);
         }
 
-        if (!empty($uri) && $uri != '/') {
+        if (!empty($uri) && $uri != '/' && empty($this->getPortalIdForClient())) {
             // print module client file
             if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
                 $this->printModuleClientFile($matches[1][0]);
@@ -626,20 +631,22 @@ class Application
      */
     private function getPortalIdForClient(): string
     {
-        // prepare result
-        $result = '';
+        if (is_null($this->clientPortalId)) {
+            // prepare result
+            $this->clientPortalId = '';
 
-        // prepare protocol
-        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+            // prepare protocol
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
 
-        // prepare url
-        $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            // prepare url
+            $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-        if (in_array($url, self::getPortalUrlFileData())) {
-            $result = array_search($url, self::getPortalUrlFileData());
+            if (in_array($url, self::getPortalUrlFileData())) {
+                $this->clientPortalId = array_search($url, self::getPortalUrlFileData());
+            }
         }
 
-        return $result;
+        return $this->clientPortalId;
     }
 
     /**

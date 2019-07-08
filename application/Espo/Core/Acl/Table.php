@@ -112,8 +112,7 @@ class Table
         $this->initCacheFilePath();
 
         if ($config && $config->get('useCache') && file_exists($this->cacheFilePath)) {
-            $cached = include $this->cacheFilePath;
-            $this->data = $cached;
+            $this->data = json_decode(file_get_contents($this->cacheFilePath));
         } else {
             $this->load();
             if ($config && $fileManager && $config->get('useCache')) {
@@ -122,9 +121,20 @@ class Table
         }
     }
 
+    /**
+     * Ini cache file path
+     */
     protected function initCacheFilePath()
     {
-        $this->cacheFilePath = 'data/cache/application/acl/' . $this->getUser()->id . '.php';
+        // prepare portal cache dir
+        $dir = 'data/cache/acl';
+
+        // create cache dir
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $this->cacheFilePath = $dir . '/' . $this->getUser()->id . '.json';
     }
 
     protected function getUser()
@@ -713,7 +723,7 @@ class Table
 
     private function buildCache()
     {
-        $this->fileManager->putPhpContents($this->cacheFilePath, $this->data, true);
+        file_put_contents($this->cacheFilePath, json_encode($this->data));
     }
 
     protected function applyReadOnlyFields(&$fieldTable)
