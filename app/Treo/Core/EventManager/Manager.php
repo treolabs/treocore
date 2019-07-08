@@ -104,9 +104,9 @@ class Manager
             $listeners = [];
 
             // for core
-            $corePath = CORE_PATH . "/application/Treo/Listeners";
+            $corePath = dirname(dirname(__DIR__)) . "/Listeners";
             if (file_exists($corePath)) {
-                $this->parseDir("Treo", CORE_PATH . "/application/Treo/Listeners", $listeners);
+                $this->parseDir("Treo", $corePath, $listeners);
             }
 
             // for modules

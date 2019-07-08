@@ -142,10 +142,10 @@ class Installer extends AbstractService
     /**
      *  Generate default config if not exists
      *
-     * @throws Exceptions\Forbidden
+     * @return bool
      * @throws Exceptions\Error
      *
-     * @return bool
+     * @throws Exceptions\Forbidden
      */
     public function generateConfig(): bool
     {
@@ -516,7 +516,7 @@ class Installer extends AbstractService
      */
     protected function getComposerVersion(): string
     {
-        $data = Json::decode(file_get_contents(CORE_PATH . '/composer.json'), true);
+        $data = Json::decode(file_get_contents('composer.json'), true);
 
         return $data['version'];
     }
@@ -530,7 +530,7 @@ class Installer extends AbstractService
     {
         if (is_null($this->installConfig)) {
             // prepare path to file
-            $configFile = CORE_PATH . "/application/Treo/Configs/Install.php";
+            $configFile = dirname(__DIR__) . "/Configs/Install.php";
 
             // get data
             $this->installConfig = include $configFile;
