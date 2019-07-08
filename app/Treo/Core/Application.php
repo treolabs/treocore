@@ -593,7 +593,7 @@ class Application
 
         if (!file_exists($path)) {
             // get default data
-            $data = include 'application/Treo/Configs/defaultConfig.php';
+            $data = include dirname(__DIR__) . '/Configs/defaultConfig.php';
 
             // prepare salt
             $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);

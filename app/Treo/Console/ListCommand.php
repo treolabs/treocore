@@ -91,6 +91,6 @@ class ListCommand extends AbstractConsole
      */
     protected function getConsoleConfig(): array
     {
-        return include 'application/Treo/Configs/Console.php';
+        return include dirname(__DIR__) . '/Configs/Console.php';
     }
 }

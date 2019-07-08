@@ -50,6 +50,6 @@ class Config extends Base
      */
     public function getDefaults()
     {
-        return array_merge(parent::getDefaults(), include "application/Treo/Configs/defaultConfig.php");
+        return array_merge(parent::getDefaults(), include dirname(dirname(__DIR__)) . '/Configs/defaultConfig.php');
     }
 }

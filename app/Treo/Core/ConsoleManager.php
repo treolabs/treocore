@@ -139,7 +139,7 @@ class ConsoleManager
      */
     protected function loadRoutes(): array
     {
-        return include 'application/Treo/Configs/Console.php';
+        return include dirname(__DIR__) . '/Configs/Console.php';
     }
 
     /**

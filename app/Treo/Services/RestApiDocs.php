@@ -388,7 +388,7 @@ class RestApiDocs extends Base
     /**
      * Generates the template for headers
      *
-     * @param  array $st_params
+     * @param array $st_params
      *
      * @return string
      */
@@ -418,8 +418,8 @@ class RestApiDocs extends Base
     /**
      * Generates the template for parameters
      *
-     * @param  array  $docs
-     * @param  string $entity
+     * @param array  $docs
+     * @param string $entity
      *
      * @return string
      */
@@ -458,9 +458,9 @@ class RestApiDocs extends Base
     /**
      * Generate POST body template
      *
-     * @param  int    $id
-     * @param  array  $docs
-     * @param  string $entity
+     * @param int    $id
+     * @param array  $docs
+     * @param string $entity
      *
      * @return string
      */
@@ -498,7 +498,7 @@ class RestApiDocs extends Base
     /**
      * Generates a badge for method
      *
-     * @param  array $data
+     * @param array $data
      *
      * @return string
      */
@@ -538,7 +538,7 @@ class RestApiDocs extends Base
     protected function getDocumentatorConfig(): array
     {
         if (is_null($this->documentatorConfig)) {
-            $this->documentatorConfig = include 'application/Treo/Configs/RestApiDocumentator.php';
+            $this->documentatorConfig = include dirname(__DIR__) . '/Configs/RestApiDocumentator.php';
         }
 
         return (array)$this->documentatorConfig;
