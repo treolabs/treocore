@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
-use Espo\Core\Utils\Json;
+use Espo\Core\Templates\Services\Base;
 use Treo\Core\Utils\Util;
 
 /**
@@ -44,15 +44,15 @@ use Treo\Core\Utils\Util;
  *
  * @author r.ratsun@treolabs.com
  */
-class TreoStore extends \Espo\Core\Templates\Services\Base
+class TreoStore extends Base
 {
     /**
      * Refresh cached data
      */
     public function refresh(): void
     {
-        if (!empty($json = $this->getRemotePackages())) {
-            $this->caching(Json::decode($json, true));
+        if (!empty($packages = $this->getRemotePackages())) {
+            $this->caching($packages);
         }
     }
 
@@ -150,9 +150,9 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
     }
 
     /**
-     * @return string
+     * @return array
      */
-    protected function getRemotePackages(): string
+    protected function getRemotePackages(): array
     {
         // prepare params
         $params = [
@@ -160,7 +160,13 @@ class TreoStore extends \Espo\Core\Templates\Services\Base
             'id'            => $this->getConfig()->get('treoId', 'common')
         ];
 
-        return file_get_contents("https://packagist.treopim.com/api/v1/packages?" . http_build_query($params));
+        try {
+            $content = file_get_contents('https://packagist.treopim.com/api/v1/packages?' . http_build_query($params));
+        } catch (\Throwable $e) {
+            $content = '';
+        }
+
+        return (!empty($content)) ? json_decode($content, true) : [];
     }
 
     /**

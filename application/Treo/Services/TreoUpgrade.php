@@ -57,12 +57,18 @@ class TreoUpgrade extends AbstractService
     {
         if (is_null($this->versions)) {
             // prepare path
-            $path = $this->getDomain() . "/api/v1/Packages/" . $this->getCurrentVersion();
+            $path = 'https://source.treopim.com/api/v1/Packages/' . $this->getCurrentVersion();
             if ($this->isDevelopMod()) {
                 $path .= '?dev=1';
             }
 
-            $this->versions = $this->readJsonData($path);
+            try {
+                $content = file_get_contents($path);
+            } catch (\Throwable $e) {
+                $content = '';
+            }
+
+            $this->versions = (!empty($content)) ? json_decode($content, true) : [];
         }
 
         return $this->versions;
@@ -165,31 +171,6 @@ class TreoUpgrade extends AbstractService
     protected function getCurrentVersion(): string
     {
         return $this->getConfig()->get('version');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getDomain(): string
-    {
-        return $this->readJsonData('composer.json')['extra']['treo-source'];
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function readJsonData(string $path): array
-    {
-        // prepare result
-        $result = [];
-
-        if (!empty($content = file_get_contents($path)) && is_string($content)) {
-            $result = json_decode($content, true);
-        }
-
-        return $result;
     }
 
     /**

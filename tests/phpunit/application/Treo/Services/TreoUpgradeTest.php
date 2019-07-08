@@ -43,37 +43,6 @@ namespace Treo\Services;
 class TreoUpgradeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test for getVersions method
-     */
-    public function testGetVersionsMethod()
-    {
-        // prepare methods
-        $methods = ['getDomain', 'getCurrentVersion', 'isDevelopMod', 'readJsonData'];
-
-        // create service
-        $service = $this->createPartialMock(TreoUpgrade::class, $methods);
-        $service
-            ->expects($this->any())
-            ->method('getDomain')
-            ->willReturn('some-path');
-        $service
-            ->expects($this->any())
-            ->method('getCurrentVersion')
-            ->willReturn('1.0.0');
-        $service
-            ->expects($this->any())
-            ->method('isDevelopMod')
-            ->willReturn(true);
-        $service
-            ->expects($this->any())
-            ->method('readJsonData')
-            ->willReturn(['1.0.0', '1.0.1']);
-
-        // test
-        $this->assertEquals(['1.0.0', '1.0.1'], $service->getVersions());
-    }
-
-    /**
      * Is runUpgrade method exists
      */
     public function testIsRunUpgradeMethodExists()
