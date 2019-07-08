@@ -47,30 +47,11 @@ use Treo\Core\Container;
 class Cmd
 {
     /**
-     * Before update
-     */
-    public static function preUpdate(): void
-    {
-        // delete old composer lock file
-        if (file_exists('data/old-composer.lock')) {
-            unlink('data/old-composer.lock');
-        }
-
-        // copy composer lock file
-        if (file_exists('composer.lock')) {
-            copy('composer.lock', 'data/old-composer.lock');
-        }
-    }
-
-    /**
      * After update
      */
     public static function postUpdate(): void
     {
-//        // define gloabal variables
-//        define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
-//
-//        (new PostUpdate())->setContainer(self::getContainer())->run();
+        (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
     /**

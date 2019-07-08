@@ -54,6 +54,9 @@ class PostUpdate
      */
     public function __construct()
     {
+        // copy root files
+        self::copyRootFiles();
+
         // save stable-composer.json file
         self::saveStableComposerJson();
 
@@ -180,6 +183,9 @@ class PostUpdate
                 ];
             }
         }
+
+        // store composer.lock file
+        self::storeComposerLock();
 
         return $result;
     }
@@ -342,8 +348,8 @@ class PostUpdate
         // prepare data
         $data = [];
 
-        // @todo remove in next release
-        $data['Treo'] = CORE_PATH . '/application/Treo/Migrations';
+        // set treo migrations
+        $data['Treo'] = dirname(__DIR__) . '/Migrations';
 
         foreach (self::getModules() as $id) {
             // prepare src
@@ -384,5 +390,27 @@ class PostUpdate
                 copy("$src/$file", "$dest/$file");
             }
         }
+    }
+
+    /**
+     * Copy root files
+     */
+    private static function copyRootFiles(): void
+    {
+        if (!file_exists('index.php')) {
+            // prepare pathes
+            $src = dirname(dirname(dirname(__DIR__))) . '/copy';
+            $dest = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
+
+            Util::copydir($src, $dest);
+        }
+    }
+
+    /**
+     * Store composer.lock
+     */
+    private function storeComposerLock(): void
+    {
+        file_put_contents('data/old-composer.lock', file_get_contents('composer.lock'));
     }
 }
