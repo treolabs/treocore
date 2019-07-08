@@ -41,7 +41,6 @@
   },
   "minimum-stability": "stable",
   "extra": {
-    "treo-source": "https://source.treopim.com",
     "merge-plugin": {
       "include": [
         "data/composer.json",
