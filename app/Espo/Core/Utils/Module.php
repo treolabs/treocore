@@ -42,8 +42,8 @@ class Module
     protected $cacheFile = 'data/cache/application/modules.php';
 
     protected $paths = array(
-        'corePath' => 'application/Espo/Resources/module.json',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/module.json',
+        'corePath' => CORE_PATH . '/Espo/Resources/module.json',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Resources/module.json',
         'customPath' => 'custom/Espo/Custom/Resources/module.json',
     );
 

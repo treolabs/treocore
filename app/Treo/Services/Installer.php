@@ -339,9 +339,6 @@ class Installer extends AbstractService
                 // set installed
                 $this->getConfig()->set('isInstalled', true);
 
-                // set version
-                $this->getConfig()->set('version', $this->getComposerVersion());
-
                 // save config
                 $this->getConfig()->save();
 
@@ -510,18 +507,6 @@ class Installer extends AbstractService
     }
 
     /**
-     * Get composer version
-     *
-     * @return string
-     */
-    protected function getComposerVersion(): string
-    {
-        $data = Json::decode(file_get_contents('composer.json'), true);
-
-        return $data['version'];
-    }
-
-    /**
      * Get install config
      *
      * @return array
@@ -530,7 +515,7 @@ class Installer extends AbstractService
     {
         if (is_null($this->installConfig)) {
             // prepare path to file
-            $configFile = dirname(__DIR__) . "/Configs/Install.php";
+            $configFile = CORE_PATH . '/Treo/Configs/Install.php';
 
             // get data
             $this->installConfig = include $configFile;

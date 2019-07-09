@@ -51,7 +51,7 @@ class Schema
     private $databaseHelper;
 
     protected $fieldTypePaths = array(
-        'application/Espo/Core/Utils/Database/DBAL/FieldTypes',
+        CORE_PATH . '/Espo/Core/Utils/Database/DBAL/FieldTypes',
         'custom/Espo/Custom/Core/Utils/Database/DBAL/FieldTypes',
     );
 
@@ -60,7 +60,7 @@ class Schema
      * @var array
      */
     protected $rebuildActionsPath = array(
-        'corePath' => 'application/Espo/Core/Utils/Database/Schema/rebuildActions',
+        'corePath' => CORE_PATH . '/Espo/Core/Utils/Database/Schema/rebuildActions',
         'customPath' => 'custom/Espo/Custom/Core/Utils/Database/Schema/rebuildActions',
     );
 

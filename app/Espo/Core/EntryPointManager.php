@@ -50,8 +50,8 @@ class EntryPointManager
      * @var array - path to entryPoint files
      */
     private $paths = array(
-        'corePath' => 'application/Espo/EntryPoints',
-        'modulePath' => 'application/Espo/Modules/{*}/EntryPoints',
+        'corePath' => CORE_PATH . '/Espo/EntryPoints',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/EntryPoints',
         'customPath' => 'custom/Espo/Custom/EntryPoints',
     );
 

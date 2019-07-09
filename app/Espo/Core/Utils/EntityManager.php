@@ -201,7 +201,7 @@ class EntityManager
         $normalizedName = Util::normilizeClassName($name);
 
         $templateNamespace = "\Espo\Core\Templates";
-        $templatePath = "application/Espo/Core/Templates";
+        $templatePath = CORE_PATH . "/Espo/Core/Templates";
 
         $contents = "<" . "?" . "php\n\n".
             "namespace Espo\Custom\Entities;\n\n".

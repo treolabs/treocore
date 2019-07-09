@@ -37,9 +37,9 @@ class Config
      * @access private
      * @var string
      */
-    private $defaultConfigPath = 'application/Espo/Core/defaults/config.php';
+    private $defaultConfigPath = CORE_PATH . '/Espo/Core/defaults/config.php';
 
-    private $systemConfigPath = 'application/Espo/Core/defaults/systemConfig.php';
+    private $systemConfigPath = CORE_PATH . '/Espo/Core/defaults/systemConfig.php';
 
     protected $configPath = 'data/config.php';
 

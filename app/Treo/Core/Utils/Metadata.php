@@ -214,14 +214,11 @@ class Metadata extends Base
         if (!$reload && file_exists($this->treoCacheFile)) {
             $this->objData = json_decode(file_get_contents($this->treoCacheFile));
         } else {
-            // prepare app path
-            $appPath = dirname(dirname(dirname(__DIR__)));
-
             // load espo
-            $content = $this->unify($appPath . '/Espo/Resources/metadata');
+            $content = $this->unify(CORE_PATH . '/Espo/Resources/metadata');
 
             // load treo
-            $content = DataUtil::merge($content, $this->unify($appPath . '/Treo/Resources/metadata'));
+            $content = DataUtil::merge($content, $this->unify(CORE_PATH . '/Treo/Resources/metadata'));
 
             // load modules
             foreach ($this->getModules() as $module) {

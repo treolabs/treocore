@@ -542,7 +542,6 @@ class Permission
 
     /**
      * Arrange permission file list
-     * e.g. array('application/Espo/Controllers/Email.php', 'application/Espo/Controllers/Import.php'), result is array('application/Espo/Controllers')
      *
      * @param  array $fileList
      * @return array

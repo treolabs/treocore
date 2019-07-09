@@ -40,8 +40,8 @@ class Route
     protected $cacheFile = 'data/cache/application/routes.php';
 
     protected $paths = array(
-        'corePath' => 'application/Espo/Resources/routes.json',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/routes.json',
+        'corePath' => CORE_PATH . '/Espo/Resources/routes.json',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Resources/routes.json',
         'customPath' => 'custom/Espo/Custom/Resources/routes.json',
     );
 
@@ -125,7 +125,7 @@ class Route
         // for module
         $moduleData = [];
         foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
-            $modulePath = str_replace('application/Espo/Modules/{*}', $moduleName, $this->paths['modulePath']);
+            $modulePath = str_replace(CORE_PATH . '/Espo/Modules/{*}', $moduleName, $this->paths['modulePath']);
             foreach ($this->getAddData([], $modulePath) as $row) {
                 $moduleData[$row['method'].$row['route']] = $row;
             }

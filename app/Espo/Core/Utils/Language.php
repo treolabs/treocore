@@ -64,8 +64,8 @@ class Language
     protected $noCustom = false;
 
     private $paths = array(
-        'corePath' => 'application/Espo/Resources/i18n',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/i18n',
+        'corePath' => CORE_PATH . '/Espo/Resources/i18n',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Resources/i18n',
         'customPath' => 'custom/Espo/Custom/Resources/i18n',
     );
 

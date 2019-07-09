@@ -120,7 +120,7 @@ class EntityManagerController extends AbstractListener
     {
         if (is_null($this->scopesConfig)) {
             // prepare result
-            $this->scopesConfig = include dirname(__DIR__) . '/Configs/Scopes.php';
+            $this->scopesConfig = include CORE_PATH . '/Treo/Configs/Scopes.php';
         }
 
         return $this->scopesConfig;

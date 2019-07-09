@@ -96,7 +96,7 @@ class ClassParser
             $data = $this->getFileManager()->getPhpContents($cacheFile);
         } else {
             // load Treo
-            $data = $this->getClassNameHash(str_replace('application/Espo', 'application/Treo', $paths['corePath']));
+            $data = $this->getClassNameHash(str_replace(CORE_PATH . '/Espo', CORE_PATH . '/Treo', $paths['corePath']));
 
             // load Espo
             $data = array_merge($data, $this->getClassNameHash($paths['corePath']));
@@ -106,7 +106,7 @@ class ClassParser
                 foreach ($this->getMetadata()->getModules() as $module) {
                     $data = array_merge(
                         $data,
-                        $module->getClassNameHash(str_replace("application/Espo/Modules/{*}/", '', $paths['modulePath']))
+                        $module->getClassNameHash(str_replace(CORE_PATH . "/Espo/Modules/{*}/", '', $paths['modulePath']))
                     );
                 }
             }

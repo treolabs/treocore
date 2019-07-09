@@ -69,11 +69,11 @@ class TemplateFileManager
             if (file_exists($fileName)) return $fileName;
 
             if ($moduleName) {
-                $fileName = "application/Espo/Modules/{$moduleName}/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
+                $fileName = CORE_PATH . "/Espo/Modules/{$moduleName}/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
                 if (file_exists($fileName)) return $fileName;
             }
 
-            $fileName = "application/Espo/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
             if (file_exists($fileName)) return $fileName;
         }
 
@@ -81,9 +81,9 @@ class TemplateFileManager
         if (file_exists($fileName)) return $fileName;
 
         if ($defaultModuleName) {
-            $fileName = "application/Espo/Modules/{$defaultModuleName}/Resources/templates/{$type}/{$language}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Modules/{$defaultModuleName}/Resources/templates/{$type}/{$language}/{$name}.tpl";
         } else {
-            $fileName = "application/Espo/Resources/templates/{$type}/{$language}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Resources/templates/{$type}/{$language}/{$name}.tpl";
         }
         if (file_exists($fileName)) return $fileName;
 
@@ -94,11 +94,11 @@ class TemplateFileManager
             if (file_exists($fileName)) return $fileName;
 
             if ($moduleName) {
-                $fileName = "application/Espo/Modules/{$moduleName}/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
+                $fileName = CORE_PATH . "/Espo/Modules/{$moduleName}/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
                 if (file_exists($fileName)) return $fileName;
             }
 
-            $fileName = "application/Espo/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Resources/templates/{$type}/{$language}/{$entityType}/{$name}.tpl";
             if (file_exists($fileName)) return $fileName;
         }
 
@@ -106,9 +106,9 @@ class TemplateFileManager
         if (file_exists($fileName)) return $fileName;
 
         if ($defaultModuleName) {
-            $fileName = "application/Espo/Modules/{$defaultModuleName}/Resources/templates/{$type}/{$language}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Modules/{$defaultModuleName}/Resources/templates/{$type}/{$language}/{$name}.tpl";
         } else {
-            $fileName = "application/Espo/Resources/templates/{$type}/{$language}/{$name}.tpl";
+            $fileName = CORE_PATH . "/Espo/Resources/templates/{$type}/{$language}/{$name}.tpl";
         }
 
         return $fileName;

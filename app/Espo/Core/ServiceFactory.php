@@ -43,8 +43,8 @@ class ServiceFactory
      * @var array - path to Service files
      */
     protected $paths = array(
-        'corePath' => 'application/Espo/Services',
-        'modulePath' => 'application/Espo/Modules/{*}/Services',
+        'corePath' => CORE_PATH . '/Espo/Services',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Services',
         'customPath' => 'custom/Espo/Custom/Services',
     );
 

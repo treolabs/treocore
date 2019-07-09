@@ -56,8 +56,8 @@ class ScheduledJob
      * @var array - path to cron job files
      */
     private $paths = array(
-        'corePath' => 'application/Espo/Jobs',
-        'modulePath' => 'application/Espo/Modules/{*}/Jobs',
+        'corePath' => CORE_PATH . '/Espo/Jobs',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Jobs',
         'customPath' => 'custom/Espo/Custom/Jobs',
     );
 

@@ -49,15 +49,15 @@ class Metadata
 
     private $metadataHelper;
 
-    protected $pathToModules = 'application/Espo/Modules';
+    protected $pathToModules = CORE_PATH . '/Espo/Modules';
 
     protected $cacheFile = 'data/cache/application/metadata.php';
 
     protected $objCacheFile = 'data/cache/application/objMetadata.php';
 
     protected $paths = array(
-        'corePath' => 'application/Espo/Resources/metadata',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/metadata',
+        'corePath' => CORE_PATH . '/Espo/Resources/metadata',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Resources/metadata',
         'customPath' => 'custom/Espo/Custom/Resources/metadata',
     );
 

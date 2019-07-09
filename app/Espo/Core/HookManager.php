@@ -56,8 +56,8 @@ class HookManager
     );
 
     protected $paths = array(
-        'corePath' => 'application/Espo/Hooks',
-        'modulePath' => 'application/Espo/Modules/{*}/Hooks',
+        'corePath' => CORE_PATH . '/Espo/Hooks',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Hooks',
         'customPath' => 'custom/Espo/Custom/Hooks',
     );
 

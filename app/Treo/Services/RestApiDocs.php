@@ -525,7 +525,7 @@ class RestApiDocs extends Base
     protected function getTemplateContent(string $template): string
     {
         // prepare file
-        $file = dirname(__DIR__) . '/Documentator/Views/Templates/' . $template . '.html';
+        $file = CORE_PATH . '/Treo/Documentator/Views/Templates/' . $template . '.html';
 
         return (file_exists($file)) ? file_get_contents($file) : '';
     }
@@ -538,7 +538,7 @@ class RestApiDocs extends Base
     protected function getDocumentatorConfig(): array
     {
         if (is_null($this->documentatorConfig)) {
-            $this->documentatorConfig = include dirname(__DIR__) . '/Configs/RestApiDocumentator.php';
+            $this->documentatorConfig = include CORE_PATH . '/Treo/Configs/RestApiDocumentator.php';
         }
 
         return (array)$this->documentatorConfig;

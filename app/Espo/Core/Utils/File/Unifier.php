@@ -41,7 +41,7 @@ class Unifier
 
     protected $unsetFileName = 'unset.json';
 
-    protected $pathToDefaults = 'application/Espo/Core/defaults';
+    protected $pathToDefaults = CORE_PATH . '/Espo/Core/defaults';
 
     public function __construct(\Espo\Core\Utils\File\Manager $fileManager, \Espo\Core\Utils\Metadata $metadata = null, $useObjects = false)
     {

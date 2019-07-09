@@ -40,16 +40,15 @@ class Layout
     protected $changedData = array();
 
     protected $params = array(
-        'defaultsPath' => 'application/Espo/Core/defaults',
+        'defaultsPath' => CORE_PATH . '/Espo/Core/defaults',
     );
-
 
     /**
      * @var array - path to layout files
      */
     protected $paths = array(
-        'corePath' => 'application/Espo/Resources/layouts',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/layouts',
+        'corePath' => CORE_PATH . '/Espo/Resources/layouts',
+        'modulePath' => CORE_PATH . '/Espo/Modules/{*}/Resources/layouts',
         'customPath' => 'custom/Espo/Custom/Resources/layouts',
     );
 

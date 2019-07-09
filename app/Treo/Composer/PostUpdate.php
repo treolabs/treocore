@@ -349,7 +349,7 @@ class PostUpdate
         $data = [];
 
         // set treo migrations
-        $data['Treo'] = dirname(__DIR__) . '/Migrations';
+        $data['Treo'] = CORE_PATH . '/Treo/Migrations';
 
         foreach (self::getModules() as $id) {
             // prepare src

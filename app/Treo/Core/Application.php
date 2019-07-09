@@ -118,6 +118,9 @@ class Application
      */
     public function __construct()
     {
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(__DIR__)));
+
         // set timezone
         date_default_timezone_set('UTC');
 
@@ -128,7 +131,7 @@ class Application
         $GLOBALS['log'] = $this->getContainer()->get('log');
 
         // prepare client path
-        $this->clientPath = dirname(dirname(dirname(__DIR__))) . '/client/';
+        $this->clientPath = dirname(CORE_PATH) . '/client/';
     }
 
     /**
@@ -320,8 +323,10 @@ class Application
         $slim = $this->getSlim();
         $container = $this->getContainer();
 
-        $slim->any('.*', function () {
-        });
+        $slim->any(
+            '.*', function () {
+        }
+        );
 
         // create entryPointManager
         $entryPointManager = new EntryPointManager($container);
@@ -333,9 +338,11 @@ class Application
             $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
-            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+            $slim->hook(
+                'slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
                 $entryPointManager->run($entryPoint, $data);
-            });
+            }
+            );
 
             $slim->run();
         } catch (\Exception $e) {
@@ -352,7 +359,7 @@ class Application
     {
         // prepare pathes
         $pathes = [];
-        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module){
+        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
             $pathes[] = $module->getClientPath();
         }
         $pathes[] = $this->clientPath;
@@ -511,7 +518,8 @@ class Application
         $apiAuth = new ApiAuth($auth);
 
         $this->getSlim()->add($apiAuth);
-        $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
+        $this->getSlim()->hook(
+            'slim.before.dispatch', function () use ($slim, $container) {
             $route = $slim->router()->getCurrentRoute();
             $conditions = $route->getConditions();
 
@@ -557,9 +565,11 @@ class Application
             } catch (\Exception $e) {
                 $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
             }
-        });
+        }
+        );
 
-        $this->getSlim()->hook('slim.after.router', function () use (&$slim) {
+        $this->getSlim()->hook(
+            'slim.after.router', function () use (&$slim) {
             $slim->contentType('application/json');
 
             $res = $slim->response();
@@ -567,7 +577,8 @@ class Application
             $res->header('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
             $res->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
             $res->header('Pragma', 'no-cache');
-        });
+        }
+        );
     }
 
     /**
@@ -588,9 +599,11 @@ class Application
                 continue;
             }
 
-            $currentRoute = $this->getSlim()->$method($baseRoute . $route['route'], function () use ($route) {
+            $currentRoute = $this->getSlim()->$method(
+                $baseRoute . $route['route'], function () use ($route) {
                 return $route['params'];
-            });
+            }
+            );
 
             if (isset($route['conditions'])) {
                 $currentRoute->conditions($route['conditions']);
@@ -608,7 +621,7 @@ class Application
 
         if (!file_exists($path)) {
             // get default data
-            $data = include dirname(__DIR__) . '/Configs/defaultConfig.php';
+            $data = include CORE_PATH . '/Treo/Configs/defaultConfig.php';
 
             // prepare salt
             $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);

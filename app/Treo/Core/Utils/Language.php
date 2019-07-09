@@ -52,14 +52,11 @@ class Language extends Base
     protected function init($reload = false)
     {
         if ($reload || !file_exists($this->getLangCacheFile()) || !$this->useCache) {
-            // prepare app path
-            $appPath = dirname(dirname(dirname(__DIR__)));
-
             // load espo
-            $fullData = $this->unify($appPath . '/Espo/Resources/i18n');
+            $fullData = $this->unify(CORE_PATH . '/Espo/Resources/i18n');
 
             // load treo
-            $fullData = Util::merge($fullData, $this->unify($appPath . '/Treo/Resources/i18n'));
+            $fullData = Util::merge($fullData, $this->unify(CORE_PATH . '/Treo/Resources/i18n'));
 
             // load modules
             foreach ($this->getMetadata()->getModules() as $module) {

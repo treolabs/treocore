@@ -46,12 +46,6 @@ class Converter
 
     private $ormMeta = null;
 
-    protected $tablePaths = array(
-        'corePath' => 'application/Espo/Core/Utils/Database/Schema/tables',
-        'modulePath' => 'application/Espo/Modules/{*}/Core/Utils/Database/Schema/tables',
-        'customPath' => 'custom/Espo/Custom/Core/Utils/Database/Schema/tables',
-    );
-
     protected $typeList;
 
     //pair ORM => doctrine
@@ -441,7 +435,7 @@ class Converter
     }
 
     /**
-     * Get custom table defenition in "application/Espo/Core/Utils/Database/Schema/tables/" and in metadata 'additionalTables'
+     * Get custom table defenition
      *
      * @param  array  $ormMeta
      *
@@ -449,27 +443,7 @@ class Converter
      */
     protected function getCustomTables(array $ormMeta)
     {
-        $customTables = $this->loadData($this->tablePaths['corePath']);
-
-        if (!empty($this->tablePaths['modulePath'])) {
-            foreach ($this->getMetadata()->getModules() as $moduleName => $module) {
-                $modulePath = str_replace('application/Espo/Modules/{*}', $moduleName, $this->tablePaths['modulePath']);
-                $customTables = Util::merge($customTables, $this->loadData($modulePath));
-            }
-        }
-
-        if (!empty($this->tablePaths['customPath'])) {
-            $customTables = Util::merge($customTables, $this->loadData($this->tablePaths['customPath']));
-        }
-
-        //get custom tables from metdata 'additionalTables'
-        foreach ($ormMeta as $entityName => $entityParams) {
-            if (isset($entityParams['additionalTables']) && is_array($entityParams['additionalTables'])) {
-                $customTables = Util::merge($customTables, $entityParams['additionalTables']);
-            }
-        }
-
-        return $customTables;
+        return $this->loadData(CORE_PATH . '/Espo/Core/Utils/Database/Schema/tables');
     }
 
     protected function getDependentEntities($entityList, $ormMeta, $dependentEntities = array())

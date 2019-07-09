@@ -121,18 +121,15 @@ class ServiceFactory extends \Espo\Core\ServiceFactory
      */
     protected function load(): void
     {
-        // prepare app path
-        $appPath = dirname(dirname(__DIR__));
-
         // load Espo
-        if (!empty($data = $this->getDirServices($appPath . '/Espo/Services'))) {
+        if (!empty($data = $this->getDirServices(CORE_PATH . '/Espo/Services'))) {
             foreach ($data as $name) {
                 $this->services[$name] = "\\Espo\\Services\\$name";
             }
         }
 
         // load Treo
-        if (!empty($data = $this->getDirServices($appPath . '/Treo/Services'))) {
+        if (!empty($data = $this->getDirServices(CORE_PATH . '/Treo/Services'))) {
             foreach ($data as $name) {
                 $this->services[$name] = "\\Treo\\Services\\$name";
             }

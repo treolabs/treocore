@@ -108,18 +108,15 @@ class HookManager extends Base
 
         $metadata = $this->container->get('metadata');
 
-        // prepare app path
-        $appPath = dirname(dirname(__DIR__));
-
         $data = $this->getHookData($this->paths['customPath']);
 
         foreach ($metadata->getModules() as $module) {
             $module->loadHooks($data);
         }
 
-        $data = $this->getHookData($appPath . '/Treo/Hooks', $data);
+        $data = $this->getHookData(CORE_PATH . '/Treo/Hooks', $data);
 
-        $data = $this->getHookData($appPath . '/Espo/Hooks', $data);
+        $data = $this->getHookData(CORE_PATH . '/Espo/Hooks', $data);
 
         $this->data = $this->sortHooks($data);
 

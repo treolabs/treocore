@@ -97,11 +97,8 @@ class Layout extends \Espo\Core\Utils\Layout
         // prepare data
         $data = [];
 
-        // prepare app path
-        $appPath = dirname(dirname(dirname(__DIR__)));
-
         // from treo core data
-        $filePath = $this->concatPath($appPath . '/Treo/Resources/layouts', $scope);
+        $filePath = $this->concatPath(CORE_PATH . '/Treo/Resources/layouts', $scope);
         $fileFullPath = $this->concatPath($filePath, $name . '.json');
         if (file_exists($fileFullPath)) {
             // get file data
@@ -113,7 +110,7 @@ class Layout extends \Espo\Core\Utils\Layout
 
         // from espo core data
         if (empty($data)) {
-            $filePath = $this->concatPath($appPath . '/Espo/Resources/layouts', $scope);
+            $filePath = $this->concatPath(CORE_PATH . '/Espo/Resources/layouts', $scope);
             $fileFullPath = $this->concatPath($filePath, $name . '.json');
             if (file_exists($fileFullPath)) {
                 // get file data
