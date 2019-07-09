@@ -21,12 +21,6 @@ php=$2
 # call cron jobs
 $php index.php cron
 
-# self upgrade process
-if [[ ! "$(ps ax | grep treo-self-upgrade.sh)" =~ "bin/treo-self-upgrade.sh $id" ]]; then
-    chmod +x bin/treo-self-upgrade.sh
-    setsid ./bin/treo-self-upgrade.sh $id $php >/dev/null 2>&1 &
-fi
-
 # module update process
 if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
     chmod +x bin/treo-module-update.sh

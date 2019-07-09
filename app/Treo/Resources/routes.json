@@ -16,14 +16,6 @@
     }
   },
   {
-    "route": "/TreoUpgrade/versions",
-    "method": "get",
-    "params": {
-      "controller": "TreoUpgrade",
-      "action": "versions"
-    }
-  },
-  {
     "route": "/ModuleManager/list",
     "method": "get",
     "params": {

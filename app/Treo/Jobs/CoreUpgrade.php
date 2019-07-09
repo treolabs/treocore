@@ -53,21 +53,10 @@ class CoreUpgrade extends \Espo\Core\Jobs\Base
         // refresh module packages cache
         $this->refreshPackagesCache();
 
-        // send notification about new version of core
-        $this->coreNotification();
-
         // send notification about new version of module
         $this->moduleNotification();
 
         return true;
-    }
-
-    /**
-     * Send notification about new version of core
-     */
-    protected function coreNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoUpgrade')->notify();
     }
 
     /**

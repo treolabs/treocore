@@ -41,7 +41,6 @@ use Treo\Console;
 return [
     "list"                                       => Console\ListCommand::class,
     "composer <action> <param1>"                 => Console\Composer::class,
-    "upgrade <versionTo> <action>"               => Console\Upgrade::class,
     "clear cache"                                => Console\ClearCache::class,
     "cleanup"                                    => Console\Cleanup::class,
     "rebuild"                                    => Console\Rebuild::class,

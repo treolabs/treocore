@@ -43,11 +43,6 @@
         "description": "integrations"
       },
       {
-        "url": "#Admin/upgrade",
-        "label": "Upgrade",
-        "description": "upgrade"
-      },
-      {
         "url": "#Admin/clearCache",
         "label": "Clear Cache",
         "description": "clearCache"
