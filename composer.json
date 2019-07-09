@@ -50,14 +50,5 @@
       "Espo\\": "app/Espo/",
       "Treo\\": "app/Treo/"
     }
-  },
-  "extra": {
-    "merge-plugin": {
-      "include": [
-        "../../../data/composer.json",
-        "../../../data/repositories.json",
-        "../../../data/dev-composer.json"
-      ]
-    }
   }
 }
