@@ -45,6 +45,7 @@ use Treo\Core\Utils\Auth;
 use Treo\Core\Utils\Route;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Util;
 use Treo\Core\Portal\Container as PortalContainer;
 
 /**
@@ -325,8 +326,10 @@ class Application
         $slim = $this->getSlim();
         $container = $this->getContainer();
 
-        $slim->any('.*', function () {
-        });
+        $slim->any(
+            '.*', function () {
+        }
+        );
 
         // create entryPointManager
         $entryPointManager = new EntryPointManager($container);
@@ -338,9 +341,11 @@ class Application
             $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
-            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+            $slim->hook(
+                'slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
                 $entryPointManager->run($entryPoint, $data);
-            });
+            }
+            );
 
             $slim->run();
         } catch (\Exception $e) {
@@ -355,54 +360,75 @@ class Application
      */
     protected function printModuleClientFile(string $file)
     {
-        // prepare pathes
-        $pathes = [];
-        foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
-            $pathes[] = $module->getClientPath();
-        }
-        $pathes[] = $this->clientPath;
+        // prepare path
+        $path = null;
 
-        foreach ($pathes as $path) {
-            $path = $path . $file;
-            if (file_exists($path)) {
-                $parts = explode(".", $path);
-
-                switch (array_pop($parts)) {
-                    case 'css':
-                        header('Content-Type: text/css');
-                        break;
-                    case 'js':
-                        header('Content-Type: application/javascript');
-                        break;
-                    case 'json':
-                        header('Content-Type: application/json');
-                        break;
-                    case 'png':
-                        header('Content-Type: image/png');
-                        break;
-                    case 'jpeg':
-                        header('Content-Type: image/jpeg');
-                        break;
-                    case 'jpg':
-                        header('Content-Type: image/jpg');
-                        break;
-                    case 'gif':
-                        header('Content-Type: image/gif');
-                        break;
-                    case 'ico':
-                        header('Content-Type: image/vnd.microsoft.icon');
-                        break;
-                    case 'svg':
-                        header('Content-type: image/svg+xml');
-                        break;
+        // get from cache
+        if (!empty($this->getConfig()->get('useCache'))) {
+            $path = 'data/cache/client/';
+            if (!file_exists($path)) {
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
                 }
-                echo file_get_contents($path);
-                exit;
+                Util::copydir($this->clientPath, $path);
+                foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
+                    Util::copydir($module->getClientPath(), $path);
+                }
+            }
+        } else {
+            // collect paths
+            foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
+                $paths[] = $module->getClientPath();
+            }
+            $paths[] = $this->clientPath;
+
+            foreach ($paths as $item) {
+                if (file_exists($item . $file)) {
+                    $path = $item;
+                    continue 1;
+                }
             }
         }
 
         // show 404
-        header("HTTP/1.0 404 Not Found");
+        if (is_null($path)) {
+            header("HTTP/1.0 404 Not Found");
+            exit;
+        }
+
+        // parse file mime type
+        $parts = explode(".", $file);
+
+        switch (array_pop($parts)) {
+            case 'css':
+                header('Content-Type: text/css');
+                break;
+            case 'js':
+                header('Content-Type: application/javascript');
+                break;
+            case 'json':
+                header('Content-Type: application/json');
+                break;
+            case 'png':
+                header('Content-Type: image/png');
+                break;
+            case 'jpeg':
+                header('Content-Type: image/jpeg');
+                break;
+            case 'jpg':
+                header('Content-Type: image/jpg');
+                break;
+            case 'gif':
+                header('Content-Type: image/gif');
+                break;
+            case 'ico':
+                header('Content-Type: image/vnd.microsoft.icon');
+                break;
+            case 'svg':
+                header('Content-type: image/svg+xml');
+                break;
+        }
+        echo file_get_contents($path . $file);
         exit;
     }
 
