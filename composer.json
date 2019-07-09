@@ -39,6 +39,13 @@
     "wikimedia/composer-merge-plugin": "1.4.1"
   },
   "autoload": {
+    "psr-0": {
+      "": [
+        "../../../data/migrations/",
+        "../../../data/module-manager-events/"
+      ],
+      "Espo\\Custom": "../../../custom/"
+    },
     "psr-4": {
       "Espo\\": "app/Espo/",
       "Treo\\": "app/Treo/"
