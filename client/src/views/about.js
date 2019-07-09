@@ -36,7 +36,7 @@ Espo.define('views/about', 'view', function (Dep) {
 
         data: function () {
             return {
-                version: this.getConfig().get('version')
+                version: ''
             };
         }
 

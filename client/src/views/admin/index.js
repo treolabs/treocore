@@ -62,7 +62,7 @@ Espo.define('views/admin/index', 'view', function (Dep) {
             }.bind(this));
 
             var iframeParams = [
-                'version=' + encodeURIComponent(this.getConfig().get('version')),
+                'version=' + encodeURIComponent(''),
                 'css=' + encodeURIComponent(this.getConfig().get('siteUrl') + '/' + this.getThemeManager().getStylesheet())
             ];
             this.iframeUrl = this.getConfig().get('adminPanelIframeUrl') || 'https://s.espocrm.com/';
