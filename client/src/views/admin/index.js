@@ -72,11 +72,6 @@ Espo.define('views/admin/index', 'view', function (Dep) {
                 this.iframeUrl += '?' + iframeParams.join('&');
             }
 
-            if (!this.getConfig().get('adminNotificationsDisabled')) {
-                this.createView('notificationsPanel', 'views/admin/panels/notifications', {
-                    el: this.getSelector() + ' .notifications-panel-container'
-                });
-            }
         },
 
         updatePageTitle: function () {

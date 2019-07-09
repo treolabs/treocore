@@ -66,7 +66,6 @@ class Cleanup extends \Espo\Core\Jobs\Base
         $this->cleanupActionHistory();
         $this->cleanupAuthToken();
         $this->cleanupAuthLog();
-        $this->cleanupUpgradeBackups();
         $this->cleanupUniqueIds();
         $this->cleanupDeletedRecords();
     }
@@ -355,26 +354,6 @@ class Cleanup extends \Espo\Core\Jobs\Base
         while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
             $id = $row['id'];
             $this->getEntityManager()->getRepository('Notification')->deleteFromDb($id);
-        }
-    }
-
-    protected function cleanupUpgradeBackups()
-    {
-        $path = 'data/.backup/upgrades';
-        $datetime = new \DateTime('-' . $this->cleanupBackupPeriod);
-
-        if (file_exists($path)) {
-            $fileManager = $this->getContainer()->get('fileManager');
-            $fileList = $fileManager->getFileList($path, false, '', false);
-
-            foreach ($fileList as $dirName) {
-                $dirPath = $path .  '/' . $dirName;
-
-                $info = new \SplFileInfo($dirPath);
-                if ($datetime->getTimestamp() > $info->getMTime()) {
-                    $fileManager->removeInDir($dirPath, true);
-                }
-            }
         }
     }
 

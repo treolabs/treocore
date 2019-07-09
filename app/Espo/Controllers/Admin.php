@@ -70,10 +70,4 @@ class Admin extends \Espo\Core\Controllers\Base
     {
         return $this->getContainer()->get('scheduledJob')->getSetupMessage();
     }
-
-    public function actionAdminNotificationList($params)
-    {
-        $adminNotificationManager = new \Espo\Core\Utils\AdminNotificationManager($this->getContainer());
-        return $adminNotificationManager->getNotificationList();
-    }
 }
