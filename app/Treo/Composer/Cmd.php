@@ -52,7 +52,7 @@ class Cmd
     public static function postUpdate(): void
     {
         // define path to core app
-        if (!defined(CORE_PATH)) {
+        if (!defined('CORE_PATH')) {
             define('CORE_PATH', dirname(dirname(__DIR__)));
         }
 
