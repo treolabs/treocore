@@ -51,6 +51,9 @@ class Cmd
      */
     public static function postUpdate(): void
     {
+        // define gloabal variables
+        define('CORE_PATH', dirname(dirname(__DIR__)));
+
         (new PostUpdate())->setContainer(self::getContainer())->run();
     }
 
