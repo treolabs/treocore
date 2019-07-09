@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Controllers;
 
+use Espo\Controllers\Admin as Base;
 use Espo\Core\Exceptions\NotFound;
 
 /**
@@ -43,28 +44,12 @@ use Espo\Core\Exceptions\NotFound;
  *
  * @author r.ratsun r.ratsun@treolabs.com
  */
-class Admin extends \Espo\Controllers\Admin
+class Admin extends Base
 {
     /**
      * @throws NotFound
      */
     public function actionNotFound()
-    {
-        throw new NotFound();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function postActionRunUpgrade($params, $data)
-    {
-        throw new NotFound();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function postActionUploadUpgradePackage($params, $data)
     {
         throw new NotFound();
     }

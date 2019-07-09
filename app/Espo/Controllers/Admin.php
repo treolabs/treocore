@@ -66,38 +66,6 @@ class Admin extends \Espo\Core\Controllers\Base
         return $scheduledJob->getAvailableList();
     }
 
-    public function postActionUploadUpgradePackage($params, $data)
-    {
-        if ($this->getConfig()->get('restrictedMode')) {
-            if (!$this->getUser()->get('isSuperAdmin')) {
-                throw new Forbidden();
-            }
-        }
-        $upgradeManager = new \Espo\Core\UpgradeManager($this->getContainer());
-
-        $upgradeId = $upgradeManager->upload($data);
-        $manifest = $upgradeManager->getManifest();
-
-        return array(
-            'id' => $upgradeId,
-            'version' => $manifest['version'],
-        );
-    }
-
-    public function postActionRunUpgrade($params, $data)
-    {
-        if ($this->getConfig()->get('restrictedMode')) {
-            if (!$this->getUser()->get('isSuperAdmin')) {
-                throw new Forbidden();
-            }
-        }
-
-        $upgradeManager = new \Espo\Core\UpgradeManager($this->getContainer());
-        $upgradeManager->install(get_object_vars($data));
-
-        return true;
-    }
-
     public function actionCronMessage($params)
     {
         return $this->getContainer()->get('scheduledJob')->getSetupMessage();
