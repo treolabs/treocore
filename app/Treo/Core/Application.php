@@ -118,8 +118,10 @@ class Application
      */
     public function __construct()
     {
-        // define gloabal variables
-        define('CORE_PATH', dirname(dirname(__DIR__)));
+        // define path to core app
+        if (!defined(CORE_PATH)) {
+            define('CORE_PATH', dirname(dirname(__DIR__)));
+        }
 
         // set timezone
         date_default_timezone_set('UTC');
