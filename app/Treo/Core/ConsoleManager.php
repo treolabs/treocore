@@ -47,15 +47,7 @@ use Treo\Traits\ContainerTrait;
  */
 class ConsoleManager
 {
-
     use ContainerTrait;
-
-    /**
-     * Path to console config
-     *
-     * @var string
-     */
-    public static $configPath = 'application/Espo/Modules/%s/Configs/Console.php';
 
     /**
      * Run console command

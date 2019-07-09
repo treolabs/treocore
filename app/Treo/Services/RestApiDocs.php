@@ -525,7 +525,7 @@ class RestApiDocs extends Base
     protected function getTemplateContent(string $template): string
     {
         // prepare file
-        $file = 'application/Treo/Documentator/Views/Templates/' . $template . '.html';
+        $file = dirname(__DIR__) . '/Documentator/Views/Templates/' . $template . '.html';
 
         return (file_exists($file)) ? file_get_contents($file) : '';
     }
