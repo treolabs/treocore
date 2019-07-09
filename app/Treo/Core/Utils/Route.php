@@ -74,6 +74,9 @@ class Route extends Base
      */
     protected function unify()
     {
+        // prepare app path
+        $appPath = dirname(dirname(dirname(__DIR__)));
+
         // for custom
         $data = $this->getAddData([], $this->paths['customPath']);
 
@@ -83,10 +86,10 @@ class Route extends Base
         }
 
         // for treo core
-        $data = $this->getAddData($data, 'application/Treo/Resources/routes.json');
+        $data = $this->getAddData($data, $appPath . '/Treo/Resources/routes.json');
 
         // for core
-        $data = $this->getAddData($data, $this->paths['corePath']);
+        $data = $this->getAddData($data, '/Espo/Resources/routes.json');
 
         return $data;
     }
