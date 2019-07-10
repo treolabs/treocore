@@ -73,7 +73,10 @@ class Installer extends AbstractListener
         $this->getConfig()->save();
 
         // create repositories file
-        \Treo\Services\Composer::putRepositoryFile($treoId);
+        file_put_contents(
+            'data/repositories.json',
+            json_encode(['repositories' => [["type" => "composer", "url" => "https://packagist.treopim.com/packages.json?id=$treoId"]]])
+        );
     }
 
     /**
