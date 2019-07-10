@@ -190,7 +190,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
         },
 
         updatePageTitle() {
-            this.setPageTitle(this.getLanguage().translate('Module Manager', 'labels', 'Admin'));
+            this.setPageTitle(this.getLanguage().translate('Composer', 'labels', 'Admin'));
         },
 
         actionRefresh(data) {
