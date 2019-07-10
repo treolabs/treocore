@@ -36,8 +36,16 @@ namespace Treo\Repositories;
 
 use Espo\ORM\Entity;
 
+/**
+ * Class Contact
+ *
+ * @package Treo\Repositories
+ */
 class Contact extends \Espo\Core\ORM\Repositories\RDB
 {
+    /**
+     * @param $params
+     */
     public function handleSelectParams(&$params)
     {
         parent::handleSelectParams($params);
@@ -52,7 +60,11 @@ class Contact extends \Espo\Core\ORM\Repositories\RDB
         ";
     }
 
-    protected function handleAfterSaveAccounts(Entity $entity, array $options = array())
+    /**
+     * @param Entity $entity
+     * @param array $options
+     */
+    protected function handleAfterSaveAccounts(Entity $entity, array $options = [])
     {
         $accountIdChanged = $entity->has('accountId') && $entity->get('accountId') != $entity->getFetched('accountId');
         $titleChanged = $entity->has('title') && $entity->get('title') != $entity->getFetched('title');
@@ -80,8 +92,8 @@ class Contact extends \Espo\Core\ORM\Repositories\RDB
             $sql = "
                 SELECT id, role FROM account_contact
                 WHERE
-                    account_id = ".$pdo->quote($accountId)." AND
-                    contact_id = ".$pdo->quote($entity->id)." AND
+                    account_id = " . $pdo->quote($accountId) . " AND
+                    contact_id = " . $pdo->quote($entity->id) . " AND
                     deleted = 0
             ";
             $sth = $pdo->prepare($sql);
@@ -103,4 +115,3 @@ class Contact extends \Espo\Core\ORM\Repositories\RDB
         }
     }
 }
-

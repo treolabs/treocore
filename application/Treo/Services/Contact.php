@@ -36,23 +36,38 @@ namespace Treo\Services;
 
 use \Espo\ORM\Entity;
 
+/**
+ * Class Contact
+ *
+ * @package Treo\Services
+ */
 class Contact extends Person
 {
-
+    /**
+     * @var array
+     */
     protected $readOnlyAttributeList = [
         'inboundEmailId',
         'portalUserId'
     ];
-
+    /**
+     * @var array
+     */
     protected $exportAllowedAttributeList = [
         'title'
     ];
-
+    /**
+     * @var array
+     */
     protected $mandatorySelectAttributeList = [
         'accountId',
         'accountName'
     ];
 
+    /**
+     * @param Entity $entity
+     * @param $data
+     */
     protected function afterCreateEntity(Entity $entity, $data)
     {
         if (!empty($data->emailId)) {

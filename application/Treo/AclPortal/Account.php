@@ -39,6 +39,12 @@ use \Espo\ORM\Entity;
 
 class Account extends \Espo\Core\AclPortal\Base
 {
+    /**
+     * @param User $user
+     * @param Entity $entity
+     *
+     * @return bool
+     */
     public function checkInAccount(User $user, Entity $entity)
     {
         $accountIdList = $user->getLinkMultipleIdList('accounts');
@@ -50,4 +56,3 @@ class Account extends \Espo\Core\AclPortal\Base
         return false;
     }
 }
-

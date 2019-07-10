@@ -36,6 +36,11 @@ namespace Treo\Services;
 
 use \Espo\ORM\Entity;
 
+/**
+ * Class Account
+ *
+ * @package Treo\Services
+ */
 class Account extends \Espo\Services\Record
 {
     protected $linkSelectParams = array(
@@ -47,6 +52,12 @@ class Account extends \Espo\Services\Record
         )
     );
 
+    /**
+     * @param Entity $entity
+     * @param $data
+     *
+     * @return array|bool
+     */
     protected function getDuplicateWhereClause(Entity $entity, $data)
     {
         if (!$entity->get('name')) {
@@ -57,6 +68,11 @@ class Account extends \Espo\Services\Record
         );
     }
 
+    /**
+     * @param Entity $entity
+     * @param array $sourceList
+     * @param $attributes
+     */
     protected function afterMerge(Entity $entity, array $sourceList, $attributes)
     {
         foreach ($sourceList as $source) {

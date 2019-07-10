@@ -34,13 +34,24 @@
 
 namespace Treo\SelectManagers;
 
+/**
+ * Class Contact
+ *
+ * @package Treo\SelectManagers
+ */
 class Contact extends \Espo\Core\SelectManagers\Base
 {
+    /**
+     * @param $result
+     */
     protected function filterPortalUsers(&$result)
     {
         $result['customJoin'] .= " JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
     }
 
+    /**
+     * @param $result
+     */
     protected function filterNotPortalUsers(&$result)
     {
         $result['customJoin'] .= " LEFT JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
@@ -49,6 +60,9 @@ class Contact extends \Espo\Core\SelectManagers\Base
         ), $result);
     }
 
+    /**
+     * @param $result
+     */
     protected function accessPortalOnlyContact(&$result)
     {
         $d = array();
@@ -66,6 +80,9 @@ class Contact extends \Espo\Core\SelectManagers\Base
         }
     }
 
+    /**
+     * @param $result
+     */
     protected function filterAccountActive(&$result)
     {
         if (!array_key_exists('additionalColumnsConditions', $result)) {
@@ -74,5 +91,5 @@ class Contact extends \Espo\Core\SelectManagers\Base
         $result['additionalColumnsConditions']['isInactive'] = false;
     }
 
- }
+}
 

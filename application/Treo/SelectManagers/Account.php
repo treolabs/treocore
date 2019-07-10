@@ -34,8 +34,16 @@
 
 namespace Treo\SelectManagers;
 
+/**
+ * Class Account
+ *
+ * @package Treo\SelectManagers
+ */
 class Account extends \Espo\Core\SelectManagers\Base
 {
+    /**
+     * @param $result
+     */
     protected function filterPartners(&$result)
     {
         $result['whereClause'][] = array(
@@ -43,6 +51,9 @@ class Account extends \Espo\Core\SelectManagers\Base
         );
     }
 
+    /**
+     * @param $result
+     */
     protected function filterCustomers(&$result)
     {
         $result['whereClause'][] = array(
@@ -50,6 +61,9 @@ class Account extends \Espo\Core\SelectManagers\Base
         );
     }
 
+    /**
+     * @param $result
+     */
     protected function filterResellers(&$result)
     {
         $result['whereClause'][] = array(
@@ -57,6 +71,11 @@ class Account extends \Espo\Core\SelectManagers\Base
         );
     }
 
+    /**
+     * @param $result
+     *
+     * @throws \Exception
+     */
     protected function filterRecentlyCreated(&$result)
     {
         $dt = new \DateTime('now');
@@ -67,6 +86,9 @@ class Account extends \Espo\Core\SelectManagers\Base
         );
     }
 
+    /**
+     * @param $result
+     */
     protected function accessPortalOnlyAccount(&$result)
     {
         $d = array();
@@ -83,6 +105,5 @@ class Account extends \Espo\Core\SelectManagers\Base
             );
         }
     }
-
- }
+}
 

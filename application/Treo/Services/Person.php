@@ -36,8 +36,19 @@ namespace Treo\Services;
 
 use \Espo\ORM\Entity;
 
+/**
+ * Class Person
+ *
+ * @package Treo\Services
+ */
 class Person extends \Espo\Services\Record
 {
+    /**
+     * @param Entity $entity
+     * @param $data
+     *
+     * @return array|bool
+     */
     protected function getDuplicateWhereClause(Entity $entity, $data)
     {
         $data = array(
