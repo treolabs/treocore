@@ -53,7 +53,7 @@
         "description": "rebuild"
       },
       {
-        "url": "#ModuleManager/list",
+        "url": "#Composer/list",
         "label": "Composer",
         "description": "composer"
       }

@@ -31,26 +31,44 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/module-manager/modals/update', 'treo-core:views/module-manager/modals/install',
+Espo.define('treo-core:views/composer/record/panels/log', 'view',
     Dep => Dep.extend({
 
-        setupHeader() {
-            this.header = this.translate('updateModule', 'labels', 'ModuleManager');
+        template: 'treo-core:composer/record/panels/log',
+
+        collection: null,
+
+        setup() {
+            Dep.prototype.setup.call(this);
         },
 
-        setupButtonList() {
-            this.buttonList = [
-                {
-                    name: 'save',
-                    label: this.translate('updateModule', 'labels', 'ModuleManager'),
-                    style: 'primary',
-                },
-                {
-                    name: 'cancel',
-                    label: 'Cancel'
-                }
-            ];
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.getCollectionFactory().create('Note', collection => {
+                this.collection = collection;
+                this.collection.url = 'Composer/logs';
+                this.collection.maxSize = this.getConfig().get('recordsPerPageSmall') || 5;
+
+                this.listenToOnce(this.collection, 'sync', () => {
+                    this.createView('list', 'views/stream/record/list', {
+                        el: this.options.el + ' .list-container',
+                        collection: this.collection,
+                        model: null
+                    }, function (view) {
+                        view.render();
+                    });
+                });
+
+                this.collection.fetch();
+            });
         },
+
+        actionRefresh() {
+            if (this.collection) {
+                this.collection.fetch();
+            }
+        }
 
     })
 );

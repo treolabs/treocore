@@ -31,7 +31,7 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/row-actions/installed', 'views/record/row-actions/default',
+Espo.define('treo-core:views/composer/record/row-actions/installed', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
         disableActions: false,

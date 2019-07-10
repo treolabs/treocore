@@ -3,7 +3,7 @@
     "dataUrl": "Daten Url"
   },
   "labels": {
-    "Composer": "Composer",
+    "Composer": "Komponist",
     "log": "log",
     "Validate": "Bestätigen",
     "progressLog": "Fortschritte Log",
@@ -15,7 +15,7 @@
     "unit": "Maßeinheit"
   },
   "descriptions": {
-    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the composer items are supported.",
+    "composer": "Das Plug-In für die Verwaltung von Abhängigkeiten, das es Ihnen erlaubt, Module aus dem externen Ablage zu installieren/aktualisieren/deinstallieren. Die Abhängigkeiten zwischen den Composer Bestandteilen sind unterstützt.",
     "representationSettings": "Representation settings.",
     "unit": "Einstellungen Maßeinheiten"
   },

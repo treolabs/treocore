@@ -1,8 +1,8 @@
 <table class="table">
     <thead>
     <tr>
-        <th>{{translate 'version' scope='ModuleManager' category='labels'}}</th>
-        <th>{{translate 'dependencies' scope='ModuleManager' category='labels'}}</th>
+        <th>{{translate 'version' scope='Composer' category='labels'}}</th>
+        <th>{{translate 'dependencies' scope='Composer' category='labels'}}</th>
     </tr>
     </thead>
     <tbody>

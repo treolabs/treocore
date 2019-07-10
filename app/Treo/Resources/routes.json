@@ -16,7 +16,7 @@
     }
   },
   {
-    "route": "/ModuleManager/list",
+    "route": "/Composer/list",
     "method": "get",
     "params": {
       "controller": "ModuleManager",
@@ -24,7 +24,7 @@
     }
   },
   {
-    "route": "/ModuleManager/installModule",
+    "route": "/Composer/installModule",
     "method": "post",
     "params": {
       "controller": "ModuleManager",
@@ -32,7 +32,7 @@
     }
   },
   {
-    "route": "/ModuleManager/updateModule",
+    "route": "/Composer/updateModule",
     "method": "put",
     "params": {
       "controller": "ModuleManager",
@@ -40,7 +40,7 @@
     }
   },
   {
-    "route": "/ModuleManager/deleteModule",
+    "route": "/Composer/deleteModule",
     "method": "delete",
     "params": {
       "controller": "ModuleManager",
@@ -48,7 +48,7 @@
     }
   },
   {
-    "route": "/ModuleManager/cancel",
+    "route": "/Composer/cancel",
     "method": "post",
     "params": {
       "controller": "ModuleManager",
@@ -56,7 +56,7 @@
     }
   },
   {
-    "route": "/ModuleManager/logs",
+    "route": "/Composer/logs",
     "method": "get",
     "params": {
       "controller": "ModuleManager",
@@ -64,7 +64,7 @@
     }
   },
   {
-    "route": "/Composer/update",
+    "route": "/Composer/runUpdate",
     "method": "post",
     "params": {
       "controller": "Composer",
@@ -72,7 +72,7 @@
     }
   },
   {
-    "route": "/Composer/cancel",
+    "route": "/Composer/cancelUpdate",
     "method": "delete",
     "params": {
       "controller": "Composer",

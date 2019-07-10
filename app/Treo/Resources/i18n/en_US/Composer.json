@@ -1,10 +1,4 @@
 {
-  "moduleNames": {
-    "TreoCore": "TreoCRM"
-  },
-  "moduleDescriptions": {
-    "TreoCore": "-"
-  },
   "fields": {
     "status": "Status",
     "settingVersion": "Setting Version",

@@ -38,7 +38,7 @@
 <div class="page-header">{{{header}}}</div>
 <div class="detail-button-container button-container record-buttons clearfix">
     <div class="btn-group pull-left" role="group">
-        <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='ModuleManager' category='labels'}}</button>
+        <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='Composer' category='labels'}}</button>
         <button class="btn btn-default action" data-action="cancelUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}} style="display: none;">{{translate 'Cancel'}}</button>
     </div>
     <div class="progress-log-wrapper">
@@ -62,7 +62,7 @@
                         </button>
                     </div>
                     <h4 class="panel-title">
-                        <span style="cursor: pointer;" class="action" title="{{translate 'clickToRefresh' category='messages'}}" data-action="refresh" data-collection="installed">{{translate 'Installed' scope='ModuleManager' category='labels'}}</span>
+                        <span style="cursor: pointer;" class="action" title="{{translate 'clickToRefresh' category='messages'}}" data-action="refresh" data-collection="installed">{{translate 'Installed' scope='Composer' category='labels'}}</span>
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -77,7 +77,7 @@
                         </button>
                     </div>
                     <h4 class="panel-title">
-                        <span style="cursor: pointer;" class="action" title="{{translate 'clickToRefresh' category='messages'}}" data-action="refresh" data-collection="store">{{translate 'Store' scope='ModuleManager' category='labels'}}</span>
+                        <span style="cursor: pointer;" class="action" title="{{translate 'clickToRefresh' category='messages'}}" data-action="refresh" data-collection="store">{{translate 'Store' scope='Composer' category='labels'}}</span>
                     </h4>
                 </div>
                 <div class="panel-body">

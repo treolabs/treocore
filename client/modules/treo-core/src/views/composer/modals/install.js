@@ -31,10 +31,10 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
+Espo.define('treo-core:views/composer/modals/install', 'views/modal',
     Dep => Dep.extend({
 
-        template: 'treo-core:module-manager/modals/install',
+        template: 'treo-core:composer/modals/install',
 
         model: null,
 
@@ -84,7 +84,7 @@ Espo.define('treo-core:views/module-manager/modals/install', 'views/modal',
         },
 
         createDependenciesView() {
-            this.createView('dependencies', 'treo-core:views/module-manager/fields/dependencies', {
+            this.createView('dependencies', 'treo-core:views/composer/fields/dependencies', {
                 el: `${this.options.el} .field[data-name="dependencies"]`,
                 model: this.model,
                 mode: 'detail',

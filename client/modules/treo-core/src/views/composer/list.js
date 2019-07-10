@@ -31,10 +31,10 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/module-manager/list', 'views/list',
+Espo.define('treo-core:views/composer/list', 'views/list',
     Dep => Dep.extend({
 
-        template: 'treo-core:module-manager/list',
+        template: 'treo-core:composer/list',
 
         createButton: false,
 
@@ -98,7 +98,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         loadLogList() {
-            this.createView('logList', 'treo-core:views/module-manager/record/panels/log', {
+            this.createView('logList', 'treo-core:views/composer/record/panels/log', {
                 el: `${this.options.el} .log-list-container`
             }, view => {
                 view.render();
@@ -109,10 +109,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         loadInstalledModulesList() {
-            this.getCollectionFactory().create('ModuleManager', collection => {
+            this.getCollectionFactory().create('Composer', collection => {
                 this.installedCollection = collection;
                 collection.maxSize = 200;
-                collection.url = 'ModuleManager/list';
+                collection.url = 'Composer/list';
 
                 this.listenToOnce(collection, 'sync', () => {
                     this.createView('list', 'views/record/list', {
@@ -128,7 +128,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         paginationEnabled: false,
                         showCount: false,
                         showMore: false,
-                        rowActionsView: 'treo-core:views/module-manager/record/row-actions/installed'
+                        rowActionsView: 'treo-core:views/composer/record/row-actions/installed'
                     }, view => {
                         this.listenTo(view, 'after:render', () => {
                             let rows = view.nestedViews || {};
@@ -173,7 +173,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                         paginationEnabled: false,
                         showCount: true,
                         showMore: true,
-                        rowActionsView: 'treo-core:views/module-manager/record/row-actions/store'
+                        rowActionsView: 'treo-core:views/composer/record/row-actions/store'
                     }, view => {
                         this.listenToOnce(view, 'after:render', () => {
                             this.storeCollection.trigger('disableActions', this.getConfig().get('isUpdating'));
@@ -186,7 +186,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
         },
 
         getHeader() {
-            return '<a href="#Admin">' + this.translate('Administration') + "</a> &rsaquo; " + this.getLanguage().translate('Module Manager', 'labels', 'Admin');
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> &rsaquo; " + this.getLanguage().translate('Composer', 'labels', 'Admin');
         },
 
         updatePageTitle() {
@@ -203,7 +203,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionInstallModule(data) {
             if (this.getConfig().get('isUpdating')) {
-                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                this.notify(this.translate('updateInProgress', 'labels', 'Composer'), 'warning');
                 return;
             }
 
@@ -219,17 +219,17 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             let requestType;
             if (data.mode === 'install') {
                 currentModel = this.storeCollection.get(data.id);
-                viewName = 'treo-core:views/module-manager/modals/install';
+                viewName = 'treo-core:views/composer/modals/install';
                 beforeSaveLabel = 'settingModuleForInstalling';
                 afterSaveLabel = 'settedModuleForInstalling';
-                apiUrl = 'ModuleManager/installModule';
+                apiUrl = 'Composer/installModule';
                 requestType = 'POST';
             } else {
                 currentModel = this.installedCollection.get(data.id);
-                viewName = 'treo-core:views/module-manager/modals/update';
+                viewName = 'treo-core:views/composer/modals/update';
                 beforeSaveLabel = 'settingModuleForUpdating';
                 afterSaveLabel = 'settedModuleForUpdating';
-                apiUrl = 'ModuleManager/updateModule';
+                apiUrl = 'Composer/updateModule';
                 requestType = 'PUT';
             }
 
@@ -239,10 +239,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                 view.render();
                 this.listenTo(view, 'save', saveData => {
                     this.actionsInProgress++;
-                    this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
+                    this.notify(this.translate(beforeSaveLabel, 'labels', 'Composer'));
                     this.ajaxRequest(apiUrl, requestType, JSON.stringify(saveData), {timeout: 180000}).then(response => {
                         if (response) {
-                            this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                            this.notify(this.translate(afterSaveLabel, 'labels', 'Composer'), 'success');
                             if (data.mode === 'install') {
                                 this.storeCollection.fetch();
                             }
@@ -257,7 +257,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionRemoveModule(data) {
             if (this.getConfig().get('isUpdating')) {
-                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                this.notify(this.translate('updateInProgress', 'labels', 'Composer'), 'warning');
                 return;
             }
 
@@ -266,10 +266,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
 
             this.actionsInProgress++;
-            this.notify(this.translate('settingModuleForRemoving', 'labels', 'ModuleManager'));
-            this.ajaxRequest('ModuleManager/deleteModule', 'DELETE', JSON.stringify({id: data.id})).then(response => {
+            this.notify(this.translate('settingModuleForRemoving', 'labels', 'Composer'));
+            this.ajaxRequest('Composer/deleteModule', 'DELETE', JSON.stringify({id: data.id})).then(response => {
                 if (response) {
-                    this.notify(this.translate('settedModuleForRemoving', 'labels', 'ModuleManager'), 'success');
+                    this.notify(this.translate('settedModuleForRemoving', 'labels', 'Composer'), 'success');
                     this.installedCollection.fetch();
                 }
             }).always(() => {
@@ -279,7 +279,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionCancelModule(data) {
             if (this.getConfig().get('isUpdating')) {
-                this.notify(this.translate('updateInProgress', 'labels', 'ModuleManager'), 'warning');
+                this.notify(this.translate('updateInProgress', 'labels', 'Composer'), 'warning');
                 return;
             }
 
@@ -298,10 +298,10 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
             }
 
             this.actionsInProgress++;
-            this.notify(this.translate(beforeSaveLabel, 'labels', 'ModuleManager'));
-            this.ajaxPostRequest('ModuleManager/cancel', {id: data.id}).then(response => {
+            this.notify(this.translate(beforeSaveLabel, 'labels', 'Composer'));
+            this.ajaxPostRequest('Composer/cancel', {id: data.id}).then(response => {
                 if (response) {
-                    this.notify(this.translate(afterSaveLabel, 'labels', 'ModuleManager'), 'success');
+                    this.notify(this.translate(afterSaveLabel, 'labels', 'Composer'), 'success');
                     if (data.status = 'install') {
                         this.storeCollection.fetch();
                     }
@@ -314,22 +314,22 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionRunUpdate() {
             if (this.actionsInProgress) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'), 'warning');
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'Composer'), 'warning');
                 return;
             }
 
             this.confirm({
-                message: this.translate('confirmRun', 'labels', 'ModuleManager'),
-                confirmText: this.translate('Run Update', 'labels', 'ModuleManager')
+                message: this.translate('confirmRun', 'labels', 'Composer'),
+                confirmText: this.translate('Run Update', 'labels', 'Composer')
             }, () => {
                 this.actionsInProgress++;
-                this.notify(this.translate('updating', 'labels', 'ModuleManager'));
+                this.notify(this.translate('updating', 'labels', 'Composer'));
                 this.actionStarted();
-                this.ajaxPostRequest('Composer/update', {}, {timeout: 180000}).then(response => {
-                    this.notify(this.translate('updateStarted', 'labels', 'ModuleManager'), 'success');
+                this.ajaxPostRequest('Composer/runUpdate', {}, {timeout: 180000}).then(response => {
+                    this.notify(this.translate('updateStarted', 'labels', 'Composer'), 'success');
                     setTimeout(() => {
                         this.initLogCheck();
-                        this.messageText = this.translate('updateInProgress', 'labels', 'ModuleManager');
+                        this.messageText = this.translate('updateInProgress', 'labels', 'Composer');
                         this.messageType = 'success';
                         this.showCurrentStatus(this.messageText, this.messageType);
                     }, 2000);
@@ -344,15 +344,15 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
 
         actionCancelUpdate() {
             if (this.actionsInProgress) {
-                this.notify(this.translate('anotherActionInProgress', 'labels', 'ModuleManager'), 'warning');
+                this.notify(this.translate('anotherActionInProgress', 'labels', 'Composer'), 'warning');
                 return;
             }
 
             this.actionsInProgress++;
-            this.notify(this.translate('canceling', 'labels', 'ModuleManager'));
-            this.ajaxRequest('Composer/cancel', 'DELETE').then(response => {
+            this.notify(this.translate('canceling', 'labels', 'Composer'));
+            this.ajaxRequest('Composer/cancelUpdate', 'DELETE').then(response => {
                 if (response) {
-                    this.notify(this.translate('canceled', 'labels', 'ModuleManager'), 'success');
+                    this.notify(this.translate('canceled', 'labels', 'Composer'), 'success');
                     this.storeCollection.fetch();
                     this.installedCollection.fetch();
                     this.reRender();
@@ -390,7 +390,7 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                     },
                     error: xhr => {
                         window.clearInterval(this.logCheckInterval);
-                        this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
+                        this.notify(this.translate('updateFailed', 'labels', 'Composer'), 'danger');
                         this.trigger('composerUpdate:failed');
                         this.notify('Error occurred', 'error');
                         this.reRender();
@@ -484,11 +484,11 @@ Espo.define('treo-core:views/module-manager/list', 'views/list',
                             this.getUser().fetch().then(() => {
                                 window.clearInterval(this.configCheckInterval);
                                 this.configCheckInterval = null;
-                                this.notify(this.translate('updateFailed', 'labels', 'ModuleManager'), 'danger');
+                                this.notify(this.translate('updateFailed', 'labels', 'Composer'), 'danger');
                                 this.trigger('composerUpdate:failed');
                             });
                         } else {
-                            this.messageText = this.translate('updateInProgress', 'labels', 'ModuleManager');
+                            this.messageText = this.translate('updateInProgress', 'labels', 'Composer');
                             this.messageType = 'success';
                             this.showCurrentStatus(this.messageText, this.messageType, true);
                         }

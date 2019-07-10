@@ -31,44 +31,35 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/module-manager/record/panels/log', 'view',
+Espo.define('treo-core:views/composer/record/row-actions/store', 'views/record/row-actions/default',
     Dep => Dep.extend({
 
-        template: 'treo-core:module-manager/record/panels/log',
-
-        collection: null,
+        disableActions: false,
 
         setup() {
             Dep.prototype.setup.call(this);
-        },
 
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            this.getCollectionFactory().create('Note', collection => {
-                this.collection = collection;
-                this.collection.url = 'ModuleManager/logs';
-                this.collection.maxSize = this.getConfig().get('recordsPerPageSmall') || 5;
-
-                this.listenToOnce(this.collection, 'sync', () => {
-                    this.createView('list', 'views/stream/record/list', {
-                        el: this.options.el + ' .list-container',
-                        collection: this.collection,
-                        model: null
-                    }, function (view) {
-                        view.render();
-                    });
-                });
-
-                this.collection.fetch();
+            this.listenTo(this.model.collection, 'disableActions', (disableActions) => {
+                this.disableActions = disableActions;
+                this.reRender();
             });
         },
 
-        actionRefresh() {
-            if (this.collection) {
-                this.collection.fetch();
+        getActionList() {
+            let list = [];
+            let versions = this.model.get('versions');
+            if (!this.disableActions && versions && versions.length && this.model.get('status') === 'available') {
+                list.push({
+                    action: 'installModule',
+                    label: 'installModule',
+                    data: {
+                        id: this.model.id,
+                        mode: 'install'
+                    }
+                });
             }
-        }
+            return list;
+        },
 
     })
 );

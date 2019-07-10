@@ -31,23 +31,36 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:controllers/module-manager', 'controller', function (Dep) {
+Espo.define('treo-core:views/composer/modals/update-details', 'views/modal',
+    Dep => Dep.extend({
 
-    return Dep.extend({
+        template: 'treo-core:composer/modals/update-details',
 
-        defaultAction: "list",
+        setup() {
+            Dep.prototype.setup.call(this);
 
-        list: function () {
-            this.collectionFactory.create('ModuleManager', function (collection) {
-                collection.maxSize = this.getConfig().get('recordsPerPage') || collection.maxSize;
-                collection.sortBy = 'name';
-                collection.asc = false;
-
-                this.main('treo-core:views/module-manager/list', {
-                    scope: 'ModuleManager',
-                    collection: collection
-                });
-            }, this);
+            this.setupHeader();
+            this.setupButtonList();
         },
-    });
-});
+
+        setupHeader() {
+            this.header = this.translate('Details');
+        },
+
+        setupButtonList() {
+            this.buttonList = [
+                {
+                    name: 'cancel',
+                    label: 'Cancel'
+                }
+            ];
+        },
+
+        data() {
+            return {
+                output: this.options.output
+            };
+        },
+
+    })
+);
