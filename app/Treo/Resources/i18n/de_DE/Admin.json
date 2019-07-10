@@ -3,13 +3,8 @@
     "dataUrl": "Daten Url"
   },
   "labels": {
-    "Extras": "Extras",
-    "Module Manager": "Modulmanager",
-    "Modules": "Module",
-    "Git User": "Git Benutzer",
-    "availableVersions": "Version zum Upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">einzelheiten</a>)",
+    "Composer": "Composer",
     "log": "log",
-    "Upgrade": "Aktualisierung",
     "Validate": "Bestätigen",
     "progressLog": "Fortschritte Log",
     "unit": "Maßeinheit",
@@ -20,21 +15,9 @@
     "unit": "Maßeinheit"
   },
   "descriptions": {
-    "upgrade": "Treo System aktualisieren.",
-    "gitAuth": "Git authentifizierungseinstellungen.",
-    "modules": "Modulmanager. Hier können Sie Module aus dem Remote-Speicher installieren / deinstallieren. Die Abhängigkeiten zwischen den Modulen und dem Treo-System werden unterstützt.",
+    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the composer items are supported.",
     "representationSettings": "Representation settings.",
     "unit": "Einstellungen Maßeinheiten"
-  },
-  "messages": {
-    "upgradeVersion": "Ihr Treo System wird nun auf Version <strong>{version}</strong> aktualisiert. Dies kann einige Zeit dauern.",
-    "upgradeDone": "Ihr Treo System wurde auf Version <strong>{version}</strong> aktualisiert.",
-    "upgradeBackup": "Wie empfehlen VOR einer Aktualisierung die Treo System Dateien sowie die Datenbank zu sichern.",
-    "newVersionIsAvailable": "Neue Treo System Version {latestVersion} ist verfügbar.",
-    "systemAlreadyUpgraded": "TreoCore ist schon aktualisiert.",
-    "upgradeStarted": "Das Upgrade wurde gestartet",
-    "upgradeFailed": "Upgrade fehlgeschlagen",
-    "upgradeSuccessful": "Upgrade erfolgreich abgeschlossen"
   },
   "layouts": {
     "relationships": "Unterer Paneele",

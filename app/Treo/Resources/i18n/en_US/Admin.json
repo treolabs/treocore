@@ -1,12 +1,7 @@
 {
   "labels": {
-    "Extras": "Extras",
-    "Module Manager": "Modules Manager",
-    "Modules": "Modules",
-    "Git User": "Git User",
-    "versionToUpgrade": "Version to upgrade (<a href=\"https://github.com/treolabs/treopim/releases\" target=\"_blank\">details</a>)",
+    "Composer": "Composer",
     "log": "log",
-    "Upgrade": "Upgrade",
     "Validate": "Validate",
     "unit": "Unit",
     "addOption": "Add option",
@@ -17,21 +12,9 @@
     "unit": "Unit"
   },
   "descriptions": {
-    "upgrade": "Upgrade Treo System.",
-    "gitAuth": "Read git authentication settings.",
-    "modules": "Modules Manager. Here you can install/uninstall modules from remote storage. The dependencies between the modules and the Treo system are supported.",
+    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the composer items are supported.",
     "representationSettings": "Representation settings.",
     "unit": "Settings units of measurement"
-  },
-  "messages": {
-    "upgradeVersion": "Treo System will be upgraded to version <strong>{version}</strong>. Please be patient as this may take a while.",
-    "upgradeDone": "Treo System has been upgraded to version <strong>{version}</strong>.",
-    "upgradeBackup": "We recommend making a backup of your Treo System files and data before upgrading.",
-    "newVersionIsAvailable": "New Treo System version {latestVersion} is available.",
-    "systemAlreadyUpgraded": "TreoCore is up-to-date.",
-    "upgradeStarted": "Upgrade has been started",
-    "upgradeFailed": "Upgrade failed",
-    "upgradeSuccessful": "Upgrade successfully finished"
   },
   "layouts": {
     "relationships": "Bottom Panels"
