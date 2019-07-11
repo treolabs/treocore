@@ -1,5 +1,17 @@
 {
   "fields": {
+    "contact": {
+      "type": "link",
+      "view": "views/user/fields/contact"
+    },
+    "accounts": {
+      "type": "linkMultiple"
+    },
+    "account": {
+      "type": "link",
+      "notStorable": true,
+      "readOnly": true
+    },
     "password": {
       "exportDisabled": true
     },
@@ -29,6 +41,19 @@
     },
     "lastAccess": {
       "exportDisabled": true
+    }
+  },
+  "links": {
+    "contact": {
+      "type": "belongsTo",
+      "entity": "Contact",
+      "foreign": "portalUser"
+    },
+    "accounts": {
+      "type": "hasMany",
+      "entity": "Account",
+      "foreign": "portalUsers",
+      "relationName": "AccountPortalUser"
     }
   }
 }
