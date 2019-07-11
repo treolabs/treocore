@@ -52,10 +52,10 @@ return [
     'lastViewedCount'        => 20,
     'decimalMark'            => '.',
     'thousandSeparator'      => ',',
-    'useCache'               => true,
+    'useCache'               => false,
     'applicationName'        => 'TreoCore',
     'outboundEmailFromName'  => 'TreoCore',
-    'smtpPort' => 25,
+    'smtpPort'               => 25,
     'languageList'           => [
         'en_US',
         'de_DE'
