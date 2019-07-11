@@ -22,16 +22,12 @@ do
      echo -e "Modules updating has been started:\n" > $log 2>&1
 
      # composer update
-     $php composer.phar run-script pre-update-cmd > /dev/null 2>&1
      if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
        echo "{{error}}" >> $log 2>&1
      else
        $php composer.phar run-script post-update-cmd > /dev/null 2>&1
        echo "{{success}}" >> $log 2>&1
      fi
-
-     # push log to stream
-     $php index.php composer --push-log module-update > /dev/null 2>&1
    fi
 
    sleep 1;

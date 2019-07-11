@@ -39,17 +39,15 @@ namespace Treo\Configs;
 use Treo\Console;
 
 return [
-    "list"                                       => Console\ListCommand::class,
-    "composer <action> <param1>"                 => Console\Composer::class,
-    "clear cache"                                => Console\ClearCache::class,
-    "cleanup"                                    => Console\Cleanup::class,
-    "rebuild"                                    => Console\Rebuild::class,
-    "cron"                                       => Console\Cron::class,
-    "store --refresh"                            => Console\StoreRefresh::class,
-    "migrate <module> <from> <to>"               => Console\Migrate::class,
-    "apidocs --generate"                         => Console\GenerateApidocs::class,
-    "developmod <param>"                         => Console\DevelopMod::class,
-    "qm <stream> --run"                          => Console\QueueManager::class,
-    "notifications --refresh"                    => Console\Notification::class,
-    "kill processes"                             => Console\KillProcess::class,
+    "list"                         => Console\ListCommand::class,
+    "clear cache"                  => Console\ClearCache::class,
+    "cleanup"                      => Console\Cleanup::class,
+    "rebuild"                      => Console\Rebuild::class,
+    "cron"                         => Console\Cron::class,
+    "store --refresh"              => Console\StoreRefresh::class,
+    "migrate <module> <from> <to>" => Console\Migrate::class,
+    "apidocs --generate"           => Console\GenerateApidocs::class,
+    "qm <stream> --run"            => Console\QueueManager::class,
+    "notifications --refresh"      => Console\Notification::class,
+    "kill processes"               => Console\KillProcess::class,
 ];

@@ -90,6 +90,9 @@ class PostUpdate
 
             // run migrations
             $this->runMigrations();
+
+            // push log
+            $this->pushLog();
         }
 
         // store composer.lock file
@@ -262,6 +265,55 @@ class PostUpdate
             if ($class instanceof AbstractEvent) {
                 $class->setContainer($this->getContainer())->{$action}();
             }
+        }
+    }
+
+    /**
+     * Push log
+     */
+    protected function pushLog(): void
+    {
+        // prepare path
+        $path = 'data/treo-module-update.log';
+
+        if (file_exists($path)) {
+            // get content
+            $content = file_get_contents($path);
+
+            // prepare status
+            $status = 1;
+            if (strpos($content, '{{success}}') !== false) {
+                $status = 0;
+            }
+
+            // prepare content
+            $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
+
+            // get config
+            $config = $this->getContainer()->get('config');
+
+            // prepare createdById
+            $createdById = 'system';
+            if (!empty($config->get('composerUser'))) {
+                $createdById = $config->get('composerUser');
+            }
+
+            // get em
+            $em = $this->getContainer()->get('entityManager');
+
+            // prepare note
+            $note = $em->getEntity('Note');
+            $note->set('type', 'composerUpdate');
+            $note->set('parentType', 'ModuleManager');
+            $note->set('data', ['status' => $status, 'output' => $content]);
+            $note->set('createdById', $createdById);
+
+            // save
+            $em->saveEntity($note, ['skipCreatedBy' => true]);
+
+            // unset user
+            $config->set('composerUser', null);
+            $config->save();
         }
     }
 
