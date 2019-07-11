@@ -72,11 +72,14 @@ class Installer extends AbstractListener
         $this->getConfig()->set('treoId', $treoId);
         $this->getConfig()->save();
 
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['repositories'][] = [
+            'type' => 'composer',
+            'url'  => 'https://packagist.treopim.com/packages.json?id=' . $treoId
+        ];
+
         // create repositories file
-        file_put_contents(
-            'data/repositories.json',
-            json_encode(['repositories' => [["type" => "composer", "url" => "https://packagist.treopim.com/packages.json?id=$treoId"]]])
-        );
+        file_put_contents('composer.json', $data);
     }
 
     /**
@@ -84,7 +87,7 @@ class Installer extends AbstractListener
      */
     protected function refreshStore(): void
     {
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
+        $this->getContainer()->get('serviceFactory')->create('TreoStore')->refresh();
     }
 
     /**
