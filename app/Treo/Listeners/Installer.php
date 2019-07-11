@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Treo\Listeners;
 
 use Treo\Core\EventManager\Event;
+use Treo\Services\Composer;
 
 /**
  * Installer listener
@@ -72,14 +73,14 @@ class Installer extends AbstractListener
         $this->getConfig()->set('treoId', $treoId);
         $this->getConfig()->save();
 
-        $data = json_decode(file_get_contents('composer.json'), true);
+        $data = json_decode(file_get_contents(Composer::$composer), true);
         $data['repositories'][] = [
             'type' => 'composer',
             'url'  => 'https://packagist.treopim.com/packages.json?id=' . $treoId
         ];
 
         // create repositories file
-        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        file_put_contents(Composer::$composer, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**

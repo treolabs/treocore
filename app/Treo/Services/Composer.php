@@ -52,12 +52,12 @@ class Composer extends AbstractService
     /**
      * @var string
      */
-    protected $moduleStableComposer = 'data/stable-composer.json';
+    public static $composer = 'composer.json';
 
     /**
      * @var string
      */
-    protected $moduleComposer = 'data/composer.json';
+    public static $stableComposer = 'data/stable-composer.json';
 
     /**
      * Run update
@@ -80,8 +80,8 @@ class Composer extends AbstractService
      */
     public function cancelChanges(): void
     {
-        if (file_exists($this->moduleStableComposer)) {
-            file_put_contents($this->moduleComposer, file_get_contents($this->moduleStableComposer));
+        if (file_exists(self::$stableComposer)) {
+            file_put_contents(self::$composer, file_get_contents(self::$stableComposer));
         }
     }
 
@@ -140,15 +140,7 @@ class Composer extends AbstractService
      */
     public function getModuleComposerJson(): array
     {
-        if (file_exists($this->moduleComposer)) {
-            $result = Json::decode(file_get_contents($this->moduleComposer), true);
-        } else {
-            $result = ['require' => []];
-
-            $this->setModuleComposerJson($result);
-        }
-
-        return $result;
+        return Json::decode(file_get_contents(self::$composer), true);
     }
 
     /**
@@ -158,16 +150,7 @@ class Composer extends AbstractService
      */
     public function getModuleStableComposerJson(): array
     {
-        // prepare result
-        $result = [];
-
-        if (file_exists($this->moduleStableComposer)) {
-            if (!empty($content = file_get_contents($this->moduleStableComposer))) {
-                $result = Json::decode($content, true);
-            }
-        }
-
-        return $result;
+        return Json::decode(file_get_contents(self::$stableComposer), true);
     }
 
     /**
@@ -179,7 +162,7 @@ class Composer extends AbstractService
      */
     public function setModuleComposerJson(array $data): void
     {
-        $this->filePutContents($this->moduleComposer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $this->filePutContents(self::$composer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -474,15 +457,15 @@ class Composer extends AbstractService
             'delete'  => [],
         ];
 
-        if (!file_exists($this->moduleStableComposer)) {
+        if (!file_exists(self::$stableComposer)) {
             // prepare data
             $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $this->filePutContents($this->moduleStableComposer, $data);
+            $this->filePutContents(self::$stableComposer, $data);
         }
 
         // prepare data
         $composerData = $this->getModuleComposerJson();
-        $composerStableData = Json::decode(file_get_contents($this->moduleStableComposer), true);
+        $composerStableData = Json::decode(file_get_contents(self::$stableComposer), true);
         foreach ($composerData['require'] as $package => $version) {
             if (!isset($composerStableData['require'][$package])) {
                 $result['install'][] = [

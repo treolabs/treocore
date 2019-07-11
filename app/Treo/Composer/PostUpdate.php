@@ -39,6 +39,7 @@ namespace Treo\Composer;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\Utils\Util;
 use Treo\Core\ModuleManager\AbstractEvent;
+use Treo\Services\Composer as ComposerService;
 
 /**
  * Class PostUpdate
@@ -344,9 +345,7 @@ class PostUpdate
      */
     private static function saveStableComposerJson(): void
     {
-        if (file_exists('data/composer.json')) {
-            file_put_contents('data/stable-composer.json', file_get_contents('data/composer.json'));
-        }
+        file_put_contents(ComposerService::$stableComposer, file_get_contents(ComposerService::$composer));
     }
 
     /**
