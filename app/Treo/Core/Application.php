@@ -363,21 +363,35 @@ class Application
         // prepare path
         $path = null;
 
-        // get from cache
-        if (!empty($this->getConfig()->get('useCache'))) {
-            $path = 'data/cache/client/';
-            if (!file_exists($path)) {
-                if (!file_exists($path)) {
-                    mkdir($path, 0777, true);
-                }
-                Util::copydir($this->clientPath, $path);
-                foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
-                    Util::copydir($module->getClientPath(), $path);
-                }
-            }
+        // prepare cache path
+        $cachePath = 'data/cache/client/';
+
+        // load from cache
+        if (!empty($this->getConfig()->get('useCache')) && file_exists($cachePath)) {
+            $path = $cachePath;
         } else {
+            // get modules
+            $modules = $this
+                ->getContainer()
+                ->get('moduleManager')
+                ->getModules();
+
+            // generate cache
+            if (!empty($this->getConfig()->get('useCache')) && !file_exists($cachePath)) {
+                if (!file_exists($cachePath)) {
+                    mkdir($cachePath, 0777, true);
+                }
+                Util::copydir($this->clientPath, $cachePath);
+                foreach ($modules as $module) {
+                    Util::copydir($module->getClientPath(), $cachePath);
+                }
+
+                // wait 2 seconds
+                sleep(2);
+            }
+
             // collect paths
-            foreach (array_reverse($this->getContainer()->get('moduleManager')->getModules()) as $module) {
+            foreach (array_reverse($modules) as $module) {
                 $paths[] = $module->getClientPath();
             }
             $paths[] = $this->clientPath;
