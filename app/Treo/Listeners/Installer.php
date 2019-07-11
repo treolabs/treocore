@@ -58,6 +58,12 @@ class Installer extends AbstractListener
 
         // create files in data dir
         $this->createDataFiles();
+
+        // set use cache param
+        $this->getConfig()->set('useCache', true);
+
+        // save config
+        $this->getConfig()->save();
     }
 
     /**
@@ -68,9 +74,8 @@ class Installer extends AbstractListener
         // generate id
         $treoId = \Treo\Services\Installer::generateTreoId();
 
-        //set to config
+        // set to config
         $this->getConfig()->set('treoId', $treoId);
-        $this->getConfig()->save();
 
         $data = json_decode(file_get_contents('composer.json'), true);
         $data['repositories'][] = [
