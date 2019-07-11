@@ -45,7 +45,7 @@ use Treo\Services\FileMigrate;
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot20Dot3 extends AbstractMigration
+class V3Dot21Dot0 extends AbstractMigration
 {
     /**
      * @inheritdoc
