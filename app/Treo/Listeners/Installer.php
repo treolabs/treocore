@@ -58,12 +58,6 @@ class Installer extends AbstractListener
 
         // create files in data dir
         $this->createDataFiles();
-
-        // set use cache param
-        $this->getConfig()->set('useCache', true);
-
-        // save config
-        $this->getConfig()->save();
     }
 
     /**
@@ -76,6 +70,7 @@ class Installer extends AbstractListener
 
         // set to config
         $this->getConfig()->set('treoId', $treoId);
+        $this->getConfig()->save();
 
         $data = json_decode(file_get_contents('composer.json'), true);
         $data['repositories'][] = [
@@ -84,7 +79,7 @@ class Installer extends AbstractListener
         ];
 
         // create repositories file
-        file_put_contents('composer.json', $data);
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**
