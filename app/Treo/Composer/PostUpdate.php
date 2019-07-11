@@ -469,7 +469,7 @@ class PostUpdate
         Util::removedir('client');
 
         // copy new
-        Util::copydir(CORE_PATH . '/client', 'client');
+        Util::copydir(dirname(CORE_PATH) . '/client', 'client');
         foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
             Util::copydir($module->getClientPath(), 'client');
         }
