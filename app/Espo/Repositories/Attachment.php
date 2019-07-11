@@ -109,27 +109,6 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
         }
     }
 
-    public function getCopiedAttachment(Entity $entity, $role = null)
-    {
-        $attachment = $this->get();
-
-        $attachment->set(array(
-            'sourceId' => $entity->getSourceId(),
-            'name' => $entity->get('name'),
-            'type' => $entity->get('type'),
-            'size' => $entity->get('size'),
-            'role' => $entity->get('role')
-        ));
-
-        if ($role) {
-            $attachment->set('role', $role);
-        }
-
-        $this->save($attachment);
-
-        return $attachment;
-    }
-
     public function getContents(Entity $entity)
     {
         return $this->getFileStorageManager()->getContents($entity);

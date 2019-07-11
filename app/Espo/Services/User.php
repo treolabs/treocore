@@ -262,17 +262,17 @@ class User extends Record
         }
     }
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
         $newPassword = null;
-        if (property_exists($data, 'password')) {
-            $newPassword = $data->password;
-            $data->password = $this->hashPassword($data->password);
+        if (property_exists($attachment, 'password')) {
+            $newPassword = $attachment->password;
+            $attachment->password = $this->hashPassword($attachment->password);
         }
 
-        $user = parent::createEntity($data);
+        $user = parent::createEntity($attachment);
 
-        if (!is_null($newPassword) && !empty($data->sendAccessInfo)) {
+        if (!is_null($newPassword) && !empty($attachment->sendAccessInfo)) {
             if ($user->isActive()) {
                 try {
                     $this->sendPassword($user, $newPassword);

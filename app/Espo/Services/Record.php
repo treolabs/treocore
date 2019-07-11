@@ -679,7 +679,7 @@ class Record extends \Espo\Core\Services\Base
         }
     }
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
         if (!$this->getAcl()->check($this->getEntityType(), 'create')) {
             throw new Forbidden();
@@ -687,25 +687,25 @@ class Record extends \Espo\Core\Services\Base
 
         $entity = $this->getRepository()->get();
 
-        $this->filterInput($data);
-        $this->handleInput($data);
+        $this->filterInput($attachment);
+        $this->handleInput($attachment);
 
-        unset($data->modifiedById);
-        unset($data->modifiedByName);
-        unset($data->modifiedAt);
-        unset($data->createdById);
-        unset($data->createdByName);
-        unset($data->createdAt);
+        unset($attachment->modifiedById);
+        unset($attachment->modifiedByName);
+        unset($attachment->modifiedAt);
+        unset($attachment->createdById);
+        unset($attachment->createdByName);
+        unset($attachment->createdAt);
 
-        $entity->set($data);
+        $entity->set($attachment);
 
         if (!$this->getAcl()->check($entity, 'create')) {
             throw new Forbidden();
         }
 
-        $this->populateDefaults($entity, $data);
+        $this->populateDefaults($entity, $attachment);
 
-        $this->beforeCreateEntity($entity, $data);
+        $this->beforeCreateEntity($entity, $attachment);
 
         if (!$this->isValid($entity)) {
             throw new BadRequest();
@@ -715,11 +715,11 @@ class Record extends \Espo\Core\Services\Base
             throw new Forbidden('Assignment permission failure');
         }
 
-        $this->processDuplicateCheck($entity, $data);
+        $this->processDuplicateCheck($entity, $attachment);
 
         if ($this->storeEntity($entity)) {
-            $this->afterCreateEntity($entity, $data);
-            $this->afterCreateProcessDuplicating($entity, $data);
+            $this->afterCreateEntity($entity, $attachment);
+            $this->afterCreateProcessDuplicating($entity, $attachment);
             $this->prepareEntityForOutput($entity);
 
             $this->processActionHistoryRecord('create', $entity);

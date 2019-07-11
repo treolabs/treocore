@@ -46,10 +46,10 @@ class Note extends Record
         return $entity;
     }
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
-        if (!empty($data->parentType) && !empty($data->parentId)) {
-            $entity = $this->getEntityManager()->getEntity($data->parentType, $data->parentId);
+        if (!empty($attachment->parentType) && !empty($attachment->parentId)) {
+            $entity = $this->getEntityManager()->getEntity($attachment->parentType, $attachment->parentId);
             if ($entity) {
                 if (!$this->getAcl()->check($entity, 'read')) {
                     throw new Forbidden();
@@ -57,7 +57,7 @@ class Note extends Record
             }
         }
 
-        return parent::createEntity($data);
+        return parent::createEntity($attachment);
     }
 
     protected function afterCreateEntity(Entity $entity, $data)

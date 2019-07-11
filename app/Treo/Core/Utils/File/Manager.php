@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils\File;
 
+use Espo\Core\Exceptions\Error;
+
 /**
  * Class Manager
  *
@@ -60,5 +62,33 @@ class Manager extends \Espo\Core\Utils\File\Manager
         }
 
         return "<?php\nreturn {$data};\n?>";
+    }
+
+    /**
+     * @param $oldPath
+     * @param $newPath
+     * @param bool $removeEmptyDirs
+     * @return bool
+     * @throws Error
+     */
+    public function move($oldPath, $newPath, $removeEmptyDirs = true): bool
+    {
+        if (!file_exists($oldPath)) {
+            throw new Error("File not found");
+        }
+
+        if ($this->checkCreateFile($newPath) === false) {
+            throw new Error('Permission denied for ' . $newPath);
+        }
+
+        if (!rename($oldPath, $newPath)) {
+            return false;
+        }
+
+        if ($removeEmptyDirs) {
+            $this->removeEmptyDirs($oldPath);
+        }
+
+        return true;
     }
 }

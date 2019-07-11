@@ -27,59 +27,21 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\FileStorage\Storages;
+namespace Treo\Entities;
 
-use \Espo\Entities\Attachment;
-
-use \Espo\Core\Exceptions\Error;
-
-class EspoUploadDir extends Base
+class Attachment extends \Espo\Core\ORM\Entity
 {
-    protected $dependencyList = ['fileManager'];
-
-    protected function getFileManager()
+    public function getSourceId()
     {
-        return $this->getInjection('fileManager');
+        $sourceId = $this->get('sourceId');
+        if (!$sourceId) {
+            $sourceId = $this->id;
+        }
+        return $sourceId;
     }
 
-    public function unlink(Attachment $attachment)
+    public function _getStorage()
     {
-        return $this->getFileManager()->unlink($this->getFilePath($attachment));
-    }
-
-    public function isFile(Attachment $attachment)
-    {
-        return $this->getFileManager()->isFile($this->getFilePath($attachment));
-    }
-
-    public function getContents(Attachment $attachment)
-    {
-        return $this->getFileManager()->getContents($this->getFilePath($attachment));
-    }
-
-    public function putContents(Attachment $attachment, $contents)
-    {
-        return $this->getFileManager()->putContents($this->getFilePath($attachment), $contents);
-    }
-
-    public function getLocalFilePath(Attachment $attachment)
-    {
-        return $this->getFilePath($attachment);
-    }
-
-    protected function getFilePath(Attachment $attachment)
-    {
-        $sourceId = $attachment->getSourceId();
-        return 'data/upload/' . $sourceId;
-    }
-
-    public function getDownloadUrl(Attachment $attachment)
-    {
-        throw new Error();
-    }
-
-    public function hasDownloadUrl(Attachment $attachment)
-    {
-        return false;
+        return "UploadDir";
     }
 }

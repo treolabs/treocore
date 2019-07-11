@@ -119,7 +119,7 @@ class EmailAccount extends Record
         throw new Error();
     }
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
         if (!$this->getUser()->isAdmin()) {
             $count = $this->getEntityManager()->getRepository('EmailAccount')->where(array(
@@ -130,7 +130,7 @@ class EmailAccount extends Record
             }
         }
 
-        $entity = parent::createEntity($data);
+        $entity = parent::createEntity($attachment);
         if ($entity) {
             if (!$this->getUser()->isAdmin()) {
                 $entity->set('assignedUserId', $this->getUser()->id);

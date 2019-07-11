@@ -31,42 +31,21 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
-
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Metadata;
-use Treo\Core\FileStorage\Manager;
-
 /**
- * FileStorageManager loader
- *
- * @author r.ratsun@zinitsolutions.com
+ * Class FilePathBuilder
+ * @package Treo\Core\Loaders
  */
-class FileStorageManager extends Base
+class FilePathBuilder extends Base
 {
-
     /**
-     * Load FileStorageManager
-     *
-     * @return \Treo\Core\FileStorage\Manager
+     * @return \Treo\Core\FilePathBuilder
      */
     public function load()
     {
-        return new Manager(
-            $this->getMetadata()->get(['app', 'fileStorage', 'implementationClassNameMap']),
-            $this->getContainer()
-        );
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        return new \Treo\Core\FilePathBuilder ($this->getContainer());
     }
 }

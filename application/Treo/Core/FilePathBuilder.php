@@ -27,63 +27,58 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\FileStorage\Storages;
+declare(strict_types=1);
 
-use \Espo\Core\Interfaces\Injectable;
+namespace Treo\Core;
 
-abstract class Base implements Injectable
+use Espo\ORM\Metadata;
+use Treo\Core\Utils\Random;
+
+/**
+ * Class FilePathBuilder
+ * @package Treo\Core
+ */
+class FilePathBuilder
 {
-    protected $dependencyList = [];
+    const UPLOAD = 'upload';
 
-    protected $injections = array();
+    /**
+     * @var Container
+     */
+    protected $container;
 
-    public function inject($name, $object)
+    /**
+     * DAMFilePathBuilder constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
     {
-        $this->injections[$name] = $object;
+        $this->container = $container;
     }
 
-    public function __construct()
+    /**
+     * @param string $type
+     * @return string
+     */
+    public function createPath(string $type): string
     {
-        $this->init();
-    }
+        $depth = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderDepth']) ?? 3;
+        $folderNameLength = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderNameLength']) ?? 3;
 
-    protected function init()
-    {
-    }
-
-    protected function getInjection($name)
-    {
-        return $this->injections[$name];
-    }
-
-    protected function addDependency($name)
-    {
-        $this->dependencyList[] = $name;
-    }
-
-    protected function addDependencyList(array $list)
-    {
-        foreach ($list as $item) {
-            $this->addDependency($item);
+        for ($i = 0; $i < $depth; $i++) {
+            $part[] = Random::getString($folderNameLength);
         }
+
+
+        return implode('/', $part);
     }
 
-    public function getDependencyList()
+    /**
+     * @return Metadata|null
+     */
+    private function getMeta()
     {
-        return $this->dependencyList;
+        return $this->container->get('metadata');
     }
-
-    abstract public function hasDownloadUrl(\Espo\Entities\Attachment $attachment);
-
-    abstract public function getDownloadUrl(\Espo\Entities\Attachment $attachment);
-
-    abstract public function unlink(\Espo\Entities\Attachment $attachment);
-
-    abstract public function getContents(\Espo\Entities\Attachment $attachment);
-
-    abstract public function isFile(\Espo\Entities\Attachment $attachment);
-
-    abstract public function putContents(\Espo\Entities\Attachment $attachment, $contents);
-
-    abstract public function getLocalFilePath(\Espo\Entities\Attachment $attachment);
 }
