@@ -367,7 +367,7 @@ class Application
         $cachePath = 'data/cache/client/';
 
         // load from cache
-        if (!empty($this->getConfig()->get('useCache')) && file_exists($cachePath)) {
+        if (!empty($this->getConfig()->get('useCache')) && file_exists($cachePath . $file)) {
             $path = $cachePath;
         } else {
             // get modules
@@ -385,9 +385,6 @@ class Application
                 foreach ($modules as $module) {
                     Util::copydir($module->getClientPath(), $cachePath);
                 }
-
-                // wait 2 seconds
-                sleep(2);
             }
 
             // collect paths
