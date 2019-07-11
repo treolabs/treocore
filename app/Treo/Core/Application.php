@@ -150,22 +150,6 @@ class Application
             $this->runApi($uri);
         }
 
-        if (!empty($uri) && $uri != '/' && empty($this->getPortalIdForClient())) {
-            // print module client file
-            if (preg_match_all('/^\/client\/(.*)$/', $uri, $matches)) {
-                $this->printModuleClientFile($matches[1][0]);
-            }
-
-            // if images path than call showImage
-            if (preg_match_all('/^\/images\/(.*)\.(jpg|png|gif)$/', $uri, $matches)) {
-                $this->runEntryPoint('TreoImage', ['id' => $matches[1][0], 'mimeType' => $matches[2][0]]);
-            }
-
-            // show 404
-            header("HTTP/1.0 404 Not Found");
-            exit;
-        }
-
         // for client
         $this->runClient();
     }
@@ -351,96 +335,6 @@ class Application
         } catch (\Exception $e) {
             $container->get('output')->processError($e->getMessage(), $e->getCode(), true, $e);
         }
-    }
-
-    /**
-     * Print modules client files
-     *
-     * @param string $file
-     */
-    protected function printModuleClientFile(string $file)
-    {
-        // prepare path
-        $path = null;
-
-        // prepare cache path
-        $cachePath = 'data/cache/client/';
-
-        // load from cache
-        if (!empty($this->getConfig()->get('useCache')) && file_exists($cachePath . $file)) {
-            $path = $cachePath;
-        } else {
-            // get modules
-            $modules = $this
-                ->getContainer()
-                ->get('moduleManager')
-                ->getModules();
-
-            // generate cache
-            if (!empty($this->getConfig()->get('useCache')) && !file_exists($cachePath)) {
-                if (!file_exists($cachePath)) {
-                    mkdir($cachePath, 0777, true);
-                }
-                Util::copydir($this->clientPath, $cachePath);
-                foreach ($modules as $module) {
-                    Util::copydir($module->getClientPath(), $cachePath);
-                }
-            }
-
-            // collect paths
-            foreach (array_reverse($modules) as $module) {
-                $paths[] = $module->getClientPath();
-            }
-            $paths[] = $this->clientPath;
-
-            foreach ($paths as $item) {
-                if (file_exists($item . $file)) {
-                    $path = $item;
-                    continue 1;
-                }
-            }
-        }
-
-        // show 404
-        if (is_null($path)) {
-            header("HTTP/1.0 404 Not Found");
-            exit;
-        }
-
-        // parse file mime type
-        $parts = explode(".", $file);
-
-        switch (array_pop($parts)) {
-            case 'css':
-                header('Content-Type: text/css');
-                break;
-            case 'js':
-                header('Content-Type: application/javascript');
-                break;
-            case 'json':
-                header('Content-Type: application/json');
-                break;
-            case 'png':
-                header('Content-Type: image/png');
-                break;
-            case 'jpeg':
-                header('Content-Type: image/jpeg');
-                break;
-            case 'jpg':
-                header('Content-Type: image/jpg');
-                break;
-            case 'gif':
-                header('Content-Type: image/gif');
-                break;
-            case 'ico':
-                header('Content-Type: image/vnd.microsoft.icon');
-                break;
-            case 'svg':
-                header('Content-type: image/svg+xml');
-                break;
-        }
-        echo file_get_contents($path . $file);
-        exit;
     }
 
     /**

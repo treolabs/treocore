@@ -79,6 +79,9 @@ class PostUpdate
      */
     public function run(): void
     {
+        // update client files
+        $this->updateClientFiles();
+
         if ($this->isInstalled()) {
             // logout all users
             $this->logoutAll();
@@ -97,7 +100,7 @@ class PostUpdate
         }
 
         // store composer.lock file
-        self::storeComposerLock();
+        file_put_contents('data/old-composer.lock', file_get_contents('composer.lock'));
     }
 
     /**
@@ -458,10 +461,17 @@ class PostUpdate
     }
 
     /**
-     * Store composer.lock
+     * Update client files
      */
-    private function storeComposerLock(): void
+    private function updateClientFiles(): void
     {
-        file_put_contents('data/old-composer.lock', file_get_contents('composer.lock'));
+        // delete old
+        Util::removedir('client');
+
+        // copy new
+        Util::copydir(CORE_PATH . '/client', 'client');
+        foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
+            Util::copydir($module->getClientPath(), 'client');
+        }
     }
 }
