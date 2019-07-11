@@ -21,10 +21,10 @@ php=$2
 # call cron jobs
 $php index.php cron
 
-# module update process
-if [[ ! "$(ps ax | grep treo-module-update.sh)" =~ "bin/treo-module-update.sh $id" ]]; then
-    chmod +x bin/treo-module-update.sh
-    setsid ./bin/treo-module-update.sh $id $php >/dev/null 2>&1 &
+# composer process
+if [[ ! "$(ps ax | grep treo-composer.sh)" =~ "bin/treo-composer.sh $id" ]]; then
+    chmod +x bin/treo-composer.sh
+    setsid ./bin/treo-composer.sh $id $php >/dev/null 2>&1 &
 fi
 
 # queue manager process

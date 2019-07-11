@@ -277,8 +277,11 @@ class PostUpdate
      */
     protected function pushLog(): void
     {
+        // get config
+        $config = $this->getContainer()->get('config');
+
         // prepare path
-        $path = 'data/treo-module-update.log';
+        $path = 'data/treo-composer.log';
 
         if (file_exists($path)) {
             // get content
@@ -292,9 +295,6 @@ class PostUpdate
 
             // prepare content
             $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
-
-            // get config
-            $config = $this->getContainer()->get('config');
 
             // prepare createdById
             $createdById = 'system';
@@ -317,8 +317,13 @@ class PostUpdate
 
             // unset user
             $config->set('composerUser', null);
-            $config->save();
         }
+
+        // unblock composer UI
+        $config->set('isUpdating', false);
+
+        // save config
+        $config->save();
     }
 
     /**

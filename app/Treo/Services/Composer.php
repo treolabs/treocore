@@ -70,7 +70,7 @@ class Composer extends AbstractService
         $this->updateConfig();
 
         // create file for treo-composer.sh
-        $this->filePutContents('data/treo-module-update.txt', '1');
+        $this->filePutContents('data/treo-composer-run.txt', '1');
 
         return true;
     }

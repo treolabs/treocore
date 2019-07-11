@@ -4,8 +4,8 @@
 php=$2
 
 # prepare file(s) path
-path="data/treo-module-update.txt"
-log="data/treo-module-update.log"
+path="data/treo-composer-run.txt"
+log="data/treo-composer.log"
 
 while true
 do
@@ -19,7 +19,7 @@ do
      rm $path;
 
      # start
-     echo -e "Modules updating has been started:\n" > $log 2>&1
+     echo -e "Composer updating has been started:\n" > $log 2>&1
 
      # composer update
      if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then

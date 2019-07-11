@@ -3,7 +3,7 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 
-<FilesMatch "(treo-module-update\.log|notReadCount\.json|popupNotifications\.json)$">
+<FilesMatch "(treo-composer\.log|notReadCount\.json|popupNotifications\.json)$">
   Allow from all
 </FilesMatch>
 

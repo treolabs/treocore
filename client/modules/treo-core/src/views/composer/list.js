@@ -381,7 +381,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                 $.ajax({
                     type: 'GET',
                     dataType: 'text',
-                    url: `../../data/treo-module-update.log`,
+                    url: `../../data/treo-composer.log`,
                     cache: false,
                     success: response => {
                         this.log = response;
