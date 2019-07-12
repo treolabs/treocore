@@ -49,5 +49,8 @@
       "Espo\\": "app/Espo/",
       "Treo\\": "app/Treo/"
     }
+  },
+  "extra": {
+    "treoId": "Treo"
   }
 }

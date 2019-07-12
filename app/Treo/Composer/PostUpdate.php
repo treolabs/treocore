@@ -124,7 +124,6 @@ class PostUpdate
         $sth->execute();
     }
 
-
     /**
      * Run migrations
      */
@@ -132,19 +131,26 @@ class PostUpdate
     {
         if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['update'])) {
             foreach ($composerDiff['update'] as $row) {
-                // get module
-                $module = $this
-                    ->getContainer()
-                    ->get('moduleManager')
-                    ->getModule($row['id']);
+                if ($row['id'] == 'Treo') {
+                    $to = ComposerService::getCoreVersion();
+                } else {
+                    // get module
+                    $module = $this
+                        ->getContainer()
+                        ->get('moduleManager')
+                        ->getModule($row['id']);
 
-                if (!empty($module)) {
-                    // prepare data
-                    $from = ModuleManager::prepareVersion($row['from']);
-                    $to = ModuleManager::prepareVersion($module->getVersion());
+                    if (!empty($module)) {
+                        $to = $module->getVersion();
+                    }
+                }
 
+                if (!empty($to)) {
                     // run migration
-                    $this->getContainer()->get('migration')->run($row['id'], $from, $to);
+                    $this
+                        ->getContainer()
+                        ->get('migration')
+                        ->run($row['id'], ModuleManager::prepareVersion($row['from']), ModuleManager::prepareVersion($to));
                 }
             }
         }
