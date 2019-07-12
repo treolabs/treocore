@@ -165,8 +165,8 @@ class Manager
         $path = 'composer.lock';
         if (file_exists($path)) {
             $data = json_decode(file_get_contents($path), true);
-            if (!empty($packages = $data['packages'])) {
-                foreach ($packages as $package) {
+            if (!empty($data['packages'])) {
+                foreach ($data['packages'] as $package) {
                     if (!empty($package['extra']['treoId']) && $package['extra']['treoId'] == $id) {
                         return $package;
                     }

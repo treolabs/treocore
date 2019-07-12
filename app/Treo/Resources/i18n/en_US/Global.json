@@ -150,7 +150,11 @@
     "applyRelation": "Apply Relation",
     "collapseAllPanels": "Collapse All",
     "expandAllPanels": "Expand All",
-    "UnitSymbol": "Unit Symbol"
+    "UnitSymbol": "Unit Symbol",
+    "Core": "Core"
+  },
+  "descriptions": {
+    "Core": "-"
   },
   "links": {
     "ownerUser": "Owner"

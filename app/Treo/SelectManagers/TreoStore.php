@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\SelectManagers;
 
 use Espo\Core\SelectManagers\Base;
+use Treo\Services\Composer;
 
 /**
  * Class TreoStore
@@ -68,12 +69,7 @@ class TreoStore extends Base
      */
     private function getComposerModules(): array
     {
-        $data = $this
-            ->getEntityManager()
-            ->getContainer()
-            ->get('serviceFactory')
-            ->create('Composer')
-            ->getModuleComposerJson();
+        $data = Composer::getComposerJson();
 
         $result = [];
         if (isset($data['require'])) {

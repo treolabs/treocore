@@ -60,6 +60,42 @@ class Composer extends AbstractService
     public static $stableComposer = 'data/stable-composer.json';
 
     /**
+     * Get composer.json
+     *
+     * @return array
+     */
+    public static function getComposerJson(): array
+    {
+        return Json::decode(file_get_contents(self::$composer), true);
+    }
+
+    /**
+     * Set composer.json
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public static function setComposerJson(array $data): void
+    {
+        file_put_contents(self::$composer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+
+    /**
+     * Get stable-composer.json
+     *
+     * @return array
+     */
+    public static function getStableComposerJson(): array
+    {
+        if (!file_exists(self::$stableComposer)) {
+            return self::getComposerJson();
+        }
+
+        return Json::decode(file_get_contents(self::$stableComposer), true);
+    }
+
+    /**
      * Run update
      *
      * @return bool
@@ -70,7 +106,7 @@ class Composer extends AbstractService
         $this->updateConfig();
 
         // create file for treo-composer.sh
-        $this->filePutContents('data/treo-composer-run.txt', '1');
+        file_put_contents('data/treo-composer-run.txt', '1');
 
         return true;
     }
@@ -100,13 +136,13 @@ class Composer extends AbstractService
         }
 
         // get composer.json data
-        $data = $this->getModuleComposerJson();
+        $data = self::getComposerJson();
 
         // prepare data
         $data['require'] = array_merge($data['require'], [$package => $version]);
 
         // set composer.json data
-        $this->setModuleComposerJson($data);
+        self::setComposerJson($data);
     }
 
     /**
@@ -123,46 +159,14 @@ class Composer extends AbstractService
         }
 
         // get composer.json data
-        $data = $this->getModuleComposerJson();
+        $data = self::getComposerJson();
 
         if (isset($data['require'][$package])) {
             unset($data['require'][$package]);
         }
 
         // set composer.json data
-        $this->setModuleComposerJson($data);
-    }
-
-    /**
-     * Get modules composer.json
-     *
-     * @return array
-     */
-    public function getModuleComposerJson(): array
-    {
-        return Json::decode(file_get_contents(self::$composer), true);
-    }
-
-    /**
-     * Get modules stable-composer.json
-     *
-     * @return array
-     */
-    public function getModuleStableComposerJson(): array
-    {
-        return Json::decode(file_get_contents(self::$stableComposer), true);
-    }
-
-    /**
-     * Set modules composer.json
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    public function setModuleComposerJson(array $data): void
-    {
-        $this->filePutContents(self::$composer, Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        self::setComposerJson($data);
     }
 
     /**
@@ -195,12 +199,24 @@ class Composer extends AbstractService
     {
         // prepare result
         $result = [
-            'total' => 0,
-            'list'  => []
+            'total' => 1,
+            'list'  => [
+                [
+                    'id'             => 'TreoCore',
+                    'name'           => $this->translate('Core'),
+                    'description'    => $this->translate('Core', 'descriptions'),
+                    'settingVersion' => self::getComposerJson()['require']['treolabs/treocore'],
+                    'currentVersion' => self::getCoreVersion(),
+                    'versions'       => [],
+                    'isSystem'       => true,
+                    'isComposer'     => true,
+                    'status'         => '',
+                ]
+            ]
         ];
 
         // prepare composer data
-        $composerData = $this->getModuleComposerJson();
+        $composerData = self::getComposerJson();
 
         // get diff
         $composerDiff = $this->getComposerDiff();
@@ -214,7 +230,6 @@ class Composer extends AbstractService
                 'settingVersion' => '*',
                 'currentVersion' => $module->getVersion(),
                 'versions'       => [],
-                'required'       => [],
                 'isSystem'       => $module->isSystem(),
                 'isComposer'     => !empty($module->getVersion()),
                 'status'         => $this->getModuleStatus($composerDiff, $id),
@@ -235,15 +250,14 @@ class Composer extends AbstractService
         // for uninstalled modules
         foreach ($composerDiff['install'] as $row) {
             $item = [
-                "id"             => $row['id'],
-                "name"           => $row['id'],
-                "description"    => '',
-                "settingVersion" => '*',
-                "currentVersion" => '',
-                "required"       => [],
-                "isSystem"       => false,
-                "isComposer"     => true,
-                "status"         => 'install'
+                'id'             => $row['id'],
+                'name'           => $row['id'],
+                'description'    => '',
+                'settingVersion' => '*',
+                'currentVersion' => '',
+                'isSystem'       => false,
+                'isComposer'     => true,
+                'status'         => 'install'
             ];
 
             // get package
@@ -267,9 +281,6 @@ class Composer extends AbstractService
         // prepare result
         $result['list'] = array_values($result['list']);
         $result['total'] = count($result['list']);
-
-        // sorting
-        usort($result['list'], [$this, 'moduleListSort']);
 
         return $result;
     }
@@ -385,18 +396,17 @@ class Composer extends AbstractService
             // get name
             $name = $package->get('packageId');
 
-            // get data
-            $composerData = $this->getModuleComposerJson();
-            $composerStableData = $this->getModuleStableComposerJson();
+            // get composer data
+            $composerData = self::getComposerJson();
 
-            if (!empty($value = $composerStableData['require'][$name])) {
+            if (!empty($value = self::getStableComposerJson()['require'][$name])) {
                 $composerData['require'][$name] = $value;
             } elseif (isset($composerData['require'][$name])) {
                 unset($composerData['require'][$name]);
             }
 
             // save
-            $this->setModuleComposerJson($composerData);
+            self::setComposerJson($composerData);
 
             // prepare result
             $result = true;
@@ -460,11 +470,11 @@ class Composer extends AbstractService
         if (!file_exists(self::$stableComposer)) {
             // prepare data
             $data = Json::encode(['require' => []], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $this->filePutContents(self::$stableComposer, $data);
+            file_put_contents(self::$stableComposer, $data);
         }
 
         // prepare data
-        $composerData = $this->getModuleComposerJson();
+        $composerData = self::getComposerJson();
         $composerStableData = Json::decode(file_get_contents(self::$stableComposer), true);
         foreach ($composerData['require'] as $package => $version) {
             if (!isset($composerStableData['require'][$package])) {
@@ -529,19 +539,6 @@ class Composer extends AbstractService
     }
 
     /**
-     * @param      $filename
-     * @param      $data
-     * @param int  $flags
-     * @param null $context
-     *
-     * @return bool|int
-     */
-    protected function filePutContents($filename, $data, $flags = 0, $context = null)
-    {
-        return file_put_contents($filename, $data, $flags, $context);
-    }
-
-    /**
      * @return array
      */
     protected function getPackages(): array
@@ -596,7 +593,7 @@ class Composer extends AbstractService
      */
     protected function translateError(string $key): string
     {
-        return $this->getContainer()->get('language')->translate($key, 'exceptions', 'ModuleManager');
+        return $this->translate($key, 'exceptions', 'Composer');
     }
 
     /**
@@ -659,24 +656,23 @@ class Composer extends AbstractService
     }
 
     /**
-     * Module list sort
-     *
-     * @param array $a
-     * @param array $b
-     *
-     * @return int
+     * @return string
      */
-    private static function moduleListSort(array $a, array $b): int
+    private static function getCoreVersion(): string
     {
-        // prepare params
-        $a = $a['name'];
-        $b = $b['name'];
-
-        if ($a == $b) {
-            return 0;
+        $path = 'composer.lock';
+        if (file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
+            if (!empty($data['packages'])) {
+                foreach ($data['packages'] as $package) {
+                    if ($package['name'] == 'treolabs/treocore') {
+                        return $package['version'];
+                    }
+                }
+            }
         }
 
-        return ($a < $b) ? -1 : 1;
+        return '';
     }
 
     /**
