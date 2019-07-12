@@ -94,9 +94,6 @@ class PostUpdate
 
             // run migrations
             $this->runMigrations();
-
-            // push log
-            $this->pushLog();
         }
 
         // store composer.lock file
@@ -270,60 +267,6 @@ class PostUpdate
                 $class->setContainer($this->getContainer())->{$action}();
             }
         }
-    }
-
-    /**
-     * Push log
-     */
-    protected function pushLog(): void
-    {
-        // get config
-        $config = $this->getContainer()->get('config');
-
-        // prepare path
-        $path = 'data/treo-composer.log';
-
-        if (file_exists($path) && !empty($content = file_get_contents($path))) {
-            // prepare status
-            $status = 1;
-            if (strpos($content, '{{success}}') !== false) {
-                $status = 0;
-            }
-
-            // prepare content
-            $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
-
-            // prepare createdById
-            $createdById = 'system';
-            if (!empty($config->get('composerUser'))) {
-                $createdById = $config->get('composerUser');
-            }
-
-            // get em
-            $em = $this->getContainer()->get('entityManager');
-
-            // prepare note
-            $note = $em->getEntity('Note');
-            $note->set('type', 'composerUpdate');
-            $note->set('parentType', 'ModuleManager');
-            $note->set('data', ['status' => $status, 'output' => $content]);
-            $note->set('createdById', $createdById);
-
-            // save
-            $em->saveEntity($note, ['skipCreatedBy' => true]);
-
-            // unset user
-            $config->set('composerUser', null);
-        }
-
-        // unblock composer UI
-        $config->set('isUpdating', false);
-
-        // save config
-        $config->save();
-
-        // clear
-        file_put_contents($path, '');
     }
 
     /**

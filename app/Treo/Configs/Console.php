@@ -50,4 +50,5 @@ return [
     "qm <stream> --run"            => Console\QueueManager::class,
     "notifications --refresh"      => Console\Notification::class,
     "kill processes"               => Console\KillProcess::class,
+    "composer log"                 => Console\ComposerLog::class,
 ];

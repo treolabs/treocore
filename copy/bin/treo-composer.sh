@@ -28,6 +28,7 @@ do
        $php composer.phar run-script post-update-cmd > /dev/null 2>&1
        echo "{{success}}" >> $log 2>&1
      fi
+     $php index.php composer log > /dev/null 2>&1
    fi
 
    sleep 1;
