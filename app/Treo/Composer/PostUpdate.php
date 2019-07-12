@@ -283,10 +283,7 @@ class PostUpdate
         // prepare path
         $path = 'data/treo-composer.log';
 
-        if (file_exists($path)) {
-            // get content
-            $content = file_get_contents($path);
-
+        if (file_exists($path) && !empty($content = file_get_contents($path))) {
             // prepare status
             $status = 1;
             if (strpos($content, '{{success}}') !== false) {
@@ -324,6 +321,9 @@ class PostUpdate
 
         // save config
         $config->save();
+
+        // clear
+        file_put_contents($path, '');
     }
 
     /**
