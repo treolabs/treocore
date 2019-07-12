@@ -290,7 +290,9 @@ class PostUpdate
             // prepare class name
             $className = "\\$moduleName\\Module";
 
-            $modules[$moduleName] = $className::getLoadOrder();
+            if (class_exists($className)) {
+                $modules[$moduleName] = $className::getLoadOrder();
+            }
         }
         asort($modules);
 
