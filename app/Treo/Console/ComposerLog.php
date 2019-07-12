@@ -98,9 +98,6 @@ class ComposerLog extends AbstractConsole
         // save config
         $this->getConfig()->save();
 
-        // clear
-        file_put_contents($path, '');
-
         self::show('Composer log saved successfully', self::SUCCESS, true);
     }
 }
