@@ -100,7 +100,7 @@ class PostUpdate
         }
 
         // store composer.lock file
-        file_put_contents('data/old-composer.lock', file_get_contents('composer.lock'));
+        file_put_contents('data/old-composer.lock', file_get_contents(ComposerService::$composerLock));
     }
 
     /**
@@ -169,7 +169,7 @@ class PostUpdate
 
         // prepare data
         $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = self::getComposerLockTreoPackages("composer.lock");
+        $newData = self::getComposerLockTreoPackages(ComposerService::$composerLock);
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
@@ -334,7 +334,7 @@ class PostUpdate
     private static function getModules(): array
     {
         $modules = [];
-        foreach (self::getComposerLockTreoPackages("composer.lock") as $row) {
+        foreach (self::getComposerLockTreoPackages(ComposerService::$composerLock) as $row) {
             // prepare module name
             $moduleName = $row['extra']['treoId'];
 

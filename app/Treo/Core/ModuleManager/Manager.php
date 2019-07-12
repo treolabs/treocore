@@ -38,6 +38,7 @@ namespace Treo\Core\ModuleManager;
 
 use Espo\Core\Exceptions\Error;
 use Treo\Core\Container;
+use Treo\Services\Composer;
 
 /**
  * Class Manager
@@ -162,9 +163,8 @@ class Manager
      */
     private function getPackage(string $id): array
     {
-        $path = 'composer.lock';
-        if (file_exists($path)) {
-            $data = json_decode(file_get_contents($path), true);
+        if (file_exists(Composer::$composerLock)) {
+            $data = json_decode(file_get_contents(Composer::$composerLock), true);
             if (!empty($data['packages'])) {
                 foreach ($data['packages'] as $package) {
                     if (!empty($package['extra']['treoId']) && $package['extra']['treoId'] == $id) {

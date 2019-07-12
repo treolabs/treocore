@@ -57,6 +57,11 @@ class Composer extends AbstractService
     /**
      * @var string
      */
+    public static $composerLock = 'composer.lock';
+
+    /**
+     * @var string
+     */
     public static $stableComposer = 'data/stable-composer.json';
 
     /**
@@ -93,6 +98,27 @@ class Composer extends AbstractService
         }
 
         return Json::decode(file_get_contents(self::$stableComposer), true);
+    }
+
+    /**
+     * Get core version
+     *
+     * @return string
+     */
+    public static function getCoreVersion(): string
+    {
+        if (file_exists(self::$composerLock)) {
+            $data = json_decode(file_get_contents(self::$composerLock), true);
+            if (!empty($data['packages'])) {
+                foreach ($data['packages'] as $package) {
+                    if ($package['name'] == 'treolabs/treocore') {
+                        return $package['version'];
+                    }
+                }
+            }
+        }
+
+        return '-';
     }
 
     /**
@@ -653,26 +679,6 @@ class Composer extends AbstractService
             ->find($where);
 
         return !empty($entities) ? $entities->toArray() : [];
-    }
-
-    /**
-     * @return string
-     */
-    private static function getCoreVersion(): string
-    {
-        $path = 'composer.lock';
-        if (file_exists($path)) {
-            $data = json_decode(file_get_contents($path), true);
-            if (!empty($data['packages'])) {
-                foreach ($data['packages'] as $package) {
-                    if ($package['name'] == 'treolabs/treocore') {
-                        return $package['version'];
-                    }
-                }
-            }
-        }
-
-        return '';
     }
 
     /**

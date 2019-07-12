@@ -144,7 +144,11 @@
     "applyRelation": "Beziehung anwenden",
     "collapseAllPanels": "Alle ausblenden",
     "expandAllPanels": "Alle anzeigen",
-    "UnitSymbol": "Einheitenzeichen"
+    "UnitSymbol": "Einheitenzeichen",
+    "Core": "Ader"
+  },
+  "descriptions": {
+    "Core": "TreoCore is a software ecosystem, designed for rapid development of web-based responsive business applications."
   },
   "links": {
     "ownerUser": "Besitzer"
