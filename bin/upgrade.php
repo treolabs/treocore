@@ -46,8 +46,8 @@ $composer = [
         ]
     ]
 ];
-if (file_exists('data/repositories.json')) {
-    $composer = array_merge_recursive($composer, json_decode(file_get_contents('data/repositories.json'), true));
+if (file_exists($rootPath . '/data/repositories.json')) {
+    $composer = array_merge_recursive($composer, json_decode(file_get_contents($rootPath . '/data/repositories.json'), true));
 }
 file_put_contents($rootPath . '/composer.json', json_encode($composer, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 
