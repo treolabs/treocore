@@ -72,7 +72,6 @@ remove($rootPath . '/composer.lock');
 remove($rootPath . '/index.php');
 remove($rootPath . '/pre-commit-hook.sh');
 remove($rootPath . '/README.md');
-//remove($rootPath . '/bin/upgrade.php');
 
 echo 'Removed!';
 die();
