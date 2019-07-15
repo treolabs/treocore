@@ -75,3 +75,6 @@ remove($rootPath . '/composer.lock');
 remove($rootPath . '/index.php');
 remove($rootPath . '/pre-commit-hook.sh');
 remove($rootPath . '/README.md');
+
+// kill processes
+file_put_contents('data/process-kill.txt', '1');
