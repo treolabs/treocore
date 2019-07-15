@@ -34,9 +34,7 @@ $composer = [
     'license'           => 'GPL-3.0-only',
     'minimum-stability' => 'RC',
     'require'           => [
-        [
-            'treolabs/treocore' => '^3.20.10'
-        ]
+        'treolabs/treocore' => '^3.20.10'
     ],
     'scripts'           => [
         'post-update-cmd' => 'Treo\\Composer\\Cmd::postUpdate'
@@ -70,6 +68,7 @@ remove($rootPath . '/data/treo-self-upgrade.log');
 remove($rootPath . '/docs');
 remove($rootPath . '/tests');
 remove($rootPath . '/console.php');
+remove($rootPath . '/composer.lock');
 remove($rootPath . '/index.php');
 remove($rootPath . '/pre-commit-hook.sh');
 remove($rootPath . '/README.md');
