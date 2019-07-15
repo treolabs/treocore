@@ -30,35 +30,21 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+Espo.define('views/account/detail', 'views/detail', function (Dep) {
 
-Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
-    Dep => Dep.extend({
+    return Dep.extend({
 
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            this.listenToOnce(this.collection, 'sync', () => {
-                setTimeout(() => {
-                    this.stopListening(this.model, 'all');
-                    this.stopListening(this.model, 'destroy');
-                    this.listenTo(this.model, 'all', event => {
-                        if (!['sync', 'after:relate', 'after:attributesSave'].includes(event)) {
-                            return;
-                        }
-                        let initialTotal = this.collection.total;
-                        this.collection.fetchNew({
-                            success: function () {
-                                this.collection.total += initialTotal;
-                            }.bind(this)
-                        });
-                    });
-
-                    this.listenTo(this.model, 'destroy', () => {
-                        this.stopListening(this.model, 'all');
-                    });
-                }, 500);
-            });
+        relatedAttributeMap: {
+            'contacts': {
+                'billingAddressCity': 'addressCity',
+                'billingAddressStreet': 'addressStreet',
+                'billingAddressPostalCode': 'addressPostalCode',
+                'billingAddressState': 'addressState',
+                'billingAddressCountry': 'addressCountry',
+                'id': 'accountId',
+                'name': 'accountName'
+            }
         }
+    });
+});
 
-    })
-);

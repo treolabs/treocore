@@ -132,6 +132,12 @@
     "cd": "cd"
   },
   "fields": {
+    "billingAddressCity": "City",
+    "billingAddressCountry": "Country",
+    "billingAddressPostalCode": "Postal Code",
+    "billingAddressState": "State",
+    "billingAddressStreet": "Street",
+    "billingAddressMap": "Map",
     "ownerUser": "Owner",
     "username": "Username",
     "password": "Password",

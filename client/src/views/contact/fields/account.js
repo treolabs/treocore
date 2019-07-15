@@ -31,34 +31,24 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
-    Dep => Dep.extend({
+Espo.define('views/contact/fields/account', 'views/fields/link', function (Dep) {
 
-        afterRender() {
+    return Dep.extend({
+
+        getAttributeList: function () {
+            var list = Dep.prototype.getAttributeList.call(this);
+            list.push('accountIsInactive');
+            return list;
+        },
+
+        afterRender: function () {
             Dep.prototype.afterRender.call(this);
-
-            this.listenToOnce(this.collection, 'sync', () => {
-                setTimeout(() => {
-                    this.stopListening(this.model, 'all');
-                    this.stopListening(this.model, 'destroy');
-                    this.listenTo(this.model, 'all', event => {
-                        if (!['sync', 'after:relate', 'after:attributesSave'].includes(event)) {
-                            return;
-                        }
-                        let initialTotal = this.collection.total;
-                        this.collection.fetchNew({
-                            success: function () {
-                                this.collection.total += initialTotal;
-                            }.bind(this)
-                        });
-                    });
-
-                    this.listenTo(this.model, 'destroy', () => {
-                        this.stopListening(this.model, 'all');
-                    });
-                }, 500);
-            });
+            if (this.mode === 'list' || this.mode === 'detail') {
+                if (this.model.get('accountIsInactive')) {
+                    this.$el.find('a').css('textDecoration', 'line-through');
+                }
+            }
         }
+    });
 
-    })
-);
+});

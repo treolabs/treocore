@@ -31,34 +31,34 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
-    Dep => Dep.extend({
+Espo.define('Views.Account.Fields.ShippingAddress', 'Views.Fields.Address', function (Dep) {
 
-        afterRender() {
+    return Dep.extend({
+
+        copyFrom: 'billingAddress',
+
+        afterRender: function () {
             Dep.prototype.afterRender.call(this);
 
-            this.listenToOnce(this.collection, 'sync', () => {
-                setTimeout(() => {
-                    this.stopListening(this.model, 'all');
-                    this.stopListening(this.model, 'destroy');
-                    this.listenTo(this.model, 'all', event => {
-                        if (!['sync', 'after:relate', 'after:attributesSave'].includes(event)) {
-                            return;
-                        }
-                        let initialTotal = this.collection.total;
-                        this.collection.fetchNew({
-                            success: function () {
-                                this.collection.total += initialTotal;
-                            }.bind(this)
-                        });
-                    });
+            if (this.mode == 'edit') {
+                var label = this.translate('Copy Billing', 'labels', 'Account');
+                $btn = $('<button class="btn btn-default btn-sm">' + label + '</button>').on('click', function () {
+                    this.copy(this.copyFrom);
+                }.bind(this));
+                this.$el.append($btn);
+            }
+        },
 
-                    this.listenTo(this.model, 'destroy', () => {
-                        this.stopListening(this.model, 'all');
-                    });
-                }, 500);
-            });
-        }
+        copy: function (fieldFrom) {
+            var attrList = Object.keys(this.getMetadata().get('fields.address.fields')).forEach(function (attr) {
+                destField = this.name + Espo.Utils.upperCaseFirst(attr);
+                sourceField = fieldFrom + Espo.Utils.upperCaseFirst(attr);
 
-    })
-);
+                this.model.set(destField, this.model.get(sourceField));
+            }, this);
+
+        },
+
+    });
+});
+
