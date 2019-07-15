@@ -32,7 +32,7 @@ $composer = [
     'description'       => 'Skeleton for Treo project',
     'homepage'          => 'https://treolabs.com',
     'license'           => 'GPL-3.0-only',
-    'minimum-stability' => 'RC',
+    'minimum-stability' => 'stable',
     'require'           => [
         'treolabs/treocore' => '^3.20.10'
     ],
