@@ -20,4 +20,4 @@ php=$2
 
 $php bin/upgrade.php
 rm "bin/upgrade.php";
-php composer.phar update --no-dev
+$php composer.phar update --no-dev
