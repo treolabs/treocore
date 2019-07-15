@@ -18,6 +18,8 @@ id=$1
 # prepare PHP
 php=$2
 
+echo -e "Ugrading has been started...\n";
 $php bin/upgrade.php
 rm "bin/upgrade.php";
-$php composer.phar update --no-dev
+$php composer.phar update --no-dev > /dev/null 2>&1
+echo -e "Finished!";
