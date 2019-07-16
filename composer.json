@@ -9,6 +9,7 @@
       "email": "r.ratsun@treolabs.com"
     }
   ],
+  "minimum-stability": "stable",
   "require": {
     "php": "^7.1",
     "ext-pdo_mysql": "*",
