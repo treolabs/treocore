@@ -38,6 +38,7 @@ namespace Treo\Listeners;
 
 use Espo\Entities\Preferences;
 use Espo\ORM\Entity;
+use stdClass;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -50,7 +51,7 @@ class AppController extends AbstractListener
 
     /**
      * After action user
-     * (change language)
+     * Change language and Hide dashlets
      *
      * @param Event $event
      */
@@ -60,18 +61,20 @@ class AppController extends AbstractListener
         $language = $event->getArgument('request')->get('language');
         $currentLanguage = $result['language'] ?? '';
 
+        $this->hideDashletsWithEmptyEntity($result['preferences']);
+
         if (!empty($result['user']) && !empty($language) && $currentLanguage !== $language) {
             /** @var Entity $preferences */
             $preferences = $this->getPreferences();
 
             // change language for user
             $preferences->set('language', $language);
-            $this->saveEntity($preferences);
 
             $result['language'] = $language;
 
-            $event->setArgument('result', $result);
+            $this->saveEntity($preferences);
         }
+        $event->setArgument('result', $result);
     }
 
     /**
@@ -92,5 +95,34 @@ class AppController extends AbstractListener
     protected function saveEntity(Entity $entity): void
     {
         $this->getEntityManager()->saveEntity($entity);
+    }
+
+    /**
+     * Hide dashlets with empty entity
+     *
+     * @param stdClass $preferences
+     */
+    protected function hideDashletsWithEmptyEntity(stdClass &$preferences): void
+    {
+        $entities = array_keys($this->getContainer()->get('metadata')->get('entityDefs'));
+        $dashletsOptions = $preferences->dashletsOptions;
+
+        if (!empty($dashletsOptions)) {
+            $dashboards = $preferences->dashboardLayout;
+            foreach ($dashboards as $dashboard) {//iterate over dashboard
+                foreach ($dashboard->layout as $key => $layout) {//iterate over layout of dashboard
+                    $id = $layout->id;
+                    //check isset dashlet with this ID layout
+                    $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
+                    if ($issetDashlet && !in_array($dashletsOptions->{$id}->entityType, $entities)) {
+                        //hide dashlet
+                        unset($dashletsOptions->{$id});
+                        unset($dashboard->layout[$key]);
+                    }
+                }
+                //reset key in array
+                $dashboard->layout = array_values($dashboard->layout);
+            }
+        }
     }
 }
