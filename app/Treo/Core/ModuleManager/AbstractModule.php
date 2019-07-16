@@ -326,6 +326,13 @@ abstract class AbstractModule
     }
 
     /**
+     * On module load
+     */
+    public function onLoad()
+    {
+    }
+
+    /**
      * @return Unifier
      */
     protected function getUnifier(): Unifier

@@ -259,6 +259,9 @@ class Container
      */
     protected function loadEventManager(): EventManager
     {
-        return (new EventManager())->setContainer($this);
+        $eventManager = new EventManager($this);
+        $eventManager->loadListeners();
+
+        return $eventManager;
     }
 }

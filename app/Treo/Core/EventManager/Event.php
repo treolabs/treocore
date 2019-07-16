@@ -41,7 +41,7 @@ namespace Treo\Core\EventManager;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Event
+class Event extends \Symfony\Contracts\EventDispatcher\Event
 {
     /**
      * @var array

@@ -36,65 +36,89 @@ declare(strict_types=1);
 
 namespace Treo\Core\EventManager;
 
-use Treo\Listeners\AbstractListener;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Treo\Core\Container;
 
 /**
  * Manager class
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Manager
+class Manager extends EventDispatcher
 {
-    use \Treo\Traits\ContainerTrait;
+    /**
+     * @var Container
+     */
+    private $container;
 
     /**
-     * @var array
+     * @var bool
      */
-    private $listeners = [];
+    private $isLoaded = false;
 
     /**
-     * Dispatch an event
+     * Manager constructor.
      *
-     * @param string $target
-     * @param string $action
-     * @param Event  $event
-     *
-     * @return Event
+     * @param Container $container
      */
-    public function dispatch(string $target, string $action, Event $event): Event
+    public function __construct(Container $container)
     {
-        foreach ($this->getClassNames($target) as $className) {
-            $listener = $this->getListener($className);
-            if (method_exists($listener, $action)) {
-                $listener->{$action}($event);
-            }
-        }
+        // call parent
+        parent::__construct();
 
-        return $event;
+        $this->container = $container;
     }
 
     /**
-     * @param string $className
-     *
-     * @return AbstractListener
+     * @inheritDoc
      */
-    protected function getListener(string $className): AbstractListener
+    public function dispatch($event)
     {
-        if (!isset($this->listeners[$className])) {
-            if (class_exists($className)) {
-                $this->listeners[$className] = (new $className())->setContainer($this->getContainer());
-            }
+        // get arguments
+        $args = \func_num_args();
+
+        $eventName = null;
+        if ($args == 3) {
+            $eventName = \func_get_arg(0) . '.' . \func_get_arg(1);
+            $event = \func_get_arg(2);
+        } elseif ($args == 2) {
+            $eventName = \func_get_arg(1);
         }
 
-        return $this->listeners[$className];
+        return parent::dispatch($event, $eventName);
     }
 
     /**
-     * @param string $target
-     *
+     * Load all listeners
+     */
+    public function loadListeners(): bool
+    {
+        if ($this->isLoaded) {
+            return true;
+        }
+
+        // load listeners
+        foreach ($this->getClassNames() as $action => $rows) {
+            foreach ($rows as $row) {
+                $object = new $row[0]();
+                if (\method_exists($object, 'setContainer')) {
+                    $object->setContainer($this->container);
+                }
+
+                // add
+                $this->addListener($action, [$object, $row[1]]);
+            }
+        }
+
+        $this->isLoaded = true;
+
+        return true;
+    }
+
+    /**
      * @return array
      */
-    protected function getClassNames(string $target): array
+    protected function getClassNames(): array
     {
         // prepare path
         $path = "data/cache/listeners.json";
@@ -110,8 +134,25 @@ class Manager
             }
 
             // for modules
-            foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
+            foreach ($this->container->get('moduleManager')->getModules() as $id => $module) {
                 $module->loadListeners($listeners);
+            }
+
+            $cache = [];
+            foreach ($listeners as $target => $classes) {
+                if ($target == 'AbstractListener') {
+                    continue 1;
+                }
+
+                foreach ($classes as $listener) {
+                    if (!empty($methods = \get_class_methods($listener))) {
+                        foreach ($methods as $method) {
+                            if ($method != 'setContainer') {
+                                $cache["$target.$method"][] = [$listener, $method];
+                            }
+                        }
+                    }
+                }
             }
 
             // create dir if it needs
@@ -119,13 +160,10 @@ class Manager
                 mkdir("data/cache", 0777, true);
             }
 
-            file_put_contents($path, json_encode($listeners, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            file_put_contents($path, json_encode($cache));
         }
 
-        // get data
-        $data = json_decode(file_get_contents($path), true);
-
-        return (isset($data[$target])) ? $data[$target] : [];
+        return json_decode(file_get_contents($path), true);
     }
 
     /**

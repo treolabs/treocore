@@ -48,7 +48,6 @@ use Treo\Core\EventManager\Event;
  */
 class AppController extends AbstractListener
 {
-
     /**
      * After action user
      * Change language and Hide dashlets

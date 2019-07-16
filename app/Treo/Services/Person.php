@@ -45,7 +45,7 @@ class Person extends \Espo\Services\Record
 {
     /**
      * @param Entity $entity
-     * @param $data
+     * @param        $data
      *
      * @return array|bool
      */
@@ -62,11 +62,9 @@ class Person extends \Espo\Services\Record
             $data['OR'][] = $part;
             $toCheck = true;
         }
-        if (
-            ($entity->get('emailAddress') || $entity->get('emailAddressData'))
-            &&
-            ($entity->isNew() || $entity->isAttributeChanged('emailAddress') || $entity->isAttributeChanged('emailAddressData'))
-        ) {
+        if (($entity->get('emailAddress') || $entity->get('emailAddressData'))
+            && ($entity->isNew() || $entity->isAttributeChanged('emailAddress')
+                || $entity->isAttributeChanged('emailAddressData'))) {
             if ($entity->get('emailAddress')) {
                 $list = [$entity->get('emailAddress')];
             }
@@ -91,4 +89,3 @@ class Person extends \Espo\Services\Record
         return $data;
     }
 }
-
