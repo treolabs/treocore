@@ -150,7 +150,11 @@ class PostUpdate
                     $this
                         ->getContainer()
                         ->get('migration')
-                        ->run($row['id'], ModuleManager::prepareVersion($row['from']), ModuleManager::prepareVersion($to));
+                        ->run(
+                            $row['id'],
+                            ModuleManager::prepareVersion($row['from']),
+                            ModuleManager::prepareVersion($to)
+                        );
                 }
             }
         }

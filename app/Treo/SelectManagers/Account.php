@@ -91,8 +91,6 @@ class Account extends \Espo\Core\SelectManagers\Base
      */
     protected function accessPortalOnlyAccount(&$result)
     {
-        $d = array();
-
         $accountIdList = $this->getUser()->getLinkMultipleIdList('accounts');
 
         if (count($accountIdList)) {
@@ -106,4 +104,3 @@ class Account extends \Espo\Core\SelectManagers\Base
         }
     }
 }
-

@@ -56,7 +56,8 @@ class Contact extends \Espo\Core\ORM\Repositories\RDB
 
         $params['customJoin'] .= "
             LEFT JOIN `account_contact` AS accountContact
-            ON accountContact.contact_id = contact.id AND accountContact.account_id = contact.account_id AND accountContact.deleted = 0
+            ON accountContact.contact_id = contact.id AND accountContact.account_id = contact.account_id 
+            AND accountContact.deleted = 0
         ";
     }
 

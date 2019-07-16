@@ -56,6 +56,11 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function createMockService(string $name, array $methods = [])
     {
+        // define path to core app
+        if (!defined('CORE_PATH')) {
+            define('CORE_PATH', dirname(dirname(dirname(__DIR__))));
+        }
+
         $service = $this->createPartialMock($name, array_merge(['getContainer', 'getConfig'], $methods));
         $service
             ->expects($this->any())

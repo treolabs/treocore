@@ -44,15 +44,6 @@ namespace Treo\Composer;
 class CmdTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test is preUpdate method exists
-     */
-    public function testIsPreUpdateExists()
-    {
-        // test
-        $this->assertTrue(method_exists($this->createPartialMock(Cmd::class, []), 'preUpdate'));
-    }
-
-    /**
      * Test is postUpdate method exists
      */
     public function testIsPostUpdateExists()

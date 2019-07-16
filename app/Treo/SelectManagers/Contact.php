@@ -46,7 +46,8 @@ class Contact extends \Espo\Core\SelectManagers\Base
      */
     protected function filterPortalUsers(&$result)
     {
-        $result['customJoin'] .= " JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
+        $result['customJoin'] .= " JOIN user AS portalUser ON portalUser.contact_id = contact.id 
+        AND portalUser.deleted = 0 ";
     }
 
     /**
@@ -54,7 +55,8 @@ class Contact extends \Espo\Core\SelectManagers\Base
      */
     protected function filterNotPortalUsers(&$result)
     {
-        $result['customJoin'] .= " LEFT JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
+        $result['customJoin'] .= " LEFT JOIN user AS portalUser ON portalUser.contact_id = contact.id 
+        AND portalUser.deleted = 0 ";
         $this->addAndWhere(array(
             'portalUser.id' => null
         ), $result);
@@ -90,6 +92,4 @@ class Contact extends \Espo\Core\SelectManagers\Base
         }
         $result['additionalColumnsConditions']['isInactive'] = false;
     }
-
 }
-

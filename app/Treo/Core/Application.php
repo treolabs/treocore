@@ -302,10 +302,8 @@ class Application
         $slim = $this->getSlim();
         $container = $this->getContainer();
 
-        $slim->any(
-            '.*', function () {
-        }
-        );
+        $slim->any('.*', function () {
+        });
 
         // create entryPointManager
         $entryPointManager = new EntryPointManager($container);
@@ -317,11 +315,9 @@ class Application
             $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
-            $slim->hook(
-                'slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
                 $entryPointManager->run($entryPoint, $data);
-            }
-            );
+            });
 
             $slim->run();
         } catch (\Exception $e) {
