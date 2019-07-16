@@ -29,5 +29,8 @@
     "and": "UND",
     "not": "NIHT",
     "or": "ODER"
+  },
+  "messages": {
+    "upgradeFailed": "Upgrade fehlgeschlagen"
   }
 }

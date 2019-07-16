@@ -18,5 +18,8 @@
   },
   "layouts": {
     "relationships": "Bottom Panels"
+  },
+  "messages": {
+    "upgradeFailed": "Upgrade failed"
   }
 }
