@@ -1,6 +1,6 @@
 {
-  "entity": "BlogPost",
-  "field": "state",
+  "entity": "ExampleEntity",
+  "field": "status",
   "places": [
     "draft",
     "review",
