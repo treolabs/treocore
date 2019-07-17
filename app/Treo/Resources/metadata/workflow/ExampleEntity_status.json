@@ -1,6 +1,4 @@
 {
-  "entity": "ExampleEntity",
-  "field": "status",
   "places": [
     "draft",
     "review",

@@ -66,6 +66,14 @@ class Workflow extends Base
             $eventManager = $this->getContainer()->get('eventManager');
 
             foreach ($config as $name => $data) {
+                // parse name
+                $parts = explode("_", $name);
+
+                // skip if wring name
+                if (count($parts) != 2) {
+                    continue 1;
+                }
+
                 // prepare definition
                 $definitionBuilder = (new DefinitionBuilder())->addPlaces($data['places']);
                 foreach ($data['transitions'] as $transition => $row) {
@@ -75,8 +83,8 @@ class Workflow extends Base
 
                 // add
                 $registry->addWorkflow(
-                    new Item($definition, new MethodMarkingStore(true, $data['field']), $eventManager, $name),
-                    new InstanceOfSupportStrategy(get_class($entityManager->getEntity($data['entity'])))
+                    new Item($definition, new MethodMarkingStore(true, $parts[1]), $eventManager, $name),
+                    new InstanceOfSupportStrategy(get_class($entityManager->getEntity($parts[0])))
                 );
             }
         }
