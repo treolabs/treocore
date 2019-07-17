@@ -1,0 +1,24 @@
+{
+  "entity": "BlogPost",
+  "field": "state",
+  "places": [
+    "draft",
+    "review",
+    "rejected",
+    "published"
+  ],
+  "transitions": {
+    "review": {
+      "from": "draft",
+      "to": "review"
+    },
+    "published": {
+      "from": "review",
+      "to": "published"
+    },
+    "rejected": {
+      "from": "review",
+      "to": "rejected"
+    }
+  }
+}
