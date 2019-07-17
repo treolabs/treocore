@@ -1,21 +1,21 @@
 {
   "places": [
     "draft",
-    "review",
+    "reviewed",
     "rejected",
     "published"
   ],
   "transitions": {
-    "review": {
+    "to_review": {
       "from": "draft",
-      "to": "review"
+      "to": "reviewed"
     },
-    "published": {
-      "from": "review",
+    "publish": {
+      "from": "reviewed",
       "to": "published"
     },
-    "rejected": {
-      "from": "review",
+    "reject": {
+      "from": "reviewed",
       "to": "rejected"
     }
   }
