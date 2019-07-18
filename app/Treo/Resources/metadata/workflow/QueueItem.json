@@ -1,28 +1,21 @@
 {
   "field": "status",
   "transitions": {
-    "run": {
-      "from": "Pending",
-      "to": "Running"
-    },
-    "done": {
-      "from": "Running",
-      "to": "Success"
-    },
-    "cancel": {
-      "from": "Pending",
-      "to": "Canceled"
-    },
-    "fail": {
-      "from": "Running",
-      "to": "Failed"
-    },
-    "close": {
-      "from": [
-        "Success",
-        "Failed"
-      ],
-      "to": "Closed"
-    }
+    "Running": [
+      "Pending"
+    ],
+    "Success": [
+      "Running"
+    ],
+    "Canceled": [
+      "Pending"
+    ],
+    "Failed": [
+      "Running"
+    ],
+    "Closed": [
+      "Success",
+      "Failed"
+    ]
   }
 }

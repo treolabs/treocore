@@ -36,6 +36,7 @@ use \Espo\Core\Exceptions\Forbidden;
 use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Conflict;
 use \Espo\Core\Exceptions\NotFound;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 
 use \Espo\Core\Utils\Util;
@@ -54,7 +55,8 @@ class Record extends \Espo\Core\Services\Base
         'selectManagerFactory',
         'fileStorageManager',
         'injectableFactory',
-        'fieldManagerUtil'
+        'fieldManagerUtil',
+        'workflow'
     );
 
     protected $getEntityBeforeUpdate = false;
@@ -764,9 +766,27 @@ class Record extends \Espo\Core\Services\Base
             throw new Forbidden();
         }
 
-        $entity->set($data);
+        // get workflow settings
+        $workflowSettings = $this->getMetadata()->get(['workflow', $entity->getEntityType()], []);
 
-        $this->beforeUpdateEntity($entity, $data);
+        if (!empty($workflowSettings['field']) && isset($data->{$workflowSettings['field']})) {
+            try {
+                $this
+                    ->getInjection('workflow')
+                    ->get($entity)
+                    ->apply($entity, $data->{$workflowSettings['field']});
+            } catch (LogicException $e) {
+                throw new Forbidden();
+            }
+
+            // unset
+            unset($data->{$workflowSettings['field']});
+        }
+
+        if (!empty($data)) {
+            $entity->set($data);
+            $this->beforeUpdateEntity($entity, $data);
+        }
 
         if (!$this->isValid($entity)) {
             throw new BadRequest();

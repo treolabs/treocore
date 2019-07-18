@@ -74,14 +74,14 @@ class Workflow extends Base
 
                 // prepare definition
                 $definitionBuilder = (new DefinitionBuilder())->addPlaces($places);
-                foreach ($data['transitions'] as $transition => $row) {
-                    $definitionBuilder->addTransition(new Transition($transition, $row['from'], $row['to']));
+                foreach ($data['transitions'] as $to => $from) {
+                    $definitionBuilder->addTransition(new Transition($to, $from, $to));
                 }
                 $definition = $definitionBuilder->build();
 
                 // add
                 $registry->addWorkflow(
-                    new Item($definition, new MethodMarkingStore(true, $data['field']), $eventManager),
+                    new Item($definition, new MethodMarkingStore(true, $data['field']), $eventManager, $entity),
                     new InstanceOfSupportStrategy(get_class($entityManager->getEntity($entity)))
                 );
             }
