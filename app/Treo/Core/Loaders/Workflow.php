@@ -58,24 +58,22 @@ class Workflow extends Base
         // create registry
         $registry = new Registry();
 
-        if (!empty($config = $this->getContainer()->get('metadata')->get('workflow', []))) {
+        // get metadata
+        $metadata = $this->getContainer()->get('metadata');
+
+        if (!empty($workflows = $metadata->get('workflow', []))) {
             // get entity manager
             $entityManager = $this->getContainer()->get('entityManager');
 
             // get event manager
             $eventManager = $this->getContainer()->get('eventManager');
 
-            foreach ($config as $name => $data) {
-                // parse name
-                $parts = explode("_", $name);
-
-                // skip if wring name
-                if (count($parts) != 2) {
-                    continue 1;
-                }
+            foreach ($workflows as $entity => $data) {
+                // get places
+                $places = $metadata->get(['entityDefs', $entity, 'fields', $data['field'], 'options']);
 
                 // prepare definition
-                $definitionBuilder = (new DefinitionBuilder())->addPlaces($data['places']);
+                $definitionBuilder = (new DefinitionBuilder())->addPlaces($places);
                 foreach ($data['transitions'] as $transition => $row) {
                     $definitionBuilder->addTransition(new Transition($transition, $row['from'], $row['to']));
                 }
@@ -83,8 +81,8 @@ class Workflow extends Base
 
                 // add
                 $registry->addWorkflow(
-                    new Item($definition, new MethodMarkingStore(true, $parts[1]), $eventManager, $name),
-                    new InstanceOfSupportStrategy(get_class($entityManager->getEntity($parts[0])))
+                    new Item($definition, new MethodMarkingStore(true, $data['field']), $eventManager),
+                    new InstanceOfSupportStrategy(get_class($entityManager->getEntity($entity)))
                 );
             }
         }

@@ -86,7 +86,6 @@ class Metadata extends Base
 
         // add hidden paths
         $this->frontendHiddenPathList[] = ['private'];
-        $this->frontendHiddenPathList[] = ['workflow'];
     }
 
     /**
