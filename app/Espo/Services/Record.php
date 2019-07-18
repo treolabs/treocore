@@ -769,18 +769,22 @@ class Record extends \Espo\Core\Services\Base
         // get workflow settings
         $workflowSettings = $this->getMetadata()->get(['workflow', $entity->getEntityType()], []);
 
-        if (!empty($workflowSettings['field']) && isset($data->{$workflowSettings['field']})) {
-            try {
-                $this
-                    ->getInjection('workflow')
-                    ->get($entity)
-                    ->apply($entity, $data->{$workflowSettings['field']});
-            } catch (LogicException $e) {
-                throw new Forbidden();
-            }
+        if (!empty($workflowSettings)) {
+            foreach ($workflowSettings as $field => $settings) {
+                if (isset($data->{$field})) {
+                    try {
+                        $this
+                            ->getInjection('workflow')
+                            ->get($entity, $entity->getEntityType() . '_' . $field)
+                            ->apply($entity, $data->{$field});
+                    } catch (LogicException $e) {
+                        throw new Forbidden();
+                    }
 
-            // unset
-            unset($data->{$workflowSettings['field']});
+                    // unset
+                    unset($data->{$field});
+                }
+            }
         }
 
         if (!empty($data)) {

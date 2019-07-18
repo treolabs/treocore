@@ -69,21 +69,26 @@ class Workflow extends Base
             $eventManager = $this->getContainer()->get('eventManager');
 
             foreach ($workflows as $entity => $data) {
-                // get places
-                $places = $metadata->get(['entityDefs', $entity, 'fields', $data['field'], 'options']);
+                foreach ($data as $field => $settings) {
+                    // prepare name
+                    $name = $entity . '_' . $field;
 
-                // prepare definition
-                $definitionBuilder = (new DefinitionBuilder())->addPlaces($places);
-                foreach ($data['transitions'] as $to => $from) {
-                    $definitionBuilder->addTransition(new Transition($to, $from, $to));
+                    // get places
+                    $places = $metadata->get(['entityDefs', $entity, 'fields', $field, 'options']);
+
+                    // prepare definition
+                    $definitionBuilder = (new DefinitionBuilder())->addPlaces($places);
+                    foreach ($settings['transitions'] as $to => $from) {
+                        $definitionBuilder->addTransition(new Transition($to, $from, $to));
+                    }
+                    $definition = $definitionBuilder->build();
+
+                    // add
+                    $registry->addWorkflow(
+                        new Item($definition, new MethodMarkingStore(true, $field), $eventManager, $name),
+                        new InstanceOfSupportStrategy(get_class($entityManager->getEntity($entity)))
+                    );
                 }
-                $definition = $definitionBuilder->build();
-
-                // add
-                $registry->addWorkflow(
-                    new Item($definition, new MethodMarkingStore(true, $data['field']), $eventManager, $entity),
-                    new InstanceOfSupportStrategy(get_class($entityManager->getEntity($entity)))
-                );
             }
         }
 
