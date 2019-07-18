@@ -112,8 +112,7 @@ class Container
         $loadMethod = 'load' . ucfirst($name);
 
         if (method_exists($this, $loadMethod)) {
-            $obj = $this->$loadMethod();
-            $this->data[$name] = $obj;
+            $this->data[$name] = $this->$loadMethod();
         } else {
             try {
                 $className = $this->get('metadata')->get('app.loaders.' . ucfirst($name));
@@ -125,8 +124,7 @@ class Container
             }
 
             if (class_exists($className)) {
-                $loadClass = new $className($this);
-                $this->data[$name] = $loadClass->load();
+                $this->data[$name] = (new $className($this))->load();
             }
         }
     }
