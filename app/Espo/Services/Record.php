@@ -36,9 +36,6 @@ use \Espo\Core\Exceptions\Forbidden;
 use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Conflict;
 use \Espo\Core\Exceptions\NotFound;
-use Symfony\Component\Workflow\Exception\LogicException;
-
-
 use \Espo\Core\Utils\Util;
 
 class Record extends \Espo\Core\Services\Base
@@ -55,8 +52,7 @@ class Record extends \Espo\Core\Services\Base
         'selectManagerFactory',
         'fileStorageManager',
         'injectableFactory',
-        'fieldManagerUtil',
-        'workflow'
+        'fieldManagerUtil'
     );
 
     protected $getEntityBeforeUpdate = false;
@@ -701,9 +697,6 @@ class Record extends \Espo\Core\Services\Base
         unset($data->createdByName);
         unset($data->createdAt);
 
-        // run workflow
-        $this->runWorkflow($entity, $data);
-
         $entity->set($data);
 
         if (!$this->getAcl()->check($entity, 'create')) {
@@ -768,9 +761,6 @@ class Record extends \Espo\Core\Services\Base
         if (!$this->getAcl()->check($entity, 'edit')) {
             throw new Forbidden();
         }
-
-        // run workflow
-        $this->runWorkflow($entity, $data);
 
         $entity->set($data);
 
@@ -2318,37 +2308,5 @@ class Record extends \Espo\Core\Services\Base
         return $this
             ->getInjection('metadata')
             ->get("entityDefs." . $entity->getEntityType() . ".links", []);
-    }
-
-    /**
-     * Run workflow if it needs
-     *
-     * @param Entity    $entity
-     * @param \stdClass $data
-     *
-     * @throws Forbidden
-     */
-    protected function runWorkflow(Entity $entity, \stdClass &$data): void
-    {
-        // get workflow settings
-        $workflowSettings = $this->getMetadata()->get(['workflow', $entity->getEntityType()], []);
-
-        if (!empty($workflowSettings)) {
-            foreach ($workflowSettings as $field => $settings) {
-                if (isset($data->{$field}) && $entity->get($field) != $data->{$field}) {
-                    try {
-                        $this
-                            ->getInjection('workflow')
-                            ->get($entity, $entity->getEntityType() . '.' . $field)
-                            ->apply($entity, $entity->get($field) . '_' . $data->{$field});
-                    } catch (LogicException $e) {
-                        throw new Forbidden();
-                    }
-
-                    // unset
-                    unset($data->{$field});
-                }
-            }
-        }
     }
 }
