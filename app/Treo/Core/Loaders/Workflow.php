@@ -70,9 +70,6 @@ class Workflow extends Base
 
             foreach ($workflows as $entity => $data) {
                 foreach ($data as $field => $settings) {
-                    // prepare name
-                    $name = $entity . '_' . $field;
-
                     // get places
                     $places = $metadata->get(['entityDefs', $entity, 'fields', $field, 'options']);
 
@@ -85,7 +82,7 @@ class Workflow extends Base
 
                     // add
                     $registry->addWorkflow(
-                        new Item($definition, new MethodMarkingStore(true, $field), $eventManager, $name),
+                        new Item($definition, new MethodMarkingStore(true, $field), $eventManager, "$entity.$field"),
                         new InstanceOfSupportStrategy(get_class($entityManager->getEntity($entity)))
                     );
                 }

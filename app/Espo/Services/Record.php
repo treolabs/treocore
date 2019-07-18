@@ -775,7 +775,7 @@ class Record extends \Espo\Core\Services\Base
                     try {
                         $this
                             ->getInjection('workflow')
-                            ->get($entity, $entity->getEntityType() . '_' . $field)
+                            ->get($entity, $entity->getEntityType() . '.' . $field)
                             ->apply($entity, $data->{$field});
                     } catch (LogicException $e) {
                         throw new Forbidden();
