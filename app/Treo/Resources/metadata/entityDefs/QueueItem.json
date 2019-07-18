@@ -28,6 +28,7 @@
     },
     "status": {
       "type": "enum",
+      "readOnly": true,
       "default": "Pending",
       "options": [
         "Pending",
