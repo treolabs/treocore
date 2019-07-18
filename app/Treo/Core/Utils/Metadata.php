@@ -84,7 +84,7 @@ class Metadata extends Base
         $this->moduleManager = $moduleManager;
         $this->eventManager = $eventManager;
 
-        // add hidden path
+        // add hidden paths
         $this->frontendHiddenPathList[] = ['private'];
     }
 
