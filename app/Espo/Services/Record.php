@@ -701,6 +701,9 @@ class Record extends \Espo\Core\Services\Base
         unset($data->createdByName);
         unset($data->createdAt);
 
+        // run workflow
+        $this->runWorkflow($entity, $data);
+
         $entity->set($data);
 
         if (!$this->getAcl()->check($entity, 'create')) {
@@ -766,31 +769,12 @@ class Record extends \Espo\Core\Services\Base
             throw new Forbidden();
         }
 
-        // get workflow settings
-        $workflowSettings = $this->getMetadata()->get(['workflow', $entity->getEntityType()], []);
+        // run workflow
+        $this->runWorkflow($entity, $data);
 
-        if (!empty($workflowSettings)) {
-            foreach ($workflowSettings as $field => $settings) {
-                if (isset($data->{$field})) {
-                    try {
-                        $this
-                            ->getInjection('workflow')
-                            ->get($entity, $entity->getEntityType() . '.' . $field)
-                            ->apply($entity, $data->{$field});
-                    } catch (LogicException $e) {
-                        throw new Forbidden();
-                    }
+        $entity->set($data);
 
-                    // unset
-                    unset($data->{$field});
-                }
-            }
-        }
-
-        if (!empty($data)) {
-            $entity->set($data);
-            $this->beforeUpdateEntity($entity, $data);
-        }
+        $this->beforeUpdateEntity($entity, $data);
 
         if (!$this->isValid($entity)) {
             throw new BadRequest();
@@ -2334,5 +2318,37 @@ class Record extends \Espo\Core\Services\Base
         return $this
             ->getInjection('metadata')
             ->get("entityDefs." . $entity->getEntityType() . ".links", []);
+    }
+
+    /**
+     * Run workflow if it needs
+     *
+     * @param Entity    $entity
+     * @param \stdClass $data
+     *
+     * @throws Forbidden
+     */
+    protected function runWorkflow(Entity $entity, \stdClass &$data): void
+    {
+        // get workflow settings
+        $workflowSettings = $this->getMetadata()->get(['workflow', $entity->getEntityType()], []);
+
+        if (!empty($workflowSettings)) {
+            foreach ($workflowSettings as $field => $settings) {
+                if (isset($data->{$field}) && $entity->get($field) != $data->{$field}) {
+                    try {
+                        $this
+                            ->getInjection('workflow')
+                            ->get($entity, $entity->getEntityType() . '.' . $field)
+                            ->apply($entity, $entity->get($field) . '_' . $data->{$field});
+                    } catch (LogicException $e) {
+                        throw new Forbidden();
+                    }
+
+                    // unset
+                    unset($data->{$field});
+                }
+            }
+        }
     }
 }

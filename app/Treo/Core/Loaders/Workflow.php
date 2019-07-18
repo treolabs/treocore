@@ -75,8 +75,10 @@ class Workflow extends Base
 
                     // prepare definition
                     $definitionBuilder = (new DefinitionBuilder())->addPlaces($places);
-                    foreach ($settings['transitions'] as $to => $from) {
-                        $definitionBuilder->addTransition(new Transition($to, $from, $to));
+                    foreach ($settings['transitions'] as $to => $froms) {
+                        foreach ((array)$froms as $from) {
+                            $definitionBuilder->addTransition(new Transition($from . '_' . $to, $from, $to));
+                        }
                     }
                     $definition = $definitionBuilder->build();
 
