@@ -148,7 +148,13 @@
     "username": "Username",
     "password": "Password",
     "measure": "Measurement",
-    "units": "Units"
+    "units": "Units",
+    "shippingAddressCity": "City (Shipping)",
+    "shippingAddressStreet": "Street (Shipping)",
+    "shippingAddressCountry": "Country (Shipping)",
+    "shippingAddressState": "State (Shipping)",
+    "shippingAddressPostalCode": "Postal Code (Shipping)",
+    "shippingAddressMap": "Map (Shipping)"
   },
   "labels": {
     "status": "Status",

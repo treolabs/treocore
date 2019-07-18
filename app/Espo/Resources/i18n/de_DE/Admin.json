@@ -63,7 +63,9 @@
     "detailSmallPortal": "Detail (Klein, Portal)",
     "listSmallPortal": "Liste (Klein, Portal)",
     "listPortal": "Liste (Portal)",
-    "relationshipsPortal": "Beziehungen (Portal)"
+    "relationshipsPortal": "Beziehungen (Portal)",
+    "listForAccount": "Liste (für Firma)",
+    "listForContact": "Liste (für Kontakt)"
   },
   "fieldTypes": {
     "address": "Adresse",

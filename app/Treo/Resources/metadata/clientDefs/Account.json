@@ -16,11 +16,6 @@
       }
    ],
    "boolFilterList": ["onlyMy"],
-   "additionalLayouts": {
-      "detailConvert": {
-         "type": "detail"
-      }
-   },
    "color": "#edc755",
    "iconClass": "fas fa-building"
 }

@@ -74,7 +74,9 @@
         "sidePanelsEdit": "Side Panels (Edit)",
         "sidePanelsDetailSmall": "Side Panels (Detail Small)",
         "sidePanelsEditSmall": "Side Panels (Edit Small)",
-        "kanban": "Kanban"
+        "kanban": "Kanban",
+        "listForAccount": "List (for Account)",
+        "listForContact": "List (for Contact)"
     },
     "fieldTypes": {
         "address": "Address",
