@@ -28,9 +28,6 @@
         "onlyMy"
     ],
     "additionalLayouts": {
-        "detailConvert": {
-            "type": "detail"
-        },
         "listForAccount": {
             "type": "listSmall"
         }
