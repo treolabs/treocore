@@ -323,6 +323,18 @@ class Stream extends \Espo\Core\Services\Base
             'targetType', 'createdAt', 'createdById', 'createdByName', 'isGlobal', 'isInternal', 'createdByGender'
         ];
 
+        $noteSql = $pdo->prepare('SELECT DISTINCT parent_type FROM note WHERE deleted = 0');
+        $noteSql->execute();
+        //get unique parent type with NOTE
+        $notes = $noteSql->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($notes as $key => $note) {
+            if (!$this->isExistEntity($note['parent_type'])) {
+                //if do not exist entity, then add IN NOT()
+                $inNotParentType[] = $note['parent_type'];
+            }
+        }
+
         $onlyTeamEntityTypeList = $this->getOnlyTeamEntityTypeList($user);
         $onlyOwnEntityTypeList = $this->getOnlyOwnEntityTypeList($user);
 
@@ -599,6 +611,10 @@ class Stream extends \Espo\Core\Services\Base
             }
         }
 
+        if (!empty($inNotParentType)) {
+            $whereClause[]['parentType!='] = $inNotParentType;
+        }
+
         $ignoreScopeList = $this->getIgnoreScopeList($user);
 
         if (!empty($ignoreScopeList)) {
@@ -814,6 +830,10 @@ class Stream extends \Espo\Core\Services\Base
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
+        }
+
+        if (!empty($inNotParentType)) {
+            $whereClause[]['parentType!='] = $inNotParentType;
         }
 
         $ignoreScopeList = $this->getIgnoreScopeList($this->getUser());
@@ -1448,5 +1468,21 @@ class Stream extends \Espo\Core\Services\Base
                 }
             }
         }
+    }
+
+    /**
+     * @param string $entityName
+     *
+     * @return bool
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function isExistEntity(string $entityName): bool
+    {
+        $entity = null;
+        if ($this->getEntityManager()->hasRepository($entityName)) {
+            $entity = $this->getEntityManager()->getEntity($entityName);
+        }
+
+        return empty($entity) ? false : true;
     }
 }

@@ -116,7 +116,7 @@ class AppController extends AbstractListener
                     $id = $layout->id;
                     //check isset dashlet with this ID layout
                     $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
-                    if ($issetDashlet && !$this->isExistEntity($dashletsOptions->{$id}->entityType)) {
+                    if ($issetDashlet && !$this->getService('Stream')->isExistEntity($dashletsOptions->{$id}->entityType)) {
                         //hide dashlet
                         unset($dashletsOptions->{$id});
                         unset($dashboard->layout[$key]);
@@ -126,21 +126,5 @@ class AppController extends AbstractListener
                 $dashboard->layout = array_values($dashboard->layout);
             }
         }
-    }
-
-    /**
-     * @param string $entityName
-     *
-     * @return bool
-     * @throws \Espo\Core\Exceptions\Error
-     */
-    protected function isExistEntity(string $entityName): bool
-    {
-        $entity = null;
-        if ($this->getEntityManager()->hasRepository($entityName)) {
-            $entity = $this->getEntityManager()->getEntity($entityName);
-        }
-
-        return empty($entity) ? false : true;
     }
 }
