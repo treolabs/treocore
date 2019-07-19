@@ -323,15 +323,16 @@ class Stream extends \Espo\Core\Services\Base
             'targetType', 'createdAt', 'createdById', 'createdByName', 'isGlobal', 'isInternal', 'createdByGender'
         ];
 
-        $noteSql = $pdo->prepare('SELECT DISTINCT parent_type FROM note WHERE deleted = 0');
-        $noteSql->execute();
-        //get unique parent type with NOTE
-        $notes = $noteSql->fetchAll(\PDO::FETCH_ASSOC);
+        $notes = $this->getEntityManager()->getRepository('Note')
+            ->select(['parentType'])
+            ->distinct()
+            ->find()
+            ->toArray();
 
         foreach ($notes as $key => $note) {
-            if (!$this->isExistEntity($note['parent_type'])) {
+            if (!$this->isExistEntity($note['parentType'])) {
                 //if do not exist entity, then add IN NOT()
-                $inNotParentType[] = $note['parent_type'];
+                $inNotParentType[] = $note['parentType'];
             }
         }
 
@@ -605,7 +606,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $whereClause[]['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $whereClause[]['type'] = ['Update', 'Status'];
                     break;
             }
@@ -826,7 +827,7 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $where['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
