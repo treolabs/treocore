@@ -29,7 +29,7 @@ fi
 
 # queue manager process
 stream=0
-while [ $stream -lt 10 ]
+while [ $stream -lt 2 ]
 do
   if [[ ! "$(ps ax | grep treo-qm.sh)" =~ "bin/treo-qm.sh $id $stream" ]]; then
     setsid ./bin/treo-qm.sh $id $stream $php >/dev/null 2>&1 &
