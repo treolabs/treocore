@@ -833,7 +833,7 @@ class Stream extends \Espo\Core\Services\Base
         }
 
         if (!empty($inNotParentType)) {
-            $whereClause[]['parentType!='] = $inNotParentType;
+            $where[]['parentType!='] = $inNotParentType;
         }
 
         $ignoreScopeList = $this->getIgnoreScopeList($this->getUser());
@@ -1478,11 +1478,6 @@ class Stream extends \Espo\Core\Services\Base
      */
     public function isExistEntity(string $entityName): bool
     {
-        $entity = null;
-        if ($this->getEntityManager()->hasRepository($entityName)) {
-            $entity = $this->getEntityManager()->getEntity($entityName);
-        }
-
-        return empty($entity) ? false : true;
+        return class_exists($this->getEntityManager()->normalizeEntityName($entityName));
     }
 }

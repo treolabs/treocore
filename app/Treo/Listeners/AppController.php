@@ -116,7 +116,7 @@ class AppController extends AbstractListener
                     $id = $layout->id;
                     //check isset dashlet with this ID layout
                     $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
-                    if ($issetDashlet && !$this->getService('Stream')->isExistEntity($dashletsOptions->{$id}->entityType)) {
+                    if ($issetDashlet && !class_exists($this->getEntityManager()->normalizeEntityName($dashletsOptions->{$id}->entityType))) {
                         //hide dashlet
                         unset($dashletsOptions->{$id});
                         unset($dashboard->layout[$key]);
