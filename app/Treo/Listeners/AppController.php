@@ -53,6 +53,8 @@ class AppController extends AbstractListener
      * Change language and Hide dashlets
      *
      * @param Event $event
+     *
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function afterActionUser(Event $event)
     {
@@ -100,10 +102,11 @@ class AppController extends AbstractListener
      * Hide dashlets with empty entity
      *
      * @param stdClass $preferences
+     *
+     * @throws \Espo\Core\Exceptions\Error
      */
     protected function hideDashletsWithEmptyEntity(stdClass &$preferences): void
     {
-        $entities = array_keys($this->getContainer()->get('metadata')->get('entityDefs'));
         $dashletsOptions = $preferences->dashletsOptions;
 
         if (!empty($dashletsOptions)) {
@@ -113,7 +116,7 @@ class AppController extends AbstractListener
                     $id = $layout->id;
                     //check isset dashlet with this ID layout
                     $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
-                    if ($issetDashlet && !in_array($dashletsOptions->{$id}->entityType, $entities)) {
+                    if ($issetDashlet && !class_exists($this->getEntityManager()->normalizeEntityName($dashletsOptions->{$id}->entityType))) {
                         //hide dashlet
                         unset($dashletsOptions->{$id});
                         unset($dashboard->layout[$key]);

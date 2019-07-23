@@ -323,6 +323,19 @@ class Stream extends \Espo\Core\Services\Base
             'targetType', 'createdAt', 'createdById', 'createdByName', 'isGlobal', 'isInternal', 'createdByGender'
         ];
 
+        $notes = $this->getEntityManager()->getRepository('Note')
+            ->select(['parentType'])
+            ->distinct()
+            ->find()
+            ->toArray();
+
+        foreach ($notes as $key => $note) {
+            if (!$this->isExistEntity($note['parentType'])) {
+                //if do not exist entity, then add IN NOT()
+                $inNotParentType[] = $note['parentType'];
+            }
+        }
+
         $onlyTeamEntityTypeList = $this->getOnlyTeamEntityTypeList($user);
         $onlyOwnEntityTypeList = $this->getOnlyOwnEntityTypeList($user);
 
@@ -593,10 +606,14 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $whereClause[]['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $whereClause[]['type'] = ['Update', 'Status'];
                     break;
             }
+        }
+
+        if (!empty($inNotParentType)) {
+            $whereClause[]['parentType!='] = $inNotParentType;
         }
 
         $ignoreScopeList = $this->getIgnoreScopeList($user);
@@ -810,10 +827,14 @@ class Stream extends \Espo\Core\Services\Base
                 case 'posts':
                     $where['type'] = 'Post';
                     break;
-                  case 'updates':
+                case 'updates':
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
+        }
+
+        if (!empty($inNotParentType)) {
+            $where[]['parentType!='] = $inNotParentType;
         }
 
         $ignoreScopeList = $this->getIgnoreScopeList($this->getUser());
@@ -1448,5 +1469,16 @@ class Stream extends \Espo\Core\Services\Base
                 }
             }
         }
+    }
+
+    /**
+     * @param string $entityName
+     *
+     * @return bool
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function isExistEntity(string $entityName): bool
+    {
+        return class_exists($this->getEntityManager()->normalizeEntityName($entityName));
     }
 }
