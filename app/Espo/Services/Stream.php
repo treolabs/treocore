@@ -330,7 +330,7 @@ class Stream extends \Espo\Core\Services\Base
             ->toArray();
 
         foreach ($notes as $key => $note) {
-            if (!$this->isExistEntity($note['parentType'])) {
+            if (!empty($note['parentType']) && !$this->isExistEntity($note['parentType'])) {
                 //if do not exist entity, then add IN NOT()
                 $inNotParentType[] = $note['parentType'];
             }
@@ -338,7 +338,6 @@ class Stream extends \Espo\Core\Services\Base
 
         $onlyTeamEntityTypeList = $this->getOnlyTeamEntityTypeList($user);
         $onlyOwnEntityTypeList = $this->getOnlyOwnEntityTypeList($user);
-
         $selectParamsList = [];
 
         $selectParamsSubscription = [
@@ -358,7 +357,9 @@ class Stream extends \Espo\Core\Services\Base
             'orderBy' => 'number',
             'order' => 'DESC'
         ];
-
+        if (!empty($inNotParentType)) {
+            $selectParamsSubscription['whereClause']['parentType!='] = $inNotParentType;
+        }
         if ($user->isPortal()) {
             $selectParamsSubscription['whereClause'][] = [
                 'isInternal' => false
@@ -612,9 +613,7 @@ class Stream extends \Espo\Core\Services\Base
             }
         }
 
-        if (!empty($inNotParentType)) {
-            $whereClause[]['parentType!='] = $inNotParentType;
-        }
+
 
         $ignoreScopeList = $this->getIgnoreScopeList($user);
 
@@ -831,10 +830,6 @@ class Stream extends \Espo\Core\Services\Base
                     $where['type'] = ['Update', 'Status'];
                     break;
             }
-        }
-
-        if (!empty($inNotParentType)) {
-            $where[]['parentType!='] = $inNotParentType;
         }
 
         $ignoreScopeList = $this->getIgnoreScopeList($this->getUser());
