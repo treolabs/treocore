@@ -107,25 +107,45 @@ class AppController extends AbstractListener
      */
     protected function hideDashletsWithEmptyEntity(stdClass &$preferences): void
     {
-        $dashletsOptions = $preferences->dashletsOptions;
+        $dashletsOptions = isset($preferences->dashletsOptions) ? $preferences->dashletsOptions : null;
 
         if (!empty($dashletsOptions)) {
-            $dashboards = $preferences->dashboardLayout;
+            $dashboards = isset($preferences->dashboardLayout) ? $preferences->dashboardLayout : [];
             foreach ($dashboards as $dashboard) {//iterate over dashboard
-                foreach ($dashboard->layout as $key => $layout) {//iterate over layout of dashboard
-                    $id = $layout->id;
-                    //check isset dashlet with this ID layout
-                    $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
-                    $isEntity = !empty($dashletsOptions->{$id}->entityType) && class_exists($this->getEntityManager()->normalizeEntityName($dashletsOptions->{$id}->entityType));
-                    if ($issetDashlet && !$isEntity) {
-                        //hide dashlet
-                        unset($dashletsOptions->{$id});
-                        unset($dashboard->layout[$key]);
+                if (is_array($dashboard->layout)) {
+                    foreach ($dashboard->layout as $key => $layout) {//iterate over layout of dashboard
+                        $id = $layout->id;
+                        //check isset dashlet with this ID layout
+                        $issetDashlet = isset($dashletsOptions->{$id}) && is_object($dashletsOptions->{$id});
+                        $isEntity = !empty($dashletsOptions->{$id}->entityType)
+                            && $this->isExistEntity($dashletsOptions->{$id}->entityType);
+                        if ($issetDashlet && !$isEntity) {
+                            //hide dashlet
+                            unset($dashletsOptions->{$id});
+                            if (isset($dashboard->layout[$key])) {
+                                unset($dashboard->layout[$key]);
+                            }
+                        }
                     }
+                    //reset key in array
+                    $dashboard->layout = array_values($dashboard->layout);
                 }
-                //reset key in array
-                $dashboard->layout = array_values($dashboard->layout);
             }
         }
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return bool
+     */
+    protected function isExistEntity(?string $name): bool
+    {
+        $isEntity = false;
+        if (!empty($name)) {
+            $isEntity = class_exists($this->getEntityManager()->normalizeEntityName($name));
+        }
+
+        return $isEntity;
     }
 }
