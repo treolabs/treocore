@@ -34,39 +34,50 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Migrations;
 
-use Treo\Core\Utils\Metadata;
-use Treo\Core\FileStorage\Manager;
+use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Utils\Util;
+use Treo\Services\FileMigrate;
 
 /**
- * FileStorageManager loader
+ * Migration class for version 3.20.3
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class FileStorageManager extends Base
+class V3Dot20Dot3 extends AbstractMigration
 {
-
     /**
-     * Load FileStorageManager
-     *
-     * @return \Treo\Core\FileStorage\Manager
+     * @inheritdoc
      */
-    public function load()
+    public function up(): void
     {
-        return new Manager(
-            $this->getMetadata()->get(['app', 'fileStorage', 'implementationClassNameMap']),
-            $this->getContainer()
-        );
+        $mover = new FileMigrate($this->getContainer());
+
+        foreach ($this->getAttachmentsId() as $id) {
+            $mover->setAttachmentId($id);
+
+            if ($mover->fileExist()) {
+                $mover->moveFile();
+            }
+        }
+
+        Util::removedir("data/upload/thumbs");
     }
 
     /**
-     * Get metadata
-     *
-     * @return Metadata
+     * @inheritdoc
      */
-    protected function getMetadata()
+    public function down(): void
     {
-        return $this->getContainer()->get('metadata');
     }
+
+    /**
+     * @return array
+     */
+    protected function getAttachmentsId()
+    {
+        return array_column($this->getEntityManager()->getRepository('Attachment')->find()->toArray(), 'id');
+    }
+
 }

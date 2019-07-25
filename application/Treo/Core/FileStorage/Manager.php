@@ -1,17 +1,21 @@
 <?php
-/************************************************************************
- * This file is part of EspoCRM.
+/**
+ * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * EspoCRM is free software: you can redistribute it and/or modify
+ * TreoCore is EspoCRM-based Open Source application.
+ * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Website: https://treolabs.com
+ *
+ * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * EspoCRM is distributed in the hope that it will be useful,
+ * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,33 +28,57 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
- ************************************************************************/
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
+ * and "TreoCore" word.
+ */
 
-namespace Espo\Core\FileStorage;
+namespace Treo\Core\FileStorage;
 
-use \Espo\Entities\Attachment;
+use Espo\Core\Exceptions\Error;
+use Treo\Core\Container;
+use Treo\Entities\Attachment;
 
-use \Espo\Core\Exceptions\Error;
-
+/**
+ * Class Manager
+ * @package Treo\Core\FileStorage
+ */
 class Manager
 {
-    private $implementations = array();
+    /**
+     * @var array
+     */
+    private $implementations = [];
 
-    private $implementationClassNameMap = array();
+    /**
+     * @var array
+     */
+    private $implementationClassNameMap = [];
 
+    /**
+     * @var Container
+     */
     private $container;
 
+    /**
+     * Manager constructor.
+     * @param array $implementationClassNameMap
+     * @param $container
+     */
     public function __construct(array $implementationClassNameMap, $container)
     {
         $this->implementationClassNameMap = $implementationClassNameMap;
         $this->container = $container;
     }
 
-    private function getImplementation($storage = null)
+    /**
+     * @param null $storage
+     * @return mixed
+     * @throws Error
+     */
+    protected function getImplementation($storage = null)
     {
         if (!$storage) {
-            $storage = 'EspoUploadDir';
+            $storage = 'UploadDir';
         }
 
         if (array_key_exists($storage, $this->implementations)) {
@@ -71,42 +99,78 @@ class Manager
         return $implementation;
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function isFile(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->isFile($attachment);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function getContents(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->getContents($attachment);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @param $contents
+     * @return mixed
+     * @throws Error
+     */
     public function putContents(Attachment $attachment, $contents)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->putContents($attachment, $contents);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function unlink(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->unlink($attachment);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function getLocalFilePath(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->getLocalFilePath($attachment);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function hasDownloadUrl(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));
         return $implementation->hasDownloadUrl($attachment);
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return mixed
+     * @throws Error
+     */
     public function getDownloadUrl(Attachment $attachment)
     {
         $implementation = $this->getImplementation($attachment->get('storage'));

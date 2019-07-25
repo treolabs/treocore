@@ -27,12 +27,14 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\EntryPoints;
+namespace Treo\EntryPoints;
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\BadRequest;
-use \Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Forbidden;
+use Espo\Core\Exceptions\NotFound;
+use Treo\Core\Container;
+use Treo\Core\FileStorage\Storages\UploadDir;
 
 class Image extends \Espo\Core\EntryPoints\Base
 {
@@ -44,17 +46,13 @@ class Image extends \Espo\Core\EntryPoints\Base
         'image/gif',
     );
 
-    protected $imageSizes = array(
-        'xxx-small' => array(18, 18),
-        'xx-small' => array(32, 32),
-        'x-small' => array(64, 64),
-        'small' => array(128, 128),
-        'medium' => array(256, 256),
-        'large' => array(512, 512),
-        'x-large' => array(864, 864),
-        'xx-large' => array(1024, 1024),
-    );
+    protected $imageSizes;
 
+    public function __construct(Container $container)
+    {
+        parent::__construct($container);
+        $this->imageSizes = $this->getMetadata()->get(['app', 'imageSizes']);
+    }
 
     public function run()
     {
@@ -82,9 +80,6 @@ class Image extends \Espo\Core\EntryPoints\Base
         if (!$disableAccessCheck && !$this->getAcl()->checkEntity($attachment)) {
             throw new Forbidden();
         }
-
-        $sourceId = $attachment->getSourceId();
-
         $filePath = $this->getEntityManager()->getRepository('Attachment')->getFilePath($attachment);
 
         $fileType = $attachment->get('type');
@@ -99,7 +94,7 @@ class Image extends \Espo\Core\EntryPoints\Base
 
         if (!empty($size)) {
             if (!empty($this->imageSizes[$size])) {
-                $thumbFilePath = "data/upload/thumbs/{$sourceId}_{$size}";
+                $thumbFilePath = UploadDir::BASE_THUMB_PATH . $attachment->get('storageFilePath') . "/{$size}/" . $attachment->get('name');
 
                 if (!file_exists($thumbFilePath)) {
                     $targetImage = $this->getThumbImage($filePath, $fileType, $size);
@@ -133,7 +128,7 @@ class Image extends \Espo\Core\EntryPoints\Base
         } else {
             $fileName = $attachment->get('name');
         }
-        header('Content-Disposition:inline;filename="'.$fileName.'"');
+        header('Content-Disposition:inline;filename="' . $fileName . '"');
         if (!empty($fileType)) {
             header('Content-Type: ' . $fileType);
         }
@@ -181,7 +176,7 @@ class Image extends \Espo\Core\EntryPoints\Base
         switch ($fileType) {
             case 'image/jpeg':
                 $sourceImage = imagecreatefromjpeg($filePath);
-                imagecopyresampled ($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth, $originalHeight);
+                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth, $originalHeight);
                 break;
             case 'image/png':
                 $sourceImage = imagecreatefrompng($filePath);

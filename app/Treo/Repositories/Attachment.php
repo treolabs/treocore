@@ -36,10 +36,13 @@ declare(strict_types=1);
 
 namespace Treo\Repositories;
 
+use Espo\Core\ORM\Entity;
+use Treo\Core\FilePathBuilder;
+use Treo\Core\FileStorage\Storages\UploadDir;
+
 /**
- * Attachment repository
- *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * Class Attachment
+ * @package Treo\Repositories
  */
 class Attachment extends \Espo\Repositories\Attachment
 {
@@ -52,6 +55,8 @@ class Attachment extends \Espo\Repositories\Attachment
         parent::init();
 
         $this->addDependency('fileStorageManager');
+        $this->addDependency('filePathBuilder');
+        $this->addDependency('fileManager');
     }
 
     /**
@@ -60,5 +65,79 @@ class Attachment extends \Espo\Repositories\Attachment
     protected function getFileStorageManager()
     {
         return $this->getInjection('fileStorageManager');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getPathBuilder()
+    {
+        return $this->getInjection('filePathBuilder');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getFileManager()
+    {
+        return $this->getInjection('fileManager');
+    }
+
+    /**
+     * @param Entity $entity
+     * @param null $role
+     *
+     * @return |null
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function getCopiedAttachment(Entity $entity, $role = null)
+    {
+        $attachment = $this->get();
+
+        $attachment->set([
+            'sourceId' => $entity->getSourceId(),
+            'name' => $entity->get('name'),
+            'type' => $entity->get('type'),
+            'size' => $entity->get('size'),
+            'role' => $entity->get('role'),
+            'storageFilePath' => $entity->get('storageFilePath')
+        ]);
+
+        if ($role) {
+            $attachment->set('role', $role);
+        }
+
+        $this->save($attachment);
+
+        return $attachment;
+
+    }
+
+    /**
+     * @param Entity $entity
+     * @return string
+     */
+    public function copy(Entity $entity): string
+    {
+        $source = $this->where(["id" => $entity->get('sourceId')])->findOne();
+
+        $sourcePath = $this->getFilePath($source);
+        $destPath = $this->getDestPath(FilePathBuilder::UPLOAD);
+        $fullDestPath = UploadDir::BASE_PATH . $destPath;
+
+        if ($this->getFileManager()->copy($sourcePath, $fullDestPath, false, null, true)) {
+            return $destPath;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    protected function getDestPath(string $type): string
+    {
+        return $this->getPathBuilder()->createPath($type);
     }
 }

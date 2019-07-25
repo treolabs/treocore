@@ -1,0 +1,9 @@
+{
+  "implementationClassNameMap": {
+    "UploadDir": "Treo\\Core\\FileStorage\\Storages\\UploadDir"
+  },
+  "upload": {
+    "folderDepth": 3,
+    "folderNameLength": 2
+  }
+}

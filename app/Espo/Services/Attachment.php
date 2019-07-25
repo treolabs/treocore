@@ -64,31 +64,31 @@ class Attachment extends Record
         return $attachment;
     }
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
-        if (!empty($data->file)) {
-            $arr = explode(',', $data->file);
+        if (!empty($attachment->file)) {
+            $arr = explode(',', $attachment->file);
             $contents = '';
             if (count($arr) > 1) {
                 $contents = $arr[1];
             }
 
             $contents = base64_decode($contents);
-            $data->contents = $contents;
+            $attachment->contents = $contents;
 
             $relatedEntityType = null;
             $field = null;
             $role = 'Attachment';
-            if (isset($data->parentType)) {
-                $relatedEntityType = $data->parentType;
-            } else if (isset($data->relatedType)) {
-                $relatedEntityType = $data->relatedType;
+            if (isset($attachment->parentType)) {
+                $relatedEntityType = $attachment->parentType;
+            } else if (isset($attachment->relatedType)) {
+                $relatedEntityType = $attachment->relatedType;
             }
-            if (isset($data->field)) {
-                $field = $data->field;
+            if (isset($attachment->field)) {
+                $field = $attachment->field;
             }
-            if (isset($data->role)) {
-                $role = $data->role;
+            if (isset($attachment->role)) {
+                $role = $attachment->role;
             }
             if (!$relatedEntityType || !$field) {
                 throw new BadRequest("Params 'field' and 'parentType' not passed along with 'file'.");
@@ -142,9 +142,9 @@ class Attachment extends Record
             }
         }
 
-        $entity = parent::createEntity($data);
+        $entity = parent::createEntity($attachment);
 
-        if (!empty($data->file)) {
+        if (!empty($attachment->file)) {
             $entity->clear('contents');
         }
 

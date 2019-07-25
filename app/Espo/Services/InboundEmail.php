@@ -45,9 +45,9 @@ class InboundEmail extends \Espo\Services\Record
 
     const PORTION_LIMIT = 20;
 
-    public function createEntity($data)
+    public function createEntity($attachment)
     {
-        $entity = parent::createEntity($data);
+        $entity = parent::createEntity($attachment);
         return $entity;
     }
 

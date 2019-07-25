@@ -34,39 +34,31 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
-
-use Treo\Core\Utils\Metadata;
-use Treo\Core\FileStorage\Manager;
+namespace Treo\Core\Utils;
 
 /**
- * FileStorageManager loader
+ * Class Random
  *
- * @author r.ratsun@zinitsolutions.com
+ * @package Treo\Core\Utils
  */
-class FileStorageManager extends Base
+class Random
 {
+    const CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     /**
-     * Load FileStorageManager
+     * @param int $length
      *
-     * @return \Treo\Core\FileStorage\Manager
+     * @return string
      */
-    public function load()
+    public static function getString(int $length): string
     {
-        return new Manager(
-            $this->getMetadata()->get(['app', 'fileStorage', 'implementationClassNameMap']),
-            $this->getContainer()
-        );
-    }
+        $string = '';
+        $strLength = strlen(self::CHARACTERS) - 1;
 
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        for ($i = 0; $i < $length; $i++) {
+            $string .= self::CHARACTERS[rand(0, $strLength)];
+        }
+
+        return $string;
     }
 }
