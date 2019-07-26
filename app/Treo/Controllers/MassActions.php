@@ -39,14 +39,16 @@ namespace Treo\Controllers;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Forbidden;
 use Slim\Http\Request;
+use Treo\Core\EventManager\Event;
 
 /**
  * Class MassActions
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class MassActions extends \Espo\Core\Controllers\Base
 {
+
     /**
      * @param array     $params
      * @param \stdClass $data
@@ -86,6 +88,13 @@ class MassActions extends \Espo\Core\Controllers\Base
         if (!$this->getAcl()->check($params['scope'], 'delete')) {
             throw new Forbidden();
         }
+
+        $event = new Event(['params' => $params, 'data' => $data, 'request' => $request]);
+        $this
+            ->getContainer()
+            ->get('eventManager')
+            ->dispatch($params['scope'] . 'Controller', 'beforeActionMassDelete', $event);
+
 
         return $this->getService('MassActions')->massDelete($params['scope'], $data);
     }
