@@ -120,17 +120,22 @@ class Manager extends EventDispatcher
      */
     protected function getClassNames(): array
     {
-        // prepare path
-        $path = "data/cache/listeners.json";
+        // get useCache param
+        $useCache = $this->container->get('config')->get('useCache', false);
 
-        if (!file_exists($path)) {
+        // prepare path
+        $path = 'data/cache/listeners.json';
+
+        if ($useCache && file_exists($path)) {
+            $data = json_decode(file_get_contents($path), true);
+        } else {
             // prepare listeners
             $listeners = [];
 
             // for core
             $corePath = CORE_PATH . '/Treo/Listeners';
             if (file_exists($corePath)) {
-                $this->parseDir("Treo", $corePath, $listeners);
+                $this->parseDir('Treo', $corePath, $listeners);
             }
 
             // for modules
@@ -138,7 +143,7 @@ class Manager extends EventDispatcher
                 $module->loadListeners($listeners);
             }
 
-            $cache = [];
+            $data = [];
             foreach ($listeners as $target => $classes) {
                 if ($target == 'AbstractListener') {
                     continue 1;
@@ -148,22 +153,25 @@ class Manager extends EventDispatcher
                     if (!empty($methods = \get_class_methods($listener))) {
                         foreach ($methods as $method) {
                             if ($method != 'setContainer') {
-                                $cache["$target.$method"][] = [$listener, $method];
+                                $data["$target.$method"][] = [$listener, $method];
                             }
                         }
                     }
                 }
             }
 
-            // create dir if it needs
-            if (!file_exists("data/cache")) {
-                mkdir("data/cache", 0777, true);
-            }
+            if ($useCache) {
+                // create dir if it needs
+                if (!file_exists('data/cache')) {
+                    mkdir('data/cache', 0777, true);
+                }
 
-            file_put_contents($path, json_encode($cache));
+                // save cache file
+                file_put_contents($path, json_encode($data));
+            }
         }
 
-        return json_decode(file_get_contents($path), true);
+        return $data;
     }
 
     /**
