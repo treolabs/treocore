@@ -58,6 +58,15 @@ Espo.define('treo-core:views/settings/modals/unit-edit', 'views/modal',
 
             this.setupHeader();
 
+            if (this.model) {
+                this.getModelFactory().create(null, model => {
+                    model = this.model.clone();
+                    model.id = this.model.id;
+                    model.defs = this.model.defs;
+                    this.model = model;
+                });
+            }
+
             this.setupOptionFields();
         },
 
