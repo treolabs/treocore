@@ -48,15 +48,16 @@ use Treo\Core\Utils\File\Manager;
  */
 class FileMigrate
 {
+    const OLD_BASE_PATH = "data/upload/";
     /**
      * @var Container
      */
     private $container;
 
     /**
-     * @var string
+     * @var \Treo\Entities\Attachment
      */
-    private $attachmentId;
+    private $attachment;
 
     /**   t
      * FileMigrate constructor.
@@ -68,12 +69,12 @@ class FileMigrate
     }
 
     /**
-     * @param $id
+     * @param \Treo\Entities\Attachment $attachment
      * @return $this
      */
-    public function setAttachmentId($id)
+    public function setAttachment(\Treo\Entities\Attachment $attachment)
     {
-        $this->attachmentId = $id;
+        $this->attachment = $attachment;
 
         return $this;
     }
@@ -83,7 +84,11 @@ class FileMigrate
      */
     public function fileExist()
     {
-        return file_exists(UploadDir::BASE_PATH . $this->attachmentId);
+        if ($this->attachment->get('storageFilePath')) {
+            return file_exists(UploadDir::BASE_PATH . $this->attachment->get('storageFilePath') . "/" . $this->attachment->get('name'));
+        } else {
+            return file_exists(self::OLD_BASE_PATH . $this->attachment->id);
+        }
     }
 
     /**
@@ -92,22 +97,35 @@ class FileMigrate
      */
     public function moveFile()
     {
-        $entity = $this->getEntityManager()->getEntity("Attachment", $this->attachmentId);
-
-        if (!$entity) {
-            $this->removeFile();
-
-            return false;
-        }
-
         $path = $this->getFilePathBuilder()->createPath(FilePathBuilder::UPLOAD);
 
-        if (!$this->getFileManager()->move(UploadDir::BASE_PATH . $entity->get('id'), UploadDir::BASE_PATH . $path . '/' . $entity->get('name'))) {
+        $oldPath = self::OLD_BASE_PATH . $this->attachment->id;
+        $newPath = UploadDir::BASE_PATH . $path . '/' . $this->attachment->get('name');
+
+        if (!$this->getFileManager()->move($oldPath, $newPath)) {
             return false;
         }
 
-        $entity->set("storageFilePath", $path);
-        return $this->getRepository()->save($entity);
+        $this->attachment->set("storageFilePath", $path);
+        return $this->getRepository()->save($this->attachment);
+    }
+
+    /**
+     * @return bool
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function backFiles()
+    {
+        $oldPath = UploadDir::BASE_PATH . $this->attachment->get('storageFilePath') . '/' . $this->attachment->get('name');
+        $newPath = self::OLD_BASE_PATH . $this->attachment->id;
+
+        if (!$this->getFileManager()->move($oldPath, $newPath)) {
+            return false;
+        }
+
+        $this->attachment->set("storageFilePath", null);
+        $this->attachment->set("storage", null);
+        return $this->getRepository()->save($this->attachment);
     }
 
     /**
@@ -148,6 +166,6 @@ class FileMigrate
      */
     protected function removeFile()
     {
-        return $this->getFileManager()->remove($this->attachmentId, UploadDir::BASE_PATH, true);
+        return $this->getFileManager()->remove($this->attachment->id, UploadDir::BASE_PATH, true);
     }
 }

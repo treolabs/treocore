@@ -36,8 +36,11 @@ declare(strict_types=1);
 
 namespace Treo\Migrations;
 
+use Espo\ORM\EntityManager;
+use Treo\Core\FileStorage\Storages\UploadDir;
 use Treo\Core\Migration\AbstractMigration;
 use Treo\Core\Utils\Util;
+use Treo\Entities\Attachment;
 use Treo\Services\FileMigrate;
 
 /**
@@ -47,15 +50,17 @@ use Treo\Services\FileMigrate;
  */
 class V3Dot21Dot0 extends AbstractMigration
 {
+    const OLD_BASE_PATH = "data/upload/";
+
     /**
-     * @inheritdoc
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function up(): void
     {
         $mover = new FileMigrate($this->getContainer());
 
-        foreach ($this->getAttachmentsId() as $id) {
-            $mover->setAttachmentId($id);
+        foreach ($this->getAttachments() as $attachment) {
+            $mover->setAttachment($attachment);
 
             if ($mover->fileExist()) {
                 $mover->moveFile();
@@ -66,18 +71,65 @@ class V3Dot21Dot0 extends AbstractMigration
     }
 
     /**
-     * @inheritdoc
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function down(): void
     {
+        foreach ($this->getAttachments() as $attachment) {
+
+            if (!$this->fileExist($attachment)) {
+                continue;
+            }
+
+            $oldPath = UploadDir::BASE_PATH . $attachment->get('storageFilePath') . '/' . $attachment->get('name');
+            $newPath = self::OLD_BASE_PATH . $attachment->id;
+
+            if (!$this->getFileManager()->move($oldPath, $newPath)) {
+                continue;
+            }
+
+            $attachment->set("storageFilePath", null);
+            $attachment->set("storage", null);
+            return $this->getRepository()->save($attachment);
+        }
+
+        Util::removedir("data/upload/thumbs");
     }
 
     /**
      * @return array
      */
-    protected function getAttachmentsId()
+    protected function getAttachments()
     {
-        return array_column($this->getEntityManager()->getRepository('Attachment')->find()->toArray(), 'id');
+        return $this->getEntityManager()->getRepository('Attachment')->find();
     }
 
+    /**
+     * @return mixed
+     */
+    protected function getFileManager()
+    {
+        return $this->container->get("fileManager");
+    }
+
+    /**
+     * @param Attachment $attachment
+     * @return bool
+     */
+    protected function fileExist(Attachment $attachment)
+    {
+        if ($attachment->get('storageFilePath')) {
+            return file_exists(UploadDir::BASE_PATH . $attachment->get('storageFilePath') . "/" . $attachment->get('name'));
+        } else {
+            return file_exists(self::OLD_BASE_PATH . $attachment->id);
+        }
+    }
+
+    /**
+     * @return \Treo\Repositories\Attachment
+     */
+    protected function getRepository(): \Treo\Repositories\Attachment
+    {
+        return $this->getEntityManager()->getRepository("Attachment");
+    }
 }
