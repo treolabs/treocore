@@ -193,15 +193,16 @@ class EmailAddress extends Record
         $result = [];
 
         $this->findInAddressBookUsers($query, $limit, $result);
-        if ($this->getAcl()->checkScope('Contact')) {
-            $this->findInAddressBookByEntityType($query, $limit, 'Contact', $result);
+        $scopes = $this->getMetadata()->get(['scopes']);
+
+        foreach (['Contact','Lead','Account'] as $item) {
+            if (in_array($item, array_keys($scopes))) {
+                if ($this->getAcl()->checkScope($item)) {
+                    $this->findInAddressBookByEntityType($query, $limit, $item, $result);
+                }
+            }
         }
-        if ($this->getAcl()->checkScope('Lead')) {
-            $this->findInAddressBookByEntityType($query, $limit, 'Lead', $result);
-        }
-        if ($this->getAcl()->checkScope('Account')) {
-            $this->findInAddressBookByEntityType($query, $limit, 'Account', $result);
-        }
+
         $this->findInInboundEmail($query, $limit, $result);
         foreach ($this->getHavingEmailAddressEntityTypeList() as $entityType) {
             if ($this->getAcl()->checkScope($entityType)) {
