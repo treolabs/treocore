@@ -37,6 +37,7 @@ namespace Treo\Core\Loaders;
 
 /**
  * Class FilePathBuilder
+ *
  * @package Treo\Core\Loaders
  */
 class FilePathBuilder extends Base
@@ -46,6 +47,6 @@ class FilePathBuilder extends Base
      */
     public function load()
     {
-        return new \Treo\Core\FilePathBuilder ($this->getContainer());
+        return new \Treo\Core\FilePathBuilder($this->getContainer());
     }
 }

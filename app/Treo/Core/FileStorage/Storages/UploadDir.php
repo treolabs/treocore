@@ -148,5 +148,4 @@ class UploadDir extends Base
     {
         return $this->getInjection('fileManager');
     }
-
 }

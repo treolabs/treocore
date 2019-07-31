@@ -76,7 +76,6 @@ class V3Dot21Dot0 extends AbstractMigration
     public function down(): void
     {
         foreach ($this->getAttachments() as $attachment) {
-
             if (!$this->fileExist($attachment)) {
                 continue;
             }
@@ -114,12 +113,16 @@ class V3Dot21Dot0 extends AbstractMigration
 
     /**
      * @param Attachment $attachment
+     *
      * @return bool
      */
     protected function fileExist(Attachment $attachment)
     {
         if ($attachment->get('storageFilePath')) {
-            return file_exists(UploadDir::BASE_PATH . $attachment->get('storageFilePath') . "/" . $attachment->get('name'));
+            return file_exists(
+                UploadDir::BASE_PATH . $attachment->get('storageFilePath') . "/" .
+                $attachment->get('name')
+            );
         } else {
             return file_exists(self::OLD_BASE_PATH . $attachment->id);
         }

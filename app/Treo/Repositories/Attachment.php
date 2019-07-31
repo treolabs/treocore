@@ -110,7 +110,6 @@ class Attachment extends \Espo\Repositories\Attachment
         $this->save($attachment);
 
         return $attachment;
-
     }
 
     /**

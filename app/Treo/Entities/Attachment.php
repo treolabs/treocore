@@ -27,6 +27,8 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+// phpcs:ignoreFile
+
 namespace Treo\Entities;
 
 class Attachment extends \Espo\Core\ORM\Entity

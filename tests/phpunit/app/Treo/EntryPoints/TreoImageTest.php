@@ -37,7 +37,7 @@ namespace Treo\EntryPoints;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Config;
-use Espo\Entities\Attachment;
+use Treo\Entities\Attachment;
 use PHPUnit\Framework\TestCase;
 use Treo\Core\Container;
 

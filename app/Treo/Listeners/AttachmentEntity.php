@@ -71,5 +71,4 @@ class AttachmentEntity extends AbstractListener
             'storageFilePath' => $path,
         ]);
     }
-
 }
