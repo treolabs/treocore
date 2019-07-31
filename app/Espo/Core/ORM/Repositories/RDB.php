@@ -641,7 +641,7 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
                     try {
                         $this
                             ->getInjection('workflow')
-                            ->get($from, "$name.$field")
+                            ->get($from, $name . '_' . $field)
                             ->apply($from, $from->get($field) . '_' . $to->get($field));
                     } catch (LogicException $e) {
                         throw new Forbidden('Such workflow transition is not defined');

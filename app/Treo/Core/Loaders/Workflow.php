@@ -84,7 +84,7 @@ class Workflow extends Base
 
                     // add
                     $registry->addWorkflow(
-                        new Item($definition, new MethodMarkingStore(true, $field), $eventManager, "$entity.$field"),
+                        new Item($definition, new MethodMarkingStore(true, $field), $eventManager, $entity . '_' . $field),
                         new InstanceOfSupportStrategy($entityManager->normalizeEntityName($entity))
                     );
                 }
