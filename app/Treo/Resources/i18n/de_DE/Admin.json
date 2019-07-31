@@ -3,7 +3,7 @@
     "dataUrl": "Daten Url"
   },
   "labels": {
-    "Composer": "Komponist",
+    "Composer": "Modul Manager",
     "log": "log",
     "Validate": "Bestätigen",
     "progressLog": "Fortschritte Log",
@@ -15,7 +15,7 @@
     "unit": "Maßeinheit"
   },
   "descriptions": {
-    "composer": "Das Plug-In für die Verwaltung von Abhängigkeiten, das es Ihnen erlaubt, Module aus dem externen Ablage zu installieren/aktualisieren/deinstallieren. Die Abhängigkeiten zwischen den Composer Bestandteilen sind unterstützt.",
+    "composer": "Das Plug-In für die Verwaltung von Abhängigkeiten, das es Ihnen erlaubt, Module aus dem externen Ablage zu installieren/aktualisieren/deinstallieren. Die Abhängigkeiten zwischen den modulen sind unterstützt.",
     "representationSettings": "Representation settings.",
     "unit": "Einstellungen Maßeinheiten"
   },

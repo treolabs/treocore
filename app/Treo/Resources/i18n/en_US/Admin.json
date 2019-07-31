@@ -1,6 +1,6 @@
 {
   "labels": {
-    "Composer": "Composer",
+    "Composer": "Module Manager",
     "log": "log",
     "Validate": "Validate",
     "unit": "Unit",
@@ -12,7 +12,7 @@
     "unit": "Unit"
   },
   "descriptions": {
-    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the composer items are supported.",
+    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the modules are supported.",
     "representationSettings": "Representation settings.",
     "unit": "Settings units of measurement"
   },
