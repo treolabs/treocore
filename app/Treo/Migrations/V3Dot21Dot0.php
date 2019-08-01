@@ -89,7 +89,7 @@ class V3Dot21Dot0 extends AbstractMigration
 
             $attachment->set("storageFilePath", null);
             $attachment->set("storage", null);
-            return $this->getRepository()->save($attachment);
+            $this->getRepository()->save($attachment);
         }
 
         Util::removedir("data/upload/thumbs");
