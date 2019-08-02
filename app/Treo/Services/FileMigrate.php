@@ -85,8 +85,7 @@ class FileMigrate
     public function fileExist()
     {
         if ($this->attachment->get('storageFilePath')) {
-            return file_exists(UploadDir::BASE_PATH . $this->attachment->get('storageFilePath') . "/" .
-                $this->attachment->get('name'));
+            return file_exists(UploadDir::BASE_PATH . $this->attachment->get('storageFilePath') . "/" . $this->attachment->get('name'));
         } else {
             return file_exists(self::OLD_BASE_PATH . $this->attachment->id);
         }
