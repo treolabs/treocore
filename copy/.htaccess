@@ -1,6 +1,10 @@
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} /client/
+RewriteRule ^ /client/ [R=404]
+
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 
 <FilesMatch "(treo-composer\.log|notReadCount\.json|popupNotifications\.json)$">
