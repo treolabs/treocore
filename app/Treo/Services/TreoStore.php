@@ -46,6 +46,8 @@ use Treo\Core\Utils\Util;
  */
 class TreoStore extends Base
 {
+    const PACKAGES = 'https://packagist.treopim.com/packages.json';
+
     /**
      * Refresh cached data
      */
@@ -154,19 +156,47 @@ class TreoStore extends Base
      */
     protected function getRemotePackages(): array
     {
-        // prepare params
-        $params = [
-            'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'id'            => $this->getConfig()->get('treoId', 'common')
-        ];
-
+        // get all
         try {
-            $content = file_get_contents('https://packagist.treopim.com/api/v1/packages?' . http_build_query($params));
+            $all = json_decode(file_get_contents(self::PACKAGES), true);
         } catch (\Throwable $e) {
-            $content = '';
+            return [];
         }
 
-        return (!empty($content)) ? json_decode($content, true) : [];
+        // get public
+        try {
+            $public = json_decode(file_get_contents(self::PACKAGES . '?id=public'), true);
+        } catch (\Throwable $e) {
+            $public = [];
+        }
+
+        // get private
+        $private = [];
+        if (!empty($treoId = $this->getConfig()->get('treoId'))) {
+            try {
+                $private = json_decode(file_get_contents(self::PACKAGES . '?id=' . $treoId), true);
+            } catch (\Throwable $e) {
+            }
+        }
+
+        // parse all
+        $packages = $this->parsePackages($all);
+
+        // parse public
+        if (!empty($public)) {
+            foreach ($this->parsePackages($public, 'available') as $id => $row) {
+                $packages[$id] = $row;
+            }
+        }
+
+        // parse private
+        if (!empty($private)) {
+            foreach ($this->parsePackages($private, 'available') as $id => $row) {
+                $packages[$id] = $row;
+            }
+        }
+
+        return array_values($packages);
     }
 
     /**
@@ -246,5 +276,81 @@ class TreoStore extends Base
     private function getModules(): array
     {
         return array_keys($this->getInjection('moduleManager')->getModules());
+    }
+
+    /**
+     * @param array  $packages
+     * @param string $status
+     *
+     * @return array
+     */
+    private function parsePackages(array $packages, string $status = 'buyable'): array
+    {
+        // prepare data
+        $data = [];
+
+        foreach ($packages['packages'] as $repository => $versions) {
+            if (is_array($versions)) {
+                foreach ($versions as $version => $row) {
+                    if (!empty($row['extra']['treoId'])) {
+                        $treoId = $row['extra']['treoId'];
+                        $version = strtolower($version);
+                        if (preg_match_all('/^v\d+.\d+.\d+$/', $version, $matches)
+                            || preg_match_all('/^v\d+.\d+.\d+-rc\d+$/', $version, $matches)
+                            || preg_match_all('/^\d+.\d+.\d+$/', $version, $matches)
+                            || preg_match_all('/^\d+.\d+.\d+-rc\d+$/', $version, $matches)
+                        ) {
+                            // prepare version
+                            $version = str_replace('v', '', $matches[0][0]);
+
+                            // skip if unstable version
+                            if (strpos($version, 'rc') !== false) {
+                                continue;
+                            }
+
+                            // push
+                            $data[$treoId][$version] = $row;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($data as $treoId => $rows) {
+            // find max version
+            $versions = array_keys($rows);
+            natsort($versions);
+            $versions = array_reverse($versions);
+            $max = $versions[0];
+
+            // prepare tags
+            $tags = [];
+            if (!empty($rows[$max]['extra']['tags'])) {
+                $tags = $rows[$max]['extra']['tags'];
+            }
+
+            // prepare item
+            $item = [
+                'treoId'      => $treoId,
+                'packageId'   => $rows[$max]['name'],
+                'url'         => $rows[$max]['source']['url'],
+                'name'        => $rows[$max]['extra']['name'],
+                'description' => $rows[$max]['extra']['description'],
+                'tags'        => $tags,
+                'status'      => $status
+            ];
+
+            foreach ($versions as $version) {
+                $item['versions'][] = [
+                    'version' => $version,
+                    'require' => $rows[$version]['require'],
+                ];
+            }
+
+            // push
+            $result[$treoId] = $item;
+        }
+
+        return $result;
     }
 }
