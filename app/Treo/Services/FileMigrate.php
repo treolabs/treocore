@@ -98,6 +98,10 @@ class FileMigrate
      */
     public function moveFile()
     {
+        if ($this->attachment->get('storageFilePath')) {
+            return true;
+        }
+
         $path = $this->getFilePathBuilder()->createPath(FilePathBuilder::UPLOAD);
 
         $oldPath = self::OLD_BASE_PATH . $this->attachment->id;
