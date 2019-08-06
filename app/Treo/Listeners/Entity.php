@@ -51,6 +51,14 @@ class Entity extends AbstractListener
      */
     public function beforeSave(Event $event)
     {
+        // get entity
+        $entity = $event->getArgument('entity');
+
+        // set owner user if it needs
+        if ($this->hasOwner($entity) && empty($entity->get('ownerUserId'))) {
+            $entity->set('ownerUserId', $entity->get('createdById'));
+        }
+
         // dispatch an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeSave', $event);
 
@@ -65,7 +73,7 @@ class Entity extends AbstractListener
                 ->process(
                     $event->getArgument('entityType'),
                     'beforeSave',
-                    $event->getArgument('entity'),
+                    $entity,
                     $event->getArgument('options')
                 );
         }
@@ -374,5 +382,15 @@ class Entity extends AbstractListener
     protected function dispatch(string $target, string $action, Event $event)
     {
         $this->getContainer()->get('eventManager')->dispatch($target, $action, $event);
+    }
+
+    /**
+     * @param OrmEntity $entity
+     *
+     * @return bool
+     */
+    protected function hasOwner(OrmEntity $entity): bool
+    {
+        return !empty($this->getContainer()->get('metadata')->get("scopes." . $entity->getEntityType() . ".hasOwner"));
     }
 }
