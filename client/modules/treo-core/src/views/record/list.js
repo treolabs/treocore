@@ -361,24 +361,23 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             let el = this.$el;
 
             el.on('show.bs.dropdown', function (e) {
-                let target = e.relatedTarget,
-                    menu = $(target).siblings('.dropdown-menu'),
-                    menuHeight = menu.height(),
-                    pageHeight = $(document).height(),
-                    positionTop = $(target).offset().top + $(target).outerHeight(true);
+                let target = e.relatedTarget;
+                let menu = $(target).siblings('.dropdown-menu');
+                if (target && menu) {
+                    let menuHeight = menu.height();
+                    let pageHeight = $(document).height();
+                    let positionTop = $(target).offset().top + $(target).outerHeight(true);
 
-                if ((positionTop + menuHeight) > pageHeight) {
-                    menu.css({
-                        'top': `-${menuHeight}px`
-                    })
+                    if ((positionTop + menuHeight) > pageHeight) {
+                        menu.css({
+                            'top': `-${menuHeight}px`
+                        });
+                    }
                 }
             });
 
             el.on('hide.bs.dropdown', function (e) {
-                let target = e.relatedTarget,
-                    menu = $(target).next('.dropdown-menu');
-
-                menu.removeAttr('style');
+                $(e.relatedTarget).next('.dropdown-menu').removeAttr('style');
             });
         },
 
