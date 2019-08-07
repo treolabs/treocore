@@ -31,8 +31,12 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
+use Espo\Core\Exceptions\Error;
 use Espo\ORM\Metadata;
+use Treo\Core\FileStorage\Storages\UploadDir;
+use Treo\Core\Utils\File\Manager;
 use Treo\Core\Utils\Random;
+use Treo\Core\Utils\Util;
 
 /**
  * Class FilePathBuilder
@@ -41,6 +45,7 @@ use Treo\Core\Utils\Random;
 class FilePathBuilder
 {
     const UPLOAD = 'upload';
+    const LAST_CREATED = "lastCreated";
 
     /**
      * @var Container
@@ -57,28 +62,108 @@ class FilePathBuilder
         $this->container = $container;
     }
 
-    /**
-     * @param string $type
-     * @return string
-     */
+    public static function folderPath()
+    {
+        return [
+            "upload" => UploadDir::BASE_PATH,
+        ];
+    }
+
+
     public function createPath(string $type): string
     {
-        $depth = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderDepth']) ?? 3;
-        $folderNameLength = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderNameLength']) ?? 3;
+        $typeEl = explode("/", $type);
+        $type = array_shift($typeEl);
+        $folderPath = implode("/", $typeEl);
 
-        for ($i = 0; $i < $depth; $i++) {
-            $part[] = Random::getString($folderNameLength);
+        $baseFolder = static::folderPath()[$type] . ($folderPath ? ($folderPath . "/") : "");
+
+        if (!file_exists($baseFolder . "lastCreated")) {
+            $path = $this->init($type);
+        } else {
+            $path = $this->buildPath($type, $folderPath);
+        }
+        $res = implode("/", $path);
+        array_pop($path);
+        $this->getFileManager()->putContents($baseFolder . self::LAST_CREATED, implode('/', $path));
+
+        return $res;
+    }
+
+    protected function buildPath(string $type, string $folderPath)
+    {
+        $basePath = static::folderPath()[$type];
+        $folderInfo = $this->getMeta()->get(['app', 'fileStorage', $type]);
+        $iter = 0;
+        $backIter = 0;
+        $path = file_get_contents($basePath . self::LAST_CREATED);
+
+        if (empty($path)) {
+            throw new Error();
+        }
+
+        $pathEl = explode("/", $path);
+
+        while (!$iter) {
+            $count = Util::countItems($this->getPath($basePath) . implode("/", $pathEl));
+
+            if ($count < $folderInfo['maxFilesInFolder']) {
+                $iter = $folderInfo['folderDepth'] - $backIter;
+                break;
+            }
+            if (!$pathEl) {
+                throw new Error("Folder limit");
+            }
+            array_pop($pathEl);
+
+            $backIter++;
+        }
+
+        for ($iter; $iter <= $folderInfo['folderDepth']; $iter++) {
+            while ($iter) {
+                $folderName = Random::getString($folderInfo['folderNameLength']);
+                if (is_dir($this->getPath($basePath) . implode("/", $pathEl) . "/" . $folderName)) {
+                    continue;
+                }
+                $pathEl[] = $folderName;
+                break;
+            }
         }
 
 
-        return implode('/', $part);
+        return $pathEl;
+    }
+
+    protected function getPath($path)
+    {
+        return realpath($path);
+    }
+
+    protected function init(string $type): array
+    {
+        $depth = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderDepth']) ?? 3;
+        $folderNameLength = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderNameLength']) ?? 3;
+        $path = [];
+
+        for ($i = 1; $i < $depth; $i++) {
+            $folderName = Random::getString($folderNameLength);
+            $path[] = $folderName;
+        }
+        $path[] = Random::getString($folderNameLength);
+
+        return $path;
     }
 
     /**
      * @return Metadata|null
      */
-    private function getMeta()
+    protected function getMeta()
     {
         return $this->container->get('metadata');
+    }
+
+    protected function getFileManager(): Manager
+    {
+        return $this->container->get("fileManager");
     }
 }
