@@ -107,7 +107,7 @@ class V3Dot21Dot0 extends AbstractMigration
     protected function setDAM($id, $storage, $filePath)
     {
         $pdo = $this->getEntityManager()->getPDO();
-        $pdo->exec("UPDATE attachment SET `storage` = '{$storage}', `storage_file_path` = '{$filePath}' WHERE id = '{$id}'");
+        $pdo->exec("UPDATE attachment SET `storage`='{$storage}', `storage_file_path`='{$filePath}' WHERE id='{$id}'");
     }
 
     /**

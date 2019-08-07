@@ -61,6 +61,17 @@ class Container
     protected $data = [];
 
     /**
+     * Container constructor.
+     */
+    public function __construct()
+    {
+        // load modules
+        foreach ($this->get('moduleManager')->getModules() as $module) {
+            $module->onLoad();
+        }
+    }
+
+    /**
      * Get class
      *
      * @param string $name
