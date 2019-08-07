@@ -1,17 +1,21 @@
 <?php
-/************************************************************************
- * This file is part of EspoCRM.
+/**
+ * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * EspoCRM is free software: you can redistribute it and/or modify
+ * TreoCore is EspoCRM-based Open Source application.
+ * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Website: https://treolabs.com
+ *
+ * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * EspoCRM is distributed in the hope that it will be useful,
+ * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,17 +28,32 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
- ************************************************************************/
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
+ * and "TreoCore" word.
+ */
 
-namespace Espo\Hooks\Integration;
+declare(strict_types=1);
 
-use Espo\ORM\Entity;
+namespace Treo\Listeners;
 
-class GoogleMaps extends \Espo\Core\Hooks\Base
+use Treo\Core\EventManager\Event;
+
+/**
+ * Class IntegrationEntity
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class IntegrationEntity extends AbstractListener
 {
-    public function afterSave(Entity $entity)
+    /**
+     * @param Event $event
+     */
+    public function afterSave(Event $event)
     {
+        // get entity
+        $entity = $event->getArgument('entity');
+
+        // for GoogleMaps
         if ($entity->id === 'GoogleMaps') {
             if (!$entity->get('enabled') || !$entity->get('apiKey')) {
                 $this->getConfig()->set('googleMapsApiKey', null);
