@@ -91,4 +91,19 @@ class Manager extends \Espo\Core\Utils\File\Manager
 
         return true;
     }
+
+    /**
+     * @param $contents
+     * @return string
+     */
+    public function createOnTemp($contents): string
+    {
+        $tmpfile = tempnam("", uniqid());
+
+        if ($tmpfile && file_put_contents($tmpfile, $contents) !== false) {
+            return $tmpfile;
+        }
+
+        return '';
+    }
 }

@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\InternalServerError;
 use Espo\ORM\Entity;
 use Treo\Core\EventManager\Event;
@@ -41,6 +42,43 @@ class AttachmentEntity extends AbstractListener
         $entity = $event->getArgument('entity');
         if ($this->isDuplicate($entity)) {
             $this->copyFile($entity);
+        }
+
+        if (!$entity->isNew() && $this->isChangeRelation($entity) && !in_array($entity->get("relatedType"), $this->skipTypes())) {
+            $this->moveFromTmp($entity);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function skipTypes()
+    {
+        return $this->getMetadata()->get(['attachment', 'skipEntities']) ?? [];
+    }
+
+    /**
+     * @param Entity $entity
+     * @return bool
+     */
+    protected function isChangeRelation(Entity $entity): bool
+    {
+        return $entity->isAttributeChanged("relatedId") || $entity->isAttributeChanged("relatedType");
+    }
+
+    /**
+     * @param Entity $entity
+     * @return bool
+     * @throws Error
+     */
+    protected function moveFromTmp(Entity $entity)
+    {
+        if ($entity->isNew()) {
+            return true;
+        }
+
+        if (!$this->getService($entity->getEntityType())->moveFromTmp($entity)) {
+            throw new Error();
         }
     }
 
