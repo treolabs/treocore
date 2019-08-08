@@ -100,13 +100,16 @@ class Manager extends EventDispatcher
         // load listeners
         foreach ($this->getClassNames() as $action => $rows) {
             foreach ($rows as $row) {
-                $object = new $row[0]();
-                if (\method_exists($object, 'setContainer')) {
-                    $object->setContainer($this->container);
-                }
+                try {
+                    $object = new $row[0]();
+                    if (\method_exists($object, 'setContainer')) {
+                        $object->setContainer($this->container);
+                    }
 
-                // add
-                $this->addListener($action, [$object, $row[1]]);
+                    // add
+                    $this->addListener($action, [$object, $row[1]]);
+                } catch (\Throwable $e) {
+                }
             }
         }
 
@@ -145,10 +148,6 @@ class Manager extends EventDispatcher
 
             $data = [];
             foreach ($listeners as $target => $classes) {
-                if ($target == 'AbstractListener') {
-                    continue 1;
-                }
-
                 foreach ($classes as $listener) {
                     if (!empty($methods = \get_class_methods($listener))) {
                         foreach ($methods as $method) {
