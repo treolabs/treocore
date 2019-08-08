@@ -128,9 +128,6 @@ class Manager
                             $this->getPackage($module),
                             $this->container
                         );
-
-                        // run on load method
-                        $this->modules[$module]->onLoad();
                     }
                 }
             }
