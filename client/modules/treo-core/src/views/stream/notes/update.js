@@ -59,6 +59,7 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
                 this.fieldsArr = [];
 
                 fields = this.addMultilangFields(model, fields);
+                fields = fields.filter(field => modelWas.has(field) && modelBecame.has(field));
 
                 fields.forEach(function (field) {
                     let type = this.model.get('attributeType') || model.getFieldType(field) || 'base';
