@@ -35,7 +35,39 @@ class AssignmentEmailNotification extends \Espo\Core\Hooks\Base
 {
     public function afterSave(Entity $entity, array $options = [])
     {
+        if (!empty($options['silent']) || !empty($options['noNotifications'])) {
+            return;
+        }
+        if (
+            $this->getConfig()->get('assignmentEmailNotifications')
+            &&
+            (
+                $entity->has('assignedUserId')
+                ||
+                $entity->hasLinkMultipleField('assignedUsers') && $entity->has('assignedUsersIds')
+            )
+            &&
+            in_array($entity->getEntityType(), $this->getConfig()->get('assignmentEmailNotificationsEntityList', []))
+        ) {
+            if ($entity->has('assignedUsersIds')) {
+                $userIdList = $entity->getLinkMultipleIdList('assignedUsers');
+                $fetchedAssignedUserIdList = $entity->getFetched('assignedUsersIds');
+                if (!is_array($fetchedAssignedUserIdList)) {
+                    $fetchedAssignedUserIdList = [];
+                }
 
+                foreach ($userIdList as $userId) {
+                    if (in_array($userId, $fetchedAssignedUserIdList)) continue;
+                    if (!$this->isNotSelfAssignment($entity, $userId)) continue;
+                    $this->createJob($entity, $userId);
+                }
+            } else {
+                $userId = $entity->get('assignedUserId');
+                if (!empty($userId) && $entity->isAttributeChanged('assignedUserId') && $this->isNotSelfAssignment($entity, $userId)) {
+                    $this->createJob($entity, $userId);
+                }
+            }
+        }
     }
 
     protected function isNotSelfAssignment(Entity $entity, $assignedUserId)

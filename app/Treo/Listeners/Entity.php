@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
-use Espo\ORM\Entity as OrmEntity;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -62,16 +61,8 @@ class Entity extends AbstractListener
      */
     public function afterSave(Event $event)
     {
-        // prepare data
-        $entity = $event->getArgument('entity');
-        $options = $event->getArgument('options');
-
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterSave', $event);
-
-        if (empty($event->getArgument('hooksDisabled')) && empty($options['skipHooks'])) {
-//            $this->assignmentEmailNotification($entity, $options);
-        }
     }
 
     /**
@@ -165,53 +156,14 @@ class Entity extends AbstractListener
             // get entity
             $entity = $event->getArgument('entity');
 
+            // get metadata
+            $metadata = $this->getContainer()->get('metadata');
+
             // has owner param
-            $hasOwner = !empty($this->getContainer()->get('metadata')->get('scopes.' . $entity->getEntityType() . '.hasOwner'));
+            $hasOwner = !empty($metadata->get('scopes.' . $entity->getEntityType() . '.hasOwner'));
 
             if ($hasOwner && empty($entity->get('ownerUserId'))) {
                 $entity->set('ownerUserId', $entity->get('createdById'));
-            }
-        }
-    }
-
-    /**
-     * @param OrmEntity $entity
-     * @param OrmEntity $options
-     */
-    protected function assignmentEmailNotification(OrmEntity $entity, array $options = [])
-    {
-        if (!empty($options['silent']) || !empty($options['noNotifications'])) {
-            return;
-        }
-        if (
-            $this->getConfig()->get('assignmentEmailNotifications')
-            && (
-                $entity->has('assignedUserId')
-                || $entity->hasLinkMultipleField('assignedUsers') && $entity->has('assignedUsersIds')
-            )
-            && in_array($entity->getEntityType(), $this->getConfig()->get('assignmentEmailNotificationsEntityList', []))
-        ) {
-            if ($entity->has('assignedUsersIds')) {
-                $userIdList = $entity->getLinkMultipleIdList('assignedUsers');
-                $fetchedAssignedUserIdList = $entity->getFetched('assignedUsersIds');
-                if (!is_array($fetchedAssignedUserIdList)) {
-                    $fetchedAssignedUserIdList = [];
-                }
-
-                foreach ($userIdList as $userId) {
-                    if (in_array($userId, $fetchedAssignedUserIdList)) {
-                        continue;
-                    }
-                    if (!$this->isNotSelfAssignment($entity, $userId)) {
-                        continue;
-                    }
-                    $this->createJob($entity, $userId);
-                }
-            } else {
-                $userId = $entity->get('assignedUserId');
-                if (!empty($userId) && $entity->isAttributeChanged('assignedUserId') && $this->isNotSelfAssignment($entity, $userId)) {
-                    $this->createJob($entity, $userId);
-                }
             }
         }
     }
