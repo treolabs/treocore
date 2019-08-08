@@ -35,8 +35,6 @@ class EntityManager extends \Espo\ORM\EntityManager
 {
     protected $espoMetadata;
 
-    private $hookManager;
-
     protected $user;
 
     protected $container;
@@ -73,16 +71,6 @@ class EntityManager extends \Espo\ORM\EntityManager
     public function setEspoMetadata($espoMetadata)
     {
         $this->espoMetadata = $espoMetadata;
-    }
-
-    public function setHookManager(\Espo\Core\HookManager $hookManager)
-    {
-        $this->hookManager = $hookManager;
-    }
-
-    public function getHookManager()
-    {
-        return $this->hookManager;
     }
 
     public function normalizeRepositoryName($name)
