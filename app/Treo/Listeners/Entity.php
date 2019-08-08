@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Espo\Hooks\Common;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -54,6 +55,19 @@ class Entity extends AbstractListener
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeSave', $event);
 
         $this->setOwnerUser($event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\CurrencyConverted::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Formula::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\NextNumber::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+        }
     }
 
     /**
@@ -63,6 +77,22 @@ class Entity extends AbstractListener
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterSave', $event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\AssignmentEmailNotification::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Notifications::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\StreamNotesAcl::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+        }
     }
 
     /**
@@ -72,6 +102,13 @@ class Entity extends AbstractListener
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRemove', $event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\Notifications::class)
+                ->beforeRemove($event->getArgument('entity'), $event->getArgument('options'));
+        }
     }
 
     /**
@@ -81,6 +118,16 @@ class Entity extends AbstractListener
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRemove', $event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\Notifications::class)
+                ->afterRemove($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterRemove($event->getArgument('entity'), $event->getArgument('options'));
+        }
     }
 
     /**
@@ -117,6 +164,17 @@ class Entity extends AbstractListener
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRelate', $event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterRelate(
+                    $event->getArgument('entity'),
+                    $event->getArgument('options'),
+                    $event->getArgument('data')
+                );
+        }
     }
 
     /**
@@ -135,6 +193,17 @@ class Entity extends AbstractListener
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterUnrelate', $event);
+
+        // call espo hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterUnrelate(
+                    $event->getArgument('entity'),
+                    $event->getArgument('options'),
+                    $event->getArgument('data')
+                );
+        }
     }
 
     /**
@@ -166,5 +235,20 @@ class Entity extends AbstractListener
                 $entity->set('ownerUserId', $entity->get('createdById'));
             }
         }
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return mixed
+     */
+    private function createHook(string $className)
+    {
+        $hook = new $className();
+        foreach ($hook->getDependencyList() as $name) {
+            $hook->inject($name, $this->getContainer()->get($name));
+        }
+
+        return $hook;
     }
 }
