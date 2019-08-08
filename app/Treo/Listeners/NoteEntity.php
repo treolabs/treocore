@@ -51,7 +51,7 @@ class NoteEntity extends AbstractListener
      */
     public function beforeSave(Event $event)
     {
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Note\Mentions::class)
@@ -64,7 +64,7 @@ class NoteEntity extends AbstractListener
      */
     public function afterSave(Event $event)
     {
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Note\Notifications::class)

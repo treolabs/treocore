@@ -56,7 +56,7 @@ class Entity extends AbstractListener
 
         $this->setOwnerUser($event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\CurrencyConverted::class)
@@ -78,7 +78,7 @@ class Entity extends AbstractListener
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterSave', $event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\AssignmentEmailNotification::class)
@@ -103,7 +103,7 @@ class Entity extends AbstractListener
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRemove', $event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\Notifications::class)
@@ -119,7 +119,7 @@ class Entity extends AbstractListener
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRemove', $event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\Notifications::class)
@@ -165,7 +165,7 @@ class Entity extends AbstractListener
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRelate', $event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\Stream::class)
@@ -194,7 +194,7 @@ class Entity extends AbstractListener
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterUnrelate', $event);
 
-        // call espo hooks
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
                 ->createHook(Common\Stream::class)
