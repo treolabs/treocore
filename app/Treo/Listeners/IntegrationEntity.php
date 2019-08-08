@@ -31,40 +31,37 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Hooks;
+namespace Treo\Listeners;
 
-use Espo\Core\Hooks\Base;
+use Treo\Core\EventManager\Event;
 
 /**
- * AbstractHook class
+ * Class IntegrationEntity
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-abstract class AbstractHook extends Base
+class IntegrationEntity extends AbstractListener
 {
-
-
     /**
-     * Translate
-     *
-     * @param string     $label
-     * @param string     $category
-     * @param string     $scope
-     * @param array|null $requiredOptions
-     *
-     * @return string
+     * @param Event $event
      */
-    protected function translate(
-        string $label,
-        string $category = 'labels',
-        string $scope = 'Global',
-        array $requiredOptions = null
-    ): string {
-        return $this
-            ->getContainer()
-            ->get('language')
-            ->translate($label, $category, $scope, $requiredOptions);
+    public function afterSave(Event $event)
+    {
+        // get entity
+        $entity = $event->getArgument('entity');
+
+        // for GoogleMaps
+        if ($entity->id === 'GoogleMaps') {
+            if (!$entity->get('enabled') || !$entity->get('apiKey')) {
+                $this->getConfig()->set('googleMapsApiKey', null);
+                $this->getConfig()->save();
+                return;
+            }
+            $this->getConfig()->set('googleMapsApiKey', $entity->get('apiKey'));
+            $this->getConfig()->save();
+        }
     }
 }

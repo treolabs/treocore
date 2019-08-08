@@ -31,22 +31,59 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Listeners;
+
+use Espo\Hooks\Note;
+use Treo\Core\EventManager\Event;
 
 /**
- * HookManager loader
+ * Class NoteEntity
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class HookManager extends Base
+class NoteEntity extends AbstractListener
 {
     /**
-     * @inheritdoc
+     * @param Event $event
      */
-    public function load()
+    public function beforeSave(Event $event)
     {
-        return new \Treo\Core\HookManager($this->getContainer());
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Note\Mentions::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+        }
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function afterSave(Event $event)
+    {
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Note\Notifications::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+        }
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return mixed
+     */
+    private function createHook(string $className)
+    {
+        $hook = new $className();
+        foreach ($hook->getDependencyList() as $name) {
+            $hook->inject($name, $this->getContainer()->get($name));
+        }
+
+        return $hook;
     }
 }

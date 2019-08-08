@@ -38,20 +38,18 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\FieldManager as EspoFieldManager;
 use Espo\Core\Utils\Metadata\Helper as MetadataHelper;
-use Treo\Core\Utils\Language;
 use Espo\Core\Utils\FieldManager\Hooks\Base as BaseHook;
-use Treo\Core\Utils\Metadata;
 use Treo\Traits\ContainerTrait;
 
 /**
  * FieldManager util
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class FieldManager extends EspoFieldManager
 {
-
     use ContainerTrait;
+
     /**
      *
      * @var MetadataHelper

@@ -74,7 +74,6 @@ class EntityManager extends Base
 
         $entityManager = new $className($params);
         $entityManager->setEspoMetadata($this->getContainer()->get('metadata'));
-        $entityManager->setHookManager($this->getContainer()->get('hookManager'));
         $entityManager->setContainer($this->getContainer());
 
         return $entityManager;
