@@ -264,7 +264,7 @@ class Entity extends AbstractListener
         $foreignEntityName = $this
             ->getContainer()
             ->get('metadata')
-            ->get(['entityDefs', $entity->getEntityType(), 'links', $relationName, 'entity']);
+            ->get(['entityDefs', $entity, 'links', $relationName, 'entity']);
 
         return (!empty($foreignEntityName)) ? $this->getEntityManager()->getEntity($foreignEntityName, $id) : null;
     }
