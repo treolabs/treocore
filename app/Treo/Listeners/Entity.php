@@ -172,7 +172,7 @@ class Entity extends AbstractListener
                 ->afterRelate(
                     $event->getArgument('entity'),
                     $event->getArgument('options'),
-                    $event->getArgument('data')
+                    $this->getHookRelationData($event)
                 );
         }
     }
@@ -201,7 +201,7 @@ class Entity extends AbstractListener
                 ->afterUnrelate(
                     $event->getArgument('entity'),
                     $event->getArgument('options'),
-                    $event->getArgument('data')
+                    $this->getHookRelationData($event)
                 );
         }
     }
@@ -250,5 +250,46 @@ class Entity extends AbstractListener
         }
 
         return $hook;
+    }
+
+    /**
+     * @param string $entity
+     * @param string $relationName
+     * @param string $id
+     *
+     * @return mixed
+     */
+    private function findForeignEntity(string $entity, string $relationName, string $id)
+    {
+        $foreignEntityName = $this
+            ->getContainer()
+            ->get('metadata')
+            ->get(['entityDefs', $entity->getEntityType(), 'links', $relationName, 'entity']);
+
+        return (!empty($foreignEntityName)) ? $this->getEntityManager()->getEntity($foreignEntityName, $id) : null;
+    }
+
+    /**
+     * @param Event $event
+     *
+     * @return array
+     */
+    private function getHookRelationData(Event $event): array
+    {
+        // prepare foreign
+        $foreign = $event->getArgument('foreign');
+        if (is_string($foreign)) {
+            $foreign = $this->findForeignEntity(
+                $event->getArgument('entity')->getEntityType(),
+                $event->getArgument('relationName'),
+                $foreign
+            );
+        }
+
+        return [
+            'relationName'  => $event->getArgument('relationName'),
+            'relationData'  => $event->getArgument('relationData'),
+            'foreignEntity' => $foreign
+        ];
     }
 }

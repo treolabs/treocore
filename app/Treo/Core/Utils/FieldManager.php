@@ -221,8 +221,10 @@ class FieldManager extends EspoFieldManager
      */
     protected function getHook($type)
     {
+        // prepare hook
         $hook = null;
 
+        // get class name
         $className = $this->getMetadata()->get(['fields', $type, 'hookClassName']);
 
         if (!empty($className) && class_exists($className)) {
@@ -233,8 +235,6 @@ class FieldManager extends EspoFieldManager
             foreach ($hook->getDependencyList() as $name) {
                 $hook->inject($name, $this->getContainer()->get($name));
             }
-        } else {
-            $GLOBALS['log']->error("Field Manager hook class '{$className}' does not exist.");
         }
 
         return $hook;
