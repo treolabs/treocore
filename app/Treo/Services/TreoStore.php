@@ -157,26 +157,15 @@ class TreoStore extends Base
     protected function getRemotePackages(): array
     {
         // get all
-        try {
-            $all = json_decode(file_get_contents(self::PACKAGES), true);
-        } catch (\Throwable $e) {
-            return [];
-        }
+        $all = self::getPathContent(self::PACKAGES);
 
         // get public
-        try {
-            $public = json_decode(file_get_contents(self::PACKAGES . '?id=public'), true);
-        } catch (\Throwable $e) {
-            $public = [];
-        }
+        $public = self::getPathContent(self::PACKAGES . '?id=public');
 
         // get private
         $private = [];
         if (!empty($treoId = $this->getConfig()->get('treoId'))) {
-            try {
-                $private = json_decode(file_get_contents(self::PACKAGES . '?id=' . $treoId), true);
-            } catch (\Throwable $e) {
-            }
+            $private = self::getPathContent(self::PACKAGES . '?id=' . $treoId);
         }
 
         // parse all
@@ -266,6 +255,18 @@ class TreoStore extends Base
                 }
             }
         }
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    private static function getPathContent(string $path): array
+    {
+        $content = @file_get_contents($path);
+
+        return (empty($content)) ? [] : json_decode($content, true);
     }
 
     /**
