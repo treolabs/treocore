@@ -55,7 +55,7 @@ class V3Dot22Dot4 extends AbstractMigration
         $pdo = $this->getEntityManager()->getPDO();
 
         // delete CoreUpgrade job
-        $pdo->exec("DELETE FROM scheduled_job WHERE name='CoreUpgrade'");
+        $pdo->exec("DELETE FROM scheduled_job WHERE name='CoreUpgrade';DELETE FROM job WHERE name='CoreUpgrade'");
 
         // insert ComposerAutoUpdate job
         $pdo->exec(
