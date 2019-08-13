@@ -34,44 +34,51 @@
 
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\Migrations;
+
+use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Utils\Util;
 
 /**
- * CoreUpgrade job
+ * Migration class for version 3.22.4
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class V3Dot22Dot4 extends AbstractMigration
 {
     /**
-     * Run cron job
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function run(): bool
+    public function up(): void
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
+        // get pdo
+        $pdo = $this->getEntityManager()->getPDO();
 
-        // send notification about new version of module
-        $this->moduleNotification();
+        // delete CoreUpgrade job
+        $pdo->exec("DELETE FROM scheduled_job WHERE name='CoreUpgrade';DELETE FROM job WHERE name='CoreUpgrade'");
 
-        return true;
+        // insert ComposerAutoUpdate job
+        $pdo->exec(
+            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
+            . "', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+        );
     }
 
     /**
-     * Send notification about new version of module
+     * @inheritDoc
      */
-    protected function moduleNotification(): void
+    public function down(): void
     {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
+        // get pdo
+        $pdo = $this->getEntityManager()->getPDO();
 
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
+        // delete CoreUpgrade job
+        $pdo->exec("DELETE FROM scheduled_job WHERE name='ComposerAutoUpdate'");
+
+        // insert ComposerAutoUpdate job
+        $pdo->exec(
+            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
+            . "', 'CoreUpgrade', 'CoreUpgrade', 'Active', '0 */2 * * *')"
+        );
     }
 }

@@ -12,7 +12,8 @@
       "SendEmailNotifications": "E-Mail-Benachrichtigungen senden",
       "CheckNewVersion": "Check for New Version",
       "ProcessMassEmail": "Massen E-Mails senden",
-      "ControlKnowledgeBaseArticleStatus": "Wissensbasis Artikel Status kontrollieren"
+      "ControlKnowledgeBaseArticleStatus": "Wissensbasis Artikel Status kontrollieren",
+      "ComposerAutoUpdate": "Automatische Aktualisierung von Modulen"
     }
   }
 }

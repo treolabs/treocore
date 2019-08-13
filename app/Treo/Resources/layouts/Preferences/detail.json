@@ -167,20 +167,6 @@
           "name": "receiveStreamEmailNotifications"
         },
         false
-      ],
-      [
-        {
-          "name": "receiveNewSystemVersionNotifications"
-        },
-        {
-          "name": "receiveNewModuleVersionNotifications"
-        }
-      ],
-      [
-        {
-          "name": "receiveInstallDeleteModuleNotifications"
-        },
-        false
       ]
     ]
   },

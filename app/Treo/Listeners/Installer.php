@@ -54,11 +54,11 @@ class Installer extends AbstractListener
         // generate Treo ID
         $this->generateTreoId();
 
-        // refresh
-        $this->refreshStore();
-
         // create files in data dir
         $this->createDataFiles();
+
+        // create scheduled jobs
+        $this->createScheduledJobs();
     }
 
     /**
@@ -84,19 +84,26 @@ class Installer extends AbstractListener
     }
 
     /**
-     * Refresh TreoStore
-     */
-    protected function refreshStore(): void
-    {
-        $this->getContainer()->get('serviceFactory')->create('TreoStore')->refresh();
-    }
-
-    /**
      * Create needed files in data directory
      */
     protected function createDataFiles(): void
     {
         file_put_contents('data/notReadCount.json', '{}');
         file_put_contents('data/popupNotifications.json', '{}');
+    }
+
+    /**
+     * Create scheduled jobs
+     */
+    protected function createScheduledJobs(): void
+    {
+        // ComposerAutoUpdate job
+        $this
+            ->getEntityManager()
+            ->getPDO()
+            ->exec(
+                "INSERT INTO scheduled_job (id, name, job, status, scheduling) 
+                 VALUES ('998', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+            );
     }
 }

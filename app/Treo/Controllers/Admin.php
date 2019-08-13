@@ -53,23 +53,4 @@ class Admin extends Base
     {
         throw new NotFound();
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function postActionClearCache($params)
-    {
-        // refresh
-        $this->refreshStore();
-
-        return parent::postActionClearCache($params);
-    }
-
-    /**
-     * Refresh TreoStore
-     */
-    protected function refreshStore(): void
-    {
-        $this->getContainer()->get("serviceFactory")->create("TreoStore")->refresh();
-    }
 }
