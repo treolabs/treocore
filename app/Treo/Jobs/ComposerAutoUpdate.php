@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
+use Treo\Services\Composer;
 
 /**
  * Class ComposerAutoUpdate
@@ -47,6 +48,17 @@ class ComposerAutoUpdate extends Base
      */
     public function run()
     {
-        return $this->getServiceFactory()->create('Composer')->runUpdate();
+        // cancel changes
+        $this->getComposerService()->cancelChanges();
+
+        return $this->getComposerService()->runUpdate();
+    }
+
+    /**
+     * @return Composer
+     */
+    protected function getComposerService(): Composer
+    {
+        return $this->getServiceFactory()->create('Composer');
     }
 }

@@ -85,11 +85,25 @@ class ComposerLog extends AbstractConsole
             $note->set('data', ['status' => $status, 'output' => $content]);
             $note->set('createdById', $createdById);
 
-            // save
+            // save note
             $em->saveEntity($note, ['skipCreatedBy' => true]);
 
             // unset user
             $this->getConfig()->set('composerUser', null);
+
+            // send notifications for all admin users
+            if (!empty($users = $em->getRepository('User')->getAdminUsers())) {
+                foreach ($users as $user) {
+                    // create notification
+                    $notification = $em->getEntity('Notification');
+                    $notification->set('type', 'Message');
+                    $notification->set('message', $this->translate('Composer updated!', 'notifications', 'Composer'));
+                    $notification->set('userId', $user['id']);
+
+                    // save notification
+                    $em->saveEntity($notification);
+                }
+            }
         }
 
         // unblock composer UI
