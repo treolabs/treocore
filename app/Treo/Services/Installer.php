@@ -584,11 +584,11 @@ class Installer extends AbstractService
         $result = null;
 
         $data = explode(".", $version);
-        if (!empty($data[0]) && !empty($data[1])) {
+        if (isset($data[0]) && isset($data[1])) {
             $result = $data[0] . '.' . $data[1];
         }
 
-        if ($patch && !empty($data[2])) {
+        if ($patch && isset($data[2])) {
             $result .= '.' . (int)$data[2];
         }
 
