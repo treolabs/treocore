@@ -14,6 +14,6 @@
     }
   },
   "jobSchedulingMap": {
-    "ComposerAutoUpdate": "0 0 */14 * *"
+    "ComposerAutoUpdate": "0 0 * * SUN"
   }
 }
