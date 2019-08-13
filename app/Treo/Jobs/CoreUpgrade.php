@@ -36,12 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Jobs;
 
+use Espo\Core\Jobs\Base;
+
 /**
- * CoreUpgrade job
+ * Class CoreUpgrade
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun r.ratsun@treolabs.com
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class CoreUpgrade extends Base
 {
     /**
      * Run cron job
@@ -50,28 +52,6 @@ class CoreUpgrade extends \Espo\Core\Jobs\Base
      */
     public function run(): bool
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
-
-        // send notification about new version of module
-        $this->moduleNotification();
-
         return true;
-    }
-
-    /**
-     * Send notification about new version of module
-     */
-    protected function moduleNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
-
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
     }
 }
