@@ -53,6 +53,10 @@ Espo.define('treo-core:views/search/filter', 'views/search/filter', function (De
 
             if (type) {
                 var viewName = this.model.getFieldParam(this.generalName, 'view') || this.getFieldManager().getViewName(type);
+                if (['varcharMultiLang', 'textMultiLang', 'enumMultiLang', 'multiEnumMultiLang', 'arrayMultiLang', 'wysiwygMultiLang'].includes(type)) {
+                    type = this.getMetadata().get(['fields', type, 'defaultFieldType']);
+                    viewName = this.getFieldManager().getViewName(type);
+                }
 
                 this.createView('field', viewName, {
                     mode: 'search',
