@@ -43,7 +43,6 @@ use Espo\Core\Utils\Json;
 use Treo\Core\Utils\Util;
 use Treo\Core\Utils\Route;
 use Treo\Core\Loaders\Layout;
-use Treo\Core\Loaders\HookManager;
 
 /**
  * Class AbstractModule
@@ -86,11 +85,6 @@ abstract class AbstractModule
      * @var Unifier
      */
     protected $objUnifier;
-
-    /**
-     * @var null
-     */
-    private $hookManager = null;
 
     /**
      * @var null
@@ -288,16 +282,6 @@ abstract class AbstractModule
     }
 
     /**
-     * Load module hooks
-     *
-     * @param array $data
-     */
-    public function loadHooks(array &$data)
-    {
-        $data = $this->getHookManager()->getModuleHookData($this->path . 'app/Hooks', $this->id, $data);
-    }
-
-    /**
      * Get className hash
      *
      * @param string $classesDir
@@ -362,18 +346,6 @@ abstract class AbstractModule
         }
 
         return $this->objUnifier;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getHookManager()
-    {
-        if (is_null($this->hookManager)) {
-            $this->hookManager = (new HookManager($this->container))->load();
-        }
-
-        return $this->hookManager;
     }
 
     /**

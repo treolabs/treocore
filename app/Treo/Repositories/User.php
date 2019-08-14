@@ -31,14 +31,19 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Repositories;
 
+use Espo\Repositories\User as Base;
+
 /**
- * User repository
+ * Class User
+ *
+ * @author r.ratsun@treolabs.com
  */
-class User extends \Espo\Repositories\User
+class User extends Base
 {
     /**
      * Get admin users
@@ -48,17 +53,15 @@ class User extends \Espo\Repositories\User
     public function getAdminUsers(): array
     {
         $sql
-            = "SELECT
-                  user.id AS id,
-                  preferences.data AS data
-                FROM user
-                JOIN
-                 preferences ON user.id = preferences.id
-                WHERE
-                  user.deleted = 0 AND user.is_admin = 1 AND user.is_active = 1";
+            = 'SELECT 
+                 u.id AS id, p.data AS data
+               FROM user AS u
+               LEFT JOIN preferences AS p ON u.id = p.id
+               WHERE u.deleted = 0 AND u.is_admin = 1 AND u.is_active = 1';
 
         $sth = $this->getEntityManager()->getPDO()->prepare($sql);
         $sth->execute();
+
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

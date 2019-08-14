@@ -34,59 +34,60 @@
 
 declare(strict_types=1);
 
-namespace Treo\Hooks\Portal;
+namespace Treo\Listeners;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\ORM\Entity;
-use Treo\Core\Hooks\AbstractHook;
 use Treo\Core\Application as App;
+use Treo\Core\EventManager\Event;
 
 /**
- * Portal hook
+ * Class PortalEntity
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Hook extends AbstractHook
+class PortalEntity extends AbstractListener
 {
     /**
-     * @param Entity $entity
-     * @param array  $options
-     */
-    public function beforeSave(Entity $entity, $options = [])
-    {
-        // prepare url
-        $this->preparePortalUrl($entity);
-
-        // validate url
-        $this->validateUrl($entity);
-    }
-
-    /**
-     * @param Entity $entity
-     * @param array  $options
+     * @param Event $event
      *
      * @throws BadRequest
      */
-    public function afterSave(Entity $entity, $options = [])
+    public function beforeSave(Event $event)
     {
-        // set url
-        $this->setUrl($entity);
+        // prepare url
+        $this->preparePortalUrl($event->getArgument('entity'));
+
+        // validate url
+        $this->validateUrl($event->getArgument('entity'));
     }
 
     /**
-     * @param Entity $entity
-     * @param array  $options
+     * @param Event $event
+     *
+     * @throws BadRequest
      */
-    public function afterRemove(Entity $entity, $options = [])
+    public function afterSave(Event $event)
+    {
+        // set url
+        $this->setUrl($event->getArgument('entity'));
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function afterRemove(Event $event)
     {
         // unsetUrl
-        $this->unsetUrl($entity);
+        $this->unsetUrl($event->getArgument('entity'));
     }
 
     /**
      * Prepare portal url
      *
      * @param Entity $entity
+     *
+     * @throws BadRequest
      */
     protected function preparePortalUrl(Entity $entity): void
     {
@@ -130,7 +131,7 @@ class Hook extends AbstractHook
     protected function validateUrl(Entity $entity)
     {
         if (empty($url = $entity->get('url'))) {
-            return;
+            return null;
         }
 
         // validate url
@@ -157,7 +158,7 @@ class Hook extends AbstractHook
             }
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -196,5 +197,17 @@ class Hook extends AbstractHook
             // save
             App::savePortalUrlFile($urls);
         }
+    }
+
+    /**
+     * @param string $label
+     * @param string $category
+     * @param string $scope
+     *
+     * @return string
+     */
+    protected function translate(string $label, string $category = 'labels', string $scope = 'Global'): string
+    {
+        return $this->getContainer()->get('language')->translate($label, $category, $scope);
     }
 }

@@ -31,40 +31,50 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Hooks;
+namespace Treo\Migrations;
 
-use Espo\Core\Hooks\Base;
+use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Utils\Util;
 
 /**
- * AbstractHook class
+ * Migration class for version 3.22.4
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-abstract class AbstractHook extends Base
+class V3Dot22Dot4 extends AbstractMigration
 {
+    /**
+     * @inheritDoc
+     */
+    public function up(): void
+    {
+        // get pdo
+        $pdo = $this->getEntityManager()->getPDO();
 
+        // delete CoreUpgrade job
+        $pdo->exec("DELETE FROM scheduled_job WHERE job='CoreUpgrade'");
+        $pdo->exec("DELETE FROM job WHERE name='CoreUpgrade'");
+
+        // insert ComposerAutoUpdate job
+        $pdo->exec(
+            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
+            . "', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+        );
+    }
 
     /**
-     * Translate
-     *
-     * @param string     $label
-     * @param string     $category
-     * @param string     $scope
-     * @param array|null $requiredOptions
-     *
-     * @return string
+     * @inheritDoc
      */
-    protected function translate(
-        string $label,
-        string $category = 'labels',
-        string $scope = 'Global',
-        array $requiredOptions = null
-    ): string {
-        return $this
-            ->getContainer()
-            ->get('language')
-            ->translate($label, $category, $scope, $requiredOptions);
+    public function down(): void
+    {
+        // get pdo
+        $pdo = $this->getEntityManager()->getPDO();
+
+        // delete CoreUpgrade job
+        $pdo->exec("DELETE FROM scheduled_job WHERE job='ComposerAutoUpdate'");
+        $pdo->exec("DELETE FROM job WHERE name='Auto-updating of modules'");
     }
 }

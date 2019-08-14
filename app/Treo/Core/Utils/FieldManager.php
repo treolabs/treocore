@@ -38,20 +38,18 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\FieldManager as EspoFieldManager;
 use Espo\Core\Utils\Metadata\Helper as MetadataHelper;
-use Treo\Core\Utils\Language;
 use Espo\Core\Utils\FieldManager\Hooks\Base as BaseHook;
-use Treo\Core\Utils\Metadata;
 use Treo\Traits\ContainerTrait;
 
 /**
  * FieldManager util
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class FieldManager extends EspoFieldManager
 {
-
     use ContainerTrait;
+
     /**
      *
      * @var MetadataHelper
@@ -223,8 +221,10 @@ class FieldManager extends EspoFieldManager
      */
     protected function getHook($type)
     {
+        // prepare hook
         $hook = null;
 
+        // get class name
         $className = $this->getMetadata()->get(['fields', $type, 'hookClassName']);
 
         if (!empty($className) && class_exists($className)) {
@@ -235,8 +235,6 @@ class FieldManager extends EspoFieldManager
             foreach ($hook->getDependencyList() as $name) {
                 $hook->inject($name, $this->getContainer()->get($name));
             }
-        } else {
-            $GLOBALS['log']->error("Field Manager hook class '{$className}' does not exist.");
         }
 
         return $hook;

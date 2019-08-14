@@ -46,66 +46,48 @@ use Treo\Core\Utils\Util;
  */
 class TreoStore extends Base
 {
+    const PACKAGES = 'https://packagist.treopim.com/packages.json';
+
     /**
-     * Refresh cached data
+     * @inheritDoc
      */
-    public function refresh(): void
+    public function findEntities($params)
     {
-        if (!empty($packages = $this->getRemotePackages())) {
+        // update store cache
+        $this->updateStoreCache();
+
+        return parent::findEntities($params);
+    }
+
+    /**
+     * Update store cache if it needs
+     */
+    protected function updateStoreCache(): void
+    {
+        // prepare cache path
+        $path = 'data/cache/store-last-update-time.json';
+
+        // prepare last update
+        $lastUpdate = strtotime('2019-01-01 00:00:00');
+        if (file_exists($path)) {
+            $lastUpdate = json_decode(file_get_contents($path), true)['time'];
+        }
+
+        // get diff in minutes
+        $minutes = (time() - $lastUpdate) / 60;
+
+        if ($minutes > 120 && !empty($packages = $this->getRemotePackages())) {
+            // caching
             $this->caching($packages);
-        }
-    }
 
-    /**
-     * Send notification about new version of module
-     */
-    public function notify(): void
-    {
-        // get module notified versions
-        $nativeNotifiedVersions = $this->getConfig()->get("moduleNotifiedVersion", []);
-
-        // clone
-        $notifiedVersions = $nativeNotifiedVersions;
-
-        foreach ($this->getInstalled() as $package) {
-            // prepare id
-            $id = $package['id'];
-
-            // get notified version
-            $version = (isset($notifiedVersions[$id])) ? $notifiedVersions[$id] : null;
-
-            if (isset($package['versions'][0]['version'])) {
-                // prepare version
-                $packageVersion = $package['versions'][0]['version'];
-
-                if ($packageVersion != $version) {
-                    // push
-                    $notifiedVersions[$id] = $packageVersion;
-
-                    // send
-                    if (!is_null($version)) {
-                        $this->sendNotification($package);
-                    }
-                }
+            // create dir if it needs
+            if (!file_exists('data/cache')) {
+                mkdir('data/cache', 0777, true);
             }
+
+            // save cache file
+            file_put_contents($path, json_encode(['time' => time()]));
         }
-
-        // set to config
-        if ($nativeNotifiedVersions != $notifiedVersions) {
-            $this->getConfig()->set("moduleNotifiedVersion", $notifiedVersions);
-            $this->getConfig()->save();
-        }
-    }
-
-    /**
-     * Init
-     */
-    protected function init()
-    {
-        parent::init();
-
-        $this->addDependency('language');
-        $this->addDependency('moduleManager');
     }
 
     /**
@@ -154,97 +136,123 @@ class TreoStore extends Base
      */
     protected function getRemotePackages(): array
     {
-        // prepare params
-        $params = [
-            'allowUnstable' => $this->getConfig()->get('developMode', 0),
-            'id'            => $this->getConfig()->get('treoId', 'common')
-        ];
+        // get all
+        $all = self::getPathContent(self::PACKAGES);
 
-        try {
-            $content = file_get_contents('https://packagist.treopim.com/api/v1/packages?' . http_build_query($params));
-        } catch (\Throwable $e) {
-            $content = '';
+        // get public
+        $public = self::getPathContent(self::PACKAGES . '?id=public');
+
+        // get private
+        $private = [];
+        if (!empty($treoId = $this->getConfig()->get('treoId'))) {
+            $private = self::getPathContent(self::PACKAGES . '?id=' . $treoId);
         }
 
-        return (!empty($content)) ? json_decode($content, true) : [];
-    }
+        // parse all
+        $packages = $this->parsePackages($all);
 
-    /**
-     * @return array
-     */
-    protected function getInstalled(): array
-    {
-        // prepare result
-        $result = [];
-
-        // find
-        $data = $this
-            ->getRepository()
-            ->where(['id' => $this->getModules()])
-            ->find();
-
-        if (count($data) > 0) {
-            foreach ($data as $row) {
-                $result[$row->get('id')] = $row->toArray();
-                $result[$row->get('id')]['versions'] = json_decode(json_encode($row->get('versions')), true);
+        // parse public
+        if (!empty($public)) {
+            foreach ($this->parsePackages($public, 'available') as $id => $row) {
+                $packages[$id] = $row;
             }
         }
 
-        return $result;
-    }
-
-    /**
-     * @param array $package
-     */
-    protected function sendNotification(array $package): void
-    {
-        if (!empty($users = $this->getEntityManager()->getRepository('User')->getAdminUsers())) {
-            // prepare id
-            $id = $package['id'];
-
-            // prepare config data
-            $isDisabledGlobally = $this->getConfig()->get('notificationNewModuleVersionDisabled', false);
-
-            // prepare preference key
-            $key = 'receiveNewModuleVersionNotifications';
-
-            foreach ($users as $user) {
-                // prepare preferences
-                $preferences = json_decode($user['data'], true);
-
-                // is disabled for user
-                $isDisabled = (isset($preferences[$key]) && !$preferences[$key]);
-
-                if (!$isDisabled && !$isDisabledGlobally) {
-                    // create notification
-                    $notification = $this->getEntityManager()->getEntity('Notification');
-                    $notification->set(
-                        [
-                            'type'   => 'TreoMessage',
-                            'userId' => $user['id'],
-                            'data'   => [
-                                'id'              => $id,
-                                'messageTemplate' => 'newModuleVersion',
-                                'messageVars'     => [
-                                    'moduleName'    => $package['name'],
-                                    'moduleVersion' => $package['versions'][0]['version'],
-                                ]
-                            ],
-                        ]
-                    );
-                    $this->getEntityManager()->saveEntity($notification);
-                }
+        // parse private
+        if (!empty($private)) {
+            foreach ($this->parsePackages($private, 'available') as $id => $row) {
+                $packages[$id] = $row;
             }
         }
+
+        return array_values($packages);
     }
 
     /**
-     * Get modules
+     * @param string $path
      *
      * @return array
      */
-    private function getModules(): array
+    private static function getPathContent(string $path): array
     {
-        return array_keys($this->getInjection('moduleManager')->getModules());
+        $content = @file_get_contents($path);
+
+        return (empty($content)) ? [] : json_decode($content, true);
+    }
+
+    /**
+     * @param array  $packages
+     * @param string $status
+     *
+     * @return array
+     */
+    private function parsePackages(array $packages, string $status = 'buyable'): array
+    {
+        // prepare data
+        $data = [];
+
+        foreach ($packages['packages'] as $repository => $versions) {
+            if (is_array($versions)) {
+                foreach ($versions as $version => $row) {
+                    if (!empty($row['extra']['treoId'])) {
+                        $treoId = $row['extra']['treoId'];
+                        $version = strtolower($version);
+                        if (preg_match_all('/^v\d+.\d+.\d+$/', $version, $matches)
+                            || preg_match_all('/^v\d+.\d+.\d+-rc\d+$/', $version, $matches)
+                            || preg_match_all('/^\d+.\d+.\d+$/', $version, $matches)
+                            || preg_match_all('/^\d+.\d+.\d+-rc\d+$/', $version, $matches)
+                        ) {
+                            // prepare version
+                            $version = str_replace('v', '', $matches[0][0]);
+
+                            // skip if unstable version
+                            if (strpos($version, 'rc') !== false) {
+                                continue;
+                            }
+
+                            // push
+                            $data[$treoId][$version] = $row;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($data as $treoId => $rows) {
+            // find max version
+            $versions = array_keys($rows);
+            natsort($versions);
+            $versions = array_reverse($versions);
+            $max = $versions[0];
+
+            // prepare tags
+            $tags = [];
+            if (!empty($rows[$max]['extra']['tags'])) {
+                $tags = $rows[$max]['extra']['tags'];
+            }
+
+            // prepare item
+            $item = [
+                'treoId'      => $treoId,
+                'packageId'   => $rows[$max]['name'],
+                'url'         => $rows[$max]['source']['url'],
+                'name'        => $rows[$max]['extra']['name'],
+                'description' => $rows[$max]['extra']['description'],
+                'tags'        => $tags,
+                'status'      => $status
+            ];
+
+            foreach ($versions as $version) {
+                $item['versions'][] = [
+                    'version' => $version,
+                    'require' => $rows[$version]['require'],
+                ];
+            }
+
+            // push
+            $result[$treoId] = $item;
+        }
+
+        return $result;
     }
 }

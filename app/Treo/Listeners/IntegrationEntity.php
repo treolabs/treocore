@@ -34,44 +34,34 @@
 
 declare(strict_types=1);
 
-namespace Treo\Jobs;
+namespace Treo\Listeners;
+
+use Treo\Core\EventManager\Event;
 
 /**
- * CoreUpgrade job
+ * Class IntegrationEntity
  *
- * @author r.ratsun r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
-class CoreUpgrade extends \Espo\Core\Jobs\Base
+class IntegrationEntity extends AbstractListener
 {
     /**
-     * Run cron job
-     *
-     * @return bool
+     * @param Event $event
      */
-    public function run(): bool
+    public function afterSave(Event $event)
     {
-        // refresh module packages cache
-        $this->refreshPackagesCache();
+        // get entity
+        $entity = $event->getArgument('entity');
 
-        // send notification about new version of module
-        $this->moduleNotification();
-
-        return true;
-    }
-
-    /**
-     * Send notification about new version of module
-     */
-    protected function moduleNotification(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->notify();
-    }
-
-    /**
-     * Refresh module packages cache
-     */
-    protected function refreshPackagesCache(): void
-    {
-        $this->getServiceFactory()->create('TreoStore')->refresh();
+        // for GoogleMaps
+        if ($entity->id === 'GoogleMaps') {
+            if (!$entity->get('enabled') || !$entity->get('apiKey')) {
+                $this->getConfig()->set('googleMapsApiKey', null);
+                $this->getConfig()->save();
+                return;
+            }
+            $this->getConfig()->set('googleMapsApiKey', $entity->get('apiKey'));
+            $this->getConfig()->save();
+        }
     }
 }

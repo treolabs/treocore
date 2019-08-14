@@ -145,11 +145,13 @@ class Manager extends EventDispatcher
 
             $data = [];
             foreach ($listeners as $target => $classes) {
-                if ($target == 'AbstractListener') {
-                    continue 1;
-                }
-
                 foreach ($classes as $listener) {
+                    // skip abstract classes
+                    try {
+                        $obj = new $listener;
+                    } catch (\Throwable $e) {
+                        continue 1;
+                    }
                     if (!empty($methods = \get_class_methods($listener))) {
                         foreach ($methods as $method) {
                             if ($method != 'setContainer') {

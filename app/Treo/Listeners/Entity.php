@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
-use Espo\ORM\Entity as OrmEntity;
+use Espo\Hooks\Common;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -51,23 +51,22 @@ class Entity extends AbstractListener
      */
     public function beforeSave(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeSave', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
+        $this->setOwnerUser($event);
+
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
-                ->getEntityManager()
-                ->getHookManager()
-                ->process(
-                    $event->getArgument('entityType'),
-                    'beforeSave',
-                    $event->getArgument('entity'),
-                    $event->getArgument('options')
-                );
+                ->createHook(Common\CurrencyConverted::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Formula::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\NextNumber::class)
+                ->beforeSave($event->getArgument('entity'), $event->getArgument('options'));
         }
     }
 
@@ -76,23 +75,23 @@ class Entity extends AbstractListener
      */
     public function afterSave(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterSave', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
-                ->getEntityManager()
-                ->getHookManager()
-                ->process(
-                    $event->getArgument('entityType'),
-                    'afterSave',
-                    $event->getArgument('entity'),
-                    $event->getArgument('options')
-                );
+                ->createHook(Common\AssignmentEmailNotification::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Notifications::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\StreamNotesAcl::class)
+                ->afterSave($event->getArgument('entity'), $event->getArgument('options'));
         }
     }
 
@@ -101,23 +100,14 @@ class Entity extends AbstractListener
      */
     public function beforeRemove(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRemove', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
-                ->getEntityManager()
-                ->getHookManager()
-                ->process(
-                    $event->getArgument('entityType'),
-                    'beforeRemove',
-                    $event->getArgument('entity'),
-                    $event->getArgument('options')
-                );
+                ->createHook(Common\Notifications::class)
+                ->beforeRemove($event->getArgument('entity'), $event->getArgument('options'));
         }
     }
 
@@ -126,23 +116,17 @@ class Entity extends AbstractListener
      */
     public function afterRemove(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRemove', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
-                ->getEntityManager()
-                ->getHookManager()
-                ->process(
-                    $event->getArgument('entityType'),
-                    'afterRemove',
-                    $event->getArgument('entity'),
-                    $event->getArgument('options')
-                );
+                ->createHook(Common\Notifications::class)
+                ->afterRemove($event->getArgument('entity'), $event->getArgument('options'));
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterRemove($event->getArgument('entity'), $event->getArgument('options'));
         }
     }
 
@@ -151,7 +135,7 @@ class Entity extends AbstractListener
      */
     public function beforeMassRelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeMassRelate', $event);
     }
 
@@ -160,29 +144,8 @@ class Entity extends AbstractListener
      */
     public function afterMassRelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterMassRelate', $event);
-
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
-            $hookData = [
-                'relationName'   => $event->getArgument('relationName'),
-                'relationParams' => $event->getArgument('relationParams')
-            ];
-            $this
-                ->getEntityManager()
-                ->getHookManager()
-                ->process(
-                    $event->getArgument('entityType'),
-                    'afterMassRelate',
-                    $event->getArgument('entity'),
-                    $event->getArgument('options'),
-                    $hookData
-                );
-        }
     }
 
     /**
@@ -190,40 +153,8 @@ class Entity extends AbstractListener
      */
     public function beforeRelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRelate', $event);
-
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
-            $foreign = $event->getArgument('foreign');
-            if (!$foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity(
-                    $event->getArgument('entity'),
-                    $event->getArgument('relationName'),
-                    (string)$foreign
-                );
-            }
-
-            if ($foreign instanceof OrmEntity) {
-                $hookData = [
-                    'relationName'  => $event->getArgument('relationName'),
-                    'relationData'  => $event->getArgument('relationData'),
-                    'foreignEntity' => $foreign
-                ];
-                $this
-                    ->getEntityManager()
-                    ->getHookManager()
-                    ->process(
-                        $event->getArgument('entityType'),
-                        'beforeRelate',
-                        $event->getArgument('entity'),
-                        $event->getArgument('options'),
-                        $hookData
-                    );
-            }
-        }
     }
 
     /**
@@ -231,39 +162,18 @@ class Entity extends AbstractListener
      */
     public function afterRelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterRelate', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
+        // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
-            $foreign = $event->getArgument('foreign');
-            if (!$foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity(
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterRelate(
                     $event->getArgument('entity'),
-                    $event->getArgument('relationName'),
-                    (string)$foreign
+                    $event->getArgument('options'),
+                    $this->getHookRelationData($event)
                 );
-            }
-
-            if ($foreign instanceof OrmEntity) {
-                $hookData = [
-                    'relationName'  => $event->getArgument('relationName'),
-                    'relationData'  => $event->getArgument('relationData'),
-                    'foreignEntity' => $foreign
-                ];
-                $this
-                    ->getEntityManager()
-                    ->getHookManager()
-                    ->process(
-                        $event->getArgument('entityType'),
-                        'afterRelate',
-                        $event->getArgument('entity'),
-                        $event->getArgument('options'),
-                        $hookData
-                    );
-            }
         }
     }
 
@@ -272,40 +182,8 @@ class Entity extends AbstractListener
      */
     public function beforeUnrelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeUnrelate', $event);
-
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
-            $foreign = $event->getArgument('foreign');
-            if (!$foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity(
-                    $event->getArgument('entity'),
-                    $event->getArgument('relationName'),
-                    (string)$foreign
-                );
-            }
-
-            if ($foreign instanceof OrmEntity) {
-                $hookData = [
-                    'relationName'  => $event->getArgument('relationName'),
-                    'foreignEntity' => $foreign
-                ];
-                $this
-                    ->getEntityManager()
-                    ->getHookManager()
-                    ->process(
-                        $event->getArgument('entityType'),
-                        'beforeUnrelate',
-                        $event->getArgument('entity'),
-                        $event->getArgument('options'),
-                        $hookData
-                    );
-            }
-        }
     }
 
     /**
@@ -313,57 +191,19 @@ class Entity extends AbstractListener
      */
     public function afterUnrelate(Event $event)
     {
-        // dispatch an event
+        // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'afterUnrelate', $event);
 
-        /**
-         * @deprecated it will be removed soon
-         */
-        if (empty($event->getArgument('hooksDisabled'))
-            && empty($event->getArgument('options')['skipHooks'])) {
-            $foreign = $event->getArgument('foreign');
-            if (!$foreign instanceof OrmEntity) {
-                $foreign = $this->findForeignEntity(
+        // call hooks
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            $this
+                ->createHook(Common\Stream::class)
+                ->afterUnrelate(
                     $event->getArgument('entity'),
-                    $event->getArgument('relationName'),
-                    (string)$foreign
+                    $event->getArgument('options'),
+                    $this->getHookRelationData($event)
                 );
-            }
-
-            if ($foreign instanceof OrmEntity) {
-                $hookData = [
-                    'relationName'  => $event->getArgument('relationName'),
-                    'foreignEntity' => $foreign
-                ];
-                $this
-                    ->getEntityManager()
-                    ->getHookManager()
-                    ->process(
-                        $event->getArgument('entityType'),
-                        'afterUnrelate',
-                        $event->getArgument('entity'),
-                        $event->getArgument('options'),
-                        $hookData
-                    );
-            }
         }
-    }
-
-    /**
-     * @param OrmEntity $entity
-     * @param string    $relationName
-     * @param string    $id
-     *
-     * @return OrmEntity|null
-     */
-    protected function findForeignEntity(OrmEntity $entity, string $relationName, string $id): ?OrmEntity
-    {
-        $foreignEntityName = $this
-            ->getContainer()
-            ->get('metadata')
-            ->get(['entityDefs', $entity->getEntityType(), 'links', $relationName, 'entity']);
-
-        return (!empty($foreignEntityName)) ? $this->getEntityManager()->getEntity($foreignEntityName, $id) : null;
     }
 
     /**
@@ -374,5 +214,82 @@ class Entity extends AbstractListener
     protected function dispatch(string $target, string $action, Event $event)
     {
         $this->getContainer()->get('eventManager')->dispatch($target, $action, $event);
+    }
+
+    /**
+     * @param Event $event
+     */
+    private function setOwnerUser(Event $event)
+    {
+        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
+            // get entity
+            $entity = $event->getArgument('entity');
+
+            // get metadata
+            $metadata = $this->getContainer()->get('metadata');
+
+            // has owner param
+            $hasOwner = !empty($metadata->get('scopes.' . $entity->getEntityType() . '.hasOwner'));
+
+            if ($hasOwner && empty($entity->get('ownerUserId'))) {
+                $entity->set('ownerUserId', $entity->get('createdById'));
+            }
+        }
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return mixed
+     */
+    private function createHook(string $className)
+    {
+        $hook = new $className();
+        foreach ($hook->getDependencyList() as $name) {
+            $hook->inject($name, $this->getContainer()->get($name));
+        }
+
+        return $hook;
+    }
+
+    /**
+     * @param string $entity
+     * @param string $relationName
+     * @param string $id
+     *
+     * @return mixed
+     */
+    private function findForeignEntity(string $entity, string $relationName, string $id)
+    {
+        $foreignEntityName = $this
+            ->getContainer()
+            ->get('metadata')
+            ->get(['entityDefs', $entity, 'links', $relationName, 'entity']);
+
+        return (!empty($foreignEntityName)) ? $this->getEntityManager()->getEntity($foreignEntityName, $id) : null;
+    }
+
+    /**
+     * @param Event $event
+     *
+     * @return array
+     */
+    private function getHookRelationData(Event $event): array
+    {
+        // prepare foreign
+        $foreign = $event->getArgument('foreign');
+        if (is_string($foreign)) {
+            $foreign = $this->findForeignEntity(
+                $event->getArgument('entity')->getEntityType(),
+                $event->getArgument('relationName'),
+                $foreign
+            );
+        }
+
+        return [
+            'relationName'  => $event->getArgument('relationName'),
+            'relationData'  => $event->getArgument('relationData'),
+            'foreignEntity' => $foreign
+        ];
     }
 }

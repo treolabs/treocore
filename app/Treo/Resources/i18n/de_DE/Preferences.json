@@ -1,7 +1,0 @@
-{
-  "fields": {
-    "receiveNewSystemVersionNotifications": "Benachrichtigungen über neue Systemversion",
-    "receiveNewModuleVersionNotifications": "Benachrichtigungen über neue Modulversion",
-    "receiveInstallDeleteModuleNotifications": "Benachrichtigungen zum Installieren / Löschen eines neuen Moduls"
-  }
-}

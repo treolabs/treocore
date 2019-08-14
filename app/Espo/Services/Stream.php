@@ -1239,12 +1239,16 @@ class Stream extends \Espo\Core\Services\Base
             if ($updated) {
                 $updatedFieldList[] = $field;
                 foreach ($item['actualList'] as $attribute) {
-                    $was[$attribute] = $entity->getFetched($attribute);
-                    $became[$attribute] = $entity->get($attribute);
+                    if ($entity->isAttributeChanged($attribute)) {
+                        $was[$attribute] = $entity->getFetched($attribute);
+                        $became[$attribute] = $entity->get($attribute);
+                    }
                 }
                 foreach ($item['notActualList'] as $attribute) {
-                    $was[$attribute] = $entity->getFetched($attribute);
-                    $became[$attribute] = $entity->get($attribute);
+                    if ($entity->isAttributeChanged($attribute)) {
+                        $was[$attribute] = $entity->getFetched($attribute);
+                        $became[$attribute] = $entity->get($attribute);
+                    }
                 }
 
                 if ($item['fieldType'] === 'linkParent') {
