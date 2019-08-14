@@ -63,6 +63,14 @@ class V3Dot22Dot4 extends AbstractMigration
             "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
             . "', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
         );
+
+        // prepare pathes
+        $src = dirname(dirname(dirname(__DIR__))) . '/copy/.htaccess';
+        $dest = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/.htaccess';
+
+        //copy .htaccess
+        copy($src, $dest);
+
     }
 
     /**
