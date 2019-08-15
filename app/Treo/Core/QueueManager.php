@@ -276,7 +276,7 @@ class QueueManager
     protected function setStatus(QueueItem $item, string $status): void
     {
         $item->set('status', $status);
-        $this->getEntityManager()->saveEntity($item, ['skipAll' => true]);
+        $this->getEntityManager()->saveEntity($item);
     }
 
     /**
