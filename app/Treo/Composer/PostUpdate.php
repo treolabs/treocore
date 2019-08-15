@@ -93,6 +93,7 @@ class PostUpdate
             // init events
             $this->initEvents();
 
+            //send notification
             $this->sendNotification();
             // run migrations
             $this->runMigrations();
@@ -310,7 +311,6 @@ class PostUpdate
                         }
                     }
                 }
-
             }
         }
     }
