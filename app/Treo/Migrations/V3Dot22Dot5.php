@@ -40,41 +40,22 @@ use Treo\Core\Migration\AbstractMigration;
 use Treo\Core\Utils\Util;
 
 /**
- * Migration class for version 3.22.4
+ * Migration class for version 3.22.5
  *
- * @author r.ratsun@treolabs.com
+ * @author m.kokhanskyi@treolabs.com
  */
-class V3Dot22Dot4 extends AbstractMigration
+class V3Dot22Dot5 extends AbstractMigration
 {
     /**
      * @inheritDoc
      */
     public function up(): void
     {
-        // get pdo
-        $pdo = $this->getEntityManager()->getPDO();
+        // prepare pathes
+        $src = dirname(dirname(dirname(__DIR__))) . '/copy/.htaccess';
+        $dest = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/.htaccess';
 
-        // delete CoreUpgrade job
-        $pdo->exec("DELETE FROM scheduled_job WHERE job='CoreUpgrade'");
-        $pdo->exec("DELETE FROM job WHERE name='CoreUpgrade'");
-
-        // insert ComposerAutoUpdate job
-        $pdo->exec(
-            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
-            . "', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
-        );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function down(): void
-    {
-        // get pdo
-        $pdo = $this->getEntityManager()->getPDO();
-
-        // delete CoreUpgrade job
-        $pdo->exec("DELETE FROM scheduled_job WHERE job='ComposerAutoUpdate'");
-        $pdo->exec("DELETE FROM job WHERE name='Auto-updating of modules'");
+        //copy .htaccess
+        copy($src, $dest);
     }
 }
