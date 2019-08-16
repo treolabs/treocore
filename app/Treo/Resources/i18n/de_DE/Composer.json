@@ -57,6 +57,9 @@
     "installModule": "das Modul"
   },
   "notifications": {
+    "Module update": "Das Pim-Modul wurde aktualisiert. Von version {from} bis {to}",
+    "Module install": "Modul {module} v.{version} wurde installiert",
+    "Module delete": "Das Modul {module} v.{version} wurde gelöscht",
     "Composer updated!": "Abhängigkeiten des Modulmanagers wurden aktualisiert! <a href=\"/#Composer/list\">Siehe Einzelheiten</a>"
   },
   "options": {

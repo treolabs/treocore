@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Composer;
 
 use Treo\Core\ModuleManager\Manager as ModuleManager;
+use Treo\Core\ORM\EntityManager;
 use Treo\Core\Utils\Util;
 use Treo\Core\ModuleManager\AbstractEvent;
 use Treo\Services\Composer as ComposerService;
@@ -92,6 +93,9 @@ class PostUpdate
             // init events
             $this->initEvents();
 
+            //send notification
+            $this->sendNotification();
+            
             // run migrations
             $this->runMigrations();
         }
@@ -279,6 +283,59 @@ class PostUpdate
         }
     }
 
+    /**
+     * Send Notification Admin Users when updated composer
+     */
+    protected function sendNotification() :void
+    {
+        $composerDiff = $this->getComposerLockDiff();
+
+        if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
+            /** @var EntityManager $em */
+            $em = $this
+                ->getContainer()
+                ->get('entityManager');
+            $users = $em->getRepository('User')->getAdminUsers();
+            if (!empty($users)) {
+                foreach ($composerDiff as $status => $modules) {
+                    foreach ($modules as $module) {
+                        foreach ($users as $user) {
+                            $message = $this->getMessageForComposer($status, $module);
+                            // create notification
+                            $notification = $em->getEntity('Notification');
+                            $notification->set('type', 'Message');
+                            $notification->set('message', $message);
+                            $notification->set('userId', $user['id']);
+                            // save notification
+                            $em->saveEntity($notification);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $status
+     * @param array $module
+     *
+     * @return string
+     */
+    private function getMessageForComposer(string $status, array $module) :string
+    {
+        $language = $this->getContainer()->get('language');
+        if ($status === 'update') {
+            $message = $language->translate('Module update', 'notifications', 'Composer');
+            $message = str_replace('{module}', $module['id'], $message);
+            $message = str_replace('{from}', $module['from'], $message);
+            $message = str_replace('{to}', $module["package"]["version"], $message);
+        } else {
+            $message = $language->translate("Module {$status}", 'notifications', 'Composer');
+            $message = str_replace('{module}', $module['id'], $message);
+            $message = str_replace('{version}', $module["package"]["version"], $message);
+        }
+        return $message;
+    }
     /**
      * Get installed modules
      *

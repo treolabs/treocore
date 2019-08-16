@@ -90,20 +90,6 @@ class ComposerLog extends AbstractConsole
 
             // unset user
             $this->getConfig()->set('composerUser', null);
-
-            // send notifications for all admin users
-            if (!empty($users = $em->getRepository('User')->getAdminUsers())) {
-                foreach ($users as $user) {
-                    // create notification
-                    $notification = $em->getEntity('Notification');
-                    $notification->set('type', 'Message');
-                    $notification->set('message', $this->translate('Composer updated!', 'notifications', 'Composer'));
-                    $notification->set('userId', $user['id']);
-
-                    // save notification
-                    $em->saveEntity($notification);
-                }
-            }
         }
 
         // unblock composer UI
