@@ -127,7 +127,6 @@ class PostUpdate
         $sth->execute();
     }
 
-
     /**
      * Run migrations
      */
