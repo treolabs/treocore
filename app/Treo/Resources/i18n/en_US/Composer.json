@@ -57,6 +57,9 @@
     "confirmRun": "After update action all users would logout from system. Are you sure you want to do that action?"
   },
   "notifications": {
+    "Module update": "Module {module} has been updated. From version {from} to {to}",
+    "Module install": "Module {module} v.{version} has been installed",
+    "Module delete": "Module {module} v.{version} has been deleted",
     "Composer updated!": "Module manager dependencies has been updated! <a href=\"/#Composer/list\">See details</a>"
   }
 }
