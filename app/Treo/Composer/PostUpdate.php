@@ -174,8 +174,8 @@ class PostUpdate
         // prepare result
         $result = [
             'install' => [],
-            'update' => [],
-            'delete' => [],
+            'update'  => [],
+            'delete'  => [],
         ];
 
         // prepare data
@@ -185,21 +185,21 @@ class PostUpdate
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
                 $result['delete'][] = [
-                    'id' => $package['extra']['treoId'],
+                    'id'      => $package['extra']['treoId'],
                     'package' => $package
                 ];
             } elseif ($package['version'] != $newData[$package['name']]['version']) {
                 $result['update'][] = [
-                    'id' => $package['extra']['treoId'],
+                    'id'      => $package['extra']['treoId'],
                     'package' => $newData[$package['name']],
-                    'from' => $package['version']
+                    'from'    => $package['version']
                 ];
             }
         }
         foreach ($newData as $package) {
             if (!isset($oldData[$package['name']])) {
                 $result['install'][] = [
-                    'id' => $package['extra']['treoId'],
+                    'id'      => $package['extra']['treoId'],
                     'package' => $package
                 ];
             }
