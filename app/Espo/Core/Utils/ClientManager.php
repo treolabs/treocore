@@ -35,9 +35,9 @@ class ClientManager
 
     private $config;
 
-    protected $mainHtmlFilePath = 'html/main.html';
+    protected $mainHtmlFilePath = 'client/html/main.html';
 
-    protected $htmlFilePathForDeveloperMode = 'frontend/html/main.html';
+    protected $htmlFilePathForDeveloperMode = 'client/html/main.html';
 
     protected $runScript = "app.start();";
 
@@ -89,8 +89,8 @@ class ClientManager
         $isDeveloperMode = $this->getConfig()->get('isDeveloperMode');
 
         if ($isDeveloperMode) {
-            if (file_exists('frontend/' . $htmlFilePath)) {
-                $htmlFilePath = 'frontend/' . $htmlFilePath;
+            if (file_exists('client/html/' . $htmlFilePath)) {
+                $htmlFilePath = 'client/html/' . $htmlFilePath;
             }
         }
 

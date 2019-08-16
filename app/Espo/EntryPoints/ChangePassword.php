@@ -60,8 +60,9 @@ class ChangePassword extends \Espo\Core\EntryPoints\Base
                 controller.doAction('passwordChange', '{$requestId}');
             });
         ";
+        $vars['classReplaceMap'] = json_encode($this->getMetadata()->get(['app', 'clientClassReplaceMap']));
 
-        $this->getClientManager()->display($runScript);
+        $this->getClientManager()->display($runScript, null, $vars);
     }
 
     protected function getThemeManager()
@@ -69,4 +70,3 @@ class ChangePassword extends \Espo\Core\EntryPoints\Base
         return $this->getContainer()->get('themeManager');
     }
 }
-
