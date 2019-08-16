@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
+use Espo\Core\Exceptions\Forbidden;
 use Espo\Hooks\Common;
 use Treo\Core\EventManager\Event;
 
@@ -48,12 +49,18 @@ class Entity extends AbstractListener
 {
     /**
      * @param Event $event
+     *
+     * @throws Forbidden
      */
     public function beforeSave(Event $event)
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeSave', $event);
 
+        // checking workflow init states
+        $this->workflowInitStates($event);
+
+        // set owner user
         $this->setOwnerUser($event);
 
         // call hooks
@@ -291,5 +298,27 @@ class Entity extends AbstractListener
             'relationData'  => $event->getArgument('relationData'),
             'foreignEntity' => $foreign
         ];
+    }
+
+    /**
+     * @param Event $event
+     *
+     * @throws Forbidden
+     */
+    private function workflowInitStates(Event $event): void
+    {
+        // get metadata
+        $metadata = $this->getContainer()->get('metadata');
+
+        // get entity
+        $entity = $event->getArgument('entity');
+
+        if (!empty($workflow = $metadata->get(['workflow', $event->getArgument('entityType')])) && $entity->isNew()) {
+            foreach ($workflow as $field => $data) {
+                if (!empty($data['initStates']) && !in_array($entity->get($field), $data['initStates'])) {
+                    throw new Forbidden('Such workflow init state is not defined');
+                }
+            }
+        }
     }
 }

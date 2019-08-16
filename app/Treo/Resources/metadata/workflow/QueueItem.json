@@ -1,5 +1,8 @@
 {
   "status": {
+    "initStates": [
+      "Pending"
+    ],
     "transitions": {
       "Running": [
         "Pending"
