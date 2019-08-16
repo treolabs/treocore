@@ -95,6 +95,7 @@ class PostUpdate
 
             //send notification
             $this->sendNotification();
+            
             // run migrations
             $this->runMigrations();
         }
