@@ -20669,6 +20669,10 @@ td[data-name="draggableIcon"] {
     padding-left: 14px;
 }
 
+.mapping-container .list table td {
+    overflow: visible;
+}
+
 .configurator-modal .row .cell.col-sm-6:nth-child(2n+1):not(:last-child) {
     clear: left;
 }
