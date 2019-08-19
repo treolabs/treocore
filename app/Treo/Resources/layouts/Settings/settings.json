@@ -21,10 +21,9 @@
         ]
     },
     {
-        "label": "Activities",
-        "rows": [
-            [{"name": "calendarEntityList"}, {"name": "activitiesEntityList"}],
-            [false, {"name": "historyEntityList"}]
-        ]
+      "label": "Activities",
+      "rows": [
+        [{"name": "calendarEntityList"}, false]
+      ]
     }
 ]
