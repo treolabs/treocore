@@ -324,14 +324,29 @@ class PostUpdate
     private function getMessageForComposer(string $status, array $module) :string
     {
         $language = $this->getContainer()->get('language');
+
+        if ($module['id'] != 'Treo'){
+            $nameModule = !empty($module["package"]["extra"]["name"]["default"])
+                        ? $module["package"]["extra"]["name"]["default"]
+                        : $module['id'];
+        } else {
+            $nameModule = 'System';
+        }
+
         if ($status === 'update') {
-            $message = $language->translate('Module update', 'notifications', 'Composer');
-            $message = str_replace('{module}', $module['id'], $message);
+
+            $oldVersion  = preg_replace("/[^0-9]/", '',  $module['from']);
+            $newVersion  = preg_replace("/[^0-9]/", '',  $module["package"]["version"]);
+
+            $keyLang = $oldVersion < $newVersion ? 'Module update' : 'Module downgrade';
+
+            $message = $language->translate($keyLang, 'notifications', 'Composer');
+            $message = str_replace('{module}',$nameModule, $message);
             $message = str_replace('{from}', $module['from'], $message);
             $message = str_replace('{to}', $module["package"]["version"], $message);
         } else {
             $message = $language->translate("Module {$status}", 'notifications', 'Composer');
-            $message = str_replace('{module}', $module['id'], $message);
+            $message = str_replace('{module}', $nameModule, $message);
             $message = str_replace('{version}', $module["package"]["version"], $message);
         }
         return $message;
