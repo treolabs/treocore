@@ -56,12 +56,6 @@ class Metadata extends AbstractListener
         // add owner
         $data = $this->addOwner($data);
 
-        // delete activities
-        $data = $this->deleteActivities($data);
-
-        // delete tasks
-        $data = $this->deleteTasks($data);
-
         // add onlyActive bool filter
         $data = $this->addOnlyActiveFilter($data);
 
@@ -171,93 +165,6 @@ class Metadata extends AbstractListener
         }
 
         return $indexes;
-    }
-
-
-    /**
-     * Delete activities
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function deleteActivities(array $data): array
-    {
-        foreach ($data['entityDefs'] as $entity => $row) {
-            if (empty($data['scopes'][$entity]['hasActivities'])) {
-                // remove from entityList
-                $entityList = [];
-                if (!empty($data['entityDefs']['Meeting']['fields']['parent']['entityList'])) {
-                    foreach ($data['entityDefs']['Meeting']['fields']['parent']['entityList'] as $item) {
-                        if ($entity != $item) {
-                            $entityList[] = $item;
-                        }
-                    }
-                }
-                $data['entityDefs']['Meeting']['fields']['parent']['entityList'] = $entityList;
-
-                // delete from side panel
-                foreach (['detail', 'detailSmall'] as $panel) {
-                    if (!empty($data['clientDefs'][$entity]['sidePanels'][$panel])) {
-                        $sidePanelsData = [];
-                        foreach ($data['clientDefs'][$entity]['sidePanels'][$panel] as $k => $item) {
-                            if (!in_array($item['name'], ['activities', 'history'])) {
-                                $sidePanelsData[] = $item;
-                            }
-                        }
-                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
-                    }
-                }
-
-                // delete link
-                if (isset($data['entityDefs'][$entity]['links']['meetings'])
-                    && !in_array($entity, ['User'])) {
-                    unset($data['entityDefs'][$entity]['links']['meetings']);
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Delete tasks
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function deleteTasks(array $data): array
-    {
-        foreach ($data['entityDefs'] as $entity => $row) {
-            if (isset($data['scopes'][$entity]['hasTasks']) && $data['scopes'][$entity]['hasTasks'] === false) {
-                // remove from entityList
-                $entityList = [];
-                if (isset($data['entityDefs']['Task']['fields']['parent']['entityList'])) {
-                    foreach ($data['entityDefs']['Task']['fields']['parent']['entityList'] as $item) {
-                        if ($entity != $item) {
-                            $entityList[] = $item;
-                        }
-                    }
-                    $data['entityDefs']['Task']['fields']['parent']['entityList'] = $entityList;
-                }
-
-                // remove from client defs
-                if (isset($data['clientDefs'][$entity]['sidePanels'])) {
-                    foreach ($data['clientDefs'][$entity]['sidePanels'] as $panel => $rows) {
-                        $sidePanelsData = [];
-                        foreach ($rows as $k => $row) {
-                            if ($row['name'] != 'tasks') {
-                                $sidePanelsData[] = $row;
-                            }
-                        }
-                        $data['clientDefs'][$entity]['sidePanels'][$panel] = $sidePanelsData;
-                    }
-                }
-            }
-        }
-
-        return $data;
     }
 
     /**
