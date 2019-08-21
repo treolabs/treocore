@@ -20366,8 +20366,8 @@ a.collapsing-button:hover {
 }
 
 a.collapsing-button > span {
-    margin-left: 3px;
-    margin-right: 2px;
+    margin: 0 3px;
+    font-size: 12px;
 }
 
 #login .logo-container img.logo {
