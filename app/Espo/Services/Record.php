@@ -396,12 +396,29 @@ class Record extends \Espo\Core\Services\Base
         return $this->getRepository()->save($entity);
     }
 
+    /**
+     * @param Entity $entity
+     *
+     * @return bool
+     */
     protected function isValid($entity)
     {
-        $fieldDefs = $entity->getAttributes();
-        if ($entity->hasAttribute('name') && !empty($fieldDefs['name']['required'])) {
-            if (!$entity->get('name')) {
-                return false;
+        // get entity fields
+        $fields = $this->getMetadata()->get(['entityDefs', $this->entityType, 'fields']);
+
+        foreach ($fields as $field => $data) {
+            // skip link multiple
+            if ($data['type'] == 'linkMultiple') {
+                continue 1;
+            }
+
+            // prepare field for link type
+            if ($data['type'] == 'link') {
+                $field .= 'Id';
+            }
+
+            if (!empty($data['required']) && is_null($entity->get($field))) {
+                throw new BadRequest("Validation failed. '$field' is required");
             }
         }
 
@@ -707,9 +724,8 @@ class Record extends \Espo\Core\Services\Base
 
         $this->beforeCreateEntity($entity, $attachment);
 
-        if (!$this->isValid($entity)) {
-            throw new BadRequest();
-        }
+        // is valid ?
+        $this->isValid($entity);
 
         if (!$this->checkAssignment($entity)) {
             throw new Forbidden('Assignment permission failure');
@@ -766,9 +782,8 @@ class Record extends \Espo\Core\Services\Base
 
         $this->beforeUpdateEntity($entity, $data);
 
-        if (!$this->isValid($entity)) {
-            throw new BadRequest();
-        }
+        // is valid ?
+        $this->isValid($entity);
 
         if (!$this->checkAssignment($entity)) {
             throw new Forbidden();
