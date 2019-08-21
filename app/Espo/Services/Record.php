@@ -37,6 +37,7 @@ use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Conflict;
 use \Espo\Core\Exceptions\NotFound;
 use \Espo\Core\Utils\Util;
+use Treo\Core\Exceptions\NoChange;
 
 class Record extends \Espo\Core\Services\Base
 {
@@ -777,6 +778,9 @@ class Record extends \Espo\Core\Services\Base
         if (!$this->getAcl()->check($entity, 'edit')) {
             throw new Forbidden();
         }
+
+        // is entity updated ?
+        $this->isEntityUpdated($entity, $data);
 
         $entity->set($data);
 
@@ -2323,5 +2327,40 @@ class Record extends \Espo\Core\Services\Base
         return $this
             ->getInjection('metadata')
             ->get("entityDefs." . $entity->getEntityType() . ".links", []);
+    }
+
+    /**
+     * @param Entity    $entity
+     * @param \stdClass $data
+     *
+     * @return bool
+     * @throws NoChange
+     */
+    protected function isEntityUpdated(Entity $entity, \stdClass $data): bool
+    {
+        // prepare skipping fields
+        $skip = [
+            'id',
+            'deleted',
+            'createdAt',
+            'modifiedAt',
+            'createdById'
+        ];
+
+        // prepare data
+        $data = json_decode(json_encode($data), true);
+
+        $isUpdated = false;
+        foreach ($entity->toArray() as $field => $value) {
+            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $value) {
+                $isUpdated = true;
+            }
+        }
+
+        if (!$isUpdated) {
+            throw new NoChange();
+        }
+
+        return true;
     }
 }
