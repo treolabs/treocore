@@ -95,7 +95,7 @@ class PostUpdate
 
             //send notification
             $this->sendNotification();
-            
+
             // run migrations
             $this->runMigrations();
         }
@@ -286,7 +286,7 @@ class PostUpdate
     /**
      * Send Notification Admin Users when updated composer
      */
-    protected function sendNotification() :void
+    protected function sendNotification(): void
     {
         $composerDiff = $this->getComposerLockDiff();
 
@@ -317,31 +317,30 @@ class PostUpdate
 
     /**
      * @param string $status
-     * @param array $module
+     * @param array  $module
      *
      * @return string
      */
-    private function getMessageForComposer(string $status, array $module) :string
+    private function getMessageForComposer(string $status, array $module): string
     {
         $language = $this->getContainer()->get('language');
 
-        if ($module['id'] != 'Treo'){
+        if ($module['id'] != 'Treo') {
             $nameModule = !empty($module["package"]["extra"]["name"]["default"])
-                        ? $module["package"]["extra"]["name"]["default"]
-                        : $module['id'];
+                ? $module["package"]["extra"]["name"]["default"]
+                : $module['id'];
         } else {
             $nameModule = 'System';
         }
 
         if ($status === 'update') {
-
-            $oldVersion  = preg_replace("/[^0-9]/", '',  $module['from']);
-            $newVersion  = preg_replace("/[^0-9]/", '',  $module["package"]["version"]);
+            $oldVersion = preg_replace("/[^0-9]/", '', $module['from']);
+            $newVersion = preg_replace("/[^0-9]/", '', $module["package"]["version"]);
 
             $keyLang = $oldVersion < $newVersion ? 'Module update' : 'Module downgrade';
 
             $message = $language->translate($keyLang, 'notifications', 'Composer');
-            $message = str_replace('{module}',$nameModule, $message);
+            $message = str_replace('{module}', $nameModule, $message);
             $message = str_replace('{from}', $module['from'], $message);
             $message = str_replace('{to}', $module["package"]["version"], $message);
         } else {
@@ -351,6 +350,7 @@ class PostUpdate
         }
         return $message;
     }
+
     /**
      * Get installed modules
      *
