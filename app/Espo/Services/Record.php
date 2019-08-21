@@ -2308,25 +2308,13 @@ class Record extends \Espo\Core\Services\Base
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function init()
-    {
-        parent::init();
-
-        $this->addDependency('metadata');
-    }
-
-    /**
      * @param Entity $entity
      *
      * @return array
      */
     protected function getEntityLinks(Entity $entity): array
     {
-        return $this
-            ->getInjection('metadata')
-            ->get("entityDefs." . $entity->getEntityType() . ".links", []);
+        return $this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'links'], []);
     }
 
     /**
