@@ -53,6 +53,12 @@ class Currency extends Base
         ];
 
         $params = $this->getFieldParams($fieldName);
+
+        // prepare required
+        if (!empty($params['required'])) {
+            $d[$entityName]['fields'][$fieldName]['required'] = true;
+        }
+
         if (!empty($params['notStorable'])) {
             $d[$entityName]['fields'][$fieldName]['notStorable'] = true;
         } else {

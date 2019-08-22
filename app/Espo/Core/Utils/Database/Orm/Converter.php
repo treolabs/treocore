@@ -367,6 +367,8 @@ class Converter
                 }
 
                 $ormMetadata = Util::merge($ormMetadata, $fieldResult);
+            } elseif (!empty($entityDefs[$entityName]['fields'][$fieldName]['required'])) {
+                $ormMetadata[$entityName]['fields'][$fieldName]['required'] = true;
             }
 
             $defaultAttributes = $this->metadata->get(['entityDefs', $entityName, 'fields', $fieldName, 'defaultAttributes']);

@@ -54,6 +54,12 @@ class Link extends Base
                 )
             )
         );
+
+        // prepare required
+        if (!empty($fieldParams['required'])) {
+            $data[$entityName]['fields'][$fieldName . 'Id']['required'] = true;
+        }
+
         if (!empty($fieldParams['notStorable'])) {
             $data[$entityName]['fields'][$fieldName.'Id']['notStorable'] = true;
         }
