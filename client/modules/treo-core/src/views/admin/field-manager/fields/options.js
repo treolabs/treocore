@@ -74,7 +74,17 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
             });
 
             return data;
-        }
+        },
+
+        fetchFromDom() {
+            var selected = [];
+            this.$el.find('.list-group .list-group-item').each((i, el) => {
+                var value = $(el).data('value').toString();
+                value = value.replace(/-quote-/g, '"').replace(/-backslash-/g, '\\');
+                selected.push(value);
+            });
+            this.selected = selected;
+        },
 
     });
 
