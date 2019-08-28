@@ -562,12 +562,13 @@ class Composer extends AbstractService
     protected function getStoredModuleId(string $packageId): string
     {
         // parse composer.lock
-        $composer = json_decode(file_get_contents('composer.lock'), true);
-
-        if (!empty($composer['packages'])) {
-            foreach ($composer['packages'] as $v) {
-                if ($v['name'] == $packageId && !empty($v['extra']['treoId'])) {
-                    return $v['extra']['treoId'];
+        if (file_exists('composer.lock')) {
+            $composer = json_decode(file_get_contents('composer.lock'), true);
+            if (!empty($composer['packages'])) {
+                foreach ($composer['packages'] as $v) {
+                    if ($v['name'] == $packageId && !empty($v['extra']['treoId'])) {
+                        return $v['extra']['treoId'];
+                    }
                 }
             }
         }
