@@ -34,6 +34,8 @@ use \Espo\ORM\EntityFactory;
 use \Espo\ORM\EntityCollection;
 use \Espo\ORM\Entity;
 use \Espo\ORM\IEntity;
+use Espo\Core\Exceptions\Forbidden;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 
 class RDB extends \Espo\ORM\Repository
@@ -143,6 +145,12 @@ class RDB extends \Espo\ORM\Repository
     {
         $entity->setAsBeingSaved();
 
+        // check workflow init states if it needs
+        $this->workflowInitStates($entity);
+
+        // run workflow method "can()" if it needs
+        $this->workflowCan($entity);
+
         if (empty($options['skipBeforeSave']) && empty($options['skipAll'])) {
             $this->beforeSave($entity, $options);
         }
@@ -153,6 +161,10 @@ class RDB extends \Espo\ORM\Repository
         }
         if ($result) {
             $entity->setIsSaved(true);
+
+            // run workflow method "apply()" if it needs
+            $this->workflowApply($entity);
+
             if (empty($options['skipAfterSave']) && empty($options['skipAll'])) {
                 $this->afterSave($entity, $options);
             }
@@ -641,9 +653,127 @@ class RDB extends \Espo\ORM\Repository
         return $params;
     }
 
-
     protected function getPDO()
     {
         return $this->getEntityManager()->getPDO();
+    }
+
+    /**
+     * Check workflow init states if it needs
+     *
+     * @param Entity $entity
+     *
+     * @throws Forbidden
+     */
+    protected function workflowInitStates(Entity $entity): void
+    {
+        // workflow init states check only for new items
+        if ($entity->isNew()) {
+
+            // get workflow settings
+            $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $entity->getEntityType()], []);
+
+            if (!empty($workflowSettings)) {
+                foreach ($workflowSettings as $field => $settings) {
+                    if (!empty($settings['initStates']) && !in_array($entity->get($field), $settings['initStates'])) {
+                        throw new Forbidden(sprintf(
+                            'Init state "%s" is not defined for workflow "%s".',
+                            $entity->get($field),
+                            $entity->getEntityType() . '_' . $field));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Run workflow method "can()" if it needs
+     *
+     * @param Entity $to
+     *
+     * @throws Forbidden
+     */
+    protected function workflowCan(Entity $to): void
+    {
+        // prepare name
+        $name = $to->getEntityType();
+
+        // get workflow settings
+        $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
+
+        // make clone of Entity for "from" place
+        $from = clone $to;
+
+        if (!empty($workflowSettings)) {
+            foreach ($workflowSettings as $field => $settings) {
+                if ($to->isNew()) {
+                    // set value for "from" place
+                    $from->set([$field => $to->get($field)]);
+                } else {
+                    // set fetched value for "from" place
+                    $from->set([$field => $to->getFetched($field)]);
+                }
+
+                if ($to->isNew() || $from->get($field) != $to->get($field)) {
+                    try {
+                        $can = $this
+                            ->getInjection('workflow')
+                            ->get($from, $name . '_' . $field)
+                            ->can($from, $from->get($field) . '_' . $to->get($field));
+                    } catch (LogicException $e) {
+                        throw new Forbidden($e->getMessage());
+                    }
+
+                    if (!$can) {
+                        throw new Forbidden(sprintf(
+                            'Transition "%s" is not defined for workflow "%s".',
+                            $from->get($field) . '_' . $to->get($field),
+                            $name . '_' . $field));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Run workflow method "apply()" if it needs
+     *
+     * @param Entity $to
+     *
+     * @throws Forbidden
+     */
+    protected function workflowApply(Entity $to): void
+    {
+        // prepare name
+        $name = $to->getEntityType();
+
+        // get workflow settings
+        $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
+
+        // make clone of Entity for "from" place
+        $from = clone $to;
+
+        if (!empty($workflowSettings)) {
+            foreach ($workflowSettings as $field => $settings) {
+                if ($to->isNew()) {
+                    // set value for "from" place
+                    $from->set([$field => $to->get($field)]);
+                } else {
+                    // set fetched value for "from" place
+                    $from->set([$field => $to->getFetched($field)]);
+                }
+
+                if ($to->isNew() || $from->get($field) != $to->get($field)) {
+                    try {
+                        $this
+                            ->getInjection('workflow')
+                            ->get($from, $name . '_' . $field)
+                            ->apply($from, $from->get($field) . '_' . $to->get($field));
+                    } catch (LogicException $e) {
+                        throw new Forbidden($e->getMessage());
+                    }
+                }
+            }
+        }
     }
 }
