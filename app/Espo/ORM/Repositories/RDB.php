@@ -724,11 +724,29 @@ class RDB extends \Espo\ORM\Repository
                         throw new Forbidden($e->getMessage());
                     }
 
+                    // if transition can not be applied
                     if (!$can) {
-                        throw new Forbidden(sprintf(
-                            'Transition "%s" is not defined for workflow "%s".',
-                            $from->get($field) . '_' . $to->get($field),
-                            $name . '_' . $field));
+                        // try to find blockers
+                        try {
+                            $transitionBlockerList = $this
+                                ->getInjection('workflow')
+                                ->get($from, $name . '_' . $field)
+                                ->buildTransitionBlockerList($from, $from->get($field) . '_' . $to->get($field));
+                        } catch (LogicException $e) {
+                            throw new Forbidden($e->getMessage());
+                        }
+                        if (!empty($transitionBlockerList)) {
+                            // if there are blockers then show blocker reason
+                            foreach ($transitionBlockerList as $transitionBlocker) {
+                                throw new Forbidden($transitionBlocker->getMessage());
+                            }
+                        } else {
+                            // if there aren't blockers then show transition error
+                            throw new Forbidden(sprintf(
+                                'Transition "%s" is not defined for workflow "%s".',
+                                $from->get($field) . '_' . $to->get($field),
+                                $name . '_' . $field));
+                        }
                     }
                 }
             }
