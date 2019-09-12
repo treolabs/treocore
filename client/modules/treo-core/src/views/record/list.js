@@ -116,6 +116,38 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.selectAllHandler(e.currentTarget.checked);
                     this.checkedAll = e.currentTarget.checked;
                 },
+
+                'click .record-checkbox': function (e) {
+                    let $target = $(e.currentTarget),
+                        id = $target.data('id'),
+                        $row = $target.closest('tr'),
+                        $checked = $row.parent().find('.record-checkbox:checked'),
+                        $allCheckboxes = $row.parent().find('.record-checkbox');
+
+                    if ($target.prop("checked")) {
+                        this.checkRecord(id, $target);
+
+                        if (e.shiftKey && $checked.length > 1) {
+                            let elementIndexInArray = $allCheckboxes.index($target);
+                            let firstCheckedElementIndexInArray = $allCheckboxes.index($checked.eq(0));
+                            let lastCheckedElementIndexInArray = $allCheckboxes.index($checked.eq($checked.length - 1));
+
+                            if (elementIndexInArray !== firstCheckedElementIndexInArray) {
+                                for (let i = firstCheckedElementIndexInArray; i <= elementIndexInArray; i++) {
+                                    let $_checkbox = $allCheckboxes.eq(i);
+                                    this.checkRecord($_checkbox.data('id'), $_checkbox);
+                                }
+                            } else {
+                                for (let i = elementIndexInArray; i <= lastCheckedElementIndexInArray; i++) {
+                                    let $_checkbox = $allCheckboxes.eq(i);
+                                    this.checkRecord($_checkbox.data('id'), $_checkbox);
+                                }
+                            }
+                        }
+                    } else {
+                        this.uncheckRecord(id, $target);
+                    }
+                },
             });
         },
 
