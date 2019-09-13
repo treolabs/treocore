@@ -62,10 +62,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             _.extend(this.events, {
                 'click a.link': function (e) {
                     e.stopPropagation();
-                    if (e.ctrlKey) {
-                        return;
-                    }
-                    if (!this.scope || this.selectable) {
+                    if (e.ctrlKey || !this.scope || this.selectable) {
                         return;
                     }
                     e.preventDefault();

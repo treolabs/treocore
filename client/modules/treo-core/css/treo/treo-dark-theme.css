@@ -19280,12 +19280,25 @@ ul.dropdown-menu > li.checkbox {
     min-height: 35px;
 }
 
+#main .detail .catalog-tree-panel {
+    margin: 0;
+    border-right: 0;
+}
+
+#main .detail .catalog-tree-panel + .overview {
+    border-left: 1px solid #e8eced;
+}
+
 #main .catalog-tree-panel + .list-container {
     padding: 0;
 }
 
 #main .catalog-tree-panel + .list-container .list {
     border-left: 1px solid #e8eced;
+}
+
+#main .detail .catalog-tree-panel + .overview.hidden-catalog-tree-panel {
+    width: calc(75% - 40px);
 }
 
 #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
@@ -19432,7 +19445,8 @@ button.category:focus {
     }
 
     #main .catalog-tree-panel.catalog-tree-panel-hidden {
-        width: 40px
+        width: 40px;
+        border-right: 1px solid #e8eced;
     }
 
     #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
@@ -19451,19 +19465,6 @@ button.category:focus {
 
     #main .search-container {
         margin-bottom: 15px;
-    }
-}
-
-@media screen and (min-width: 992px) {
-    .detail > .row > .col-md-8::after {
-        content: '';
-        position: absolute;
-        background: #fafafa;
-        height: 100%;
-        width: 50.1%;
-        top: 1px;
-        right: -50%;
-        border-left: 1px solid #dcdcdc
     }
 }
 
@@ -19647,11 +19648,12 @@ button.category:focus {
         padding-left: 0
     }
 
-    .edit > .row > .col-md-8,
-    .detail > .row > .col-md-8 {
+    .edit > .row > .overview,
+    .detail > .row > .overview  {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
+        border-right: 1px solid #e8eced;
     }
 
     #main .edit > .row,
