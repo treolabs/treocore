@@ -2329,9 +2329,11 @@ class Record extends \Espo\Core\Services\Base
         $data = json_decode(json_encode($data), true);
 
         $isUpdated = false;
-        foreach ($entity->getAttributes() as $field => $value) {
-            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $value) {
+
+        foreach ($entity->getFields() as $field => $params) {
+            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $entity->get($field)) {
                 $isUpdated = true;
+                break;
             }
         }
 
