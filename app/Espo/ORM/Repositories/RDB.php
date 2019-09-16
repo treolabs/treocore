@@ -145,25 +145,27 @@ class RDB extends \Espo\ORM\Repository
     {
         $entity->setAsBeingSaved();
 
-        // check workflow init states if it needs
-        $this->workflowInitStates($entity);
-
-        // run workflow method "can()" if it needs
-        $this->workflowCan($entity);
-
         if (empty($options['skipBeforeSave']) && empty($options['skipAll'])) {
             $this->beforeSave($entity, $options);
         }
         if ($entity->isNew() && !$entity->isSaved()) {
+            // check workflow init states if it needs
+            $this->workflowInitStates($entity);
+
             $result = $this->getMapper()->insert($entity);
         } else {
+            // run workflow method "can()" if it needs
+            $this->workflowCan($entity);
+
             $result = $this->getMapper()->update($entity);
+
+            if ($result) {
+                // run workflow method "apply()" if it needs
+                $this->workflowApply($entity);
+            }
         }
         if ($result) {
             $entity->setIsSaved(true);
-
-            // run workflow method "apply()" if it needs
-            $this->workflowApply($entity);
 
             if (empty($options['skipAfterSave']) && empty($options['skipAll'])) {
                 $this->afterSave($entity, $options);
@@ -706,15 +708,10 @@ class RDB extends \Espo\ORM\Repository
 
         if (!empty($workflowSettings)) {
             foreach ($workflowSettings as $field => $settings) {
-                if ($to->isNew()) {
-                    // set value for "from" place
-                    $from->set([$field => $to->get($field)]);
-                } else {
-                    // set fetched value for "from" place
-                    $from->set([$field => $to->getFetched($field)]);
-                }
+                // set fetched value for "from" place
+                $from->set([$field => $to->getFetched($field)]);
 
-                if ($to->isNew() || $from->get($field) != $to->get($field)) {
+                if ($from->get($field) != $to->get($field)) {
                     try {
                         $can = $this
                             ->getInjection('workflow')
@@ -773,15 +770,10 @@ class RDB extends \Espo\ORM\Repository
 
         if (!empty($workflowSettings)) {
             foreach ($workflowSettings as $field => $settings) {
-                if ($to->isNew()) {
-                    // set value for "from" place
-                    $from->set([$field => $to->get($field)]);
-                } else {
-                    // set fetched value for "from" place
-                    $from->set([$field => $to->getFetched($field)]);
-                }
+                // set fetched value for "from" place
+                $from->set([$field => $to->getFetched($field)]);
 
-                if ($to->isNew() || $from->get($field) != $to->get($field)) {
+                if ($from->get($field) != $to->get($field)) {
                     try {
                         $this
                             ->getInjection('workflow')
