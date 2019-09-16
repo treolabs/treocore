@@ -713,7 +713,7 @@ class Record extends \Espo\Core\Services\Base
 
         $this->beforeCreateEntity($entity, $attachment);
         // set owner user
-        $this->setOwnerUser($entity);
+        $this->setOwnerAndAssignedUser($entity);
         // is valid ?
         $this->isValid($entity);
 
@@ -775,7 +775,7 @@ class Record extends \Espo\Core\Services\Base
 
         $this->beforeUpdateEntity($entity, $data);
         // set owner user
-        $this->setOwnerUser($entity);
+        $this->setOwnerAndAssignedUser($entity);
         // is valid ?
         $this->isValid($entity);
 
@@ -2345,13 +2345,20 @@ class Record extends \Espo\Core\Services\Base
     /**
      * @param IEntity $entity
      */
-    private function setOwnerUser(IEntity $entity): void
+    private function setOwnerAndAssignedUser(IEntity $entity): void
     {
         // has owner param
         $hasOwner = !empty($this->getMetadata()->get(['scopes', $entity->getEntityType(), 'hasOwner']));
 
-        if ($hasOwner && empty($entity->get('ownerUserId'))) {
+        if (($hasOwner || $entity->hasAttribute('ownerUserId')) && empty($entity->get('ownerUserId'))) {
             $entity->set('ownerUserId', $this->getEntityManager()->getUser()->id);
+        }
+
+        // has assigned
+        $hasAssigned = !empty($this->getMetadata()->get(['scopes', $entity->getEntityType(), 'hasAssignedUser']));
+
+        if (($hasAssigned || $entity->hasAttribute('assignedUserId')) && empty($entity->get('assignedUserId'))) {
+            $entity->set('assignedUserId', $this->getEntityManager()->getUser()->id);
         }
     }
 }
