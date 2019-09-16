@@ -12,9 +12,9 @@
     "unit": "Unit"
   },
   "descriptions": {
-    "composer": "Tool for dependency management that allows you to install/update/uninstall modules from the remote storage. The dependencies between the modules are supported.",
-    "representationSettings": "Representation settings.",
-    "unit": "Settings units of measurement"
+    "composer": "Installation / uninstallation / updating of modules, which is dependency consistent",
+    "representationSettings": "Representation settings",
+    "unit": "Units of measurement settings"
   },
   "layouts": {
     "relationships": "Bottom Panels"

@@ -337,7 +337,11 @@ class PostUpdate
             $oldVersion = preg_replace("/[^0-9]/", '', $module['from']);
             $newVersion = preg_replace("/[^0-9]/", '', $module["package"]["version"]);
 
-            $keyLang = $oldVersion < $newVersion ? 'Module update' : 'Module downgrade';
+            if ($oldVersion < $newVersion) {
+                $keyLang = $nameModule == 'System' ? 'System update' : 'Module update';
+            } else {
+                $keyLang = $nameModule == 'System' ? 'System downgrade' : 'Module downgrade';
+            }
 
             $message = $language->translate($keyLang, 'notifications', 'Composer');
             $message = str_replace('{module}', $nameModule, $message);
