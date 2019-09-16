@@ -669,20 +669,19 @@ class RDB extends \Espo\ORM\Repository
      */
     protected function workflowInitStates(Entity $entity): void
     {
-        // workflow init states check only for new items
-        if ($entity->isNew()) {
+        // get workflow settings
+        $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $entity->getEntityType()], []);
 
-            // get workflow settings
-            $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $entity->getEntityType()], []);
-
-            if (!empty($workflowSettings)) {
-                foreach ($workflowSettings as $field => $settings) {
-                    if (!empty($settings['initStates']) && !in_array($entity->get($field), $settings['initStates'])) {
-                        throw new Forbidden(sprintf(
+        if (!empty($workflowSettings)) {
+            foreach ($workflowSettings as $field => $settings) {
+                if (!empty($settings['initStates']) && !in_array($entity->get($field), $settings['initStates'])) {
+                    throw new Forbidden(
+                        sprintf(
                             'Init state "%s" is not defined for workflow "%s".',
                             $entity->get($field),
-                            $entity->getEntityType() . '_' . $field));
-                    }
+                            $entity->getEntityType() . '_' . $field
+                        )
+                    );
                 }
             }
         }
