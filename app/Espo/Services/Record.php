@@ -37,6 +37,7 @@ use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Conflict;
 use \Espo\Core\Exceptions\NotFound;
 use \Espo\Core\Utils\Util;
+use Espo\ORM\IEntity;
 use Treo\Core\Exceptions\NoChange;
 
 class Record extends \Espo\Core\Services\Base
@@ -711,7 +712,8 @@ class Record extends \Espo\Core\Services\Base
         $this->populateDefaults($entity, $attachment);
 
         $this->beforeCreateEntity($entity, $attachment);
-
+        // set owner user
+        $this->setOwnerUser($entity);
         // is valid ?
         $this->isValid($entity);
 
@@ -772,7 +774,8 @@ class Record extends \Espo\Core\Services\Base
         $entity->set($data);
 
         $this->beforeUpdateEntity($entity, $data);
-
+        // set owner user
+        $this->setOwnerUser($entity);
         // is valid ?
         $this->isValid($entity);
 
@@ -2337,5 +2340,18 @@ class Record extends \Espo\Core\Services\Base
         }
 
         return true;
+    }
+
+    /**
+     * @param IEntity $entity
+     */
+    private function setOwnerUser(IEntity $entity): void
+    {
+        // has owner param
+        $hasOwner = !empty($this->getMetadata()->get(['scopes', $entity->getEntityType(), 'hasOwner']));
+
+        if ($hasOwner && empty($entity->get('ownerUserId'))) {
+            $entity->set('ownerUserId', $this->getEntityManager()->getUser()->id);
+        }
     }
 }
