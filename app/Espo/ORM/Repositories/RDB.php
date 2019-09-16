@@ -696,52 +696,55 @@ class RDB extends \Espo\ORM\Repository
      */
     protected function workflowCan(Entity $to): void
     {
-        // prepare name
-        $name = $to->getEntityType();
+        // workflow check only for not new items
+        if (!$to->isNew()) {
+            // prepare name
+            $name = $to->getEntityType();
 
-        // get workflow settings
-        $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
+            // get workflow settings
+            $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
 
-        // make clone of Entity for "from" place
-        $from = clone $to;
+            // make clone of Entity for "from" place
+            $from = clone $to;
 
-        if (!empty($workflowSettings)) {
-            foreach ($workflowSettings as $field => $settings) {
-                // set fetched value for "from" place
-                $from->set([$field => $to->getFetched($field)]);
+            if (!empty($workflowSettings)) {
+                foreach ($workflowSettings as $field => $settings) {
+                    // set fetched value for "from" place
+                    $from->set([$field => $to->getFetched($field)]);
 
-                if ($from->get($field) != $to->get($field)) {
-                    try {
-                        $can = $this
-                            ->getInjection('workflow')
-                            ->get($from, $name . '_' . $field)
-                            ->can($from, $from->get($field) . '_' . $to->get($field));
-                    } catch (LogicException $e) {
-                        throw new Forbidden($e->getMessage());
-                    }
-
-                    // if transition can not be applied
-                    if (!$can) {
-                        // try to find blockers
+                    if ($from->get($field) != $to->get($field)) {
                         try {
-                            $transitionBlockerList = $this
+                            $can = $this
                                 ->getInjection('workflow')
                                 ->get($from, $name . '_' . $field)
-                                ->buildTransitionBlockerList($from, $from->get($field) . '_' . $to->get($field));
+                                ->can($from, $from->get($field) . '_' . $to->get($field));
                         } catch (LogicException $e) {
                             throw new Forbidden($e->getMessage());
                         }
-                        if (!empty($transitionBlockerList)) {
-                            // if there are blockers then show blocker reason
-                            foreach ($transitionBlockerList as $transitionBlocker) {
-                                throw new Forbidden($transitionBlocker->getMessage());
+
+                        // if transition can not be applied
+                        if (!$can) {
+                            // try to find blockers
+                            try {
+                                $transitionBlockerList = $this
+                                    ->getInjection('workflow')
+                                    ->get($from, $name . '_' . $field)
+                                    ->buildTransitionBlockerList($from, $from->get($field) . '_' . $to->get($field));
+                            } catch (LogicException $e) {
+                                throw new Forbidden($e->getMessage());
                             }
-                        } else {
-                            // if there aren't blockers then show transition error
-                            throw new Forbidden(sprintf(
-                                'Transition "%s" is not defined for workflow "%s".',
-                                $from->get($field) . '_' . $to->get($field),
-                                $name . '_' . $field));
+                            if (!empty($transitionBlockerList)) {
+                                // if there are blockers then show blocker reason
+                                foreach ($transitionBlockerList as $transitionBlocker) {
+                                    throw new Forbidden($transitionBlocker->getMessage());
+                                }
+                            } else {
+                                // if there aren't blockers then show transition error
+                                throw new Forbidden(sprintf(
+                                    'Transition "%s" is not defined for workflow "%s".',
+                                    $from->get($field) . '_' . $to->get($field),
+                                    $name . '_' . $field));
+                            }
                         }
                     }
                 }
@@ -758,28 +761,31 @@ class RDB extends \Espo\ORM\Repository
      */
     protected function workflowApply(Entity $to): void
     {
-        // prepare name
-        $name = $to->getEntityType();
+        // workflow check only for not new items
+        if (!$to->isNew()) {
+            // prepare name
+            $name = $to->getEntityType();
 
-        // get workflow settings
-        $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
+            // get workflow settings
+            $workflowSettings = $this->getEntityManager()->getEspoMetadata()->get(['workflow', $name], []);
 
-        // make clone of Entity for "from" place
-        $from = clone $to;
+            // make clone of Entity for "from" place
+            $from = clone $to;
 
-        if (!empty($workflowSettings)) {
-            foreach ($workflowSettings as $field => $settings) {
-                // set fetched value for "from" place
-                $from->set([$field => $to->getFetched($field)]);
+            if (!empty($workflowSettings)) {
+                foreach ($workflowSettings as $field => $settings) {
+                    // set fetched value for "from" place
+                    $from->set([$field => $to->getFetched($field)]);
 
-                if ($from->get($field) != $to->get($field)) {
-                    try {
-                        $this
-                            ->getInjection('workflow')
-                            ->get($from, $name . '_' . $field)
-                            ->apply($from, $from->get($field) . '_' . $to->get($field));
-                    } catch (LogicException $e) {
-                        throw new Forbidden($e->getMessage());
+                    if ($from->get($field) != $to->get($field)) {
+                        try {
+                            $this
+                                ->getInjection('workflow')
+                                ->get($from, $name . '_' . $field)
+                                ->apply($from, $from->get($field) . '_' . $to->get($field));
+                        } catch (LogicException $e) {
+                            throw new Forbidden($e->getMessage());
+                        }
                     }
                 }
             }
