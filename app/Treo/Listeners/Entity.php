@@ -60,9 +60,6 @@ class Entity extends AbstractListener
         // checking workflow init states
         $this->workflowInitStates($event);
 
-        // set owner user
-        $this->setOwnerUser($event);
-
         // call hooks
         if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
             $this
@@ -223,26 +220,7 @@ class Entity extends AbstractListener
         $this->getContainer()->get('eventManager')->dispatch($target, $action, $event);
     }
 
-    /**
-     * @param Event $event
-     */
-    private function setOwnerUser(Event $event)
-    {
-        if (empty($event->getArgument('hooksDisabled')) && empty($event->getArgument('options')['skipHooks'])) {
-            // get entity
-            $entity = $event->getArgument('entity');
 
-            // get metadata
-            $metadata = $this->getContainer()->get('metadata');
-
-            // has owner param
-            $hasOwner = !empty($metadata->get('scopes.' . $entity->getEntityType() . '.hasOwner'));
-
-            if ($hasOwner && empty($entity->get('ownerUserId'))) {
-                $entity->set('ownerUserId', $entity->get('createdById'));
-            }
-        }
-    }
 
     /**
      * @param string $className
