@@ -2330,7 +2330,14 @@ class Record extends \Espo\Core\Services\Base
 
         $isUpdated = false;
         foreach ($entity->getFields() as $field => $params) {
-            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $entity->get($field)) {
+            // prepare value
+            if (substr($field, -3) == 'Ids') {
+                $value = array_column($entity->get(substr($field, 0, -3))->toArray(), 'id');
+            } else {
+                $value = $entity->get($field);
+            }
+
+            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $value) {
                 $isUpdated = true;
                 break;
             }
