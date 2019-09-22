@@ -39,6 +39,7 @@ use \Espo\Core\Exceptions\NotFound;
 use \Espo\Core\Utils\Util;
 use Espo\ORM\IEntity;
 use Treo\Core\Exceptions\NoChange;
+use Treo\Services\DynamicLogic;
 
 class Record extends \Espo\Core\Services\Base
 {
@@ -405,12 +406,15 @@ class Record extends \Espo\Core\Services\Base
      */
     protected function isValid($entity)
     {
+        /** @var DynamicLogic $dynamicLogic */
+        $dynamicLogic = $this->getServiceFactory()->create('DynamicLogic');
+
         foreach ($entity->getAttributes() as $field => $data) {
-            if (!empty($data['required']) && is_null($entity->get($field))) {
+            if ((!empty($data['required']) || $dynamicLogic->isRequiredField($field, $entity, 'required'))
+                && is_null($entity->get($field))) {
                 throw new BadRequest("Validation failed. '$field' is required");
             }
         }
-
         return true;
     }
 
