@@ -295,7 +295,7 @@ class Condition
      * @param array $values Array containing the necessary value
      *      $values = [
      *          0   => (EntityCollection|array)
-     *          1   => (string|int|float|bool)
+     *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
      * @throws BadRequest
@@ -325,7 +325,7 @@ class Condition
      * @param array $values Array containing the necessary value
      *      $values = [
      *          0   => (EntityCollection|array)
-     *          1   => (string|int|float|bool)
+     *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
      * @throws BadRequest
@@ -339,7 +339,7 @@ class Condition
      * @param array $values Array containing the necessary value
      *      $values = [
      *          0   => (array)
-     *          1   => (string|int|float|bool)
+     *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
      * @throws BadRequest
@@ -365,7 +365,7 @@ class Condition
      * @param array $values Array containing the necessary value
      *      $values = [
      *          0   => (array)
-     *          1   => (string|int|float|bool)
+     *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
      * @throws BadRequest
@@ -450,7 +450,7 @@ class Condition
     /**
      * @param array $values Array containing the necessary value
      *      $values = [
-     *          0   => (int|string|float|bool)
+     *          0   => (int|string|float|bool|null)
      *          1   => (array)
      *      ]
      * @return bool
@@ -476,7 +476,7 @@ class Condition
     /**
      * @param array $values Array containing the necessary value
      *      $values = [
-     *          0   => (int|string|float|bool)
+     *          0   => (int|string|float|bool|null)
      *          1   => (array)
      *      ]
      * @return bool
