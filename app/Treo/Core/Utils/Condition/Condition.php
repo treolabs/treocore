@@ -80,6 +80,12 @@ class Condition
         }
     }
 
+    /**
+     * @param Entity $entity
+     * @param array $items
+     * @return ConditionGroup
+     * @throws BadRequest
+     */
     public static function prepare(Entity $entity, array $items): ConditionGroup
     {
         if (empty($items)) {
@@ -110,6 +116,12 @@ class Condition
         return $result;
     }
 
+    /**
+     * @param Entity $entity
+     * @param array $item
+     * @return ConditionGroup
+     * @throws BadRequest
+     */
     private static function prepareConditionGroup(Entity $entity, array $item): ConditionGroup
     {
         if (!isset($item['attribute'])) {
