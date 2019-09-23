@@ -20731,6 +20731,14 @@ td[data-name="draggableIcon"] {
     border-bottom: 1px solid #ececec;
 }
 
+.bottom .panel .group-container > .group .list td[data-name="value"] {
+    overflow: visible;
+}
+
+.bottom .panel .group-container > .group .list td[data-name="value"] .field .input-group {
+    width: 100%;
+}
+
 .field > .list-group > .list-group-item > .delimiter-group.list-group {
     margin-top: 10px;
     margin-bottom: 5px;
