@@ -2332,7 +2332,13 @@ class Record extends \Espo\Core\Services\Base
         foreach ($entity->getFields() as $field => $params) {
             // prepare value
             if (substr($field, -3) == 'Ids') {
-                $value = array_column($entity->get(substr($field, 0, -3))->toArray(), 'id');
+                $linked = $entity->get(substr($field, 0, -3));
+
+                if (!empty($linked)) {
+                    $value = array_column($linked->toArray(), 'id');
+                } else {
+                    continue;
+                }
             } else {
                 $value = $entity->get($field);
             }
