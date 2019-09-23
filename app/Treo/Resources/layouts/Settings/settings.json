@@ -19,11 +19,5 @@
             [{"name": "addressPreview"}, false]
 
         ]
-    },
-    {
-      "label": "Activities",
-      "rows": [
-        [{"name": "calendarEntityList"}, false]
-      ]
     }
 ]
