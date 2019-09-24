@@ -58,6 +58,10 @@ class ArrayValue extends \Espo\Core\ORM\Repositories\RDB
             $valueList = [];
         }
 
+        if (is_string($valueList)) {
+            $valueList = json_decode($valueList, true);
+        }
+
         if (!is_array($valueList)) throw new Error("ArrayValue: Bad value passed to JSON_ARRAY attribute {$attribute}.");
 
         $valueList = array_unique($valueList);
