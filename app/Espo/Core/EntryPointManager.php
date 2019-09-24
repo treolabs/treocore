@@ -28,9 +28,10 @@
  ************************************************************************/ 
 
 namespace Espo\Core;
-use \Espo\Core\Exceptions\NotFound,
-    \Espo\Core\Utils\Util;
 
+use Espo\Core\Exceptions\NotFound;
+use Espo\Core\Utils\Util;
+use Treo\Core\EventManager\Event;
 
 class EntryPointManager
 {
@@ -98,7 +99,13 @@ class EntryPointManager
         }
         $entryPoint = new $className($this->container);
 
-        $entryPoint->run($data);
+        // dispatch an event
+        $event = $this
+            ->getContainer()
+            ->get('eventManager')
+            ->dispatch('EntryPoint', 'run', new Event(['name' => $name, 'data' => $data]));
+
+        $entryPoint->run($event->getArgument('data'));
     }
 
     protected function getClassName($name)
