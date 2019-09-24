@@ -89,4 +89,13 @@ class Validation
 
         return true;
     }
+
+    public static function isValidFirstValueIsArray($value): bool
+    {
+        if (!is_array($value)) {
+            throw new BadRequest('The first value must be an Array type');
+        }
+
+        return true;
+    }
 }

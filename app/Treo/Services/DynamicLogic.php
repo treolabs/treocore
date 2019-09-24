@@ -33,7 +33,6 @@ class DynamicLogic extends AbstractService
 
         $result = false;
 
-
         $item = $this->getContainer()
             ->get('metadata')
             ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$field.$typeResult.conditionGroup", []);

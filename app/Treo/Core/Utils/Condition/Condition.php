@@ -128,13 +128,19 @@ class Condition
             throw new BadRequest('Empty attribute or in condition');
         }
 
-        $attribute = !empty($item['data']['field']) ? $item['data']['field'] : $item['attribute'];
+        $attribute = $item['attribute'];
 
         if (!$entity->hasAttribute($attribute) && !$entity->hasRelation($attribute)) {
             throw new BadRequest("Attribute '{$attribute}' does not exists in '{$entity->getEntityType()}'");
         }
 
         $currentValue = $entity->get($attribute);
+
+        if (is_null($currentValue)
+            && !empty($item['data']['field'])
+            && $entity->get($item['data']['field'])) {
+            $currentValue = $entity->get($item['data']['field']);
+        }
 
         if ($currentValue instanceof EntityCollection) {
             $currentValue = array_column($currentValue->toArray(), 'id');
@@ -305,17 +311,9 @@ class Condition
         Validation::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
-
-        if (!$currentValue instanceof EntityCollection && !is_array($currentValue)) {
-            throw new BadRequest('The first value must be an EntityCollection or Array type');
-        }
-
-        if ($currentValue instanceof EntityCollection) {
-            $currentValue = array_column($currentValue->toArray(), 'id');
-        }
+        Validation::isValidFirstValueIsArray($currentValue);
 
         $needValue = array_shift($values);
-
         Validation::isValidNotArrayAndObject($needValue);
 
         return in_array($needValue, $currentValue);
@@ -346,19 +344,7 @@ class Condition
      */
     protected function checkHas(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
-
-        $currentValue = array_shift($values);
-
-        if (!is_array($currentValue)) {
-            throw new BadRequest('The first value must be an Array type');
-        }
-
-        $needValue = array_shift($values);
-
-        Validation::isValidNotArrayAndObject($needValue);
-
-        return in_array($needValue, $currentValue);
+        return self::checkContains($values);
     }
 
     /**
@@ -372,7 +358,7 @@ class Condition
      */
     protected function checkNotHas(array $values): bool
     {
-        return self::checkHas($values);
+        return !self::checkHas($values);
     }
 
     /**
@@ -464,7 +450,6 @@ class Condition
         if (is_array($currentValue) || is_object($currentValue)) {
             throw new BadRequest('The first value should not be an Array or Object type');
         }
-
         $needValue = array_shift($values);
 
         if (!is_array($needValue)) {
@@ -530,7 +515,6 @@ class Condition
             $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
             $result = $time > 0;
         }
-
         return $result;
     }
 
@@ -554,7 +538,6 @@ class Condition
             $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
             $result = $time < 0;
         }
-
         return $result;
     }
 
