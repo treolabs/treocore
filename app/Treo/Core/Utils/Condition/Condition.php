@@ -495,7 +495,7 @@ class Condition
      * @throws Error
      * @throws Exception
      */
-    protected static function checkinFuture(array $values): bool
+    protected static function checkInFuture(array $values): bool
     {
         self::isValidCountArray(1, $values);
         $currentValue = array_shift($values);
@@ -503,7 +503,7 @@ class Condition
         if (!is_null($currentValue)) {
             self::isValidDateTime($currentValue);
 
-            $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
+            $time = (int)self::howTime($currentValue)->format("%R%d%h%i%s");
             $result = $time > 0;
         }
         return $result;
@@ -518,7 +518,7 @@ class Condition
      * @throws Error
      * @throws Exception
      */
-    protected static function checkinPast(array $values): bool
+    protected static function checkInPast(array $values): bool
     {
         self::isValidCountArray(1, $values);
         $currentValue = array_shift($values);
@@ -526,7 +526,7 @@ class Condition
         if (!is_null($currentValue)) {
             self::isValidDateTime($currentValue);
 
-            $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
+            $time = (int)self::howTime($currentValue)->format("%R%d%h%i%s");
             $result = $time < 0;
         }
         return $result;
@@ -544,7 +544,9 @@ class Condition
             : new DateTime($time);
 
         $today = new DateTime();
-
+        if (strlen($time) <= 10) {
+            $today->setTime(0,0,0);
+        }
         return $today
             ->diff($compareTime);
     }
