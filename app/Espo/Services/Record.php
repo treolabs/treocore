@@ -39,6 +39,7 @@ use \Espo\Core\Exceptions\NotFound;
 use \Espo\Core\Utils\Util;
 use Espo\ORM\IEntity;
 use Treo\Core\Exceptions\NoChange;
+use Treo\Core\Utils\Condition\Condition;
 
 class Record extends \Espo\Core\Services\Base
 {
@@ -102,6 +103,11 @@ class Record extends \Espo\Core\Services\Base
     protected $mandatorySelectAttributeList = [];
 
     protected $forceSelectAllAttributes = false;
+
+    /**
+     * @var bool|array
+     */
+    private $relationFields = false;
 
     const MAX_SELECT_TEXT_ATTRIBUTE_LENGTH = 5000;
 
@@ -402,15 +408,16 @@ class Record extends \Espo\Core\Services\Base
      * @param Entity $entity
      *
      * @return bool
+     * @throws BadRequest
      */
     protected function isValid($entity)
     {
         foreach ($entity->getAttributes() as $field => $data) {
-            if (!empty($data['required']) && is_null($entity->get($field))) {
+            if ((!empty($data['required']) || $this->isRequiredField($field, $entity, 'required'))
+                && is_null($entity->get($field))) {
                 throw new BadRequest("Validation failed. '$field' is required");
             }
         }
-
         return true;
     }
 
@@ -2373,6 +2380,47 @@ class Record extends \Espo\Core\Services\Base
 
         if (($hasAssigned || $entity->hasAttribute('assignedUserId')) && empty($entity->get('assignedUserId'))) {
             $entity->set('assignedUserId', $this->getEntityManager()->getUser()->id);
+        }
+    }
+
+    /**
+     * @param string $field
+     * @param Entity $entity
+     * @param $typeResult
+     *
+     * @return bool
+     * @throws Error
+     */
+    public function isRequiredField(string $field, Entity $entity, $typeResult): bool
+    {
+        if ($this->relationFields === false) {
+            $this->setRelationFields($entity);
+        }
+        if (isset($this->relationFields[$field])) {
+            $field = $this->relationFields[$field];
+        }
+
+        $result = false;
+
+        $item = $this->getMetadata()
+            ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$field.$typeResult.conditionGroup", []);
+
+        if (!empty($item)) {
+            $result = Condition::isCheck(Condition::prepare($entity, $item));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Entity $entity
+     */
+    private function setRelationFields(Entity $entity): void
+    {
+        foreach ($entity->getRelations() as $key => $relation) {
+            if (isset($relation['key'])) {
+                $this->relationFields[$relation['key']] = $key;
+            }
         }
     }
 }
