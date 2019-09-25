@@ -38,6 +38,7 @@ namespace Treo\Core\Utils\Condition;
 
 use DateInterval as DateInterval;
 use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\ORM\Entity;
 use Espo\ORM\EntityCollection as EntityCollection;
 use \DateTime;
@@ -66,8 +67,9 @@ class Condition
 
     /**
      * @param ConditionGroup $condition
+     *
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     public static function isCheck(ConditionGroup $condition): bool
     {
@@ -76,20 +78,21 @@ class Condition
         if (method_exists(self::class, $method)) {
             return self::{$method}($condition->getValues());
         } else {
-            throw new BadRequest("Type {$condition->getType()} does not exists");
+            throw new Error("Type {$condition->getType()} does not exists");
         }
     }
 
     /**
      * @param Entity $entity
      * @param array $items
+     *
      * @return ConditionGroup
-     * @throws BadRequest
+     * @throws Error
      */
     public static function prepare(Entity $entity, array $items): ConditionGroup
     {
         if (empty($items)) {
-            throw new BadRequest('Empty items in condition');
+            throw new Error('Empty items in condition');
         }
         $result = null;
         if (isset($items['type'])) {
@@ -97,7 +100,7 @@ class Condition
                 $result = self::prepareConditionGroup($entity, $items);
             } else {
                 if (empty($items['value'])) {
-                    throw new BadRequest('Empty value or in condition');
+                    throw new Error('Empty value or in condition');
                 }
                 $valuesConditionGroup = [];
                 foreach ($items['value'] as $value) {
@@ -119,19 +122,20 @@ class Condition
     /**
      * @param Entity $entity
      * @param array $item
+     *
      * @return ConditionGroup
-     * @throws BadRequest
+     * @throws Error
      */
     private static function prepareConditionGroup(Entity $entity, array $item): ConditionGroup
     {
         if (!isset($item['attribute'])) {
-            throw new BadRequest('Empty attribute or in condition');
+            throw new Error('Empty attribute or in condition');
         }
 
         $attribute = $item['attribute'];
 
         if (!$entity->hasAttribute($attribute) && !$entity->hasRelation($attribute)) {
-            throw new BadRequest("Attribute '{$attribute}' does not exists in '{$entity->getEntityType()}'");
+            throw new Error("Attribute '{$attribute}' does not exists in '{$entity->getEntityType()}'");
         }
 
         $currentValue = $entity->get($attribute);
@@ -163,7 +167,7 @@ class Condition
      *          n   => (ConditionGroup)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkAnd(array $values): bool
     {
@@ -188,7 +192,7 @@ class Condition
      *          n   => (ConditionGroup)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkOr(array $values): bool
     {
@@ -210,7 +214,7 @@ class Condition
      *          0   => (string|array|float|null|int)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkEquals(array $values): bool
     {
@@ -232,7 +236,7 @@ class Condition
      *          0   => (string|array|float|null|int)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkNotEquals(array $values): bool
     {
@@ -245,7 +249,7 @@ class Condition
      *          0   => (string|array|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkIsEmpty(array $values)
     {
@@ -262,7 +266,7 @@ class Condition
      *          0   => (string|array|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkIsNotEmpty(array $values)
     {
@@ -275,7 +279,7 @@ class Condition
      *          0   => (bool)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkIsTrue(array $values): bool
     {
@@ -290,7 +294,7 @@ class Condition
      *          0   => (bool)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkIsFalse(array $values): bool
     {
@@ -304,7 +308,7 @@ class Condition
      *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkContains(array $values): bool
     {
@@ -326,7 +330,7 @@ class Condition
      *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected function checkNotContains(array $values): bool
     {
@@ -340,7 +344,7 @@ class Condition
      *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected function checkHas(array $values): bool
     {
@@ -354,7 +358,7 @@ class Condition
      *          1   => (string|int|float|bool|null)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected function checkNotHas(array $values): bool
     {
@@ -368,7 +372,7 @@ class Condition
      *          1   => (float|int) Second numeric
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected function checkGreaterThan(array $values): bool
     {
@@ -387,7 +391,7 @@ class Condition
      *          1   => (float|int) Second numeric
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected function checkLessThan(array $values): bool
     {
@@ -401,7 +405,7 @@ class Condition
      *          1   => (float|int) Second numeric
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkGreaterThanOrEquals(array $values): bool
     {
@@ -421,7 +425,7 @@ class Condition
      *          1   => (float|int) Second numeric
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkLessThanOrEquals(array $values): bool
     {
@@ -439,8 +443,9 @@ class Condition
      *          0   => (int|string|float|bool|null)
      *          1   => (array)
      *      ]
+     *
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkIn(array $values): bool
     {
@@ -448,12 +453,12 @@ class Condition
 
         $currentValue = array_shift($values);
         if (is_array($currentValue) || is_object($currentValue)) {
-            throw new BadRequest('The first value should not be an Array or Object type');
+            throw new Error('The first value should not be an Array or Object type');
         }
         $needValue = array_shift($values);
 
         if (!is_array($needValue)) {
-            throw new BadRequest('The second value must be an Array type');
+            throw new Error('The second value must be an Array type');
         }
         return in_array($currentValue, $needValue);
     }
@@ -465,7 +470,7 @@ class Condition
      *          1   => (array)
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     protected static function checkNotIn(array $values): bool
     {
@@ -478,7 +483,7 @@ class Condition
      *          0   => (string|DataTime) Time.
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      * @throws Exception
      */
     protected static function checkIsToday(array $values): bool
@@ -501,7 +506,7 @@ class Condition
      *          0   => (string|DataTime) Time.
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      * @throws Exception
      */
     protected static function checkinFuture(array $values): bool
@@ -524,7 +529,7 @@ class Condition
      *          0   => (string|DataTime) Time.
      *      ]
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      * @throws Exception
      */
     protected static function checkinPast(array $values): bool

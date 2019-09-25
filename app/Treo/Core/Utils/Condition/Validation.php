@@ -37,7 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils\Condition;
 
 use DateTime;
-use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
 
 /**
  * Class Validation for Condition
@@ -49,13 +49,14 @@ class Validation
 {
     /**
      * @param $value
+     *
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     public static function isValidNotArrayAndObject($value): bool
     {
         if (is_array($value) || is_object($value)) {
-            throw new BadRequest('The second value should not be an Array or Object type');
+            throw new Error('The second value should not be an Array or Object type');
         }
 
         return true;
@@ -64,13 +65,14 @@ class Validation
     /**
      * @param int $needCount
      * @param array $values
+     *
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     public static function isValidCountArray(int $needCount, array $values): bool
     {
         if (count($values) < $needCount) {
-            throw new BadRequest("Wrong number of values");
+            throw new Error("Wrong number of values");
         }
 
         return true;
@@ -78,22 +80,29 @@ class Validation
 
     /**
      * @param $time
+     *
      * @return bool
-     * @throws BadRequest
+     * @throws Error
      */
     public static function isValidDateTime($time): bool
     {
         if (!is_string($time) && !$time instanceof DateTime) {
-            throw new BadRequest('The first value must be an string or DateTime type');
+            throw new Error('The first value must be an string or DateTime type');
         }
 
         return true;
     }
 
+    /**
+     * @param $value
+     *
+     * @return bool
+     * @throws Error
+     */
     public static function isValidFirstValueIsArray($value): bool
     {
         if (!is_array($value)) {
-            throw new BadRequest('The first value must be an Array type');
+            throw new Error('The first value must be an Array type');
         }
 
         return true;

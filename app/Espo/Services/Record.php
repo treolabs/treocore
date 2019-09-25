@@ -403,6 +403,7 @@ class Record extends \Espo\Core\Services\Base
      * @param Entity $entity
      *
      * @return bool
+     * @throws BadRequest
      */
     protected function isValid($entity)
     {
