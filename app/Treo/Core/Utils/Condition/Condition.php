@@ -36,13 +36,12 @@ declare(strict_types=1);
 
 namespace Treo\Core\Utils\Condition;
 
-use DateInterval as DateInterval;
-use Espo\Core\Exceptions\BadRequest;
+use DateInterval;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\ORM\Entity;
-use Espo\ORM\EntityCollection as EntityCollection;
-use \DateTime;
-use Exception as Exception;
+use Espo\ORM\EntityCollection;
+use DateTime;
+use Exception;
 
 /**
  * Class Condition
@@ -52,19 +51,6 @@ use Exception as Exception;
  */
 class Condition
 {
-    /**
-     * @param Entity $entity
-     * @param array $items
-     * @return bool
-     * @throws BadRequest
-     */
-    public static function prepareAndCheck(Entity $entity, array $items): bool
-    {
-        $data = self::prepare($entity, $items);
-
-        return self::isCheck($data);
-    }
-
     /**
      * @param ConditionGroup $condition
      *
@@ -218,7 +204,7 @@ class Condition
      */
     protected static function checkEquals(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $left = array_shift($values);
         if ($left instanceof Entity) {
@@ -253,7 +239,7 @@ class Condition
      */
     protected static function checkIsEmpty(array $values)
     {
-        Validation::isValidCountArray(1, $values);
+        self::isValidCountArray(1, $values);
 
         $value = array_shift($values);
 
@@ -283,7 +269,7 @@ class Condition
      */
     protected static function checkIsTrue(array $values): bool
     {
-        Validation::isValidCountArray(1, $values);
+        self::isValidCountArray(1, $values);
 
         return (bool)array_shift($values);
     }
@@ -312,13 +298,13 @@ class Condition
      */
     protected static function checkContains(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
-        Validation::isValidFirstValueIsArray($currentValue);
+        self::isValidFirstValueIsArray($currentValue);
 
         $needValue = array_shift($values);
-        Validation::isValidNotArrayAndObject($needValue);
+        self::isValidNotArrayAndObject($needValue);
 
         return in_array($needValue, $currentValue);
     }
@@ -376,7 +362,7 @@ class Condition
      */
     protected function checkGreaterThan(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
         $needValue = array_shift($values);
@@ -409,7 +395,7 @@ class Condition
      */
     protected static function checkGreaterThanOrEquals(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
         $needValue = array_shift($values);
@@ -429,7 +415,7 @@ class Condition
      */
     protected static function checkLessThanOrEquals(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
         $needValue = array_shift($values);
@@ -449,7 +435,7 @@ class Condition
      */
     protected static function checkIn(array $values): bool
     {
-        Validation::isValidCountArray(2, $values);
+        self::isValidCountArray(2, $values);
 
         $currentValue = array_shift($values);
         if (is_array($currentValue) || is_object($currentValue)) {
@@ -488,11 +474,11 @@ class Condition
      */
     protected static function checkIsToday(array $values): bool
     {
-        Validation::isValidCountArray(1, $values);
+        self::isValidCountArray(1, $values);
         $currentValue = array_shift($values);
         $result = false;
         if (!is_null($currentValue)) {
-            Validation::isValidDateTime($currentValue);
+            self::isValidDateTime($currentValue);
 
             $time = (int)self::howTime($currentValue)->format("%R%a");
             $result = $time === 0;
@@ -511,11 +497,11 @@ class Condition
      */
     protected static function checkinFuture(array $values): bool
     {
-        Validation::isValidCountArray(1, $values);
+        self::isValidCountArray(1, $values);
         $currentValue = array_shift($values);
         $result = false;
         if (!is_null($currentValue)) {
-            Validation::isValidDateTime($currentValue);
+            self::isValidDateTime($currentValue);
 
             $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
             $result = $time > 0;
@@ -534,11 +520,11 @@ class Condition
      */
     protected static function checkinPast(array $values): bool
     {
-        Validation::isValidCountArray(1, $values);
+        self::isValidCountArray(1, $values);
         $currentValue = array_shift($values);
         $result = false;
         if (!is_null($currentValue)) {
-            Validation::isValidDateTime($currentValue);
+            self::isValidDateTime($currentValue);
 
             $time = (int)self::howTime($currentValue)->format("%R%h%i%s");
             $result = $time < 0;
@@ -561,5 +547,66 @@ class Condition
 
         return $today
             ->diff($compareTime);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return bool
+     * @throws Error
+     */
+    private static function isValidNotArrayAndObject($value): bool
+    {
+        if (is_array($value) || is_object($value)) {
+            throw new Error('The second value should not be an Array or Object type');
+        }
+
+        return true;
+    }
+
+    /**
+     * @param int $needCount
+     * @param array $values
+     *
+     * @return bool
+     * @throws Error
+     */
+    private static function isValidCountArray(int $needCount, array $values): bool
+    {
+        if (count($values) < $needCount) {
+            throw new Error("Wrong number of values");
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $time
+     *
+     * @return bool
+     * @throws Error
+     */
+    private static function isValidDateTime($time): bool
+    {
+        if (!is_string($time) && !$time instanceof DateTime) {
+            throw new Error('The first value must be an string or DateTime type');
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return bool
+     * @throws Error
+     */
+    private static function isValidFirstValueIsArray($value): bool
+    {
+        if (!is_array($value)) {
+            throw new Error('The first value must be an Array type');
+        }
+
+        return true;
     }
 }
