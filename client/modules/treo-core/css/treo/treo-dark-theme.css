@@ -20713,10 +20713,6 @@ td[data-name="draggableIcon"] {
     margin: -14px;
 }
 
-.bottom .panel .group-container > .group:not(:last-child) {
-    margin-bottom: 20px;
-}
-
 .bottom .panel .group-container > .group > .group-name {
     padding: 10px 0 10px 10px;
     border-bottom: 1px solid #e8eced;
