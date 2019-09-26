@@ -82,8 +82,10 @@ class Condition
         }
         $result = null;
         if (isset($items['type'])) {
-            if (!in_array($items['type'], ['and', 'or', 'not'])) {
+            if ($items['type'] != 'and' && $items['type'] != 'or' && $items['type'] != 'not') {
                 $result = self::prepareConditionGroup($entity, $items);
+            } elseif ($items['type'] == 'not') {
+                $result = new ConditionGroup($items['type'], [self::prepare($entity, $items['value'])]);
             } else {
                 if (empty($items['value'])) {
                     throw new Error('Empty value or in condition');
@@ -191,6 +193,21 @@ class Condition
             }
         }
         return $result;
+    }
+
+    /**
+     * @param array $values Array containing the necessary value
+     *      $values = [
+     *          0   => (ConditionGroup)
+     *      ]
+     * @return bool
+     * @throws Error
+     */
+    protected static function checkNot(array $values): bool
+    {
+        self::isValidCountArray(1, $values);
+
+        return !self::isCheck(array_shift($values));
     }
 
     /**
