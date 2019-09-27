@@ -92,6 +92,9 @@
   "views/admin/field-manager/fields/options": [
     "treo-core"
   ],
+  "views/admin/layouts/list-small": [
+    "treo-core"
+  ],
   "views/admin/layouts/relationships": [
     "treo-core"
   ],
