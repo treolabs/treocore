@@ -139,6 +139,10 @@ class FieldManager
             $isCustom = true;
         }
 
+        if(!empty($fieldDefs["audited"])) {
+            $this->getContainer()->get('entityManagerUtil')->update($scope, ['stream' => true]);
+        }
+
         $result = true;
         $isLabelChanged = false;
 
