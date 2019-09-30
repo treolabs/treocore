@@ -2350,7 +2350,7 @@ class Record extends \Espo\Core\Services\Base
                 $value = $entity->get($field);
             }
 
-            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] != $value) {
+            if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] !== $value) {
                 $isUpdated = true;
                 break;
             }
@@ -2418,7 +2418,7 @@ class Record extends \Espo\Core\Services\Base
     private function setRelationFields(Entity $entity): void
     {
         foreach ($entity->getRelations() as $key => $relation) {
-            if (isset($relation['key'])) {
+            if (isset($relation['key']) && $relation['type'] != 'manyMany') {
                 $this->relationFields[$relation['key']] = $key;
             }
         }
