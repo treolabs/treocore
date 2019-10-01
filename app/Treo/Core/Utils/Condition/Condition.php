@@ -228,7 +228,7 @@ class Condition
 
         if ($left instanceof Entity) {
             $left = $left->get('id');
-        } elseif (self::isScalar(gettype($left)) && gettype($left) !== gettype($right)){
+        } elseif (self::isScalar(gettype($left)) && gettype($left) !== gettype($right)) {
             settype($right, gettype($left));
         }
 
@@ -570,7 +570,7 @@ class Condition
 
         $today = new DateTime();
         if (strlen($time) <= 10) {
-            $today->setTime(0,0,0);
+            $today->setTime(0, 0, 0);
         }
         return $today
             ->diff($compareTime);
@@ -637,6 +637,11 @@ class Condition
         return true;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
     public static function isScalar(string $type): bool
     {
         return in_array($type, ['boolean', 'integer', 'double', 'string']);
