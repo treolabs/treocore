@@ -270,4 +270,22 @@ class Metadata extends Base
     {
         return $this->eventManager;
     }
+
+    /**
+     * Is module installed
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function isModuleInstalled(string $id): bool
+    {
+        foreach ($this->getModules() as $name => $module) {
+            if ($name == $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
