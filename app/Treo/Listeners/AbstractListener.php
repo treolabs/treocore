@@ -36,11 +36,11 @@ declare(strict_types=1);
 
 namespace Treo\Listeners;
 
-use Espo\Core\Services\Base as BaseService;
 use Espo\Core\ORM\EntityManager;
+use Espo\Core\Services\Base as BaseService;
+use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Language;
 use Treo\Services\AbstractService;
-use Treo\Core\Utils\Config;
 
 /**
  * AbstractListener class
@@ -103,5 +103,15 @@ abstract class AbstractListener
     protected function getLanguage(): Language
     {
         return $this->getContainer()->get('language');
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return \Treo\Core\Utils\Metadata
+     */
+    protected function getMetadata(): \Treo\Core\Utils\Metadata
+    {
+        return $this->getContainer()->get('metadata');
     }
 }
