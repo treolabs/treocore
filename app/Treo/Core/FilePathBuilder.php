@@ -62,6 +62,9 @@ class FilePathBuilder
         $this->container = $container;
     }
 
+    /**
+     * @return array
+     */
     public static function folderPath()
     {
         return [
@@ -119,6 +122,13 @@ class FilePathBuilder
         return $content;
     }
 
+    /**
+     * @param string      $baseFolder
+     * @param string      $path
+     * @param string|null $type
+     * @return bool
+     * @throws Error
+     */
     protected function saveInFile(string $baseFolder, string $path, ?string $type = null)
     {
         $data = $this->getFromFile($baseFolder);
@@ -134,6 +144,13 @@ class FilePathBuilder
             ->putContents($baseFolder . self::LAST_CREATED, json_encode($data, JSON_PRETTY_PRINT));
     }
 
+    /**
+     * @param string      $type
+     * @param string      $path
+     * @param string|null $subType
+     * @return array
+     * @throws Error
+     */
     protected function buildPath(string $type, string $path, ?string $subType)
     {
         $basePath = static::folderPath()[$type];
@@ -179,6 +196,11 @@ class FilePathBuilder
         return $pathEl;
     }
 
+    /**
+     * @param $path
+     * @param $folder
+     * @return string
+     */
     protected function getPath($path, $folder)
     {
         if (!$folder) {
@@ -188,6 +210,10 @@ class FilePathBuilder
         return realpath($path) . "/{$folder}/";
     }
 
+    /**
+     * @param string $type
+     * @return array
+     */
     protected function init(string $type): array
     {
         $depth = $this->getMeta()->get(['app', 'fileStorage', $type, 'folderDepth']) ?? 3;
@@ -211,6 +237,9 @@ class FilePathBuilder
         return $this->container->get('metadata');
     }
 
+    /**
+     * @return Manager
+     */
     protected function getFileManager(): Manager
     {
         return $this->container->get("fileManager");

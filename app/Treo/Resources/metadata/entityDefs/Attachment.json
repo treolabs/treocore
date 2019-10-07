@@ -1,5 +1,8 @@
 {
   "fields": {
+    "tmpPath" : {
+      "type": "varchar"
+    },
     "name": {
       "type": "varchar",
       "required": true,

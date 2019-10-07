@@ -105,6 +105,11 @@ abstract class AbstractListener
         return $this->getContainer()->get('language');
     }
 
+    /**
+     * Get metadata
+     *
+     * @return \Treo\Core\Utils\Metadata
+     */
     protected function getMetadata(): \Treo\Core\Utils\Metadata
     {
         return $this->getContainer()->get('metadata');
