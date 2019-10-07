@@ -108,6 +108,9 @@ class Util extends Base
      */
     public static function countItems($folder)
     {
+        if (!is_dir($folder)) {
+            return 0;
+        }
         $fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
         return iterator_count($fi);
     }

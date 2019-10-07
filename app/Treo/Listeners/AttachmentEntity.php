@@ -58,7 +58,9 @@ class AttachmentEntity extends AbstractListener
             $this->copyFile($entity);
         }
 
-        if (!$entity->isNew() && $this->isChangeRelation($entity) && !in_array($entity->get("relatedType"), $this->skipTypes())) {
+        if (!$entity->isNew()
+            && $this->isChangeRelation($entity)
+            && !in_array($entity->get("relatedType"), $this->skipTypes())) {
             $this->moveFromTmp($entity);
         }
     }

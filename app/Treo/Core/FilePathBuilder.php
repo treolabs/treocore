@@ -69,34 +69,79 @@ class FilePathBuilder
         ];
     }
 
-
-    public function createPath(string $type): string
+    /**
+     * @param string $type
+     * @param string|null $route
+     * @return string
+     * @throws Error
+     *
+     * This method use in migration DAM V3.21.0
+     */
+    public function createPath(string $type, ?string $route = null): string
     {
-        $typeEl = explode("/", $type);
-        $type = array_shift($typeEl);
-        $folderPath = implode("/", $typeEl);
+        $baseFolder = static::folderPath()[$type];
+        $lastPath = $this->getFromFile($baseFolder, $route);
 
-        $baseFolder = static::folderPath()[$type] . ($folderPath ? ($folderPath . "/") : "");
-
-        if (!file_exists($baseFolder . "lastCreated")) {
+        if (!$lastPath) {
             $path = $this->init($type);
         } else {
-            $path = $this->buildPath($type, $folderPath);
+            $path = $this->buildPath($type, $lastPath, $route);
         }
         $res = implode("/", $path);
         array_pop($path);
-        $this->getFileManager()->putContents($baseFolder . self::LAST_CREATED, implode('/', $path));
+        $this->saveInFile($baseFolder, implode('/', $path), $route);
 
         return $res;
     }
 
-    protected function buildPath(string $type, string $folderPath)
+    /**
+     * @param string $baseFolder
+     * @param null $type
+     * @return string|null
+     *
+     */
+    protected function getFromFile(string $baseFolder, ?string $type = null)
+    {
+        if (!file_exists($baseFolder . self::LAST_CREATED)) {
+            return null;
+        }
+
+        $content = json_decode(file_get_contents($baseFolder . self::LAST_CREATED), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        if ($type) {
+            return $content[$type] ?? null;
+        }
+
+        return $content;
+    }
+
+    protected function saveInFile(string $baseFolder, string $path, ?string $type = null)
+    {
+        $data = $this->getFromFile($baseFolder);
+
+        if ($type) {
+            $data[$type] = $path;
+        } else {
+            $data = $path;
+        }
+
+        return $this
+            ->getFileManager()
+            ->putContents($baseFolder . self::LAST_CREATED, json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    protected function buildPath(string $type, string $path, ?string $subType)
     {
         $basePath = static::folderPath()[$type];
         $folderInfo = $this->getMeta()->get(['app', 'fileStorage', $type]);
         $iter = 0;
         $backIter = 0;
-        $path = file_get_contents($basePath . self::LAST_CREATED);
+
+        $basePath = $this->getPath($basePath, $subType);
 
         if (empty($path)) {
             throw new Error();
@@ -105,7 +150,7 @@ class FilePathBuilder
         $pathEl = explode("/", $path);
 
         while (!$iter) {
-            $count = Util::countItems($this->getPath($basePath) . implode("/", $pathEl));
+            $count = Util::countItems($basePath . implode("/", $pathEl));
 
             if ($count < $folderInfo['maxFilesInFolder']) {
                 $iter = $folderInfo['folderDepth'] - $backIter;
@@ -122,7 +167,7 @@ class FilePathBuilder
         for ($iter; $iter <= $folderInfo['folderDepth']; $iter++) {
             while ($iter) {
                 $folderName = Random::getString($folderInfo['folderNameLength']);
-                if (is_dir($this->getPath($basePath) . implode("/", $pathEl) . "/" . $folderName)) {
+                if (is_dir($basePath . implode("/", $pathEl) . "/" . $folderName)) {
                     continue;
                 }
                 $pathEl[] = $folderName;
@@ -134,9 +179,13 @@ class FilePathBuilder
         return $pathEl;
     }
 
-    protected function getPath($path)
+    protected function getPath($path, $folder)
     {
-        return realpath($path);
+        if (!$folder) {
+            return realpath($path) . "/";
+        }
+
+        return realpath($path) . "/{$folder}/";
     }
 
     protected function init(string $type): array

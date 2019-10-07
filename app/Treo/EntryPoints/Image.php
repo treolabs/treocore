@@ -44,11 +44,11 @@ class Image extends \Espo\Core\EntryPoints\Base
 {
     public static $authRequired = true;
 
-    protected $allowedFileTypes = array(
+    protected $allowedFileTypes = [
         'image/jpeg',
         'image/png',
         'image/gif',
-    );
+    ];
 
     protected $imageSizes;
 
@@ -84,8 +84,8 @@ class Image extends \Espo\Core\EntryPoints\Base
     }
 
     /**
-     * @param $id
-     * @param $size
+     * @param      $id
+     * @param      $size
      * @param bool $disableAccessCheck
      * @throws Error
      * @throws Forbidden
@@ -166,18 +166,18 @@ class Image extends \Espo\Core\EntryPoints\Base
         } else {
             $contents = file_get_contents($thumbFilePath);
         }
-        return $contents;
 
+        return $contents;
     }
 
     /**
-     * @param $attachment
+     * @param $a
      * @param $size
      * @return string
      */
-    protected function getThumbPath($attachment, $size)
+    protected function getThumbPath($a, $size)
     {
-        return UploadDir::BASE_THUMB_PATH . $attachment->get('storageFilePath') . "/{$size}/" . $attachment->get('name');
+        return UploadDir::BASE_THUMB_PATH . $a->get('storageFilePath') . "/{$size}/" . $a->get('name');
     }
 
     /**
@@ -206,21 +206,21 @@ class Image extends \Espo\Core\EntryPoints\Base
         list($width, $height) = $this->imageSizes[$size];
 
         if ($originalWidth <= $width && $originalHeight <= $height) {
-            $targetWidth = $originalWidth;
+            $targetWidth  = $originalWidth;
             $targetHeight = $originalHeight;
         } else {
             if ($originalWidth > $originalHeight) {
-                $targetWidth = $width;
+                $targetWidth  = $width;
                 $targetHeight = $originalHeight / ($originalWidth / $width);
                 if ($targetHeight > $height) {
                     $targetHeight = $height;
-                    $targetWidth = $originalWidth / ($originalHeight / $height);
+                    $targetWidth  = $originalWidth / ($originalHeight / $height);
                 }
             } else {
                 $targetHeight = $height;
-                $targetWidth = $originalWidth / ($originalHeight / $height);
+                $targetWidth  = $originalWidth / ($originalHeight / $height);
                 if ($targetWidth > $width) {
-                    $targetWidth = $width;
+                    $targetWidth  = $width;
                     $targetHeight = $originalHeight / ($originalWidth / $width);
                 }
             }
@@ -230,8 +230,18 @@ class Image extends \Espo\Core\EntryPoints\Base
         switch ($fileType) {
             case 'image/jpeg':
                 $sourceImage = imagecreatefromjpeg($filePath);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth,
-                    $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
             case 'image/png':
                 $sourceImage = imagecreatefrompng($filePath);
@@ -239,19 +249,42 @@ class Image extends \Espo\Core\EntryPoints\Base
                 imagesavealpha($targetImage, true);
                 $transparent = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
                 imagefilledrectangle($targetImage, 0, 0, $targetWidth, $targetHeight, $transparent);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth,
-                    $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
             case 'image/gif':
                 $sourceImage = imagecreatefromgif($filePath);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth,
-                    $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
         }
 
         if (function_exists('exif_read_data')) {
-            $targetImage = imagerotate($targetImage,
-                array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0], 0);
+            $targetImage = imagerotate(
+                $targetImage,
+                array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0],
+                0
+            );
         }
 
         ob_start();

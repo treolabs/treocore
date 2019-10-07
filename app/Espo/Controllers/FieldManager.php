@@ -33,9 +33,15 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Exceptions\BadRequest;
+use Treo\Core\Container;
 
 class FieldManager extends \Espo\Core\Controllers\Base
 {
+    public function __construct(Container $container, $requestMethod = null)
+    {
+        parent::__construct($container, $requestMethod);
+    }
+
     protected function checkControllerAccess()
     {
         if (!$this->getUser()->isAdmin()) {
