@@ -379,7 +379,7 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
             foreach ($this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'fields']) as $name => $defs) {
                 if (!empty($defs['type']) && in_array($defs['type'], ['file', 'image'])) {
                     $attribute = $name . 'Id';
-                    if ($entity->isAttributeChanged($attribute)) {
+                    if ($entity->isAttributeChanged($attribute) && empty($entity->keepAttachment)) {
                         $previousAttachmentId = $entity->getFetched($attribute);
                         if ($previousAttachmentId) {
                             $attachment = $this->getEntityManager()->getEntity('Attachment', $previousAttachmentId);
