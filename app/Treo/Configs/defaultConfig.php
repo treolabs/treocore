@@ -47,7 +47,7 @@ return [
         'user'     => '',
         'password' => ''
     ],
-    'recordsPerPage'         => 200,
+    'recordsPerPage'         => 50,
     'recordsPerPageSmall'    => 5,
     'lastViewedCount'        => 20,
     'decimalMark'            => '.',
