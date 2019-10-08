@@ -86,7 +86,7 @@ class Attachment extends \Espo\Repositories\Attachment
 
     /**
      * @param Entity $entity
-     * @param null $role
+     * @param null   $role
      *
      * @return |null
      * @throws \Espo\Core\Exceptions\Error
@@ -96,12 +96,12 @@ class Attachment extends \Espo\Repositories\Attachment
         $attachment = $this->get();
 
         $attachment->set([
-            'sourceId' => $entity->getSourceId(),
-            'name' => $entity->get('name'),
-            'type' => $entity->get('type'),
-            'size' => $entity->get('size'),
-            'role' => $entity->get('role'),
-            'storageFilePath' => $entity->get('storageFilePath')
+            'sourceId'        => $entity->getSourceId(),
+            'name'            => $entity->get('name'),
+            'type'            => $entity->get('type'),
+            'size'            => $entity->get('size'),
+            'role'            => $entity->get('role'),
+            'storageFilePath' => $entity->get('storageFilePath'),
         ]);
 
         if ($role) {
@@ -121,8 +121,8 @@ class Attachment extends \Espo\Repositories\Attachment
     {
         $source = $this->where(["id" => $entity->get('sourceId')])->findOne();
 
-        $sourcePath = $this->getFilePath($source);
-        $destPath = $this->getDestPath(FilePathBuilder::UPLOAD);
+        $sourcePath   = $this->getFilePath($source);
+        $destPath     = $this->getDestPath(FilePathBuilder::UPLOAD);
         $fullDestPath = UploadDir::BASE_PATH . $destPath;
 
         if ($this->getFileManager()->copy($sourcePath, $fullDestPath, false, null, true)) {
@@ -134,11 +134,11 @@ class Attachment extends \Espo\Repositories\Attachment
 
     /**
      * @param \Espo\ORM\Entity $entity
-     * @param array $options
+     * @param array            $options
      * @return mixed
      * @throws \Espo\Core\Exceptions\Error
      */
-    public function save(\Espo\ORM\Entity $entity, array $options = array())
+    public function save(\Espo\ORM\Entity $entity, array $options = [])
     {
         $isNew = $entity->isNew();
 
@@ -179,9 +179,10 @@ class Attachment extends \Espo\Repositories\Attachment
         $destPath = $this->getDestPath(FilePathBuilder::UPLOAD);
         $fullPath = UploadDir::BASE_PATH . $destPath . "/" . $entity->get('name');
 
-        if ($this->getFileManager()->move($entity->get('tmpPath'), $fullPath)) {
+        if ($this->getFileManager()->move($entity->get('tmpPath'), $fullPath, false)) {
             $entity->set("tmpPath", null);
             $entity->set("storageFilePath", $destPath);
+
             return true;
         }
 
