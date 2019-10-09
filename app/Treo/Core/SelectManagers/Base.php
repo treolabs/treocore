@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\SelectManagers;
 
+use Treo\Core\SelectManagerFactory;
+
 /**
  * Class Base
  *
@@ -43,6 +45,31 @@ namespace Treo\Core\SelectManagers;
  */
 class Base extends \Espo\Core\SelectManagers\Base
 {
+    /**
+     * @var SelectManagerFactory
+     */
+    protected $selectManagerFactory;
+
+    /**
+     * @param SelectManagerFactory $selectManagerFactory
+     *
+     * @return Base
+     */
+    public function setSelectManagerFactory(SelectManagerFactory $selectManagerFactory): Base
+    {
+        $this->selectManagerFactory = $selectManagerFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return SelectManagerFactory
+     */
+    protected function getSelectManagerFactory(): SelectManagerFactory
+    {
+        return $this->selectManagerFactory;
+    }
+
     /**
      * @param array $result
      */
