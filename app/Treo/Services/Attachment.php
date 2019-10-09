@@ -58,6 +58,10 @@ class Attachment extends \Espo\Services\Attachment
      */
     public function moveFromTmp(Entity $entity)
     {
+        if ($entity->get("storageFilePath")) {
+            return true;
+        }
+
         if (!file_exists($entity->get('tmpPath'))) {
             throw new NotFound("File not found");
         }
