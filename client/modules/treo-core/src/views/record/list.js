@@ -43,12 +43,16 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         dragndropEventName: null,
 
+        dragableListRows: false,
+
         massRelationView: 'treo-core:views/modals/select-entity-and-records',
 
         setup() {
             Dep.prototype.setup.call(this);
 
             this.enabledFixedHeader = this.options.enabledFixedHeader || this.enabledFixedHeader;
+
+            this.setupDraggableParams();
 
             this.listenTo(this, 'after:save', () => {
                 this.collection.fetch();
@@ -117,6 +121,24 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.checkedAll = e.currentTarget.checked;
                 },
             });
+        },
+
+        setupDraggableParams() {
+            this.dragableListRows = this.options.dragableListRows  || this.dragableListRows;
+
+            const urlParts = (this.collection.url || '').split('/');
+            const mainScope = urlParts[0];
+            this.relationName = urlParts[2];
+            if (mainScope && this.relationName) {
+                const dragDropDefs = this.getMetadata().get(['clientDefs', mainScope, 'relationshipPanels', this.relationName, 'dragDrop']);
+                if (dragDropDefs) {
+                    this.dragableListRows = dragDropDefs.isActive;
+                    this.dragableSortField = dragDropDefs.sortField;
+                    if (this.dragableSortField) {
+                        this.collection.sortBy = this.dragableSortField;
+                    }
+                }
+            }
         },
 
         setupMassActionItems() {
@@ -219,7 +241,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.changeDropDownPosition();
 
-            if (this.options.dragableListRows) {
+            if (this.dragableListRows) {
                 this.initDraggableList();
                 $(window).off(this.dragndropEventName).on(this.dragndropEventName, () => {
                     this.initDraggableList();
@@ -234,8 +256,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.$el.find(this.listContainerEl).sortable({
                     handle: window.innerWidth < 768 ? '.cell[data-name="draggableIcon"]' : false,
                     delay: 150,
-                    update: function () {
-                        this.saveListItemOrder();
+                    update: function (e, ui) {
+                        this.saveListItemOrder(e, ui);
                     }.bind(this)
                 });
             }
@@ -249,25 +271,46 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             });
         },
 
-        saveListItemOrder() {
-            let saveUrl = this.getListRowsOrderSaveUrl();
-            if (saveUrl) {
-                this.ajaxPutRequest(saveUrl, {ids: this.getIdsFromDom()})
-                    .then(response => {
-                        let statusMsg = 'Error occurred';
-                        let type = 'error';
-                        if (response) {
-                            statusMsg = 'Saved';
-                            type = 'success';
-                        }
-                        this.collection.trigger('listSorted');
-                        this.notify(statusMsg, type, 3000);
-                    });
+        saveListItemOrder(e, ui) {
+            if (this.dragableSortField) {
+                const itemId = this.getItemId(ui);
+                const sortFieldValue = this.getSortFieldValue(itemId);
+                if (itemId && sortFieldValue > -1) {
+                    this.ajaxPutRequest(`${this.scope}/${itemId}`, {[this.dragableSortField]: sortFieldValue})
+                        .then(response => {
+                            let statusMsg = 'Error occurred';
+                            let type = 'error';
+                            if (response) {
+                                statusMsg = 'Saved';
+                                type = 'success';
+                            }
+                            this.collection.trigger('listSorted');
+                            this.notify(statusMsg, type, 3000);
+                        });
+                }
+            } else {
+                this.collection.trigger('listSorted', this.getIdsFromDom());
             }
         },
 
-        getListRowsOrderSaveUrl() {
-            return this.options.listRowsOrderSaveUrl;
+        getItemId(ui) {
+            let id;
+            if (ui && ui.item) {
+                id = ui.item.data('id');
+            }
+            return id;
+        },
+
+        getSortFieldValue(id) {
+            let value;
+            const ids = this.getIdsFromDom();
+            const currIndex = ids.indexOf(id);
+            if (currIndex > 0) {
+                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 1;
+            } else {
+                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 1;
+            }
+            return value;
         },
 
         getIdsFromDom() {
@@ -277,7 +320,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         filterListLayout: function (listLayout) {
-            if (this.options.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
+            if (this.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
                 listLayout = Espo.Utils.cloneDeep(listLayout);
                 listLayout.unshift({
                     widthPx: '40',
