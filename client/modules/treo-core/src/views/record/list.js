@@ -139,6 +139,10 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     }
                 }
             }
+
+            if (this.dragableListRows) {
+                this.listenTo(this.collection, 'listSorted', () => this.collection.fetch());
+            }
         },
 
         setupMassActionItems() {
@@ -275,7 +279,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             if (this.dragableSortField) {
                 const itemId = this.getItemId(ui);
                 const sortFieldValue = this.getSortFieldValue(itemId);
-                if (itemId && sortFieldValue > -1) {
+                if (itemId) {
                     this.ajaxPutRequest(`${this.scope}/${itemId}`, {[this.dragableSortField]: sortFieldValue})
                         .then(response => {
                             let statusMsg = 'Error occurred';
@@ -284,9 +288,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                                 statusMsg = 'Saved';
                                 type = 'success';
                             }
-                            this.collection.trigger('listSorted');
                             this.notify(statusMsg, type, 3000);
-                        });
+                        })
+                        .always(() => this.collection.trigger('listSorted'));
                 }
             } else {
                 this.collection.trigger('listSorted', this.getIdsFromDom());
