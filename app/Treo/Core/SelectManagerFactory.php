@@ -107,7 +107,7 @@ class SelectManagerFactory
             $this->container->get('injectableFactory')
         );
         $selectManager->setEntityType($entityType);
-        $selectManager->setSelectManagerFactory($this->container->get('selectManagerFactory'));
+        $selectManager->setSelectManagerFactory($this);
 
         return $selectManager;
     }

@@ -37,6 +37,7 @@ use \Espo\Core\AclManager;
 use \Espo\Core\Utils\Metadata;
 use \Espo\Core\Utils\Config;
 use \Espo\Core\InjectableFactory;
+use Treo\Core\SelectManagerFactory;
 
 class Base
 {
@@ -77,6 +78,31 @@ class Base
         $this->metadata = $metadata;
         $this->config = $config;
         $this->injectableFactory = $injectableFactory;
+    }
+
+    /**
+     * @var SelectManagerFactory
+     */
+    protected $selectManagerFactory;
+
+    /**
+     * @param SelectManagerFactory $selectManagerFactory
+     *
+     * @return Base
+     */
+    public function setSelectManagerFactory(SelectManagerFactory $selectManagerFactory): Base
+    {
+        $this->selectManagerFactory = $selectManagerFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return SelectManagerFactory
+     */
+    protected function getSelectManagerFactory(): SelectManagerFactory
+    {
+        return $this->selectManagerFactory;
     }
 
     protected function getEntityManager()
