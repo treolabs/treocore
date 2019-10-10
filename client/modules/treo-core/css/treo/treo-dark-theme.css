@@ -20883,3 +20883,7 @@ select {
     display: inline-block;
     float: left;
 }
+
+.panel-body .list table tbody.ui-sortable td:not(:last-child) {
+    vertical-align: middle;
+}
