@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Loaders;
 
 use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 use Symfony\Component\Workflow\Transition;
@@ -80,6 +81,12 @@ class Workflow extends Base
                             $definitionBuilder->addTransition(new Transition($from . '_' . $to, $from, $to));
                         }
                     }
+                    $metadataStore = [];
+                    if (!empty($settings['conditions'][$from . '_' . $to])) {
+                        $metadataStore['conditions'] = $settings['conditions'][$from . '_' . $to];
+                    }
+
+                    $definitionBuilder->setMetadataStore(new InMemoryMetadataStore([$from . '_' . $to => $metadataStore]));
                     $definition = $definitionBuilder->build();
 
                     // prepare id
