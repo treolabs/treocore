@@ -81,12 +81,17 @@ class Workflow extends Base
                             $definitionBuilder->addTransition(new Transition($from . '_' . $to, $from, $to));
                         }
                     }
-                    $metadataStore = [];
+                    
+                    // set conditions
                     if (!empty($settings['conditions'][$from . '_' . $to])) {
-                        $metadataStore['conditions'] = $settings['conditions'][$from . '_' . $to];
+                        // prepare conditions
+                        $conditions = [
+                            'conditions' => $settings['conditions'][$from . '_' . $to]
+                        ];
+                        
+                        $definitionBuilder->setMetadataStore(new InMemoryMetadataStore([$from . '_' . $to => $conditions]));
                     }
-
-                    $definitionBuilder->setMetadataStore(new InMemoryMetadataStore([$from . '_' . $to => $metadataStore]));
+                    
                     $definition = $definitionBuilder->build();
 
                     // prepare id
