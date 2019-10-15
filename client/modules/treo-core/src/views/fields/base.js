@@ -95,6 +95,24 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
             if (!$el.size() && this.$element) {
                 $el = this.$element;
             }
+
+            if (!$el.is(':visible')) {
+                let visibleParent;
+                $el.parents().each((i, elem) => {
+                    const $elem = $(elem);
+                    if ($elem.is(':visible')) {
+                        visibleParent = $elem;
+                        return false;
+                    }
+                });
+
+                if (visibleParent) {
+                    $el = visibleParent
+                } else {
+                    return;
+                }
+            }
+
             $el.popover({
                 placement: 'bottom',
                 container: 'body',
