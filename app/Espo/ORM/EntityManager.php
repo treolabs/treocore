@@ -33,7 +33,9 @@ use \Espo\Core\Exceptions\Error;
 
 class EntityManager
 {
-
+    /**
+     * @var \PDO
+     */
     protected $pdo;
 
     protected $entityFactory;
@@ -211,6 +213,9 @@ class EntityManager
         return $this->getMetadata();
     }
 
+    /**
+     * @return \PDO
+     */
     public function getPDO()
     {
         if (empty($this->pdo)) {
