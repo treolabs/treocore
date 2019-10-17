@@ -245,7 +245,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.changeDropDownPosition();
 
-            if (this.dragableListRows) {
+            if (this.dragableListRows && !((this.getParentView() || {}).defs || {}).readOnly) {
                 this.initDraggableList();
                 $(window).off(this.dragndropEventName).on(this.dragndropEventName, () => {
                     this.initDraggableList();
@@ -324,7 +324,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         filterListLayout: function (listLayout) {
-            if (this.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
+            if (this.dragableListRows && !((this.getParentView() || {}).defs || {}).readOnly && listLayout
+                && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
                 listLayout = Espo.Utils.cloneDeep(listLayout);
                 listLayout.unshift({
                     widthPx: '40',
