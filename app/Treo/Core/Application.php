@@ -138,7 +138,7 @@ class Application
         $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
 
         // for api
-        if (preg_match('/^\/api\/(.*)$/', $uri)) {
+        if (count(explode('api/v1', $uri)) == 2) {
             $this->runApi($uri);
         }
 
