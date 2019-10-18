@@ -138,7 +138,7 @@ class Application
         $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
 
         // for api
-        if (preg_match('/^\/api\/(.*)$/', $uri)) {
+        if (count(explode('api/v1', $uri)) == 2) {
             $this->runApi($uri);
         }
 
@@ -302,8 +302,10 @@ class Application
         $slim = $this->getSlim();
         $container = $this->getContainer();
 
-        $slim->any('.*', function () {
-        });
+        $slim->any(
+            '.*', function () {
+        }
+        );
 
         // create entryPointManager
         $entryPointManager = new EntryPointManager($container);
@@ -315,9 +317,11 @@ class Application
             $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
-            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+            $slim->hook(
+                'slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
                 $entryPointManager->run($entryPoint, $data);
-            });
+            }
+            );
 
             $slim->run();
         } catch (\Exception $e) {
@@ -435,7 +439,8 @@ class Application
         $apiAuth = new ApiAuth($auth);
 
         $this->getSlim()->add($apiAuth);
-        $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
+        $this->getSlim()->hook(
+            'slim.before.dispatch', function () use ($slim, $container) {
             $route = $slim->router()->getCurrentRoute();
             $conditions = $route->getConditions();
 
@@ -481,9 +486,11 @@ class Application
             } catch (\Exception $e) {
                 $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
             }
-        });
+        }
+        );
 
-        $this->getSlim()->hook('slim.after.router', function () use (&$slim) {
+        $this->getSlim()->hook(
+            'slim.after.router', function () use (&$slim) {
             $slim->contentType('application/json');
 
             $res = $slim->response();
@@ -491,7 +498,8 @@ class Application
             $res->header('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
             $res->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
             $res->header('Pragma', 'no-cache');
-        });
+        }
+        );
     }
 
     /**
@@ -512,9 +520,11 @@ class Application
                 continue;
             }
 
-            $currentRoute = $this->getSlim()->$method($baseRoute . $route['route'], function () use ($route) {
+            $currentRoute = $this->getSlim()->$method(
+                $baseRoute . $route['route'], function () use ($route) {
                 return $route['params'];
-            });
+            }
+            );
 
             if (isset($route['conditions'])) {
                 $currentRoute->conditions($route['conditions']);
