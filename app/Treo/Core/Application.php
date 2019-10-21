@@ -134,12 +134,18 @@ class Application
      */
     public function run()
     {
-        // prepare uri
-        $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
+        // prepare url
+        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
+            $url = $_SERVER['SCRIPT_URL'];
+        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
+            $url = $_SERVER['REDIRECT_URL'];
+        } else {
+            $url = '';
+        }
 
         // for api
-        if (count(explode('api/v1', $uri)) == 2) {
-            $this->runApi($uri);
+        if (count(explode('api/v1', $url)) == 2) {
+            $this->runApi($url);
         }
 
         // for client
@@ -190,9 +196,9 @@ class Application
     /**
      * Run API
      *
-     * @param string $uri
+     * @param string $url
      */
-    protected function runApi(string $uri)
+    protected function runApi(string $url)
     {
         // for installer
         if (!$this->isInstalled()) {
@@ -203,9 +209,9 @@ class Application
         $baseRoute = '/api/v1';
 
         // for portal api
-        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri)) {
+        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
             // parse uri
-            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
+            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $url));
 
             // init portal container
             $this->initPortalContainer($matches[0]);
