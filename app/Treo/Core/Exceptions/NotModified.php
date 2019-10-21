@@ -37,16 +37,14 @@ declare(strict_types=1);
 namespace Treo\Core\Exceptions;
 
 /**
- * Class NoChange
+ * Class NotModified
  *
- * @deprecated
- *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @package Treo\Core\Exceptions
  */
-class NoChange extends NotModified
+class NotModified extends \Exception
 {
     /**
-     * @var string
+     * @var int
      */
-    protected $message = 'No changes for updating';
+    protected $code = 304;
 }
