@@ -254,6 +254,8 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
                     });
                 });
 
+                this.listenTo(view, 'collapsePanel', type => this.collapseBottomPanel(p.name, type));
+
                 if (callback) {
                     callback(view ,p);
                 }

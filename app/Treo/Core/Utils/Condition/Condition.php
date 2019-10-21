@@ -224,10 +224,13 @@ class Condition
         self::isValidCountArray(2, $values);
 
         $left = array_shift($values);
+        $right = array_shift($values);
+
         if ($left instanceof Entity) {
             $left = $left->get('id');
+        } elseif (self::isScalar(gettype($left)) && gettype($left) !== gettype($right)) {
+            settype($right, gettype($left));
         }
-        $right = array_shift($values);
 
         return $left === $right;
     }
@@ -398,7 +401,12 @@ class Condition
      */
     protected function checkLessThan(array $values): bool
     {
-        return !self::checkGreaterThan($values);
+        self::isValidCountArray(2, $values);
+
+        $currentValue = array_shift($values);
+        $needValue = array_shift($values);
+
+        return (float)$currentValue < (float)$needValue;
     }
 
     /**
@@ -562,7 +570,7 @@ class Condition
 
         $today = new DateTime();
         if (strlen($time) <= 10) {
-            $today->setTime(0,0,0);
+            $today->setTime(0, 0, 0);
         }
         return $today
             ->diff($compareTime);
@@ -627,5 +635,15 @@ class Condition
         }
 
         return true;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isScalar(string $type): bool
+    {
+        return in_array($type, ['boolean', 'integer', 'double', 'string']);
     }
 }
