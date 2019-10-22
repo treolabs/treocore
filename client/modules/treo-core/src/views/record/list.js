@@ -48,11 +48,11 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         massRelationView: 'treo-core:views/modals/select-entity-and-records',
 
         setup() {
+            this.setupDraggableParams();
+
             Dep.prototype.setup.call(this);
 
             this.enabledFixedHeader = this.options.enabledFixedHeader || this.enabledFixedHeader;
-
-            this.setupDraggableParams();
 
             this.listenTo(this, 'after:save', () => {
                 this.collection.fetch();
