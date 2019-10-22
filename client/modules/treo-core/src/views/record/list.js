@@ -125,6 +125,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         setupDraggableParams() {
             this.dragableListRows = this.options.dragableListRows  || this.dragableListRows;
+            this.listRowsOrderSaveUrl = this.options.listRowsOrderSaveUrl  || this.listRowsOrderSaveUrl;
 
             const urlParts = (this.collection.url || '').split('/');
             const mainScope = urlParts[0];
@@ -276,22 +277,35 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         saveListItemOrder(e, ui) {
+            let url;
+            let data;
             if (this.dragableSortField) {
                 const itemId = this.getItemId(ui);
-                const sortFieldValue = this.getSortFieldValue(itemId);
                 if (itemId) {
-                    this.ajaxPutRequest(`${this.scope}/${itemId}`, {[this.dragableSortField]: sortFieldValue})
-                        .then(response => {
-                            let statusMsg = 'Error occurred';
-                            let type = 'error';
-                            if (response) {
-                                statusMsg = 'Saved';
-                                type = 'success';
-                            }
-                            this.notify(statusMsg, type, 3000);
-                        })
-                        .always(() => this.collection.trigger('listSorted'));
+                    const sortFieldValue = this.getSortFieldValue(itemId);
+                    url = `${this.scope}/${itemId}`;
+                    data = {
+                        [this.dragableSortField]: sortFieldValue
+                    };
                 }
+            } else if (this.listRowsOrderSaveUrl) {
+                url = this.listRowsOrderSaveUrl;
+                data = {
+                    ids: this.getIdsFromDom()
+                };
+            }
+            if (url) {
+                this.ajaxPutRequest(url, data)
+                    .then(response => {
+                        let statusMsg = 'Error occurred';
+                        let type = 'error';
+                        if (response) {
+                            statusMsg = 'Saved';
+                            type = 'success';
+                        }
+                        this.notify(statusMsg, type, 3000);
+                    })
+                    .always(() => this.collection.trigger('listSorted'));
             } else {
                 this.collection.trigger('listSorted', this.getIdsFromDom());
             }
