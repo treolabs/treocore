@@ -20727,7 +20727,7 @@ td[data-name="draggableIcon"] {
     border-bottom: 1px solid #ececec;
 }
 
-.bottom .panel .group-container > .group .list td[data-name="value"] {
+.bottom .panel .group-container > .group .list td.over-visible[data-name="value"] {
     overflow: visible;
 }
 
