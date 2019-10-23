@@ -124,7 +124,7 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
 
         getCustomLabel(field, langField) {
             let label = '';
-            label += this.translate(field, 'fields', this.model.get('parentType')) + " › ";
+            label += this.translate(field, 'fields', this.model.get('parentType')) + ' &#8250; ';
             label += langField.slice(-4, -2).toLowerCase() + "_" + langField.slice(-2).toUpperCase();
             return label;
         }
