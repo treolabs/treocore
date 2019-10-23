@@ -83,6 +83,9 @@ class PostUpdate
         // update client files
         $this->updateClientFiles();
 
+        // copy default config if it needs
+        $this->copyDefaultConfig();
+
         if ($this->isInstalled()) {
             // logout all users
             $this->logoutAll();
@@ -508,6 +511,29 @@ class PostUpdate
         Util::copydir(dirname(CORE_PATH) . '/client', 'client');
         foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
             Util::copydir($module->getClientPath(), 'client');
+        }
+    }
+
+    /**
+     * Copy default config
+     */
+    private function copyDefaultConfig(): void
+    {
+        // prepare config path
+        $path = 'data/config.php';
+
+        if (!file_exists($path)) {
+            // get default data
+            $data = include CORE_PATH . '/Treo/Configs/defaultConfig.php';
+
+            // prepare salt
+            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
+
+            // get content
+            $content = "<?php\nreturn " . $this->getContainer()->get('fileManager')->varExport($data) . ";\n?>";
+
+            // create config
+            file_put_contents($path, $content);
         }
     }
 }

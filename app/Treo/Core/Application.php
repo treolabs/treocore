@@ -187,9 +187,6 @@ class Application
      */
     public function isInstalled(): bool
     {
-        // copy config if it needs
-        $this->copyDefaultConfig();
-
         return file_exists($this->getConfig()->getConfigPath()) && $this->getConfig()->get('isInstalled');
     }
 
@@ -525,29 +522,6 @@ class Application
             if (isset($route['conditions'])) {
                 $currentRoute->conditions($route['conditions']);
             }
-        }
-    }
-
-    /**
-     * Copy default config
-     */
-    private function copyDefaultConfig(): void
-    {
-        // prepare config path
-        $path = 'data/config.php';
-
-        if (!file_exists($path)) {
-            // get default data
-            $data = include CORE_PATH . '/Treo/Configs/defaultConfig.php';
-
-            // prepare salt
-            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
-
-            // get content
-            $content = "<?php\nreturn " . $this->getContainer()->get('fileManager')->varExport($data) . ";\n?>";
-
-            // create config
-            file_put_contents($path, $content);
         }
     }
 
