@@ -17,6 +17,18 @@
   "controllers/admin": [
     "treo-core"
   ],
+  "views/admin/auth-log-record/list": [
+    "treo-core"
+  ],
+  "views/admin/auth-token/list": [
+    "treo-core"
+  ],
+  "views/admin/job/list": [
+    "treo-core"
+  ],
+  "views/admin/layouts/index": [
+    "treo-core"
+  ],
   "views/detail": [
     "treo-core"
   ],
