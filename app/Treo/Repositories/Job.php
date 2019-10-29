@@ -53,7 +53,7 @@ class Job extends Base
     public function beforeSave(Entity $entity, array $options = [])
     {
         // dispatch an event
-        $event = $this->dispatch('Job', 'beforeSave', ['entity' => $entity, 'options' => $options]);
+        $event = $this->dispatch('JobEntity', 'beforeSave', ['entity' => $entity, 'options' => $options]);
 
         // call parent
         parent::beforeSave($event->getArgument('entity'), $event->getArgument('options'));
@@ -65,7 +65,7 @@ class Job extends Base
     protected function afterRemove(Entity $entity, array $options = [])
     {
         // dispatch an event
-        $event = $this->dispatch('Job', 'afterRemove', ['entity' => $entity, 'options' => $options]);
+        $event = $this->dispatch('JobEntity', 'afterRemove', ['entity' => $entity, 'options' => $options]);
 
         // call parent
         parent::afterRemove($event->getArgument('entity'), $event->getArgument('options'));

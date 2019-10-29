@@ -43,7 +43,7 @@ use Treo\Core\EventManager\Event;
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class JobController extends AbstractListener
+class JobEntity extends AbstractListener
 {
     /**
      * @param Event $event
@@ -51,7 +51,7 @@ class JobController extends AbstractListener
     public function beforeSave(Event $event)
     {
         // prepare data
-        $entity = $event->get('entity');
+        $entity = $event->getArgument('entity');
 
         // set scheduledJobId to data
         if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
