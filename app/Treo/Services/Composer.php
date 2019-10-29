@@ -267,7 +267,7 @@ class Composer extends AbstractService
             }
 
             // set settingVersion
-            if ($composerData['require'][$module->getComposerName()]) {
+            if (isset($composerData['require'][$module->getComposerName()])) {
                 $settingVersion = $composerData['require'][$module->getComposerName()];
                 $result['list'][$id]['settingVersion'] = TreoModuleManager::prepareVersion($settingVersion);
             }
