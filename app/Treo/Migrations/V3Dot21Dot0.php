@@ -55,23 +55,6 @@ class V3Dot21Dot0 extends AbstractMigration
      */
     public function up(): void
     {
-        foreach ($this->getAttachments() as $attachment) {
-            if (!file_exists(self::OLD_BASE_PATH . $attachment['id'])) {
-                continue;
-            }
-
-            $path = $this->getPathBuilder()->createPath(FilePathBuilder::UPLOAD);
-
-            $oldPath = self::OLD_BASE_PATH . $attachment['id'];
-            $newPath = self::NEW_BASE_PATH . $path . '/' . $attachment['name'];
-
-            if (!$this->getFileManager()->move($oldPath, $newPath)) {
-                continue;
-            }
-
-            $this->setDAM($attachment['id'], "UploadDir", $path);
-        }
-
         Util::removedir("data/upload/thumbs");
     }
 
@@ -104,12 +87,6 @@ class V3Dot21Dot0 extends AbstractMigration
         $pdo->exec("UPDATE attachment SET `storage` = NULL, `storage_file_path` = NULL WHERE id = '{$id}'");
     }
 
-    protected function setDAM($id, $storage, $filePath)
-    {
-        $pdo = $this->getEntityManager()->getPDO();
-        $pdo->exec("UPDATE attachment SET `storage`='{$storage}', `storage_file_path`='{$filePath}' WHERE id='{$id}'");
-    }
-
     /**
      * @return array
      */
@@ -126,11 +103,6 @@ class V3Dot21Dot0 extends AbstractMigration
     protected function getFileManager()
     {
         return $this->container->get("fileManager");
-    }
-
-    protected function getPathBuilder()
-    {
-        return $this->container->get('filePathBuilder');
     }
 
     /**
