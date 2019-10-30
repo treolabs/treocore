@@ -36,8 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Repositories;
 
+use Espo\Repositories\Attachment as Base;
 use Espo\ORM\Entity;
-use Espo\Core\Utils\Util;
+use Treo\Core\Utils\Util;
 use Treo\Core\FilePathBuilder;
 use Treo\Core\FileStorage\Storages\UploadDir;
 
@@ -46,7 +47,7 @@ use Treo\Core\FileStorage\Storages\UploadDir;
  *
  * @package Treo\Repositories
  */
-class Attachment extends \Espo\Repositories\Attachment
+class Attachment extends Base
 {
     /**
      * @inheritDoc
