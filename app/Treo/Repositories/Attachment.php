@@ -36,16 +36,25 @@ declare(strict_types=1);
 
 namespace Treo\Repositories;
 
-use Espo\Core\ORM\Entity;
+use Espo\ORM\Entity;
 use Treo\Core\FilePathBuilder;
 use Treo\Core\FileStorage\Storages\UploadDir;
 
 /**
  * Class Attachment
+ *
  * @package Treo\Repositories
  */
 class Attachment extends \Espo\Repositories\Attachment
 {
+    public function getFilePath(Entity $entity)
+    {
+        // migrate attachment if it needs
+        $this->migrateAttachment($entity);
+
+        return parent::getFilePath($entity);
+    }
+
     /**
      * @inheritdoc
      */
@@ -85,7 +94,7 @@ class Attachment extends \Espo\Repositories\Attachment
 
     /**
      * @param Entity $entity
-     * @param null $role
+     * @param null   $role
      *
      * @return |null
      * @throws \Espo\Core\Exceptions\Error
@@ -94,14 +103,16 @@ class Attachment extends \Espo\Repositories\Attachment
     {
         $attachment = $this->get();
 
-        $attachment->set([
-            'sourceId' => $entity->getSourceId(),
-            'name' => $entity->get('name'),
-            'type' => $entity->get('type'),
-            'size' => $entity->get('size'),
-            'role' => $entity->get('role'),
-            'storageFilePath' => $entity->get('storageFilePath')
-        ]);
+        $attachment->set(
+            [
+                'sourceId'        => $entity->getSourceId(),
+                'name'            => $entity->get('name'),
+                'type'            => $entity->get('type'),
+                'size'            => $entity->get('size'),
+                'role'            => $entity->get('role'),
+                'storageFilePath' => $entity->get('storageFilePath')
+            ]
+        );
 
         if ($role) {
             $attachment->set('role', $role);
@@ -114,6 +125,7 @@ class Attachment extends \Espo\Repositories\Attachment
 
     /**
      * @param Entity $entity
+     *
      * @return string
      */
     public function copy(Entity $entity): string
@@ -133,10 +145,38 @@ class Attachment extends \Espo\Repositories\Attachment
 
     /**
      * @param string $type
+     *
      * @return string
      */
     protected function getDestPath(string $type): string
     {
         return $this->getPathBuilder()->createPath($type);
+    }
+
+    /**
+     * @param Entity $attachment
+     */
+    protected function migrateAttachment(Entity $attachment)
+    {
+        // prepare old path
+        $oldPath = 'data/upload/' . $attachment->get('id');
+
+        if (file_exists($oldPath)) {
+            // prepare new base path
+            $newBasePath = 'data/upload/files/';
+
+            // create dir path
+            $path = $this->getPathBuilder()->createPath($newBasePath);
+
+            // create full path
+            $newPath = $newBasePath . $path . '/' . $attachment->get('name');
+
+            if ($this->getFileManager()->move($oldPath, $newPath)) {
+                $attachment->set('storage', 'UploadDir');
+                $attachment->set('storageFilePath', $path);
+
+                $this->getEntityManager()->saveEntity($attachment, ['skipAll' => true]);
+            }
+        }
     }
 }
