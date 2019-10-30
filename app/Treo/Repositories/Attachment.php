@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Repositories;
 
+use Espo\Repositories\Attachment AS Base;
 use Espo\ORM\Entity;
 use Treo\Core\FilePathBuilder;
 use Treo\Core\FileStorage\Storages\UploadDir;
@@ -45,51 +46,17 @@ use Treo\Core\FileStorage\Storages\UploadDir;
  *
  * @package Treo\Repositories
  */
-class Attachment extends \Espo\Repositories\Attachment
+class Attachment extends Base
 {
+    /**
+     * @inheritDoc
+     */
     public function getFilePath(Entity $entity)
     {
         // migrate attachment if it needs
         $this->migrateAttachment($entity);
 
         return parent::getFilePath($entity);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function init()
-    {
-        // call parent
-        parent::init();
-
-        $this->addDependency('fileStorageManager');
-        $this->addDependency('filePathBuilder');
-        $this->addDependency('fileManager');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getFileStorageManager()
-    {
-        return $this->getInjection('fileStorageManager');
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getPathBuilder()
-    {
-        return $this->getInjection('filePathBuilder');
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getFileManager()
-    {
-        return $this->getInjection('fileManager');
     }
 
     /**
@@ -141,6 +108,43 @@ class Attachment extends \Espo\Repositories\Attachment
         }
 
         return '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function init()
+    {
+        // call parent
+        parent::init();
+
+        $this->addDependency('fileStorageManager');
+        $this->addDependency('filePathBuilder');
+        $this->addDependency('fileManager');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getFileStorageManager()
+    {
+        return $this->getInjection('fileStorageManager');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getPathBuilder()
+    {
+        return $this->getInjection('filePathBuilder');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getFileManager()
+    {
+        return $this->getInjection('fileManager');
     }
 
     /**
