@@ -149,11 +149,13 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         setupMassActionItems() {
             Dep.prototype.setupMassActionItems.call(this);
 
-            let foreignEntities = this.getForeignEntities();
-            if (foreignEntities.length) {
-                this.massActionList = Espo.Utils.clone(this.massActionList);
-                this.massActionList.push('addRelation');
-                this.massActionList.push('removeRelation');
+            if (!this.getMetadata().get(['scopes', this.scope, 'relationDisabled'])) {
+                let foreignEntities = this.getForeignEntities();
+                if (foreignEntities.length) {
+                    this.massActionList = Espo.Utils.clone(this.massActionList);
+                    this.massActionList.push('addRelation');
+                    this.massActionList.push('removeRelation');
+                }
             }
         },
 
