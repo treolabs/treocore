@@ -4,7 +4,8 @@
       "type": "varchar",
       "required": true,
       "readOnly": true,
-      "trim": true
+      "trim": true,
+      "view": "treo-core:views/queue-manager/fields/name"
     },
     "serviceName": {
       "type": "varchar",
