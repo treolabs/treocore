@@ -113,20 +113,22 @@ Espo.define('treo-core:views/fields/multi-enum', 'class-replace!treo-core:views/
 
                 this.$element.selectize(selectizeOptions);
 
-                let depPositionDropdown = this.$element[0].selectize.positionDropdown;
-                this.$element[0].selectize.positionDropdown = function () {
-                    depPositionDropdown.call(this);
+                if (this.$element.size()) {
+                    let depPositionDropdown = this.$element[0].selectize.positionDropdown;
+                    this.$element[0].selectize.positionDropdown = function () {
+                        depPositionDropdown.call(this);
 
-                    this.$dropdown.hide();
-                    let pageHeight = $(document).height();
-                    this.$dropdown.show();
-                    let dropdownHeight = this.$dropdown.outerHeight(true);
-                    if (this.$dropdown.offset().top + dropdownHeight > pageHeight) {
-                        this.$dropdown.css({
-                            'top': `-${dropdownHeight}px`
-                        });
-                    }
-                };
+                        this.$dropdown.hide();
+                        let pageHeight = $(document).height();
+                        this.$dropdown.show();
+                        let dropdownHeight = this.$dropdown.outerHeight(true);
+                        if (this.$dropdown.offset().top + dropdownHeight > pageHeight) {
+                            this.$dropdown.css({
+                                'top': `-${dropdownHeight}px`
+                            });
+                        }
+                    };
+                }
 
                 this.$element.on('change', function () {
                     this.trigger('change');
