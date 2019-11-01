@@ -411,6 +411,10 @@ class PostUpdate
                 // get src
                 $src = (new \ReflectionClass($className))->getFileName();
 
+                if (!file_exists($src)) {
+                    continue 1;
+                }
+
                 // prepare dest
                 $dest = "data/module-manager-events/{$module}";
 
