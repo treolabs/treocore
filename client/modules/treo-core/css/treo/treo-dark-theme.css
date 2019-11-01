@@ -19285,10 +19285,6 @@ ul.dropdown-menu > li.checkbox {
     border-right: 0;
 }
 
-#main .detail .catalog-tree-panel + .overview {
-    border-left: 1px solid #e8eced;
-}
-
 #main .catalog-tree-panel + .list-container {
     padding: 0;
 }
@@ -19297,11 +19293,7 @@ ul.dropdown-menu > li.checkbox {
     border-left: 1px solid #e8eced;
 }
 
-#main .detail .catalog-tree-panel + .overview.hidden-catalog-tree-panel {
-    width: calc(75% - 40px);
-}
-
-#main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
+#main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
     margin-left: 40px;
 }
 
@@ -19666,8 +19658,6 @@ button.category:focus {
     .detail > .row > .side {
         padding: 0;
         position: relative;
-        margin-left: 1px;
-        margin-right: -1px;
     }
 
     .nav > li > a {
@@ -19709,6 +19699,14 @@ button.category:focus {
         background: #dcdcdc;
         position: absolute;
         right: 0;
+    }
+
+    #main .detail .catalog-tree-panel + .overview {
+        border-left: 1px solid #e8eced;
+    }
+
+    #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
+        width: calc(75% - 40px);
     }
 }
 
@@ -19886,8 +19884,12 @@ button.category:focus {
     #main .catalog-tree-panel-hidden > button.collapse-panel {
         border: 0;
         left: -3px;
-        z-index: 1;
+        z-index: 999;
         position: relative;
+    }
+
+    #main .record .catalog-tree-panel-hidden > button.collapse-panel {
+        left: 8px;
     }
 
     #main .catalog-tree-panel {
@@ -19896,6 +19898,7 @@ button.category:focus {
         padding: 0;
         width: 100%;
         border: none;
+        float: none;
     }
 
     #main .catalog-tree-panel button:active {
