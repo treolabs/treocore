@@ -34,64 +34,49 @@
 
 declare(strict_types=1);
 
-namespace Treo\Repositories;
-
-use Espo\Repositories\Job as Base;
-use Espo\ORM\Entity;
-use Treo\Core\EventManager\Event;
+namespace Treo\Core\Utils\Condition;
 
 /**
- * Class Job
+ * Class ConditionGroup
+ * @package Treo\Core\Utils\DynamicLogic
  *
- * @author r.ratsun@treolabs.com
+ * @author Maksim Kokhanskyi <m.kokhanskyi@treolabs.com>
  */
-class Job extends Base
+class ConditionGroup
 {
     /**
-     * @inheritdoc
+     * @var string
      */
-    public function beforeSave(Entity $entity, array $options = [])
-    {
-        // dispatch an event
-        $event = $this->dispatch('JobEntity', 'beforeSave', ['entity' => $entity, 'options' => $options]);
+    protected $type = '';
+    /**
+     * @var array
+     */
+    protected $values = [];
 
-        // call parent
-        parent::beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+    /**
+     * ConditionGroup constructor.
+     * @param string $type
+     * @param array $values
+     */
+    public function __construct(string $type, array $values)
+    {
+        $this->type = $type;
+        $this->values = $values;
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
-    protected function afterRemove(Entity $entity, array $options = [])
+    public function getType(): string
     {
-        // dispatch an event
-        $event = $this->dispatch('JobEntity', 'afterRemove', ['entity' => $entity, 'options' => $options]);
-
-        // call parent
-        parent::afterRemove($event->getArgument('entity'), $event->getArgument('options'));
+        return $this->type;
     }
 
     /**
-     * @inheritdoc
+     * @return array
      */
-    protected function init()
+    public function getValues(): array
     {
-        parent::init();
-
-        $this->addDependency('eventManager');
-    }
-
-    /**
-     * Dispatch an event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return Event
-     */
-    protected function dispatch(string $target, string $action, array $data = []): Event
-    {
-        return $this->getInjection('eventManager')->dispatch($target, $action, new Event($data));
+        return $this->values;
     }
 }

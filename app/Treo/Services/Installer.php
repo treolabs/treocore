@@ -233,18 +233,7 @@ class Installer extends AbstractService
      */
     public function getDefaultDbSettings(): array
     {
-        $defaultConfig = $this->getConfig()->getDefaults();
-        $defaultDBSettings = [
-            'driver'   => 'pdo_mysql',
-            'host'     => 'localhost',
-            'port'     => '',
-            'charset'  => 'utf8mb4',
-            'dbname'   => '',
-            'user'     => '',
-            'password' => '',
-        ];
-
-        return isset($defaultConfig['database']) ? $defaultConfig['database'] : $defaultDBSettings;
+        return $this->getConfig()->get('database');
     }
 
     /**

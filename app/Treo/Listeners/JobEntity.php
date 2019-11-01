@@ -34,64 +34,51 @@
 
 declare(strict_types=1);
 
-namespace Treo\Repositories;
+namespace Treo\Listeners;
 
-use Espo\Repositories\Job as Base;
-use Espo\ORM\Entity;
 use Treo\Core\EventManager\Event;
 
 /**
- * Class Job
+ * Class JobController
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Job extends Base
+class JobEntity extends AbstractListener
 {
     /**
-     * @inheritdoc
+     * @param Event $event
      */
-    public function beforeSave(Entity $entity, array $options = [])
+    public function beforeSave(Event $event)
     {
-        // dispatch an event
-        $event = $this->dispatch('JobEntity', 'beforeSave', ['entity' => $entity, 'options' => $options]);
+        // prepare data
+        $entity = $event->getArgument('entity');
 
-        // call parent
-        parent::beforeSave($event->getArgument('entity'), $event->getArgument('options'));
+        // set scheduledJobId to data
+        if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
+            $entity->set('targetType', 'ScheduledJob');
+            $entity->set('targetId', $scheduledJobId);
+        }
+
+        // skip saving for Stream action
+        if ($entity->get('serviceName') == 'Stream' && $entity->get('methodName') == 'controlFollowersJob') {
+            // for skip saving
+            $entity->setIsSaved(true);
+
+            // call service method
+            $this->controlFollowersJob($entity->get('data'));
+        }
     }
 
     /**
-     * @inheritdoc
+     * @param array $data
      */
-    protected function afterRemove(Entity $entity, array $options = [])
+    protected function controlFollowersJob(array $data): void
     {
-        // dispatch an event
-        $event = $this->dispatch('JobEntity', 'afterRemove', ['entity' => $entity, 'options' => $options]);
+        // prepare input
+        $input = new \stdClass();
+        $input->entityId = $data['entityId'];
+        $input->entityType = $data['entityType'];
 
-        // call parent
-        parent::afterRemove($event->getArgument('entity'), $event->getArgument('options'));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function init()
-    {
-        parent::init();
-
-        $this->addDependency('eventManager');
-    }
-
-    /**
-     * Dispatch an event
-     *
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return Event
-     */
-    protected function dispatch(string $target, string $action, array $data = []): Event
-    {
-        return $this->getInjection('eventManager')->dispatch($target, $action, new Event($data));
+        $this->getContainer()->get('serviceFactory')->create('Stream')->controlFollowersJob($input);
     }
 }

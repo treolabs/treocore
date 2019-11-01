@@ -95,6 +95,7 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
             if (!$el.size() && this.$element) {
                 $el = this.$element;
             }
+
             $el.popover({
                 placement: 'bottom',
                 container: 'body',

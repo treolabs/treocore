@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,21 +31,14 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/admin/layouts/list-small', 'class-replace!treo-core:views/admin/layouts/list-small',
+    Dep => Dep.extend({
 
-namespace Treo\Core\Exceptions;
+        isFieldEnabled(model, name) {
+            return !model.getFieldParam(name, 'layoutListSmallDisabled') && Dep.prototype.isFieldEnabled.call(this, model, name);
+        },
 
-/**
- * Class NoChange
- *
- * @deprecated
- *
- * @author r.ratsun <r.ratsun@treolabs.com>
- */
-class NoChange extends NotModified
-{
-    /**
-     * @var string
-     */
-    protected $message = 'No changes for updating';
-}
+    })
+);
+
+

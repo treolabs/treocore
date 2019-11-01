@@ -74,11 +74,11 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
                 continue;
             }
 
+            // get column name
+            $columnName = $column->getQuotedName($this);
+
             //espo: remove autoincrement option
             if ($column->getAutoincrement()) {
-
-                $columnName = $column->getQuotedName($this);
-
                 $changedColumn = clone $column;
                 $changedColumn->setNotNull(false);
                 $changedColumn->setAutoincrement(false);
@@ -92,7 +92,10 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             }
             //END espo
 
-            //$queryParts[] =  'DROP ' . $column->getQuotedName($this); //espo: no needs to remove columns
+            // remove multilang columns
+            if (strlen($columnName) > 6 && in_array(substr($columnName, -6), self::getPreparedLocales())) {
+                $queryParts[] = 'DROP ' . $columnName;
+            }
         }
 
         foreach ($diff->changedColumns as $columnDiff) {
@@ -465,4 +468,30 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         return implode(', ', $queryFields);
     }
     //end: ESPO
+
+    /**
+     * Get prepared locales
+     *
+     * @return array
+     */
+    protected static function getPreparedLocales(): array
+    {
+        // prepare locales
+        $locales = [];
+
+        // prepare path
+        $path = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/Treo/Resources/i18n/en_US/Global.json';
+
+        // get data
+        if (file_exists($path)) {
+            $fileData = json_decode(file_get_contents($path), true);
+            if (isset($fileData['options']['language']) && is_array($fileData['options']['language'])) {
+                foreach ($fileData['options']['language'] as $locale => $translate) {
+                    $locales[] = '_' . strtolower($locale);
+                }
+            }
+        }
+
+        return $locales;
+    }
 }

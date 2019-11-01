@@ -18,6 +18,9 @@ id=$1
 # prepare PHP
 php=$2
 
+# change dir
+cd "$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" )"
+
 # call cron jobs
 $php index.php cron
 

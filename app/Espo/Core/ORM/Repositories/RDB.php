@@ -32,10 +32,8 @@ namespace Espo\Core\ORM\Repositories;
 use Espo\ORM\EntityManager;
 use Espo\ORM\EntityFactory;
 use Espo\ORM\Entity;
-use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Interfaces\Injectable;
 use Espo\Core\Utils\Util;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Treo\Core\EventManager\Event;
 
 class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
@@ -255,9 +253,6 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
     {
         parent::beforeSave($entity, $options);
 
-        // run workflow if it needs
-        $this->runWorkflow($entity);
-
         // dispatch an event
         $this->dispatch('beforeSave', $entity, $options);
 
@@ -377,24 +372,6 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
                 'relatedType' => $entity->getEntityType()
             ));
             $this->getEntityManager()->saveEntity($attachment);
-        }
-
-        if (!$entity->isNew()) {
-
-            foreach ($this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'fields']) as $name => $defs) {
-                if (!empty($defs['type']) && in_array($defs['type'], ['file', 'image'])) {
-                    $attribute = $name . 'Id';
-                    if ($entity->isAttributeChanged($attribute)) {
-                        $previousAttachmentId = $entity->getFetched($attribute);
-                        if ($previousAttachmentId) {
-                            $attachment = $this->getEntityManager()->getEntity('Attachment', $previousAttachmentId);
-                            if ($attachment) {
-                                $this->getEntityManager()->removeEntity($attachment);
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -615,43 +592,6 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
     }
 
     /**
-     * Run workflow if it needs
-     *
-     * @param Entity $to
-     *
-     * @throws Forbidden
-     */
-    protected function runWorkflow(Entity $to): void
-    {
-        // prepare name
-        $name = $to->getEntityType();
-
-        // get workflow settings
-        $workflowSettings = $this->getMetadata()->get(['workflow', $name], []);
-
-        if (!empty($workflowSettings)) {
-            // get from
-            $from = $this->getEntityManager()->getEntity($name, $to->get('id'));
-            if (empty($from)) {
-                $from = $this->getEntityManager()->getEntity($name);
-            }
-
-            foreach ($workflowSettings as $field => $settings) {
-                if ($from->get($field) != $to->get($field)) {
-                    try {
-                        $this
-                            ->getInjection('workflow')
-                            ->get($from, $name . '_' . $field)
-                            ->apply($from, $from->get($field) . '_' . $to->get($field));
-                    } catch (LogicException $e) {
-                        throw new Forbidden('Such workflow transition is not defined');
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Dispatch an event
      *
      * @param string $action
@@ -680,4 +620,3 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
         $this->getInjection('eventManager')->dispatch('Entity', $action, $event);
     }
 }
-

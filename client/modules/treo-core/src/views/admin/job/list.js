@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,21 +31,13 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/admin/job/list', 'class-replace!treo-core:views/admin/job/list',
+    Dep => Dep.extend({
 
-namespace Treo\Core\Exceptions;
+        getHeader: function () {
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> &raquo; " + this.getLanguage().translate('Jobs', 'labels', 'Admin');
+        }
 
-/**
- * Class NoChange
- *
- * @deprecated
- *
- * @author r.ratsun <r.ratsun@treolabs.com>
- */
-class NoChange extends NotModified
-{
-    /**
-     * @var string
-     */
-    protected $message = 'No changes for updating';
-}
+    })
+);
+

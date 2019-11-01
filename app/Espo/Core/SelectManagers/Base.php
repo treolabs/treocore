@@ -29,28 +29,53 @@
 
 namespace Espo\Core\SelectManagers;
 
-use \Espo\Core\Exceptions\Error;
-use \Espo\Core\Exceptions\Forbidden;
-
-use \Espo\Core\Acl;
-use \Espo\Core\AclManager;
-use \Espo\Core\Utils\Metadata;
-use \Espo\Core\Utils\Config;
-use \Espo\Core\InjectableFactory;
+use Espo\Core\Acl;
+use Espo\Core\AclManager;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Forbidden;
+use Espo\Entities\User;
+use Espo\ORM\EntityManager;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\Config;
+use Espo\Core\InjectableFactory;
+use Treo\Core\SelectManagerFactory;
 
 class Base
 {
-    protected $container;
-
+    /**
+     * @var \Espo\Entities\User
+     */
     protected $user;
 
+    /**
+     * @var Acl
+     */
     protected $acl;
 
+    /**
+     * @var EntityManager
+     */
     protected $entityManager;
 
+    /**
+     * @var string
+     */
     protected $entityType;
 
+    /**
+     * @var Metadata
+     */
     protected $metadata;
+
+    /**
+     * @var SelectManagerFactory
+     */
+    protected $selectManagerFactory;
+
+    /**
+     * @var bool
+     */
+    protected $isSubQuery = false;
 
     private $config;
 
@@ -68,7 +93,7 @@ class Base
 
     protected $fullTextSearchDataCacheHash = [];
 
-    public function __construct($entityManager, \Espo\Entities\User $user, Acl $acl, AclManager $aclManager, Metadata $metadata, Config $config, InjectableFactory $injectableFactory)
+    public function __construct($entityManager, User $user, Acl $acl, AclManager $aclManager, Metadata $metadata, Config $config, InjectableFactory $injectableFactory)
     {
         $this->entityManager = $entityManager;
         $this->user = $user;
@@ -79,36 +104,95 @@ class Base
         $this->injectableFactory = $injectableFactory;
     }
 
+    /**
+     * @param SelectManagerFactory $selectManagerFactory
+     *
+     * @return Base
+     */
+    public function setSelectManagerFactory(SelectManagerFactory $selectManagerFactory): Base
+    {
+        $this->selectManagerFactory = $selectManagerFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return SelectManagerFactory
+     */
+    protected function getSelectManagerFactory(): SelectManagerFactory
+    {
+        return $this->selectManagerFactory;
+    }
+
+    /**
+     * @param string $scope
+     *
+     * @return Base
+     */
+    protected function createSelectManager(string $scope): Base
+    {
+        // create select manager
+        $selectManager = $this
+            ->getSelectManagerFactory()
+            ->create($scope);
+
+        // set param
+        $selectManager->isSubQuery = true;
+
+        return $selectManager;
+    }
+
+    /**
+     * @return EntityManager
+     */
     protected function getEntityManager()
     {
         return $this->entityManager;
     }
 
+    /**
+     * @return Metadata
+     */
     protected function getMetadata()
     {
         return $this->metadata;
     }
 
+    /**
+     * @return User
+     */
     protected function getUser()
     {
         return $this->user;
     }
 
+    /**
+     * @return Acl
+     */
     protected function getAcl()
     {
         return $this->acl;
     }
 
+    /**
+     * @return Config
+     */
     protected function getConfig()
     {
         return $this->config;
     }
 
+    /**
+     * @return AclManager
+     */
     protected function getAclManager()
     {
         return $this->aclManager;
     }
 
+    /**
+     * @return InjectableFactory
+     */
     protected function getInjectableFactory()
     {
         return $this->injectableFactory;
@@ -750,7 +834,7 @@ class Base
             $this->access($result);
         }
 
-        $this->applyAdditional($result);
+        $this->applyAdditional($result, $params);
 
         return $result;
     }
@@ -1474,9 +1558,12 @@ class Base
         $this->textFilter($textFilter, $result);
     }
 
-    public function applyAdditional(&$result)
+    /**
+     * @param array $result
+     * @param array $params
+     */
+    public function applyAdditional(array &$result, array $params)
     {
-
     }
 
     public function hasJoin($join, &$result)

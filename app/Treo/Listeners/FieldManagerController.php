@@ -135,7 +135,10 @@ class FieldManagerController extends AbstractListener
      */
     protected function isDefaultValueValid(string $type, $default): bool
     {
-        if (is_string($default) && strpos($default, "'") !== false) {
+        // prepare types
+        $types = ['text', 'textMultiLang', 'wysiwyg', 'wysiwygMultiLang'];
+
+        if (in_array($type, $types) && is_string($default) && strpos($default, "'") !== false) {
             // prepare message
             $message = $this
                 ->getLanguage()

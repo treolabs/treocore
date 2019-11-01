@@ -134,12 +134,18 @@ class Application
      */
     public function run()
     {
-        // prepare uri
-        $uri = (!empty($_SERVER['REDIRECT_URL'])) ? $_SERVER['REDIRECT_URL'] : '';
+        // prepare url
+        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
+            $url = $_SERVER['SCRIPT_URL'];
+        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
+            $url = $_SERVER['REDIRECT_URL'];
+        } else {
+            $url = '';
+        }
 
         // for api
-        if (preg_match('/^\/api\/(.*)$/', $uri)) {
-            $this->runApi($uri);
+        if (count(explode('api/v1', $url)) == 2) {
+            $this->runApi($url);
         }
 
         // for client
@@ -181,18 +187,15 @@ class Application
      */
     public function isInstalled(): bool
     {
-        // copy config if it needs
-        $this->copyDefaultConfig();
-
         return file_exists($this->getConfig()->getConfigPath()) && $this->getConfig()->get('isInstalled');
     }
 
     /**
      * Run API
      *
-     * @param string $uri
+     * @param string $url
      */
-    protected function runApi(string $uri)
+    protected function runApi(string $url)
     {
         // for installer
         if (!$this->isInstalled()) {
@@ -203,9 +206,9 @@ class Application
         $baseRoute = '/api/v1';
 
         // for portal api
-        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $uri)) {
+        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
             // parse uri
-            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $uri));
+            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $url));
 
             // init portal container
             $this->initPortalContainer($matches[0]);
@@ -519,29 +522,6 @@ class Application
             if (isset($route['conditions'])) {
                 $currentRoute->conditions($route['conditions']);
             }
-        }
-    }
-
-    /**
-     * Copy default config
-     */
-    private function copyDefaultConfig(): void
-    {
-        // prepare config path
-        $path = 'data/config.php';
-
-        if (!file_exists($path)) {
-            // get default data
-            $data = include CORE_PATH . '/Treo/Configs/defaultConfig.php';
-
-            // prepare salt
-            $data['passwordSalt'] = mb_substr(md5((string)time()), 0, 9);
-
-            // get content
-            $content = "<?php\nreturn " . $this->getContainer()->get('fileManager')->varExport($data) . ";\n?>";
-
-            // create config
-            file_put_contents($path, $content);
         }
     }
 

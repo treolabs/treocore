@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,53 +31,18 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/admin/layouts/index', 'class-replace!treo-core:views/admin/layouts/index',
+    Dep => Dep.extend({
 
-namespace Treo\Listeners;
-
-use Treo\Core\EventManager\Event;
-
-/**
- * Class JobController
- *
- * @author r.ratsun <r.ratsun@treolabs.com>
- */
-class JobController extends AbstractListener
-{
-    /**
-     * @param Event $event
-     */
-    public function beforeSave(Event $event)
-    {
-        // prepare data
-        $entity = $event->get('entity');
-
-        // set scheduledJobId to data
-        if (!empty($scheduledJobId = $entity->get('scheduledJobId'))) {
-            $entity->set('targetType', 'ScheduledJob');
-            $entity->set('targetId', $scheduledJobId);
+        renderLayoutHeader: function () {
+            if (!this.scope) {
+                $("#layout-header").html("");
+                return;
+            }
+            $("#layout-header").show().html(this.getLanguage().translate(this.scope, 'scopeNamesPlural') + " &raquo; " + this.getLanguage().translate(this.type, 'layouts', 'Admin'));
         }
 
-        // skip saving for Stream action
-        if ($entity->get('serviceName') == 'Stream' && $entity->get('methodName') == 'controlFollowersJob') {
-            // for skip saving
-            $entity->setIsSaved(true);
+    })
+);
 
-            // call service method
-            $this->controlFollowersJob($entity->get('data'));
-        }
-    }
 
-    /**
-     * @param array $data
-     */
-    protected function controlFollowersJob(array $data): void
-    {
-        // prepare input
-        $input = new \stdClass();
-        $input->entityId = $data['entityId'];
-        $input->entityType = $data['entityType'];
-
-        $this->getContainer()->get('serviceFactory')->create('Stream')->controlFollowersJob($input);
-    }
-}
