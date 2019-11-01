@@ -211,6 +211,9 @@ class EntityManager
         return $this->getMetadata();
     }
 
+    /**
+     * @return \PDO
+     */
     public function getPDO()
     {
         if (empty($this->pdo)) {
@@ -239,6 +242,31 @@ class EntityManager
     public function getEntityFactory()
     {
         return $this->entityFactory;
+    }
+
+    /**
+     * @param string $sql
+     * @param array  $inputParams
+     *
+     * @return \PDOStatement
+     */
+    public function nativeQuery(string $sql, array $inputParams = []):\PDOStatement
+    {
+        // prepare params
+        $params = null;
+        if (!empty($inputParams)) {
+            $params = [];
+            foreach ($inputParams as $key => $value) {
+                $params[':' . $key] = $value;
+            }
+        }
+
+        $sth = $this
+            ->getPDO()
+            ->prepare($sql);
+        $sth->execute($params);
+
+        return $sth;
     }
 
     protected function init()
