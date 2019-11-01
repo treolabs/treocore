@@ -19294,7 +19294,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
-    margin-left: 40px;
+    margin-left: 25px;
 }
 
 #main .catalog-tree-panel + .list-buttons-container::before,
@@ -19324,7 +19324,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #main .catalog-tree-panel > button.collapsed {
-    left: 15px;
+    left: 9px;
 }
 
 #main .category-tree button.catalog-link {
@@ -19701,12 +19701,16 @@ button.category:focus {
         right: 0;
     }
 
+    #main .catalog-tree-panel.catalog-tree-panel-hidden {
+        padding: 0 8px 0 17px;
+    }
+
     #main .detail .catalog-tree-panel + .overview {
         border-left: 1px solid #e8eced;
     }
 
     #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
-        width: calc(75% - 40px);
+        width: calc(75% - 25px);
     }
 }
 
