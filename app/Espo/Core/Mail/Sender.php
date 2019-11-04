@@ -263,6 +263,9 @@ class Sender
         if (!empty($attachmentCollection)) {
             foreach ($attachmentCollection as $a) {
                 $fileName = $this->getEntityManager()->getRepository('Attachment')->getFilePath($a);
+                if (!file_exists($fileName)) {
+                    continue 1;
+                }
                 $attachment = new MimePart(file_get_contents($fileName));
                 $attachment->disposition = Mime::DISPOSITION_ATTACHMENT;
                 $attachment->encoding = Mime::ENCODING_BASE64;
