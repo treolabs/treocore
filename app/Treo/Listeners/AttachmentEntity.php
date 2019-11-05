@@ -56,8 +56,7 @@ class AttachmentEntity extends AbstractListener
         $entity = $event->getArgument('entity');
         if ($this->isDuplicate($entity)) {
             $this->copyFile($entity);
-        } elseif (
-            !$entity->isNew()
+        } elseif (!$entity->isNew()
             && $this->isChangeRelation($entity)
             && !in_array($entity->get("relatedType"), $this->skipTypes())
         ) {
