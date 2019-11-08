@@ -234,21 +234,6 @@ Espo.define('controllers/admin', ['controller', 'search-manager'], function (Dep
             this.main('views/admin/integrations/index', {integration: integration});
         },
 
-        rebuild: function (options) {
-            var master = this.get('master');
-            Espo.Ui.notify(master.translate('Please wait...'));
-            this.getRouter().navigate('#Admin');
-            $.ajax({
-                url: 'Admin/rebuild',
-                timeout: 0,
-                type: 'POST',
-                success: function () {
-                    var msg = master.translate('Rebuild has been done', 'labels', 'Admin');
-                    Espo.Ui.success(msg);
-                }.bind(this)
-            });
-        },
-
         clearCache: function (options) {
             var master = this.get('master');
             Espo.Ui.notify(master.translate('Please wait...'));

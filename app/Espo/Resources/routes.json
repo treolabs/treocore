@@ -165,14 +165,6 @@
         }
     },
     {
-        "route": "/Admin/rebuild",
-        "method": "post",
-        "params": {
-            "controller": "Admin",
-            "action": "rebuild"
-        }
-    },
-    {
         "route": "/Admin/clearCache",
         "method": "post",
         "params": {

@@ -48,11 +48,6 @@
         "description": "clearCache"
       },
       {
-        "url": "#Admin/rebuild",
-        "label": "Rebuild",
-        "description": "rebuild"
-      },
-      {
         "url": "#Composer/list",
         "label": "Composer",
         "description": "composer"
