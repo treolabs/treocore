@@ -56,7 +56,7 @@
     "Log": "Log",
     "confirmRun": "After update action all users would logout from system. Are you sure you want to do that action?",
     "daemonDisabledLabel": "The composer daemon is not running!",
-    "daemonDisabledDescription": "Probably the crontab is not configured. Instructions on how to configure the crontab you can find",
+    "daemonDisabledDescription": "Probably the daemon is reloading now and you should wait a minute or the crontab is not configured. Instructions on how to configure the crontab you can find",
     "daemonDisabledDescriptionLink": "here"
   },
   "notifications": {

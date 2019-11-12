@@ -7,11 +7,6 @@ if [ $# -ne 2 ]
     exit 1;
 fi
 
-# remove processes killer
-if [ -f "data/process-kill.txt" ]; then
-  rm "data/process-kill.txt";
-fi
-
 # prepare process id
 id=$1
 
@@ -20,6 +15,9 @@ php=$2
 
 # change dir
 cd "$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" )"
+
+# remove processes killer
+rm "data/process-kill.txt" > /dev/null 2>&1
 
 # call cron jobs
 $php index.php cron
