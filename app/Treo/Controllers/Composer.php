@@ -48,6 +48,8 @@ use Treo\Services\Composer as ComposerService;
  */
 class Composer extends Base
 {
+    const CHECK_UP_FILE = 'data/composer-check-up.log';
+
     /**
      * @ApiDescription(description="Call composer update command")
      * @ApiMethod(type="POST")
@@ -67,6 +69,10 @@ class Composer extends Base
 
         if (!$request->isPost()) {
             throw new Exceptions\BadRequest();
+        }
+
+        if (file_exists(self::CHECK_UP_FILE)) {
+            throw new Exceptions\BadRequest('Composer daemon is not running');
         }
 
         return $this->getComposerService()->runUpdate();
@@ -299,6 +305,33 @@ class Composer extends Base
         }
 
         return $this->getComposerService()->getLogs($request);
+    }
+
+
+    /**
+     * @param mixed   $params
+     * @param mixed   $data
+     * @param Request $request
+     *
+     * @return bool
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionIsDaemonEnabled($params, $data, Request $request): bool
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        file_put_contents(self::CHECK_UP_FILE, '1');
+
+        sleep(2);
+
+        return !file_exists(self::CHECK_UP_FILE);
     }
 
     /**

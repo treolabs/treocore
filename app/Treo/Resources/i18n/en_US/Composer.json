@@ -54,7 +54,10 @@
     "cancelingModuleInstall": "Canceling module install...",
     "canceledModuleInstall": "Module install has been canceled",
     "Log": "Log",
-    "confirmRun": "After update action all users would logout from system. Are you sure you want to do that action?"
+    "confirmRun": "After update action all users would logout from system. Are you sure you want to do that action?",
+    "daemonDisabledLabel": "The composer daemon is not running!",
+    "daemonDisabledDescription": "Probably the crontab is not configured. Instructions on how to configure the crontab you can find",
+    "daemonDisabledDescriptionLink": "here"
   },
   "notifications": {
     "Module update": "Module {module} has been updated. From version {from} to {to}",
