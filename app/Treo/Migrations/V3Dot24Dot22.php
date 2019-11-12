@@ -43,20 +43,6 @@ use Treo\Core\Migration\AbstractMigration;
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot24Dot22 extends AbstractMigration
+class V3Dot24Dot22 extends V3Dot23Dot29
 {
-    /**
-     * @inheritDoc
-     */
-    public function up(): void
-    {
-        file_put_contents('data/process-kill.txt', '1');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function down(): void
-    {
-    }
 }

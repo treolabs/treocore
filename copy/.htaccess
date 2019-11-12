@@ -7,7 +7,7 @@ RewriteRule ^ /client/ [R=404]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 
-<FilesMatch "(treo-composer\.log|notReadCount\.json|popupNotifications\.json)$">
+<FilesMatch "(treo-composer\.log|treo-composer-run\.txt|notReadCount\.json|popupNotifications\.json)$">
   Allow from all
 </FilesMatch>
 

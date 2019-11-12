@@ -35,6 +35,10 @@ class Espo extends Base
 {
     public function login($username, $password, \Espo\Entities\AuthToken $authToken = null, $isPortal = null)
     {
+        if (!empty($this->getConfig()->get('isUpdating'))) {
+            throw new Error('System is updating now! Please try later.');
+        }
+
         if ($authToken) {
             $hash = $authToken->get('hash');
         } else {
