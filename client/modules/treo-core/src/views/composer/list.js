@@ -55,10 +55,16 @@ Espo.define('treo-core:views/composer/list', 'views/list',
         inProgress: false,
 
         data() {
-            let isDaemonEnabled = true;
+            this.ajaxPostRequest('Composer/action/isDaemonEnabled').then(response => {
+                if (response) {
+                    $('#composer-buttons').fadeIn();
+                } else {
+                    $('#composer-alert').fadeIn();
+                }
+            });
+
             return {
-                disabledRunUpdateButton: this.getConfig().get('isUpdating'),
-                isDaemonEnabled: isDaemonEnabled
+                disabledRunUpdateButton: this.getConfig().get('isUpdating')
             }
         },
 

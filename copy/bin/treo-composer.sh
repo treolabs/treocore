@@ -9,6 +9,9 @@ log="data/treo-composer.log"
 
 while true
 do
+   # delete check-up file
+   rm "data/composer-check-up.log" > /dev/null 2>&1
+
    # exit
    if [ -f "data/process-kill.txt" ]; then
      exit 1;

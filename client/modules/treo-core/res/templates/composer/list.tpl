@@ -38,12 +38,13 @@
 <div class="page-header">{{{header}}}</div>
 <div class="detail-button-container button-container record-buttons clearfix" {{#if isDaemonDisabled}}style="padding: 0"{{/if}}>
     <div class="btn-group pull-left" role="group">
-        {{#if isDaemonEnabled}}
-        <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='Composer' category='labels'}}</button>
-        <button class="btn btn-default action" data-action="cancelUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}} style="display: none;">{{translate 'Cancel'}}</button>
-        {{else}}
-        <div class="alert alert-danger" role="alert"><b>{{translate 'daemonDisabledLabel' scope='Composer' category='labels'}}</b><br>{{translate 'daemonDisabledDescription' scope='Composer' category='labels'}} <a href="https://github.com/treolabs/treocore#installation" class="alert-link" target="_blank">{{translate 'daemonDisabledDescriptionLink' scope='Composer' category='labels'}}</a>.</div>
-        {{/if}}
+        <div id="composer-alert" style="display: none">
+            <div class="alert alert-danger" role="alert"><b>{{translate 'daemonDisabledLabel' scope='Composer' category='labels'}}</b><br>{{translate 'daemonDisabledDescription' scope='Composer' category='labels'}} <a href="https://github.com/treolabs/treocore#installation" class="alert-link" target="_blank">{{translate 'daemonDisabledDescriptionLink' scope='Composer' category='labels'}}</a>.</div>
+        </div>
+        <div id="composer-buttons" style="display: none">
+            <button class="btn btn-primary action" data-action="runUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}}>{{translate 'Run Update' scope='Composer' category='labels'}}</button>
+            <button class="btn btn-default action" data-action="cancelUpdate" type="button" {{#if disabledRunUpdateButton}}disabled{{/if}} style="display: none;">{{translate 'Cancel'}}</button>
+        </div>
     </div>
     <div class="progress-log-wrapper">
         <div class="spinner{{#unless hideLoader}} hidden{{/unless}}">
