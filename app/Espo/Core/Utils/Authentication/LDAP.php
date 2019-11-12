@@ -112,9 +112,8 @@ class LDAP extends Espo
      */
     public function login($username, $password, \Espo\Entities\AuthToken $authToken = null, $isPortal = null)
     {
-        if (!empty($this->getConfig()->get('isUpdating'))) {
-            throw new Error('System is updating now! Please try later.');
-        }
+        // is system updating ?
+        $this->isUpdating($authToken);
 
         if ($authToken) {
             return $this->loginByToken($username, $authToken);

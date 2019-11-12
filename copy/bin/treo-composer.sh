@@ -18,6 +18,9 @@ do
      # delete file
      rm $path;
 
+     # start
+     echo -e "" > $log 2>&1
+
      # composer update
      if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
        echo "{{error}}" >> $log 2>&1
