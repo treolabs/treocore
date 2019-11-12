@@ -54,20 +54,6 @@ Espo.define('treo-core:views/composer/list', 'views/list',
 
         inProgress: false,
 
-        data() {
-            this.ajaxPostRequest('Composer/action/isDaemonEnabled').then(response => {
-                if (response) {
-                    $('#composer-buttons').fadeIn();
-                } else {
-                    $('#composer-alert').fadeIn();
-                }
-            });
-
-            return {
-                disabledRunUpdateButton: this.getConfig().get('isUpdating')
-            }
-        },
-
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -93,6 +79,16 @@ Espo.define('treo-core:views/composer/list', 'views/list',
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
+
+            if (!this.getConfig().get('isUpdating')) {
+                this.ajaxPostRequest('Composer/action/isDaemonEnabled').then(response => {
+                    if (response) {
+                        $('.composer-action').removeAttr('disabled');
+                    } else {
+                        $('#composer-alert').fadeIn();
+                    }
+                });
+            }
 
             if (this.getConfig().get('isUpdating')) {
                 this.initConfigCheck();
