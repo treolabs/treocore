@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Util as Base;
+use FilesystemIterator;
 
 /**
  * Class Util
@@ -97,5 +98,20 @@ class Util extends Base
                 }
             }
         }
+    }
+
+    /**
+     * Get count folders and files in folder
+     *
+     * @param $folder
+     * @return int
+     */
+    public static function countItems($folder)
+    {
+        if (!is_dir($folder)) {
+            return 0;
+        }
+        $fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
+        return iterator_count($fi);
     }
 }

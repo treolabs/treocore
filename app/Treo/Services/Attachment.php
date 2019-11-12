@@ -36,6 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Services;
 
+use Espo\Core\Exceptions\NotFound;
+use Espo\ORM\Entity;
+
 /**
  * Service Attachment
  *
@@ -47,4 +50,22 @@ class Attachment extends \Espo\Services\Attachment
      * @var array
      */
     protected $inlineAttachmentFieldTypeList = ['text', 'wysiwyg', 'wysiwygMultiLang'];
+
+    /**
+     * @param Entity $entity
+     * @return mixed
+     * @throws NotFound
+     */
+    public function moveFromTmp(Entity $entity)
+    {
+        if ($entity->get("storageFilePath")) {
+            return true;
+        }
+
+        if (!file_exists($entity->get('tmpPath'))) {
+            throw new NotFound("File not found");
+        }
+
+        return $this->getRepository()->moveFromTmp($entity);
+    }
 }
