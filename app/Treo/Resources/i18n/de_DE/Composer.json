@@ -54,7 +54,10 @@
     "settedModuleForInstalling": "Das Modul wurde für die Installation eingerichtet",
     "settedModuleForRemoving": "Das Modul wurde zum Entfernen eingerichtet",
     "settedModuleForUpdating": "Das Modul wurde für die Aktualisierung eingerichtet",
-    "installModule": "das Modul"
+    "installModule": "das Modul",
+    "daemonDisabledLabel": "Der Composer Daemon läuft nicht!",
+    "daemonDisabledDescription": "Wahrscheinlich ist die Crontab nicht konfiguriert. Eine Anleitung zur Konfiguration der Crontab finden Sie",
+    "daemonDisabledDescriptionLink": "hier"
   },
   "notifications": {
     "Module update": "Das {module} wurde aktualisiert. Von version {from} bis {to}",
