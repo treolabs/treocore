@@ -87,7 +87,7 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                 let fieldView = fields[name];
                 if (!fieldView.model.getFieldParam(name, 'advancedFilterDisabled')) {
                     if (
-                        currentLocaleFilter !== null
+                        currentLocaleFilter !== null && typeof currentLocaleFilter !== 'undefined'
                         &&
                         this.getConfig().get('isMultilangActive')
                         &&
@@ -100,7 +100,8 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
                         let langFieldNameList = fieldView.getLangFieldNameList();
                         langFieldNameList = langFieldNameList.filter(field => this.checkFieldValue(currentFieldFilter, fieldView.model.get(field), fieldView.isRequired()));
                         fieldView.langFieldNameList = langFieldNameList;
-                        fieldView.hideMainOption = !showGenericFields || !this.checkFieldValue(currentFieldFilter, fieldView.model.get(name), fieldView.isRequired());
+                        fieldView.hideMainOption = (showGenericFields !== null && typeof showGenericFields !== 'undefined' && !showGenericFields)
+                            || !this.checkFieldValue(currentFieldFilter, fieldView.model.get(name), fieldView.isRequired());
                         fieldView.expandLocales = fieldView.hideMainOption || !!(hiddenLocales.length || currentLocaleFilter);
                         this.controlFieldVisibility(fieldView, !fieldView.langFieldNameList.length && fieldView.hideMainOption);
                         fieldView.reRender();

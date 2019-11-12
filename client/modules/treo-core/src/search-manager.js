@@ -48,10 +48,18 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                 var o = {
                     type: 'bool',
                     value: [],
+                    data: {}
                 };
                 for (var name in this.data.bool) {
                     if (this.data.bool[name]) {
                         o.value.push(name);
+                        var boolData = this.data.boolData;
+                        if (boolData && boolData[name]) {
+                            o.data[name] = boolData[name];
+                        }
+                    }
+                    if (boolData && boolData[name]) {
+                        o.data[name] = boolData[name];
                     }
                 }
                 if (o.value.length) {

@@ -154,7 +154,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                             data[elem] = this.boolFilterData[elem];
                         }
                     });
-                    item.data = data;
+                    _.extend(item.data, data);
                 }
             });
             this.collection.where = where;
