@@ -50,7 +50,8 @@ class V3Dot23Dot29 extends AbstractMigration
      */
     public function up(): void
     {
-        // copy file
+        // copy files
+        copy('vendor/treolabs/treocore/copy/bin/cron.sh', 'bin/cron.sh');
         copy('vendor/treolabs/treocore/copy/bin/treo-composer.sh', 'bin/treo-composer.sh');
 
         // kill processes
