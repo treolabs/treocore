@@ -412,8 +412,10 @@ class Record extends \Espo\Core\Services\Base
      */
     protected function isValid($entity)
     {
+        $hasCompleteness = !empty($this->getMetadata()->get("scopes.{$entity->getEntityType()}.hasCompleteness"))
+                            && !empty($this->getMetadata()->get("app.additionalEntityParams.hasCompleteness"));
         foreach ($entity->getAttributes() as $field => $data) {
-            if ((!empty($data['required']) || $this->isRequiredField($field, $entity, 'required'))
+            if (!$hasCompleteness && (!empty($data['required']) || $this->isRequiredField($field, $entity, 'required'))
                 && is_null($entity->get($field))) {
                 throw new BadRequest("Validation failed. '$field' is required");
             }
