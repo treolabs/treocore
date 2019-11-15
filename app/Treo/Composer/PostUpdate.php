@@ -165,18 +165,22 @@ class PostUpdate
                 }
 
                 if (!empty($to)) {
-                    // prepare data
-                    $module = $row['id'];
+                    // prepare name
+                    $name = $row['id'];
+                    if ($name == 'Treo') {
+                        $name = 'Core';
+                    }
+
                     $from = ModuleManager::prepareVersion($row['from']);
                     $to = ModuleManager::prepareVersion($to);
 
-                    echo "Migrate $module $from -> $to ... ";
+                    echo "Migrate $name $from -> $to ... ";
 
                     // run migration
                     $this
                         ->getContainer()
                         ->get('migration')
-                        ->run($module, $from, $to);
+                        ->run($row['id'], $from, $to);
 
                     echo 'Done!' . PHP_EOL;
                 }
