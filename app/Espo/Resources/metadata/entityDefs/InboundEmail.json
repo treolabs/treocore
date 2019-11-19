@@ -109,7 +109,7 @@
         },
         "smtpUsername": {
             "type": "varchar",
-            "required": true,
+            "required": false,
             "trim": true
         },
         "smtpPassword": {
