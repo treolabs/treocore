@@ -19654,6 +19654,11 @@ button.category:focus {
         min-height: 79.6vh;
     }
 
+    .modal-dialog .edit > .row > .overview.col-sm-12,
+    .modal-dialog .detail > .row > .overview.col-sm-12  {
+        min-height: unset;
+    }
+
     #main .edit > .row,
     #main .detail > .row {
         margin-left: -15px;

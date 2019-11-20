@@ -31,53 +31,22 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/record/edit-small', 'class-replace!treo-core:views/record/edit-small',
+Espo.define('treo-core:views/record/panels/side', 'class-replace!treo-core:views/record/panels/side',
     Dep => Dep.extend({
 
-        template: 'treo-core:record/edit-small',
+        detailSmallTemplate: 'treo-core:record/panels/default-side',
 
-        isWide: true,
+        editSmallTemplate: 'treo-core:record/panels/side',
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.isWide = this.isWide || this.sideDisabled;
-        },
+            const type = (this.options.recordViewObject || {}).type;
+            if (type && (type === 'detailSmall' || type === 'editSmall')) {
+                this.template = this[`${type}Template`];
+                this.defs.label = 'Ownership Information';
+            }
+        }
 
-        prepareLayoutAfterConverting(layout) {
-            layout = Dep.prototype.prepareLayoutAfterConverting.call(this, layout);
-
-            (layout || []).forEach(panel => {
-                (panel.rows || []).forEach(row => {
-                    if (row[0]) {
-                        if (!row[1]) {
-                            row[0].fullWidth = true;
-                        }
-                    }
-                });
-            });
-
-            return layout;
-        },
-
-        createSideView() {
-            this.wait(true);
-            let el = this.options.el || '#' + (this.id);
-            this.createView('side', this.sideView, {
-                model: this.model,
-                scope: this.scope,
-                el: el + ' .side',
-                type: this.type,
-                readOnly: this.readOnly,
-                inlineEditDisabled: this.inlineEditDisabled,
-                recordHelper: this.recordHelper,
-                recordViewObject: this
-            }, view => {
-                if (!view.panelList.length) {
-                    this.isWide = true;
-                }
-                this.wait(false);
-            });
-        },
     })
 );
