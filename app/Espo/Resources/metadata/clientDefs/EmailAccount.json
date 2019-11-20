@@ -45,5 +45,23 @@
             "create": false,
             "rowActionsView": "views/record/row-actions/remove-only"
         }
+    },
+    "dynamicLogic": {
+        "fields": {
+            "smtpUsername": {
+                "required": {
+                    "conditionGroup": [
+                        {
+                            "type": "isTrue",
+                            "attribute": "useSmtp"
+                        },
+                        {
+                            "type": "isTrue",
+                            "attribute": "smtpAuth"
+                        }
+                    ]
+                }
+            }
+        }
     }
 }
