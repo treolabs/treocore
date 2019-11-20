@@ -19648,6 +19648,11 @@ button.category:focus {
         border-right: 1px solid #e8eced;
     }
 
+    .modal-dialog .edit > .row > .overview.col-sm-12,
+    .modal-dialog .detail > .row > .overview.col-sm-12  {
+        min-height: unset;
+    }
+
     #main .edit > .row,
     #main .detail > .row {
         margin-left: -15px;
