@@ -54,6 +54,10 @@
                         {
                             "type": "isTrue",
                             "attribute": "useSmtp"
+                        },
+                        {
+                            "type": "isTrue",
+                            "attribute": "smtpAuth"
                         }
                     ]
                 }
