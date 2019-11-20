@@ -58,8 +58,6 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
 
                 this.fieldsArr = [];
 
-                fields = this.addMultilangFields(model, fields);
-
                 fields.forEach(function (field) {
                     if (model.getFieldParam(field, 'isMultilang') && !modelWas.has(field) && !modelBecame.has(field)) {
                         return;
@@ -99,23 +97,6 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
                 this.wait(false);
 
             }, this);
-        },
-
-        addMultilangFields(model, fields) {
-            let additionalFields = [];
-            let inputLanguageList = this.getConfig().get('inputLanguageList') || [];
-            (fields || []).forEach(field => {
-                if (model.getFieldParam(field, 'isMultilang')) {
-                    let langFieldNameList = inputLanguageList.map(lang => this.getInputLangName(lang, field)) || [];
-                    langFieldNameList.forEach(langField => {
-                        if (langField in model.attributes) {
-                            this.customLabels[langField] = this.getCustomLabel(field, langField);
-                            additionalFields.push(langField);
-                        }
-                    });
-                }
-            });
-            return fields.concat(additionalFields);
         },
 
         getInputLangName(lang, field) {

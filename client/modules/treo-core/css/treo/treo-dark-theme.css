@@ -20698,6 +20698,10 @@ td[data-name="draggableIcon"] {
     word-break: break-word;
 }
 
+.became {
+    margin-bottom: 10px;
+}
+
 .was .html-container,
 .became .html-container {
     overflow-x: auto;
