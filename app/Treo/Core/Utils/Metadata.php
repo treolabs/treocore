@@ -205,6 +205,24 @@ class Metadata extends Base
     }
 
     /**
+     * Is module installed
+     *
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function isModuleInstalled(string $id): bool
+    {
+        foreach ($this->getModules() as $name => $module) {
+            if ($name == $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param bool $reload
      */
     protected function objInit($reload = false)
@@ -251,6 +269,25 @@ class Metadata extends Base
 
         // set object data
         $this->objData = json_decode(json_encode($event->getArgument('data')));
+
+        // clearing metadata
+        $this->clearingMetadata();
+    }
+
+    /**
+     * Clearing metadata
+     */
+    protected function clearingMetadata()
+    {
+        foreach ($this->objData->entityDefs as $scope => $rows) {
+            if (isset($rows->fields)) {
+                foreach ($rows->fields as $field => $params) {
+                    if (!isset($params->type)) {
+                        unset($this->objData->entityDefs->$scope->fields->$field);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -269,23 +306,5 @@ class Metadata extends Base
     private function getEventManager(): EventManager
     {
         return $this->eventManager;
-    }
-
-    /**
-     * Is module installed
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function isModuleInstalled(string $id): bool
-    {
-        foreach ($this->getModules() as $name => $module) {
-            if ($name == $id) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

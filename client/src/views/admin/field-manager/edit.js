@@ -142,7 +142,10 @@ Espo.define('views/admin/field-manager/edit', ['view', 'model'], function (Dep, 
                         if (this.getMetadata().get('entityDefs.' + this.scope + '.fields.' + this.field + '.' + disableParamName)) {
                             return;
                         }
-                        this.paramList.push(o);
+
+                        if (!(o.name === 'isMultilang' && this.defs.hideMultilang)) {
+                            this.paramList.push(o);
+                        }
                     }, this);
 
                     if (this.hasPersonalData) {
