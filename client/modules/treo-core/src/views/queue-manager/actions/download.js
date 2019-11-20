@@ -37,8 +37,9 @@ Espo.define('treo-core:views/queue-manager/actions/download', 'treo-core:views/q
         buttonLabel: 'download',
 
         runAction() {
-            window.location = `${this.getBasePath()}?entryPoint=download&id=${this.actionData.attachmentId}`;
-        },
+            let url = this.getBasePath() + '?entryPoint=download&id=' + this.actionData.attachmentId;
+            window.open(url, '_blank');
+        }
     })
 );
 
