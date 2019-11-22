@@ -2407,6 +2407,11 @@ class Record extends \Espo\Core\Services\Base
         $item = $this->getMetadata()
             ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$field.$typeResult.conditionGroup", []);
 
+        if (empty($item) && !empty($relation = $entity->getFields()[$field]['relation'])) {
+            $item = $this->getMetadata()
+                ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$relation.$typeResult.conditionGroup", []);
+        }
+
         if (!empty($item)) {
             $result = Condition::isCheck(Condition::prepare($entity, $item));
         }
