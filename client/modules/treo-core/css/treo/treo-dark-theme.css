@@ -20896,3 +20896,27 @@ select {
 .panel-body .list table tbody.ui-sortable td:not(:last-child) {
     vertical-align: middle;
 }
+
+.btn.btn-chevron-dropdown {
+    background-color: transparent;
+}
+
+.btn.btn-chevron-dropdown:active {
+    box-shadow: none;
+}
+
+.chevron-dropdown > ul.dropdown-menu > li > a {
+    padding: 10px 15px;
+}
+
+.header-breadcrumbs .header-with-dropdown {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.header-breadcrumbs .header-with-dropdown + .chevron-dropdown {
+    position: relative;
+    display: inline-block;
+}
