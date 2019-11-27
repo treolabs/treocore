@@ -100,7 +100,13 @@ class Manager extends EventDispatcher
         // load listeners
         foreach ($this->getClassNames() as $action => $rows) {
             foreach ($rows as $row) {
-                $object = new $row[0]();
+                try {
+                    $object = new $row[0]();
+                } catch (\Throwable $e) {
+                    continue 1;
+                }
+
+                // set container
                 if (\method_exists($object, 'setContainer')) {
                     $object->setContainer($this->container);
                 }
