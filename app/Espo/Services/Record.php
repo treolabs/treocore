@@ -416,7 +416,7 @@ class Record extends \Espo\Core\Services\Base
                             && !empty($this->getMetadata()->get("app.additionalEntityParams.hasCompleteness"));
         foreach ($entity->getAttributes() as $field => $data) {
             if (!$hasCompleteness && (!empty($data['required']) || $this->isRequiredField($field, $entity, 'required'))
-                && is_null($entity->get($field))) {
+                && (is_null($entity->get($field)) && $this->isNullRelations($entity, $field))) {
                 throw new BadRequest("Validation failed. '$field' is required");
             }
         }
@@ -2407,6 +2407,12 @@ class Record extends \Espo\Core\Services\Base
         $item = $this->getMetadata()
             ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$field.$typeResult.conditionGroup", []);
 
+        if (empty($item) && !empty($relation = $entity->getFields()[$field]['relation']) && empty($this->relationFields['usedRelation'][$relation])) {
+            $this->relationFields['usedRelation'][$relation] = $relation;
+            $item = $this->getMetadata()
+                ->get("clientDefs.{$entity->getEntityName()}.dynamicLogic.fields.$relation.$typeResult.conditionGroup", []);
+        }
+
         if (!empty($item)) {
             $result = Condition::isCheck(Condition::prepare($entity, $item));
         }
@@ -2424,5 +2430,17 @@ class Record extends \Espo\Core\Services\Base
                 $this->relationFields[$relation['key']] = $key;
             }
         }
+    }
+
+    /**
+     * @param Entity $entity
+     * @param $field
+     * @return bool
+     */
+    private function isNullRelations(Entity $entity, $field): bool
+    {
+        return !empty($relation = $entity->getFields()[$field]['relation'])
+                        && $entity->get($relation) instanceof \Espo\ORM\EntityCollection
+                        && $entity->get($relation)->count() === 0;
     }
 }
