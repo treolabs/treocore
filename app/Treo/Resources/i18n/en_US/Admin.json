@@ -3,7 +3,7 @@
     "Composer": "Module Manager",
     "log": "log",
     "Validate": "Validate",
-    "unit": "Unit",
+    "Unit": "Measurement Unit",
     "addOption": "Add option",
     "addMeasureUnit": "Add measurement unit",
     "progressLog": "Progress Log"
