@@ -173,7 +173,8 @@
     "ownerUser": "Besitzer"
   },
   "themes": {
-    "TreoDarkTheme": "Treo Dark Theme"
+    "TreoDarkTheme": "Treo Dark Theme",
+    "TreoClassicTheme": "Treo Classic Theme"
   },
   "scopeNames": {
     "Stream": "Stream"
