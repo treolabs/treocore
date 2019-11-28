@@ -49,12 +49,47 @@ use Treo\Core\FileStorage\Storages\UploadDir;
 class Attachment extends Base
 {
     /**
+     * Move to dir if it needs
+     *
+     * @param Entity $attachment
+     *
+     * @return bool
+     */
+    public function moveToTreoDir(Entity $attachment): bool
+    {
+        // prepare id
+        $id = $attachment->get('id');
+
+        // prepare old path
+        $oldPath = "data/upload/$id";
+
+        if (file_exists($oldPath)) {
+            // prepare new base path
+            $newBasePath = 'data/upload/files/';
+
+            // create dir path
+            $path = $this->getPathBuilder()->createPath($newBasePath);
+
+            // create full path
+            $newPath = $newBasePath . $path . '/' . $attachment->get('name');
+
+            if ($this->getFileManager()->move($oldPath, $newPath)) {
+                $this->getEntityManager()->nativeQuery("UPDATE attachment SET storage='UploadDir', storage_file_path='$path' WHERE id='$id'");
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getFilePath(Entity $entity)
     {
-        // migrate attachment if it needs
-        $this->migrateAttachment($entity);
+        // move to dir if it needs
+        $this->moveToTreoDir($entity);
 
         return parent::getFilePath($entity);
     }
@@ -155,32 +190,5 @@ class Attachment extends Base
     protected function getDestPath(string $type): string
     {
         return $this->getPathBuilder()->createPath($type);
-    }
-
-    /**
-     * @param Entity $attachment
-     */
-    protected function migrateAttachment(Entity $attachment)
-    {
-        // prepare old path
-        $oldPath = 'data/upload/' . $attachment->get('id');
-
-        if (file_exists($oldPath)) {
-            // prepare new base path
-            $newBasePath = 'data/upload/files/';
-
-            // create dir path
-            $path = $this->getPathBuilder()->createPath($newBasePath);
-
-            // create full path
-            $newPath = $newBasePath . $path . '/' . $attachment->get('name');
-
-            if ($this->getFileManager()->move($oldPath, $newPath)) {
-                $attachment->set('storage', 'UploadDir');
-                $attachment->set('storageFilePath', $path);
-
-                $this->getEntityManager()->saveEntity($attachment, ['skipAll' => true]);
-            }
-        }
     }
 }
