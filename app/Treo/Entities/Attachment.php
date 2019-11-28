@@ -55,9 +55,6 @@ class Attachment extends Base
      */
     public function _getStorage()
     {
-        // move to dir if it needs
-        $this->entityManager->getRepository('Attachment')->moveToTreoDir($this);
-
         return "UploadDir";
     }
 }
