@@ -58,9 +58,6 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                             o.data[name] = boolData[name];
                         }
                     }
-                    if (boolData && boolData[name]) {
-                        o.data[name] = boolData[name];
-                    }
                 }
                 if (o.value.length) {
                     where.push(o);

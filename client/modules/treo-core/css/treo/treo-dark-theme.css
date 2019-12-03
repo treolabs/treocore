@@ -19641,7 +19641,7 @@ button.category:focus {
     }
 
     .edit > .row > .overview,
-    .detail > .row > .overview  {
+    .detail > .row > .overview {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
