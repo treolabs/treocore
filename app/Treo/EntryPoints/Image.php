@@ -1,17 +1,21 @@
 <?php
-/************************************************************************
- * This file is part of EspoCRM.
+/**
+ * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2018 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
+ * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
  * Website: http://www.espocrm.com
  *
- * EspoCRM is free software: you can redistribute it and/or modify
+ * TreoCore is EspoCRM-based Open Source application.
+ * Copyright (C) 2017-2019 TreoLabs GmbH
+ * Website: https://treolabs.com
+ *
+ * TreoCore as well as EspoCRM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * EspoCRM is distributed in the hope that it will be useful,
+ * TreoCore as well as EspoCRM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,10 +28,9 @@
  * Section 5 of the GNU General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
- ************************************************************************/
-
-// phpcs:ignoreFile
+ * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
+ * and "TreoCore" word.
+ */
 
 namespace Treo\EntryPoints;
 
@@ -38,24 +41,38 @@ use Espo\Core\Exceptions\NotFound;
 use Treo\Core\Container;
 use Treo\Core\FileStorage\Storages\UploadDir;
 
+/**
+ * Class Image
+ * @package Treo\EntryPoints
+ */
 class Image extends \Espo\Core\EntryPoints\Base
 {
     public static $authRequired = true;
 
-    protected $allowedFileTypes = array(
+    protected $allowedFileTypes = [
         'image/jpeg',
         'image/png',
         'image/gif',
-    );
+    ];
 
     protected $imageSizes;
 
+    /**
+     * Image constructor.
+     * @param Container $container
+     */
     public function __construct(Container $container)
     {
         parent::__construct($container);
         $this->imageSizes = $this->getMetadata()->get(['app', 'imageSizes']);
     }
 
+    /**
+     * @throws BadRequest
+     * @throws Error
+     * @throws Forbidden
+     * @throws NotFound
+     */
     public function run()
     {
         if (empty($_GET['id'])) {
@@ -71,6 +88,14 @@ class Image extends \Espo\Core\EntryPoints\Base
         $this->show($id, $size);
     }
 
+    /**
+     * @param      $id
+     * @param      $size
+     * @param bool $disableAccessCheck
+     * @throws Error
+     * @throws Forbidden
+     * @throws NotFound
+     */
     protected function show($id, $size, $disableAccessCheck = false)
     {
         $attachment = $this->getEntityManager()->getEntity('Attachment', $id);
@@ -86,7 +111,7 @@ class Image extends \Espo\Core\EntryPoints\Base
 
         $fileType = $attachment->get('type');
 
-        if (!file_exists($filePath)) {
+        if (!file_exists($filePath) && !file_exists($attachment->get("tmpPath"))) {
             throw new NotFound();
         }
 
@@ -94,36 +119,7 @@ class Image extends \Espo\Core\EntryPoints\Base
             throw new Error();
         }
 
-        if (!empty($size)) {
-            if (!empty($this->imageSizes[$size])) {
-                $thumbFilePath = UploadDir::BASE_THUMB_PATH . $attachment->get('storageFilePath') . "/{$size}/" . $attachment->get('name');
-
-                if (!file_exists($thumbFilePath)) {
-                    $targetImage = $this->getThumbImage($filePath, $fileType, $size);
-                    ob_start();
-
-                    switch ($fileType) {
-                        case 'image/jpeg':
-                            imagejpeg($targetImage);
-                            break;
-                        case 'image/png':
-                            imagepng($targetImage);
-                            break;
-                        case 'image/gif':
-                            imagegif($targetImage);
-                            break;
-                    }
-                    $contents = ob_get_contents();
-                    ob_end_clean();
-                    imagedestroy($targetImage);
-                    $this->getContainer()->get('fileManager')->putContents($thumbFilePath, $contents);
-                }
-                $filePath = $thumbFilePath;
-
-            } else {
-                throw new Error();
-            }
-        }
+        $content = $this->getFileContent($attachment, $filePath, $fileType, $size);
 
         if (!empty($size)) {
             $fileName = $size . '-' . $attachment->get('name');
@@ -136,14 +132,75 @@ class Image extends \Espo\Core\EntryPoints\Base
         }
         header('Pragma: public');
         header('Cache-Control: max-age=360000, must-revalidate');
-        $fileSize = filesize($filePath);
+        $fileSize = mb_strlen($content, "8bit");
         if ($fileSize) {
             header('Content-Length: ' . $fileSize);
         }
-        readfile($filePath);
+        echo $content;
         exit;
     }
 
+    /**
+     * @param $attachment
+     * @param $filePath
+     * @param $fileType
+     * @param $size
+     * @return false|string
+     * @throws Error
+     */
+    protected function getFileContent($attachment, $filePath, $fileType, $size)
+    {
+        $filePath = $attachment->get("tmpPath") ?? $filePath;
+
+        if (empty($size)) {
+            return file_get_contents($filePath);
+        }
+
+        if (empty($this->imageSizes[$size])) {
+            throw new Error();
+        }
+
+        $thumbFilePath = $this->getThumbPath($attachment, $size);
+
+        if (!file_exists($thumbFilePath)) {
+            $contents = $this->getThumbImage($filePath, $fileType, $size);
+
+            if (!$this->isTmp($attachment)) {
+                $this->getContainer()->get('fileManager')->putContents($thumbFilePath, $contents);
+            }
+        } else {
+            $contents = file_get_contents($thumbFilePath);
+        }
+
+        return $contents;
+    }
+
+    /**
+     * @param $a
+     * @param $size
+     * @return string
+     */
+    protected function getThumbPath($a, $size)
+    {
+        return UploadDir::BASE_THUMB_PATH . $a->get('storageFilePath') . "/{$size}/" . $a->get('name');
+    }
+
+    /**
+     * @param $attachment
+     * @return bool
+     */
+    protected function isTmp($attachment): bool
+    {
+        return $attachment->get('tmpPath') ? true : false;
+    }
+
+    /**
+     * @param $filePath
+     * @param $fileType
+     * @param $size
+     * @return false|string
+     * @throws Error
+     */
     protected function getThumbImage($filePath, $fileType, $size)
     {
         if (!@is_array(getimagesize($filePath))) {
@@ -154,21 +211,21 @@ class Image extends \Espo\Core\EntryPoints\Base
         list($width, $height) = $this->imageSizes[$size];
 
         if ($originalWidth <= $width && $originalHeight <= $height) {
-            $targetWidth = $originalWidth;
+            $targetWidth  = $originalWidth;
             $targetHeight = $originalHeight;
         } else {
             if ($originalWidth > $originalHeight) {
-                $targetWidth = $width;
+                $targetWidth  = $width;
                 $targetHeight = $originalHeight / ($originalWidth / $width);
                 if ($targetHeight > $height) {
                     $targetHeight = $height;
-                    $targetWidth = $originalWidth / ($originalHeight / $height);
+                    $targetWidth  = $originalWidth / ($originalHeight / $height);
                 }
             } else {
                 $targetHeight = $height;
-                $targetWidth = $originalWidth / ($originalHeight / $height);
+                $targetWidth  = $originalWidth / ($originalHeight / $height);
                 if ($targetWidth > $width) {
-                    $targetWidth = $width;
+                    $targetWidth  = $width;
                     $targetHeight = $originalHeight / ($originalWidth / $width);
                 }
             }
@@ -178,7 +235,18 @@ class Image extends \Espo\Core\EntryPoints\Base
         switch ($fileType) {
             case 'image/jpeg':
                 $sourceImage = imagecreatefromjpeg($filePath);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth, $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
             case 'image/png':
                 $sourceImage = imagecreatefrompng($filePath);
@@ -186,18 +254,61 @@ class Image extends \Espo\Core\EntryPoints\Base
                 imagesavealpha($targetImage, true);
                 $transparent = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
                 imagefilledrectangle($targetImage, 0, 0, $targetWidth, $targetHeight, $transparent);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth, $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
             case 'image/gif':
                 $sourceImage = imagecreatefromgif($filePath);
-                imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $originalWidth, $originalHeight);
+                imagecopyresampled(
+                    $targetImage,
+                    $sourceImage,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $originalWidth,
+                    $originalHeight
+                );
                 break;
         }
 
         if (function_exists('exif_read_data')) {
-            $targetImage = imagerotate($targetImage, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0], 0);
+            $targetImage = imagerotate(
+                $targetImage,
+                array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filePath)['Orientation'] ?: 0],
+                0
+            );
         }
 
-        return $targetImage;
+        ob_start();
+
+        switch ($fileType) {
+            case 'image/jpeg':
+                imagejpeg($targetImage);
+                break;
+            case 'image/png':
+                imagepng($targetImage);
+                break;
+            case 'image/gif':
+                imagegif($targetImage);
+                break;
+        }
+        $contents = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($targetImage);
+
+        return $contents;
     }
 }

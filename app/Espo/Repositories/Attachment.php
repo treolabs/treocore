@@ -68,27 +68,6 @@ class Attachment extends \Espo\Core\ORM\Repositories\RDB
         }
     }
 
-    public function save(Entity $entity, array $options = array())
-    {
-        $isNew = $entity->isNew();
-
-        if ($isNew) {
-            $entity->id = Util::generateId();
-
-            if (!empty($entity->id) && $entity->has('contents')) {
-                $contents = $entity->get('contents');
-                $storeResult = $this->getFileStorageManager()->putContents($entity, $contents);
-                if ($storeResult === false) {
-                    throw new \Espo\Core\Exceptions\Error("Could not store the file");
-                }
-            }
-        }
-
-        $result = parent::save($entity, $options);
-
-        return $result;
-    }
-
     protected function afterRemove(Entity $entity, array $options = array())
     {
         parent::afterRemove($entity, $options);
