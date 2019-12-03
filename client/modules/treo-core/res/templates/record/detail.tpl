@@ -48,7 +48,7 @@
 
 
     <div class="row">
-        <div class="{{#if isWide}} col-md-12{{else}}{{#if isSmall}} col-md-7{{else}} col-md-8{{/if}}{{/if}}">
+        <div class="overview{{#if isWide}} col-md-12{{else}}{{#if isSmall}} col-md-7{{else}} col-md-8{{/if}}{{/if}}">
             <div class="middle">{{{middle}}}</div>
             <div class="extra">{{{extra}}}</div>
             <div class="bottom">{{{bottom}}}</div>
