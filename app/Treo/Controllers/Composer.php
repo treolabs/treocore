@@ -313,11 +313,11 @@ class Composer extends Base
      * @param mixed   $data
      * @param Request $request
      *
-     * @return bool
+     * @return array
      * @throws Exceptions\BadRequest
      * @throws Exceptions\Forbidden
      */
-    public function actionIsDaemonEnabled($params, $data, Request $request): bool
+    public function actionCheck($params, $data, Request $request): array
     {
         if (!$this->getUser()->isAdmin()) {
             throw new Exceptions\Forbidden();
@@ -327,11 +327,7 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
-        file_put_contents(self::CHECK_UP_FILE, '1');
-
-        sleep(2);
-
-        return !file_exists(self::CHECK_UP_FILE);
+        return $this->getComposerService()->checkUpdate();
     }
 
     /**
