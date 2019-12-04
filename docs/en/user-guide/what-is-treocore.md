@@ -40,10 +40,10 @@ Please, note that the concept of data auditing is the foundation of the **"Revis
 
 ## License
 
-TreoCore is published under the GNU GPLv3 [license](docs/LICENSE.txt).
+TreoCore is published under the GNU GPLv3 [license](https://github.com/treolabs/treocore/blob/master/LICENSE.txt).
 
 ## Support
 
 - TreoCore is developed and supported by [TreoLabs GmbH](https://treolabs.com/).
 - Feel free to join [our Community](https://community.treolabs.com/).
-- To contact us, please visit [our website](https://treolabs.com/).
+- To contact us, please visit [our website](https://treolabs.com/contact).

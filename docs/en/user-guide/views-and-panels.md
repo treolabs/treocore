@@ -59,7 +59,7 @@ The following mass actions are available in the TreoCore system:
 - **Remove** – to remove the selected entity records.
 - **Merge** – to merge the selected entity records.
 - **Mass update** – to update several selected entity records at once. To have a longer list of fields available for mass updating, please, contact your administrator.
-- **Export** – to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
+- **[Export](./export.md)** – to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
 - **Follow** – to enable tracking of the changes for the selected entity records. 
 - **Unfollow** – to disable tracking of the changes for the selected entity records.
 - **Add relation** – to relate the selected entity records with other entities (or entity).
@@ -76,7 +76,7 @@ To see the actions available for separate records in the list, click the single 
 ![Single Record Actions](../../_assets/views-and-panels/single-record-actions.jpg)
 
 By default, the following actions are available for all entities:
-- **View** – to go to the detail view of the record.
+- **View** – to go to the [detail view](#detail-view) of the record.
 - **Edit** – to go to the detail view of the record in the edit mode.
 - **Remove** – to remove the selected record.
 
