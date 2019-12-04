@@ -40,7 +40,6 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
-use Treo\Controllers\Composer as Controller;
 use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 
 /**
@@ -50,6 +49,8 @@ use Treo\Core\ModuleManager\Manager as TreoModuleManager;
  */
 class Composer extends AbstractService
 {
+    const CHECK_UP_FILE = 'data/composer-check-up.log';
+
     /**
      * @var string
      */
@@ -130,9 +131,9 @@ class Composer extends AbstractService
         /**
          * Is daemon enabled ?
          */
-        file_put_contents(Controller::CHECK_UP_FILE, '1');
+        file_put_contents(self::CHECK_UP_FILE, '1');
         sleep(2);
-        if (file_exists(Controller::CHECK_UP_FILE)) {
+        if (file_exists(self::CHECK_UP_FILE)) {
             return [
                 'status'  => false,
                 'message' => $this->translate('daemonDisabled', 'labels', 'Composer')
