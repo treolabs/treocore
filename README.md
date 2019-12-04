@@ -1,9 +1,9 @@
-## TreoCore Overview
+## What is TreoCore?
 TreoCore is an open-source software ecosystem developed by TreoLabs GmbH and distributed under GPLv3 License for free. TreCore is designed for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM, etc.). It is an excellent tool for cost-effective and timely application development that comes with the powerful out-of-the-box functionality.
 
 TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture, and flexible data model based on configurable entities and relations. You can organize any data and business-related processes directly in TreoCore, many of them via a simple and user-friendly configuration.
 
-### Target TreoCore Audience
+### For Whom is TreoCore?
 TreoCore is the best fit **for businesses**, who want to:
 * solve custom business problems
 * store data and organize business processes
@@ -11,15 +11,16 @@ TreoCore is the best fit **for businesses**, who want to:
 * create added value and best experience for their employees, customers, and partners
 * extend the functionality of the existing software infrastructure
 
-### TreoCore Modules
+### What are TreoCore Add-Ons?
 The following add-on applications are available on the TreoCore basis:
 * TreoPIM
 * TreoCRM
+* TreoDAM
 
 Each application may be used as a single instance and/or may be extended with numerous modules.
 
-### TreoCore Kit in Detail
-
+### What is On Board?
+Here is a TreoCore package description in detail.
 | Feature                                     | Description                                                                                                                                             |
 |---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Dashboards                                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
@@ -57,7 +58,7 @@ Each application may be used as a single instance and/or may be extended with nu
 * Many out-of-the-box features
 * Best for Rapid Application  Development
 
-### What technologies is it based on?п
+### What technologies is it based on?
 TreoCore was created based on EspoCRM. It uses:
 
 * PHP7 - pure PHP, without any frameworks to achieve the best possible performance,
