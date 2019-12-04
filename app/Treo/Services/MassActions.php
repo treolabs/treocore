@@ -196,11 +196,15 @@ class MassActions extends AbstractService
      */
     protected function getMassActionIds(string $entityType, \stdClass $data): array
     {
+        $selectParams = $this->getSelectParams($entityType, $this->getWhere($data));
+        if (!empty($data->selectData) && is_array($data->selectData)) {
+            $selectParams['select'] = $this->getService($entityType)->getSelectAttributeList(['select'=> $data->selectData]);
+        }
         $res = $this
             ->getEntityManager()
             ->getRepository($entityType)
             ->select(['id'])
-            ->find($this->getSelectParams($entityType, $this->getWhere($data)));
+            ->find($selectParams);
 
         return (empty($res)) ? [] : array_column($res->toArray(), 'id');
     }
