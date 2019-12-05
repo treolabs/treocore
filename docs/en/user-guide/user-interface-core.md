@@ -8,17 +8,17 @@ The following elements make up the TreoCore user interface:
 
 - [**Navigation Menu**](#navigation-menu) – to navigate through available entities.
 - [**Taskbar**](#taskbar) – to help the user interact with the TreoCore system in a more efficient way; additional information or actions are displayed here. 
-- [**Search and Filtering Panel**](./search-and-filtering.md) – to search and filter within one entity or its related entities.
+- [**Search and Filtering Panel**](./search-and-filtering-core.md) – to search and filter within one entity or its related entities.
 
 Within the TreoCore system your information may be presented in various ways:
 
-- [**List View**](./views-and-panels.md#list-view) – to view the lists of entity records.
-- [**Detail View**](./views-and-panels.md#detail-view) – to view the entity record details.
-- [**Create View**](./views-and-panels.md#create-view) – to create a new entity record in the main window.
-- [**Edit View**](./views-and-panels.md#edit-view) – to edit the entity record.
-- [**Quick Detail View (pop-up)**](./views-and-panels.md#quick-detail-view-small-detail-view) – to view the record details in the pop-up window.
-- [**Quick Edit View (pop-up)**](./views-and-panels.md#quick-edit-view) – to edit the record detail in the pop-up window.
-- [**Quick Create View**](./views-and-panels.md#quick-create-view) – to create a new entity record in the pop-up window.
+- [**List View**](./views-and-panels-core.md#list-view) – to view the lists of entity records.
+- [**Detail View**](./views-and-panels-core.md#detail-view) – to view the entity record details.
+- [**Create View**](./views-and-panels-core.md#create-view) – to create a new entity record in the main window.
+- [**Edit View**](./views-and-panels-core.md#edit-view) – to edit the entity record.
+- [**Quick Detail View (pop-up)**](./views-and-panels-core.md#quick-detail-view-small-detail-view) – to view the record details in the pop-up window.
+- [**Quick Edit View (pop-up)**](./views-and-panels-core.md#quick-edit-view) – to edit the record detail in the pop-up window.
+- [**Quick Create View**](./views-and-panels-core.md#quick-create-view) – to create a new entity record in the pop-up window.
 
 ## Navigation Menu
 
@@ -46,7 +46,7 @@ A taskbar consists of a [global search](#global-search) field and some functiona
 
 ### Global Search
 
-You can [search](./search-and-filtering.md) all the records existing in the TreoCore system using the global search functionality. Use the search form on the taskbar for it:
+You can [search](./search-and-filtering-core.md) all the records existing in the TreoCore system using the global search functionality. Use the search form on the taskbar for it:
 
 ![Global Search](../../_assets/user-interface/global-search.jpg)
 
@@ -81,7 +81,7 @@ To create new records from anywhere, click the quick create button located in th
 
 ![Quick Create](../../_assets/user-interface/quick-create.jpg)
 
-The [quick create view](./views-and-panels.md#quick-create-view) page will be opened.
+The [quick create view](./views-and-panels-core.md#quick-create-view) page will be opened.
 
 > If there is no quick create button on your taskbar, please, contact your administrator.
 
@@ -147,11 +147,11 @@ You can also create a post in the corresponding message box right on the `STREAM
 
 ![Stream post](../../_assets/user-interface/stream-post.jpg)
 
-Self-posted messages can be edited and removed via the corresponding options of the common [single-record actions](./views-and-panels.md#single-record-actions) menu:
+Self-posted messages can be edited and removed via the corresponding options of the common [single-record actions](./views-and-panels-core.md#single-record-actions) menu:
 
 ![Stream post menu](../../_assets/user-interface/stream-post-menu.jpg)
 
-To learn more about the stream and its features, please, refer to the corresponding [article](./stream.md) within this user guide.
+To learn more about the stream and its features, please, refer to the corresponding [article](./stream-core.md) within this user guide.
 
 #### User Preferences
 
@@ -165,7 +165,7 @@ To reset preferences to default, please click the `Reset to default` button.
 
 Select the `Custom Tab List` checkbox to enable a custom navigation menu. Using the `Add` button select the entities to be linked to your custom [navigation menu](#navigation-menu).
 
-[Dashboard](./dashboards-and-dashlets.md#dashboards) layout and [dashlet](./dashboards-and-dashlets.md#dashlets) settings are also available for editing on the `USER INTERFACE` panel:
+[Dashboard](./dashboards-and-dashlets-core.md#dashboards) layout and [dashlet](./dashboards-and-dashlets-core.md#dashlets) settings are also available for editing on the `USER INTERFACE` panel:
 
 ![Dashboard settings](../../_assets/user-interface/ui-dashboard.jpg)
 
@@ -185,7 +185,7 @@ To rearrange your dashboard view, drag-and-drop the dashlets right on the `USER 
 
 ![Dashlets order](../../_assets/user-interface/dashlets-order.jpg)
 
-Alternatively, you can customize your [dashboard](./dashboards-and-dashlets.md#dashboards) view in the same way on the TreoCore starting page.
+Alternatively, you can customize your [dashboard](./dashboards-and-dashlets-core.md#dashboards) view in the same way on the TreoCore starting page.
 
 #### Email Accounts
 

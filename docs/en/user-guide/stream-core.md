@@ -2,16 +2,16 @@
 
 Stream is a separate TreoCore [entity](./what-is-treocore.md#concept-of-entity), which is used to display the entries of the [user activity](#user-activity-stream) and [entity records](#entity-records-stream).
 
-> The stream display is enabled/disabled by the administrator for each entity separately, so if this feature is missing on any entity [detail view](./views-and-panels.md#detail-view) page, please, contact your administrator.
+> The stream display is enabled/disabled by the administrator for each entity separately, so if this feature is missing on any entity [detail view](./views-and-panels-core.md#detail-view) page, please, contact your administrator.
 
 TreoCore supports the following **types** of stream entries:
 - **Posts** – messages assigned to the current user by other system users, as well as his own messages posted in the stream, irregardless of the assignee.
-- **Updates** – notifications about changes in the [audited](./what-is-treocore.md#concept-of-data-auditing) fields of the user-related entries. *Please, note that entity fields are made audited only by the administrator.*
+- **Updates** – notifications about changes in the [audited](./what-is-treocore-core.md#concept-of-data-auditing) fields of the user-related entries. *Please, note that entity fields are made audited only by the administrator.*
 - **All** – general changes in the user- or entity-related actions.
 
 ## User Activity Stream
 
-The user activity stream represents the list of activity records for the currently logged user, including the updates in the entity records followed by the user, as well as posts about user-related actions performed in the system. It can be added to the [navigation menu](./user-interface.md#navigation-menu) on the user preferences page via activating the `Custom tab list` option and adding the corresponding tab.
+The user activity stream represents the list of activity records for the currently logged user, including the updates in the entity records followed by the user, as well as posts about user-related actions performed in the system. It can be added to the [navigation menu](./user-interface-core.md#navigation-menu) on the user preferences page via activating the `Custom tab list` option and adding the corresponding tab.
 
 To open the user activity records list, click `Stream` in the navigation menu:
 
@@ -31,7 +31,7 @@ When other users make changes in your user-related entity records or address str
 
 ### Creating a Post
 
-To add a new post on the user activity records [list view](./views-and-panels.md#list-view) page, place the cursor in the text box, enter the desired message and assign it to a different user, if needed, by selecting the corresponding option from the user list:
+To add a new post on the user activity records [list view](./views-and-panels-core.md#list-view) page, place the cursor in the text box, enter the desired message and assign it to a different user, if needed, by selecting the corresponding option from the user list:
 
 ![Post creating](../../_assets/stream/post-creating.jpg)
 
@@ -47,7 +47,7 @@ When the message is addressed to other users, they will also see this post on th
 
 ### Managing Posts
 
-By default, posts and updates from the user activity stream can only be removed via the corresponding option from the [single record actions](./views-and-panels.md#single-record-actions) menu:
+By default, posts and updates from the user activity stream can only be removed via the corresponding option from the [single record actions](./views-and-panels-core.md#single-record-actions) menu:
 
 ![Remove post](../../_assets/stream/remove-post.jpg)
 
@@ -61,7 +61,7 @@ User added posts, however, can not only be removed, but also edited. For this, c
 
 ## Entity Records Stream
 
-The entity records stream is displayed on the `Stream` panel on the [detail view](./views-and-panels.md#detail-view) page of the corresponding entity record:
+The entity records stream is displayed on the `Stream` panel on the [detail view](./views-and-panels-core.md#detail-view) page of the corresponding entity record:
 
 ![Stream panel](../../_assets/stream/stream-panel.jpg)
 
@@ -77,7 +77,7 @@ Posts and updates from the entity records stream can be removed via the correspo
 
 ![Stream panel post removing](../../_assets/stream/stream-panel-remove-post.jpg)
 
-*Please, note that the stream functionality can be further extended with the help of the  **"Revisions"** module, which allows you to view the field changes history in the pop-up and restore previous values from the change history. Go to our [store](https://treopim.com/store/revisions) to learn more about the "Revisions" module.*
+*Please, note that the stream functionality can be further extended with the help of the **"Revisions"** module, which allows you to view the field changes history in the pop-up and restore previous values from the change history. Go to our [store](https://treopim.com/store/revisions) to learn more about the "Revisions" module.*
 
 
 

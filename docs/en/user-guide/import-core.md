@@ -2,7 +2,7 @@
 
 Data import is a separate TreoCore system [entity](./what-is-treocore.md#concept-of-entity) that comes out of the box. It allows you to import the data from CSV files. 
 
-`Import` can be added to the [navigation menu](./user-interface.md#navigation-menu) on the user preferences page via activating the `Custom tab list` option and adding the corresponding tab.
+`Import` can be added to the [navigation menu](./user-interface-core.md#navigation-menu) on the user preferences page via activating the `Custom tab list` option and adding the corresponding tab.
 
 ## Setup
 
@@ -48,7 +48,7 @@ If you need to make changes on `Step 1`, click the `Back` button. To proceed to 
 
 ## Import Results
 
-Once the import operation is completed, the [detail view](./views-and-panels.md#detail-view) page of the current import result record with the import details opens:
+Once the import operation is completed, the [detail view](./views-and-panels-core.md#detail-view) page of the current import result record with the import details opens:
 
 ![Import result](../../_assets/import/import-result.jpg)
 

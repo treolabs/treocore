@@ -1,6 +1,6 @@
 # Export
 
-The data exporting feature comes with the TreoCore system out of the box and is available on any entity [list view](./views-and-panels.md#list-view) page. It allows you to export the desired data fields in the XLSX (Excel) or CSV format.
+The data exporting feature comes with the TreoCore system out of the box and is available on any entity [list view](./views-and-panels-core.md#list-view) page. It allows you to export the desired data fields in the XLSX (Excel) or CSV format.
 
 ## Setup
 

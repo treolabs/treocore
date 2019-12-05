@@ -4,7 +4,7 @@ Dashboards are designed for quick navigation within the TreoCore entities data d
 
 ![Dashboard](../../_assets/dashboards-and-dashlets/dashboard-interface.jpg)
 
-Both dashboards and dashlets are [user customizable](./user-interface.md#user-interface-settings), i.e. you can add, rename and delete dashboards, as well as modify the dashlets layout.
+Both dashboards and dashlets are [user customizable](./user-interface-core.md#user-interface-settings), i.e. you can add, rename and delete dashboards, as well as modify the dashlets layout.
 
 ## Dashboards
 
@@ -40,7 +40,7 @@ In order to switch between dashboards available in the system, click the button 
 
 ## Dashlets
 
-Dashlets are [user-configurable](./user-interface.md#user-interface-settings) blocks, which can be placed via drag-and-drop anywhere on the dashboard, giving you a quick overview of your records and activity. 
+Dashlets are [user-configurable](./user-interface-core.md#user-interface-settings) blocks, which can be placed via drag-and-drop anywhere on the dashboard, giving you a quick overview of your records and activity. 
 
 Dashlets provide you with valuable information regarding records of specific entities.
 
@@ -59,7 +59,7 @@ The added dashlets can be resized using the double-headed arrow in the bottom ri
 The following dashlets are available in TreoCore out-of-the-box:
 - My Inbox
 - Record List
-- Stream
+- [Stream](./stream-core.md)
 
 ### Dashlet Actions 
 

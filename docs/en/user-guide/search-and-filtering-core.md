@@ -1,6 +1,6 @@
 # Search and Filtering
 
-Search and filtering allow you to quickly focus on the records you want to see. These sections are automatically available on each entity [list](./views-and-panels.md#list-view) view page:
+Search and filtering allow you to quickly focus on the records you want to see. These sections are automatically available on each entity [list](./views-and-panels-core.md#list-view) view page:
 
 ![Search and filtering](../../_assets/search-and-filtering/search-filter.jpg)
 *Search and filtering on the custom entities list view page*
@@ -15,7 +15,7 @@ To filter your entity records, open the filter drop-down list and set the desire
 
 To clear all filters, click the `Reset` button, located to the right of the search field.
 
-Use the [global search](./user-interface.md#global-search) if you wish to search globally across all the entities in the system.
+Use the [global search](./user-interface-core.md#global-search) if you wish to search globally across all the entities in the system.
 
 The fields available for searching can be configured by developers in the metadata of the appropriate entity.
 

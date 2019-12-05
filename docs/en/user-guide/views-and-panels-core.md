@@ -1,6 +1,6 @@
 # Views and Panels
 
-The TreoCore system comes with a user-friendly configurable [interface](./user-interface.md) that includes a number of views and panels, where **entity records** are displayed and managed. 
+The TreoCore system comes with a user-friendly configurable [interface](./user-interface-core.md) that includes a number of views and panels, where **entity records** are displayed and managed. 
 
 Views can be shown in the main or pop-up window. They consist of the panels, which can be configured by the administrator. Usually these are structured in a way to provide you with key information on the record management.
 
@@ -28,10 +28,10 @@ The following actions are available for entity records directly out of the box:
 The list view is a default view page that appears when any entity is selected in the navigation menu, where the records belonging to this entity are displayed. It has its own layout, which can be configured by the administrator. 
 
 The list view page shows a table of records with main fields configured for each entity and includes:
-  - *[navigation menu](./user-interface.md#navigation-menu) (1);*
-  - *[taskbar](./user-interface.md#taskbar) (2);*
-  - *[breadcrumb navigation](./user-interface.md#breadcrumb-navigation) including the page name (3);*
-  - *[search and filtering panel](./search-and-filtering.md) (4);*
+  - *[navigation menu](./user-interface-core.md#navigation-menu) (1);*
+  - *[taskbar](./user-interface-core.md#taskbar) (2);*
+  - *[breadcrumb navigation](./user-interface-core.md#breadcrumb-navigation) including the page name (3);*
+  - *[search and filtering panel](./search-and-filtering-core.md) (4);*
   - *records list (5).* 
 
 ![Default List View](../../_assets/views-and-panels/default-list-view-core.jpg)
@@ -59,7 +59,7 @@ The following mass actions are available in the TreoCore system:
 - **Remove** – to remove the selected entity records.
 - **Merge** – to merge the selected entity records.
 - **Mass update** – to update several selected entity records at once. To have a longer list of fields available for mass updating, please, contact your administrator.
-- **[Export](./export.md)** – to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
+- **[Export](./export-core.md)** – to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
 - **Follow** – to enable tracking of the changes for the selected entity records. 
 - **Unfollow** – to disable tracking of the changes for the selected entity records.
 - **Add relation** – to relate the selected entity records with other entities (or entity).
@@ -104,9 +104,9 @@ The following actions are available for the small list view panels:
 The detail view page appears when the  entity record name is clicked in the corresponding list of records. It has its own layout, which can be configured by the administrator. 
 
 The detail view page shows detailed information about the selected entity record and all its relations and includes:
-  - *[navigation menu](./user-interface.md#navigation-menu) (1);*
-  - *[taskbar](./user-interface.md#taskbar) (2);*
-  - *[breadcrumb navigation](./user-interface.md#breadcrumb-navigation) including the page name (3);*
+  - *[navigation menu](./user-interface-core.md#navigation-menu) (1);*
+  - *[taskbar](./user-interface-core.md#taskbar) (2);*
+  - *[breadcrumb navigation](./user-interface-core.md#breadcrumb-navigation) including the page name (3);*
   - *actions and tabs panel (4);*
   - *record details, where detailed information about the currently open entity record is displayed (5).* 
 
@@ -183,7 +183,7 @@ In all other cases, i.e. when the `+` button is used, you will be taken to the [
 
 ## Quick Create View
 
-The quick create view is shown in a pop-up window and uses the layout of the [quick detail view](#quick-detail-view-small-detail-view) page. It is usually applicable for creating records for the related entities or appears when the [quick create](./user-interface.md#quick-create) button is used on any TreoCore page:
+The quick create view is shown in a pop-up window and uses the layout of the [quick detail view](#quick-detail-view-small-detail-view) page. It is usually applicable for creating records for the related entities or appears when the [quick create](./user-interface-core.md#quick-create) button is used on any TreoCore page:
 
 ![Quick create view](../../_assets/views-and-panels/quick-create-view.jpg)
 
