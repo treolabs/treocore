@@ -27,12 +27,20 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-// phpcs:ignoreFile
-
 namespace Treo\Entities;
 
-class Attachment extends \Espo\Core\ORM\Entity
+use Espo\Core\ORM\Entity as Base;
+
+/**
+ * Class Attachment
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class Attachment extends Base
 {
+    /**
+     * @return mixed|null
+     */
     public function getSourceId()
     {
         $sourceId = $this->get('sourceId');
@@ -42,6 +50,9 @@ class Attachment extends \Espo\Core\ORM\Entity
         return $sourceId;
     }
 
+    /**
+     * @return string
+     */
     public function _getStorage()
     {
         return "UploadDir";

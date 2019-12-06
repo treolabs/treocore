@@ -31,14 +31,12 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Language as Instance;
-use Espo\Core\Utils\File\Manager;
 
 /**
  * DefaultLanguage loader
@@ -54,51 +52,14 @@ class DefaultLanguage extends Base
      */
     public function load()
     {
-        return new Instance(
-            Instance::detectLanguage($this->getConfig()),
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->useCache()
+        $language = new Instance(
+            Instance::detectLanguage($this->getContainer()->get('config')),
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('config')->get('useCache')
         );
-    }
+        $language->setEventManager($this->getContainer()->get('eventManager'));
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Us use cache
-     *
-     * @return bool|null
-     */
-    protected function useCache()
-    {
-        return $this->getContainer()->get('useCache');
+        return $language;
     }
 }

@@ -31,15 +31,12 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Language as Instance;
-use Espo\Entities\Preferences;
-use Espo\Core\Utils\File\Manager;
 
 /**
  * Language loader
@@ -53,51 +50,14 @@ class Language extends Base
      */
     public function load()
     {
-        return new Instance(
-            Instance::detectLanguage($this->getConfig(), $this->getPreferences()),
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->getConfig()->get('useCache')
+        $language = new Instance(
+            Instance::detectLanguage($this->getContainer()->get('config'), $this->getContainer()->get('preferences')),
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('config')->get('useCache')
         );
-    }
+        $language->setEventManager($this->getContainer()->get('eventManager'));
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get preferences
-     *
-     * @return Preferences
-     */
-    protected function getPreferences()
-    {
-        return $this->getContainer()->get('preferences');
-    }
-
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
+        return $language;
     }
 }

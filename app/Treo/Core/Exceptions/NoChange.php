@@ -36,14 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Core\Exceptions;
 
-use Espo\Core\Exceptions\BadRequest;
-
 /**
  * Class NoChange
  *
+ * @deprecated
+ *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class NoChange extends BadRequest
+class NoChange extends NotModified
 {
     /**
      * @var string

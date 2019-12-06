@@ -770,7 +770,7 @@ class RestApiDocs extends Base
                 // set deleted
                 $entityDeffs['deleted'] = 'bool';
 
-                if (empty($row['notStorable'])) {
+                if (empty($row['notStorable']) && isset($row['type'])) {
                     switch ($row['type']) {
                         case 'link':
                             $entityDeffs[$field . 'Id'] = 'string';

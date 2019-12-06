@@ -3,12 +3,6 @@
   "description": "TreoCORE. Open source application.",
   "homepage": "https://treolabs.com",
   "license": "GPL-3.0-only",
-  "authors": [
-    {
-      "name": "Roman Ratsun",
-      "email": "r.ratsun@treolabs.com"
-    }
-  ],
   "minimum-stability": "stable",
   "require": {
     "php": "^7.1",

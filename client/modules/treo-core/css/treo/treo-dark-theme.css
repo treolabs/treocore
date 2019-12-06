@@ -19101,7 +19101,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #main .page-header > h3 > a::after {
-    content: '›';
+    content: '\203A';
     display: inline-block;
     color: #000;
     background: #fff;
@@ -19280,6 +19280,11 @@ ul.dropdown-menu > li.checkbox {
     min-height: 35px;
 }
 
+#main .detail .catalog-tree-panel {
+    margin: 0;
+    border-right: 0;
+}
+
 #main .catalog-tree-panel + .list-container {
     padding: 0;
 }
@@ -19288,8 +19293,8 @@ ul.dropdown-menu > li.checkbox {
     border-left: 1px solid #e8eced;
 }
 
-#main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
-    margin-left: 40px;
+#main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
+    margin-left: 25px;
 }
 
 #main .catalog-tree-panel + .list-buttons-container::before,
@@ -19319,7 +19324,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #main .catalog-tree-panel > button.collapsed {
-    left: 15px;
+    left: 9px;
 }
 
 #main .category-tree button.catalog-link {
@@ -19432,7 +19437,8 @@ button.category:focus {
     }
 
     #main .catalog-tree-panel.catalog-tree-panel-hidden {
-        width: 40px
+        width: 40px;
+        border-right: 1px solid #e8eced;
     }
 
     #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
@@ -19451,19 +19457,6 @@ button.category:focus {
 
     #main .search-container {
         margin-bottom: 15px;
-    }
-}
-
-@media screen and (min-width: 992px) {
-    .detail > .row > .col-md-8::after {
-        content: '';
-        position: absolute;
-        background: #fafafa;
-        height: 100%;
-        width: 50.1%;
-        top: 1px;
-        right: -50%;
-        border-left: 1px solid #dcdcdc
     }
 }
 
@@ -19647,11 +19640,17 @@ button.category:focus {
         padding-left: 0
     }
 
-    .edit > .row > .col-md-8,
-    .detail > .row > .col-md-8 {
+    .edit > .row > .overview,
+    .detail > .row > .overview {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
+        border-right: 1px solid #e8eced;
+    }
+
+    .modal-dialog .edit > .row > .overview.col-sm-12,
+    .modal-dialog .detail > .row > .overview.col-sm-12  {
+        min-height: unset;
     }
 
     #main .edit > .row,
@@ -19664,8 +19663,6 @@ button.category:focus {
     .detail > .row > .side {
         padding: 0;
         position: relative;
-        margin-left: 1px;
-        margin-right: -1px;
     }
 
     .nav > li > a {
@@ -19707,6 +19704,18 @@ button.category:focus {
         background: #dcdcdc;
         position: absolute;
         right: 0;
+    }
+
+    #main .catalog-tree-panel.catalog-tree-panel-hidden {
+        padding: 0 8px 0 17px;
+    }
+
+    #main .detail .catalog-tree-panel + .overview {
+        border-left: 1px solid #e8eced;
+    }
+
+    #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
+        width: calc(75% - 25px);
     }
 }
 
@@ -19884,8 +19893,12 @@ button.category:focus {
     #main .catalog-tree-panel-hidden > button.collapse-panel {
         border: 0;
         left: -3px;
-        z-index: 1;
+        z-index: 999;
         position: relative;
+    }
+
+    #main .record .catalog-tree-panel-hidden > button.collapse-panel {
+        left: 8px;
     }
 
     #main .catalog-tree-panel {
@@ -19894,6 +19907,7 @@ button.category:focus {
         padding: 0;
         width: 100%;
         border: none;
+        float: none;
     }
 
     #main .catalog-tree-panel button:active {
@@ -20698,6 +20712,10 @@ td[data-name="draggableIcon"] {
     word-break: break-word;
 }
 
+.became {
+    margin-bottom: 10px;
+}
+
 .was .html-container,
 .became .html-container {
     overflow-x: auto;
@@ -20727,7 +20745,7 @@ td[data-name="draggableIcon"] {
     border-bottom: 1px solid #ececec;
 }
 
-.bottom .panel .group-container > .group .list td[data-name="value"] {
+.bottom .panel .group-container > .group .list td.over-visible[data-name="value"] {
     overflow: visible;
 }
 
@@ -20882,4 +20900,32 @@ select {
 .list .ui-sortable-helper td.cell {
     display: inline-block;
     float: left;
+}
+
+.panel-body .list table tbody.ui-sortable td:not(:last-child) {
+    vertical-align: middle;
+}
+
+.btn.btn-chevron-dropdown {
+    background-color: transparent;
+}
+
+.btn.btn-chevron-dropdown:active {
+    box-shadow: none;
+}
+
+.chevron-dropdown > ul.dropdown-menu > li > a {
+    padding: 10px 15px;
+}
+
+.header-breadcrumbs .header-with-dropdown {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.header-breadcrumbs .header-with-dropdown + .chevron-dropdown {
+    position: relative;
+    display: inline-block;
 }

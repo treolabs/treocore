@@ -56,11 +56,10 @@ class AttachmentEntity extends AbstractListener
         $entity = $event->getArgument('entity');
         if ($this->isDuplicate($entity)) {
             $this->copyFile($entity);
-        }
-
-        if (!$entity->isNew()
+        } elseif (!$entity->isNew()
             && $this->isChangeRelation($entity)
-            && !in_array($entity->get("relatedType"), $this->skipTypes())) {
+            && !in_array($entity->get("relatedType"), $this->skipTypes())
+        ) {
             $this->moveFromTmp($entity);
         }
     }
@@ -116,7 +115,7 @@ class AttachmentEntity extends AbstractListener
     protected function copyFile(Entity $entity): void
     {
         $repository = $this->getEntityManager()->getRepository($entity->getEntityType());
-        $path = $repository->copy($entity);
+        $path       = $repository->copy($entity);
 
         if (!$path) {
             throw new InternalServerError($this->getLanguage()->translate("Can't copy file", 'exceptions', 'Global'));

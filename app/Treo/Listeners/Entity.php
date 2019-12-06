@@ -148,11 +148,21 @@ class Entity extends AbstractListener
 
     /**
      * @param Event $event
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function beforeRelate(Event $event)
     {
         // delegate an event
         $this->dispatch($event->getArgument('entityType') . 'Entity', 'beforeRelate', $event);
+
+        //for move multiple attachments
+        if ($this->isMultipleAttachment($event)) {
+            $attachment = $this->getEntityManager()
+                               ->getEntity("Attachment", $event->getArgument("foreign"));
+            if ($attachment) {
+                $this->getService("Attachment")->moveMultipleAttachment($attachment);
+            }
+        }
     }
 
     /**
@@ -266,7 +276,28 @@ class Entity extends AbstractListener
         return [
             'relationName'  => $event->getArgument('relationName'),
             'relationData'  => $event->getArgument('relationData'),
-            'foreignEntity' => $foreign
+            'foreignEntity' => $foreign,
         ];
+    }
+
+    /**
+     * @param Event $event
+     * @return bool
+     */
+    private function isMultipleAttachment(Event $event)
+    {
+        $metaData = $this->getMetadata()
+                         ->get([
+                             "entityDefs",
+                             $event->getArgument("entityType"),
+                             "links",
+                             $event->getArgument("relationName"),
+                         ]);
+
+        if ($metaData['type'] === "hasChildren" && $metaData['entity'] === "Attachment") {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -169,7 +169,9 @@
     "collapseAllPanels": "Collapse All",
     "expandAllPanels": "Expand All",
     "UnitSymbol": "Unit Symbol",
-    "Core": "Core"
+    "Core": "Core",
+    "Mark all read": "Mark all as read",
+    "Ownership Information": "Ownership Information"
   },
   "descriptions": {
     "Core": "TreoCore is a software ecosystem, designed for rapid development of web-based responsive business applications."
@@ -178,7 +180,8 @@
     "ownerUser": "Owner"
   },
   "themes": {
-    "TreoDarkTheme": "Treo Dark Theme"
+    "TreoDarkTheme": "Treo Dark Theme",
+    "TreoClassicTheme": "Treo Classic Theme"
   },
   "exceptions": {
     "URL is invalid": "URL is invalid",

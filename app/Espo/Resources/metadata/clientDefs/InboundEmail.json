@@ -49,5 +49,23 @@
         ],
         "editSmall": [
         ]
+    },
+    "dynamicLogic": {
+        "fields": {
+            "smtpUsername": {
+                "required": {
+                    "conditionGroup": [
+                        {
+                            "type": "isTrue",
+                            "attribute": "useSmtp"
+                        },
+                        {
+                            "type": "isTrue",
+                            "attribute": "smtpAuth"
+                        }
+                    ]
+                }
+            }
+        }
     }
 }

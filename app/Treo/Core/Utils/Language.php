@@ -38,6 +38,8 @@ namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Language as Base;
 use Espo\Core\Exceptions\Error;
+use Treo\Core\EventManager\Event;
+use Treo\Core\EventManager\Manager as EventManager;
 
 /**
  * Class Language
@@ -46,6 +48,23 @@ use Espo\Core\Exceptions\Error;
  */
 class Language extends Base
 {
+    /**
+     * @var Language|null
+     */
+    protected $eventManager = null;
+
+    /**
+     * @param EventManager $eventManager
+     *
+     * @return Language
+     */
+    public function setEventManager(EventManager $eventManager): Language
+    {
+        $this->eventManager = $eventManager;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
@@ -90,6 +109,10 @@ class Language extends Base
         $currentLanguage = $this->getLanguage();
         if (empty($this->data[$currentLanguage])) {
             $this->data[$currentLanguage] = $this->getFileManager()->getPhpContents($this->getLangCacheFile());
+        }
+
+        if (!is_null($this->eventManager)) {
+            $this->data = $this->eventManager->dispatch('Language', 'modify', new Event(['data' => $this->data]))->getArgument('data');
         }
     }
 

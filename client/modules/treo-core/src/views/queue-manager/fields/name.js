@@ -36,6 +36,8 @@ Espo.define('treo-core:views/queue-manager/fields/name', 'views/fields/varchar',
 
         listTemplate: 'treo-core:queue-manager/fields/name/list',
 
+        listLinkTemplate: 'treo-core:queue-manager/fields/name/list-link',
+
         data() {
             return _.extend({
                 mutedText: ['Success', 'Failed'].includes(this.model.get('status'))

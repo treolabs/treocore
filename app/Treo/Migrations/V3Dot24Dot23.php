@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,29 +32,17 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/admin/field-manager/list', 'class-replace!treo-core:views/admin/field-manager/list', function (Dep) {
+declare(strict_types=1);
 
-    return Dep.extend({
+namespace Treo\Migrations;
 
-        data: function () {
-            // get scope fields
-            var scopeFields = this.getMetadata().get('entityDefs.' + this.scope + '.fields');
+use Treo\Core\Migration\AbstractMigration;
 
-            // prepare fieldDefsArray
-            var fieldDefsArray = [];
-            $.each(this.fieldDefsArray, function (k, v) {
-                if (!scopeFields[v.name].emHidden) {
-                    fieldDefsArray.push(v);
-                }
-            });
-
-            return {
-                scope: this.scope,
-                fieldDefsArray: fieldDefsArray,
-                typeList: this.typeList
-            };
-        },
-
-    });
-});
-
+/**
+ * Migration class for version 3.24.23
+ *
+ * @author r.ratsun@treolabs.com
+ */
+class V3Dot24Dot23 extends V3Dot23Dot29
+{
+}

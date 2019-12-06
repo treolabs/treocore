@@ -33,9 +33,20 @@ Espo.define('views/admin/field-manager/list', 'view', function (Dep) {
         template: 'admin/field-manager/list',
 
         data: function () {
+            // get scope fields
+            let scopeFields = this.getMetadata().get('entityDefs.' + this.scope + '.fields');
+
+            // prepare fieldDefsArray
+            let fieldDefsArray = [];
+            $.each(this.fieldDefsArray, function (k, v) {
+                if (!scopeFields[v.name].emHidden) {
+                    fieldDefsArray.push(v);
+                }
+            });
+
             return {
                 scope: this.scope,
-                fieldDefsArray: this.fieldDefsArray,
+                fieldDefsArray: fieldDefsArray,
                 typeList: this.typeList
             };
         },
@@ -54,7 +65,7 @@ Espo.define('views/admin/field-manager/list', 'view', function (Dep) {
                             var data = this.getMetadata().data;
                             delete data['entityDefs'][this.scope]['fields'][field];
                             this.getMetadata().storeToCache();
-                            $(e.currentTarget).closest('tr').remove();
+                            location.reload();
                         }.bind(this),
                     });
                 }, this);

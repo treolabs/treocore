@@ -43,16 +43,6 @@ class Admin extends \Espo\Core\Controllers\Base
         }
     }
 
-    public function postActionRebuild($params, $data, $request)
-    {
-        if (!$request->isPost()) {
-            throw new BadRequest();
-        }
-        $result = $this->getContainer()->get('dataManager')->rebuild();
-
-        return $result;
-    }
-
     public function postActionClearCache($params)
     {
         $result = $this->getContainer()->get('dataManager')->clearCache();

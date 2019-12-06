@@ -9,6 +9,9 @@ log="data/treo-composer.log"
 
 while true
 do
+   # delete check-up file
+   rm "data/composer-check-up.log" > /dev/null 2>&1
+
    # exit
    if [ -f "data/process-kill.txt" ]; then
      exit 1;
@@ -19,13 +22,13 @@ do
      rm $path;
 
      # start
-     echo -e "Composer updating has been started:\n" > $log 2>&1
+     echo -e "" > $log 2>&1
 
      # composer update
      if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
        echo "{{error}}" >> $log 2>&1
      else
-       $php composer.phar run-script post-update-cmd > /dev/null 2>&1
+       $php composer.phar run-script post-update-cmd >> $log 2>&1
        echo "{{success}}" >> $log 2>&1
      fi
      $php index.php composer log > /dev/null 2>&1

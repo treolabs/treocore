@@ -34,10 +34,14 @@
 Espo.define('treo-core:views/record/edit-small', 'class-replace!treo-core:views/record/edit-small',
     Dep => Dep.extend({
 
+        template: 'treo-core:record/edit-small',
+
+        isWide: true,
+
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.isWide = this.sideDisabled;
+            this.isWide = this.isWide || this.sideDisabled;
         },
 
         prepareLayoutAfterConverting(layout) {

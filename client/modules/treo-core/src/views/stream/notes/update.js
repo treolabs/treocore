@@ -58,14 +58,11 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
 
                 this.fieldsArr = [];
 
-                fields = this.addMultilangFields(model, fields);
-                fields = fields.filter(field => modelWas.has(field) && modelBecame.has(field));
-
                 fields.forEach(function (field) {
-                    let type = this.model.get('attributeType') || model.getFieldType(field) || 'base';
-                    if (model.getFieldParam(field, 'isMultilang') && this.getConfig().get('isMultilangActive')) {
-                        type = this.getMetadata().get(['fields', type, 'defaultFieldType']);
+                    if (model.getFieldParam(field, 'isMultilang') && !modelWas.has(field) && !modelBecame.has(field)) {
+                        return;
                     }
+                    let type = this.model.get('attributeType') || model.getFieldType(field) || 'base';
                     let viewName = model.getFieldParam(field, 'view') || this.getFieldManager().getViewName(type);
                     this.createView(field + 'Was', viewName, {
                         el: this.options.el + '.was',
@@ -102,30 +99,13 @@ Espo.define('treo-core:views/stream/notes/update', 'views/stream/notes/update', 
             }, this);
         },
 
-        addMultilangFields(model, fields) {
-            let additionalFields = [];
-            let inputLanguageList = this.getConfig().get('inputLanguageList') || [];
-            (fields || []).forEach(field => {
-                if (model.getFieldParam(field, 'isMultilang')) {
-                    let langFieldNameList = inputLanguageList.map(lang => this.getInputLangName(lang, field)) || [];
-                    langFieldNameList.forEach(langField => {
-                        if (langField in model.attributes) {
-                            this.customLabels[langField] = this.getCustomLabel(field, langField);
-                            additionalFields.push(langField);
-                        }
-                    });
-                }
-            });
-            return fields.concat(additionalFields);
-        },
-
         getInputLangName(lang, field) {
             return lang.split('_').reduce((prev, curr) => prev + Espo.utils.upperCaseFirst(curr.toLowerCase()), field);
         },
 
         getCustomLabel(field, langField) {
             let label = '';
-            label += this.translate(field, 'fields', this.model.get('parentType')) + " › ";
+            label += this.translate(field, 'fields', this.model.get('parentType')) + ' &#8250; ';
             label += langField.slice(-4, -2).toLowerCase() + "_" + langField.slice(-2).toUpperCase();
             return label;
         }

@@ -57,8 +57,8 @@ class Preferences extends Base
     public function load()
     {
         return $this
-                ->getEntityManager()
-                ->getEntity('Preferences', $this->getUser()->id);
+            ->getEntityManager()
+            ->getEntity('Preferences', (!is_object($this->getUser())) ? $this->getUser() : $this->getUser()->id);
     }
 
     /**
