@@ -190,5 +190,8 @@
   ],
   "views/stream/panel": [
     "treo-core"
+  ],
+  "views/stream/record/edit": [
+    "treo-core"
   ]
 }
