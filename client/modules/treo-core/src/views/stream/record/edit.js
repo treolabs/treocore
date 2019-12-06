@@ -37,26 +37,13 @@ Espo.define('treo-core:views/stream/record/edit', 'class-replace!treo-core:views
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.events['blur textarea[name="post"]'] = e => {
-                if (this.getFieldView('post') && this.getFieldView('post').$element.val() == '') {
-                    if (!(this.model.get('attachmentsIds') || []).length) {
-                        this.disablePostingMode();
-                    }
-                }
+            if (this.events['focus textarea[name="post"]']) {
+                delete this.events['focus textarea[name="post"]'];
+            }
+
+            this.events['click textarea[name="post"]'] = e => {
+                this.enablePostingMode();
             }
         },
-
-        disablePostingMode: function () {
-            this.postingMode = false;
-            this.$el.find('.post-control').addClass('hidden');
-            this.setConfirmLeaveOut(false);
-            this.getFieldView('post').$element.prop('rows', 1);
-        },
-
-        enablePostingMode: function () {
-            this.$el.find('.post-control').removeClass('hidden');
-            this.postingMode = true;
-        },
-
     })
 });
