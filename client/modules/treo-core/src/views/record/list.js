@@ -43,8 +43,6 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         dragndropEventName: null,
 
-        dragableListRows: false,
-
         massRelationView: 'treo-core:views/modals/select-entity-and-records',
 
         setup() {
@@ -121,15 +119,15 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         setupDraggableParams() {
-            this.dragableListRows = this.options.dragableListRows  || this.dragableListRows;
-            this.listRowsOrderSaveUrl = this.options.listRowsOrderSaveUrl  || this.listRowsOrderSaveUrl;
+            this.dragableListRows = this.dragableListRows || this.options.dragableListRows;
+            this.listRowsOrderSaveUrl = this.listRowsOrderSaveUrl || this.options.listRowsOrderSaveUrl;
 
             const urlParts = (this.collection.url || '').split('/');
             const mainScope = urlParts[0];
             this.relationName = urlParts[2];
             if (mainScope && this.relationName) {
                 const dragDropDefs = this.getMetadata().get(['clientDefs', mainScope, 'relationshipPanels', this.relationName, 'dragDrop']);
-                if (dragDropDefs) {
+                if (dragDropDefs && (this.dragableListRows || typeof this.dragableListRows === 'undefined')) {
                     this.dragableListRows = dragDropDefs.isActive;
                     this.dragableSortField = dragDropDefs.sortField;
                     if (this.dragableSortField) {
