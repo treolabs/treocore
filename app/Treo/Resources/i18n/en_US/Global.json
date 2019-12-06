@@ -180,7 +180,9 @@
     "ownerUser": "Owner"
   },
   "themes": {
-    "TreoDarkTheme": "Treo Dark Theme"
+    "TreoDarkTheme": "Treo Dark Theme",
+    "TreoClassicTheme": "Treo Classic Theme",
+    "TreoLightTheme": "Treo Light Theme"
   },
   "exceptions": {
     "URL is invalid": "URL is invalid",

@@ -1,0 +1,85 @@
+.btn-default {
+  background-color: $bg-white;
+  border-color: $border-btn-default;
+  &:hover {
+    background-color: $border-btn-default;
+  }
+}
+
+.btn {
+  border-radius: 3px;
+  &.reset {
+    .fas {
+      font-size: 14px;
+      margin-right: 5px;
+    }
+  }
+}
+.btn-primary,
+.search-row .filters-button,
+.show-more > .btn-block,
+.form-control + .input-group-btn > .btn:hover,
+.btn-group > .btn[data-action="edit"] + .dropdown-toggle,
+.search-row .open > .dropdown-toggle.btn-default:hover,
+.search-row .filters-button:active:focus,
+.search-row .filters-button.active:focus,
+.search-row .open > .dropdown-toggle.filters-button:focus,
+.search-row .open > .dropdown-toggle.filters-button.focus,
+.search-row .open > .dropdown-toggle.filters-button {
+  background-color: $btn-blue;
+  border-color: $btn-blue;
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.search-row .filters-button:focus,
+.search-row .filters-button:hover,
+.show-more > .btn-block:hover,
+.btn-group > .btn[data-action="edit"] + .dropdown-toggle:hover {
+  background-color: $btn-blue-dark;
+  border-color: $border-btn-blue-dark;
+  color: #fff;
+}
+
+.btn-group > .btn[data-action="edit"] + .dropdown-toggle {
+  border-left: 1px solid rgba(255, 255, 255, 0.16);;
+}
+
+
+.btn-default:active:hover,
+.btn-default.active:hover,
+.open > .dropdown-toggle.btn-default:hover,
+.btn-default:active:focus,
+.btn-default.active:focus,
+.open > .dropdown-toggle.btn-default:focus,
+.btn-default:active.focus,
+.btn-default.active.focus,
+.open > .dropdown-toggle.btn-default.focus {
+  color: $text-blue;
+  background-color: $btn-bg-blue;
+  border-color: $btn-bg-blue;
+}
+
+.btn-default:active,
+.btn-default.active,
+.open > .dropdown-toggle.btn-default {
+  color: $text-blue;
+  background-color: $btn-bg-blue;
+  border-color: $btn-bg-blue;
+}
+.btn-default:hover {
+  background-color: $btn-bg-blue;
+  border-color: $btn-bg-blue;
+}
+.btn-default:focus,
+.btn-default.focus {
+  background-color: $btn-bg-blue;
+  border-color: $btn-bg-blue;
+}
+
+.btn.btn-icon-x-wide {
+  width: auto;
+  padding: 6px 10px;
+}

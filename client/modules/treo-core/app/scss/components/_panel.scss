@@ -1,0 +1,161 @@
+.panel {
+  margin-bottom: 0;
+}
+.panel-title {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.panel-heading {
+  position: relative;
+  & > .btn-group {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+.panel-body {
+  & > div {
+    & > .list {
+      & > table {
+        td:last-child,
+        th:last-child {
+          padding-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+.panel-info {
+  & > .panel-heading {
+    padding: 5px 10px 6px;
+    & > .btn-group & > .btn-info {
+      color: #31708f;
+      border-color: #bce8ff;
+      background-color: #e0efff;
+      border-right-width: 0;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
+}
+
+
+
+.panel-default {
+  & > .panel-heading {
+    padding:13px 10px;
+    color: $text-heading;
+    box-shadow: 0px -8px 6px -10px;
+    & > .btn-group {
+      & > .btn-default {
+        padding: 4px 8px;
+        margin-left: 5px;
+        border-color: $border-btn;
+        border-radius: 3px;
+        &:first-child {
+          margin-left: 0;
+        }
+        &:hover {
+          z-index: 0;
+          background: #fafafa;
+        }
+      }
+    }
+  }
+  & > .panel-body {
+    margin-bottom: 15px;
+  }
+}
+.panel.sticked > .panel-heading .btn-group .btn {
+  border-top-width: 1px;
+}
+.detail .record-buttons ~ .edit-buttons.hidden ~ .row .panel-body .form-group .field {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f5f5f5
+}
+
+.nav-pills {
+  & > li {
+    margin-left: 5px;
+    &:hover,
+    &:focus {
+      border-radius: 3px;
+      background-color: $btn-bg-blue;
+    }
+    & + li {
+      margin-left: 5px;
+    }
+  }
+}
+
+.cell,
+.filter {
+  label {
+    color: $text-heading-label;
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+.side {
+  &> .panel {
+    &.panel-default.panel-default,
+    &.panel-default.panel-default list {
+      background: $bg-white;
+    }
+  }
+  .panel-default {
+    &> .panel-heading {
+      border-top: 0;
+      &> .btn-group {
+        &> .btn-default {
+          border-right-width: 1px;
+        }
+      }
+    }
+  }
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    & > button {
+      width: 100%;
+    }
+  }
+}
+
+.dropdown-menu {
+  padding: 0;
+  border: 0;
+  box-shadow: 0 0 13px rgba(0, 0, 0, 0.175);
+  border-radius: 3px;
+  .divider {
+    margin: 0
+  }
+  & > li > a {
+    padding: 10px 20px
+  }
+}
+
+
+ul.dropdown-menu > li.checkbox {
+  padding: 10px 10px 10px 20px
+}
+
+@media screen and (min-width: 768px) {
+  .detail .bottom .panel-default > .panel-heading:not(.note-toolbar) {
+    position: relative;
+    margin-bottom: 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .detail .bottom .panel-default > .panel-heading > .btn-group:not(.note-btn-group) {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+}
