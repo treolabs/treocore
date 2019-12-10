@@ -100,8 +100,8 @@ class Avatar extends Image
             if (empty($size)) {
                 $size = 'small';
             }
-            if (!empty($this->imageSizes[$size])) {
-                $width = $this->imageSizes[$size][0];
+            if (!empty($data = $this->getImageSize($size))) {
+                $width = $data[0];
 
                 header('Cache-Control: max-age=360000, must-revalidate');
                 header('Content-Type: image/png');

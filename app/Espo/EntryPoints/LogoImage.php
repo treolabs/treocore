@@ -38,8 +38,6 @@ class LogoImage extends Image
 
     public function run()
     {
-        $this->imageSizes['small-logo'] = array(181, 44);
-
         if (!empty($_GET['id'])) {
             $id = $_GET['id'];
         } else {
@@ -56,6 +54,18 @@ class LogoImage extends Image
         }
 
         $this->show($id, $size);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getImageSize(string $size): ?array
+    {
+        if ($size == 'small-logo') {
+            return [181, 44];
+        }
+
+        return parent::getImageSize($size);
     }
 }
 
