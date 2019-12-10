@@ -184,13 +184,6 @@ class AclManager
 
     public function checkEntity(User $user, Entity $entity, $action = 'read')
     {
-//        echo '<pre>';
-//        print_r('123');
-//        die();
-//        if (in_array($entity->get('relatedType'), ['Category', 'Product'])) {
-//            $entity = $this->getContainer()->get('entityManager')->getRepository('PimImage')->where(['imageId' => $entity->get('id')])->findOne();
-//        }
-
         $scope = $entity->getEntityType();
 
         $data = $this->getTable($user)->getScopeData($scope);

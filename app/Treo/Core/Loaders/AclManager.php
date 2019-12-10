@@ -53,10 +53,7 @@ class AclManager extends Base
         $aclManager = new \Espo\Core\AclManager($this->getContainer());
 
         if (!empty($this->getContainer()->get('portal'))) {
-            $portalAclManager = new \Espo\Core\Portal\AclManager($this->getContainer());
-            $portalAclManager->setMainManager($aclManager);
-
-            return $portalAclManager;
+            return new \Espo\Core\Portal\AclManager($this->getContainer());
         }
 
         return $aclManager;

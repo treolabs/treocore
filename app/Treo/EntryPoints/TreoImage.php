@@ -39,13 +39,14 @@ namespace Treo\EntryPoints;
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\ORM\Entity;
+use Treo\Core\EntryPoints\AbstractEntryPoint;
 
 /**
  * EntryPoint Image
  *
- * @author r.ratsun <r.ratsun@zinitsolutions.com>
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class TreoImage extends \Espo\Core\EntryPoints\Base
+class TreoImage extends AbstractEntryPoint
 {
     /**
      * @var bool

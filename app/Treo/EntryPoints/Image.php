@@ -39,33 +39,21 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\NotFound;
 use Treo\Core\Container;
+use Treo\Core\EntryPoints\AbstractEntryPoint;
 use Treo\Core\FileStorage\Storages\UploadDir;
+use Treo\Entities\Attachment;
 
 /**
  * Class Image
+ *
  * @package Treo\EntryPoints
  */
-class Image extends \Espo\Core\EntryPoints\Base
+class Image extends AbstractEntryPoint
 {
-    public static $authRequired = true;
-
-    protected $allowedFileTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-    ];
-
-    protected $imageSizes;
-
     /**
-     * Image constructor.
-     * @param Container $container
+     * @var array
      */
-    public function __construct(Container $container)
-    {
-        parent::__construct($container);
-        $this->imageSizes = $this->getMetadata()->get(['app', 'imageSizes']);
-    }
+    protected $allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
     /**
      * @throws BadRequest
@@ -78,20 +66,18 @@ class Image extends \Espo\Core\EntryPoints\Base
         if (empty($_GET['id'])) {
             throw new BadRequest();
         }
-        $id = $_GET['id'];
 
-        $size = null;
-        if (!empty($_GET['size'])) {
-            $size = $_GET['size'];
-        }
+        // prepare size
+        $size = !empty($_GET['size']) ? $_GET['size'] : null;
 
-        $this->show($id, $size);
+        $this->show($_GET['id'], $size);
     }
 
     /**
-     * @param      $id
-     * @param      $size
-     * @param bool $disableAccessCheck
+     * @param mixed $id
+     * @param mixed $size
+     * @param bool  $disableAccessCheck
+     *
      * @throws Error
      * @throws Forbidden
      * @throws NotFound
@@ -104,7 +90,7 @@ class Image extends \Espo\Core\EntryPoints\Base
             throw new NotFound();
         }
 
-        if (!$disableAccessCheck && !$this->getAcl()->checkEntity($attachment)) {
+        if (!$disableAccessCheck && !$this->checkAttachment($attachment)) {
             throw new Forbidden();
         }
         $filePath = $this->getEntityManager()->getRepository('Attachment')->getFilePath($attachment);
@@ -145,18 +131,19 @@ class Image extends \Espo\Core\EntryPoints\Base
      * @param $filePath
      * @param $fileType
      * @param $size
+     *
      * @return false|string
      * @throws Error
      */
     protected function getFileContent($attachment, $filePath, $fileType, $size)
     {
-        $filePath = $attachment->get("tmpPath") ?? $filePath;
+        $filePath = $attachment->get('tmpPath') ?? $filePath;
 
         if (empty($size)) {
             return file_get_contents($filePath);
         }
 
-        if (empty($this->imageSizes[$size])) {
+        if (empty($this->getImageSize($size))) {
             throw new Error();
         }
 
@@ -178,6 +165,7 @@ class Image extends \Espo\Core\EntryPoints\Base
     /**
      * @param $a
      * @param $size
+     *
      * @return string
      */
     protected function getThumbPath($a, $size)
@@ -187,6 +175,7 @@ class Image extends \Espo\Core\EntryPoints\Base
 
     /**
      * @param $attachment
+     *
      * @return bool
      */
     protected function isTmp($attachment): bool
@@ -198,6 +187,7 @@ class Image extends \Espo\Core\EntryPoints\Base
      * @param $filePath
      * @param $fileType
      * @param $size
+     *
      * @return false|string
      * @throws Error
      */
@@ -208,24 +198,24 @@ class Image extends \Espo\Core\EntryPoints\Base
         }
 
         list($originalWidth, $originalHeight) = getimagesize($filePath);
-        list($width, $height) = $this->imageSizes[$size];
+        list($width, $height) = $this->getImageSize($size);
 
         if ($originalWidth <= $width && $originalHeight <= $height) {
-            $targetWidth  = $originalWidth;
+            $targetWidth = $originalWidth;
             $targetHeight = $originalHeight;
         } else {
             if ($originalWidth > $originalHeight) {
-                $targetWidth  = $width;
+                $targetWidth = $width;
                 $targetHeight = $originalHeight / ($originalWidth / $width);
                 if ($targetHeight > $height) {
                     $targetHeight = $height;
-                    $targetWidth  = $originalWidth / ($originalHeight / $height);
+                    $targetWidth = $originalWidth / ($originalHeight / $height);
                 }
             } else {
                 $targetHeight = $height;
-                $targetWidth  = $originalWidth / ($originalHeight / $height);
+                $targetWidth = $originalWidth / ($originalHeight / $height);
                 if ($targetWidth > $width) {
-                    $targetWidth  = $width;
+                    $targetWidth = $width;
                     $targetHeight = $originalHeight / ($originalWidth / $width);
                 }
             }
@@ -310,5 +300,28 @@ class Image extends \Espo\Core\EntryPoints\Base
         imagedestroy($targetImage);
 
         return $contents;
+    }
+
+    /**
+     * @param Attachment $attachment
+     *
+     * @return bool
+     */
+    protected function checkAttachment(Attachment $attachment): bool
+    {
+        return $this->getAcl()->checkEntity($attachment);
+    }
+
+    /**
+     * @param string $size
+     *
+     * @return array|null
+     */
+    protected function getImageSize(string $size): ?array
+    {
+        // get sizes
+        $sizes = $this->getMetadata()->get(['app', 'imageSizes'], []);
+
+        return isset($sizes[$size]) ? $sizes[$size] : null;
     }
 }
