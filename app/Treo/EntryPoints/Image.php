@@ -38,7 +38,6 @@ use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\NotFound;
-use Treo\Core\Container;
 use Treo\Core\EntryPoints\AbstractEntryPoint;
 use Treo\Core\FileStorage\Storages\UploadDir;
 use Treo\Entities\Attachment;
