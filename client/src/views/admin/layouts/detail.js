@@ -95,7 +95,7 @@ Espo.define('views/admin/layouts/detail', 'views/admin/layouts/grid', function (
                             layout = layoutLoaded;
                             model = m;
                             resolve();
-                        });
+                        }, false);
                     }.bind(this));
                 }.bind(this))
             );
@@ -106,7 +106,7 @@ Espo.define('views/admin/layouts/detail', 'views/admin/layouts/grid', function (
                         this.getHelper().layoutManager.get(this.scope, 'sidePanels' + Espo.Utils.upperCaseFirst(this.type), function (layoutLoaded) {
                             this.sidePanelsLayout = layoutLoaded;
                             resolve();
-                        }.bind(this));
+                        }.bind(this), false);
                     }.bind(this))
                 );
             }
