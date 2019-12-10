@@ -36,7 +36,33 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
 
         template: 'treo-core:modals/select-entity-and-records',
 
+        selectBoolFilterList: [],
+
+        boolFilterData: {},
+
+        getBoolFilterData() {
+            let data = {};
+            this.selectBoolFilterList.forEach(item => {
+                if (typeof this.boolFilterData[item] === 'function') {
+                    data[item] = this.boolFilterData[item].call(this);
+                }
+            });
+            return data;
+        },
+
+        getSelectFilters() {},
+
+        getSelectBoolFilterList() {
+            return this.selectBoolFilterList;
+        },
+
+        getSelectPrimaryFilterName() {
+            return this.selectPrimaryFilterName;
+        },
+
         setup() {
+            this.updateBoolParams();
+
             Dep.prototype.setup.call(this);
 
             this.buttonList.find(button => button.name === 'select').label = 'applyRelation';
@@ -80,12 +106,25 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                     return;
                 }
 
-                let foreignIds = [];
-                (models || []).forEach(model => foreignIds.push(model.id));
-                let data = this.getDataForUpdateRelation(foreignIds, this.model);
-                let url = `${this.model.get('mainEntity')}/${this.model.get('selectedLink')}/relation`;
+                const foreignIds = (models || []).map(model => model.id);
+                const data = this.getDataForUpdateRelation(foreignIds, this.model);
+                const url = `${this.model.get('mainEntity')}/${this.model.get('selectedLink')}/relation`;
                 this.sendDataForUpdateRelation(url, data);
             });
+        },
+
+        updateBoolParams() {
+            const mainEntity = this.model.get('mainEntity');
+            const selectedLink = this.model.get('selectedLink');
+            const keyPath = ['clientDefs', mainEntity, 'relationshipPanels', selectedLink, 'selectBoolFilterList'];
+
+            this.selectBoolFilterList = this.getMetadata().get(keyPath) || [];
+            this.boolFilterData = {};
+
+            this.filters = this.options.filters = this.getSelectFilters();
+            this.boolFilterList = this.options.boolFilterList = this.getSelectBoolFilterList();
+            this.boolFilterData = this.options.boolFilterData = this.getBoolFilterData();
+            this.primaryFilterName = this.options.primaryFilterName = this.getSelectPrimaryFilterName();
         },
 
         getDataForUpdateRelation(foreignIds, viewModel) {
@@ -115,8 +154,8 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                 let link = entityDefs.link;
                 options.push(link);
                 let translation = this.translate(link, 'links', this.model.get('mainEntity'));
-                if (entityDefs.customDefs) {
-                    translation = this.translate(entityDefs.customDefs.link, 'links', this.model.get('mainEntity'));
+                if (entityDefs.addRelationCustomDefs) {
+                    translation = this.translate(entityDefs.addRelationCustomDefs.link, 'links', this.model.get('mainEntity'));
                 }
                 translatedOptions[link] = translation;
             });
@@ -138,13 +177,14 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
         getEntityFromSelectedLink() {
             let selectedLink = this.model.get('selectedLink');
             let entityDefs = (this.model.get('foreignEntities') || []).find(item => item.link === selectedLink) || {};
-            return entityDefs.customDefs ? entityDefs.customDefs.entity : entityDefs.entity;
+            return entityDefs.addRelationCustomDefs ? entityDefs.addRelationCustomDefs.entity : entityDefs.entity;
         },
 
         reloadList(selectedLink) {
             if (!selectedLink) {
                 return;
             }
+
             let entity = this.getEntityFromSelectedLink();
             this.scope = entity;
             this.collection.name = this.collection.urlRoot = this.collection.url = entity;
@@ -152,6 +192,8 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
             this.collection.sortBy = collectionDefs.sortBy;
             this.collection.asc = collectionDefs.asc;
             this.getModelFactory().getSeed(entity, seed => this.collection.model = seed);
+
+            this.updateBoolParams();
             this.loadSearch();
             this.loadList();
         },

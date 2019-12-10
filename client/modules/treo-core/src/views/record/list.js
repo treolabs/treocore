@@ -173,17 +173,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (defs.foreign && defs.entity && this.getAcl().check(defs.entity, 'edit')) {
                         let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
                         if (this.checkRelationshipType(defs.type, foreignType)
-                            && this.getMetadata().get(['scopes', defs.entity, 'entity'])
+                            && (this.getMetadata().get(['scopes', defs.entity, 'entity']) || defs.addRelationCustomDefs)
                             && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])
                             && !defs.disableMassRelation) {
-                            let data = {
+                            foreignEntities.push({
                                 link: link,
                                 entity: defs.entity,
-                            };
-                            if (defs.customDefs) {
-                                data.customDefs = defs.customDefs;
-                            }
-                            foreignEntities.push(data);
+                                addRelationCustomDefs: defs.addRelationCustomDefs
+                            });
                         }
                     }
                 });
@@ -220,7 +217,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     model: model,
                     multiple: true,
                     createButton: false,
-                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
+                    scope: (foreignEntities[0].addRelationCustomDefs || {}).entity || foreignEntities[0].entity,
                     type: type,
                     checkedList: this.checkedList
                 }, view => {
