@@ -69,6 +69,10 @@ class Composer extends Base
             throw new Exceptions\BadRequest();
         }
 
+        if (file_exists(ComposerService::CHECK_UP_FILE)) {
+            throw new Exceptions\BadRequest('Composer daemon is not running');
+        }
+
         return $this->getComposerService()->runUpdate();
     }
 
@@ -299,6 +303,29 @@ class Composer extends Base
         }
 
         return $this->getComposerService()->getLogs($request);
+    }
+
+
+    /**
+     * @param mixed   $params
+     * @param mixed   $data
+     * @param Request $request
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionCheck($params, $data, Request $request): array
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw new Exceptions\Forbidden();
+        }
+
+        if (!$request->isPost()) {
+            throw new Exceptions\BadRequest();
+        }
+
+        return $this->getComposerService()->checkUpdate();
     }
 
     /**

@@ -58,7 +58,7 @@ class Preferences extends Base
     {
         return $this
             ->getEntityManager()
-            ->getEntity('Preferences', (is_string($this->getUser())) ? $this->getUser() : $this->getUser()->id);
+            ->getEntity('Preferences', (!is_object($this->getUser())) ? $this->getUser() : $this->getUser()->id);
     }
 
     /**

@@ -36,8 +36,9 @@ declare(strict_types=1);
 
 namespace Treo\Repositories;
 
-use Espo\Repositories\Attachment AS Base;
+use Espo\Repositories\Attachment as Base;
 use Espo\ORM\Entity;
+use Treo\Core\Utils\Util;
 use Treo\Core\FilePathBuilder;
 use Treo\Core\FileStorage\Storages\UploadDir;
 
@@ -48,17 +49,6 @@ use Treo\Core\FileStorage\Storages\UploadDir;
  */
 class Attachment extends Base
 {
-    /**
-     * @inheritDoc
-     */
-    public function getFilePath(Entity $entity)
-    {
-        // migrate attachment if it needs
-        $this->migrateAttachment($entity);
-
-        return parent::getFilePath($entity);
-    }
-
     /**
      * @param Entity $entity
      * @param null   $role
@@ -77,7 +67,7 @@ class Attachment extends Base
                 'type'            => $entity->get('type'),
                 'size'            => $entity->get('size'),
                 'role'            => $entity->get('role'),
-                'storageFilePath' => $entity->get('storageFilePath')
+                'storageFilePath' => $entity->get('storageFilePath'),
             ]
         );
 
@@ -108,6 +98,65 @@ class Attachment extends Base
         }
 
         return '';
+    }
+
+    /**
+     * @param Entity $entity
+     * @param array  $options
+     *
+     * @return mixed
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function save(Entity $entity, array $options = [])
+    {
+        $isNew = $entity->isNew();
+
+        if ($isNew) {
+            if (!$entity->has("id")) {
+                $entity->id = Util::generateId();
+            }
+            $storeResult = false;
+
+            if (!empty($entity->id) && $entity->has('contents')) {
+                $contents = $entity->get('contents');
+                if ($entity->get('role') === "Attachment") {
+                    $temp = $this->getFileManager()->createOnTemp($contents);
+                    if ($temp) {
+                        $entity->set("tmpPath", $temp);
+                        $storeResult = true;
+                    }
+                } else {
+                    $storeResult = $this->getFileStorageManager()->putContents($entity, $contents);
+                }
+                if ($storeResult === false) {
+                    throw new \Espo\Core\Exceptions\Error("Could not store the file");
+                }
+            }
+        }
+
+        $result = parent::save($entity, $options);
+
+        return $result;
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return bool
+     */
+    public function moveFromTmp(Entity $entity)
+    {
+        $destPath = $this->getDestPath(FilePathBuilder::UPLOAD);
+        $fullPath = UploadDir::BASE_PATH . $destPath . "/" . $entity->get('name');
+
+        if ($this->getFileManager()->move($entity->get('tmpPath'), $fullPath, false)) {
+            $entity->set("tmpPath", null);
+            $entity->set("storageFilePath", $destPath);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -155,32 +204,5 @@ class Attachment extends Base
     protected function getDestPath(string $type): string
     {
         return $this->getPathBuilder()->createPath($type);
-    }
-
-    /**
-     * @param Entity $attachment
-     */
-    protected function migrateAttachment(Entity $attachment)
-    {
-        // prepare old path
-        $oldPath = 'data/upload/' . $attachment->get('id');
-
-        if (file_exists($oldPath)) {
-            // prepare new base path
-            $newBasePath = 'data/upload/files/';
-
-            // create dir path
-            $path = $this->getPathBuilder()->createPath($newBasePath);
-
-            // create full path
-            $newPath = $newBasePath . $path . '/' . $attachment->get('name');
-
-            if ($this->getFileManager()->move($oldPath, $newPath)) {
-                $attachment->set('storage', 'UploadDir');
-                $attachment->set('storageFilePath', $path);
-
-                $this->getEntityManager()->saveEntity($attachment, ['skipAll' => true]);
-            }
-        }
     }
 }

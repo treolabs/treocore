@@ -40,6 +40,7 @@ use Treo\Entities\Attachment;
 
 /**
  * Class UploadDir
+ *
  * @package Treo\Core\FileStorage\Storages
  */
 class UploadDir extends Base
@@ -53,6 +54,7 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return mixed
      */
     public function unlink(Attachment $attachment)
@@ -62,6 +64,7 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return mixed
      */
     public function isFile(Attachment $attachment)
@@ -71,6 +74,7 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return mixed
      */
     public function getContents(Attachment $attachment)
@@ -80,7 +84,8 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
-     * @param $contents
+     * @param            $contents
+     *
      * @return mixed
      */
     public function putContents(Attachment $attachment, $contents)
@@ -90,6 +95,7 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return mixed|string
      */
     public function getLocalFilePath(Attachment $attachment)
@@ -99,6 +105,7 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return mixed|void
      * @throws Error
      */
@@ -109,11 +116,22 @@ class UploadDir extends Base
 
     /**
      * @param Attachment $attachment
+     *
      * @return bool|mixed
      */
     public function hasDownloadUrl(Attachment $attachment)
     {
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('entityManager');
     }
 
     /**
@@ -130,7 +148,25 @@ class UploadDir extends Base
             $attachment->set('storageFilePath', $storage);
         }
 
-        return self::BASE_PATH . "{$storage}/" . $attachment->get('name');
+        // prepare path
+        $path = self::BASE_PATH . "{$storage}/" . $attachment->get('name');
+
+        // move old files to new dirs if it needs
+        if (!file_exists($path)) {
+            // prepare id
+            $id = $attachment->get('id');
+
+            // prepare old path
+            $oldPath = "data/upload/$id";
+
+            if (file_exists($oldPath) && $this->getFileManager()->move($oldPath, $path)) {
+                $this
+                    ->getInjection('entityManager')
+                    ->nativeQuery("UPDATE attachment SET storage='UploadDir', storage_file_path='$storage' WHERE id='$id'");
+            }
+        }
+
+        return $path;
     }
 
     /**

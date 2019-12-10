@@ -36,17 +36,14 @@ declare(strict_types=1);
 namespace Treo\Core\Loaders;
 
 use Treo\Core\Utils\Language;
-use Espo\Core\Utils\File\Manager;
-use Treo\Core\Utils\Metadata;
 
 /**
  * BaseLanguage loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class BaseLanguage extends Base
 {
-
     /**
      * Load BaseLanguage
      *
@@ -54,41 +51,14 @@ class BaseLanguage extends Base
      */
     public function load()
     {
-        return new Language(
+        $language = new Language(
             'en_US',
-            $this->getFileManager(),
-            $this->getMetadata(),
-            $this->useCache()
+            $this->getContainer()->get('fileManager'),
+            $this->getContainer()->get('metadata'),
+            $this->getContainer()->get('config')->get('useCache')
         );
-    }
+        $language->setEventManager($this->getContainer()->get('eventManager'));
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
-
-    /**
-     * Get metadata
-     *
-     * @return Metadata
-     */
-    protected function getMetadata()
-    {
-        return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Is use cache
-     *
-     * @return bool|null
-     */
-    protected function useCache()
-    {
-        return $this->getContainer()->get('useCache');
+        return $language;
     }
 }

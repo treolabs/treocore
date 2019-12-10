@@ -68,6 +68,9 @@
   "views/record/detail-bottom": [
     "treo-core"
   ],
+  "views/record/edit": [
+    "treo-core"
+  ],
   "views/record/edit-side": [
     "treo-core"
   ],
@@ -78,6 +81,9 @@
     "treo-core"
   ],
   "views/record/panels/relationship": [
+    "treo-core"
+  ],
+  "views/record/panels/side": [
     "treo-core"
   ],
   "views/record/search": [
@@ -96,9 +102,6 @@
     "treo-core"
   ],
   "views/admin/entity-manager/modals/edit-entity": [
-    "treo-core"
-  ],
-  "views/admin/field-manager/list": [
     "treo-core"
   ],
   "views/admin/field-manager/fields/options": [
@@ -186,6 +189,9 @@
     "treo-core"
   ],
   "views/stream/panel": [
+    "treo-core"
+  ],
+  "views/stream/record/edit": [
     "treo-core"
   ]
 }

@@ -2,6 +2,11 @@
   "labels": {
     "Type": "Typ"
   },
+  "fieldParts": {
+    "unit": {
+      "unit": "(Maßeinheit)"
+    }
+  },
   "messages": {
     "defaultValidationFailed": "Der Standardwert darf keine Sonderzeichen enthalten"
   }

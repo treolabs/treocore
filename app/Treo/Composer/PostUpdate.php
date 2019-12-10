@@ -72,7 +72,9 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
+        echo 'Clear cache... ';
         Util::removedir('data/cache');
+        echo 'Done!' . PHP_EOL;
     }
 
     /**
@@ -80,6 +82,11 @@ class PostUpdate
      */
     public function run(): void
     {
+        // logout all users
+        if ($this->isInstalled()) {
+            $this->logoutAll();
+        }
+
         // update client files
         $this->updateClientFiles();
 
@@ -87,9 +94,6 @@ class PostUpdate
         $this->copyDefaultConfig();
 
         if ($this->isInstalled()) {
-            // logout all users
-            $this->logoutAll();
-
             // rebuild
             $this->rebuild();
 
@@ -112,10 +116,14 @@ class PostUpdate
      */
     protected function rebuild(): void
     {
+        echo 'Rebuild database schema... ';
+
         $this
             ->getContainer()
             ->get('dataManager')
             ->rebuild();
+
+        echo 'Done!' . PHP_EOL;
     }
 
     /**
@@ -123,12 +131,16 @@ class PostUpdate
      */
     protected function logoutAll(): void
     {
+        echo 'Logout all... ';
+
         $sth = $this
             ->getContainer()
             ->get('entityManager')
             ->getPDO()->prepare("UPDATE auth_token SET deleted = 1");
 
         $sth->execute();
+
+        echo 'Done!' . PHP_EOL;
     }
 
     /**
@@ -153,15 +165,24 @@ class PostUpdate
                 }
 
                 if (!empty($to)) {
+                    // prepare name
+                    $name = $row['id'];
+                    if ($name == 'Treo') {
+                        $name = 'Core';
+                    }
+
+                    $from = ModuleManager::prepareVersion($row['from']);
+                    $to = ModuleManager::prepareVersion($to);
+
+                    echo "Migrate $name $from -> $to ... ";
+
                     // run migration
                     $this
                         ->getContainer()
                         ->get('migration')
-                        ->run(
-                            $row['id'],
-                            ModuleManager::prepareVersion($row['from']),
-                            ModuleManager::prepareVersion($to)
-                        );
+                        ->run($row['id'], $from, $to);
+
+                    echo 'Done!' . PHP_EOL;
                 }
             }
         }
@@ -256,14 +277,18 @@ class PostUpdate
         // call afterInstall event
         if (!empty($composerDiff['install'])) {
             foreach ($composerDiff['install'] as $row) {
+                echo 'Call after install event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterInstall');
+                echo 'Done!' . PHP_EOL;
             }
         }
 
         // call afterDelete event
         if (!empty($composerDiff['delete'])) {
             foreach ($composerDiff['delete'] as $row) {
+                echo 'Call after delete event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterDelete');
+                echo 'Done!' . PHP_EOL;
             }
         }
     }
@@ -294,6 +319,8 @@ class PostUpdate
         $composerDiff = $this->getComposerLockDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
+            echo 'Send update notifications to admin users... ';
+
             /** @var EntityManager $em */
             $em = $this
                 ->getContainer()
@@ -315,6 +342,7 @@ class PostUpdate
                     }
                 }
             }
+            echo 'Done!' . PHP_EOL;
         }
     }
 
@@ -410,6 +438,10 @@ class PostUpdate
             if (class_exists($className)) {
                 // get src
                 $src = (new \ReflectionClass($className))->getFileName();
+
+                if (!file_exists($src)) {
+                    continue 1;
+                }
 
                 // prepare dest
                 $dest = "data/module-manager-events/{$module}";
