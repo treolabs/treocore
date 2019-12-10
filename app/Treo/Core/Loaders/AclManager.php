@@ -31,18 +31,18 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
 /**
- * AclManager loader
+ * Class AclManager
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class AclManager extends Base
 {
-
     /**
      * Load AclManager
      *
@@ -50,12 +50,12 @@ class AclManager extends Base
      */
     public function load()
     {
-        // prepare classname
-        $className = $this
-            ->getContainer()
-            ->get('metadata')
-            ->get('app.serviceContainer.classNames.acl', '\\Treo\\Core\\AclManager');
+        $aclManager = new \Espo\Core\AclManager($this->getContainer());
 
-        return new $className($this->getContainer());
+        if (!empty($this->getContainer()->get('portal'))) {
+            return new \Espo\Core\Portal\AclManager($this->getContainer());
+        }
+
+        return $aclManager;
     }
 }
