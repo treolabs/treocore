@@ -37,9 +37,7 @@ Espo.define('treo-core:views/stream/record/edit', 'class-replace!treo-core:views
         setup() {
             Dep.prototype.setup.call(this);
 
-            if (this.events['focus textarea[name="post"]']) {
-                delete this.events['focus textarea[name="post"]'];
-            }
+            delete this.events['focus textarea[name="post"]'];
 
             this.events['click textarea[name="post"]'] = e => {
                 this.enablePostingMode();

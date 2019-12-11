@@ -34,16 +34,14 @@
 Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
     Dep => Dep.extend({
 
-        init() {
-            if (this.events['focus textarea.note']) {
-                delete this.events['focus textarea.note'];
-            }
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            delete this.events['focus textarea.note'];
 
             this.events['click textarea.note'] = e => {
                 this.enablePostingMode();
             };
-
-            Dep.prototype.init.call(this);
         },
 
         afterRender() {
