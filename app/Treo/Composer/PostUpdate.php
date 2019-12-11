@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application;
+use Treo\Core\Container;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\ORM\EntityManager;
 use Treo\Core\Utils\Util;
@@ -49,7 +51,10 @@ use Treo\Services\Composer as ComposerService;
  */
 class PostUpdate
 {
-    use \Treo\Traits\ContainerTrait;
+    /**
+     * @var Container
+     */
+    private $container;
 
     /**
      * PostUpdate constructor.
@@ -75,6 +80,12 @@ class PostUpdate
         echo 'Clear cache... ';
         Util::removedir('data/cache');
         echo 'Done!' . PHP_EOL;
+
+        // load classes
+        require_once 'vendor/autoload.php';
+
+        // set container
+        $this->container = (new Application())->getContainer();
     }
 
     /**
@@ -344,6 +355,16 @@ class PostUpdate
             }
             echo 'Done!' . PHP_EOL;
         }
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
     }
 
     /**

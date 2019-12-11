@@ -37,8 +37,6 @@ declare(strict_types=1);
 namespace Treo\Composer;
 
 use Composer\Installer\PackageEvent;
-use Treo\Core\Application;
-use Treo\Core\Container;
 
 /**
  * Class Cmd
@@ -57,7 +55,7 @@ class Cmd
             define('CORE_PATH', dirname(dirname(__DIR__)));
         }
 
-        (new PostUpdate())->setContainer(self::getContainer())->run();
+        (new PostUpdate())->run();
     }
 
     /**
@@ -156,15 +154,5 @@ class Cmd
         file_put_contents("$dirPath/{$data['extra']['treoId']}.txt", $content);
 
         return true;
-    }
-
-    /**
-     * @return Container
-     */
-    protected static function getContainer(): Container
-    {
-        require_once 'vendor/autoload.php';
-
-        return (new Application())->getContainer();
     }
 }
