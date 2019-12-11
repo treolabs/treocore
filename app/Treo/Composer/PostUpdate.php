@@ -195,34 +195,22 @@ class PostUpdate
             'delete'  => [],
         ];
 
+        // parse packages
+        $packages = self::getComposerLockTreoPackages(ComposerService::$composerLock);
+
         // get diff path
         $diffPath = Cmd::DIFF_PATH;
 
-        // for installed
-        foreach (Util::scandir("$diffPath/install") as $file) {
-            $result['install'][] = [
-                'id'      => str_replace('.txt', '', $file),
-                'package' => file_get_contents("$diffPath/install/$file")
-            ];
-        }
-
-        // for updated
-        foreach (Util::scandir("$diffPath/update") as $file) {
-            $parts = explode('_', file_get_contents("$diffPath/update/$file"));
-            $result['update'][] = [
-                'id'      => str_replace('.txt', '', $file),
-                'package' => $parts[0],
-                'from'    => $parts[1],
-                'to'      => $parts[2]
-            ];
-        }
-
-        // for deleted
-        foreach (Util::scandir("$diffPath/delete") as $file) {
-            $result['delete'][] = [
-                'id'      => str_replace('.txt', '', $file),
-                'package' => file_get_contents("$diffPath/delete/$file")
-            ];
+        foreach (Util::scandir($diffPath) as $type) {
+            foreach (Util::scandir("$diffPath/$type") as $file) {
+                $parts = explode('_', file_get_contents("$diffPath/$type/$file"));
+                $result[$type][] = [
+                    'id'      => str_replace('.txt', '', $file),
+                    'package' => (isset($packages[$parts[0]])) ? $packages[$parts[0]] : null,
+                    'from'    => (isset($parts[1])) ? $parts[1] : null,
+                    'to'      => (isset($parts[2])) ? $parts[2] : null
+                ];
+            }
         }
 
         return $result;
@@ -372,7 +360,7 @@ class PostUpdate
 
         if ($status === 'update') {
             $oldVersion = preg_replace("/[^0-9]/", '', $module['from']);
-            $newVersion = preg_replace("/[^0-9]/", '', $module["package"]["version"]);
+            $newVersion = preg_replace("/[^0-9]/", '', $module['to']);
 
             if ($oldVersion < $newVersion) {
                 $keyLang = $nameModule == 'System' ? 'System update' : 'Module update';
@@ -383,7 +371,7 @@ class PostUpdate
             $message = $language->translate($keyLang, 'notifications', 'Composer');
             $message = str_replace('{module}', $nameModule, $message);
             $message = str_replace('{from}', $module['from'], $message);
-            $message = str_replace('{to}', $module["package"]["version"], $message);
+            $message = str_replace('{to}', $module['to'], $message);
         } else {
             $message = $language->translate("Module {$status}", 'notifications', 'Composer');
             $message = str_replace('{module}', $nameModule, $message);
