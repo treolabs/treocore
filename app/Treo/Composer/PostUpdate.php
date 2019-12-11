@@ -36,7 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\Application;
 use Treo\Core\Container;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\ORM\EntityManager;
@@ -58,9 +57,16 @@ class PostUpdate
 
     /**
      * PostUpdate constructor.
+     *
+     * @param Container $container
      */
-    public function __construct()
+    public function __construct(Container $container)
     {
+        // define path to core app
+        if (!defined('CORE_PATH')) {
+            define('CORE_PATH', dirname(dirname(__DIR__)));
+        }
+
         // copy root files
         self::copyRootFiles();
 
@@ -81,11 +87,8 @@ class PostUpdate
         Util::removedir('data/cache');
         echo 'Done!' . PHP_EOL;
 
-        // load classes
-        require_once 'vendor/autoload.php';
-
         // set container
-        $this->container = (new Application())->getContainer();
+        $this->container = $container;
     }
 
     /**
@@ -199,7 +202,7 @@ class PostUpdate
         $packages = self::getComposerLockTreoPackages(ComposerService::$composerLock);
 
         // get diff path
-        $diffPath = Cmd::DIFF_PATH;
+        $diffPath = \TreoComposer::DIFF_PATH;
 
         foreach (Util::scandir($diffPath) as $type) {
             foreach (Util::scandir("$diffPath/$type") as $file) {
