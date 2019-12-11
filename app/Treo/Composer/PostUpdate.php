@@ -202,7 +202,7 @@ class PostUpdate
         $packages = self::getComposerLockTreoPackages(ComposerService::$composerLock);
 
         // get diff path
-        $diffPath = \TreoComposer::DIFF_PATH;
+        $diffPath = 'data/composer-diff';
 
         foreach (Util::scandir($diffPath) as $type) {
             foreach (Util::scandir("$diffPath/$type") as $file) {
