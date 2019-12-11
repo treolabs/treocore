@@ -53,6 +53,7 @@ class Cmd
      */
     public static function preUpdate(): void
     {
+        // delete diff cache
         Util::removedir(self::DIFF_PATH);
     }
 
@@ -66,7 +67,11 @@ class Cmd
             define('CORE_PATH', dirname(dirname(__DIR__)));
         }
 
+        // run posy update actions
         (new PostUpdate())->run();
+
+        // delete diff cache
+        Util::removedir(self::DIFF_PATH);
     }
 
     /**
