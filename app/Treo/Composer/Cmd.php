@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Composer\Installer\PackageEvent;
 use Treo\Core\Application;
 use Treo\Core\Container;
 
@@ -57,6 +58,80 @@ class Cmd
         }
 
         (new PostUpdate())->setContainer(self::getContainer())->run();
+    }
+
+    /**
+     * After package install
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public static function postPackageInstall(PackageEvent $event): void
+    {
+        self::createPackageActionFile($event, 'install');
+    }
+
+    /**
+     * Before package uninstall
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public static function prePackageUninstall(PackageEvent $event): void
+    {
+        self::createPackageActionFile($event, 'delete');
+    }
+
+    /**
+     * @param PackageEvent $event
+     * @param string       $dir
+     *
+     * @return bool
+     */
+    protected static function createPackageActionFile(PackageEvent $event, string $dir): bool
+    {
+        // get package name
+        try {
+            $name = $event->getOperation()->getPackage()->getName();
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        // prepare root path
+        $rootPath = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
+
+        // find composer.json file
+        $file = "$rootPath/vendor/$name/composer.json";
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        // try to parse composer.json file
+        try {
+            $data = json_decode(file_get_contents($file), true);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        // exit if is not treo package
+        if (!isset($data['extra']['treoId'])) {
+            return false;
+        }
+
+        // prepare dir path
+        $dirPath = "$rootPath/data/composer-diff/$dir";
+
+        // create dir if it needs
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0755, true);
+        }
+
+        // save
+        file_put_contents("$dirPath/{$data['extra']['treoId']}.txt", '1');
+
+        return true;
     }
 
     /**
