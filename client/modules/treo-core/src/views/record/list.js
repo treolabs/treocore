@@ -212,6 +212,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 let view = this.getMetadata().get(['clientDefs', this.scope, 'massRelationView']) || this.massRelationView;
                 this.createView('dialog', view, {
                     model: model,
+                    mainCollection: this.collection,
                     multiple: true,
                     createButton: false,
                     scope: (foreignEntities[0].addRelationCustomDefs || {}).entity || foreignEntities[0].entity,

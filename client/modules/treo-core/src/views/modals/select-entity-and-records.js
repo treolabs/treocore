@@ -38,30 +38,37 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
 
         selectBoolFilterList: [],
 
-        boolFilterData: {},
+        selectBoolFilterData: {},
 
-        getBoolFilterData() {
+        getSelectFilters() {
+            //leave empty
+        },
+
+        getSelectBoolFilterList() {
+            const mainEntity = this.model.get('mainEntity');
+            const selectedLink = this.model.get('selectedLink');
+            const keyPath = ['clientDefs', mainEntity, 'relationshipPanels', selectedLink, 'selectBoolFilterList'];
+
+            return this.selectBoolFilterList = this.getMetadata().get(keyPath) || [];
+        },
+
+        getSelectBoolFilterData() {
             let data = {};
             this.selectBoolFilterList.forEach(item => {
-                if (typeof this.boolFilterData[item] === 'function') {
-                    data[item] = this.boolFilterData[item].call(this);
+                if (typeof this.selectBoolFilterData[item] === 'function') {
+                    data[item] = this.selectBoolFilterData[item].call(this);
                 }
             });
+
             return data;
         },
 
-        getSelectFilters() {},
-
-        getSelectBoolFilterList() {
-            return this.selectBoolFilterList;
-        },
-
         getSelectPrimaryFilterName() {
-            return this.selectPrimaryFilterName;
+            //leave empty
         },
 
         setup() {
-            this.updateBoolParams();
+            // this.updateBoolParams();
 
             Dep.prototype.setup.call(this);
 
@@ -113,18 +120,49 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
             });
         },
 
-        updateBoolParams() {
+        setupPipelines() {
             const mainEntity = this.model.get('mainEntity');
             const selectedLink = this.model.get('selectedLink');
-            const keyPath = ['clientDefs', mainEntity, 'relationshipPanels', selectedLink, 'selectBoolFilterList'];
+            const keyPath = ['clientDefs', mainEntity, 'addRelationPipelines', selectedLink];
 
-            this.selectBoolFilterList = this.getMetadata().get(keyPath) || [];
-            this.boolFilterData = {};
+            const pipelines = this.getMetadata().get(keyPath);
 
+            if (pipelines) {
+                this.pipelines = _.extend({}, this.pipelines, {
+                    actionUpdateFilters: keyPath || []
+                });
+            }
+        },
+
+        updateBoolParams(callback) {
             this.filters = this.options.filters = this.getSelectFilters();
             this.boolFilterList = this.options.boolFilterList = this.getSelectBoolFilterList();
-            this.boolFilterData = this.options.boolFilterData = this.getBoolFilterData();
+            this.boolFilterData = this.options.boolFilterData = this.getSelectBoolFilterData();
             this.primaryFilterName = this.options.primaryFilterName = this.getSelectPrimaryFilterName();
+
+            this.setupPipelines();
+
+            if (Object.keys(this.pipelines || {}).length) {
+                this.runPipeline('actionUpdateFilters', {
+                    filters: this.filters,
+                    boolFilterList: this.boolFilterList,
+                    boolFilterData: this.boolFilterData,
+                    primaryFilterName: this.primaryFilterName,
+                    callback: callback  //required
+                });
+            } else {
+                callback();
+            }
+        },
+
+        loadSearch() {
+            this.updateBoolParams(() => Dep.prototype.loadSearch.call(this));
+        },
+
+        loadList() {
+            Dep.prototype.loadList.call(this);
+
+            this.listenToOnce(this.collection, 'sync', () => this.notify(false));
         },
 
         getDataForUpdateRelation(foreignIds, viewModel) {
@@ -171,7 +209,8 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                     }
                 },
                 mode: 'edit'
-            }, view => {});
+            }, view => {
+            });
         },
 
         getEntityFromSelectedLink() {
@@ -185,6 +224,7 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
                 return;
             }
 
+            this.notify('Loading...');
             let entity = this.getEntityFromSelectedLink();
             this.scope = entity;
             this.collection.name = this.collection.urlRoot = this.collection.url = entity;
@@ -193,7 +233,6 @@ Espo.define('treo-core:views/modals/select-entity-and-records', 'views/modals/se
             this.collection.asc = collectionDefs.asc;
             this.getModelFactory().getSeed(entity, seed => this.collection.model = seed);
 
-            this.updateBoolParams();
             this.loadSearch();
             this.loadList();
         },
