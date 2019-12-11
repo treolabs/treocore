@@ -69,7 +69,30 @@ class Cmd
      */
     public static function postPackageInstall(PackageEvent $event): void
     {
-        self::createPackageActionFile($event, 'install');
+        try {
+            $name = $event->getOperation()->getPackage()->getName();
+        } catch (\Throwable $e) {
+        }
+
+        if (isset($name)) {
+            self::createPackageActionFile($name, 'install', '1');
+        }
+    }
+
+    /**
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public static function postPackageUpdate(PackageEvent $event): void
+    {
+        // get composer update pretty line
+        $prettyLine = (string)$event->getOperation();
+
+        preg_match_all("/^Updating (.*) \((.*)\) to (.*) \((.*)\)$/", $prettyLine, $matches);
+        if (count($matches) == 5) {
+            self::createPackageActionFile($matches[1][0], 'update', $matches[2][0] . '_' . $matches[4][0]);
+        }
     }
 
     /**
@@ -81,24 +104,25 @@ class Cmd
      */
     public static function prePackageUninstall(PackageEvent $event): void
     {
-        self::createPackageActionFile($event, 'delete');
-    }
-
-    /**
-     * @param PackageEvent $event
-     * @param string       $dir
-     *
-     * @return bool
-     */
-    protected static function createPackageActionFile(PackageEvent $event, string $dir): bool
-    {
-        // get package name
         try {
             $name = $event->getOperation()->getPackage()->getName();
         } catch (\Throwable $e) {
-            return false;
         }
 
+        if (isset($name)) {
+            self::createPackageActionFile($name, 'delete', '1');
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param string $dir
+     * @param string $content
+     *
+     * @return bool
+     */
+    protected static function createPackageActionFile(string $name, string $dir, string $content): bool
+    {
         // prepare root path
         $rootPath = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
 
@@ -129,7 +153,7 @@ class Cmd
         }
 
         // save
-        file_put_contents("$dirPath/{$data['extra']['treoId']}.txt", '1');
+        file_put_contents("$dirPath/{$data['extra']['treoId']}.txt", $content);
 
         return true;
     }
