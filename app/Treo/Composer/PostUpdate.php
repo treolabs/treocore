@@ -375,8 +375,11 @@ class PostUpdate
         } else {
             $message = $language->translate("Module {$status}", 'notifications', 'Composer');
             $message = str_replace('{module}', $nameModule, $message);
-            $message = str_replace('{version}', $module["package"]["version"], $message);
+            if (isset($module["package"]["version"])) {
+                $message = str_replace('{version}', $module["package"]["version"], $message);
+            }
         }
+
         return $message;
     }
 
