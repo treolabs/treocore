@@ -117,9 +117,6 @@ class PostUpdate
             // run migrations
             $this->runMigrations();
         }
-
-        // store composer.lock file
-        file_put_contents('data/old-composer.lock', file_get_contents(ComposerService::$composerLock));
     }
 
     /**
@@ -159,52 +156,37 @@ class PostUpdate
      */
     protected function runMigrations(): void
     {
-        if (!empty($composerDiff = $this->getComposerLockDiff()) && !empty($composerDiff['update'])) {
-            foreach ($composerDiff['update'] as $row) {
-                if ($row['id'] == 'Treo') {
-                    $to = ComposerService::getCoreVersion();
-                } else {
-                    // get module
-                    $module = $this
-                        ->getContainer()
-                        ->get('moduleManager')
-                        ->getModule($row['id']);
-
-                    if (!empty($module)) {
-                        $to = $module->getVersion();
-                    }
-                }
-
-                if (!empty($to)) {
-                    // prepare name
-                    $name = $row['id'];
-                    if ($name == 'Treo') {
-                        $name = 'Core';
-                    }
-
-                    $from = ModuleManager::prepareVersion($row['from']);
-                    $to = ModuleManager::prepareVersion($to);
-
-                    echo "Migrate $name $from -> $to ... ";
-
-                    // run migration
-                    $this
-                        ->getContainer()
-                        ->get('migration')
-                        ->run($row['id'], $from, $to);
-
-                    echo 'Done!' . PHP_EOL;
-                }
+        foreach ($this->getComposerDiff()['update'] as $row) {
+            // prepare name
+            $name = $row['id'];
+            if ($name == 'Treo') {
+                $name = 'Core';
             }
+
+            // prepare version from
+            $from = ModuleManager::prepareVersion($row['from']);
+
+            // prepare version to
+            $to = ModuleManager::prepareVersion($row['to']);
+
+            echo "Migrate $name $from -> $to ... ";
+
+            // run migration
+            $this
+                ->getContainer()
+                ->get('migration')
+                ->run($row['id'], $from, $to);
+
+            echo 'Done!' . PHP_EOL;
         }
     }
 
     /**
-     * Get composer.lock diff
+     * Get composer diff
      *
      * @return array
      */
-    protected function getComposerLockDiff(): array
+    protected function getComposerDiff(): array
     {
         // prepare result
         $result = [
@@ -213,31 +195,34 @@ class PostUpdate
             'delete'  => [],
         ];
 
-        // prepare data
-        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
-        $newData = self::getComposerLockTreoPackages(ComposerService::$composerLock);
+        // get diff path
+        $diffPath = Cmd::DIFF_PATH;
 
-        foreach ($oldData as $package) {
-            if (!isset($newData[$package['name']])) {
-                $result['delete'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $package
-                ];
-            } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                $result['update'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $newData[$package['name']],
-                    'from'    => $package['version']
-                ];
-            }
+        // for installed
+        foreach (Util::scandir("$diffPath/install") as $file) {
+            $result['install'][] = [
+                'id'      => str_replace('.txt', '', $file),
+                'package' => file_get_contents("$diffPath/install/$file")
+            ];
         }
-        foreach ($newData as $package) {
-            if (!isset($oldData[$package['name']])) {
-                $result['install'][] = [
-                    'id'      => $package['extra']['treoId'],
-                    'package' => $package
-                ];
-            }
+
+        // for updated
+        foreach (Util::scandir("$diffPath/update") as $file) {
+            $parts = explode('_', file_get_contents("$diffPath/update/$file"));
+            $result['update'][] = [
+                'id'      => str_replace('.txt', '', $file),
+                'package' => $parts[0],
+                'from'    => $parts[1],
+                'to'      => $parts[2]
+            ];
+        }
+
+        // for deleted
+        foreach (Util::scandir("$diffPath/delete") as $file) {
+            $result['delete'][] = [
+                'id'      => str_replace('.txt', '', $file),
+                'package' => file_get_contents("$diffPath/delete/$file")
+            ];
         }
 
         return $result;
@@ -283,7 +268,7 @@ class PostUpdate
     protected function initEvents(): void
     {
         // get diff
-        $composerDiff = $this->getComposerLockDiff();
+        $composerDiff = $this->getComposerDiff();
 
         // call afterInstall event
         if (!empty($composerDiff['install'])) {
@@ -327,7 +312,7 @@ class PostUpdate
      */
     protected function sendNotification(): void
     {
-        $composerDiff = $this->getComposerLockDiff();
+        $composerDiff = $this->getComposerDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
             echo 'Send update notifications to admin users... ';

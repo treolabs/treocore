@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Composer;
 
 use Composer\Installer\PackageEvent;
+use Treo\Core\Utils\Util;
 
 /**
  * Class Cmd
@@ -45,6 +46,16 @@ use Composer\Installer\PackageEvent;
  */
 class Cmd
 {
+    const DIFF_PATH = 'data/composer-diff';
+
+    /**
+     * Before update
+     */
+    public static function preUpdate(): void
+    {
+        Util::removedir(self::DIFF_PATH);
+    }
+
     /**
      * After update
      */
@@ -73,7 +84,7 @@ class Cmd
         }
 
         if (isset($name)) {
-            self::createPackageActionFile($name, 'install', '1');
+            self::createPackageActionFile($name, 'install');
         }
     }
 
@@ -108,7 +119,7 @@ class Cmd
         }
 
         if (isset($name)) {
-            self::createPackageActionFile($name, 'delete', '1');
+            self::createPackageActionFile($name, 'delete');
         }
     }
 
@@ -119,13 +130,10 @@ class Cmd
      *
      * @return bool
      */
-    protected static function createPackageActionFile(string $name, string $dir, string $content): bool
+    protected static function createPackageActionFile(string $name, string $dir, string $content = ''): bool
     {
-        // prepare root path
-        $rootPath = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
-
         // find composer.json file
-        $file = "$rootPath/vendor/$name/composer.json";
+        $file = "vendor/$name/composer.json";
         if (!file_exists($file)) {
             return false;
         }
@@ -143,12 +151,15 @@ class Cmd
         }
 
         // prepare dir path
-        $dirPath = "$rootPath/data/composer-diff/$dir";
+        $dirPath = self::DIFF_PATH . "/$dir";
 
         // create dir if it needs
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0755, true);
         }
+
+        // prepare content
+        $content = (empty($content)) ? $name : $name . '_' . $content;
 
         // save
         file_put_contents("$dirPath/{$data['extra']['treoId']}.txt", $content);
