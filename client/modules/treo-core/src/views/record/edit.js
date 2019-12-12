@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,33 +31,12 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/record/edit', 'class-replace!treo-core:views/record/edit', function (Dep) {
 
-namespace Treo\Migrations;
+    return Dep.extend({
 
-use Treo\Core\Migration\AbstractMigration;
-use Treo\Core\Utils\Util;
+        template: 'treo-core:record/edit'
 
-/**
- * Migration class for version 3.21.0
- *
- * @author r.ratsun@treolabs.com
- */
-class V3Dot21Dot0 extends AbstractMigration
-{
-    /**
-     * @inheritDoc
-     */
-    public function up(): void
-    {
-        Util::removedir('data/upload/thumbs');
-    }
+    });
 
-    /**
-     * @inheritDoc
-     */
-    public function down(): void
-    {
-        Util::removedir('data/upload/thumbs');
-    }
-}
+});

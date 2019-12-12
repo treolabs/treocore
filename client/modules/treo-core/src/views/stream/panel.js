@@ -34,6 +34,22 @@
 Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
     Dep => Dep.extend({
 
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.events['blur textarea.note'] = e => {
+                const attachmentsIds = this.seed.get('attachmentsIds') || [];
+
+                if (this.$textarea.val() !== '') {
+                    return;
+                }
+
+                if (!attachmentsIds.length && !this.getView('attachments').isUploading) {
+                    this.disablePostingMode();
+                }
+            }
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
@@ -58,7 +74,31 @@ Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/strea
                     });
                 }, 500);
             });
-        }
+        },
+
+        enablePostingMode: function () {
+            this.$el.find('.buttons-panel').removeClass('hide');
+
+            if (!this.postingMode) {
+                if (this.$textarea.val() && this.$textarea.val().length) {
+                    this.controlTextareaHeight();
+                }
+            }
+
+            this.postingMode = true;
+        },
+
+        disablePostingMode: function () {
+            this.postingMode = false;
+            this.$textarea.val('');
+            this.$el.find('.buttons-panel').addClass('hide');
+
+            if (this.hasView('attachments')) {
+                this.getView('attachments').empty();
+            }
+
+            this.$textarea.prop('rows', 1);
+        },
 
     })
 );

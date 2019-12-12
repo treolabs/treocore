@@ -68,6 +68,9 @@
   "views/record/detail-bottom": [
     "treo-core"
   ],
+  "views/record/edit": [
+    "treo-core"
+  ],
   "views/record/edit-side": [
     "treo-core"
   ],
@@ -186,6 +189,12 @@
     "treo-core"
   ],
   "views/stream/panel": [
+    "treo-core"
+  ],
+  "views/stream/record/edit": [
+    "treo-core"
+  ],
+  "views/admin/layouts/detail": [
     "treo-core"
   ]
 }

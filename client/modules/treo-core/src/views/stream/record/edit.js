@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -32,33 +31,32 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+Espo.define('treo-core:views/stream/record/edit', 'class-replace!treo-core:views/stream/record/edit', function (Dep) {
 
-namespace Treo\Migrations;
+    return Dep.extend({
+        setup() {
+            Dep.prototype.setup.call(this);
 
-use Treo\Core\Migration\AbstractMigration;
-use Treo\Core\Utils\Util;
+            this.events['blur textarea[name="post"]'] = e => {
+                if (this.getFieldView('post') && this.getFieldView('post').$element.val() == '') {
+                    if (!(this.model.get('attachmentsIds') || []).length) {
+                        this.disablePostingMode();
+                    }
+                }
+            }
+        },
 
-/**
- * Migration class for version 3.21.0
- *
- * @author r.ratsun@treolabs.com
- */
-class V3Dot21Dot0 extends AbstractMigration
-{
-    /**
-     * @inheritDoc
-     */
-    public function up(): void
-    {
-        Util::removedir('data/upload/thumbs');
-    }
+        disablePostingMode: function () {
+            this.postingMode = false;
+            this.$el.find('.post-control').addClass('hidden');
+            this.setConfirmLeaveOut(false);
+            this.getFieldView('post').$element.prop('rows', 1);
+        },
 
-    /**
-     * @inheritDoc
-     */
-    public function down(): void
-    {
-        Util::removedir('data/upload/thumbs');
-    }
-}
+        enablePostingMode: function () {
+            this.$el.find('.post-control').removeClass('hidden');
+            this.postingMode = true;
+        },
+
+    })
+});

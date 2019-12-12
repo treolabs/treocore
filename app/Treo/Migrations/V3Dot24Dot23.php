@@ -39,10 +39,10 @@ namespace Treo\Migrations;
 use Treo\Core\Migration\AbstractMigration;
 
 /**
- * Migration class for version 3.24.22
+ * Migration class for version 3.24.23
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot24Dot22 extends V3Dot23Dot29
+class V3Dot24Dot23 extends V3Dot23Dot29
 {
 }
