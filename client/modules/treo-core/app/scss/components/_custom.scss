@@ -39,26 +39,6 @@ a:hover, a:focus {
 }
 
 
-.panel {
-  box-shadow: none;
-  border-top-width: 1px;
-  border-bottom-width: 0
-}
-
-.panel-default {
-  background: #fff;
-  border-color: #f5f5f5
-}
-
-.panel-title {
-  text-transform: uppercase;
-  font-size: 14px;
-}
-
-.panel-heading {
-  padding: 12px 10px
-}
-
 .page-header h3 {
   font-size: 28px;
   color: #000
@@ -233,23 +213,8 @@ table.table > thead th > a {
   min-height: 30px
 }
 
-
-
 .page-header {
   padding-bottom: 0;
-}
-
-#header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a {
-  background: red !important
-}
-
-#header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
-  color: #fff !important;
-  background: #424242 !important
-}
-
-#header .navbar-inverse.navbar[data-orientation="vertical"] .navbar-nav .active > a {
-  background: #616161 !important
 }
 
 #header .navbar-right .global-search-container a.global-searcy-button:hover {
@@ -259,10 +224,6 @@ table.table > thead th > a {
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
   background-color: #ececec;
   color: #fff
-}
-
-.navbar-inverse .navbar-nav > .more.open > a, .navbar-inverse .navbar-nav > .more.open > a:hover, .navbar-inverse .navbar-nav > .more.open > a:focus {
-  background-color: #616161;
 }
 
 .row.dashlets .panel-default {
@@ -303,16 +264,21 @@ table.table > thead th > a {
     .header-items {
       display: inline-block;
       float: right;
-      margin-left: 5px;
+      margin-left: 4px;
       margin-bottom: 10px;
       & > a.action {
-
+        float: left;
+        margin: 0;
+        margin-right: 4px;
+        line-height: 21px;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
     .pull-right {
       display: flex;
       justify-content: flex-end;
-      width: 100%;
       min-width: 510px;
       .filter-cell {
         &:first-child {
@@ -380,6 +346,7 @@ table.table > thead th > a {
           display: inline-block;
           height: 100%;
           overflow: hidden;
+          line-height: 21px;
         }
       }
     }
@@ -1741,7 +1708,6 @@ td[data-name="draggableIcon"] {
 
 .bottom .panel .group-container > .group > .group-name {
   padding: 10px 0 10px 10px;
-  border-bottom: 1px solid #e8eced;
 }
 
 .bottom .panel .group-container > .group > .group-name .btn {

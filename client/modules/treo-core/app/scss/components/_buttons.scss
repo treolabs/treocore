@@ -1,9 +1,5 @@
-.btn-default {
-  background-color: $bg-white;
-  border-color: $border-btn-default;
-  &:hover {
-    background-color: $border-btn-default;
-  }
+.label {
+  padding: .2em .6em .3em;
 }
 
 .btn {
@@ -14,7 +10,30 @@
       margin-right: 5px;
     }
   }
+  &:active,
+  &.active {
+    box-shadow: none !important;
+  }
 }
+
+
+.btn-default {
+  background-color: $bg-white;
+  border-color: $border-btn-default;
+  color: $text-btn-black;
+  &:hover {
+    background-color: $border-btn-default;
+  }
+  &:hover,
+  &:focus,
+  &.focus,
+  &:active,
+  &.active {
+    background-color: $btn-bg-blue;
+    border-color: $btn-bg-blue;
+  }
+}
+
 .btn-primary,
 .search-row .filters-button,
 .show-more > .btn-block,
@@ -29,6 +48,9 @@
   background-color: $btn-blue;
   border-color: $btn-blue;
   color: #fff;
+}
+.show-more > .btn-block {
+  border-radius: 3px;
 }
 
 .btn-primary:hover,
@@ -62,19 +84,8 @@
   border-color: $btn-bg-blue;
 }
 
-.btn-default:active,
-.btn-default.active,
 .open > .dropdown-toggle.btn-default {
   color: $text-blue;
-  background-color: $btn-bg-blue;
-  border-color: $btn-bg-blue;
-}
-.btn-default:hover {
-  background-color: $btn-bg-blue;
-  border-color: $btn-bg-blue;
-}
-.btn-default:focus,
-.btn-default.focus {
   background-color: $btn-bg-blue;
   border-color: $btn-bg-blue;
 }
@@ -83,3 +94,27 @@
   width: auto;
   padding: 6px 10px;
 }
+
+.btn-group,
+.btn-group-vertical {
+  & > .btn {
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      z-index: 0;
+    }
+  }
+  &.open .dropdown-toggle {
+    box-shadow: none;
+  }
+}
+
+.input-group > .input-group-btn > .btn:hover,
+.input-group > .input-group-btn > .btn:focus,
+.input-group > .input-group-btn > .btn.active {
+  z-index: 2
+}
+
+
+

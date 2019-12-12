@@ -1,0 +1,7 @@
+.note-editor {
+  .panel-heading {
+    & > .btn-group {
+      position: relative;
+    }
+  }
+}
