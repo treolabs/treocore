@@ -251,8 +251,12 @@ class PostUpdate
             'delete'  => [],
         ];
 
+        if (!file_exists('data/old-composer.lock')) {
+            return $result;
+        }
+
         // prepare data
-        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
+        $oldData = self::getComposerLockTreoPackages('data/old-composer.lock');
         $newData = self::getComposerLockTreoPackages(ComposerService::$composerLock);
 
         foreach ($oldData as $package) {
