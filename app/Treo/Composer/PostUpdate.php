@@ -111,15 +111,15 @@ class PostUpdate
             // rebuild
             $this->rebuild();
 
-            // init events
-            $this->initEvents();
-
             //send notification
             $this->sendNotification();
 
             // run migrations
             $this->runMigrations();
         }
+
+        // init events
+        $this->initEvents();
     }
 
     /**
