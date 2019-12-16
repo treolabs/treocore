@@ -391,18 +391,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                     url: `../../data/treo-composer.log`,
                     cache: false,
                     success: response => {
-                        this.log = response;
-
-                        let replace = [
-                            '> ComposerCmd::preUpdate',
-                            '> ComposerCmd::postUpdate',
-                            '> ComposerCmd::postPackageInstall',
-                            '> ComposerCmd::postPackageUpdate',
-                            '> ComposerCmd::prePackageUninstall'
-                        ];
-
-                        replace.forEach(item => this.log = this.log.replace(item, '').trim());
-
+                        this.log = response.trim();
                         this.trigger('log-updated');
                         this.checkLog();
                     },

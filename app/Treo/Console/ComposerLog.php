@@ -66,22 +66,8 @@ class ComposerLog extends AbstractConsole
                 $status = 0;
             }
 
-            // prepare replace keys
-            $replace = [
-                '{{success}}',
-                '{{error}}',
-                '> ComposerCmd::preUpdate',
-                '> ComposerCmd::postUpdate',
-                '> ComposerCmd::postPackageInstall',
-                '> ComposerCmd::postPackageUpdate',
-                '> ComposerCmd::prePackageUninstall'
-            ];
-
             // prepare content
-            foreach ($replace as $v) {
-                $content = str_replace($v, '', $content);
-            }
-            $content = \trim($content);
+            $content = \trim(str_replace(['{{success}}', '{{error}}'], ['', ''], $content));
 
             // prepare createdById
             $createdById = 'system';
