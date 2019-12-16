@@ -1,10 +1,6 @@
 <?php
 /**
- * This file is part of EspoCRM and/or TreoCore.
- *
- * EspoCRM - Open Source CRM application.
- * Copyright (C) 2014-2019 Yuri Kuznetsov, Taras Machyshyn, Oleksiy Avramenko
- * Website: http://www.espocrm.com
+ * This file is part of TreoCore.
  *
  * TreoCore is EspoCRM-based Open Source application.
  * Copyright (C) 2017-2019 TreoLabs GmbH
