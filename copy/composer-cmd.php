@@ -173,5 +173,3 @@ class ComposerCmd
         return true;
     }
 }
-
-
