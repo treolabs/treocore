@@ -196,5 +196,8 @@
   ],
   "views/admin/layouts/detail": [
     "treo-core"
+  ],
+  "views/admin/layouts/base": [
+    "treo-core"
   ]
 }

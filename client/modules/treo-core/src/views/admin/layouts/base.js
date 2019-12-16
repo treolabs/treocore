@@ -31,17 +31,17 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/stream/record/edit', 'class-replace!treo-core:views/stream/record/edit', function (Dep) {
+Espo.define('treo-core:views/admin/layouts/base', 'class-replace!treo-core:views/admin/layouts/base',
+    Dep => Dep.extend({
 
-    return Dep.extend({
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            delete this.events['focus textarea[name="post"]'];
-
-            this.events['click textarea[name="post"]'] = e => {
-                this.enablePostingMode();
+        events: _.extend({}, Dep.prototype.events, {
+            'click button[data-action="save"]': function () {
+                this.disableButtons();
+                this.notify('Saving...');
+                if (!this.save(this.enableButtons.bind(this))) {
+                    this.notify(false)
+                }
             }
-        },
+        })
     })
-});
+);
