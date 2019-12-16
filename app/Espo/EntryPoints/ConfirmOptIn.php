@@ -29,12 +29,11 @@
 
 namespace Espo\EntryPoints;
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
 use \Espo\Core\Exceptions\BadRequest;
 use \Espo\Core\Exceptions\Error;
+use Treo\Core\EntryPoints\AbstractEntryPoint;
 
-class ConfirmOptIn extends \Espo\Core\EntryPoints\Base
+class ConfirmOptIn extends AbstractEntryPoint
 {
     public static $authRequired = false;
 

@@ -62,7 +62,8 @@ TreoCore was created based on EspoCRM. It uses:
 * PHP7 - pure PHP, without any frameworks to achieve the best possible performance,
 * backbone.js - framework for SPA Frontend,
 * Composer - dependency manager for PHP,
-* Some libraries from Zend Framework 3,
+* Some libraries from Zend Framework,
+* Some libraries from Symfony Framework,
 * MySQL 5.
 
 ### Integrations
