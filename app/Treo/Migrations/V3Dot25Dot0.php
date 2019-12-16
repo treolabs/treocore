@@ -51,7 +51,7 @@ class V3Dot25Dot0 extends AbstractMigration
     public function up(): void
     {
         // get data
-        $data = $this->getComposerData();
+        $data = json_decode(file_get_contents('composer.json'), true);
 
         // prepare
         $data['require']['treolabs/treocore'] = '^3.25.0';
@@ -65,28 +65,15 @@ class V3Dot25Dot0 extends AbstractMigration
         $data['autoload'] = ['classmap' => ['composer-cmd.php']];
 
         // save new composer data
-        $this->setComposerData($data);
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        // copy to stable
+        copy('composer.json', 'data/stable-composer.json');
 
         // copy composer-cmd.php file
         $file = 'vendor/treolabs/treocore/copy/composer-cmd.php';
         if (file_exists($file)) {
             copy($file, 'composer-cmd.php');
         }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getComposerData(): array
-    {
-        return json_decode(file_get_contents('composer.json'), true);
-    }
-
-    /**
-     * @param array $data
-     */
-    protected function setComposerData(array $data): void
-    {
-        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 }
