@@ -40,7 +40,7 @@ namespace Treo\Composer;
  * Class Cmd
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
- * @deprecated
+ * @deprecated 16.12.2019
  */
 class Cmd
 {
