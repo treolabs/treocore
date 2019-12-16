@@ -259,13 +259,16 @@ class PostUpdate
             if (!isset($newData[$package['name']])) {
                 $result['delete'][] = [
                     'id'      => $package['extra']['treoId'],
-                    'package' => $package
+                    'package' => $package,
+                    'from'    => null,
+                    'to'      => null
                 ];
             } elseif ($package['version'] != $newData[$package['name']]['version']) {
                 $result['update'][] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $newData[$package['name']],
-                    'from'    => $package['version']
+                    'from'    => $package['version'],
+                    'to'      => $newData[$package['name']]['version']
                 ];
             }
         }
@@ -273,7 +276,9 @@ class PostUpdate
             if (!isset($oldData[$package['name']])) {
                 $result['install'][] = [
                     'id'      => $package['extra']['treoId'],
-                    'package' => $package
+                    'package' => $package,
+                    'from'    => null,
+                    'to'      => null
                 ];
             }
         }
