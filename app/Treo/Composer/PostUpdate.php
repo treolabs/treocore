@@ -57,9 +57,16 @@ class PostUpdate
     private $container;
 
     /**
-     * PostUpdate constructor.
+     * @var bool
      */
-    public function __construct()
+    private $byLockFile;
+
+    /**
+     * PostUpdate constructor.
+     *
+     * @param bool $byLockFile
+     */
+    public function __construct(bool $byLockFile = false)
     {
         // define path to core app
         if (!defined('CORE_PATH')) {
@@ -88,6 +95,9 @@ class PostUpdate
 
         // set container
         $this->container = (new App())->getContainer();
+
+        // find diff by lock file ?
+        $this->byLockFile = $byLockFile;
     }
 
     /**
@@ -119,6 +129,9 @@ class PostUpdate
 
         // init events
         $this->initEvents();
+
+        // store composer.lock file
+        file_put_contents('data/old-composer.lock', file_get_contents(ComposerService::$composerLock));
     }
 
     /**
@@ -190,6 +203,10 @@ class PostUpdate
      */
     protected function getComposerDiff(): array
     {
+        if ($this->byLockFile) {
+            return $this->getComposerLockDiff();
+        }
+
         // prepare result
         $result = [
             'install' => [],
@@ -211,6 +228,50 @@ class PostUpdate
                     'package' => (isset($packages[$parts[0]])) ? $packages[$parts[0]] : null,
                     'from'    => (isset($parts[1])) ? $parts[1] : null,
                     'to'      => (isset($parts[2])) ? $parts[2] : null
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get composer.lock diff
+     *
+     * @return array
+     */
+    protected function getComposerLockDiff(): array
+    {
+        // prepare result
+        $result = [
+            'install' => [],
+            'update'  => [],
+            'delete'  => [],
+        ];
+
+        // prepare data
+        $oldData = self::getComposerLockTreoPackages("data/old-composer.lock");
+        $newData = self::getComposerLockTreoPackages(ComposerService::$composerLock);
+
+        foreach ($oldData as $package) {
+            if (!isset($newData[$package['name']])) {
+                $result['delete'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $package
+                ];
+            } elseif ($package['version'] != $newData[$package['name']]['version']) {
+                $result['update'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $newData[$package['name']],
+                    'from'    => $package['version']
+                ];
+            }
+        }
+        foreach ($newData as $package) {
+            if (!isset($oldData[$package['name']])) {
+                $result['install'][] = [
+                    'id'      => $package['extra']['treoId'],
+                    'package' => $package
                 ];
             }
         }
