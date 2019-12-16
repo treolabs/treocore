@@ -54,6 +54,7 @@ class V3Dot25Dot0 extends AbstractMigration
         $data = $this->getComposerData();
 
         // prepare
+        $data['require']['treolabs/treocore'] = '^3.25.0';
         $data['scripts'] = [
             'pre-update-cmd'        => 'ComposerCmd::preUpdate',
             'post-update-cmd'       => 'ComposerCmd::postUpdate',
@@ -71,26 +72,6 @@ class V3Dot25Dot0 extends AbstractMigration
         if (file_exists($file)) {
             copy($file, 'composer-cmd.php');
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function down(): void
-    {
-        // get data
-        $data = $this->getComposerData();
-
-        // prepare
-        $data['scripts'] = [
-            'post-update-cmd' => 'Treo\\Composer\\Cmd::postUpdate'
-        ];
-        if (isset($data['autoload'])) {
-            unset($data['autoload']);
-        }
-
-        // save new composer data
-        $this->setComposerData($data);
     }
 
     /**
