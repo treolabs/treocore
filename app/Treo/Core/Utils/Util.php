@@ -47,6 +47,27 @@ use FilesystemIterator;
 class Util extends Base
 {
     /**
+     * @param string $dir
+     *
+     * @return array
+     */
+    public static function scandir(string $dir): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($dir) && is_dir($dir)) {
+            foreach (scandir($dir) as $item) {
+                if (!in_array($item, ['.', '..'])) {
+                    $result[] = $item;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Remove dir recursively
      *
      * @param string $dir
@@ -54,14 +75,11 @@ class Util extends Base
     public static function removedir(string $dir)
     {
         if (file_exists($dir) && is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($dir . "/" . $object)) {
-                        self::removedir($dir . "/" . $object);
-                    } else {
-                        unlink($dir . "/" . $object);
-                    }
+            foreach (self::scandir($dir) as $object) {
+                if (is_dir($dir . "/" . $object)) {
+                    self::removedir($dir . "/" . $object);
+                } else {
+                    unlink($dir . "/" . $object);
                 }
             }
             rmdir($dir);
@@ -104,6 +122,7 @@ class Util extends Base
      * Get count folders and files in folder
      *
      * @param $folder
+     *
      * @return int
      */
     public static function countItems($folder)
