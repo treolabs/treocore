@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
+use Treo\Core\Application as App;
 use Treo\Core\Container;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\ORM\EntityManager;
@@ -57,10 +58,8 @@ class PostUpdate
 
     /**
      * PostUpdate constructor.
-     *
-     * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct()
     {
         // define path to core app
         if (!defined('CORE_PATH')) {
@@ -88,7 +87,7 @@ class PostUpdate
         echo 'Done!' . PHP_EOL;
 
         // set container
-        $this->container = $container;
+        $this->container = (new App())->getContainer();
     }
 
     /**
