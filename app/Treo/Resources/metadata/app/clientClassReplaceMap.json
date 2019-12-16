@@ -194,6 +194,9 @@
   "views/stream/record/edit": [
     "treo-core"
   ],
+  "views/admin/layouts/detail": [
+    "treo-core"
+  ],
   "views/admin/layouts/base": [
     "treo-core"
   ]
