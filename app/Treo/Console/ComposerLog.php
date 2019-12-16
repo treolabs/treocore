@@ -81,6 +81,7 @@ class ComposerLog extends AbstractConsole
             foreach ($replace as $v) {
                 $content = str_replace($v, '', $content);
             }
+            $content = \trim($content);
 
             // prepare createdById
             $createdById = 'system';

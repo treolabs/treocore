@@ -401,7 +401,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                             '> ComposerCmd::prePackageUninstall'
                         ];
 
-                        replace.forEach(item => this.log = this.log.replace(item, ''));
+                        replace.forEach(item => this.log = this.log.replace(item, '').trim());
 
                         this.trigger('log-updated');
                         this.checkLog();
