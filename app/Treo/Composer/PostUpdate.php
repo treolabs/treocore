@@ -90,7 +90,7 @@ class PostUpdate
 
         // drop cache
         echo 'Clear cache... ';
-        Util::removedir('data/cache');
+        Util::removeDir('data/cache');
         echo 'Done!' . PHP_EOL;
 
         // set container
@@ -222,8 +222,8 @@ class PostUpdate
         // get diff path
         $diffPath = 'data/composer-diff';
 
-        foreach (Util::scandir($diffPath) as $type) {
-            foreach (Util::scandir("$diffPath/$type") as $file) {
+        foreach (Util::scanDir($diffPath) as $type) {
+            foreach (Util::scanDir("$diffPath/$type") as $file) {
                 $parts = explode('_', file_get_contents("$diffPath/$type/$file"));
                 $result[$type][] = [
                     'id'      => str_replace('.txt', '', $file),
@@ -598,7 +598,7 @@ class PostUpdate
             $src = dirname(dirname(dirname(__DIR__))) . '/copy';
             $dest = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
 
-            Util::copydir($src, $dest);
+            Util::copyDir($src, $dest);
         }
     }
 
@@ -608,12 +608,12 @@ class PostUpdate
     private function updateClientFiles(): void
     {
         // delete old
-        Util::removedir('client');
+        Util::removeDir('client');
 
         // copy new
-        Util::copydir(dirname(CORE_PATH) . '/client', 'client');
+        Util::copyDir(dirname(CORE_PATH) . '/client', 'client');
         foreach ($this->getContainer()->get('moduleManager')->getModules() as $module) {
-            Util::copydir($module->getClientPath(), 'client');
+            Util::copyDir($module->getClientPath(), 'client');
         }
     }
 

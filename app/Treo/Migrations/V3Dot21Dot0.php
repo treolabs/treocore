@@ -51,7 +51,7 @@ class V3Dot21Dot0 extends AbstractMigration
      */
     public function up(): void
     {
-        Util::removedir('data/upload/thumbs');
+        Util::removeDir('data/upload/thumbs');
     }
 
     /**
@@ -59,6 +59,6 @@ class V3Dot21Dot0 extends AbstractMigration
      */
     public function down(): void
     {
-        Util::removedir('data/upload/thumbs');
+        Util::removeDir('data/upload/thumbs');
     }
 }

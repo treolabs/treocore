@@ -53,7 +53,7 @@ class ComposerCmd
     {
         if (class_exists(Util::class)) {
             // delete diff cache
-            Util::removedir(self::DIFF_PATH);
+            Util::removeDir(self::DIFF_PATH);
         }
     }
 
