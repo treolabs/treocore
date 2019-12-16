@@ -59,7 +59,7 @@ class PostUpdate
     /**
      * @var bool
      */
-    private $byLockFile;
+    private $byLockFile = false;
 
     /**
      * PostUpdate constructor.
