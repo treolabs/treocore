@@ -76,6 +76,8 @@ class V3Dot25Dot0 extends AbstractMigration
             copy($file, 'composer-cmd.php');
         }
 
+        // reload composer daemon
+        copy('vendor/treolabs/treocore/copy/bin/treo-composer.sh', 'bin/treo-composer.sh');
         file_put_contents('data/process-kill.txt', '1');
     }
 }
