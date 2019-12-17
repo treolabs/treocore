@@ -319,9 +319,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             const ids = this.getIdsFromDom();
             const currIndex = ids.indexOf(id);
             if (currIndex > 0) {
-                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 1;
+                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 10;
             } else {
-                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 1;
+                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 10;
             }
             return value;
         },
