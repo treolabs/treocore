@@ -18,7 +18,7 @@ By default, the required fields are displayed in the `Field list` box, but you c
 
 ## Running Export
 
-To start exporting the data, click the `Export` button in the setup pop-up – the export file will be downloaded in the defined format.
+To start exporting the data, click the `Export` button in the setup pop-up â€“ the export file will be downloaded in the defined format.
 
 ## Export Permissions
 

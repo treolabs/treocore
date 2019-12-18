@@ -5,9 +5,9 @@ Stream is a separate TreoCore [entity](./what-is-treocore.md#concept-of-entity),
 > The stream display is enabled/disabled by the administrator for each entity separately, so if this feature is missing on any entity [detail view](./views-and-panels-core.md#detail-view) page, please, contact your administrator.
 
 TreoCore supports the following **types** of stream entries:
-- **Posts** – messages assigned to the current user by other system users, as well as his own messages posted in the stream, irregardless of the assignee.
-- **Updates** – notifications about changes in the [audited](./what-is-treocore-core.md#concept-of-data-auditing) fields of the user-related entries. *Please, note that entity fields are made audited only by the administrator.*
-- **All** – general changes in the user- or entity-related actions.
+- **Posts** â€“ messages assigned to the current user by other system users, as well as his own messages posted in the stream, irregardless of the assignee.
+- **Updates** â€“ notifications about changes in the [audited](./what-is-treocore-core.md#concept-of-data-auditing) fields of the user-related entries. *Please, note that entity fields are made audited only by the administrator.*
+- **All** â€“ general changes in the user- or entity-related actions.
 
 ## User Activity Stream
 
@@ -39,7 +39,7 @@ You can also attach a file (or multiple files) to your post by clicking the atta
 
 ![Post attachment](../../_assets/stream/post-attachment.jpg)
 
-Click the `Post` button – your message will appear on top of the stream list with all its details:
+Click the `Post` button â€“ your message will appear on top of the stream list with all its details:
 
 ![New post](../../_assets/stream/new-post.jpg)
 
