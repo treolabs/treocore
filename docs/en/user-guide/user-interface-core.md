@@ -6,19 +6,19 @@ The user interface (UI) includes all visible elements users see and interact wit
 
 The following elements make up the TreoCore user interface:
 
-- [**Navigation Menu**](#navigation-menu) – to navigate through available entities.
-- [**Taskbar**](#taskbar) – to help the user interact with the TreoCore system in a more efficient way; additional information or actions are displayed here. 
-- [**Search and Filtering Panel**](./search-and-filtering-core.md) – to search and filter within one entity or its related entities.
+- [**Navigation Menu**](#navigation-menu) â€“ to navigate through available entities.
+- [**Taskbar**](#taskbar) â€“ to help the user interact with the TreoCore system in a more efficient way; additional information or actions are displayed here. 
+- [**Search and Filtering Panel**](./search-and-filtering-core.md) â€“ to search and filter within one entity or its related entities.
 
 Within the TreoCore system your information may be presented in various ways:
 
-- [**List View**](./views-and-panels-core.md#list-view) – to view the lists of entity records.
-- [**Detail View**](./views-and-panels-core.md#detail-view) – to view the entity record details.
-- [**Create View**](./views-and-panels-core.md#create-view) – to create a new entity record in the main window.
-- [**Edit View**](./views-and-panels-core.md#edit-view) – to edit the entity record.
-- [**Quick Detail View (pop-up)**](./views-and-panels-core.md#quick-detail-view-small-detail-view) – to view the record details in the pop-up window.
-- [**Quick Edit View (pop-up)**](./views-and-panels-core.md#quick-edit-view) – to edit the record detail in the pop-up window.
-- [**Quick Create View**](./views-and-panels-core.md#quick-create-view) – to create a new entity record in the pop-up window.
+- [**List View**](./views-and-panels-core.md#list-view) â€“ to view the lists of entity records.
+- [**Detail View**](./views-and-panels-core.md#detail-view) â€“ to view the entity record details.
+- [**Create View**](./views-and-panels-core.md#create-view) â€“ to create a new entity record in the main window.
+- [**Edit View**](./views-and-panels-core.md#edit-view) â€“ to edit the entity record.
+- [**Quick Detail View (pop-up)**](./views-and-panels-core.md#quick-detail-view-small-detail-view) â€“ to view the record details in the pop-up window.
+- [**Quick Edit View (pop-up)**](./views-and-panels-core.md#quick-edit-view) â€“ to edit the record detail in the pop-up window.
+- [**Quick Create View**](./views-and-panels-core.md#quick-create-view) â€“ to create a new entity record in the pop-up window.
 
 ## Navigation Menu
 

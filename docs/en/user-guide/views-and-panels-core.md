@@ -56,14 +56,14 @@ The following mass actions are available in the TreoCore system:
 
 ![Mass Actions](../../_assets/views-and-panels/mass-actions.jpg)
 
-- **Remove** – to remove the selected entity records.
-- **Merge** – to merge the selected entity records.
-- **Mass update** – to update several selected entity records at once. To have a longer list of fields available for mass updating, please, contact your administrator.
-- **[Export](./export-core.md)** – to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
-- **Follow** – to enable tracking of the changes for the selected entity records. 
-- **Unfollow** – to disable tracking of the changes for the selected entity records.
-- **Add relation** – to relate the selected entity records with other entities (or entity).
-- **Remove relation** – to remove the relations that have been added to the selected entity records.
+- **Remove** â€“ to remove the selected entity records.
+- **Merge** â€“ to merge the selected entity records.
+- **Mass update** â€“ to update several selected entity records at once. To have a longer list of fields available for mass updating, please, contact your administrator.
+- **[Export](./export-core.md)** â€“ to export the desired data fields of the selected entity records in the XLSX (Excel) or CSV format.
+- **Follow** â€“ to enable tracking of the changes for the selected entity records. 
+- **Unfollow** â€“ to disable tracking of the changes for the selected entity records.
+- **Add relation** â€“ to relate the selected entity records with other entities (or entity).
+- **Remove relation** â€“ to remove the relations that have been added to the selected entity records.
 
 > To modify the mass actions list, please, contact your administrator.
 
@@ -76,9 +76,9 @@ To see the actions available for separate records in the list, click the single 
 ![Single Record Actions](../../_assets/views-and-panels/single-record-actions.jpg)
 
 By default, the following actions are available for all entities:
-- **View** – to go to the [detail view](#detail-view) of the record.
-- **Edit** – to go to the detail view of the record in the edit mode.
-- **Remove** – to remove the selected record.
+- **View** â€“ to go to the [detail view](#detail-view) of the record.
+- **Edit** â€“ to go to the detail view of the record in the edit mode.
+- **Remove** â€“ to remove the selected record.
 
 > To modify the single record actions list, please, contact your administrator.
 
@@ -87,16 +87,16 @@ By default, the following actions are available for all entities:
 Small list views are panels and pop-up windows with data on the entities related to the given entity record, shown in the main window always together with the [detail view](#detail-view). Each entity may have as many related entities as needed in accordance with the administrator's configurations. 
 
 The following actions are available for the small list view panels:
-- **General actions** – applicable to all records on the related entities panel:
+- **General actions** â€“ applicable to all records on the related entities panel:
   ![Related entity global actions](../../_assets/views-and-panels/related-entity-actions-global.jpg)
-  - *Refresh* – to refresh the related entities list on the panel;
-  - *Create* – to create a new record for the related entity;
-  - *Select* – to create a relation between the entity record, which is opened in the main window and the entity record, which was chosen in the pop-up window. 
+  - *Refresh* â€“ to refresh the related entities list on the panel;
+  - *Create* â€“ to create a new record for the related entity;
+  - *Select* â€“ to create a relation between the entity record, which is opened in the main window and the entity record, which was chosen in the pop-up window. 
   
 
 *Please, keep in mind that choosing some record in the pop-up window will reassign it to the entity record, which is opened in the main window. The previous relation will be dropped, if the relation is one-to-many.*
 
-- **Single record actions** – applicable to each record of the related entities separately. The list of actions here is usually the same as on the list view for this entity.
+- **Single record actions** â€“ applicable to each record of the related entities separately. The list of actions here is usually the same as on the list view for this entity.
     ![Related entity single actions](../../_assets/views-and-panels/related-entity-actions-single.jpg)
 
 ## Detail View
@@ -139,9 +139,9 @@ The following actions are available for all entity records by default on the det
 
 ![Main actions](../../_assets/views-and-panels/main-actions.jpg)
 
-- **Edit** – click the `Edit` button to make changes in the given record.
-- **Remove** – select the `Remove` option from the actions menu to remove the given record.
-- **Duplicate** – select the `Duplicate` option from the actions menu to go to the record creation page and enter the unique values for the record fields to be used for duplication. 
+- **Edit** â€“ click the `Edit` button to make changes in the given record.
+- **Remove** â€“ select the `Remove` option from the actions menu to remove the given record.
+- **Duplicate** â€“ select the `Duplicate` option from the actions menu to go to the record creation page and enter the unique values for the record fields to be used for duplication. 
 
 ## Quick Detail View (Small Detail View)
 
@@ -160,12 +160,12 @@ The side view panel is used to show additional information and is shown in the m
 ![Side view](../../_assets/views-and-panels/side-view.jpg)
 
 The following information is available by default on the side view panel:
- - **Owner** – who is currently responsible for the record; the value is changeable.
- - **Assigned User** – who should work on the record; the value is changeable.
- - **Teams** – which team(s) can have access to this record; values are changeable.
- - **Created** – the date and time of the record creation, as well as its author; not changeable.
- - **Modified** – the date and time of the record modification, not changeable.
- - **Followers** – who is following the changes in the record.
+ - **Owner** â€“ who is currently responsible for the record; the value is changeable.
+ - **Assigned User** â€“ who should work on the record; the value is changeable.
+ - **Teams** â€“ which team(s) can have access to this record; values are changeable.
+ - **Created** â€“ the date and time of the record creation, as well as its author; not changeable.
+ - **Modified** â€“ the date and time of the record modification, not changeable.
+ - **Followers** â€“ who is following the changes in the record.
 
 The `Owner`, `Assigned user`, and `Teams` fields are enabled/disabled by the administrator.
 

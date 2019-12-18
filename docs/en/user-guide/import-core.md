@@ -6,15 +6,15 @@ Data import is a separate TreoCore system [entity](./what-is-treocore.md#concept
 
 ## Setup
 
-To configure an import operation, click `Import` in the navigation menu – the setup page `Step 1` will open:
+To configure an import operation, click `Import` in the navigation menu â€“ the setup page `Step 1` will open:
 
 ![Import page](../../_assets/import/import-page.jpg)
 
 On the `WHAT TO IMPORT?` panel, select the desired entity type and action to be performed using the corresponding drop-down lists. The following import actions are available in TreoCore:
 
-- **Create Only** – new data records will be created;
-- **Update Only** – data in the already existing records will be updated;
-- **Create & Update** – new data records will be created and the existing records will be updated.
+- **Create Only** â€“ new data records will be created;
+- **Update Only** â€“ data in the already existing records will be updated;
+- **Create & Update** â€“ new data records will be created and the existing records will be updated.
 
 Click the `Choose File` button to load the import file in the CSV format. All the data in this file should be UTF-8 encoded. As a result, the `PREVIEW` panel display will be updated according to the defined entity type and template file:
 
@@ -62,7 +62,7 @@ Additionally, on the `DUPLICATES` panel, you can mark the desired records as non
 
 ![Not duplicate option](../../_assets/import/not-duplicate-option.jpg) 
 
-Confirm your decision in the pop-up that appears – the given record will not be displayed on the `DUPLICATES` panel any more.
+Confirm your decision in the pop-up that appears â€“ the given record will not be displayed on the `DUPLICATES` panel any more.
 
 To remove all the duplicated records at once, click the `Remove Duplicates` button.
 
