@@ -1,9 +1,9 @@
-## What is TreoCore?
+## TreoCore Overview
 TreoCore is an open-source software ecosystem developed by TreoLabs GmbH and distributed under GPLv3 License for free. TreCore is designed for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM, etc.). It is an excellent tool for cost-effective and timely application development that comes with the powerful out-of-the-box functionality.
 
 TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture, and flexible data model based on configurable entities and relations. You can organize any data and business-related processes directly in TreoCore, many of them via a simple and user-friendly configuration.
 
-### For Whom is TreoCore?
+### Target TreoCore Audience
 TreoCore is the best fit **for businesses**, who want to:
 * solve custom business problems
 * store data and organize business processes
@@ -11,16 +11,15 @@ TreoCore is the best fit **for businesses**, who want to:
 * create added value and best experience for their employees, customers, and partners
 * extend the functionality of the existing software infrastructure
 
-### What are TreoCore Add-Ons?
+### TreoCore Modules
 The following add-on applications are available on the TreoCore basis:
 * TreoPIM
 * TreoCRM
-* TreoDAM
 
 Each application may be used as a single instance and/or may be extended with numerous modules.
 
-### What is On Board?
-Here is a TreoCore package description in detail.
+### TreoCore Kit in Detail
+
 | Feature                                     | Description                                                                                                                                             |
 |---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Dashboards                                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
@@ -56,7 +55,7 @@ Here is a TreoCore package description in detail.
 * Very fast
 * Easy to maintain and support
 * Many out-of-the-box features
-* Best for Rapid Application  Development
+* Best for Rapid Application Development
 
 ### What technologies is it based on?
 TreoCore was created based on EspoCRM. It uses:
@@ -64,8 +63,7 @@ TreoCore was created based on EspoCRM. It uses:
 * PHP7 - pure PHP, without any frameworks to achieve the best possible performance,
 * backbone.js - framework for SPA Frontend,
 * Composer - dependency manager for PHP,
-* Some libraries from Zend Framework,
-* Some libraries from Symfony Framework,
+* Some libraries from Zend Framework 3,
 * MySQL 5.
 
 ### Integrations
@@ -77,45 +75,31 @@ TreoCore has a REST API and can be integrated with any third-party system. You c
 
 ### Requirements
 
-* Unix-based system. Linux Mint recommend
+* Unix-based system
 * PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
-### Configuration instructions based on your server
-* [Apache server configuration](docs/en/administration/apache-server-configuration.md)
-* [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
+See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
 
 ### Installation
-> Installation guide is based on **Linux Mint OS**. Of course, you can use any unix-based system, but make sure that your OS supports the following commands.<br/>
-
-To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed.
+To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed. 
 
 1. Create your new project by running:
    ```
-   composer create-project treolabs/skeleton my-treocore-project --no-dev
+   composer create-project treolabs/treocore my-treocore-project
    ```
-   > **my-treocore-project** - project name
-   
-2. Change recursively the user and group ownership for project files. It is important for code generation mechanism
+2. Make cron handler files executable:
    ```
-   sudo chown -R www-data:www-data my-treocore-project/
+   chmod +x bin/cron.sh 
    ```
-3. Make cron handler files executable:
+3. Configure crontab:
    ```
-   sudo chmod +x my-treocore-project/bin/cron.sh
+   * * * * * cd /var/www/my-treocore-project; ./bin/cron.sh process-treocore /usr/bin/php 
    ```
-4. Configure crontab:
-   1. crontab should be configured for **www-data** user. You can do it by running:
-      ```
-      sudo crontab -u www-data -e
-      ```
-   2. put the following configuration:
-      ```
-      * * * * * /var/www/my-treocore-project/bin/cron.sh process-treocore /usr/bin/php 
-      ```
-      >**process-treocore** - a unique id of process. You should use a different process id if you have several TreoCore projects in one server<br/>
-      >**/usr/bin/php** - PHP7.1 or above
-5. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
+   - **/var/www/my-treocore-project** - path to project root
+   - **process-treocore** - an unique id of process. You should use different process id if you have few TreoCore project in one server
+   - **/usr/bin/php** - PHP7.1 or above
+4. Install TreoCore by following installation wizard in web interface. Just go to http://YOUR_PROJECT/
 
 ### License
 TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
