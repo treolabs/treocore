@@ -409,14 +409,15 @@ class Record extends \Espo\Core\Services\Base
      *
      * @return bool
      * @throws BadRequest
+     * @throws Error
      */
     protected function isValid($entity)
     {
         $hasCompleteness = !empty($this->getMetadata()->get("scopes.{$entity->getEntityType()}.hasCompleteness"))
-                            && !empty($this->getMetadata()->get("app.additionalEntityParams.hasCompleteness"));
+            && !empty($this->getMetadata()->get("app.additionalEntityParams.hasCompleteness"));
         foreach ($entity->getAttributes() as $field => $data) {
             if (!$hasCompleteness && (!empty($data['required']) || $this->isRequiredField($field, $entity, 'required'))
-                && (is_null($entity->get($field)) || $this->isNullRelations($entity, $field))) {
+                && $this->isNullField($entity, $field)) {
                 throw new BadRequest("Validation failed. '$field' is required");
             }
         }
@@ -2437,10 +2438,17 @@ class Record extends \Espo\Core\Services\Base
      * @param $field
      * @return bool
      */
-    private function isNullRelations(Entity $entity, $field): bool
+    private function isNullField(Entity $entity, $field): bool
     {
-        return !empty($relation = $entity->getFields()[$field]['relation'])
-                        && $entity->get($relation) instanceof \Espo\ORM\EntityCollection
-                        && $entity->get($relation)->count() === 0;
+        $isNull = is_null($entity->get($field));
+        if ($isNull && !empty($relation = $entity->getFields()[$field]['relation'])) {
+            $relationValue = $entity->get($relation);
+            if ($relationValue instanceof \Espo\ORM\EntityCollection) {
+                $isNull = $relationValue->count() === 0;
+            } else {
+                $isNull = is_null($relationValue);
+            }
+        }
+        return $isNull;
     }
 }
