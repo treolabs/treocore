@@ -1,24 +1,26 @@
 ## What is TreoCore?
-TreoCore is an open-source software ecosystem developed by TreoLabs GmbH, made for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM etc.). TreoCore is distributed under GPLv3 License and is free. It has a lot of features right out-of-the box and thus is an excellent tool for cost-effective and timely application development.
+TreoCore is an open-source software ecosystem developed by TreoLabs GmbH and distributed under GPLv3 License for free. TreCore is designed for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM, etc.). It is an excellent tool for cost-effective and timely application development that comes with the powerful out-of-the-box functionality.
 
-TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture and flexible data model based on configurable entities and relations. You can organize any data and related business processes directly in TreoCore, many of them by simple and user-friendly configuration.
+TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture, and flexible data model based on configurable entities and relations. You can organize any data and business-related processes directly in TreoCore, many of them via a simple and user-friendly configuration.
 
-### For whom?
+### For Whom is TreoCore?
 TreoCore is the best fit **for businesses**, who want to:
 * solve custom business problems
 * store data and organize business processes
-* set up and use a middleware to connect with third-party systems
-* create added value and best experience for your employees, customers and partners
+* set up and use a middleware to connect with the third-party systems
+* create added value and best experience for their employees, customers, and partners
 * extend the functionality of the existing software infrastructure
 
-### Which Applications based on TreoCore are available?
+### What are TreoCore Add-Ons?
+The following add-on applications are available on the TreoCore basis:
 * TreoPIM
 * TreoCRM
+* TreoDAM
 
-Both applications can be used in a single instance and can be extended with numerous modules.
+Each application may be used as a single instance and/or may be extended with numerous modules.
 
-### What is on board?
-
+### What is On Board?
+Here is a TreoCore package description in detail.
 | Feature                                     | Description                                                                                                                                             |
 |---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Dashboards                                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
@@ -54,7 +56,7 @@ Both applications can be used in a single instance and can be extended with nume
 * Very fast
 * Easy to maintain and support
 * Many out-of-the-box features
-* Best for Rapid Application Development
+* Best for Rapid Application  Development
 
 ### What technologies is it based on?
 TreoCore was created based on EspoCRM. It uses:
