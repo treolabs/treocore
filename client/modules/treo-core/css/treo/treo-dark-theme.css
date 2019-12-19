@@ -20929,3 +20929,7 @@ select {
     position: relative;
     display: inline-block;
 }
+
+entity-container .cell {
+    padding: 0;
+}
