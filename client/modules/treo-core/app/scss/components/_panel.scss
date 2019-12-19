@@ -15,6 +15,7 @@
 .panel-heading {
   position: relative;
   padding: 12px 10px;
+
   & > .btn-group {
     position: absolute;
     top: 10px;
@@ -31,12 +32,14 @@
 
     &.panel-info {
       border-top: 1px solid $border-panel;
+
       & > .panel-heading {
         padding: 13px 10px;
         color: $text-heading;
-        box-shadow: 0px -8px 6px -10px;
+        box-shadow: 0px -8px 10px -10px;
         background-color: $bg-white;
       }
+
       .btn-info {
         padding: 4px 8px;
         margin-left: 5px;
@@ -44,6 +47,7 @@
         background-color: $bg-white;
         border-color: $border-btn;
         border-radius: 3px;
+
         &:hover {
           color: $text-blue;
           background-color: #fafafa;
@@ -77,6 +81,7 @@
 .panel-info {
   & > .panel-heading {
     padding: 5px 10px 6px;
+
     & > .btn-group & > .btn-info {
       color: #31708f;
       border-color: #bce8ff;
@@ -89,14 +94,15 @@
 }
 
 
-
 .panel-default {
   background: $bg-white;
   border-color: $border-panel;
+
   & > .panel-heading {
-    padding:13px 10px;
+    padding: 13px 10px;
     color: $text-heading;
-    box-shadow: 0px -8px 6px -10px;
+    box-shadow: 0px -8px 10px -10px;
+
     & > .btn-group {
       & > .btn-default {
         padding: 4px 8px;
@@ -108,9 +114,11 @@
         align-items: center;
         width: 28px;
         height: 28px;
+
         &:first-child {
           margin-left: 0;
         }
+
         &:hover {
           z-index: 0;
           background: #fafafa;
@@ -118,26 +126,35 @@
       }
     }
   }
+
   & > .panel-body {
     margin-bottom: 15px;
   }
 }
+
 .panel.sticked > .panel-heading .btn-group .btn {
   border-top-width: 1px;
 }
+
+.form-group {
+  margin-bottom: 6px;
+}
+
 .detail .record-buttons ~ .edit-buttons.hidden ~ .row .panel-body .form-group .field {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f5f5f5
+  padding-bottom: 8px;
+  border-bottom: 1px solid $border-panel;
 }
 
 .nav-pills {
   & > li {
     margin-left: 5px;
+
     &:hover,
     &:focus {
       border-radius: 3px;
       background-color: $btn-bg-blue;
     }
+
     & + li {
       margin-left: 5px;
     }
@@ -154,25 +171,29 @@
 }
 
 .side {
-  &> .panel {
+  & > .panel {
     &.panel-default.panel-default,
     &.panel-default.panel-default list {
       background: $bg-white;
     }
   }
+
   .panel-default {
-    &> .panel-heading {
+    & > .panel-heading {
       border-top: 0;
-      &> .btn-group {
-        &> .btn-default {
+
+      & > .btn-group {
+        & > .btn-default {
           border-right-width: 1px;
         }
       }
     }
   }
+
   .button-container {
     display: flex;
     justify-content: space-between;
+
     & > button {
       width: 100%;
     }
@@ -184,9 +205,11 @@
   border: 0;
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.175);
   border-radius: 3px;
+
   .divider {
     margin: 0
   }
+
   & > li > a {
     padding: 10px 20px
   }
@@ -195,6 +218,17 @@
 
 ul.dropdown-menu > li.checkbox {
   padding: 10px 10px 10px 20px
+}
+
+@media screen and (max-width: 767px) {
+  .panel.sticked > .panel-heading .btn-group, .panel.sticked > .panel-heading .btn-group {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .panel.sticked, .panel.sticked {
+    margin-top: 0;
+  }
 }
 
 @media screen and (min-width: 768px) {

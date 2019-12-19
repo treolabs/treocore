@@ -7,11 +7,13 @@
         right: 10px;
       }
     }
+
     .panel-body {
       border-right: 1px solid #dcdcdc;
     }
   }
 }
+
 .dashlets {
   &.grid-stack {
     & > .grid-stack-item {

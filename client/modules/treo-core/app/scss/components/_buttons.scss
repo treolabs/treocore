@@ -4,10 +4,15 @@
 
 .btn {
   border-radius: 3px;
-  &.reset {
+  &.reset,
+  &.search {
     .fas {
       font-size: 14px;
-      margin-right: 5px;
+    }
+  }
+  &.reset {
+    .fas {
+      margin-right: 4px;
     }
   }
   &:active,
