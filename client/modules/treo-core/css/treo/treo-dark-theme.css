@@ -20930,6 +20930,6 @@ select {
     display: inline-block;
 }
 
-entity-container .cell {
+.entity-container .cell {
     padding: 0;
 }
