@@ -20847,6 +20847,7 @@ select {
     background-repeat: no-repeat;
     background-size: 12px;
     padding-right: 20px !important;
+	-webkit-appearance: none;
 }
 
 @media screen and (max-width: 768px)  {
