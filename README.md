@@ -1,11 +1,9 @@
 ## What is TreoCore?
-
 TreoCore is an open-source software ecosystem developed by TreoLabs GmbH and distributed under GPLv3 License for free. TreCore is designed for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM, etc.). It is an excellent tool for cost-effective and timely application development that comes with the powerful out-of-the-box functionality.
 
 TreoCore is a single page application (SPA) with an API-centric, service-oriented architecture, and flexible data model based on configurable entities and relations. You can organize any data and business-related processes directly in TreoCore, many of them via a simple and user-friendly configuration.
 
 ### For Whom is TreoCore?
-
 TreoCore is the best fit **for businesses**, who want to:
 * solve custom business problems
 * store data and organize business processes
@@ -14,7 +12,6 @@ TreoCore is the best fit **for businesses**, who want to:
 * extend the functionality of the existing software infrastructure
 
 ### What are TreoCore Add-Ons?
-
 The following add-on applications are available on the TreoCore basis:
 * TreoPIM
 * TreoCRM
@@ -23,33 +20,31 @@ The following add-on applications are available on the TreoCore basis:
 Each application may be used as a single instance and/or may be extended with numerous modules.
 
 ### What is On Board?
-
 Here is a TreoCore package description in detail.
-
-| Feature                     | Description                                                 |
-|-----------------------------|-------------------------------------------------------------|
-| Dashboards                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
-| Module Manager              | It allows you to install and/or update any module directly from the administration panel. Just choose the version you want to use.                   |
-| Entity Manager              | You can configure the data model directly from the administration panel, create new or edit existing entities and set relations of different types.     |
-| Dynamic field logic         | You can configure the conditions that make some fields invisible, read-only or editable.                                                          |
-| Layout Manager              | Use it to configure any User Interface in the system or to show up the panels for related entities, via drag-and-drop.                                  |
-| Label Manager               | You can edit any label in the system, in all languages you want to use.                                                                           |
-| Configurable navigation     | Use the drag-and-drop functionality to set up the navigation as you wish, also separately for each user, if needed.                               |
-| Scheduled Jobs              | You can configure, which jobs should be run by cron and at what schedule.                                                                       |
-| Notifications               | Set up a system or e-mail notifications for different events in the system.                                                                             |
-| Data import and export      | You can import or export any data to any and from any entity in the system, even those you have just created.                                           |
-| Advanced mass updates       | Choose the entries to be updated, set the new values and perform a mass update.                                                                     |
-| Advanced search and filters | You can configure the filters and search criteria as you wish, and save them, if you want to use the saved filters later.                               |
-| Portals                     | Use this additional layer to give access to third parties to your system. Use portal roles to restrict their access.                                    |
-| Change Log and Stream       | See all changes to the entries (who, old and new value, when) and add your own posts with a timestamp and attachments.                                |
-| Queue Manager               | Use it if you want to run or control processes in the background.                                                                                |
-| Access Control Lists (ACL)  | Enterprise Level ACL based on Teams and Roles, with access level (own, team, all). You are able to edit the permissions even for each field separately. |
-| REST API                    | Integrate it with any third-party software, fully automated. |
+| Feature                                     | Description                                                                                                                                             |
+|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dashboards                                  | Use multiple dashboards to control all main activities in the system.                                                                                   |
+| Module Manager                              | It allows to install or to update any module directly from the administration panel, just choose the version you want to use.                           |
+| Entity Manager                              | You can configure the data model directly from the administration panel, create new or edit existing entities and set relations of different types.     |
+| Dynamic field logic                         | You can configure the conditions that make some fields invisible, read-only or editable.                                                                |
+| Layout manager                              | Use it to configure any User Interface in the system or to show up the panels for related entities, via drag-and-drop.                                  |
+| Label manager                               | You can edit any label in the system, in all languages you want to use.                                                                                 |
+| Configurable navigation                     | Use drag-and-drop functionality to set a navigation as you wish, also separately for each user, if needed.                                              |
+| Scheduled Jobs                              | You can configure, which jobs should be run by cron and at what schedule.                                                                               |
+| Notifications                               | Set up a system or e-mail notifications for different events in the system.                                                                             |
+| Data import and Export                      | You can import or export any data to any and from any entity in the system, even those you have just created.                                           |
+| Advanced mass updates                       | Choose the entries to be updated, set the new values and do a bulk update.                                                                              |
+| Advanced search and filters                 | You can configure the filters and search criteria as you wish, and save them, if you want to use this saved filter later.                               |
+| Portals                                     | Use this additional layer to give access to third parties to your system. Use portal roles to restrict their access.                                    |
+| Change Log and Stream                       | See all changes to the entries (who, old and new value, when) and add your own notices with a timestamp and attachments.                                |
+| Queue Manager                               | Use it if you want to run or control processes in the background.                                                                                       |
+| Access Control Lists (ACL)                  | Enterprise Level ACL based on Teams and Roles, with access level (own, team, all). You are able to edit the permissions even for each field separately. |
+| REST API                                    | Integrate it with any third-party software, fully automated.                                                                                            |
 
 ### What are the advantages of using it?
 * Really quick time to market and low implementation costs!
 * Configurable, flexible and customizable
-* Free – 100% open source, licensed under GPLv3
+* Free - 100% open source, licensed under GPLv3
 * REST API
 * Web-based and platform independent
 * Based on modern technologies
@@ -61,61 +56,72 @@ Here is a TreoCore package description in detail.
 * Very fast
 * Easy to maintain and support
 * Many out-of-the-box features
-* Best for Rapid Application Development
+* Best for Rapid Application  Development
 
 ### What technologies is it based on?
 TreoCore was created based on EspoCRM. It uses:
 
-* PHP7 – pure PHP, without any frameworks to achieve the best possible performance,
-* backbone.js – framework for SPA Frontend,
-* Composer – dependency manager for PHP,
-* Some libraries from Zend Framework 3,
+* PHP7 - pure PHP, without any frameworks to achieve the best possible performance,
+* backbone.js - framework for SPA Frontend,
+* Composer - dependency manager for PHP,
+* Some libraries from Zend Framework,
+* Some libraries from Symfony Framework,
 * MySQL 5.
 
 ### Integrations
-
 TreoCore has a REST API and can be integrated with any third-party system. You can also use import and export functions or use our modules (import feeds and export feeds) to get even more flexibility.
 
 ### Documentation
-
 - We are working on documentation. The current version is available [here](https://treopim.com/help)
 - Documentation for administrators is available [here](docs/en/administration/).
 
 ### Requirements
 
-* Unix-based system
-* PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl, exif extensions)
+* Unix-based system. Linux Mint recommend
+* PHP 7.1 or above (with pdo_mysql, openssl, json, zip, gd, mbstring, xml, curl,exif extensions)
 * MySQL 5.5.3 or above
 
-See [Server Configuration](docs/en/administration/server-configuration.md) article for more information.
+### Configuration instructions based on your server
+* [Apache server configuration](docs/en/administration/apache-server-configuration.md)
+* [Nginx server configuration](docs/en/administration/nginx-server-configuration.md)
 
 ### Installation
+> Installation guide is based on **Linux Mint OS**. Of course, you can use any unix-based system, but make sure that your OS supports the following commands.<br/>
 
-To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed. 
+To create your new TreoCore application, first make sure you're using PHP 7.1 or above and have [Composer](https://getcomposer.org/) installed.
 
 1. Create your new project by running:
    ```
-   composer create-project treolabs/treocore my-treocore-project
+   composer create-project treolabs/skeleton my-treocore-project --no-dev
    ```
-2. Make cron handler files executable:
+   > **my-treocore-project** - project name
+   
+2. Change recursively the user and group ownership for project files. It is important for code generation mechanism
    ```
-   chmod +x bin/cron.sh 
+   sudo chown -R www-data:www-data my-treocore-project/
    ```
-3. Configure crontab:
+3. Make cron handler files executable:
    ```
-   * * * * * cd /var/www/my-treocore-project; ./bin/cron.sh process-treocore /usr/bin/php 
+   sudo chmod +x my-treocore-project/bin/cron.sh
    ```
-   - **/var/www/my-treocore-project** - path to project root
-   - **process-treocore** - a unique ID of the process. You should use different process ID if you have several TreoCore projects on one server
-   - **/usr/bin/php** - PHP7.1 or above
-4. Install TreoCore by following the installation wizard in web interface. Just go to http://YOUR_PROJECT/
+4. Configure crontab:
+   1. crontab should be configured for **www-data** user. You can do it by running:
+      ```
+      sudo crontab -u www-data -e
+      ```
+   2. put the following configuration:
+      ```
+      * * * * * /var/www/my-treocore-project/bin/cron.sh process-treocore /usr/bin/php 
+      ```
+      >**process-treocore** - a unique id of process. You should use a different process id if you have several TreoCore projects in one server<br/>
+      >**/usr/bin/php** - PHP7.1 or above
+5. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
 
 ### License
-
 TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
 
 ### Support
 
 - TreoCore is a developed and supported by [TreoLabs GmbH](https://treolabs.com/).
 - Feel free to join [our Community](https://community.treolabs.com/)
-- To contact us, please visit [our Website](https://treolabs.com/)
+- To contact us please visit [our Website](https://treolabs.com/)

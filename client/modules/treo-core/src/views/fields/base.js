@@ -35,8 +35,6 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
 
     return Dep.extend({
 
-        isDestroyed: false,
-
         inlineEditSave: function () {
             var data = this.fetch();
 
@@ -97,6 +95,7 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
             if (!$el.size() && this.$element) {
                 $el = this.$element;
             }
+
             $el.popover({
                 placement: 'bottom',
                 container: 'body',
@@ -104,13 +103,15 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
                 trigger: 'manual'
             }).popover('show');
 
-            $el.closest('.field').one('mousedown click', function () {
+            this.isDestroyed = false;
+
+            $el.closest('.field').one('mousedown click', () => {
                 if (this.isDestroyed) return;
                 $el.popover('destroy');
                 this.isDestroyed = true;
             });
 
-            this.once('render remove', function () {
+            this.once('render remove', () => {
                 if (this.isDestroyed) return;
                 if ($el) {
                     $el.popover('destroy');
@@ -122,7 +123,7 @@ Espo.define('treo-core:views/fields/base', 'class-replace!treo-core:views/fields
                 clearTimeout(this._timeout);
             }
 
-            this._timeout = setTimeout(function () {
+            this._timeout = setTimeout(() => {
                 if (this.isDestroyed) return;
                 $el.popover('destroy');
                 this.isDestroyed = true;

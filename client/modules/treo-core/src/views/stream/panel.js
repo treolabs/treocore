@@ -34,6 +34,16 @@
 Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
     Dep => Dep.extend({
 
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            delete this.events['focus textarea.note'];
+
+            this.events['click textarea.note'] = e => {
+                this.enablePostingMode();
+            };
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
@@ -45,7 +55,12 @@ Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/strea
                         if (!['sync', 'after:relate', 'after:attributesSave'].includes(event)) {
                             return;
                         }
-                        this.collection.fetchNew();
+                        let initialTotal = this.collection.total;
+                        this.collection.fetchNew({
+                            success: function () {
+                                this.collection.total += initialTotal;
+                            }.bind(this)
+                        });
                     });
 
                     this.listenTo(this.model, 'destroy', () => {
@@ -53,7 +68,6 @@ Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/strea
                     });
                 }, 500);
             });
-        }
-
+        },
     })
 );

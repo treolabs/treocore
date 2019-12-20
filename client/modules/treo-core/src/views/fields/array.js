@@ -42,5 +42,45 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
             });
         },
 
+        getItemHtml(value) {
+            if (this.translatedOptions != null) {
+                for (let item in this.translatedOptions) {
+                    if (this.translatedOptions[item] === value) {
+                        value = item;
+                        break;
+                    }
+                }
+            }
+
+            value = value.toString();
+
+            let valueSanitized = this.getHelper().stripTags(value);
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
+
+            let label = valueSanitized.replace(/"/g, '&quot;').replace(/\\/g, '&bsol;');
+            if (this.translatedOptions) {
+                label = ((value in this.translatedOptions) ? this.translatedOptions[value] : label);
+                label = label.toString();
+                label = this.getHelper().stripTags(label);
+                label = label.replace(/"/g, '&quot;').replace(/\\/g, '&bsol;');
+            }
+
+            return `
+                <div class="list-group-item" data-value="${valueInternal}" style="cursor: default;">
+                    ${label}&nbsp;
+                    <a href="javascript:" class="pull-right" data-value="${valueInternal}" data-action="removeValue"><span class="fas fa-times"></a>
+                </div>`;
+        },
+
+        removeValue(value) {
+            let valueSanitized = this.getHelper().stripTags(value);
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
+
+            this.$list.children(`[data-value="${valueInternal}"]`).remove();
+            let index = this.selected.indexOf(value);
+            this.selected.splice(index, 1);
+            this.trigger('change');
+        }
+
     })
 );

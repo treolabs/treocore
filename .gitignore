@@ -1,17 +1,1 @@
 .idea/
-/nb_metadata
-
-/apidocs/index.html
-/application/Espo
-/custom/*
-!/custom/.htaccess
-/data/*
-!/data/.htaccess
-/vendor/
-/composer.lock
-
-!client/
-client/*
-!client/modules
-client/modules/*
-!/client/modules/treo-core

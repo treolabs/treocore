@@ -1,0 +1,10 @@
+{
+  "options": {
+    "job": {
+      "ComposerAutoUpdate": "Auto-updating of modules"
+    }
+  },
+  "exceptions": {
+    "Wrong crontab configuration": "Wrong crontab configuration"
+  }
+}

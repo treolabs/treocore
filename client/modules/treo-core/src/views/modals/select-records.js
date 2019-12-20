@@ -35,7 +35,7 @@ Espo.define('treo-core:views/modals/select-records', ['class-replace!treo-core:v
 
     return Dep.extend({
 
-        boolFilterData: [],
+        boolFilterData: {},
 
         disableSavePreset: false,
 

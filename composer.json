@@ -1,17 +1,11 @@
 {
   "name": "treolabs/treocore",
-  "version": "3.13.6",
   "description": "TreoCORE. Open source application.",
-  "homepage": "https://treopim.com",
+  "homepage": "https://treolabs.com",
   "license": "GPL-3.0-only",
-  "authors": [
-    {
-      "name": "Roman Ratsun",
-      "email": "r.ratsun@treolabs.com"
-    }
-  ],
+  "minimum-stability": "stable",
   "require": {
-    "php": ">=7.1.0",
+    "php": "^7.1",
     "ext-pdo_mysql": "*",
     "ext-openssl": "*",
     "ext-json": "*",
@@ -21,35 +15,36 @@
     "ext-xml": "*",
     "ext-curl": "*",
     "ext-exif": "*",
-    "wikimedia/composer-merge-plugin": "1.4.1",
-    "treolabs/espocore": "^1.2.0"
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "treo-source": "https://source.treopim.com",
-    "merge-plugin": {
-      "include": [
-        "data/composer.json",
-        "data/repositories.json",
-        "data/dev-composer.json"
-      ]
-    }
+    "composer/semver": "~1.4.0",
+    "doctrine/dbal": "~2.4.2",
+    "slim/slim": "~2.6.2",
+    "mtdowling/cron-expression": "~1.0.3",
+    "zendframework/zend-mail": "~2.10.0",
+    "zendframework/zend-ldap": "~2.7.1",
+    "monolog/monolog": "~1.20.0",
+    "yzalis/identicon": "~1.1.0",
+    "zordius/lightncandy": "~0.21",
+    "tecnickcom/tcpdf": "~6.2.17 ",
+    "php-mime-mail-parser/php-mime-mail-parser": "~2.10.0",
+    "zbateson/mail-mime-parser": "~0.4.8",
+    "phpoffice/phpspreadsheet": "~1.8.0",
+    "symfony/event-dispatcher": "~4.3.0",
+    "symfony/workflow": "~4.3.0"
   },
   "autoload": {
     "psr-0": {
-      "": "application/",
-      "Espo\\Custom": "custom/"
+      "": [
+        "../../../data/migrations/",
+        "../../../data/module-manager-events/"
+      ],
+      "Espo\\Custom": "../../../custom/"
+    },
+    "psr-4": {
+      "Espo\\": "app/Espo/",
+      "Treo\\": "app/Treo/"
     }
   },
-  "scripts": {
-    "post-install-cmd": "Treo\\Composer\\Cmd::postInstall",
-    "pre-update-cmd": "Treo\\Composer\\Cmd::preUpdate",
-    "post-update-cmd": "Treo\\Composer\\Cmd::postUpdate"
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://packagist.treopim.com/packages.json?id=public"
-    }
-  ]
+  "extra": {
+    "treoId": "Treo"
+  }
 }

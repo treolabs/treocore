@@ -105,5 +105,52 @@ Espo.define('treo-core:views/record/panels/relationship', ['class-replace!treo-c
             this.getRouter().dispatch(this.scope, 'list', params);
         },
 
+        actionUnlinkRelated(data) {
+            let id = data.id;
+
+            this.confirm({
+                message: this.translate('unlinkRecordConfirmation', 'messages'),
+                confirmText: this.translate('Unlink')
+            }, () => {
+                let model = this.collection.get(id);
+                this.notify('Unlinking...');
+                $.ajax({
+                    url: this.collection.url,
+                    type: 'DELETE',
+                    data: JSON.stringify({
+                        id: id
+                    }),
+                    contentType: 'application/json',
+                    success: () => {
+                        this.notify('Unlinked', 'success');
+                        this.collection.fetch();
+                        this.model.trigger('after:unrelate', this.link);
+                    },
+                    error: () => {
+                        this.notify('Error occurred', 'error');
+                    },
+                });
+            });
+        },
+
+        actionRemoveRelated(data) {
+            let id = data.id;
+
+            this.confirm({
+                message: this.translate('removeRecordConfirmation', 'messages'),
+                confirmText: this.translate('Remove')
+            }, () => {
+                let model = this.collection.get(id);
+                this.notify('Removing...');
+                model.destroy({
+                    success: () => {
+                        this.notify('Removed', 'success');
+                        this.collection.fetch();
+                        this.model.trigger('after:unrelate', this.link);
+                    },
+                });
+            });
+        },
+
     });
 });

@@ -46,6 +46,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         massRelationView: 'treo-core:views/modals/select-entity-and-records',
 
         setup() {
+            this.setupDraggableParams();
+
             Dep.prototype.setup.call(this);
 
             this.enabledFixedHeader = this.options.enabledFixedHeader || this.enabledFixedHeader;
@@ -62,10 +64,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             _.extend(this.events, {
                 'click a.link': function (e) {
                     e.stopPropagation();
-                    if (e.ctrlKey) {
-                        return;
-                    }
-                    if (!this.scope || this.selectable) {
+                    if (e.ctrlKey || !this.scope || this.selectable) {
                         return;
                     }
                     e.preventDefault();
@@ -119,14 +118,39 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             });
         },
 
+        setupDraggableParams() {
+            this.dragableListRows = this.dragableListRows || this.options.dragableListRows;
+            this.listRowsOrderSaveUrl = this.listRowsOrderSaveUrl || this.options.listRowsOrderSaveUrl;
+
+            const urlParts = (this.collection.url || '').split('/');
+            const mainScope = urlParts[0];
+            this.relationName = urlParts[2];
+            if (mainScope && this.relationName) {
+                const dragDropDefs = this.getMetadata().get(['clientDefs', mainScope, 'relationshipPanels', this.relationName, 'dragDrop']);
+                if (dragDropDefs && (this.dragableListRows || typeof this.dragableListRows === 'undefined')) {
+                    this.dragableListRows = dragDropDefs.isActive;
+                    this.dragableSortField = dragDropDefs.sortField;
+                    if (this.dragableSortField) {
+                        this.collection.sortBy = this.dragableSortField;
+                    }
+                }
+            }
+
+            if (this.dragableListRows) {
+                this.listenTo(this.collection, 'listSorted', () => this.collection.fetch());
+            }
+        },
+
         setupMassActionItems() {
             Dep.prototype.setupMassActionItems.call(this);
 
-            let foreignEntities = this.getForeignEntities();
-            if (foreignEntities.length) {
-                this.massActionList = Espo.Utils.clone(this.massActionList);
-                this.massActionList.push('addRelation');
-                this.massActionList.push('removeRelation');
+            if (!this.getMetadata().get(['scopes', this.scope, 'relationDisabled'])) {
+                let foreignEntities = this.getForeignEntities();
+                if (foreignEntities.length) {
+                    this.massActionList = Espo.Utils.clone(this.massActionList);
+                    this.massActionList.push('addRelation');
+                    this.massActionList.push('removeRelation');
+                }
             }
         },
 
@@ -144,17 +168,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (defs.foreign && defs.entity && this.getAcl().check(defs.entity, 'edit')) {
                         let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
                         if (this.checkRelationshipType(defs.type, foreignType)
-                            && this.getMetadata().get(['scopes', defs.entity, 'entity'])
+                            && (this.getMetadata().get(['scopes', defs.entity, 'entity']) || defs.addRelationCustomDefs)
                             && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])
                             && !defs.disableMassRelation) {
-                            let data = {
+                            foreignEntities.push({
                                 link: link,
                                 entity: defs.entity,
-                            };
-                            if (defs.customDefs) {
-                                data.customDefs = defs.customDefs;
-                            }
-                            foreignEntities.push(data);
+                                addRelationCustomDefs: defs.addRelationCustomDefs
+                            });
                         }
                     }
                 });
@@ -189,9 +210,10 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 let view = this.getMetadata().get(['clientDefs', this.scope, 'massRelationView']) || this.massRelationView;
                 this.createView('dialog', view, {
                     model: model,
+                    mainCollection: this.collection,
                     multiple: true,
                     createButton: false,
-                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
+                    scope: (foreignEntities[0].addRelationCustomDefs || {}).entity || foreignEntities[0].entity,
                     type: type,
                     checkedList: this.checkedList
                 }, view => {
@@ -219,7 +241,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
             this.changeDropDownPosition();
 
-            if (this.options.dragableListRows) {
+            if (this.dragableListRows && !((this.getParentView() || {}).defs || {}).readOnly) {
                 this.initDraggableList();
                 $(window).off(this.dragndropEventName).on(this.dragndropEventName, () => {
                     this.initDraggableList();
@@ -234,8 +256,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.$el.find(this.listContainerEl).sortable({
                     handle: window.innerWidth < 768 ? '.cell[data-name="draggableIcon"]' : false,
                     delay: 150,
-                    update: function () {
-                        this.saveListItemOrder();
+                    update: function (e, ui) {
+                        this.saveListItemOrder(e, ui);
                     }.bind(this)
                 });
             }
@@ -249,10 +271,26 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             });
         },
 
-        saveListItemOrder() {
-            let saveUrl = this.getListRowsOrderSaveUrl();
-            if (saveUrl) {
-                this.ajaxPutRequest(saveUrl, {ids: this.getIdsFromDom()})
+        saveListItemOrder(e, ui) {
+            let url;
+            let data;
+            if (this.dragableSortField) {
+                const itemId = this.getItemId(ui);
+                if (itemId) {
+                    const sortFieldValue = this.getSortFieldValue(itemId);
+                    url = `${this.scope}/${itemId}`;
+                    data = {
+                        [this.dragableSortField]: sortFieldValue
+                    };
+                }
+            } else if (this.listRowsOrderSaveUrl) {
+                url = this.listRowsOrderSaveUrl;
+                data = {
+                    ids: this.getIdsFromDom()
+                };
+            }
+            if (url) {
+                this.ajaxPutRequest(url, data)
                     .then(response => {
                         let statusMsg = 'Error occurred';
                         let type = 'error';
@@ -260,14 +298,32 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                             statusMsg = 'Saved';
                             type = 'success';
                         }
-                        this.collection.trigger('listSorted');
                         this.notify(statusMsg, type, 3000);
-                    });
+                    })
+                    .always(() => this.collection.trigger('listSorted'));
+            } else {
+                this.collection.trigger('listSorted', this.getIdsFromDom());
             }
         },
 
-        getListRowsOrderSaveUrl() {
-            return this.options.listRowsOrderSaveUrl;
+        getItemId(ui) {
+            let id;
+            if (ui && ui.item) {
+                id = ui.item.data('id');
+            }
+            return id;
+        },
+
+        getSortFieldValue(id) {
+            let value;
+            const ids = this.getIdsFromDom();
+            const currIndex = ids.indexOf(id);
+            if (currIndex > 0) {
+                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 10;
+            } else {
+                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 10;
+            }
+            return value;
         },
 
         getIdsFromDom() {
@@ -277,7 +333,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         },
 
         filterListLayout: function (listLayout) {
-            if (this.options.dragableListRows && listLayout && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
+            if (this.dragableListRows && !((this.getParentView() || {}).defs || {}).readOnly && listLayout
+                && Array.isArray(listLayout) && !listLayout.find(item => item.name === 'draggableIcon')) {
                 listLayout = Espo.Utils.cloneDeep(listLayout);
                 listLayout.unshift({
                     widthPx: '40',
@@ -296,7 +353,7 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             let defs = Dep.prototype._getHeaderDefs.call(this);
             let model = this.collection.model.prototype;
             defs.forEach(item => {
-                if (item.name && ['wysiwyg', 'wysiwygMultiLang'].includes(model.getFieldType(item.name))) {
+                if (item.name && ['currency', 'wysiwyg', 'wysiwygMultiLang'].includes(model.getFieldType(item.name))) {
                     item.sortable = false;
                 }
             });
@@ -361,24 +418,23 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             let el = this.$el;
 
             el.on('show.bs.dropdown', function (e) {
-                let target = e.relatedTarget,
-                    menu = $(target).siblings('.dropdown-menu'),
-                    menuHeight = menu.height(),
-                    pageHeight = $(document).height(),
-                    positionTop = $(target).offset().top + $(target).outerHeight(true);
+                let target = e.relatedTarget;
+                let menu = $(target).siblings('.dropdown-menu');
+                if (target && menu) {
+                    let menuHeight = menu.height();
+                    let pageHeight = $(document).height();
+                    let positionTop = $(target).offset().top + $(target).outerHeight(true);
 
-                if ((positionTop + menuHeight) > pageHeight) {
-                    menu.css({
-                        'top': `-${menuHeight}px`
-                    })
+                    if ((positionTop + menuHeight) > pageHeight) {
+                        menu.css({
+                            'top': `-${menuHeight}px`
+                        });
+                    }
                 }
             });
 
             el.on('hide.bs.dropdown', function (e) {
-                let target = e.relatedTarget,
-                    menu = $(target).next('.dropdown-menu');
-
-                menu.removeAttr('style');
+                $(e.relatedTarget).next('.dropdown-menu').removeAttr('style');
             });
         },
 

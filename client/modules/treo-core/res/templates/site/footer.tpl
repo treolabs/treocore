@@ -1,6 +1,5 @@
 <p class="credit small" style="width: 100%">
     &copy; {{year}} <a href="https://treolabs.com" title="TreoCore is powered by EspoCRM" target="_blank">TreoCore is powered by EspoCRM</a>
-    <span class="pull-right">{{version}}</span>
 </p>
 
 <button class="scroll-top hidden">

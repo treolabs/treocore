@@ -52,6 +52,15 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
         },
 
         setup() {
+            this.once('render remove', function () {
+                if (this.isDestroyed) return;
+                let el = this.$el.find('.note-editor');
+                if (el) {
+                    el.popover('destroy');
+                    this.isDestroyed = true;
+                }
+            });
+
             Dep.prototype.setup.call(this);
 
             this.detailMaxHeight = this.params.displayedHeight || this.detailMaxHeight;
@@ -86,11 +95,11 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
 
         checkDataForDefaultTagsValue(data, field) {
             if (data[field] === '<p><br></p>') {
-                data[field] = null;
+                data[field] = '';
             }
 
             if (data[field + 'Plain'] === '<p><br></p>') {
-                data[field + 'Plain'] = null
+                data[field + 'Plain'] = ''
             }
 
             return data;
@@ -125,6 +134,16 @@ Espo.define('treo-core:views/fields/wysiwyg', 'class-replace!treo-core:views/fie
             }
 
             return this.sanitizeHtml(text || '');
+        },
+
+        validateRequired: function () {
+            if (this.isRequired()) {
+                if (this.model.get(this.name) === '') {
+                    let msg = this.translate('fieldIsRequired', 'messages').replace('{field}', this.getLabelText());
+                    this.showValidationMessage(msg, '.note-editor');
+                    return true;
+                }
+            }
         },
 
         applyFieldPartHiding(name) {

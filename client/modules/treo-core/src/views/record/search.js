@@ -41,70 +41,9 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
         hiddenBoolFilterList: [],
 
-        boolFilterData: [],
+        boolFilterData: {},
 
-        data() {
-            let data = Dep.prototype.data.call(this);
-            data.boolFilterListLength = 0;
-            data.boolFilterListComplex = data.boolFilterList.map(item => {
-                let includes = this.hiddenBoolFilterList.includes(item);
-                if (!includes) {
-                    data.boolFilterListLength++;
-                }
-                return {name: item, hidden: includes};
-            });
-            return data;
-        },
-
-        setup: function () {
-            this.hiddenBoolFilterList = this.options.hiddenBoolFilterList || this.hiddenBoolFilterList;
-            this.boolFilterData = this.options.boolFilterData || this.boolFilterData;
-            Dep.prototype.setup.call(this);
-
-            _.extend(Dep.prototype.events, this.newEvents);
-        },
-
-        manageBoolFilters() {
-            (this.boolFilterList || []).forEach(item => {
-                if (this.bool[item] && !this.hiddenBoolFilterList.includes(item)) {
-                    this.currentFilterLabelList.push(this.translate(item, 'boolFilters', this.entityType));
-                }
-            });
-        },
-
-        updateCollection() {
-            this.collection.reset();
-            this.notify('Please wait...');
-            this.listenTo(this.collection, 'sync', function () {
-                this.notify(false);
-            }.bind(this));
-            let where = this.searchManager.getWhere();
-            where.forEach(item => {
-                if (item.type === 'bool') {
-                    let data = {};
-                    item.value.forEach(elem => {
-                        if (elem in this.boolFilterData) {
-                            data[elem] = this.boolFilterData[elem];
-                        }
-                    });
-                    item.data = data;
-                }
-            });
-            this.collection.where = where;
-            this.collection.fetch();
-        },
-
-        sortAdvanced: function (advanced) {
-            var result = {};
-            Object.keys(advanced).sort(function (item1, item2) {
-                return item1.localeCompare(item2, undefined, {numeric: true});
-            }).forEach(function (item) {
-                result[item] = advanced[item];
-            }.bind(this));
-            return result;
-        },
-
-        newEvents: {
+        events: _.extend({}, Dep.prototype.events, {
             'click a[data-action="addFilter"]': function (e) {
                 var $target = $(e.currentTarget);
                 var name = $target.data('name');
@@ -170,6 +109,66 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
                 e.stopPropagation();
                 e.preventDefault();
             }
+        }),
+
+        data() {
+            let data = Dep.prototype.data.call(this);
+            data.boolFilterListLength = 0;
+            data.boolFilterListComplex = data.boolFilterList.map(item => {
+                let includes = this.hiddenBoolFilterList.includes(item);
+                if (!includes) {
+                    data.boolFilterListLength++;
+                }
+                return {name: item, hidden: includes};
+            });
+            return data;
+        },
+
+        setup: function () {
+            this.hiddenBoolFilterList = this.options.hiddenBoolFilterList || this.hiddenBoolFilterList;
+            this.boolFilterData = this.options.boolFilterData || this.boolFilterData;
+
+            Dep.prototype.setup.call(this);
+        },
+
+        manageBoolFilters() {
+            (this.boolFilterList || []).forEach(item => {
+                if (this.bool[item] && !this.hiddenBoolFilterList.includes(item)) {
+                    this.currentFilterLabelList.push(this.translate(item, 'boolFilters', this.entityType));
+                }
+            });
+        },
+
+        updateCollection() {
+            this.collection.reset();
+            this.notify('Please wait...');
+            this.listenTo(this.collection, 'sync', function () {
+                this.notify(false);
+            }.bind(this));
+            let where = this.searchManager.getWhere();
+            where.forEach(item => {
+                if (item.type === 'bool') {
+                    let data = {};
+                    item.value.forEach(elem => {
+                        if (elem in this.boolFilterData) {
+                            data[elem] = this.boolFilterData[elem];
+                        }
+                    });
+                    _.extend(item.data, data);
+                }
+            });
+            this.collection.where = where;
+            this.collection.fetch();
+        },
+
+        sortAdvanced: function (advanced) {
+            var result = {};
+            Object.keys(advanced).sort(function (item1, item2) {
+                return item1.localeCompare(item2, undefined, {numeric: true});
+            }).forEach(function (item) {
+                result[item] = advanced[item];
+            }.bind(this));
+            return result;
         },
 
         updateAddFilterButton: function () {
@@ -179,6 +178,41 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
             } else {
                 this.$el.find('a.add-filter-button').removeClass('hidden');
             }
+        },
+
+        savePreset(name) {
+            let id = 'f' + (Math.floor(Math.random() * 1000001)).toString();
+
+            this.fetch();
+            this.updateSearch();
+
+            let presetFilters = this.getPreferences().get('presetFilters') || {};
+            if (!(this.scope in presetFilters)) {
+                presetFilters[this.scope] = [];
+            }
+
+            let data = {
+                id: id,
+                name: id,
+                label: name,
+                data: Espo.Utils.cloneDeep(this.advanced),
+                primary: this.primary
+            };
+
+            presetFilters[this.scope].push(data);
+
+            this.presetFilterList.push(data);
+
+            this.getPreferences().once('sync', () => {
+                this.getPreferences().trigger('update');
+                this.updateSearch()
+            });
+
+            this.getPreferences().save({
+                'presetFilters': presetFilters
+            }, {patch: true});
+
+            this.presetName = id;
         },
 
         afterRender: function () {

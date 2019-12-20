@@ -110,7 +110,7 @@ Espo.define('treo-core:views/login', 'class-replace!treo-core:views/login',
                 $cell.addClass('has-error');
                 this.$el.one('mousedown click', function () {
                     $cell.removeClass('has-error');
-                    $el.popover('destroy');
+                    $el.popover('hide');
                 });
                 return;
             }
