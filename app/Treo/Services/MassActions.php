@@ -111,6 +111,15 @@ class MassActions extends AbstractService
         // prepare result
         $result = false;
 
+        // prepare service
+        $service = $this->getService($entityType);
+        $methodName = 'massRelate' . ucfirst($link);
+
+        // if method exists
+        if (method_exists($service, $methodName)) {
+            return $service->$methodName($ids, $foreignIds);
+        }
+
         // prepare repository
         $repository = $this->getRepository($entityType);
 
@@ -123,7 +132,7 @@ class MassActions extends AbstractService
             ->where(['id' => $foreignIds])
             ->find();
 
-        if (!empty($entities) && !empty($foreignEntities)) {
+        if (count($entities) > 0 && count($foreignEntities) > 0) {
             foreach ($entities as $entity) {
                 foreach ($foreignEntities as $foreignEntity) {
                     if ($repository->relate($entity, $link, $foreignEntity) && !$result) {
@@ -151,6 +160,15 @@ class MassActions extends AbstractService
         // prepare result
         $result = false;
 
+        // prepare service
+        $service = $this->getService($entityType);
+        $methodName = 'massUnrelate' . ucfirst($link);
+
+        // if method exists
+        if (method_exists($service, $methodName)) {
+            return $service->$methodName($ids, $foreignIds);
+        }
+
         // prepare repository
         $repository = $this->getRepository($entityType);
 
@@ -163,7 +181,7 @@ class MassActions extends AbstractService
             ->where(['id' => $foreignIds])
             ->find();
 
-        if (!empty($entities) && !empty($foreignEntities)) {
+        if (count($entities) > 0 && count($foreignEntities) > 0) {
             foreach ($entities as $entity) {
                 foreach ($foreignEntities as $foreignEntity) {
                     if ($repository->unrelate($entity, $link, $foreignEntity) && !$result) {

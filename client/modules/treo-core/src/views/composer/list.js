@@ -391,7 +391,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                     url: `../../data/treo-composer.log`,
                     cache: false,
                     success: response => {
-                        this.log = response;
+                        this.log = response.trim();
                         this.trigger('log-updated');
                         this.checkLog();
                     },

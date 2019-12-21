@@ -37,10 +37,6 @@ class AclManager extends \Espo\Core\AclManager
 {
     protected $tableClassName = '\\Espo\\Core\\AclPortal\\Table';
 
-    private $mainManager = null;
-
-    private $portal = null;
-
     protected $userAclClassName = '\\Espo\\Core\\Portal\\Acl';
 
     public function getImplementation($scope)
@@ -76,29 +72,6 @@ class AclManager extends \Espo\Core\AclManager
         return $this->implementationHashMap[$scope];
     }
 
-    public function setMainManager($mainManager)
-    {
-        $this->mainManager = $mainManager;
-    }
-
-    protected function getMainManager()
-    {
-        return $this->mainManager;
-    }
-
-    public function setPortal($portal)
-    {
-        $this->portal = $portal;
-    }
-
-    protected function getPortal()
-    {
-        if ($this->portal) {
-            return $this->portal;
-        }
-        return $this->getContainer()->get('portal');
-    }
-
     protected function getTable(User $user)
     {
         $key = $user->id;
@@ -111,7 +84,7 @@ class AclManager extends \Espo\Core\AclManager
             $fileManager = $this->getContainer()->get('fileManager');
             $metadata = $this->getContainer()->get('metadata');
             $fieldManager = $this->getContainer()->get('fieldManagerUtil');
-            $portal = $this->getPortal();
+            $portal = $this->getContainer()->get('portal');
 
             $this->tableHashMap[$key] = new $this->tableClassName($user, $portal, $config, $fileManager, $metadata, $fieldManager);
         }
@@ -147,125 +120,36 @@ class AclManager extends \Espo\Core\AclManager
         return $this->getImplementation($entity->getEntityType())->checkIsOwnContact($user, $entity);
     }
 
-    public function getMap(User $user)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->getMap($user);
-        }
-        return parent::getMap($user);
-    }
-
-    public function getLevel(User $user, $scope, $action)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->getLevel($user, $scope, $action);
-        }
-        return parent::getLevel($user, $scope, $action);
-    }
-
-    public function get(User $user, $permission)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->get($user, $permission);
-        }
-        return parent::get($user, $permission);
-    }
-
     public function checkReadOnlyTeam(User $user, $scope)
     {
         if ($this->checkUserIsNotPortal($user)) {
-            $data = $this->getTable($user)->getScopeData($scope);
-            return $this->getMainManager()->checkReadOnlyTeam($user, $data);
+            $scope = $this->getTable($user)->getScopeData($scope);
         }
+
         return parent::checkReadOnlyTeam($user, $scope);
     }
 
     public function checkReadNo(User $user, $scope)
     {
         if ($this->checkUserIsNotPortal($user)) {
-            $data = $this->getTable($user)->getScopeData($scope);
-            return $this->getMainManager()->checkReadNo($user, $data);
+            $scope = $this->getTable($user)->getScopeData($scope);
         }
+
         return parent::checkReadNo($user, $scope);
     }
 
     public function checkReadOnlyOwn(User $user, $scope)
     {
         if ($this->checkUserIsNotPortal($user)) {
-            $data = $this->getTable($user)->getScopeData($scope);
-            return $this->getMainManager()->checkReadOnlyOwn($user, $data);
+            $scope = $this->getTable($user)->getScopeData($scope);
         }
+
         return parent::checkReadOnlyOwn($user, $scope);
-    }
-
-    public function check(User $user, $subject, $action = null)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->check($user, $subject, $action);
-        }
-        return parent::check($user, $subject, $action);
-    }
-
-    public function checkEntity(User $user, Entity $entity, $action = 'read')
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->checkEntity($user, $entity, $action);
-        }
-        return parent::checkEntity($user, $entity, $action);
-    }
-
-    public function checkIsOwner(User $user, Entity $entity)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->checkIsOwner($user, $entity);
-        }
-        return parent::checkIsOwner($user, $entity);
-    }
-
-    public function checkInTeam(User $user, Entity $entity)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->checkInTeam($user, $entity);
-        }
-        return parent::checkInTeam($user, $entity);
-    }
-
-    public function checkScope(User $user, $scope, $action = null)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->checkScope($user, $scope, $action);
-        }
-        return parent::checkScope($user, $scope, $action);
-    }
-
-    public function checkUser(User $user, $permission, User $entity)
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->checkUser($user, $permission, $entity);
-        }
-        return parent::checkUser($user, $permission, $entity);
-    }
-
-    public function getScopeForbiddenAttributeList(User $user, $scope, $action = 'read', $thresholdLevel = 'no')
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->getScopeForbiddenAttributeList($user, $scope, $action, $thresholdLevel);
-        }
-        return parent::getScopeForbiddenAttributeList($user, $scope, $action, $thresholdLevel);
-    }
-
-    public function getScopeForbiddenFieldList(User $user, $scope, $action = 'read', $thresholdLevel = 'no')
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->getMainManager()->getScopeForbiddenFieldList($user, $scope, $action, $thresholdLevel);
-        }
-        return parent::getScopeForbiddenFieldList($user, $scope, $action, $thresholdLevel);
     }
 
     protected function checkUserIsNotPortal($user)
     {
         return !$user->get('isPortalUser');
     }
-
 }
 

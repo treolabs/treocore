@@ -25,10 +25,9 @@ do
      echo -e "" > $log 2>&1
 
      # composer update
-     if ! $php composer.phar update --no-dev --no-scripts >> $log 2>&1; then
+     if ! $php composer.phar update >> $log 2>&1; then
        echo "{{error}}" >> $log 2>&1
      else
-       $php composer.phar run-script post-update-cmd >> $log 2>&1
        echo "{{success}}" >> $log 2>&1
      fi
      $php index.php composer log > /dev/null 2>&1

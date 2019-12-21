@@ -67,7 +67,7 @@ class ComposerLog extends AbstractConsole
             }
 
             // prepare content
-            $content = str_replace(["{{success}}", "{{error}}"], ["", ""], $content);
+            $content = \trim(str_replace(['{{success}}', '{{error}}'], ['', ''], $content));
 
             // prepare createdById
             $createdById = 'system';
