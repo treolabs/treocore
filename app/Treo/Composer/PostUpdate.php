@@ -365,10 +365,7 @@ class PostUpdate
         }
 
         if ($status === 'update') {
-            $oldVersion = preg_replace("/[^0-9]/", '', $module['from']);
-            $newVersion = preg_replace("/[^0-9]/", '', $module["package"]["version"]);
-
-            if ($oldVersion < $newVersion) {
+            if (version_compare($module["package"]["version"], $module['from'], '>=')) {
                 $keyLang = $nameModule == 'System' ? 'System update' : 'Module update';
             } else {
                 $keyLang = $nameModule == 'System' ? 'System downgrade' : 'Module downgrade';
