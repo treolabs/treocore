@@ -52,7 +52,7 @@ class V3Dot22Dot4 extends AbstractMigration
     public function up(): void
     {
         // get pdo
-        $pdo = $this->getPdo();
+        $pdo = $this->getPDO();
 
         // delete CoreUpgrade job
         $pdo->exec("DELETE FROM scheduled_job WHERE job='CoreUpgrade'");

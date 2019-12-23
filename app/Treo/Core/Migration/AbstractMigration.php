@@ -48,6 +48,7 @@ abstract class AbstractMigration
 {
     /**
      * @var Container
+     *
      * @deprecated We will remove it after 01.01.2021
      */
     private $container;
@@ -92,6 +93,7 @@ abstract class AbstractMigration
      * @param Container $container
      *
      * @return AbstractMigration
+     *
      * @deprecated We will remove it after 01.01.2021
      */
     public function setContainer(Container $container): AbstractMigration
@@ -105,6 +107,7 @@ abstract class AbstractMigration
      * Get container
      *
      * @return Container
+     *
      * @deprecated We will remove it after 01.01.2021
      */
     protected function getContainer(): Container
@@ -126,6 +129,7 @@ abstract class AbstractMigration
      * Get entityManager
      *
      * @return EntityManager
+     *
      * @deprecated We will remove it after 01.01.2021
      */
     protected function getEntityManager(): EntityManager
@@ -148,7 +152,7 @@ abstract class AbstractMigration
      *
      * @return PDO
      */
-    protected function getPdo(): PDO
+    protected function getPDO(): PDO
     {
         return $this->pdo;
     }
