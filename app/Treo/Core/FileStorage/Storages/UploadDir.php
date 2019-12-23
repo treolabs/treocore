@@ -152,7 +152,7 @@ class UploadDir extends Base
         $path = self::BASE_PATH . "{$storage}/" . $attachment->get('name');
 
         // move old files to new dirs if it needs
-        if (!file_exists($path)) {
+        if (!file_exists($path) && !$attachment->isNew()) {
             // prepare id
             $id = $attachment->get('id');
 
