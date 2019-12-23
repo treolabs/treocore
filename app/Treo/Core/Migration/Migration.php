@@ -51,14 +51,14 @@ class Migration
      * @param string $module
      * @param string $from
      * @param string $to
+     *
+     * @return bool
      */
-    public function run(string $module, string $from, string $to): void
+    public function run(string $module, string $from, string $to): bool
     {
         // get module migration versions
-        $migrations = $this->getModuleMigrationVersions($module);
-
-        if (empty($migrations)) {
-            return;
+        if (empty($migrations = $this->getModuleMigrationVersions($module))) {
+            return false;
         }
 
         // prepare versions
@@ -81,8 +81,13 @@ class Migration
         $keyTo = array_search($to, $data);
 
         if ($keyFrom == $keyTo) {
-            return;
+            return false;
         }
+
+        // prepare name
+        $name = ($module == 'Treo') ? 'Core' : $module;
+
+        echo "Migrate $name $from -> $to ... ";
 
         // prepare increment
         if ($keyFrom < $keyTo) {
@@ -108,6 +113,10 @@ class Migration
                 }
             }
         }
+
+        echo 'Done!' . PHP_EOL;
+
+        return true;
     }
 
     /**

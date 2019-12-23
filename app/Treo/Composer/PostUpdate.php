@@ -38,6 +38,7 @@ namespace Treo\Composer;
 
 use Treo\Core\Application as App;
 use Treo\Core\Container;
+use Treo\Core\Migration\Migration;
 use Treo\Core\ModuleManager\Manager as ModuleManager;
 use Treo\Core\ORM\EntityManager;
 use Treo\Core\Utils\Util;
@@ -152,32 +153,30 @@ class PostUpdate
 
     /**
      * Run migrations
+     *
+     * @return bool
      */
-    protected function runMigrations(): void
+    protected function runMigrations(): bool
     {
-        foreach ($this->getComposerDiff()['update'] as $row) {
-            // prepare name
-            $name = $row['id'];
-            if ($name == 'Treo') {
-                $name = 'Core';
-            }
-
-            // prepare version from
-            $from = ModuleManager::prepareVersion($row['from']);
-
-            // prepare version to
-            $to = ModuleManager::prepareVersion($row['to']);
-
-            echo "Migrate $name $from -> $to ... ";
-
-            // run migration
-            $this
-                ->getContainer()
-                ->get('migration')
-                ->run($row['id'], $from, $to);
-
-            echo 'Done!' . PHP_EOL;
+        /** @var array $data */
+        if (empty($data = $this->getComposerDiff()['update'])) {
+            return false;
         }
+
+        /** @var Migration $migration */
+        $migration = $this->getContainer()->get('migration');
+
+        if (isset($data['Treo'])) {
+            $migration->run('Treo', ModuleManager::prepareVersion($data['Treo']['from']), ModuleManager::prepareVersion($data['Treo']['to']));
+        }
+
+        foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
+            if (isset($data[$id])) {
+                $migration->run($id, ModuleManager::prepareVersion($data[$id]['from']), ModuleManager::prepareVersion($data[$id]['to']));
+            }
+        }
+
+        return true;
     }
 
     /**
