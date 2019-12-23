@@ -117,14 +117,11 @@ class PostUpdate
         $this->copyDefaultConfig();
 
         if ($this->isInstalled()) {
-            // rebuild
-            $this->rebuild();
+            // run migrations
+            $this->runMigrations();
 
             //send notification
             $this->sendNotification();
-
-            // run migrations
-            $this->runMigrations();
         }
 
         // init events
@@ -134,21 +131,6 @@ class PostUpdate
         if ($this->byLockFile) {
             file_put_contents('data/old-composer.lock', file_get_contents(ComposerService::$composerLock));
         }
-    }
-
-    /**
-     * Rebuild
-     */
-    protected function rebuild(): void
-    {
-        echo 'Rebuild database schema... ';
-
-        $this
-            ->getContainer()
-            ->get('dataManager')
-            ->rebuild();
-
-        echo 'Done!' . PHP_EOL;
     }
 
     /**

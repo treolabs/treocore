@@ -88,29 +88,23 @@ class Migration
         if ($keyFrom < $keyTo) {
             // go UP
             foreach ($data as $k => $className) {
-                if ($k >= $keyFrom && $keyTo >= $k && $from != $className && in_array($className, $migrations)) {
-                    // prepare class name
-                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
-
-                    $class = new $className();
-                    if ($class instanceof AbstractMigration) {
-                        $class->setContainer($this->getContainer());
-                        $class->up();
-                    }
+                if ($k >= $keyFrom
+                    && $keyTo >= $k
+                    && $from != $className
+                    && in_array($className, $migrations)
+                    && !empty($migration = $this->createMigration($module, $className))) {
+                    $migration->up();
                 }
             }
         } else {
             // go DOWN
             foreach (array_reverse($data, true) as $k => $className) {
-                if ($k >= $keyTo && $keyFrom >= $k && $to != $className && in_array($className, $migrations)) {
-                    // prepare class name
-                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
-
-                    $class = new $className();
-                    if ($class instanceof AbstractMigration) {
-                        $class->setContainer($this->getContainer());
-                        $class->down();
-                    }
+                if ($k >= $keyTo
+                    && $keyFrom >= $k
+                    && $to != $className
+                    && in_array($className, $migrations)
+                    && !empty($migration = $this->createMigration($module, $className))) {
+                    $migration->down();
                 }
             }
         }
@@ -164,5 +158,40 @@ class Migration
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $module
+     * @param string $className
+     *
+     * @return null|AbstractMigration
+     */
+    protected function createMigration(string $module, string $className): ?AbstractMigration
+    {
+        // prepare class name
+        $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
+
+        if (!class_exists($className)) {
+            return null;
+        }
+
+        $migration = new $className($this->getContainer()->get('entityManager')->getPDO(), $this->getContainer()->get('config'));
+
+        if (!$migration instanceof AbstractMigration) {
+            return null;
+        }
+
+        /**
+         * @deprecated 23.12.2019. It will be removed soon.
+         */
+        if (method_exists($migration, 'setContainer')) {
+            if (empty($this->isRebuilded)) {
+                $this->isRebuilded = true;
+                $this->getContainer()->get('dataManager')->rebuild();
+            }
+            $migration->setContainer($this->getContainer());
+        }
+
+        return $migration;
     }
 }

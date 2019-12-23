@@ -34,32 +34,88 @@
 
 namespace Treo\Core\Migration;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Core\Utils\Config;
+use PDO;
+use Treo\Core\Container;
+use Treo\Core\ORM\EntityManager;
+use Treo\Core\Utils\Config;
 
 /**
  * AbstractMigration class
  *
- * @author     r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com
  */
 abstract class AbstractMigration
 {
-    use \Treo\Traits\ContainerTrait;
+    /**
+     * @var Container
+     * @deprecated 23.12.2019. Remove it soon.
+     */
+    private $container;
+
+    /**
+     * @var PDO
+     */
+    private $pdo;
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @param PDO    $pdo
+     * @param Config $config
+     */
+    public function __construct(PDO $pdo, Config $config)
+    {
+        $this->pdo = $pdo;
+        $this->config = $config;
+    }
 
     /**
      * Up to current
      */
-    abstract public function up(): void;
+    public function up(): void
+    {
+    }
 
     /**
-     * Down to previous  version
+     * Down to previous version
      */
     public function down(): void
     {
     }
 
     /**
+     * Set container
+     *
+     * @param Container $container
+     *
+     * @return AbstractMigration
+     * @deprecated 23.12.2019. Remove it soon.
+     */
+    public function setContainer(Container $container): AbstractMigration
+    {
+        $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     * @deprecated 23.12.2019. Remove it soon.
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
      * Run rebuild action
+     *
+     * @deprecated 23.12.2019. Remove it soon.
      */
     protected function runRebuild(): void
     {
@@ -70,6 +126,7 @@ abstract class AbstractMigration
      * Get entityManager
      *
      * @return EntityManager
+     * @deprecated 23.12.2019. Remove it soon.
      */
     protected function getEntityManager(): EntityManager
     {
@@ -83,6 +140,16 @@ abstract class AbstractMigration
      */
     protected function getConfig(): Config
     {
-        return $this->getContainer()->get('config');
+        return $this->config;
+    }
+
+    /**
+     * Get PDO
+     *
+     * @return PDO
+     */
+    protected function getPdo(): PDO
+    {
+        return $this->pdo;
     }
 }
