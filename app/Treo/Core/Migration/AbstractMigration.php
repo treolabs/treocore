@@ -34,58 +34,22 @@
 
 namespace Treo\Core\Migration;
 
-use PDO;
 use Treo\Core\Container;
 use Treo\Core\ORM\EntityManager;
-use Treo\Core\Utils\Config;
 
 /**
  * AbstractMigration class
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author     r.ratsun <r.ratsun@treolabs.com>
+ *
+ * @deprecated We will remove it after 01.01.2021
  */
-abstract class AbstractMigration
+class AbstractMigration extends Base
 {
     /**
      * @var Container
-     *
-     * @deprecated We will remove it after 01.01.2021
      */
     private $container;
-
-    /**
-     * @var PDO
-     */
-    private $pdo;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @param PDO    $pdo
-     * @param Config $config
-     */
-    public function __construct(PDO $pdo, Config $config)
-    {
-        $this->pdo = $pdo;
-        $this->config = $config;
-    }
-
-    /**
-     * Up to current
-     */
-    public function up(): void
-    {
-    }
-
-    /**
-     * Down to previous version
-     */
-    public function down(): void
-    {
-    }
 
     /**
      * Set container
@@ -93,8 +57,6 @@ abstract class AbstractMigration
      * @param Container $container
      *
      * @return AbstractMigration
-     *
-     * @deprecated We will remove it after 01.01.2021
      */
     public function setContainer(Container $container): AbstractMigration
     {
@@ -107,8 +69,6 @@ abstract class AbstractMigration
      * Get container
      *
      * @return Container
-     *
-     * @deprecated We will remove it after 01.01.2021
      */
     protected function getContainer(): Container
     {
@@ -117,8 +77,6 @@ abstract class AbstractMigration
 
     /**
      * Run rebuild action
-     *
-     * @deprecated We will remove it after 01.01.2021
      */
     protected function runRebuild(): void
     {
@@ -129,31 +87,9 @@ abstract class AbstractMigration
      * Get entityManager
      *
      * @return EntityManager
-     *
-     * @deprecated We will remove it after 01.01.2021
      */
     protected function getEntityManager(): EntityManager
     {
         return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig(): Config
-    {
-        return $this->config;
-    }
-
-    /**
-     * Get PDO
-     *
-     * @return PDO
-     */
-    protected function getPDO(): PDO
-    {
-        return $this->pdo;
     }
 }

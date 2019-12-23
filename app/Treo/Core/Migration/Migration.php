@@ -164,9 +164,9 @@ class Migration
      * @param string $module
      * @param string $className
      *
-     * @return null|AbstractMigration
+     * @return null|Base
      */
-    protected function createMigration(string $module, string $className): ?AbstractMigration
+    protected function createMigration(string $module, string $className): ?Base
     {
         // prepare class name
         $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
@@ -177,14 +177,14 @@ class Migration
 
         $migration = new $className($this->getContainer()->get('entityManager')->getPDO(), $this->getContainer()->get('config'));
 
-        if (!$migration instanceof AbstractMigration) {
+        if (!$migration instanceof Base) {
             return null;
         }
 
         /**
          * @deprecated We will remove it after 01.01.2021
          */
-        if (method_exists($migration, 'setContainer')) {
+        if ($migration instanceof AbstractMigration) {
             if (empty($this->isRebuilded)) {
                 $this->isRebuilded = true;
                 $this->getContainer()->get('dataManager')->rebuild();

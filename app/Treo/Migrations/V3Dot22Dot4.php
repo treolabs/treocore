@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Migrations;
 
-use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Migration\Base;
 use Treo\Core\Utils\Util;
 
 /**
@@ -44,22 +44,19 @@ use Treo\Core\Utils\Util;
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot22Dot4 extends AbstractMigration
+class V3Dot22Dot4 extends Base
 {
     /**
      * @inheritDoc
      */
     public function up(): void
     {
-        // get pdo
-        $pdo = $this->getPDO();
-
         // delete CoreUpgrade job
-        $pdo->exec("DELETE FROM scheduled_job WHERE job='CoreUpgrade'");
-        $pdo->exec("DELETE FROM job WHERE name='CoreUpgrade'");
+        $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='CoreUpgrade'");
+        $this->getPDO()->exec("DELETE FROM job WHERE name='CoreUpgrade'");
 
         // insert ComposerAutoUpdate job
-        $pdo->exec(
+        $this->getPDO()->exec(
             "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('" . Util::generateId()
             . "', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
         );
@@ -70,11 +67,8 @@ class V3Dot22Dot4 extends AbstractMigration
      */
     public function down(): void
     {
-        // get pdo
-        $pdo = $this->getEntityManager()->getPDO();
-
         // delete CoreUpgrade job
-        $pdo->exec("DELETE FROM scheduled_job WHERE job='ComposerAutoUpdate'");
-        $pdo->exec("DELETE FROM job WHERE name='Auto-updating of modules'");
+        $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='ComposerAutoUpdate'");
+        $this->getPDO()->exec("DELETE FROM job WHERE name='Auto-updating of modules'");
     }
 }
