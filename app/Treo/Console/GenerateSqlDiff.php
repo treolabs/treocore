@@ -34,22 +34,41 @@
 
 declare(strict_types=1);
 
-namespace Treo\Configs;
+namespace Treo\Console;
 
-use Treo\Console;
+/**
+ * Class GenerateSqlDiff
+ *
+ * @author r.ratsun@teolabs.com
+ */
+class GenerateSqlDiff extends AbstractConsole
+{
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Generate SQL diff file.';
+    }
 
-return [
-    "list"                         => Console\ListCommand::class,
-    "clear cache"                  => Console\ClearCache::class,
-    "cleanup"                      => Console\Cleanup::class,
-    "rebuild"                      => Console\Rebuild::class,
-    "generate sql diff"            => Console\GenerateSqlDiff::class,
-    "cron"                         => Console\Cron::class,
-    "store --refresh"              => Console\StoreRefresh::class,
-    "migrate <module> <from> <to>" => Console\Migrate::class,
-    "apidocs --generate"           => Console\GenerateApidocs::class,
-    "qm <stream> --run"            => Console\QueueManager::class,
-    "notifications --refresh"      => Console\Notification::class,
-    "kill processes"               => Console\KillProcess::class,
-    "composer log"                 => Console\ComposerLog::class,
-];
+    /**
+     * @inheritDoc
+     */
+    public function run(array $data): void
+    {
+        // prepare file name
+        $fileName = 'data/' . \date('YmdHis') . '.sql';
+
+        /** @var array $queries */
+        $queries = $this->getContainer()->get('schema')->getDiffQueries();
+
+        echo '<pre>';
+        print_r($queries);
+        die();
+
+        self::show('No database changes were detected.', self::ERROR, true);
+
+        echo "\033[0;32mFile\033[0m " . $fileName . " \033[0;32msuccessfully generated!\033[0m" . PHP_EOL;
+        die();
+    }
+}

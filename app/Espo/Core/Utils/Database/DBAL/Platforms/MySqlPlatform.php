@@ -92,8 +92,12 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
             }
             //END espo
 
+            if (!empty($this->strictType)) {
+                $queryParts[] = 'DROP ' . $columnName;
+            }
+
             // remove multilang columns
-            if (strlen($columnName) > 6 && in_array(substr($columnName, -6), self::getPreparedLocales())) {
+            if (empty($this->strictType) && strlen($columnName) > 6 && in_array(substr($columnName, -6), self::getPreparedLocales())) {
                 $queryParts[] = 'DROP ' . $columnName;
             }
         }
