@@ -63,7 +63,7 @@ class SqlDiff extends AbstractConsole
             self::show('No database changes were detected.', self::ERROR, true);
         }
 
-        echo implode(PHP_EOL, $queries) . PHP_EOL;
+        echo implode(';' . PHP_EOL, $queries) . PHP_EOL;
         die();
     }
 }
