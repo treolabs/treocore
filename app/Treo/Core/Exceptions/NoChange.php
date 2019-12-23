@@ -39,7 +39,7 @@ namespace Treo\Core\Exceptions;
 /**
  * Class NoChange
  *
- * @deprecated
+ * @deprecated We will remove it after 01.01.2021
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */

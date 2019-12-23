@@ -48,7 +48,7 @@ abstract class AbstractMigration
 {
     /**
      * @var Container
-     * @deprecated 23.12.2019. Remove it soon.
+     * @deprecated We will remove it after 01.01.2021
      */
     private $container;
 
@@ -92,7 +92,7 @@ abstract class AbstractMigration
      * @param Container $container
      *
      * @return AbstractMigration
-     * @deprecated 23.12.2019. Remove it soon.
+     * @deprecated We will remove it after 01.01.2021
      */
     public function setContainer(Container $container): AbstractMigration
     {
@@ -105,7 +105,7 @@ abstract class AbstractMigration
      * Get container
      *
      * @return Container
-     * @deprecated 23.12.2019. Remove it soon.
+     * @deprecated We will remove it after 01.01.2021
      */
     protected function getContainer(): Container
     {
@@ -115,7 +115,7 @@ abstract class AbstractMigration
     /**
      * Run rebuild action
      *
-     * @deprecated 23.12.2019. Remove it soon.
+     * @deprecated We will remove it after 01.01.2021
      */
     protected function runRebuild(): void
     {
@@ -126,7 +126,7 @@ abstract class AbstractMigration
      * Get entityManager
      *
      * @return EntityManager
-     * @deprecated 23.12.2019. Remove it soon.
+     * @deprecated We will remove it after 01.01.2021
      */
     protected function getEntityManager(): EntityManager
     {

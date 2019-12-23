@@ -182,7 +182,7 @@ class Migration
         }
 
         /**
-         * @deprecated 23.12.2019. It will be removed soon.
+         * @deprecated We will remove it after 01.01.2021
          */
         if (method_exists($migration, 'setContainer')) {
             if (empty($this->isRebuilded)) {

@@ -40,14 +40,14 @@ namespace Treo\Composer;
  * Class Cmd
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
- * @deprecated 16.12.2019
+ * @deprecated We will remove it after 01.01.2021
  */
 class Cmd
 {
     /**
      * After update
      *
-     * @deprecated
+     * @deprecated We will remove it after 01.01.2021
      */
     public static function postUpdate(): void
     {
