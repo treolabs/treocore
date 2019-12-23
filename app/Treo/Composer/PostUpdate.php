@@ -170,7 +170,7 @@ class PostUpdate
             $migration->run('Treo', ModuleManager::prepareVersion($data['Treo']['from']), ModuleManager::prepareVersion($data['Treo']['to']));
         }
 
-        foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
+        foreach (self::getModules() as $id) {
             if (isset($data[$id])) {
                 $migration->run($id, ModuleManager::prepareVersion($data[$id]['from']), ModuleManager::prepareVersion($data[$id]['to']));
             }
