@@ -60,7 +60,7 @@ class SqlDiff extends AbstractConsole
         $queries = $this->getContainer()->get('schema')->getDiffQueries();
 
         if (empty($queries)) {
-            self::show('No database changes were detected.', self::ERROR, true);
+            self::show('No database changes were detected.', self::SUCCESS, true);
         }
 
         echo implode(';' . PHP_EOL, $queries) . PHP_EOL;
