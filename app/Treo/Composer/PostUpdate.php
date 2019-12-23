@@ -316,6 +316,10 @@ class PostUpdate
 
         // call afterInstall event
         if (!empty($composerDiff['install'])) {
+            // rebuild
+            $this->getContainer()->get('dataManager')->rebuild();
+
+            // run
             foreach ($composerDiff['install'] as $row) {
                 echo 'Call after install event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterInstall');
@@ -325,6 +329,7 @@ class PostUpdate
 
         // call afterDelete event
         if (!empty($composerDiff['delete'])) {
+            // run
             foreach ($composerDiff['delete'] as $row) {
                 echo 'Call after delete event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterDelete');
