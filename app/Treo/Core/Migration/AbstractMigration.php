@@ -42,7 +42,7 @@ use Treo\Core\Utils\Config;
 /**
  * AbstractMigration class
  *
- * @author r.ratsun <r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 abstract class AbstractMigration
 {
