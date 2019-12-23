@@ -199,5 +199,17 @@
   ],
   "views/admin/layouts/base": [
     "treo-core"
+  ],
+  "views/admin/integrations/index": [
+    "treo-core"
+  ],
+  "views/admin/label-manager/index": [
+    "treo-core"
+  ],
+  "views/admin/entity-manager/index": [
+    "treo-core"
+  ],
+  "views/preferences/edit": [
+    "treo-core"
   ]
 }

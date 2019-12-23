@@ -42,6 +42,90 @@ Espo.define('treo-core:controllers/admin', 'class-replace!treo-core:controllers/
             // blocking page
             this.error404();
         },
+
+        settings: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/settings',
+                    recordView: 'views/admin/settings'
+                });
+            }, this);
+            model.fetch();
+        },
+
+        notifications: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/notifications',
+                    recordView: 'views/admin/notifications'
+                });
+            }, this);
+            model.fetch();
+        },
+
+        outboundEmails: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/outbound-emails',
+                    recordView: 'views/admin/outbound-emails'
+                });
+            }, this);
+            model.fetch();
+        },
+
+        inboundEmails: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/inbound-emails',
+                    recordView: 'views/admin/inbound-emails'
+                });
+            }, this);
+            model.fetch();
+        },
+
+        userInterface: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/user-interface',
+                    recordView: 'views/admin/user-interface'
+                });
+            }, this);
+            model.fetch();
+        },
+
+        authentication: function () {
+            var model = this.getSettingsModel();
+
+            model.once('sync', function () {
+                model.id = '1';
+                this.main('views/settings/edit', {
+                    model: model,
+                    headerTemplate: 'treo-core:admin/settings/headers/authentication',
+                    recordView: 'views/admin/authentication'
+                });
+            }, this);
+            model.fetch();
+        },
     });
 
 });
