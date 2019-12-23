@@ -14610,6 +14610,66 @@ body > #header .navbar-brand span.home-icon {
         visibility: visible
     }
 
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more.keep-open > a:after {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 50%;
+        background: #111111;
+        position: absolute;
+        left: 4px;
+        top: 19px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a:before {
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        background: #111111;
+        position: absolute;
+        left: 2px;
+        top: 14px;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before, body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        content: '';
+        display: block;
+        background: #111111;
+        position: absolute;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before {
+        width: 1px;
+        height: 100%;
+        left: 4px;
+        top: 0;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        width: 5px;
+        height: 1px;
+        left: 4px;
+        top: 17px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li:last-child a:before {
+        width: 1px;
+        height: 50%;
+        left: 4px;
+        top: 0;
+    }
+
     #header .navbar {
         top: 0;
         border-width: 0
@@ -19079,10 +19139,6 @@ ul.dropdown-menu > li.checkbox {
     border-color: #424242;
 }
 
-#header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a {
-    background: red !important
-}
-
 #header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
     color: #fff !important;
     background: #424242 !important
@@ -19298,6 +19354,11 @@ ul.dropdown-menu > li.checkbox {
     min-height: 35px;
 }
 
+#main .detail .catalog-tree-panel {
+    margin: 0;
+    border-right: 0;
+}
+
 #main .catalog-tree-panel + .list-container {
     padding: 0;
 }
@@ -19306,8 +19367,8 @@ ul.dropdown-menu > li.checkbox {
     border-left: 1px solid #e8eced;
 }
 
-#main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
-    margin-left: 40px;
+#main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
+    margin-left: 25px;
 }
 
 #main .catalog-tree-panel + .list-buttons-container::before,
@@ -19337,7 +19398,7 @@ ul.dropdown-menu > li.checkbox {
 }
 
 #main .catalog-tree-panel > button.collapsed {
-    left: 15px;
+    left: 9px;
 }
 
 #main .category-tree button.catalog-link {
@@ -19450,7 +19511,8 @@ button.category:focus {
     }
 
     #main .catalog-tree-panel.catalog-tree-panel-hidden {
-        width: 40px
+        width: 40px;
+        border-right: 1px solid #e8eced;
     }
 
     #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
@@ -19469,19 +19531,6 @@ button.category:focus {
 
     #main .search-container {
         margin-bottom: 15px;
-    }
-}
-
-@media screen and (min-width: 992px) {
-    .detail > .row > .col-md-8::after {
-        content: '';
-        position: absolute;
-        background: #fafafa;
-        height: 100%;
-        width: 50.1%;
-        top: 1px;
-        right: -50%;
-        border-left: 1px solid #dcdcdc
     }
 }
 
@@ -19730,8 +19779,21 @@ button.category:focus {
         position: absolute;
         right: 0;
     }
-}
 
+    #main .catalog-tree-panel.catalog-tree-panel-hidden {
+        padding: 0 8px 0 17px;
+    }
+
+    #main .detail .catalog-tree-panel + .overview {
+        border-left: 1px solid #e8eced;
+    }
+
+}
+@media screen and (max-width: 1200px) {
+    #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
+        width: calc(75% - 25px);
+    }
+}
 @media screen and (max-width: 767px) {
     #content {
         margin-top: 44px;

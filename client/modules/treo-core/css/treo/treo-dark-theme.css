@@ -14610,6 +14610,66 @@ body > #header .navbar-brand span.home-icon {
         visibility: visible
     }
 
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more.keep-open > a:after {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 50%;
+        background: #fff;
+        position: absolute;
+        left: 4px;
+        top: 19px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a:before {
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        background: #fff;
+        position: absolute;
+        left: 2px;
+        top: 14px;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before, body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        content: '';
+        display: block;
+        background: #fff;
+        position: absolute;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before {
+        width: 1px;
+        height: 100%;
+        left: 4px;
+        top: 0;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        width: 5px;
+        height: 1px;
+        left: 4px;
+        top: 17px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li:last-child a:before {
+        width: 1px;
+        height: 50%;
+        left: 4px;
+        top: 0;
+    }
+
     #header .navbar {
         top: 0;
         border-width: 0
@@ -19070,9 +19130,6 @@ ul.dropdown-menu > li.checkbox {
     border-color: #424242;
 }
 
-#header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a {
-    background: red !important
-}
 
 #header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
     color: #fff !important;
@@ -19723,11 +19780,12 @@ button.category:focus {
         border-left: 1px solid #e8eced;
     }
 
+}
+@media screen and (max-width: 1200px) {
     #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
         width: calc(75% - 25px);
     }
 }
-
 @media screen and (max-width: 767px) {
     #content {
         margin-top: 44px;

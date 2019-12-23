@@ -238,6 +238,7 @@ table.table > thead th > a {
   position: absolute;
 }
 
+
 .menu {
   padding-left: 8px;
   padding-right: 8px;
@@ -297,7 +298,7 @@ table.table > thead th > a {
       width: 170px;
       margin-right: -1px;
 
-      .field {
+      & > .field {
         border: 1px solid $border-btn-default;
 
         .form-control {
@@ -411,6 +412,13 @@ table.table > thead th > a {
   float: left;
   min-height: 35px;
 }
+#main .detail .catalog-tree-panel {
+  margin: 0;
+  border-right: 0;
+}
+#main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
+  margin-left: 25px;
+}
 
 #main .catalog-tree-panel + .list-container {
   padding: 0;
@@ -421,7 +429,7 @@ table.table > thead th > a {
 }
 
 #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
-  margin-left: 40px;
+  margin-left: 25px;
 }
 
 #main .catalog-tree-panel + .list-buttons-container::before,
@@ -451,8 +459,26 @@ table.table > thead th > a {
 }
 
 #main .catalog-tree-panel > button.collapsed {
-  left: 15px;
+  left: 50%;
+  transform: translateX(-50%);
 }
+
+@media screen and (min-width: 768px) {
+  #main .catalog-tree-panel.catalog-tree-panel-hidden {
+    padding: 20px 8px 20px 17px;
+  }
+
+  #main .detail .catalog-tree-panel + .overview {
+    border-left: 1px solid #e8eced;
+  }
+
+}
+@media screen and (min-width: 1200px) {
+  #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
+    width: calc(75% - 25px);
+  }
+}
+
 
 #main .category-tree button.catalog-link {
   position: relative;
@@ -697,6 +723,9 @@ button.category:focus {
     margin-left: -15px;
     margin-right: -14px;
   }
+  #main .detail .catalog-tree-panel + .overview {
+    border-right: 1px solid $border-nav;
+  }
 
   .edit > .row > .side,
   .detail > .row > .side {
@@ -710,11 +739,9 @@ button.category:focus {
     padding: 7px 15px;
   }
 
-
   .home-content > .row.dashlets {
     margin-left: -15px
   }
-
 
   #main {
     padding-left: 15px;

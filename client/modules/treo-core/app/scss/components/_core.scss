@@ -16220,6 +16220,15 @@ body > footer > p, body > footer > p a, body > footer > p a:hover, body > footer
   top: -4px;
   position: relative
 }
+#confProductDropDown {
+  margin-top: -6px;
+  margin-left: 10px;
+  padding: 3px 4px;
+  line-height: 14px;
+  i {
+    font-size: 12px;
+  }
+}
 
 span.color-icon {
   font-size: 50%;
