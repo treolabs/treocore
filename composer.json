@@ -48,6 +48,7 @@
     }
   },
   "extra": {
-    "treoId": "Treo"
+    "treoId": "Treo",
+    "version": "3.24.x"
   }
 }
