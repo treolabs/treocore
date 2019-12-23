@@ -37,18 +37,18 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class GenerateSqlDiff
+ * Class SqlDiff
  *
  * @author r.ratsun@teolabs.com
  */
-class GenerateSqlDiff extends AbstractConsole
+class SqlDiff extends AbstractConsole
 {
     /**
      * @inheritDoc
      */
     public static function getDescription(): string
     {
-        return 'Generate SQL diff file.';
+        return 'Show SQL diff.';
     }
 
     /**
@@ -56,19 +56,14 @@ class GenerateSqlDiff extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // prepare file name
-        $fileName = 'data/' . \date('YmdHis') . '.sql';
-
         /** @var array $queries */
         $queries = $this->getContainer()->get('schema')->getDiffQueries();
 
-        echo '<pre>';
-        print_r($queries);
-        die();
+        if (empty($queries)) {
+            self::show('No database changes were detected.', self::ERROR, true);
+        }
 
-        self::show('No database changes were detected.', self::ERROR, true);
-
-        echo "\033[0;32mFile\033[0m " . $fileName . " \033[0;32msuccessfully generated!\033[0m" . PHP_EOL;
+        echo implode(PHP_EOL, $queries) . PHP_EOL;
         die();
     }
 }
