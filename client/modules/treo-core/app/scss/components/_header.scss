@@ -66,6 +66,7 @@ body,
 @media screen and (max-width: 767px) {
   .navbar-toggle {
     margin-right: 4px;
+    margin-top: 6.5px;
   }
 
 
@@ -178,13 +179,6 @@ body,
       margin-left: 4px;
     }
 
-    .navbar {
-      img.logo {
-        max-width: 100%;
-        margin: 12px 0 0 0;
-      }
-    }
-
     .navbar-collapse {
       transform: translate(0, -150%);
     }
@@ -248,12 +242,22 @@ body,
     right: 0;
     top: 53px;
     width: 100% !important;
-    height: 48px;
+    min-height: 48px;
+    height: auto;
+    color: $text-black;
     box-shadow: rgba(255, 255, 255, 0.8) 0 3px 8px;
     border-bottom: 1px solid $border-mobile;
+    .header-with-dropdown {
+      white-space: initial;
+    }
   }
   .navbar-brand {
-    max-width: 100px;
+    display: inline-flex;
+    align-items: center;
+    width: 160px;
+  }
+  #header .navbar img.logo {
+    max-width: 60%;
   }
   .navbar-header {
     background-color: $bg-header;
@@ -277,7 +281,7 @@ body,
       min-height: 53px;
       margin: 0;
       padding: 0;
-      width: 100%;
+      width: calc(100% - 15px);
       left: 15px;
       border: none;
     }
@@ -361,10 +365,26 @@ body,
 
       .filter-cell {
         margin-bottom: 5px;
-        width: 33%;
+        width: 100%;
         max-width: 170px;
+
+        &:first-child {
+          & > .open {
+            .dropdown-menu {
+              left: 0;
+            }
+          }
+        }
       }
     }
+  }
+}
+@media screen and (max-width: 399px) {
+  .navbar-brand {
+    max-width: 100px;
+  }
+  #header .navbar img.logo {
+    max-width: 80%;
   }
 }
 

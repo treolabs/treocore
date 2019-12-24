@@ -14506,7 +14506,7 @@ body > #header .navbar-brand span.home-icon {
     #header a.minimizer {
         color: #dfdfdf;
         text-decoration: none;
-        margin-top: 5px;
+        margin-top: 4px;
         display: inline-block;
         margin-left: 4px
     }
@@ -14534,9 +14534,9 @@ body > #header .navbar-brand span.home-icon {
     body.minimized #header a.navbar-brand {
         position: fixed;
         top: 0;
-        height: 35px;
+        height: 48px;
         width: 38px;
-        padding-top: 8px
+        padding-top: 13px
     }
 
     body.minimized #header a.navbar-brand span.home-icon {
@@ -19543,7 +19543,7 @@ button.category:focus {
         background: #424242;
         border-right: 1px solid #424242;
         border-bottom: 1px solid #545454;
-        height: 47px
+        height: 48px
     }
 
     #header a.navbar-brand {
@@ -19621,7 +19621,7 @@ button.category:focus {
     }
 
     body.minimized #header .navbar-header {
-        height: 35px;
+        height: 48px;
     }
 
     #header a.navbar-brand {
@@ -19781,7 +19781,7 @@ button.category:focus {
     }
 
 }
-@media screen and (max-width: 1200px) {
+@media screen and (min-width: 1200px) {
     #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
         width: calc(75% - 25px);
     }
@@ -19884,7 +19884,6 @@ button.category:focus {
 
     #header .navbar img.logo {
         max-width: 60%;
-        margin: 12px 0 0 0;
     }
 
     #header .navbar-collapse,
@@ -20067,6 +20066,8 @@ button.category:focus {
     }
 
     .navbar-brand {
+        display: inline-flex;
+        align-items: center;
         width: 160px;
     }
 
@@ -20148,6 +20149,15 @@ button.category:focus {
         width: calc(100% - 30px);
         box-shadow: none;
         margin: 0 15px;
+    }
+}
+
+@media screen and (max-width: 399px) {
+    .navbar-brand {
+        max-width: 100px;
+    }
+    #header .navbar img.logo {
+        max-width: 100%;
     }
 }
 
