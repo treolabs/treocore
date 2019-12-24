@@ -220,8 +220,9 @@ class PostUpdate
         foreach (Util::scanDir($diffPath) as $type) {
             foreach (Util::scanDir("$diffPath/$type") as $file) {
                 $parts = explode('_', file_get_contents("$diffPath/$type/$file"));
-                $result[$type][] = [
-                    'id'      => str_replace('.txt', '', $file),
+                $moduleId = str_replace('.txt', '', $file);
+                $result[$type][$moduleId] = [
+                    'id'      => $moduleId,
                     'package' => (isset($packages[$parts[0]])) ? $packages[$parts[0]] : null,
                     'from'    => (isset($parts[1])) ? $parts[1] : null,
                     'to'      => (isset($parts[2])) ? $parts[2] : null
@@ -256,14 +257,14 @@ class PostUpdate
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
-                $result['delete'][] = [
+                $result['delete'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
                     'to'      => null
                 ];
             } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                $result['update'][] = [
+                $result['update'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $newData[$package['name']],
                     'from'    => $package['version'],
@@ -273,7 +274,7 @@ class PostUpdate
         }
         foreach ($newData as $package) {
             if (!isset($oldData[$package['name']])) {
-                $result['install'][] = [
+                $result['install'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
