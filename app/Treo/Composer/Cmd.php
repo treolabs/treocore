@@ -36,36 +36,24 @@ declare(strict_types=1);
 
 namespace Treo\Composer;
 
-use Treo\Core\Application;
-use Treo\Core\Container;
-
 /**
  * Class Cmd
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author     r.ratsun <r.ratsun@treolabs.com>
+ *
+ * @deprecated We will remove it after 01.01.2021
  */
 class Cmd
 {
     /**
      * After update
+     *
+     * @deprecated We will remove it after 01.01.2021
      */
     public static function postUpdate(): void
     {
-        // define path to core app
-        if (!defined('CORE_PATH')) {
-            define('CORE_PATH', dirname(dirname(__DIR__)));
-        }
-
-        (new PostUpdate())->setContainer(self::getContainer())->run();
-    }
-
-    /**
-     * @return Container
-     */
-    protected static function getContainer(): Container
-    {
         require_once 'vendor/autoload.php';
 
-        return (new Application())->getContainer();
+        (new PostUpdate(true))->run();
     }
 }

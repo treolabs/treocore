@@ -1,84 +1,85 @@
-## Module manager
+## Modules Manager
 
-To installation, updating, and removing modules in TreoCore provide a module manager mechanism. Within TreoCore, modules – extensions that add new or expand existing functionality.
+The Modules Manager mechanism is available for you in TreoCore to install, update, and remove modules – extensions that add new or expand the existing functionality.
 
-Module Manager is located in Administration > Modules page.
+Modules Manager is located on the Administration > Modules Manager page.
 
-![module_manager](../../_assets/module-manader/module_manager_en.png)
+![modules_manager](../../_assets/module-manader/module_manager_en.png)
 
-As you can see, module manager consist of three parts:
+As you can see, the Modules Manager insterface consists of three panels:
 
-* Install panel – display list of installed modules in system. There is you can get information such as module description, setting version (* means newest version), current version in TreoCore and required dependencies in corresponding column.
+* **Installed** – a list of modules installed in the system is displayed here along with the following data given in the corresponding columns: module name and description, setting version (* means the latest version), current version of TreoCore and required dependencies.
 
   ![installed_panel](../../_assets/module-manader/module_manager_installed_en.png)
   
-* Store panel – list of all modules that support TreoCore. As Install panel in has description of each module. Tags identify module by it features that simplifies search of needed modules, for example: possibility export or restore data, price managing, etc. Status column points on possibility of module managing. More in [module buying](#module-buying).   
+* **Store** – a list of all modules supported by TreoCore is displayed here along with the description, tags, and status of each module. Tags identify modules by their main features to simplify your search for this or that module. For example: possibility to export or restore data, manage prices, etc. Management options are given in the "Status" column for each module separately. See the details in the [Module Buying](#module-buying) section.   
 
   ![store_panel](../../_assets/module-manader/module_manager_store_en.png)
 
-* Logs – display actions history in Module manager by every system user.
+* **Logs** – the history of operations performed by each system user in the Modules Manager is displayed here.
 
   ![logs_panel](../../_assets/module-manader/module_manager_logs_en.png)
   
-  Clicked to view detail you get information about operation with packages and their dependencies.
+  To view detailed information about any operation, click "View Details"  for the desired operation:
   
   ![logs_detailed](../../_assets/module-manader/module_manager_logs_detailed_en.png)
 
-#### Module buying
+#### Module Buying
 
-First, visit our store for details: [English version](https://treopim.com/store), [German version](https://treopim.com/de/shop).
+For a start, visit our store for details: [English version](https://treopim.com/store), [German version](https://treopim.com/de/shop).
 
-In TreoStore modules has one of two statuses:
+In TreoCore the following status options are available for each module:
 
 * **available** – available for installation;
 * **buyable** – there is no access to module.
 
-To change status from **buyable** to **available** after confirmation of module purchase you must take contact with our support and tell your system ID, that contain on the Administration > Settings page. In case of success after several minutes needed module will be available in TreoStore.
+To change the status from **buyable** to **available** after the confirmation of module purchase, please contact our support and provide your system ID, which can be found on the Administration > Settings page. In case of success, the needed module will be available in TreoStore within a few several minutes.
+<!-- давайте зробимо інтерактивним слово support, щоб по кліку на нього відкривалося вікно створення нового листа з імейлом нашого сапорту в полі To -->
     
 ![settings_page](../../_assets/module-manader/module_manager_settings_en.png)
 
-#### Module installing
+#### Module Installation
 
-Before installing, make sure that the module has status **available**. More details in [module buying](#module-buying).
+Prior to installation, make sure that the module has the **available** status. See the details in the [Module Buying](#module-buying) section.
 
-To install module:
+To install a module:
 
 1. Go to Administration > Modules.
-2. Open dropdown menu in needed module.
+2. Open the drop-down menu of a needed module:
 
    ![call_dropdown](../../_assets/module-manader/module_manager_drondown_en.png)
-3. Click Install button.
+3. Click the "Install" button.
 
    ![install_module](../../_assets/module-manader/module_manager_install_en.png)
-4. Choose version to install. You can set module version manually or set * for newest version.
+4. Choose the version to install. You can define the module version manually or set "*" to get the latest version:
 
    ![choosing_version](../../_assets/module-manader/module_manager_versions_en.png)
    
-   After you click Install TreoCore generate schema with chosen modules and their dependencies for further installation.
+   Having clicked "Install", TreoCore generates a schema with chosen module(s) and their dependencies for further installation.
 
-5. To start modules install process click Run Update and confirm action. 
+5. To start the module(s) installation process, click "Run Update" and confirm the action: 
    
    ![confirm_install](../../_assets/module-manader/module_manager_confirm_en.png)
 
-   During the updating you can call realtime logs to get actual information about process.
+   During the update, you can call realtime logs to get actual information about the process:
    
    ![realtime_logs](../../_assets/module-manader/module_manager_realtime_logs_en.png)
 
-#### Module updating
+#### Module Update
 
-To update module version:
+To update a module version:
 
-1. Go to Administration > Modules.
-2. Open dropdown menu from Installed panel.
-3. Click Update button.
-4. Choose version to update.
-5. Click Run Update.
+1. Go to Administration > Modules Manager.
+2. Open the drop-down menu of the desired module from the "Installed" panel.
+3. Click the "Update" button.
+4. Choose the version to update to.
+5. Click "Run Update".
 
-#### Module deleting
+#### Module Deletion
 
-To delete module from system:
+To delete a module from the system:
 
-1. Go to Administration > Module Manager.
-2. Open dropdown menu from Installed panel.
-3. Click Delete button.
-4. Click Run Update.
+1. Go to Administration > Modules Manager.
+2. Open the drop-down menu of the desired module from the "Installed" panel.
+3. Click the "Delete" button.
+4. Click "Run Update".

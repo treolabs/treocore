@@ -41,7 +41,7 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
 
         hiddenBoolFilterList: [],
 
-        boolFilterData: [],
+        boolFilterData: {},
 
         events: _.extend({}, Dep.prototype.events, {
             'click a[data-action="addFilter"]': function (e) {

@@ -64,7 +64,7 @@
     "Module downgrade": "Das {module} wurde degradieren. Von version {from} bis {to}",
     "System downgrade": "Das System wurde heruntergestuft. Ab Version {from} bis {to}",
     "Module install": "Das {module} v.{version} wurde installiert",
-    "Module delete": "Das {module} v.{version} wurde gelöscht",
+    "Module delete": "Das {module} wurde gelöscht",
     "Composer updated!": "Abhängigkeiten des Modulmanagers wurden aktualisiert! <a href=\"/#Composer/list\">Siehe Einzelheiten</a>"
   },
   "options": {

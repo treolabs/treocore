@@ -35,6 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Entities\Portal;
+
 /**
  * ThemeManager loader
  *
@@ -50,6 +52,17 @@ class ThemeManager extends Base
      */
     public function load()
     {
+        /** @var Portal $portal */
+        $portal = $this->getContainer()->get('portal');
+
+        if (!empty($portal)) {
+            return new \Espo\Core\Portal\Utils\ThemeManager(
+                $this->getConfig(),
+                $this->getMetadata(),
+                $portal
+            );
+        }
+
         return new \Espo\Core\Utils\ThemeManager(
             $this->getConfig(),
             $this->getMetadata()

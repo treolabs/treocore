@@ -51,14 +51,14 @@ class Migration
      * @param string $module
      * @param string $from
      * @param string $to
+     *
+     * @return bool
      */
-    public function run(string $module, string $from, string $to): void
+    public function run(string $module, string $from, string $to): bool
     {
         // get module migration versions
-        $migrations = $this->getModuleMigrationVersions($module);
-
-        if (empty($migrations)) {
-            return;
+        if (empty($migrations = $this->getModuleMigrationVersions($module))) {
+            return false;
         }
 
         // prepare versions
@@ -81,39 +81,42 @@ class Migration
         $keyTo = array_search($to, $data);
 
         if ($keyFrom == $keyTo) {
-            return;
+            return false;
         }
+
+        // prepare name
+        $name = ($module == 'Treo') ? 'Core' : $module;
+
+        echo "Migrate $name $from -> $to ... ";
 
         // prepare increment
         if ($keyFrom < $keyTo) {
             // go UP
             foreach ($data as $k => $className) {
-                if ($k >= $keyFrom && $keyTo >= $k && $from != $className && in_array($className, $migrations)) {
-                    // prepare class name
-                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
-
-                    $class = new $className();
-                    if ($class instanceof AbstractMigration) {
-                        $class->setContainer($this->getContainer());
-                        $class->up();
-                    }
+                if ($k >= $keyFrom
+                    && $keyTo >= $k
+                    && $from != $className
+                    && in_array($className, $migrations)
+                    && !empty($migration = $this->createMigration($module, $className))) {
+                    $migration->up();
                 }
             }
         } else {
             // go DOWN
             foreach (array_reverse($data, true) as $k => $className) {
-                if ($k >= $keyTo && $keyFrom >= $k && $to != $className && in_array($className, $migrations)) {
-                    // prepare class name
-                    $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
-
-                    $class = new $className();
-                    if ($class instanceof AbstractMigration) {
-                        $class->setContainer($this->getContainer());
-                        $class->down();
-                    }
+                if ($k >= $keyTo
+                    && $keyFrom >= $k
+                    && $to != $className
+                    && in_array($className, $migrations)
+                    && !empty($migration = $this->createMigration($module, $className))) {
+                    $migration->down();
                 }
             }
         }
+
+        echo 'Done!' . PHP_EOL;
+
+        return true;
     }
 
     /**
@@ -164,5 +167,40 @@ class Migration
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $module
+     * @param string $className
+     *
+     * @return null|Base
+     */
+    protected function createMigration(string $module, string $className): ?Base
+    {
+        // prepare class name
+        $className = sprintf('\\%s\\Migrations\\%s', $module, $className);
+
+        if (!class_exists($className)) {
+            return null;
+        }
+
+        $migration = new $className($this->getContainer()->get('entityManager')->getPDO(), $this->getContainer()->get('config'));
+
+        if (!$migration instanceof Base) {
+            return null;
+        }
+
+        /**
+         * @deprecated We will remove it after 01.01.2021
+         */
+        if ($migration instanceof AbstractMigration) {
+            if (empty($this->isRebuilded)) {
+                $this->isRebuilded = true;
+                $this->getContainer()->get('dataManager')->rebuild();
+            }
+            $migration->setContainer($this->getContainer());
+        }
+
+        return $migration;
     }
 }

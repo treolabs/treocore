@@ -36,17 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Jobs;
 
-use Doctrine\DBAL\Schema\Schema as DoctrineSchema;
-use Espo\Core\Utils\Database\DBAL\Schema\Comparator;
-use Treo\Core\Utils\Database\Schema\Converter;
-use Treo\Core\Utils\Database\Schema\Schema;
+use Espo\Core\Jobs\Base;
 
 /**
  * Class TreoCleanup
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class TreoCleanup extends \Espo\Core\Jobs\Base
+class TreoCleanup extends Base
 {
     /**
      * Run cron job
@@ -55,74 +52,10 @@ class TreoCleanup extends \Espo\Core\Jobs\Base
      */
     public function run(): bool
     {
-        // cleanup deleted rows from all tables
-        $this->cleanupDeleted();
-
-        // cleanup deleted attachments
-        $this->cleanupAttachments();
-
         // cleanup cron jobs
         $this->cleanupJobs();
 
         return true;
-    }
-
-    /**
-     * Cleanup deleted rows from all tables
-     */
-    protected function cleanupDeleted(): void
-    {
-        // get tables
-        if (!empty($tables = $this->getTables())) {
-            foreach ($tables as $table) {
-                $this->execute("DELETE FROM $table WHERE deleted=1");
-            }
-        }
-    }
-
-    /**
-     * Cleanup deleted attachments
-     */
-    protected function cleanupAttachments(): void
-    {
-        // prepare path
-        $upload = "data/upload";
-
-        if (file_exists($upload) && is_dir($upload)) {
-            $files = scandir($upload);
-            if (!empty($files)) {
-                foreach ($files as $file) {
-                    if (!in_array($file, [".", ".."]) && !is_dir($upload . "/" . $file)) {
-                        $ids[] = $file;
-                    }
-                }
-            }
-
-            if (!empty($ids)) {
-                $attachments = $this
-                    ->getEntityManager()
-                    ->getRepository('Attachment')
-                    ->select(['id', 'relatedId', 'parentId'])
-                    ->where([['OR' => [['id' => $ids], ['relatedId' => $ids], ['parentId' => $ids]]]])
-                    ->find();
-
-                $attachmentsIds = [];
-                if (!empty($attachments)) {
-                    foreach ($attachments as $attachment) {
-                        $attachmentsIds[] = $attachment->get('id');
-                        $attachmentsIds[] = $attachment->get('relatedId');
-                        $attachmentsIds[] = $attachment->get('parentId');
-                    }
-                    $attachmentsIds = array_unique($attachmentsIds);
-                }
-
-                foreach ($ids as $id) {
-                    if (!in_array($id, $attachmentsIds)) {
-                        unlink($upload . "/" . $id);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -133,75 +66,6 @@ class TreoCleanup extends \Espo\Core\Jobs\Base
         // prepare date
         $date = (new \DateTime())->modify("-1 month")->format('Y-m-d');
 
-        $this->execute("DELETE FROM job WHERE DATE(execute_time)<'{$date}' AND status IN ('Success','Failed')");
-    }
-
-    /**
-     * @param string $sql
-     */
-    protected function execute(string $sql): void
-    {
-        if (!empty($sql)) {
-            try {
-                $sth = $this
-                    ->getEntityManager()
-                    ->getPDO()
-                    ->prepare($sql);
-                $sth->execute();
-            } catch (\Exception $e) {
-                // something wrong
-            }
-        }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getTables(): array
-    {
-        // prepare metadata schema
-        $metadataSchema = $this
-            ->getConverter()
-            ->process($this->getContainer()->get('ormMetadata')->getData());
-
-        // get schema diff
-        $schemaDiff = (new Comparator())->compare(new DoctrineSchema(), $metadataSchema);
-
-        // prepare result
-        $result = [];
-        if (!empty($schemaDiff->newTables)) {
-            $result = array_keys($schemaDiff->newTables);
-            natsort($result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return Schema
-     */
-    protected function getSchema(): Schema
-    {
-        return new Schema(
-            $this->getContainer()->get('config'),
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('fileManager'),
-            $this->getContainer()->get('entityManager'),
-            $this->getContainer()->get('classParser'),
-            $this->getContainer()->get('ormMetadata')
-        );
-    }
-
-    /**
-     * @return Converter
-     */
-    protected function getConverter(): Converter
-    {
-        return new Converter(
-            $this->getContainer()->get('metadata'),
-            $this->getContainer()->get('fileManager'),
-            $this->getSchema(),
-            $this->getContainer()->get('config')
-        );
+        $this->getEntityManager()->nativeQuery("DELETE FROM job WHERE DATE(execute_time)<'{$date}' AND status IN ('Success','Failed')");
     }
 }

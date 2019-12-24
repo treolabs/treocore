@@ -29,10 +29,7 @@
 
 namespace Espo\EntryPoints;
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\BadRequest;
-use \Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\NotFound;
 use Treo\EntryPoints\Image;
 
 class LogoImage extends Image
@@ -41,8 +38,6 @@ class LogoImage extends Image
 
     public function run()
     {
-        $this->imageSizes['small-logo'] = array(181, 44);
-
         if (!empty($_GET['id'])) {
             $id = $_GET['id'];
         } else {
@@ -59,6 +54,18 @@ class LogoImage extends Image
         }
 
         $this->show($id, $size);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getImageSize(string $size): ?array
+    {
+        if ($size == 'small-logo') {
+            return [181, 44];
+        }
+
+        return parent::getImageSize($size);
     }
 }
 
