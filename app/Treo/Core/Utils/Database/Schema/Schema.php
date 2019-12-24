@@ -106,6 +106,30 @@ class Schema extends \Espo\Core\Utils\Database\Schema\Schema
     }
 
     /**
+     * Get diff queries
+     *
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    public function getDiffQueries(): array
+    {
+        // set strict type
+        $this->getPlatform()->strictType = true;
+
+        // get queries
+        $queries = $this
+            ->getComparator()
+            ->compare($this->getCurrentSchema(), $this->schemaConverter->process($this->ormMetadata->getData(), null))
+            ->toSql($this->getPlatform());
+
+        // set strict type
+        $this->getPlatform()->strictType = false;
+
+        return $queries;
+    }
+
+    /**
      * Dispatch an event
      *
      * @param string $target

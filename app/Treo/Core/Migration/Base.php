@@ -32,30 +32,69 @@
  * and "TreoCore" word.
  */
 
-declare(strict_types=1);
+namespace Treo\Core\Migration;
 
-namespace Treo\Migrations;
-
-use Treo\Core\Migration\Base;
+use PDO;
+use Treo\Core\Utils\Config;
 
 /**
- * Migration class for version 3.19.9
+ * Base class
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class V3Dot19Dot9 extends Base
+class Base
 {
     /**
-     * @inheritdoc
+     * @var PDO
+     */
+    private $pdo;
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @param PDO    $pdo
+     * @param Config $config
+     */
+    public function __construct(PDO $pdo, Config $config)
+    {
+        $this->pdo = $pdo;
+        $this->config = $config;
+    }
+
+    /**
+     * Up to current
      */
     public function up(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * Down to previous version
      */
     public function down(): void
     {
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    protected function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    /**
+     * Get PDO
+     *
+     * @return PDO
+     */
+    protected function getPDO(): PDO
+    {
+        return $this->pdo;
     }
 }

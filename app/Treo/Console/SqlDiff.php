@@ -34,28 +34,36 @@
 
 declare(strict_types=1);
 
-namespace Treo\Migrations;
-
-use Treo\Core\Migration\Base;
+namespace Treo\Console;
 
 /**
- * Migration class for version 3.19.9
+ * Class SqlDiff
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun@teolabs.com
  */
-class V3Dot19Dot9 extends Base
+class SqlDiff extends AbstractConsole
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function up(): void
+    public static function getDescription(): string
     {
+        return 'Show SQL diff.';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function down(): void
+    public function run(array $data): void
     {
+        /** @var array $queries */
+        $queries = $this->getContainer()->get('schema')->getDiffQueries();
+
+        if (empty($queries)) {
+            self::show('No database changes were detected.', self::SUCCESS, true);
+        }
+
+        echo implode(';' . PHP_EOL, $queries) . PHP_EOL;
+        die();
     }
 }
