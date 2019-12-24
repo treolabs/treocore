@@ -36,14 +36,14 @@ declare(strict_types=1);
 
 namespace Treo\Migrations;
 
-use Treo\Core\Migration\AbstractMigration;
+use Treo\Core\Migration\Base;
 
 /**
  * Migration class for version 3.22.5
  *
  * @author m.kokhanskyi@treolabs.com
  */
-class V3Dot22Dot5 extends AbstractMigration
+class V3Dot22Dot5 extends Base
 {
     /**
      * @inheritDoc
