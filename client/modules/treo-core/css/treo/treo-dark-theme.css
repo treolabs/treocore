@@ -19641,7 +19641,7 @@ button.category:focus {
     }
 
     .edit > .row > .overview,
-    .detail > .row > .overview  {
+    .detail > .row > .overview {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
@@ -20847,6 +20847,7 @@ select {
     background-repeat: no-repeat;
     background-size: 12px;
     padding-right: 20px !important;
+	-webkit-appearance: none;
 }
 
 @media screen and (max-width: 768px)  {
@@ -20928,4 +20929,8 @@ select {
 .header-breadcrumbs .header-with-dropdown + .chevron-dropdown {
     position: relative;
     display: inline-block;
+}
+
+.entity-container .cell {
+    padding: 0;
 }

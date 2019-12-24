@@ -45,8 +45,6 @@ use Treo\Core\Utils\Auth;
 use Treo\Core\Utils\Route;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Util;
-use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class Application
@@ -575,9 +573,6 @@ class Application
      */
     private function initPortalContainer(string $portalId): void
     {
-        // set portal container
-        $this->container = new PortalContainer();
-
         // find portal
         $portal = $this
             ->getContainer()
@@ -585,7 +580,6 @@ class Application
             ->getEntity('Portal', $portalId);
 
         if (!empty($portal) && $portal->get('isActive')) {
-            // set portal
             $this->getContainer()->setPortal($portal);
         } else {
             throw new \Exception('No such portal');

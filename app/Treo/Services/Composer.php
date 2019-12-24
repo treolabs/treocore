@@ -49,6 +49,8 @@ use Treo\Core\ModuleManager\Manager as TreoModuleManager;
  */
 class Composer extends AbstractService
 {
+    const CHECK_UP_FILE = 'data/composer-check-up.log';
+
     /**
      * @var string
      */
@@ -119,6 +121,45 @@ class Composer extends AbstractService
         }
 
         return '-';
+    }
+
+    /**
+     * @return array
+     */
+    public function checkUpdate(): array
+    {
+        /**
+         * Is daemon enabled ?
+         */
+        file_put_contents(self::CHECK_UP_FILE, '1');
+        sleep(2);
+        if (file_exists(self::CHECK_UP_FILE)) {
+            return [
+                'status'  => false,
+                'message' => $this->translate('daemonDisabled', 'labels', 'Composer')
+            ];
+        }
+
+        /**
+         * Is Queue Manager running ?
+         */
+        $queueItem = $this
+            ->getEntityManager()
+            ->getRepository('QueueItem')
+            ->select(['id'])
+            ->where(['status' => ['Pending', 'Running']])
+            ->findOne();
+        if (!empty($queueItem)) {
+            return [
+                'status'  => false,
+                'message' => $this->translate('queueManagerRunning', 'labels', 'Composer')
+            ];
+        }
+
+        return [
+            'status'  => true,
+            'message' => ''
+        ];
     }
 
     /**

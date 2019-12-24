@@ -81,11 +81,14 @@ Espo.define('treo-core:views/composer/list', 'views/list',
             Dep.prototype.afterRender.call(this);
 
             if (!this.getConfig().get('isUpdating')) {
-                this.ajaxPostRequest('Composer/action/isDaemonEnabled').then(response => {
-                    if (response) {
+                this.ajaxPostRequest('Composer/action/check').then(response => {
+                    let alertEl = $('#composer-alert');
+                    alertEl.html('');
+                    if (response.status) {
                         $('.composer-action').removeAttr('disabled');
                     } else {
-                        $('#composer-alert').fadeIn();
+                        alertEl.html(response.message);
+                        alertEl.fadeIn();
                     }
                 });
             }
@@ -388,7 +391,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                     url: `../../data/treo-composer.log`,
                     cache: false,
                     success: response => {
-                        this.log = response;
+                        this.log = response.trim();
                         this.trigger('log-updated');
                         this.checkLog();
                     },

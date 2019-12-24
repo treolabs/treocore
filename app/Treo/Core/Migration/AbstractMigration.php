@@ -34,28 +34,45 @@
 
 namespace Treo\Core\Migration;
 
-use Espo\Core\ORM\EntityManager;
-use Espo\Core\Utils\Config;
+use Treo\Core\Container;
+use Treo\Core\ORM\EntityManager;
 
 /**
  * AbstractMigration class
  *
- * @author     r.ratsun@zinitsolutions.com
+ * @author     r.ratsun <r.ratsun@treolabs.com>
+ *
+ * @deprecated We will remove it after 01.01.2021
  */
-abstract class AbstractMigration
+class AbstractMigration extends Base
 {
-    use \Treo\Traits\ContainerTrait;
+    /**
+     * @var Container
+     */
+    private $container;
 
     /**
-     * Up to current
+     * Set container
+     *
+     * @param Container $container
+     *
+     * @return AbstractMigration
      */
-    abstract public function up(): void;
-
-    /**
-     * Down to previous  version
-     */
-    public function down(): void
+    public function setContainer(Container $container): AbstractMigration
     {
+        $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * Get container
+     *
+     * @return Container
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
     }
 
     /**
@@ -74,15 +91,5 @@ abstract class AbstractMigration
     protected function getEntityManager(): EntityManager
     {
         return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig(): Config
-    {
-        return $this->getContainer()->get('config');
     }
 }

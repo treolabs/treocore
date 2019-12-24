@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Migrations;
 
-use Treo\Core\Migration\AbstractMigration;
-
 /**
  * Migration class for version 3.24.23
  *

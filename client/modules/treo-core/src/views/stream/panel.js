@@ -34,6 +34,16 @@
 Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/stream/panel',
     Dep => Dep.extend({
 
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            delete this.events['focus textarea.note'];
+
+            this.events['click textarea.note'] = e => {
+                this.enablePostingMode();
+            };
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
@@ -58,7 +68,6 @@ Espo.define('treo-core:views/stream/panel', 'class-replace!treo-core:views/strea
                     });
                 }, 500);
             });
-        }
-
+        },
     })
 );
