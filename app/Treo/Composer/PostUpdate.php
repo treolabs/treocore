@@ -63,6 +63,20 @@ class PostUpdate
     private $byLockFile = false;
 
     /**
+     * @param string $message
+     * @param bool   $break
+     */
+    public static function renderLine(string $message, bool $break = true)
+    {
+        $result = "\033[0;36m" . date('d.m.Y H:i:s') . "\033[0m" . ' | ' . $message;
+        if ($break) {
+            $result .= PHP_EOL;
+        }
+
+        echo $result;
+    }
+
+    /**
      * PostUpdate constructor.
      *
      * @param bool $byLockFile
@@ -90,10 +104,9 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
-        echo date('d.m.Y H:i:s') . PHP_EOL;
-        echo 'Clear cache... ';
+        self::renderLine('Clear cache...');
         Util::removeDir('data/cache');
-        echo 'Done!' . PHP_EOL;
+        self::renderLine('Done!');
 
         // set container
         $this->container = (new App())->getContainer();
@@ -140,8 +153,7 @@ class PostUpdate
      */
     protected function logoutAll(): void
     {
-        echo date('d.m.Y H:i:s') . PHP_EOL;
-        echo 'Logout all... ';
+        self::renderLine('Logout all...');
 
         $sth = $this
             ->getContainer()
@@ -150,7 +162,7 @@ class PostUpdate
 
         $sth->execute();
 
-        echo 'Done!' . PHP_EOL;
+        self::renderLine('Done!');
     }
 
     /**
@@ -322,10 +334,9 @@ class PostUpdate
 
             // run
             foreach ($composerDiff['install'] as $row) {
-                echo date('d.m.Y H:i:s') . PHP_EOL;
-                echo 'Call after install event for ' . $row['id'] . '... ';
+                self::renderLine('Call after install event for ' . $row['id'] . '... ');
                 $this->callEvent($row['id'], 'afterInstall');
-                echo 'Done!' . PHP_EOL;
+                self::renderLine('Done!');
             }
         }
 
@@ -333,10 +344,9 @@ class PostUpdate
         if (!empty($composerDiff['delete'])) {
             // run
             foreach ($composerDiff['delete'] as $row) {
-                echo date('d.m.Y H:i:s') . PHP_EOL;
-                echo 'Call after delete event for ' . $row['id'] . '... ';
+                self::renderLine('Call after delete event for ' . $row['id'] . '... ');
                 $this->callEvent($row['id'], 'afterDelete');
-                echo 'Done!' . PHP_EOL;
+                self::renderLine('Done!');
             }
         }
     }
@@ -367,8 +377,7 @@ class PostUpdate
         $composerDiff = $this->getComposerDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
-            echo date('d.m.Y H:i:s') . PHP_EOL;
-            echo 'Send update notifications to admin users... ';
+            self::renderLine('Send update notifications to admin users... ');
 
             /** @var EntityManager $em */
             $em = $this
@@ -391,7 +400,7 @@ class PostUpdate
                     }
                 }
             }
-            echo 'Done!' . PHP_EOL;
+            self::renderLine('Done!');
         }
     }
 

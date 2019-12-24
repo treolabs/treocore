@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Migration;
 
+use Treo\Composer\PostUpdate;
+
 /**
  * Migration
  *
@@ -87,8 +89,7 @@ class Migration
             return false;
         }
 
-        echo date('d.m.Y H:i:s') . PHP_EOL;
-        echo $message . PHP_EOL;
+        PostUpdate::renderLine($message);
 
         // prepare increment
         if ($keyFrom < $keyTo) {
@@ -115,7 +116,7 @@ class Migration
             }
         }
 
-        echo 'Done!' . PHP_EOL;
+        PostUpdate::renderLine('Migration done!');
 
         return true;
     }
