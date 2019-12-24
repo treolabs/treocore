@@ -416,9 +416,6 @@ table.table > thead th > a {
   margin: 0;
   border-right: 0;
 }
-#main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
-  margin-left: 25px;
-}
 
 #main .catalog-tree-panel + .list-container {
   padding: 0;
@@ -427,9 +424,13 @@ table.table > thead th > a {
 #main .catalog-tree-panel + .list-container .list {
   border-left: 1px solid #e8eced;
 }
-
-#main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
-  margin-left: 25px;
+@media screen and (min-width: 1200px) {
+  #main .catalog-tree-panel.catalog-tree-panel-hidden + .list-container {
+    margin-left: 25px;
+  }
+  #main .catalog-tree-panel + .list-container.hidden-catalog-tree-panel {
+    margin-left: 25px;
+  }
 }
 
 #main .catalog-tree-panel + .list-buttons-container::before,
@@ -621,7 +622,7 @@ button.category:focus {
   #header ul.tabs {
     margin: 0 0 0 -8px;
     overflow-y: auto;
-    border-bottom: 1px solid #545454;
+    border-bottom: 1px solid $border-header;
   }
 
   #header .nav > li.more:not(.more-group) > .dropdown-menu {
@@ -1542,6 +1543,9 @@ td[data-name="draggableIcon"] {
 
 .bottom .panel .group-container > .group {
   border-bottom: 1px solid #ececec;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .bottom .panel .group-container > .group .list td[data-name="value"] {

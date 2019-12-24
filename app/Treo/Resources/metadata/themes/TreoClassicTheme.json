@@ -2,7 +2,7 @@
   "stylesheet": "client/modules/treo-core/css/treo/treo-classic-theme.css",
   "logo": "client/modules/treo-core/img/treo_core_logo_black.svg",
   "navbarIsVertical": true,
-  "navbarStaticItemsHeight": 65,
+  "navbarStaticItemsHeight": 75,
   "recordTopButtonsStickTop": 61,
   "recordTopButtonsBlockHeight": 21,
   "dashboardCellHeight": 155,

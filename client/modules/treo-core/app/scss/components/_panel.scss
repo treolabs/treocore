@@ -4,6 +4,11 @@
   border-top-width: 1px;
   border-bottom-width: 0
 }
+@media screen and (max-width: 767px) {
+  .panel {
+    border-top: none;
+  }
+}
 
 .panel-title {
   font-size: 14px;
@@ -131,6 +136,32 @@
     margin-bottom: 15px;
   }
 }
+.modal-content {
+  .panel-default {
+    & > .panel-heading {
+      position: relative;
+      &:before {
+        content: '';
+        width: calc(100% + 14px);
+        height: 6px;
+        background-color: #efefef;
+        bottom: 100%;
+        display: block;
+        position: absolute;
+        left: -7px;
+      }
+    }
+    @media screen and (max-width: 767px) {
+      & > .panel-heading {
+        border-top: none;
+        &:before {
+          left: -14px;
+          width: calc(100% + 28px);
+        }
+      }
+    }
+  }
+}
 
 .panel.sticked > .panel-heading .btn-group .btn {
   border-top-width: 1px;
@@ -180,8 +211,6 @@
 
   .panel-default {
     & > .panel-heading {
-      border-top: 0;
-
       & > .btn-group {
         & > .btn-default {
           border-right-width: 1px;
