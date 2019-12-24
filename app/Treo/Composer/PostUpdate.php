@@ -68,7 +68,7 @@ class PostUpdate
      */
     public static function renderLine(string $message, bool $break = true)
     {
-        $result = "\033[0;36m" . date('d.m.Y H:i:s') . "\033[0m" . ' | ' . $message;
+        $result = date('d.m.Y H:i:s') . ' | ' . $message;
         if ($break) {
             $result .= PHP_EOL;
         }
