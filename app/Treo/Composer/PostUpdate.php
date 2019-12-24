@@ -90,6 +90,7 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
+        echo date('d.m.Y H:i:s') . PHP_EOL;
         echo 'Clear cache... ';
         Util::removeDir('data/cache');
         echo 'Done!' . PHP_EOL;
@@ -139,6 +140,7 @@ class PostUpdate
      */
     protected function logoutAll(): void
     {
+        echo date('d.m.Y H:i:s') . PHP_EOL;
         echo 'Logout all... ';
 
         $sth = $this
@@ -320,6 +322,7 @@ class PostUpdate
 
             // run
             foreach ($composerDiff['install'] as $row) {
+                echo date('d.m.Y H:i:s') . PHP_EOL;
                 echo 'Call after install event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterInstall');
                 echo 'Done!' . PHP_EOL;
@@ -330,6 +333,7 @@ class PostUpdate
         if (!empty($composerDiff['delete'])) {
             // run
             foreach ($composerDiff['delete'] as $row) {
+                echo date('d.m.Y H:i:s') . PHP_EOL;
                 echo 'Call after delete event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterDelete');
                 echo 'Done!' . PHP_EOL;
@@ -363,6 +367,7 @@ class PostUpdate
         $composerDiff = $this->getComposerDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
+            echo date('d.m.Y H:i:s') . PHP_EOL;
             echo 'Send update notifications to admin users... ';
 
             /** @var EntityManager $em */

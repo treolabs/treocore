@@ -61,6 +61,9 @@ class Migration
             return false;
         }
 
+        // prepare message
+        $message = sprintf('Migrate %s %s -> %s ... ', ($module == 'Treo') ? 'Core' : $module, $from, $to);
+
         // prepare versions
         $from = $this->prepareVersion($from);
         $to = $this->prepareVersion($to);
@@ -84,10 +87,8 @@ class Migration
             return false;
         }
 
-        // prepare name
-        $name = ($module == 'Treo') ? 'Core' : $module;
-
-        echo "Migrate $name $from -> $to ... ";
+        echo date('d.m.Y H:i:s') . PHP_EOL;
+        echo $message . PHP_EOL;
 
         // prepare increment
         if ($keyFrom < $keyTo) {
