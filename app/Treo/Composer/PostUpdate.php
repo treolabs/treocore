@@ -104,9 +104,7 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
-        self::renderLine('Clear cache...');
         Util::removeDir('data/cache');
-        self::renderLine('Done!');
 
         // set container
         $this->container = (new App())->getContainer();
