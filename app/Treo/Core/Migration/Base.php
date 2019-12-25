@@ -79,6 +79,15 @@ class Base
     }
 
     /**
+     * @param string $message
+     * @param bool   $break
+     */
+    protected function renderLine(string $message, bool $break = true)
+    {
+        \Treo\Composer\PostUpdate::renderLine($message, $break);
+    }
+
+    /**
      * Get config
      *
      * @return Config

@@ -63,6 +63,20 @@ class PostUpdate
     private $byLockFile = false;
 
     /**
+     * @param string $message
+     * @param bool   $break
+     */
+    public static function renderLine(string $message, bool $break = true)
+    {
+        $result = date('d.m.Y H:i:s') . ' | ' . $message;
+        if ($break) {
+            $result .= PHP_EOL;
+        }
+
+        echo $result;
+    }
+
+    /**
      * PostUpdate constructor.
      *
      * @param bool $byLockFile
@@ -90,9 +104,7 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
-        echo 'Clear cache... ';
         Util::removeDir('data/cache');
-        echo 'Done!' . PHP_EOL;
 
         // set container
         $this->container = (new App())->getContainer();
@@ -139,7 +151,7 @@ class PostUpdate
      */
     protected function logoutAll(): void
     {
-        echo 'Logout all... ';
+        self::renderLine('Logout all...');
 
         $sth = $this
             ->getContainer()
@@ -148,7 +160,7 @@ class PostUpdate
 
         $sth->execute();
 
-        echo 'Done!' . PHP_EOL;
+        self::renderLine('Done!');
     }
 
     /**
@@ -206,8 +218,9 @@ class PostUpdate
         foreach (Util::scanDir($diffPath) as $type) {
             foreach (Util::scanDir("$diffPath/$type") as $file) {
                 $parts = explode('_', file_get_contents("$diffPath/$type/$file"));
-                $result[$type][] = [
-                    'id'      => str_replace('.txt', '', $file),
+                $moduleId = str_replace('.txt', '', $file);
+                $result[$type][$moduleId] = [
+                    'id'      => $moduleId,
                     'package' => (isset($packages[$parts[0]])) ? $packages[$parts[0]] : null,
                     'from'    => (isset($parts[1])) ? $parts[1] : null,
                     'to'      => (isset($parts[2])) ? $parts[2] : null
@@ -242,14 +255,14 @@ class PostUpdate
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
-                $result['delete'][] = [
+                $result['delete'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
                     'to'      => null
                 ];
             } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                $result['update'][] = [
+                $result['update'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $newData[$package['name']],
                     'from'    => $package['version'],
@@ -259,7 +272,7 @@ class PostUpdate
         }
         foreach ($newData as $package) {
             if (!isset($oldData[$package['name']])) {
-                $result['install'][] = [
+                $result['install'][$package['extra']['treoId']] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
@@ -320,9 +333,9 @@ class PostUpdate
 
             // run
             foreach ($composerDiff['install'] as $row) {
-                echo 'Call after install event for ' . $row['id'] . '... ';
+                self::renderLine('Call after install event for ' . $row['id'] . '... ');
                 $this->callEvent($row['id'], 'afterInstall');
-                echo 'Done!' . PHP_EOL;
+                self::renderLine('Done!');
             }
         }
 
@@ -330,9 +343,9 @@ class PostUpdate
         if (!empty($composerDiff['delete'])) {
             // run
             foreach ($composerDiff['delete'] as $row) {
-                echo 'Call after delete event for ' . $row['id'] . '... ';
+                self::renderLine('Call after delete event for ' . $row['id'] . '... ');
                 $this->callEvent($row['id'], 'afterDelete');
-                echo 'Done!' . PHP_EOL;
+                self::renderLine('Done!');
             }
         }
     }
@@ -363,7 +376,7 @@ class PostUpdate
         $composerDiff = $this->getComposerDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
-            echo 'Send update notifications to admin users... ';
+            self::renderLine('Send update notifications to admin users... ');
 
             /** @var EntityManager $em */
             $em = $this
@@ -386,7 +399,7 @@ class PostUpdate
                     }
                 }
             }
-            echo 'Done!' . PHP_EOL;
+            self::renderLine('Done!');
         }
     }
 
