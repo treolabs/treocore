@@ -129,6 +129,9 @@ class PostUpdate
         // copy default config if it needs
         $this->copyDefaultConfig();
 
+        // init events
+        $this->initEvents();
+
         if ($this->isInstalled()) {
             // run migrations
             $this->runMigrations();
@@ -136,9 +139,6 @@ class PostUpdate
             //send notification
             $this->sendNotification();
         }
-
-        // init events
-        $this->initEvents();
 
         // store composer.lock file
         if ($this->byLockFile) {
