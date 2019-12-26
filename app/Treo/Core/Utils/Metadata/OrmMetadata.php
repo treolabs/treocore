@@ -31,64 +31,61 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Utils\Metadata;
 
-use Espo\Core\Utils\Metadata;
-use Espo\Core\Utils\File\Manager;
-use Espo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata\OrmMetadata as Instance;
+use Espo\Core\Utils\Metadata\OrmMetadata as Base;
 
 /**
- * OrmMetadata loader
+ * Class OrmMetadata
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class OrmMetadata extends Base
 {
-
     /**
-     * Load OrmMetadata
-     *
-     * @return \Espo\Core\Utils\Metadata\OrmMetadata
+     * @inheritDoc
      */
-    public function load()
+    public function getData($reload = false)
     {
-        return new Instance(
-            $this->getMetadata(),
-            $this->getFileManager(),
-            $this->getConfig()->get('useCache')
-        );
+        return $this->unsetLinkName(parent::getData($reload));
     }
 
     /**
-     * Get metadata
+     * Unset link field name if it needs
      *
-     * @return Metadata
+     * @param array $data
+     *
+     * @return array
      */
-    protected function getMetadata()
+    protected function unsetLinkName(array $data): array
     {
-        return $this->getContainer()->get('metadata');
-    }
+        /** @var array $entityDefs */
+        $entityDefs = $this->metadata->get('entityDefs', []);
 
-    /**
-     * Get file manager
-     *
-     * @return Manager
-     */
-    protected function getFileManager()
-    {
-        return $this->getContainer()->get('fileManager');
-    }
+        foreach ($entityDefs as $scope => $rows) {
+            if (!isset($rows['links'])) {
+                continue 1;
+            }
 
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->getContainer()->get('config');
+            foreach ($rows['links'] as $link => $settings) {
+                if (isset($settings['type'])) {
+                    if ($settings['type'] == 'belongsTo'
+                        && !isset($entityDefs[$settings['entity']]['fields']['name'])
+                        && isset($data[$scope]['fields'][$link . 'Name'])) {
+                        unset($data[$scope]['fields'][$link . 'Name']);
+                    }
+                    if ($settings['type'] == 'hasMany'
+                        && !isset($entityDefs[$settings['entity']]['fields']['name'])
+                        && isset($data[$scope]['fields'][$link . 'Names'])) {
+                        unset($data[$scope]['fields'][$link . 'Names']);
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }
