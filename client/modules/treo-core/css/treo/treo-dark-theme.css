@@ -20934,3 +20934,11 @@ select {
 .entity-container .cell {
     padding: 0;
 }
+
+#header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header {
+    border: 0 !important;
+}
+
+#header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header a.navbar-brand.nav-link.logo img {
+    margin: 13px auto !important;
+}
