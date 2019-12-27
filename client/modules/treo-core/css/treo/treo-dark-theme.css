@@ -19100,7 +19100,8 @@ ul.dropdown-menu > li.checkbox {
     position: relative;
 }
 
-#main .page-header > h3 > a::after {
+#main .page-header h3 > a::after,
+#main .page-header h3 > span.subsection::after {
     content: '\203A';
     display: inline-block;
     color: #000;
@@ -19108,7 +19109,6 @@ ul.dropdown-menu > li.checkbox {
     height: 100%;
     width: 21px;
     text-align: center;
-    position: absolute;
 }
 
 .menu {

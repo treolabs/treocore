@@ -44,7 +44,7 @@ Espo.define('treo-core:controllers/representation-settings', 'controllers/admin'
                 model.id = '1';
                 this.main('views/settings/edit', {
                     model: model,
-                    headerTemplate: 'admin/settings/headers/settings',
+                    headerTemplate: 'treo-core:admin/settings/headers/representation-settings',
                     recordView: 'views/admin/settings',
                     layoutName: 'representationSettingsList',
                     optionsToPass: ['layoutName']

@@ -31,20 +31,10 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/admin/layouts/index', 'class-replace!treo-core:views/admin/layouts/index',
-    Dep => Dep.extend({
+Espo.define('treo-core:views/admin/label-manager/index', 'class-replace!treo-core:views/admin/label-manager/index', function (Dep) {
 
-        template: 'treo-core:admin/layouts/index',
+   return Dep.extend({
+       template: 'treo-core:admin/label-manager/index'
 
-        renderLayoutHeader: function () {
-            if (!this.scope) {
-                $("#layout-header").html("");
-                return;
-            }
-            $("#layout-header").show().html(this.getLanguage().translate(this.scope, 'scopeNamesPlural') + " &raquo; " + this.getLanguage().translate(this.type, 'layouts', 'Admin'));
-        }
-
-    })
-);
-
-
+   })
+});
