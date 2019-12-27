@@ -83,9 +83,6 @@
   "views/record/panels/relationship": [
     "treo-core"
   ],
-  "views/record/panels/side": [
-    "treo-core"
-  ],
   "views/record/search": [
     "treo-core"
   ],
