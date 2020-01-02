@@ -171,7 +171,8 @@
     "UnitSymbol": "Unit Symbol",
     "Core": "Core",
     "Mark all read": "Mark all as read",
-    "Ownership Information": "Ownership Information"
+    "Ownership Information": "Ownership Information",
+    "New": "New"
   },
   "descriptions": {
     "Core": "TreoCore is a software ecosystem, designed for rapid development of web-based responsive business applications."

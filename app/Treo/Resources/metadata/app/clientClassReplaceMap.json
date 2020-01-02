@@ -211,5 +211,11 @@
   ],
   "views/preferences/edit": [
     "treo-core"
+  ],
+  "views/edit": [
+    "treo-core"
+  ],
+  "views/modals/edit": [
+    "treo-core"
   ]
 }

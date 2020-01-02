@@ -164,7 +164,8 @@
     "expandAllPanels": "Alle anzeigen",
     "UnitSymbol": "Einheitenzeichen",
     "Core": "Ader",
-    "Ownership Information": "Besitzerinformationen"
+    "Ownership Information": "Besitzerinformationen",
+    "New": "Neu"
   },
   "descriptions": {
     "Core": "TreoCore ist ein Software-Ökosystem, das für die schnelle Entwicklung webbasierter responsiver Geschäftsanwendungen entwickelt wurde."
