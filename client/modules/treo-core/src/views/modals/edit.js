@@ -34,38 +34,7 @@
 Espo.define('treo-core:views/modals/edit', 'class-replace!treo-core:views/modals/edit',
     Dep => Dep.extend({
         setup() {
-            this.buttonList = [];
-
-            if ('saveDisabled' in this.options) {
-                this.saveDisabled = this.options.saveDisabled;
-            }
-
-            if (!this.saveDisabled) {
-                this.buttonList.push({
-                    name: 'save',
-                    label: 'Save',
-                    style: 'primary',
-                });
-            }
-
-            this.fullFormDisabled = this.options.fullFormDisabled || this.fullFormDisabled;
-
-            this.layoutName = this.options.layoutName || this.layoutName;
-
-            if (!this.fullFormDisabled) {
-                this.buttonList.push({
-                    name: 'fullForm',
-                    label: 'Full Form'
-                });
-            }
-
-            this.buttonList.push({
-                name: 'cancel',
-                label: 'Cancel'
-            });
-
-            this.scope = this.scope || this.options.scope;
-            this.id = this.options.id;
+            Dep.prototype.setup.call(this);
 
             if (!this.id) {
                 this.header = `${this.getLanguage().translate(this.scope, 'scopeNames')}: ${this.translate('New')}`;
@@ -84,34 +53,6 @@ Espo.define('treo-core:views/modals/edit', 'class-replace!treo-core:views/modals
 
             const iconHtml = this.getHelper().getScopeColorIconHtml(this.scope);
             this.header = iconHtml + this.header;
-
-            this.sourceModel = this.model;
-
-            this.waitForView('edit');
-
-            this.getModelFactory().create(this.scope, function (model) {
-                if (this.id) {
-                    if (this.sourceModel) {
-                        model = this.model = this.sourceModel.clone();
-                    } else {
-                        this.model = model;
-                        model.id = this.id;
-                    }
-                    model.once('sync', function () {
-                        this.createRecordView(model);
-                    }, this);
-                    model.fetch();
-                } else {
-                    this.model = model;
-                    if (this.options.relate) {
-                        model.setRelate(this.options.relate);
-                    }
-                    if (this.options.attributes) {
-                        model.set(this.options.attributes);
-                    }
-                    this.createRecordView(model);
-                }
-            }.bind(this));
         }
     })
 );
