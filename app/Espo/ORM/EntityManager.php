@@ -33,7 +33,9 @@ use \Espo\Core\Exceptions\Error;
 
 class EntityManager
 {
-
+    /**
+     * @var \PDO
+     */
     protected $pdo;
 
     protected $entityFactory;
