@@ -208,6 +208,10 @@ class RDB extends \Espo\ORM\Repository
         return $this->getMapper()->deleteFromDb($this->entityType, $id, $onlyDeleted);
     }
 
+    /**
+     * @param array $params
+     * @return EntityCollection
+     */
     public function find(array $params = array())
     {
         $params = $this->getSelectParams($params);

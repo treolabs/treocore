@@ -31,33 +31,9 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/record/edit-side', 'class-replace!treo-core:views/record/edit-side', function (Dep) {
+Espo.define('treo-core:views/admin/field-manager/index', 'class-replace!treo-core:views/admin/field-manager/index',
+    Dep => Dep.extend({
 
-    return Dep.extend({
+        template: 'treo-core:admin/field-manager/index'
 
-        defaultPanelDefs: {
-            name: 'default',
-            label: 'Ownership Information',
-            view: 'views/record/panels/side',
-            isForm: true,
-            options: {
-                fieldList: [
-                    {
-                        name: 'ownerUser',
-                        view: 'views/fields/user-with-avatar'
-                    },
-                    {
-                        name: ':assignedUser'
-                    },
-                    {
-                        name: 'teams',
-                        view: 'views/fields/teams'
-                    }
-                ]
-            }
-        },
-
-    });
-});
-
-
+    }));

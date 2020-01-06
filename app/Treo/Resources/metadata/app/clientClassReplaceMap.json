@@ -215,7 +215,16 @@
   "views/edit": [
     "treo-core"
   ],
+  "views/admin/field-manager/index": [
+    "treo-core"
+  ],
   "views/modals/edit": [
+    "treo-core"
+  ]
+"views/admin/field-manager/index": [
+    "treo-core"
+  ],
+  "views/admin/link-manager/index": [
     "treo-core"
   ]
 }

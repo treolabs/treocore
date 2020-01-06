@@ -18820,7 +18820,12 @@ input#sn-checkbox-open-in-new-window {
     padding: 5px 10px 6px;
     color: rgba(0, 0, 0, 0.87);
     background-color: #ececec;
-    border-top: 1px solid gainsboro
+    border-top: 1px solid #dcdcdc;
+    height: 28px;
+}
+
+.middle > .panel-default > .panel-heading {
+    height: 29px;
 }
 
 .panel-info > .panel-heading {
@@ -18918,7 +18923,8 @@ input#sn-checkbox-open-in-new-window {
 }
 
 .list-container > .list, .panel, .dashlet-container, #main > .calendar-container .calendar, #main > .calendar-container .timeline, .well, .admin-content .table.table-bordered, .admin-content iframe, .list-group-panel {
-    box-shadow: none
+    box-shadow: none;
+    border: 0;
 }
 
 table.table > thead th > a {
@@ -18980,7 +18986,8 @@ ul.dropdown-menu > li.checkbox {
 .side > .panel.panel-default.panel-default,
 .side > .panel.panel-default.panel-default .list {
     background: #fafafa;
-    margin-bottom: 0
+    margin-bottom: 0;
+    border-top: 0;
 }
 
 .page-header {
@@ -19203,7 +19210,7 @@ ul.dropdown-menu > li.checkbox {
     border-radius: 100%;
 }
 
-#content .completeness {
+.completeness {
     position: relative;
     border: 0;
     background: none;
@@ -19213,26 +19220,26 @@ ul.dropdown-menu > li.checkbox {
     padding: 0;
 }
 
-#content .table .completeness {
+.table .completeness {
     width: 100px;
 }
 
-#content .table .completeness.red .progress-value {
+.table .completeness.red .progress-value {
     color: #000;
 }
 
-#content .completeness .progress-value {
+.completeness .progress-value {
     position: absolute;
     left: 5px;
     top: 0;
     color: #fff;
 }
 
-#content .completeness .progress-value.none {
+.completeness .progress-value.none {
     color: #000;
 }
 
-#content .progress {
+.progress {
     border-radius: 0;
     box-shadow: none;
     background: #fff;
@@ -19241,13 +19248,13 @@ ul.dropdown-menu > li.checkbox {
     margin-bottom: 5px;
 }
 
-#content .progress-bar {
+.progress-bar {
     box-shadow: none;
     background: #0080ff;
 }
 
-#content .progress-bar-success,
-#content .progress-bar-warning {
+.progress-bar-success,
+.progress-bar-warning {
     min-width: 24px;
 }
 
@@ -19272,8 +19279,8 @@ ul.dropdown-menu > li.checkbox {
 
 #main .catalog-tree-panel {
     position: relative;
-    border-top: 1px solid #e8eced;
-    border-right: 1px solid #e8eced;
+    border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #dcdcdc;
     margin: -6px 14px -10px -15px;
     padding: 0 15px 0 25px;
     float: left;
@@ -19645,7 +19652,7 @@ button.category:focus {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
-        border-right: 1px solid #e8eced;
+        border-right: 1px solid #dcdcdc;
     }
 
     .modal-dialog .edit > .row > .overview.col-sm-12,
@@ -19663,6 +19670,7 @@ button.category:focus {
     .detail > .row > .side {
         padding: 0;
         position: relative;
+        border-top: 1px solid #dcdcdc;
     }
 
     .nav > li > a {
@@ -19711,7 +19719,7 @@ button.category:focus {
     }
 
     #main .detail .catalog-tree-panel + .overview {
-        border-left: 1px solid #e8eced;
+        border-left: 1px solid #dcdcdc;
     }
 
     #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {

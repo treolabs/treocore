@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * This file is part of EspoCRM and/or TreoCore.
  *
  * EspoCRM - Open Source CRM application.
@@ -31,22 +32,23 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/record/panels/side', 'class-replace!treo-core:views/record/panels/side',
-    Dep => Dep.extend({
+declare(strict_types = 1);
 
-        detailSmallTemplate: 'treo-core:record/panels/default-side',
+namespace Treo\Services;
 
-        editSmallTemplate: 'treo-core:record/panels/side',
-
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            const type = (this.options.recordViewObject || {}).type;
-            if (type && (type === 'detailSmall' || type === 'editSmall')) {
-                this.template = this[`${type}Template`];
-                this.defs.label = 'Ownership Information';
-            }
-        }
-
-    })
-);
+/**
+ * Interface DashletInterface
+ *
+ * @package Treo\Services
+ *
+ * @author r.ratsun <r.ratsun@treolabs.com>
+ */
+interface DashletInterface
+{
+    /**
+     * Get dashlet data
+     *
+     * @return array
+     */
+    public function getDashlet(): array;
+}
