@@ -208,5 +208,11 @@
   ],
   "views/preferences/edit": [
     "treo-core"
+  ],
+  "views/admin/field-manager/index": [
+    "treo-core"
+  ],
+  "views/admin/link-manager/index": [
+    "treo-core"
   ]
 }

@@ -31,13 +31,9 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/admin/job/list', 'class-replace!treo-core:views/admin/job/list',
+Espo.define('treo-core:views/admin/field-manager/index', 'class-replace!treo-core:views/admin/field-manager/index',
     Dep => Dep.extend({
 
-        getHeader: function () {
-            return `<a href="#Admin">${this.translate('Administration')}</a><span class="subsection">${this.translate('Scheduled Jobs', 'labels', 'Admin')}</span>${this.getLanguage().translate('Jobs', 'labels', 'Admin')}`;
-        }
+        template: 'treo-core:admin/field-manager/index'
 
-    })
-);
-
+    }));
