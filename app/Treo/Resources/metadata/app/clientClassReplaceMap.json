@@ -215,9 +215,6 @@
   "views/edit": [
     "treo-core"
   ],
-  "views/admin/field-manager/index": [
-    "treo-core"
-  ],
   "views/modals/edit": [
     "treo-core"
   ],
