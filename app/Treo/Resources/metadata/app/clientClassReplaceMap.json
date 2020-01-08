@@ -95,7 +95,7 @@
   "views/admin/index": [
     "treo-core"
   ],
-  "views/admin/notifications":[
+  "views/admin/notifications": [
     "treo-core"
   ],
   "views/admin/upgrade/index": [
@@ -220,8 +220,8 @@
   ],
   "views/modals/edit": [
     "treo-core"
-  ]
-"views/admin/field-manager/index": [
+  ],
+  "views/admin/field-manager/index": [
     "treo-core"
   ],
   "views/admin/link-manager/index": [
