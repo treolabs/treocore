@@ -18821,10 +18821,15 @@ input#sn-checkbox-open-in-new-window {
     color: rgba(0, 0, 0, 0.87);
     background-color: #ececec;
     border-top: 1px solid #dcdcdc;
+}
+
+.middle > .panel-default > .panel-heading,
+.bottom > .panel-default > .panel-heading,
+.side > .panel-default > .panel-heading {
     height: 28px;
 }
 
-.middle > .panel-default > .panel-heading {
+.middle > .panel-default > .panel-heading:first-child {
     height: 29px;
 }
 
