@@ -329,7 +329,9 @@ class PostUpdate
         // call afterInstall event
         if (!empty($composerDiff['install'])) {
             // rebuild
-            $this->getContainer()->get('dataManager')->rebuild();
+            if ($this->isInstalled()) {
+                $this->getContainer()->get('dataManager')->rebuild();
+            }
 
             // run
             foreach ($composerDiff['install'] as $row) {
