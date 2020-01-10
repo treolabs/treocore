@@ -56,9 +56,16 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.collection.fetch();
             });
 
+            $(window).on(`keydown.${this.cid} keyup.${this.cid}`, e => {
+                document.onselectstart = function() {
+                    return !e.shiftKey;
+                }
+            });
+
             this.dragndropEventName = `resize.drag-n-drop-table-${this.cid}`;
             this.listenToOnce(this, 'remove', () => {
                 $(window).off(this.dragndropEventName);
+                $(window).off(`keydown.${this.cid} keyup.${this.cid}`);
             });
 
             _.extend(this.events, {
@@ -85,21 +92,6 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.getRouter().dispatch(scope, 'view', options);
                 },
 
-                'click tr': function (e) {
-                    if (e.target.tagName === 'TD') {
-                        let $target = $(e.currentTarget);
-                        let id = $target.data('id');
-                        let checkbox = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0);
-                        if (checkbox) {
-                            if (!checkbox.checked) {
-                                this.checkRecord(id);
-                            } else {
-                                this.uncheckRecord(id);
-                            }
-                        }
-                    }
-                },
-
                 'click .select-all': function (e) {
                     let checkbox = this.$el.find('.full-table').find('.select-all');
                     let checkboxFixed = this.$el.find('.fixed-header-table').find('.select-all');
@@ -116,38 +108,58 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.checkedAll = e.currentTarget.checked;
                 },
 
-                'click .record-checkbox': function (e) {
-                    let $target = $(e.currentTarget),
-                        id = $target.data('id'),
-                        $row = $target.closest('tr'),
-                        $checked = $row.parent().find('.record-checkbox:checked'),
-                        $allCheckboxes = $row.parent().find('.record-checkbox');
+                'click tr': function (e) {
+                    if (e.target.tagName === 'TD') {
+                        const row = $(e.currentTarget);
+                        const id = row.data('id');
+                        const $target = row.find('.record-checkbox');
 
-                    if ($target.prop("checked")) {
-                        this.checkRecord(id, $target);
-
-                        if (e.shiftKey && $checked.length > 1) {
-                            let elementIndexInArray = $allCheckboxes.index($target);
-                            let firstCheckedElementIndexInArray = $allCheckboxes.index($checked.eq(0));
-                            let lastCheckedElementIndexInArray = $allCheckboxes.index($checked.eq($checked.length - 1));
-
-                            if (elementIndexInArray !== firstCheckedElementIndexInArray) {
-                                for (let i = firstCheckedElementIndexInArray; i <= elementIndexInArray; i++) {
-                                    let $_checkbox = $allCheckboxes.eq(i);
-                                    this.checkRecord($_checkbox.data('id'), $_checkbox);
-                                }
+                        if ($target) {
+                            if (!$target.prop('checked')) {
+                                this.checkRecord(id);
+                                this.checkIntervalRecords(e, $target);
                             } else {
-                                for (let i = elementIndexInArray; i <= lastCheckedElementIndexInArray; i++) {
-                                    let $_checkbox = $allCheckboxes.eq(i);
-                                    this.checkRecord($_checkbox.data('id'), $_checkbox);
-                                }
+                                this.uncheckRecord(id);
                             }
                         }
+                    }
+                },
+
+                'click .record-checkbox': function (e) {
+                    const $target = $(e.currentTarget);
+                    const id = $target.data('id');
+
+                    if ($target.prop('checked')) {
+                        this.checkRecord(id, $target);
+                        this.checkIntervalRecords(e, $target);
                     } else {
                         this.uncheckRecord(id, $target);
                     }
                 },
             });
+        },
+
+        checkIntervalRecords(e, $target) {
+            const checked = this.$el.find('.record-checkbox:checked');
+            const allCheckboxes = this.$el.find('.record-checkbox');
+            if (e.shiftKey && checked.length > 1) {
+                const elementIndexInArray = allCheckboxes.index($target);
+                const firstCheckedElementIndexInArray = allCheckboxes.index(checked.eq(0));
+                const lastCheckedElementIndexInArray = allCheckboxes.index(checked.eq(checked.length - 1));
+
+                //set cycle indexes for checking interval records
+                let startIndex = elementIndexInArray;
+                let endIndex = lastCheckedElementIndexInArray;
+                if (elementIndexInArray !== firstCheckedElementIndexInArray) {
+                    startIndex = firstCheckedElementIndexInArray;
+                    endIndex = elementIndexInArray;
+                }
+
+                for (let i = startIndex; i <= endIndex; i++) {
+                    let checkbox = allCheckboxes.eq(i);
+                    this.checkRecord(checkbox.data('id'), checkbox);
+                }
+            }
         },
 
         setupDraggableParams() {
