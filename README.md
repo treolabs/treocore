@@ -104,7 +104,7 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
 
 1. Create your new project by running:
    ```
-   composer create-project treolabs/skeleton my-treocore-project --no-dev
+   composer create-project treolabs/skeleton my-treocore-project
    ```
    > **my-treocore-project** – project name
    
