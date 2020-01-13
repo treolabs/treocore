@@ -33,19 +33,24 @@ use \Espo\Entities\Portal;
 
 use \Espo\Core\Utils\Config;
 use \Espo\Core\Utils\Metadata;
+use Espo\Entities\Preferences;
 
 class ThemeManager extends \Espo\Core\Utils\ThemeManager
 {
-    public function __construct(Config $config, Metadata $metadata, Portal $portal)
+    public function __construct(Config $config, Metadata $metadata, Portal $portal, ?Preferences $preferences)
     {
         $this->config = $config;
         $this->metadata = $metadata;
         $this->portal = $portal;
+        $this->preferences = $preferences;
     }
 
     public function getName()
     {
-        $theme = $this->portal->get('theme');
+        $theme = !empty($this->preferences) && !empty($this->preferences->get('theme'))
+            ? $this->preferences->get('theme')
+            : $this->portal->get('theme');
+
         if (!$theme) {
             $theme = $this->config->get('theme', $this->defaultName);
         }

@@ -29,25 +29,32 @@
 
 namespace Espo\Core\Utils;
 
+use Espo\Entities\Preferences;
+
 class ThemeManager
 {
     protected $config;
 
     protected $metadata;
 
+    protected $preferences;
+
     protected $defaultName = 'Espo';
 
     private $defaultStylesheet = 'Espo';
 
-    public function __construct(Config $config, Metadata $metadata)
+    public function __construct(Config $config, Metadata $metadata, ?Preferences $preferences)
     {
         $this->config = $config;
         $this->metadata = $metadata;
+        $this->preferences = $preferences;
     }
 
     public function getName()
     {
-        return $this->config->get('theme', $this->defaultName);
+        return !empty($this->preferences) && !empty($this->preferences->get('theme'))
+            ? $this->preferences->get('theme')
+            : $this->config->get('theme', $this->defaultName);
     }
 
     public function getStylesheet()

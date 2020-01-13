@@ -35,7 +35,11 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Core\ORM\Entity;
+use Espo\Entities\AuthToken;
 use Espo\Entities\Portal;
+use Treo\Core\ORM\EntityManager;
+use \Espo\Entities\Preferences;
 
 /**
  * ThemeManager loader
@@ -55,18 +59,52 @@ class ThemeManager extends Base
         /** @var Portal $portal */
         $portal = $this->getContainer()->get('portal');
 
+        $preferences = $this->getPreference();
+
         if (!empty($portal)) {
             return new \Espo\Core\Portal\Utils\ThemeManager(
                 $this->getConfig(),
                 $this->getMetadata(),
-                $portal
+                $portal,
+                $preferences
             );
         }
 
         return new \Espo\Core\Utils\ThemeManager(
             $this->getConfig(),
-            $this->getMetadata()
+            $this->getMetadata(),
+            $preferences
         );
+    }
+
+    /**
+     * @return Preferences|null
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function getPreference(): ?Preferences
+    {
+        $preferences = null;
+        if (!empty($_COOKIE['auth-token'])) {
+            $authToken = $this->getAuthToken();
+            if (!empty($authToken) && !empty($authToken->get('userId'))) {
+                $preferences = $this->getEntityManager()->getEntity('Preferences',  $authToken->get('userId'));
+            }
+        }
+
+        return $preferences;
+    }
+
+    /**
+     * @return AuthToken|null
+     */
+    protected function getAuthToken(): ?AuthToken
+    {
+        return $this
+            ->getContainer()
+            ->get('entityManager')
+            ->getRepository('AuthToken')
+            ->where(['token' => $_COOKIE['auth-token']])
+            ->findOne();
     }
 
     /**
@@ -87,5 +125,15 @@ class ThemeManager extends Base
     protected function getMetadata()
     {
         return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Get entityManager
+     *
+     * @return EntityManager;
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->getContainer()->get('entityManager');
     }
 }
