@@ -313,7 +313,19 @@ Espo.define('treo-core:views/record/detail-bottom', 'class-replace!treo-core:vie
             }
             this.getStorage().set('collapsed-panels', this.scope, states);
 
+        },
+
+        getFieldViews(withHidden) {
+            var fields = {};
+            this.panelList.forEach(function (p) {
+                var panelView = this.getView(p.name);
+                if (panelView && (!panelView.disabled || withHidden)  && 'getFieldViews' in panelView) {
+                    fields = _.extend(fields, panelView.getFieldViews());
+                }
+            }, this);
+            return fields;
         }
+
     });
 });
 
