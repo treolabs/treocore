@@ -35,12 +35,17 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
+use Espo\Entities\AuthToken;
 use Espo\Entities\Portal;
+use Treo\Core\ORM\EntityManager;
+use Espo\Entities\Preferences;
+use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata;
 
 /**
  * ThemeManager loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class ThemeManager extends Base
 {
@@ -49,32 +54,66 @@ class ThemeManager extends Base
      * Load ThemeManager
      *
      * @return \Espo\Core\Utils\ThemeManager
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function load()
     {
         /** @var Portal $portal */
         $portal = $this->getContainer()->get('portal');
 
+        $preferences = $this->getPreference();
+
         if (!empty($portal)) {
             return new \Espo\Core\Portal\Utils\ThemeManager(
                 $this->getConfig(),
                 $this->getMetadata(),
-                $portal
+                $portal,
+                $preferences
             );
         }
 
         return new \Espo\Core\Utils\ThemeManager(
             $this->getConfig(),
-            $this->getMetadata()
+            $this->getMetadata(),
+            $preferences
         );
+    }
+
+    /**
+     * @return Preferences|null
+     * @throws \Espo\Core\Exceptions\Error
+     */
+    protected function getPreference(): ?Preferences
+    {
+        $preferences = null;
+        if (!empty($_COOKIE['auth-token'])) {
+            $authToken = $this->getAuthToken();
+            if ($authToken !== null && !empty($authToken->get('userId'))) {
+                $preferences = $this->getEntityManager()->getEntity('Preferences',  $authToken->get('userId'));
+            }
+        }
+
+        return $preferences;
+    }
+
+    /**
+     * @return AuthToken|null
+     */
+    protected function getAuthToken(): ?AuthToken
+    {
+        return $this->getEntityManager()
+            ->getRepository('AuthToken')
+            ->select(['userId'])
+            ->where(['token' => $_COOKIE['auth-token']])
+            ->findOne();
     }
 
     /**
      * Get config
      *
-     * @return \Treo\Core\Utils\Config
+     * @return Config
      */
-    protected function getConfig()
+    protected function getConfig(): Config
     {
         return $this->getContainer()->get('config');
     }
@@ -82,10 +121,20 @@ class ThemeManager extends Base
     /**
      * Get metadata
      *
-     * @return \Treo\Core\Utils\Metadata
+     * @return Metadata
      */
-    protected function getMetadata()
+    protected function getMetadata(): Metadata
     {
         return $this->getContainer()->get('metadata');
+    }
+
+    /**
+     * Get entityManager
+     *
+     * @return EntityManager;
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->getContainer()->get('entityManager');
     }
 }

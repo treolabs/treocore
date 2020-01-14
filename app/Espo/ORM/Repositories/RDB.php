@@ -247,6 +247,10 @@ class RDB extends \Espo\ORM\Repository
         }
     }
 
+    /**
+     * @param array $params
+     * @return Entity|null
+     */
     public function findOne(array $params = array())
     {
         $collection = $this->limit(0, 1)->find($params);
