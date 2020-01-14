@@ -31,6 +31,10 @@ namespace Espo\Core\Utils;
 
 use Espo\Entities\Preferences;
 
+/**
+ * Class ThemeManager
+ * @package Espo\Core\Utils
+ */
 class ThemeManager
 {
     protected $config;
@@ -43,6 +47,12 @@ class ThemeManager
 
     private $defaultStylesheet = 'Espo';
 
+    /**
+     * ThemeManager constructor.
+     * @param Config $config
+     * @param Metadata $metadata
+     * @param Preferences|null $preferences
+     */
     public function __construct(Config $config, Metadata $metadata, ?Preferences $preferences)
     {
         $this->config = $config;
@@ -50,13 +60,23 @@ class ThemeManager
         $this->preferences = $preferences;
     }
 
+    /**
+     * Get name theme
+     *
+     * @return string
+     */
     public function getName()
     {
-        return !empty($this->preferences) && !empty($this->preferences->get('theme'))
+        return $this->preferences !== null && !empty($this->preferences->get('theme'))
             ? $this->preferences->get('theme')
             : $this->config->get('theme', $this->defaultName);
     }
 
+    /**
+     * Get stylesheet
+     *
+     * @return string
+     */
     public function getStylesheet()
     {
         return $this->metadata->get('themes.' . $this->getName() . '.stylesheet', 'client/css/espo.css');

@@ -35,16 +35,17 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\ORM\Entity;
 use Espo\Entities\AuthToken;
 use Espo\Entities\Portal;
 use Treo\Core\ORM\EntityManager;
-use \Espo\Entities\Preferences;
+use Espo\Entities\Preferences;
+use Treo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata;
 
 /**
  * ThemeManager loader
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun@treolabs.com
  */
 class ThemeManager extends Base
 {
@@ -53,6 +54,7 @@ class ThemeManager extends Base
      * Load ThemeManager
      *
      * @return \Espo\Core\Utils\ThemeManager
+     * @throws \Espo\Core\Exceptions\Error
      */
     public function load()
     {
@@ -86,7 +88,7 @@ class ThemeManager extends Base
         $preferences = null;
         if (!empty($_COOKIE['auth-token'])) {
             $authToken = $this->getAuthToken();
-            if (!empty($authToken) && !empty($authToken->get('userId'))) {
+            if ($authToken !== null && !empty($authToken->get('userId'))) {
                 $preferences = $this->getEntityManager()->getEntity('Preferences',  $authToken->get('userId'));
             }
         }
@@ -99,10 +101,9 @@ class ThemeManager extends Base
      */
     protected function getAuthToken(): ?AuthToken
     {
-        return $this
-            ->getContainer()
-            ->get('entityManager')
+        return $this->getEntityManager()
             ->getRepository('AuthToken')
+            ->select(['userId'])
             ->where(['token' => $_COOKIE['auth-token']])
             ->findOne();
     }
@@ -110,9 +111,9 @@ class ThemeManager extends Base
     /**
      * Get config
      *
-     * @return \Treo\Core\Utils\Config
+     * @return Config
      */
-    protected function getConfig()
+    protected function getConfig(): Config
     {
         return $this->getContainer()->get('config');
     }
@@ -120,9 +121,9 @@ class ThemeManager extends Base
     /**
      * Get metadata
      *
-     * @return \Treo\Core\Utils\Metadata
+     * @return Metadata
      */
-    protected function getMetadata()
+    protected function getMetadata(): Metadata
     {
         return $this->getContainer()->get('metadata');
     }
