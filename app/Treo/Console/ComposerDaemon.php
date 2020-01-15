@@ -36,8 +36,6 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
-use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Util;
 use Treo\Services\Composer;
 
 /**
@@ -120,12 +118,6 @@ class ComposerDaemon extends AbstractConsole
         // prepare content
         $content = \trim(str_replace(['{{success}}', '{{error}}'], ['', ''], $content));
 
-        // prepare createdById
-        $createdById = 'system';
-        if (!empty($this->getConfig()->get('composerUser'))) {
-            $createdById = $this->getConfig()->get('composerUser');
-        }
-
         // get em
         $em = $this->getContainer()->get('entityManager');
 
@@ -134,13 +126,13 @@ class ComposerDaemon extends AbstractConsole
         $note->set('type', 'composerUpdate');
         $note->set('parentType', 'ModuleManager');
         $note->set('data', ['status' => $status, 'output' => $content]);
-        $note->set('createdById', $createdById);
+        $note->set('createdById', file_get_contents(Composer::COMPOSER_USER));
 
         // save note
         $em->saveEntity($note, ['skipCreatedBy' => true]);
 
         // unset user
-        $this->getConfig()->set('composerUser', null);
+        unlink(Composer::COMPOSER_USER);
 
         // unblock composer UI
         $this->getConfig()->set('isUpdating', false);

@@ -82,8 +82,8 @@ class Cron extends AbstractConsole
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
 
         // open composer daemon
-        if (empty(strpos($processes, "index.php composer daemon $id --up"))) {
-            exec("$php index.php composer daemon $id --up >/dev/null 2>&1 &");
+        if (empty(strpos($processes, "index.php composer daemon $id"))) {
+            exec("$php index.php composer daemon $id >/dev/null 2>&1 &");
         }
 
         // run cron jobs

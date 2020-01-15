@@ -51,5 +51,5 @@ return [
     "qm <stream> --run"            => Console\QueueManager::class,
     "notifications --refresh"      => Console\Notification::class,
     "kill daemons"                 => Console\KillDaemons::class,
-    "composer daemon <id> --up"    => Console\ComposerDaemon::class,
+    "composer daemon <id>"         => Console\ComposerDaemon::class,
 ];
