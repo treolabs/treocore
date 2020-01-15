@@ -2336,7 +2336,7 @@ class Record extends \Espo\Core\Services\Base
         ];
 
         // prepare data
-        json_decode(json_encode($entity->get($field), JSON_PRESERVE_ZERO_FRACTION | JSON_NUMERIC_CHECK), true)
+        $data = json_decode(json_encode($data, JSON_PRESERVE_ZERO_FRACTION | JSON_NUMERIC_CHECK), true);
 
         $isUpdated = false;
         foreach ($entity->getFields() as $field => $params) {
