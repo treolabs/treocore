@@ -78,9 +78,9 @@ class Cron extends AbstractConsole
         /** @var string $php */
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
 
-        // open test daemon
-        if (empty(strpos($processes, 'index.php daemon test'))) {
-            system("$php index.php daemon test >> data/test.log 2>&1 &");
+        // open composer daemon
+        if (empty(strpos($processes, 'index.php daemon composer'))) {
+            exec("$php index.php daemon composer >/dev/null 2>&1 &");
         }
 
 //        system("$php composer.phar update >> test.log 2>&1");

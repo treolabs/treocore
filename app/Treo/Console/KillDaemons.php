@@ -57,6 +57,6 @@ class KillDaemons extends AbstractConsole
     public function run(array $data): void
     {
         file_put_contents('data/process-kill.txt', '1');
-        self::show("Daemons killed successfully", self::SUCCESS, true);
+        self::show("All daemons killed successfully", self::SUCCESS, true);
     }
 }
