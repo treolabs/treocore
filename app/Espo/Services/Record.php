@@ -2336,7 +2336,7 @@ class Record extends \Espo\Core\Services\Base
         ];
 
         // prepare data
-        $data = json_decode(json_encode($data), true);
+        $data = json_decode(json_encode($data, JSON_PRESERVE_ZERO_FRACTION), true);
 
         $isUpdated = false;
         foreach ($entity->getFields() as $field => $params) {
@@ -2350,7 +2350,7 @@ class Record extends \Espo\Core\Services\Base
                     continue;
                 }
             } else {
-                $value = $entity->get($field);
+                $value = json_decode(json_encode($entity->get($field), JSON_PRESERVE_ZERO_FRACTION), true);
             }
 
             if (!in_array($field, $skip) && array_key_exists($field, $data) && $data[$field] !== $value) {
