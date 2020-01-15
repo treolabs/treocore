@@ -188,7 +188,10 @@ class TreoStore extends Base
      */
     private function parsePackages(array $packages, string $status = 'buyable'): array
     {
-        // prepare data
+        /** @var array $result */
+        $result = [];
+
+        /** @var array $data */
         $data = [];
 
         foreach ($packages['packages'] as $repository => $versions) {
