@@ -37,66 +37,26 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Cron console
+ * Class KillDaemons
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Cron extends AbstractConsole
+class KillDaemons extends AbstractConsole
 {
-    const DAEMON_KILLER = 'data/process-kill.txt';
-
     /**
-     * Get console command description
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return 'Run CRON jobs.';
+        return 'Kill all daemons.';
     }
 
     /**
-     * Run action
-     *
-     * @param array $data
+     * @inheritdoc
      */
     public function run(array $data): void
     {
-        if (empty($this->getConfig()->get('isInstalled'))) {
-            exit(1);
-        }
-
-        // kill daemon killer
-        if (file_exists(self::DAEMON_KILLER)) {
-            unlink(self::DAEMON_KILLER);
-        }
-
-        // get active processes
-        exec('ps ax | grep index.php', $processes);
-        $processes = implode(' | ', $processes);
-
-        /** @var string $php */
-        $php = (new \Espo\Core\Utils\System())->getPhpBin();
-
-        // open test daemon
-        if (empty(strpos($processes, 'index.php daemon test'))) {
-            system("$php index.php daemon test >> data/test.log 2>&1 &");
-        }
-
-//        system("$php composer.phar update >> test.log 2>&1");
-
-        // run cron jobs
-        $this->runCronManager();
-    }
-
-    /**
-     * Run cron manager
-     */
-    protected function runCronManager(): void
-    {
-        $auth = new \Treo\Core\Utils\Auth($this->getContainer());
-        $auth->useNoAuth();
-
-        $this->getContainer()->get('cronManager')->run();
+        file_put_contents('data/process-kill.txt', '1');
+        self::show("Daemons killed successfully", self::SUCCESS, true);
     }
 }

@@ -37,26 +37,32 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class KillProcess
+ * Class DaemonTest
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class KillProcess extends AbstractConsole
+class DaemonTest extends AbstractConsole
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function getDescription(): string
     {
-        return 'Processes killer.';
+        return 'Daemon for testing.';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function run(array $data): void
     {
-        file_put_contents('data/process-kill.txt', '1');
-        self::show("Processes killed successfully", self::SUCCESS, true);
+        while (true) {
+            if (file_exists(Cron::DAEMON_KILLER)) {
+                break;
+            }
+
+            echo time() . PHP_EOL;
+            sleep(1);
+        }
     }
 }
