@@ -66,9 +66,6 @@ class Cron extends AbstractConsole
             exit(1);
         }
 
-        /** @var string $id */
-        $id = $data['id'];
-
         // kill daemon killer
         if (file_exists(self::DAEMON_KILLER)) {
             unlink(self::DAEMON_KILLER);
@@ -80,6 +77,9 @@ class Cron extends AbstractConsole
 
         /** @var string $php */
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
+
+        /** @var string $id */
+        $id = $data['id'];
 
         // open composer daemon
         if (empty(strpos($processes, "index.php composer daemon $id"))) {
