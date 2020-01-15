@@ -52,7 +52,7 @@ class Cron extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Run CRON jobs.';
+        return 'Run CRON.';
     }
 
     /**
@@ -65,6 +65,9 @@ class Cron extends AbstractConsole
         if (empty($this->getConfig()->get('isInstalled'))) {
             exit(1);
         }
+
+        /** @var string $id */
+        $id = $data['id'];
 
         // kill daemon killer
         if (file_exists(self::DAEMON_KILLER)) {
@@ -79,11 +82,9 @@ class Cron extends AbstractConsole
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
 
         // open composer daemon
-        if (empty(strpos($processes, 'index.php daemon composer'))) {
-            exec("$php index.php daemon composer >/dev/null 2>&1 &");
+        if (empty(strpos($processes, "index.php composer daemon $id --up"))) {
+            exec("$php index.php composer daemon $id --up >/dev/null 2>&1 &");
         }
-
-//        system("$php composer.phar update >> test.log 2>&1");
 
         // run cron jobs
         $this->runCronManager();

@@ -36,21 +36,23 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 use Treo\Services\Composer;
 
 /**
- * Class DaemonComposer
+ * Class ComposerDaemon
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class DaemonComposer extends AbstractConsole
+class ComposerDaemon extends AbstractConsole
 {
     /**
      * @inheritDoc
      */
     public static function getDescription(): string
     {
-        return 'Daemon for composer.';
+        return 'Create daemon for composer.';
     }
 
     /**
