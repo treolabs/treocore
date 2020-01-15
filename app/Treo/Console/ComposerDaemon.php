@@ -46,6 +46,11 @@ use Treo\Services\Composer;
 class ComposerDaemon extends AbstractConsole
 {
     /**
+     * @var bool
+     */
+    public static $isHidden = true;
+
+    /**
      * @inheritDoc
      */
     public static function getDescription(): string
