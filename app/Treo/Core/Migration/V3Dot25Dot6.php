@@ -34,29 +34,50 @@
 
 declare(strict_types=1);
 
-namespace Treo\Console;
+namespace Pim\Migrations;
+
+use Treo\Core\Migration\Base;
 
 /**
- * Class KillProcess
+ * Migration class for version 3.25.6
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author r.ratsun@treolabs.com
  */
-class KillProcess extends AbstractConsole
+class V3Dot25Dot6 extends Base
 {
     /**
      * @inheritdoc
      */
-    public static function getDescription(): string
+    public function up(): void
     {
-        return 'Processes killer.';
+        // cleanup
+        if (file_exists('bin/treo-composer.sh')) {
+            unlink('bin/treo-composer.sh');
+        }
+        if (file_exists('bin/treo-notification.sh')) {
+            unlink('bin/treo-notification.sh');
+        }
+        if (file_exists('bin/treo-qm.sh')) {
+            unlink('bin/treo-qm.sh');
+        }
+
+        // update cron.sh
+        $composerSh = '#!/bin/bash' . PHP_EOL;
+        $composerSh .= 'cd "$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" )"' . PHP_EOL;
+        $composerSh .= '$2 index.php cron';
+        file_put_contents('bin/cron.sh', $composerSh);
+
+        // update composer.json
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['require']['treolabs/treocore'] = '^3.25.6';
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        copy('composer.json', 'data/stable-composer.json');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function run(array $data): void
+    public function down(): void
     {
-        file_put_contents('data/process-kill.txt', '1');
-        self::show("Processes killed successfully", self::SUCCESS, true);
     }
 }

@@ -50,6 +50,6 @@ return [
     "apidocs --generate"           => Console\GenerateApidocs::class,
     "qm <stream> --run"            => Console\QueueManager::class,
     "notifications --refresh"      => Console\Notification::class,
-    "kill processes"               => Console\KillProcess::class,
-    "composer log"                 => Console\ComposerLog::class,
+    "kill daemons"                 => Console\KillDaemons::class,
+    "daemon <name> <id>"           => Console\Daemon::class,
 ];

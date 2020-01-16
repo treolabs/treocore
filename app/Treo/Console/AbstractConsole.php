@@ -54,6 +54,11 @@ abstract class AbstractConsole
     const INFO = 3;
 
     /**
+     * @var bool
+     */
+    public static $isHidden = false;
+
+    /**
      * Run action
      *
      * @param array $data

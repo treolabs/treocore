@@ -50,6 +50,7 @@ use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 class Composer extends AbstractService
 {
     const CHECK_UP_FILE = 'data/composer-check-up.log';
+    const COMPOSER_USER = 'data/compose-user.txt';
 
     /**
      * @var string
@@ -251,7 +252,7 @@ class Composer extends AbstractService
      */
     public function updateConfig(): void
     {
-        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
+        file_put_contents(self::COMPOSER_USER, $this->getUser()->get('id'));
         $this->getConfig()->set('isUpdating', true);
         $this->getConfig()->save();
     }

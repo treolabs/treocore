@@ -37,18 +37,18 @@ declare(strict_types=1);
 namespace Treo\Console;
 
 /**
- * Class ComposerLog
+ * Class KillDaemons
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ComposerLog extends AbstractConsole
+class KillDaemons extends AbstractConsole
 {
     /**
      * @inheritdoc
      */
     public static function getDescription(): string
     {
-        return 'Save composer log.';
+        return 'Kill all daemons.';
     }
 
     /**
@@ -56,48 +56,7 @@ class ComposerLog extends AbstractConsole
      */
     public function run(array $data): void
     {
-        // prepare path
-        $path = 'data/treo-composer.log';
-
-        if (file_exists($path) && !empty($content = file_get_contents($path))) {
-            // prepare status
-            $status = 1;
-            if (strpos($content, '{{success}}') !== false) {
-                $status = 0;
-            }
-
-            // prepare content
-            $content = \trim(str_replace(['{{success}}', '{{error}}'], ['', ''], $content));
-
-            // prepare createdById
-            $createdById = 'system';
-            if (!empty($this->getConfig()->get('composerUser'))) {
-                $createdById = $this->getConfig()->get('composerUser');
-            }
-
-            // get em
-            $em = $this->getContainer()->get('entityManager');
-
-            // prepare note
-            $note = $em->getEntity('Note');
-            $note->set('type', 'composerUpdate');
-            $note->set('parentType', 'ModuleManager');
-            $note->set('data', ['status' => $status, 'output' => $content]);
-            $note->set('createdById', $createdById);
-
-            // save note
-            $em->saveEntity($note, ['skipCreatedBy' => true]);
-
-            // unset user
-            $this->getConfig()->set('composerUser', null);
-        }
-
-        // unblock composer UI
-        $this->getConfig()->set('isUpdating', false);
-
-        // save config
-        $this->getConfig()->save();
-
-        self::show('Composer log saved successfully', self::SUCCESS, true);
+        file_put_contents('data/process-kill.txt', '1');
+        self::show("All daemons killed successfully", self::SUCCESS, true);
     }
 }
