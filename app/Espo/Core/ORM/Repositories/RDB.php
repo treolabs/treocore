@@ -273,7 +273,9 @@ class RDB extends \Espo\ORM\Repositories\RDB implements Injectable
             $this->processEmailAddressSave($entity);
             $this->processPhoneNumberSave($entity);
             $this->processSpecifiedRelationsSave($entity);
-            $this->processFileFieldsSave($entity);
+            if (!$entity->skipProcessFileFieldsSave) {
+                $this->processFileFieldsSave($entity);
+            }
             $this->processArrayFieldsSave($entity);
             $this->processWysiwygFieldsSave($entity);
         }
