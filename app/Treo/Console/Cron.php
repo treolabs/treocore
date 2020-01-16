@@ -79,11 +79,26 @@ class Cron extends AbstractConsole
         $php = (new \Espo\Core\Utils\System())->getPhpBin();
 
         /** @var string $id */
-        $id = $data['id'];
+        $id = $this->getConfig()->get('treoId');
 
-        // open composer daemon
-        if (empty(strpos($processes, "index.php composer daemon $id"))) {
-            exec("$php index.php composer daemon $id >/dev/null 2>&1 &");
+        // open daemon for composer
+        if (empty(strpos($processes, "index.php daemon composer $id"))) {
+            exec("$php index.php daemon composer $id >/dev/null 2>&1 &");
+        }
+
+        // open daemon queue manager stream 0
+        if (empty(strpos($processes, "index.php daemon qm 0-$id"))) {
+            system("$php index.php daemon qm 0-$id >/dev/null 2>&1 &");
+        }
+
+        // open daemon queue manager stream 1
+        if (empty(strpos($processes, "index.php daemon qm 1-$id"))) {
+            system("$php index.php daemon qm 1-$id >/dev/null 2>&1 &");
+        }
+
+        // open daemon notification
+        if (empty(strpos($processes, "index.php daemon notification $id"))) {
+            system("$php index.php daemon notification $id >/dev/null 2>&1 &");
         }
 
         // run cron jobs

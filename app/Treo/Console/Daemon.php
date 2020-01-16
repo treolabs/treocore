@@ -36,14 +36,16 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Treo\Core\ORM\EntityManager;
+use Treo\Core\QueueManager;
 use Treo\Services\Composer;
 
 /**
- * Class ComposerDaemon
+ * Class Daemon
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ComposerDaemon extends AbstractConsole
+class Daemon extends AbstractConsole
 {
     /**
      * @var bool
@@ -55,13 +57,24 @@ class ComposerDaemon extends AbstractConsole
      */
     public static function getDescription(): string
     {
-        return 'Create daemon for composer.';
+        return '';
     }
 
     /**
      * @inheritDoc
      */
     public function run(array $data): void
+    {
+        $method = $data['name'] . 'Daemon';
+        if (method_exists($this, $method)) {
+            $this->$method($data['id']);
+        }
+    }
+
+    /**
+     * @param string $id
+     */
+    protected function composerDaemon(string $id): void
     {
         /** @var string $runner */
         $runner = 'data/treo-composer-run.txt';
@@ -86,23 +99,38 @@ class ComposerDaemon extends AbstractConsole
                 // cleanup log
                 file_put_contents($log, '');
 
-                /** @var string $php */
-                $php = (new \Espo\Core\Utils\System())->getPhpBin();
-
                 // execute composer update
-                exec("$php composer.phar update >> $log 2>&1", $output, $exitCode);
+                exec($this->getPhp() . " composer.phar update >> $log 2>&1", $output, $exitCode);
 
                 // set end of log file
                 $content = file_get_contents($log);
                 if ($exitCode > 0) {
-                    $content .= '{{error}}';
+                    file_put_contents($log, $content . '{{error}}');
                 } else {
-                    $content .= '{{success}}';
+                    file_put_contents($log, $content . '{{success}}');
                 }
-                file_put_contents($log, $content);
 
-                // push to log
-                $this->log($content);
+                /** @var EntityManager $em */
+                $em = $this->getContainer()->get('entityManager');
+
+                // prepare note
+                $note = $em->getEntity('Note');
+                $note->set('type', 'composerUpdate');
+                $note->set('parentType', 'ModuleManager');
+                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => $content]);
+                $note->set('createdById', file_get_contents(Composer::COMPOSER_USER));
+
+                // save note
+                $em->saveEntity($note, ['skipCreatedBy' => true]);
+
+                // unset user
+                unlink(Composer::COMPOSER_USER);
+
+                // unblock composer UI
+                $this->getConfig()->set('isUpdating', false);
+
+                // save config
+                $this->getConfig()->save();
             }
 
             sleep(1);
@@ -110,39 +138,47 @@ class ComposerDaemon extends AbstractConsole
     }
 
     /**
-     * @param string $content
+     * @param string $id
      */
-    protected function log(string $content): void
+    protected function qmDaemon(string $id): void
     {
-        // prepare status
-        $status = 1;
-        if (strpos($content, '{{success}}') !== false) {
-            $status = 0;
+        /** @var string $stream */
+        $stream = explode('-', $id)[0];
+
+        while (true) {
+            if (file_exists(Cron::DAEMON_KILLER)) {
+                break;
+            }
+
+            if (file_exists(sprintf(QueueManager::QUEUE_PATH, $stream))) {
+                exec($this->getPhp() . " index.php qm $stream --run");
+            }
+
+            sleep(1);
         }
+    }
 
-        // prepare content
-        $content = \trim(str_replace(['{{success}}', '{{error}}'], ['', ''], $content));
+    /**
+     * @param string $id
+     */
+    protected function notificationDaemon(string $id): void
+    {
+        while (true) {
+            if (file_exists(Cron::DAEMON_KILLER)) {
+                break;
+            }
 
-        // get em
-        $em = $this->getContainer()->get('entityManager');
+            exec($this->getPhp() . " index.php notifications --refresh");
 
-        // prepare note
-        $note = $em->getEntity('Note');
-        $note->set('type', 'composerUpdate');
-        $note->set('parentType', 'ModuleManager');
-        $note->set('data', ['status' => $status, 'output' => $content]);
-        $note->set('createdById', file_get_contents(Composer::COMPOSER_USER));
+            sleep(5);
+        }
+    }
 
-        // save note
-        $em->saveEntity($note, ['skipCreatedBy' => true]);
-
-        // unset user
-        unlink(Composer::COMPOSER_USER);
-
-        // unblock composer UI
-        $this->getConfig()->set('isUpdating', false);
-
-        // save config
-        $this->getConfig()->save();
+    /**
+     * @return string
+     */
+    protected function getPhp(): string
+    {
+        return (new \Espo\Core\Utils\System())->getPhpBin();
     }
 }
