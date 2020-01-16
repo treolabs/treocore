@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Pim\Migrations;
+namespace Treo\Migrations;
 
 use Treo\Core\Migration\Base;
 
