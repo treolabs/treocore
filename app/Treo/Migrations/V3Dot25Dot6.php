@@ -76,6 +76,9 @@ class V3Dot25Dot6 extends Base
         // unblock composer UI
         $this->getConfig()->set('isUpdating', false);
         $this->getConfig()->save();
+
+        // kill daemons
+        file_put_contents('data/process-kill.txt', '1');
     }
 
     /**
