@@ -86,10 +86,10 @@ class ThemeManager extends Base
     protected function getPreference(): ?Preferences
     {
         $preferences = null;
-        if (!empty($_COOKIE['auth-token'])) {
+        if (!empty($_COOKIE['auth-token']) && !empty($this->getConfig()->get('isInstalled'))) {
             $authToken = $this->getAuthToken();
             if ($authToken !== null && !empty($authToken->get('userId'))) {
-                $preferences = $this->getEntityManager()->getEntity('Preferences',  $authToken->get('userId'));
+                $preferences = $this->getEntityManager()->getEntity('Preferences', $authToken->get('userId'));
             }
         }
 
