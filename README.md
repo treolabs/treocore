@@ -124,7 +124,6 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
       ```
       * * * * * /usr/bin/php /var/www/my-treocore-project/index.php cron 
       ```
-      >**process-treocore** – a unique process ID. You should use a different process ID if you have several TreoCORE projects on one server.
 4. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
 
 ### License
