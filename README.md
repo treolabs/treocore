@@ -114,23 +114,18 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
    ```
    >**webserver_user** – depends on your webserver and can be one of the following: www, www-data, apache, etc.
 
-3. Make the cron handler files executable:
-   ```
-   sudo chmod +x my-treocore-project/bin/cron.sh
-   ```
+3. Configure the crontab as described below.
 
-4. Configure the crontab as described below.
-
-   4.1. Run the following command:
+   3.1. Run the following command:
       ```
       crontab -e -u webserver_user
       ```
-   4.2. Add the following configuration:
+   3.2. Add the following configuration:
       ```
-      * * * * * /var/www/my-treocore-project/bin/cron.sh process-treocore /usr/bin/php 
+      * * * * * /usr/bin/php /var/www/my-treocore-project/index.php cron 
       ```
       >**process-treocore** – a unique process ID. You should use a different process ID if you have several TreoCORE projects on one server.
-5. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
+4. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
 
 ### License
 
