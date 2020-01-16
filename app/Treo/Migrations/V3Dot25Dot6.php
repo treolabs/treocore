@@ -72,6 +72,10 @@ class V3Dot25Dot6 extends Base
         $data['require']['treolabs/treocore'] = '^3.25.6';
         file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         copy('composer.json', 'data/stable-composer.json');
+
+        // unblock composer UI
+        $this->getConfig()->set('isUpdating', false);
+        $this->getConfig()->save();
     }
 
     /**
