@@ -29,8 +29,6 @@
 
 namespace Espo\Core\Utils;
 
-use Espo\Entities\Preferences;
-
 /**
  * Class ThemeManager
  * @package Espo\Core\Utils
@@ -51,13 +49,11 @@ class ThemeManager
      * ThemeManager constructor.
      * @param Config $config
      * @param Metadata $metadata
-     * @param Preferences|null $preferences
      */
-    public function __construct(Config $config, Metadata $metadata, ?Preferences $preferences)
+    public function __construct(Config $config, Metadata $metadata)
     {
         $this->config = $config;
         $this->metadata = $metadata;
-        $this->preferences = $preferences;
     }
 
     /**
@@ -67,9 +63,7 @@ class ThemeManager
      */
     public function getName()
     {
-        return $this->preferences !== null && !empty($this->preferences->get('theme'))
-            ? $this->preferences->get('theme')
-            : $this->config->get('theme', $this->defaultName);
+        return $this->config->get('theme', $this->defaultName);
     }
 
     /**

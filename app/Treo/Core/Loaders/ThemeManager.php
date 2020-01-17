@@ -35,10 +35,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Entities\AuthToken;
 use Espo\Entities\Portal;
 use Treo\Core\ORM\EntityManager;
-use Espo\Entities\Preferences;
 use Treo\Core\Utils\Config;
 use Treo\Core\Utils\Metadata;
 
@@ -61,51 +59,20 @@ class ThemeManager extends Base
         /** @var Portal $portal */
         $portal = $this->getContainer()->get('portal');
 
-        $preferences = $this->getPreference();
+        //$this->setTheme();
 
         if (!empty($portal)) {
             return new \Espo\Core\Portal\Utils\ThemeManager(
                 $this->getConfig(),
                 $this->getMetadata(),
-                $portal,
-                $preferences
+                $portal
             );
         }
 
         return new \Espo\Core\Utils\ThemeManager(
             $this->getConfig(),
-            $this->getMetadata(),
-            $preferences
+            $this->getMetadata()
         );
-    }
-
-    /**
-     * @return Preferences|null
-     * @throws \Espo\Core\Exceptions\Error
-     */
-    protected function getPreference(): ?Preferences
-    {
-        $preferences = null;
-        if (!empty($_COOKIE['auth-token']) && !empty($this->getConfig()->get('isInstalled'))) {
-            $authToken = $this->getAuthToken();
-            if ($authToken !== null && !empty($authToken->get('userId'))) {
-                $preferences = $this->getEntityManager()->getEntity('Preferences', $authToken->get('userId'));
-            }
-        }
-
-        return $preferences;
-    }
-
-    /**
-     * @return AuthToken|null
-     */
-    protected function getAuthToken(): ?AuthToken
-    {
-        return $this->getEntityManager()
-            ->getRepository('AuthToken')
-            ->select(['userId'])
-            ->where(['token' => $_COOKIE['auth-token']])
-            ->findOne();
     }
 
     /**
