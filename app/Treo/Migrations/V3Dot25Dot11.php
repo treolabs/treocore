@@ -59,6 +59,9 @@ class V3Dot25Dot11 extends Base
         if (file_exists('data/treo-composer.log')) {
             unlink('data/treo-composer.log');
         }
+
+        $this->getConfig()->remove('isUpdating');
+        $this->getConfig()->save();
     }
 
     /**
