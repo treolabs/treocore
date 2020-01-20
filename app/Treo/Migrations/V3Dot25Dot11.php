@@ -34,36 +34,32 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Utils;
+namespace Treo\Migrations;
 
-use Espo\Core\Utils\Config as Base;
-use Treo\Services\Composer;
+use Treo\Core\Migration\Base;
 
 /**
- * Class of Config
+ * Migration class for version 3.25.11
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author r.ratsun@treolabs.com
  */
-class Config extends Base
+class V3Dot25Dot11 extends Base
 {
     /**
      * @inheritdoc
      */
-    public function getDefaults()
+    public function up(): void
     {
-        return array_merge(parent::getDefaults(), include CORE_PATH . '/Treo/Configs/defaultConfig.php');
+        unlink('data/treo-composer-run.txt');
+        unlink('data/treo-composer.log');
+        file_put_contents('data/process-kill.txt', '1');
     }
 
     /**
      * @inheritDoc
      */
-    protected function loadConfig($reload = false)
+    public function down(): void
     {
-        $data = parent::loadConfig($reload);
-
-        // set is updating param
-        $data['isUpdating'] = file_exists(Composer::COMPOSER_LOG);
-
-        return $data;
+        file_put_contents('data/process-kill.txt', '1');
     }
 }
