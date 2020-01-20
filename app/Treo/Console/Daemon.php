@@ -107,9 +107,6 @@ class Daemon extends AbstractConsole
                     file_put_contents($log, $content . '{{success}}');
                 }
 
-                // wait (for frontend)
-                sleep(2);
-
                 // remove file
                 unlink($log);
 
