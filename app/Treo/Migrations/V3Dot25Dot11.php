@@ -50,9 +50,15 @@ class V3Dot25Dot11 extends Base
      */
     public function up(): void
     {
-        unlink('data/treo-composer-run.txt');
-        unlink('data/treo-composer.log');
         file_put_contents('data/process-kill.txt', '1');
+
+        if (file_exists('data/treo-composer-run.txt')) {
+            unlink('data/treo-composer-run.txt');
+        }
+
+        if (file_exists('data/treo-composer.log')) {
+            unlink('data/treo-composer.log');
+        }
     }
 
     /**
