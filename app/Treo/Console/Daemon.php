@@ -99,17 +99,6 @@ class Daemon extends AbstractConsole
                 // execute composer update
                 exec($this->getPhp() . " composer.phar update >> $log 2>&1", $output, $exitCode);
 
-                // set end of log file (for frontend)
-                $content = file_get_contents($log);
-                if ($exitCode > 0) {
-                    file_put_contents($log, $content . '{{error}}');
-                } else {
-                    file_put_contents($log, $content . '{{success}}');
-                }
-
-                // remove file
-                unlink($log);
-
                 /** @var EntityManager $em */
                 $em = $this->getContainer()->get('entityManager');
 
@@ -117,11 +106,14 @@ class Daemon extends AbstractConsole
                 $note = $em->getEntity('Note');
                 $note->set('type', 'composerUpdate');
                 $note->set('parentType', 'ModuleManager');
-                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => $content]);
+                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => file_get_contents($log)]);
                 $note->set('createdById', $userId);
 
                 // save note
                 $em->saveEntity($note, ['skipCreatedBy' => true]);
+
+                // remove file
+                unlink($log);
             }
 
             sleep(1);
