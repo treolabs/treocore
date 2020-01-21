@@ -34,35 +34,45 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Utils;
+namespace Treo\Migrations;
 
-use Espo\Core\Utils\Config as Base;
-use Treo\Services\Composer;
+use Treo\Core\Migration\Base;
 
 /**
- * Class of Config
+ * Migration class for version 3.25.11
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @author r.ratsun@treolabs.com
  */
-class Config extends Base
+class V3Dot25Dot11 extends Base
 {
-    /**
-     * @inheritDoc
-     */
-    public function get($name, $default = null)
-    {
-        if ($name == 'isUpdating') {
-            return file_exists(Composer::COMPOSER_LOG);
-        }
-
-        return parent::get($name, $default);
-    }
-
     /**
      * @inheritdoc
      */
-    public function getDefaults()
+    public function up(): void
     {
-        return array_merge(parent::getDefaults(), include CORE_PATH . '/Treo/Configs/defaultConfig.php');
+        file_put_contents('data/process-kill.txt', '1');
+
+        if (file_exists('data/treo-composer-run.txt')) {
+            unlink('data/treo-composer-run.txt');
+        }
+
+        if (file_exists('data/treo-composer.log')) {
+            unlink('data/treo-composer.log');
+        }
+
+        copy('vendor/treolabs/treocore/copy/.htaccess', '.htaccess');
+
+        $this->getConfig()->remove('isUpdating');
+        $this->getConfig()->save();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function down(): void
+    {
+        file_put_contents('data/process-kill.txt', '1');
+
+        copy('vendor/treolabs/treocore/copy/.htaccess', '.htaccess');
     }
 }

@@ -76,11 +76,8 @@ class Daemon extends AbstractConsole
      */
     protected function composerDaemon(string $id): void
     {
-        /** @var string $runner */
-        $runner = 'data/treo-composer-run.txt';
-
         /** @var string $log */
-        $log = 'data/treo-composer.log';
+        $log = Composer::COMPOSER_LOG;
 
         while (true) {
             // delete check-up file
@@ -92,23 +89,15 @@ class Daemon extends AbstractConsole
                 break;
             }
 
-            if (file_exists($runner)) {
-                // remove runner file
-                unlink($runner);
+            if (file_exists($log)) {
+                /** @var string $userId */
+                $userId = file_get_contents($log);
 
-                // cleanup log
+                // cleanup
                 file_put_contents($log, '');
 
                 // execute composer update
                 exec($this->getPhp() . " composer.phar update >> $log 2>&1", $output, $exitCode);
-
-                // set end of log file
-                $content = file_get_contents($log);
-                if ($exitCode > 0) {
-                    file_put_contents($log, $content . '{{error}}');
-                } else {
-                    file_put_contents($log, $content . '{{success}}');
-                }
 
                 /** @var EntityManager $em */
                 $em = $this->getContainer()->get('entityManager');
@@ -117,20 +106,14 @@ class Daemon extends AbstractConsole
                 $note = $em->getEntity('Note');
                 $note->set('type', 'composerUpdate');
                 $note->set('parentType', 'ModuleManager');
-                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => $content]);
-                $note->set('createdById', file_get_contents(Composer::COMPOSER_USER));
+                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => file_get_contents($log)]);
+                $note->set('createdById', $userId);
 
                 // save note
                 $em->saveEntity($note, ['skipCreatedBy' => true]);
 
-                // unset user
-                unlink(Composer::COMPOSER_USER);
-
-                // unblock composer UI
-                $this->getConfig()->set('isUpdating', false);
-
-                // save config
-                $this->getConfig()->save();
+                // remove file
+                unlink($log);
             }
 
             sleep(1);

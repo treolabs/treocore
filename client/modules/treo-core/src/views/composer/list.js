@@ -389,13 +389,17 @@ Espo.define('treo-core:views/composer/list', 'views/list',
             let logCheck = () => {
                 $.ajax({
                     type: 'GET',
-                    dataType: 'text',
-                    url: `../../data/treo-composer.log`,
+                    dataType: 'json',
+                    url: 'Composer/realTimeLogs',
                     cache: false,
                     success: response => {
-                        this.log = response.trim();
-                        this.trigger('log-updated');
-                        this.checkLog();
+                        if (response.status) {
+                            this.log = response.logs.trim();
+                            this.trigger('log-updated');
+                        } else {
+                            window.clearInterval(this.logCheckInterval);
+                            location.reload();
+                        }
                     },
                     error: xhr => {
                         window.clearInterval(this.logCheckInterval);
@@ -408,30 +412,6 @@ Espo.define('treo-core:views/composer/list', 'views/list',
             };
             window.clearInterval(this.logCheckInterval);
             this.logCheckInterval = window.setInterval(logCheck, 1000);
-            logCheck();
-        },
-
-        checkLog() {
-            let error = this.log.indexOf('{{error}}');
-            if (error > -1) {
-                window.clearInterval(this.logCheckInterval);
-                this.log = this.log.slice(0, error);
-
-                this.messageType = 'danger';
-                this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
-                this.trigger('composerUpdate:failed');
-                this.actionFinished();
-                this.showCurrentStatus(this.messageText, this.messageType);
-            }
-
-            let success = this.log.indexOf('{{success}}');
-            if (success > -1) {
-                window.clearInterval(this.logCheckInterval);
-                this.log = this.log.slice(0, success);
-
-                location.reload();
-            }
-            this.trigger('log-updated');
         },
 
         actionStarted() {
