@@ -106,4 +106,15 @@ class Base
     {
         return $this->pdo;
     }
+
+    /**
+     * @param string $version
+     */
+    protected function updateCoreVersion(string $version): void
+    {
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['require']['treolabs/treocore'] = $version;
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        copy('composer.json', 'data/stable-composer.json');
+    }
 }

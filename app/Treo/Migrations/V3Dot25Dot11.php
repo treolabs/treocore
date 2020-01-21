@@ -65,9 +65,8 @@ class V3Dot25Dot11 extends Base
         $this->getConfig()->remove('isUpdating');
         $this->getConfig()->save();
 
-        $data = json_decode(file_get_contents('composer.json'), true);
-        $data['require']['treolabs/treocore'] = '^3.25.11';
-        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        // update composer.json
+        $this->updateCoreVersion('^3.25.11');
     }
 
     /**
