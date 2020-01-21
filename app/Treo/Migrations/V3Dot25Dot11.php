@@ -64,6 +64,9 @@ class V3Dot25Dot11 extends Base
 
         $this->getConfig()->remove('isUpdating');
         $this->getConfig()->save();
+
+        // update composer.json
+        $this->updateCoreVersion('^3.25.11');
     }
 
     /**
@@ -71,8 +74,5 @@ class V3Dot25Dot11 extends Base
      */
     public function down(): void
     {
-        file_put_contents('data/process-kill.txt', '1');
-
-        copy('vendor/treolabs/treocore/copy/.htaccess', '.htaccess');
     }
 }
