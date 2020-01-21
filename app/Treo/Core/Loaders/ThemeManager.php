@@ -52,14 +52,11 @@ class ThemeManager extends Base
      * Load ThemeManager
      *
      * @return \Espo\Core\Utils\ThemeManager
-     * @throws \Espo\Core\Exceptions\Error
      */
     public function load()
     {
         /** @var Portal $portal */
         $portal = $this->getContainer()->get('portal');
-
-        //$this->setTheme();
 
         if (!empty($portal)) {
             return new \Espo\Core\Portal\Utils\ThemeManager(
@@ -93,15 +90,5 @@ class ThemeManager extends Base
     protected function getMetadata(): Metadata
     {
         return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * Get entityManager
-     *
-     * @return EntityManager;
-     */
-    protected function getEntityManager(): EntityManager
-    {
-        return $this->getContainer()->get('entityManager');
     }
 }
