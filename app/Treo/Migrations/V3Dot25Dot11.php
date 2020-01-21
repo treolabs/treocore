@@ -56,10 +56,6 @@ class V3Dot25Dot11 extends Base
             unlink('data/treo-composer-run.txt');
         }
 
-        if (file_exists('data/treo-composer.log')) {
-            unlink('data/treo-composer.log');
-        }
-
         copy('vendor/treolabs/treocore/copy/.htaccess', '.htaccess');
 
         $this->getConfig()->remove('isUpdating');
