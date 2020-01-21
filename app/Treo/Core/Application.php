@@ -577,13 +577,6 @@ class Application
      */
     private function display(string $template, array $vars)
     {
-        // show 404 page if it needs
-        if (!empty($url = $this->getUrl()) && $url !== '/' && empty($vars['portalId'])) {
-            header("HTTP/1.0 404 Not Found");
-            echo "<h1>404 Not Found</h1>";
-            exit;
-        }
-
         $this
             ->getContainer()
             ->get('clientManager')
