@@ -110,7 +110,7 @@ class SumRelatedType extends EspoSumRelatedType
 
         $selectParams['groupBy'] = [$foreignLink . '.id'];
         // @todo treoinject. Espo bug fix
-        $selectParams['whereClause'] = [$foreignLink . '.id' => $entity->get('id')];
+        $selectParams['whereClause'][] = [$foreignLink . '.id' => $entity->get('id')];
 
         $this->handleSelectParams($foreignEntityType, $selectParams);
 
