@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Treo\Console;
 
+use Espo\Entities\User;
 use Treo\Core\ORM\EntityManager;
 use Treo\Core\QueueManager;
 use Treo\Services\Composer;
@@ -90,8 +91,22 @@ class Daemon extends AbstractConsole
             }
 
             if (file_exists($log)) {
-                /** @var string $userId */
-                $userId = file_get_contents($log);
+                /** @var EntityManager $em */
+                $em = $this->getContainer()->get('entityManager');
+
+                /** @var User $user */
+                $user = $em
+                    ->getRepository('User')
+                    ->select(['id'])
+                    ->where(['id' => file_get_contents($log)])
+                    ->findOne();
+
+                // skip if no such user
+                if (empty($user)) {
+                    // remove log file
+                    unlink($log);
+                    continue 1;
+                }
 
                 // cleanup
                 file_put_contents($log, '');
@@ -99,26 +114,16 @@ class Daemon extends AbstractConsole
                 // execute composer update
                 exec($this->getPhp() . " composer.phar update >> $log 2>&1", $output, $exitCode);
 
-                // get log file content
-                $content = file_get_contents($log);
+                // create note
+                $note = $em->getEntity('Note');
+                $note->set('type', 'composerUpdate');
+                $note->set('parentType', 'ModuleManager');
+                $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => file_get_contents($log)]);
+                $note->set('createdById', $user->get('id'));
+                $em->saveEntity($note, ['skipCreatedBy' => true]);
 
-                // remove file
+                // remove log file
                 unlink($log);
-
-                /** @var EntityManager $em */
-                $em = $this->getContainer()->get('entityManager');
-
-                if (!empty($em->getEntity('User', $userId))) {
-                    // prepare note
-                    $note = $em->getEntity('Note');
-                    $note->set('type', 'composerUpdate');
-                    $note->set('parentType', 'ModuleManager');
-                    $note->set('data', ['status' => ($exitCode == 0) ? 0 : 1, 'output' => $content]);
-                    $note->set('createdById', $userId);
-
-                    // save note
-                    $em->saveEntity($note, ['skipCreatedBy' => true]);
-                }
             }
 
             sleep(1);
