@@ -397,6 +397,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                             this.log = response.logs.trim();
                             this.trigger('log-updated');
                         } else {
+                            window.clearInterval(this.logCheckInterval);
                             location.reload();
                         }
                     },

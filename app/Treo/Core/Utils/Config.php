@@ -47,23 +47,22 @@ use Treo\Services\Composer;
 class Config extends Base
 {
     /**
+     * @inheritDoc
+     */
+    public function get($name, $default = null)
+    {
+        if ($name == 'isUpdating') {
+            return file_exists(Composer::COMPOSER_LOG);
+        }
+
+        return parent::get($name, $default);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getDefaults()
     {
         return array_merge(parent::getDefaults(), include CORE_PATH . '/Treo/Configs/defaultConfig.php');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function loadConfig($reload = false)
-    {
-        $data = parent::loadConfig($reload);
-
-        // set is updating param
-        $data['isUpdating'] = file_exists(Composer::COMPOSER_LOG);
-
-        return $data;
     }
 }
