@@ -133,13 +133,7 @@ class Application
     public function run()
     {
         // prepare url
-        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
-            $url = $_SERVER['SCRIPT_URL'];
-        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
-            $url = $_SERVER['REDIRECT_URL'];
-        } else {
-            $url = '';
-        }
+        $url = $this->getUrl();
 
         // for api
         if (count(explode('api/v1', $url)) == 2) {
@@ -251,18 +245,10 @@ class Application
             $vars['portalId'] = $portalId;
 
             // load client
-            $this
-                ->getContainer()
-                ->get('clientManager')
-                ->display(null, 'client/html/portal.html', $vars);
-            exit;
+            $this->display('client/html/portal.html', $vars);
         }
 
-        $this
-            ->getContainer()
-            ->get('clientManager')
-            ->display(null, 'client/html/main.html', $vars);
-        exit;
+        $this->display('client/html/main.html', $vars);
     }
 
     /**
@@ -405,8 +391,7 @@ class Application
             'year'            => date('Y')
         ];
 
-        $this->getContainer()->get('clientManager')->display(null, 'client/html/installation.html', $vars);
-        exit;
+        $this->display('client/html/installation.html', $vars);
     }
 
     /**
@@ -584,5 +569,41 @@ class Application
         } else {
             throw new \Exception('No such portal');
         }
+    }
+
+    /**
+     * @param string $template
+     * @param array  $vars
+     */
+    private function display(string $template, array $vars)
+    {
+        // show 404 page if it needs
+        if (!empty($url = $this->getUrl()) && $url !== '/' && empty($vars['portalId'])) {
+            header("HTTP/1.0 404 Not Found");
+            echo "<h1>404 Not Found</h1>";
+            exit;
+        }
+
+        $this
+            ->getContainer()
+            ->get('clientManager')
+            ->display(null, $template, $vars);
+        exit;
+    }
+
+    /**
+     * @return string
+     */
+    private function getUrl(): string
+    {
+        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
+            $url = $_SERVER['SCRIPT_URL'];
+        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
+            $url = $_SERVER['REDIRECT_URL'];
+        } else {
+            $url = '';
+        }
+
+        return $url;
     }
 }
