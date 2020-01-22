@@ -68,7 +68,8 @@
             "type": "enum",
             "default": "USD",
             "required": true,
-            "view": "views/settings/fields/default-currency"
+            "view": "views/settings/fields/default-currency",
+            "readOnly": true
         },
         "currencyRates": {
             "type": "base",
