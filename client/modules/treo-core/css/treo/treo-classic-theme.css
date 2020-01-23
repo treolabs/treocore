@@ -18889,7 +18889,17 @@ input#sn-checkbox-open-in-new-window {
     padding: 5px 10px 6px;
     color: rgba(0, 0, 0, 0.87);
     background-color: #ececec;
-    border-top: 1px solid gainsboro
+    border-top: 1px solid #dcdcdc;
+}
+
+.middle > .panel-default > .panel-heading,
+.bottom > .panel-default > .panel-heading,
+.side > .panel-default > .panel-heading {
+    height: 28px;
+}
+
+.middle > .panel-default > .panel-heading:first-child {
+    height: 29px;
 }
 
 .panel-info > .panel-heading {
@@ -18987,7 +18997,8 @@ input#sn-checkbox-open-in-new-window {
 }
 
 .list-container > .list, .panel, .dashlet-container, #main > .calendar-container .calendar, #main > .calendar-container .timeline, .well, .admin-content .table.table-bordered, .admin-content iframe, .list-group-panel {
-    box-shadow: none
+    box-shadow: none;
+    border: 0;
 }
 
 table.table > thead th > a {
@@ -19058,7 +19069,8 @@ ul.dropdown-menu > li.checkbox {
 .side > .panel.panel-default.panel-default,
 .side > .panel.panel-default.panel-default .list {
     background: #fafafa;
-    margin-bottom: 0
+    margin-bottom: 0;
+    border-top: 0;
 }
 
 .page-header {
@@ -19139,6 +19151,7 @@ ul.dropdown-menu > li.checkbox {
     border-color: #424242;
 }
 
+
 #header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
     color: #fff !important;
     background: #424242 !important
@@ -19174,7 +19187,8 @@ ul.dropdown-menu > li.checkbox {
     position: relative;
 }
 
-#main .page-header > h3 > a::after {
+#main .page-header h3 > a::after,
+#main .page-header h3 > span.subsection::after {
     content: '\203A';
     display: inline-block;
     color: #000;
@@ -19182,7 +19196,6 @@ ul.dropdown-menu > li.checkbox {
     height: 100%;
     width: 21px;
     text-align: center;
-    position: absolute;
 }
 
 .menu {
@@ -19277,7 +19290,7 @@ ul.dropdown-menu > li.checkbox {
     border-radius: 100%;
 }
 
-#content .completeness {
+.completeness {
     position: relative;
     border: 0;
     background: none;
@@ -19287,26 +19300,26 @@ ul.dropdown-menu > li.checkbox {
     padding: 0;
 }
 
-#content .table .completeness {
+.table .completeness {
     width: 100px;
 }
 
-#content .table .completeness.red .progress-value {
+.table .completeness.red .progress-value {
     color: #000;
 }
 
-#content .completeness .progress-value {
+.completeness .progress-value {
     position: absolute;
     left: 5px;
     top: 0;
-    color: #fff;
+    color: #333333;
 }
 
-#content .completeness .progress-value.none {
+.completeness .progress-value.none {
     color: #000;
 }
 
-#content .progress {
+.progress {
     border-radius: 0;
     box-shadow: none;
     background: #fff;
@@ -19315,13 +19328,13 @@ ul.dropdown-menu > li.checkbox {
     margin-bottom: 5px;
 }
 
-#content .progress-bar {
+.progress-bar {
     box-shadow: none;
     background: #0080ff;
 }
 
-#content .progress-bar-success,
-#content .progress-bar-warning {
+.progress-bar-success,
+.progress-bar-warning {
     min-width: 24px;
 }
 
@@ -19555,7 +19568,6 @@ button.category:focus {
 
     #header a.navbar-brand {
         height: 47px
-
     }
 
     #header .navbar-brand img {
@@ -19715,11 +19727,12 @@ button.category:focus {
         padding-left: 0
     }
 
-    .edit > .row > .col-md-8,
-    .detail > .row > .col-md-8 {
+    .edit > .row > .overview,
+    .detail > .row > .overview {
         padding-right: 0;
         padding-left: 0;
         min-height: 79.6vh;
+        border-right: 1px solid #dcdcdc;
     }
 
     .modal-dialog .edit > .row > .overview.col-sm-12,
@@ -19737,8 +19750,7 @@ button.category:focus {
     .detail > .row > .side {
         padding: 0;
         position: relative;
-        margin-left: 1px;
-        margin-right: -1px;
+        border-top: 1px solid #dcdcdc;
     }
 
     .nav > li > a {
@@ -19978,8 +19990,12 @@ button.category:focus {
     #main .catalog-tree-panel-hidden > button.collapse-panel {
         border: 0;
         left: -3px;
-        z-index: 1;
+        z-index: 999;
         position: relative;
+    }
+
+    #main .record .catalog-tree-panel-hidden > button.collapse-panel {
+        left: 8px;
     }
 
     #main .catalog-tree-panel {
@@ -19988,6 +20004,7 @@ button.category:focus {
         padding: 0;
         width: 100%;
         border: none;
+        float: none;
     }
 
     #main .catalog-tree-panel button:active {
@@ -20165,6 +20182,7 @@ button.category:focus {
         margin: 0 15px;
     }
 }
+
 @media screen and (max-width: 399px) {
     .navbar-brand {
         max-width: 100px;
@@ -20937,6 +20955,7 @@ select {
     background-repeat: no-repeat;
     background-size: 12px;
     padding-right: 20px !important;
+	-webkit-appearance: none;
 }
 
 @media screen and (max-width: 768px)  {
@@ -21022,4 +21041,12 @@ select {
 
 .entity-container .cell {
     padding: 0;
+}
+
+#header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header {
+    border: 0 !important;
+}
+
+#header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header a.navbar-brand.nav-link.logo img {
+    margin: 13px auto !important;
 }
