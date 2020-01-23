@@ -193,9 +193,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
         },
 
         getHeader() {
-            return  `<a href="#Admin">${this.translate('Administration')}</a>`+
-                    `<span class="subsection">${this.translate('System')}</span>` +
-                    this.getLanguage().translate('Composer', 'labels', 'Admin');
+            return '<a href="#Admin">' + this.translate('Administration') + "</a> &rsaquo; " + this.getLanguage().translate('Composer', 'labels', 'Admin');
         },
 
         updatePageTitle() {
@@ -389,17 +387,13 @@ Espo.define('treo-core:views/composer/list', 'views/list',
             let logCheck = () => {
                 $.ajax({
                     type: 'GET',
-                    dataType: 'json',
-                    url: 'Composer/realTimeLogs',
+                    dataType: 'text',
+                    url: `../../data/treo-composer.log`,
                     cache: false,
                     success: response => {
-                        if (response.status) {
-                            this.log = response.logs.trim();
-                            this.trigger('log-updated');
-                        } else {
-                            window.clearInterval(this.logCheckInterval);
-                            location.reload();
-                        }
+                        this.log = response.trim();
+                        this.trigger('log-updated');
+                        this.checkLog();
                     },
                     error: xhr => {
                         window.clearInterval(this.logCheckInterval);
@@ -412,6 +406,30 @@ Espo.define('treo-core:views/composer/list', 'views/list',
             };
             window.clearInterval(this.logCheckInterval);
             this.logCheckInterval = window.setInterval(logCheck, 1000);
+            logCheck();
+        },
+
+        checkLog() {
+            let error = this.log.indexOf('{{error}}');
+            if (error > -1) {
+                window.clearInterval(this.logCheckInterval);
+                this.log = this.log.slice(0, error);
+
+                this.messageType = 'danger';
+                this.messageText = this.translate('upgradeFailed', 'messages', 'Admin');
+                this.trigger('composerUpdate:failed');
+                this.actionFinished();
+                this.showCurrentStatus(this.messageText, this.messageType);
+            }
+
+            let success = this.log.indexOf('{{success}}');
+            if (success > -1) {
+                window.clearInterval(this.logCheckInterval);
+                this.log = this.log.slice(0, success);
+
+                location.reload();
+            }
+            this.trigger('log-updated');
         },
 
         actionStarted() {

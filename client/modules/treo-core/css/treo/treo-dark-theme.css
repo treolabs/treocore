@@ -19142,7 +19142,6 @@ ul.dropdown-menu > li.checkbox {
     border-color: #424242;
 }
 
-
 #header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
     color: #fff !important;
     background: #424242 !important
@@ -19799,6 +19798,7 @@ button.category:focus {
         width: calc(75% - 25px);
     }
 }
+
 @media screen and (max-width: 767px) {
     #content {
         margin-top: 44px;
@@ -20929,15 +20929,14 @@ select.input-sm {
 }
 
 select {
-    -webkit-appearance: button;
-    -moz-appearance: button;
-    appearance: button;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background-image: url("../../img/arrow-down.png") !important;
     background-position: center right 5px;
     background-repeat: no-repeat;
     background-size: 12px;
     padding-right: 20px !important;
-	-webkit-appearance: none;
 }
 
 @media screen and (max-width: 768px)  {
@@ -21031,4 +21030,8 @@ select {
 
 #header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header a.navbar-brand.nav-link.logo img {
     margin: 13px auto !important;
+}
+
+.entity-container .cell {
+    padding: 0;
 }

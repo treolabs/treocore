@@ -63,20 +63,6 @@ class PostUpdate
     private $byLockFile = false;
 
     /**
-     * @param string $message
-     * @param bool   $break
-     */
-    public static function renderLine(string $message, bool $break = true)
-    {
-        $result = date('d.m.Y H:i:s') . ' | ' . $message;
-        if ($break) {
-            $result .= PHP_EOL;
-        }
-
-        echo $result;
-    }
-
-    /**
      * PostUpdate constructor.
      *
      * @param bool $byLockFile
@@ -104,7 +90,9 @@ class PostUpdate
         self::copyModulesMigrations();
 
         // drop cache
+        echo 'Clear cache... ';
         Util::removeDir('data/cache');
+        echo 'Done!' . PHP_EOL;
 
         // set container
         $this->container = (new App())->getContainer();
@@ -129,9 +117,6 @@ class PostUpdate
         // copy default config if it needs
         $this->copyDefaultConfig();
 
-        // init events
-        $this->initEvents();
-
         if ($this->isInstalled()) {
             // run migrations
             $this->runMigrations();
@@ -139,6 +124,9 @@ class PostUpdate
             //send notification
             $this->sendNotification();
         }
+
+        // init events
+        $this->initEvents();
 
         // store composer.lock file
         if ($this->byLockFile) {
@@ -151,7 +139,7 @@ class PostUpdate
      */
     protected function logoutAll(): void
     {
-        self::renderLine('Logout all...');
+        echo 'Logout all... ';
 
         $sth = $this
             ->getContainer()
@@ -160,7 +148,7 @@ class PostUpdate
 
         $sth->execute();
 
-        self::renderLine('Done!');
+        echo 'Done!' . PHP_EOL;
     }
 
     /**
@@ -218,9 +206,8 @@ class PostUpdate
         foreach (Util::scanDir($diffPath) as $type) {
             foreach (Util::scanDir("$diffPath/$type") as $file) {
                 $parts = explode('_', file_get_contents("$diffPath/$type/$file"));
-                $moduleId = str_replace('.txt', '', $file);
-                $result[$type][$moduleId] = [
-                    'id'      => $moduleId,
+                $result[$type][] = [
+                    'id'      => str_replace('.txt', '', $file),
                     'package' => (isset($packages[$parts[0]])) ? $packages[$parts[0]] : null,
                     'from'    => (isset($parts[1])) ? $parts[1] : null,
                     'to'      => (isset($parts[2])) ? $parts[2] : null
@@ -255,14 +242,14 @@ class PostUpdate
 
         foreach ($oldData as $package) {
             if (!isset($newData[$package['name']])) {
-                $result['delete'][$package['extra']['treoId']] = [
+                $result['delete'][] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
                     'to'      => null
                 ];
             } elseif ($package['version'] != $newData[$package['name']]['version']) {
-                $result['update'][$package['extra']['treoId']] = [
+                $result['update'][] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $newData[$package['name']],
                     'from'    => $package['version'],
@@ -272,7 +259,7 @@ class PostUpdate
         }
         foreach ($newData as $package) {
             if (!isset($oldData[$package['name']])) {
-                $result['install'][$package['extra']['treoId']] = [
+                $result['install'][] = [
                     'id'      => $package['extra']['treoId'],
                     'package' => $package,
                     'from'    => null,
@@ -329,15 +316,13 @@ class PostUpdate
         // call afterInstall event
         if (!empty($composerDiff['install'])) {
             // rebuild
-            if ($this->isInstalled()) {
-                $this->getContainer()->get('dataManager')->rebuild();
-            }
+            $this->getContainer()->get('dataManager')->rebuild();
 
             // run
             foreach ($composerDiff['install'] as $row) {
-                self::renderLine('Call after install event for ' . $row['id'] . '... ');
+                echo 'Call after install event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterInstall');
-                self::renderLine('Done!');
+                echo 'Done!' . PHP_EOL;
             }
         }
 
@@ -345,9 +330,9 @@ class PostUpdate
         if (!empty($composerDiff['delete'])) {
             // run
             foreach ($composerDiff['delete'] as $row) {
-                self::renderLine('Call after delete event for ' . $row['id'] . '... ');
+                echo 'Call after delete event for ' . $row['id'] . '... ';
                 $this->callEvent($row['id'], 'afterDelete');
-                self::renderLine('Done!');
+                echo 'Done!' . PHP_EOL;
             }
         }
     }
@@ -378,7 +363,7 @@ class PostUpdate
         $composerDiff = $this->getComposerDiff();
 
         if (!empty($composerDiff['install']) || !empty($composerDiff['update']) || !empty($composerDiff['delete'])) {
-            self::renderLine('Send update notifications to admin users... ');
+            echo 'Send update notifications to admin users... ';
 
             /** @var EntityManager $em */
             $em = $this
@@ -401,7 +386,7 @@ class PostUpdate
                     }
                 }
             }
-            self::renderLine('Done!');
+            echo 'Done!' . PHP_EOL;
         }
     }
 

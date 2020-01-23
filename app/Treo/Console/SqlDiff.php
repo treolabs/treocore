@@ -56,13 +56,8 @@ class SqlDiff extends AbstractConsole
      */
     public function run(array $data): void
     {
-        try {
-            /** @var array $queries */
-            $queries = $this->getContainer()->get('schema')->getDiffQueries();
-        } catch (\Throwable $e) {
-            echo $e->getMessage() . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
-            die();
-        }
+        /** @var array $queries */
+        $queries = $this->getContainer()->get('schema')->getDiffQueries();
 
         if (empty($queries)) {
             self::show('No database changes were detected.', self::SUCCESS, true);

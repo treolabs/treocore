@@ -104,27 +104,30 @@ To create your new TreoCore application, first make sure you're using PHP 7.1 or
 
 1. Create your new project by running:
    ```
-   composer create-project treolabs/skeleton my-treocore-project
+   composer create-project treolabs/skeleton my-treocore-project --no-dev
    ```
    > **my-treocore-project** – project name
    
-2. Change recursively the user and group ownership for project files: 
+2. Change recursively the user and group ownership for project files. It is important for code generation mechanism
    ```
-   chown -R webserver_user:webserver_user my-treocore-project/
+   sudo chown -R www-data:www-data my-treocore-project/
    ```
-   >**webserver_user** – depends on your webserver and can be one of the following: www, www-data, apache, etc.
-
-3. Configure the crontab as described below.
-
-   3.1. Run the following command:
+3. Make cron handler files executable:
+   ```
+   sudo chmod +x my-treocore-project/bin/cron.sh
+   ```
+4. Configure crontab:
+   1. crontab should be configured for **www-data** user. You can do it by running:
       ```
-      crontab -e -u webserver_user
+      sudo crontab -u www-data -e
       ```
-   3.2. Add the following configuration:
+   2. put the following configuration:
       ```
-      * * * * * /usr/bin/php /var/www/my-treocore-project/index.php cron 
+      * * * * * /var/www/my-treocore-project/bin/cron.sh process-treocore /usr/bin/php 
       ```
-4. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
+      >**process-treocore** – a unique ID of the process. You should use a different process ID if you have several TreoCore projects on one server<br/>
+      >**/usr/bin/php** – PHP7.1 or above
+5. Install TreoCore following the installation wizard in web interface. Go to http://YOUR_PROJECT/
 
 ### License
 

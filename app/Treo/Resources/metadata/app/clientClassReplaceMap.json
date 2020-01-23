@@ -83,6 +83,9 @@
   "views/record/panels/relationship": [
     "treo-core"
   ],
+  "views/record/panels/side": [
+    "treo-core"
+  ],
   "views/record/search": [
     "treo-core"
   ],
@@ -92,7 +95,7 @@
   "views/admin/index": [
     "treo-core"
   ],
-  "views/admin/notifications": [
+  "views/admin/notifications":[
     "treo-core"
   ],
   "views/admin/upgrade/index": [
@@ -195,30 +198,6 @@
     "treo-core"
   ],
   "views/admin/layouts/base": [
-    "treo-core"
-  ],
-  "views/admin/integrations/index": [
-    "treo-core"
-  ],
-  "views/admin/label-manager/index": [
-    "treo-core"
-  ],
-  "views/admin/entity-manager/index": [
-    "treo-core"
-  ],
-  "views/preferences/edit": [
-    "treo-core"
-  ],
-  "views/edit": [
-    "treo-core"
-  ],
-  "views/modals/edit": [
-    "treo-core"
-  ],
-  "views/admin/field-manager/index": [
-    "treo-core"
-  ],
-  "views/admin/link-manager/index": [
     "treo-core"
   ]
 }

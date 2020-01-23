@@ -36,14 +36,11 @@ declare(strict_types=1);
 namespace Treo\Core\Loaders;
 
 use Espo\Entities\Portal;
-use Treo\Core\ORM\EntityManager;
-use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Metadata;
 
 /**
  * ThemeManager loader
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun@zinitsolutions.com
  */
 class ThemeManager extends Base
 {
@@ -75,9 +72,9 @@ class ThemeManager extends Base
     /**
      * Get config
      *
-     * @return Config
+     * @return \Treo\Core\Utils\Config
      */
-    protected function getConfig(): Config
+    protected function getConfig()
     {
         return $this->getContainer()->get('config');
     }
@@ -85,9 +82,9 @@ class ThemeManager extends Base
     /**
      * Get metadata
      *
-     * @return Metadata
+     * @return \Treo\Core\Utils\Metadata
      */
-    protected function getMetadata(): Metadata
+    protected function getMetadata()
     {
         return $this->getContainer()->get('metadata');
     }

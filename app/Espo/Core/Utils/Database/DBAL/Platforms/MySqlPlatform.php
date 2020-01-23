@@ -98,7 +98,7 @@ class MySqlPlatform extends \Doctrine\DBAL\Platforms\MySqlPlatform
 
             // remove multi-lang columns
             if (empty($this->strictType) && strlen($columnName) > 6 && in_array(substr($columnName, -6), self::getPreparedLocales())) {
-//                $queryParts[] = 'DROP ' . $columnName;
+                $queryParts[] = 'DROP ' . $columnName;
             }
         }
 
