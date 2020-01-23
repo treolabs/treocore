@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace Treo\Core\Migration;
 
+use Treo\Composer\PostUpdate;
+
 /**
  * Migration
  *
@@ -61,6 +63,9 @@ class Migration
             return false;
         }
 
+        // prepare message
+        $message = sprintf('Migrate %s %s -> %s ... ', ($module == 'Treo') ? 'Core' : $module, $from, $to);
+
         // prepare versions
         $from = $this->prepareVersion($from);
         $to = $this->prepareVersion($to);
@@ -84,10 +89,7 @@ class Migration
             return false;
         }
 
-        // prepare name
-        $name = ($module == 'Treo') ? 'Core' : $module;
-
-        echo "Migrate $name $from -> $to ... ";
+        PostUpdate::renderLine($message);
 
         // prepare increment
         if ($keyFrom < $keyTo) {
@@ -114,7 +116,7 @@ class Migration
             }
         }
 
-        echo 'Done!' . PHP_EOL;
+        PostUpdate::renderLine('Migration done!');
 
         return true;
     }

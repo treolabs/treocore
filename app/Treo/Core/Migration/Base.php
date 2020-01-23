@@ -79,6 +79,15 @@ class Base
     }
 
     /**
+     * @param string $message
+     * @param bool   $break
+     */
+    protected function renderLine(string $message, bool $break = true)
+    {
+        \Treo\Composer\PostUpdate::renderLine($message, $break);
+    }
+
+    /**
      * Get config
      *
      * @return Config
@@ -96,5 +105,16 @@ class Base
     protected function getPDO(): PDO
     {
         return $this->pdo;
+    }
+
+    /**
+     * @param string $version
+     */
+    protected function updateCoreVersion(string $version): void
+    {
+        $data = json_decode(file_get_contents('composer.json'), true);
+        $data['require']['treolabs/treocore'] = $version;
+        file_put_contents('composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        copy('composer.json', 'data/stable-composer.json');
     }
 }
