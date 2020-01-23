@@ -109,6 +109,9 @@ class TreoCleanup extends Base
     {
         $tables = $this->getEntityManager()->nativeQuery('show tables')->fetchAll(\PDO::FETCH_COLUMN);
         foreach ($tables as $table) {
+            if ($table == 'attachment') {
+                continue 1;
+            }
             $columns = $this->getEntityManager()->nativeQuery("SHOW COLUMNS FROM {$this->db}.$table")->fetchAll(\PDO::FETCH_COLUMN);
             if (!in_array('deleted', $columns)) {
                 continue 1;
@@ -156,6 +159,8 @@ class TreoCleanup extends Base
 
     /**
      * Cleanup attachments
+     *
+     * @todo will be developed soon
      */
     protected function cleanupAttachments(): void
     {
