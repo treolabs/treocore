@@ -254,7 +254,7 @@ class Container
             $this->get('fileManager'),
             $this->get('moduleManager'),
             $this->get('eventManager'),
-            $this->get('config')->get('useCache')
+            $this->get('config')->get('useCache', false)
         );
     }
 
