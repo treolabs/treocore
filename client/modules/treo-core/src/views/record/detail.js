@@ -77,6 +77,27 @@ Espo.define('treo-core:views/record/detail', 'class-replace!treo-core:views/reco
             }
         },
 
+        actionSave: function () {
+            let savingCanceled = false;
+
+            this.listenToOnce(this, 'cancel:save', () => savingCanceled = true);
+
+            const setDetailAndScroll = () => {
+                this.setDetailMode();
+                $(window).scrollTop(0)
+            };
+
+            if (this.save(setDetailAndScroll, true) && savingCanceled) {
+                setDetailAndScroll();
+            }
+        },
+
+        afterSaveError: function () {
+            Dep.prototype.afterSaveError.call(this);
+
+            this.model.fetch();
+        },
+
         applyOverviewFilters() {
             let currentFieldFilter = (this.model.advancedEntityView || {}).fieldsFilter;
             let currentLocaleFilter = (this.model.advancedEntityView || {}).localesFilter;

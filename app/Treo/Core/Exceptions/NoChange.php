@@ -39,9 +39,9 @@ namespace Treo\Core\Exceptions;
 /**
  * Class NoChange
  *
- * @deprecated
+ * @author     r.ratsun <r.ratsun@treolabs.com>
  *
- * @author r.ratsun <r.ratsun@treolabs.com>
+ * @deprecated We will remove it after 01.01.2021
  */
 class NoChange extends NotModified
 {

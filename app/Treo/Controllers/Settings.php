@@ -69,7 +69,7 @@ class Settings extends \Espo\Controllers\Settings
         if (!empty($config['tabList'])) {
             $newTabList = [];
             foreach ($config['tabList'] as $item) {
-                if ($this->getMetadata()->get("scopes.$item.tab") || $item == '_delimiter_') {
+                if (is_string($item) && ($this->getMetadata()->get("scopes.$item.tab") || $item == '_delimiter_')) {
                     $newTabList[] = $item;
                 }
             }

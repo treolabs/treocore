@@ -64,6 +64,17 @@
     }
   },
   {
+    "route": "/Composer/realTimeLogs",
+    "method": "get",
+    "params": {
+      "controller": "Composer",
+      "action": "realTimeLogs"
+    },
+    "conditions": {
+      "auth": false
+    }
+  },
+  {
     "route": "/Composer/runUpdate",
     "method": "post",
     "params": {
@@ -147,6 +158,15 @@
       "action": "removeRelation",
       "scope": ":controller",
       "link": ":link"
+    }
+  },
+  {
+    "route": "Dashlet/:dashletName",
+    "method": "get",
+    "params": {
+      "controller": "Dashlet",
+      "action": "GetDashlet",
+      "dashletName": ":dashletName"
     }
   }
 ]

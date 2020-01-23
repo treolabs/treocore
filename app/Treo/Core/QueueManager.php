@@ -50,10 +50,7 @@ class QueueManager
 {
     use \Treo\Traits\ContainerTrait;
 
-    /**
-     * @var string
-     */
-    private $path = 'data/qm-items-%s.json';
+    const QUEUE_PATH = 'data/qm-items-%s.json';
 
     /**
      * @param int $stream
@@ -108,7 +105,7 @@ class QueueManager
         }
 
         // prepare path
-        $path = sprintf($this->path, $stream);
+        $path = sprintf(self::QUEUE_PATH, $stream);
 
         if (empty($data) && file_exists($path)) {
             unlink($path);
@@ -149,7 +146,7 @@ class QueueManager
         $fileData[] = $item->get('id');
 
         // prepare path
-        $path = sprintf($this->path, $stream);
+        $path = sprintf(self::QUEUE_PATH, $stream);
 
         // save
         file_put_contents($path, json_encode($fileData));
@@ -208,7 +205,7 @@ class QueueManager
         $data = [];
 
         // prepare path
-        $path = sprintf($this->path, $stream);
+        $path = sprintf(self::QUEUE_PATH, $stream);
 
         if (file_exists($path)) {
             $data = json_decode(file_get_contents($path), true);

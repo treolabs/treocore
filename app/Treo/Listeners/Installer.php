@@ -45,7 +45,6 @@ use Treo\Services\Composer;
  */
 class Installer extends AbstractListener
 {
-
     /**
      * @param Event $event
      */
@@ -59,6 +58,15 @@ class Installer extends AbstractListener
 
         // create scheduled jobs
         $this->createScheduledJobs();
+
+        /**
+         * Run after install script if it needs
+         */
+        $file = 'data/after_install_script.php';
+        if (file_exists($file)) {
+            include_once $file;
+            unlink($file);
+        }
     }
 
     /**

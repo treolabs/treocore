@@ -164,7 +164,8 @@
     "expandAllPanels": "Alle anzeigen",
     "UnitSymbol": "Einheitenzeichen",
     "Core": "Ader",
-    "Ownership Information": "Besitzerinformationen"
+    "Ownership Information": "Besitzerinformationen",
+    "New": "Neu"
   },
   "descriptions": {
     "Core": "TreoCore ist ein Software-Ökosystem, das für die schnelle Entwicklung webbasierter responsiver Geschäftsanwendungen entwickelt wurde."
@@ -189,7 +190,8 @@
     "URL is invalid": "Die URL ist ungültig",
     "Such URL is already exists": "Eine solche URL ist bereits vorhanden",
     "Site URL is empty": "Die Website-URL ist leer",
-    "Code is invalid": "Code ist ungültig. Code sollte eindeutig sein. Nur Buchstaben, Zahlen und Char \"_\" erwartet."
+    "Code is invalid": "Code ist ungültig. Code sollte eindeutig sein. Nur Buchstaben, Zahlen und Char \"_\" erwartet.",
+    "notDashletService": "Service %s muss DashletInterface implementieren"
   },
   "streamMessages": {
     "composerUpdateThis": "{user}"

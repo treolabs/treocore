@@ -35,10 +35,10 @@ declare(strict_types=1);
 
 namespace Treo\Core\Loaders;
 
-use Espo\Core\Utils\Metadata\OrmMetadata as Instance;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\File\Manager;
 use Espo\Core\Utils\Config;
+use Treo\Core\Utils\Metadata\OrmMetadata as Instance;
 
 /**
  * OrmMetadata loader

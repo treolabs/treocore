@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Config as Base;
+use Treo\Services\Composer;
 
 /**
  * Class of Config
@@ -45,6 +46,18 @@ use Espo\Core\Utils\Config as Base;
  */
 class Config extends Base
 {
+    /**
+     * @inheritDoc
+     */
+    public function get($name, $default = null)
+    {
+        if ($name == 'isUpdating') {
+            return file_exists(Composer::COMPOSER_LOG);
+        }
+
+        return parent::get($name, $default);
+    }
+
     /**
      * @inheritdoc
      */

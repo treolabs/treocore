@@ -37,7 +37,7 @@ Espo.define('treo-core:views/record/edit-side', 'class-replace!treo-core:views/r
 
         defaultPanelDefs: {
             name: 'default',
-            label: false,
+            label: 'Ownership Information',
             view: 'views/record/panels/side',
             isForm: true,
             options: {

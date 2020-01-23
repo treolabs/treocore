@@ -18675,7 +18675,7 @@ body {
 }
 
 body {
-    --theme-name: TreoClassicTheme
+    --theme-name:TreoClassicTheme;
 }
 
 body {
@@ -21018,4 +21018,8 @@ select {
 .header-breadcrumbs .header-with-dropdown + .chevron-dropdown {
     position: relative;
     display: inline-block;
+}
+
+.entity-container .cell {
+    padding: 0;
 }

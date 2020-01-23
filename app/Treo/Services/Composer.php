@@ -50,6 +50,7 @@ use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 class Composer extends AbstractService
 {
     const CHECK_UP_FILE = 'data/composer-check-up.log';
+    const COMPOSER_LOG = 'data/treo-composer.log';
 
     /**
      * @var string
@@ -169,11 +170,7 @@ class Composer extends AbstractService
      */
     public function runUpdate(): bool
     {
-        // update config
-        $this->updateConfig();
-
-        // create file for treo-composer.sh
-        file_put_contents('data/treo-composer-run.txt', '1');
+        file_put_contents(self::COMPOSER_LOG, $this->getUser()->get('id'));
 
         return true;
     }
@@ -244,16 +241,6 @@ class Composer extends AbstractService
     public function getComposerDiff(): array
     {
         return $this->compareComposerSchemas();
-    }
-
-    /**
-     * Update config
-     */
-    public function updateConfig(): void
-    {
-        $this->getConfig()->set('composerUser', $this->getUser()->get('id'));
-        $this->getConfig()->set('isUpdating', true);
-        $this->getConfig()->save();
     }
 
     /**

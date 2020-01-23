@@ -67,7 +67,7 @@ class ListCommand extends AbstractConsole
 
         // prepare data
         foreach ($config as $command => $class) {
-            if (method_exists($class, 'getDescription')) {
+            if (method_exists($class, 'getDescription') && empty($class::$isHidden)) {
                 $data[$command] = [$command, $class::getDescription()];
             }
         }

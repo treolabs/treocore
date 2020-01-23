@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\AclManager;
+use Espo\Entities\Portal;
 use Espo\Entities\User;
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Log\Monolog\Handler\RotatingFileHandler;
@@ -98,6 +99,53 @@ class Container
     public function setUser(User $user): Container
     {
         $this->set('user', $user);
+
+        return $this;
+    }
+
+    /**
+     * Set portal
+     *
+     * @param Portal $portal
+     *
+     * @return Container
+     */
+    public function setPortal(Portal $portal): Container
+    {
+        $this->set('portal', $portal);
+
+        $data = [];
+        foreach ($this->get('portal')->getSettingsAttributeList() as $attribute) {
+            $data[$attribute] = $this->get('portal')->get($attribute);
+        }
+        if (empty($data['language'])) {
+            unset($data['language']);
+        }
+        if (empty($data['theme'])) {
+            unset($data['theme']);
+        }
+        if (empty($data['timeZone'])) {
+            unset($data['timeZone']);
+        }
+        if (empty($data['dateFormat'])) {
+            unset($data['dateFormat']);
+        }
+        if (empty($data['timeFormat'])) {
+            unset($data['timeFormat']);
+        }
+        if (isset($data['weekStart']) && $data['weekStart'] === -1) {
+            unset($data['weekStart']);
+        }
+        if (array_key_exists('weekStart', $data) && is_null($data['weekStart'])) {
+            unset($data['weekStart']);
+        }
+        if (empty($data['defaultCurrency'])) {
+            unset($data['defaultCurrency']);
+        }
+
+        foreach ($data as $attribute => $value) {
+            $this->get('config')->set($attribute, $value, true);
+        }
 
         return $this;
     }

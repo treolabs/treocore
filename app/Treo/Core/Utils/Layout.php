@@ -37,9 +37,6 @@ declare(strict_types=1);
 namespace Treo\Core\Utils;
 
 use Espo\Core\Utils\Json;
-use Treo\Core\Utils\Util;
-use Treo\Layouts\AbstractLayout;
-use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class of Layout
@@ -203,7 +200,7 @@ class Layout extends \Espo\Core\Utils\Layout
      */
     protected function isPortal(): bool
     {
-        return (get_class($this->getContainer()) == PortalContainer::class);
+        return !empty($this->getContainer()->get('portal'));
     }
 
     /**

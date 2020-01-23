@@ -45,8 +45,6 @@ use Treo\Core\Utils\Auth;
 use Treo\Core\Utils\Route;
 use Treo\Core\Utils\Metadata;
 use Treo\Core\Utils\Config;
-use Treo\Core\Utils\Util;
-use Treo\Core\Portal\Container as PortalContainer;
 
 /**
  * Class Application
@@ -135,13 +133,7 @@ class Application
     public function run()
     {
         // prepare url
-        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
-            $url = $_SERVER['SCRIPT_URL'];
-        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
-            $url = $_SERVER['REDIRECT_URL'];
-        } else {
-            $url = '';
-        }
+        $url = $this->getUrl();
 
         // for api
         if (count(explode('api/v1', $url)) == 2) {
@@ -253,18 +245,10 @@ class Application
             $vars['portalId'] = $portalId;
 
             // load client
-            $this
-                ->getContainer()
-                ->get('clientManager')
-                ->display(null, 'client/html/portal.html', $vars);
-            exit;
+            $this->display('client/html/portal.html', $vars);
         }
 
-        $this
-            ->getContainer()
-            ->get('clientManager')
-            ->display(null, 'client/html/main.html', $vars);
-        exit;
+        $this->display('client/html/main.html', $vars);
     }
 
     /**
@@ -407,8 +391,7 @@ class Application
             'year'            => date('Y')
         ];
 
-        $this->getContainer()->get('clientManager')->display(null, 'client/html/installation.html', $vars);
-        exit;
+        $this->display('client/html/installation.html', $vars);
     }
 
     /**
@@ -575,9 +558,6 @@ class Application
      */
     private function initPortalContainer(string $portalId): void
     {
-        // set portal container
-        $this->container = new PortalContainer();
-
         // find portal
         $portal = $this
             ->getContainer()
@@ -585,10 +565,38 @@ class Application
             ->getEntity('Portal', $portalId);
 
         if (!empty($portal) && $portal->get('isActive')) {
-            // set portal
             $this->getContainer()->setPortal($portal);
         } else {
             throw new \Exception('No such portal');
         }
+    }
+
+    /**
+     * @param string $template
+     * @param array  $vars
+     */
+    private function display(string $template, array $vars)
+    {
+        $this
+            ->getContainer()
+            ->get('clientManager')
+            ->display(null, $template, $vars);
+        exit;
+    }
+
+    /**
+     * @return string
+     */
+    private function getUrl(): string
+    {
+        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
+            $url = $_SERVER['SCRIPT_URL'];
+        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
+            $url = $_SERVER['REDIRECT_URL'];
+        } else {
+            $url = '';
+        }
+
+        return $url;
     }
 }

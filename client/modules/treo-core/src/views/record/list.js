@@ -43,8 +43,6 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
 
         dragndropEventName: null,
 
-        dragableListRows: false,
-
         massRelationView: 'treo-core:views/modals/select-entity-and-records',
 
         setup() {
@@ -58,9 +56,16 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 this.collection.fetch();
             });
 
+            $(window).on(`keydown.${this.cid} keyup.${this.cid}`, e => {
+                document.onselectstart = function() {
+                    return !e.shiftKey;
+                }
+            });
+
             this.dragndropEventName = `resize.drag-n-drop-table-${this.cid}`;
             this.listenToOnce(this, 'remove', () => {
                 $(window).off(this.dragndropEventName);
+                $(window).off(`keydown.${this.cid} keyup.${this.cid}`);
             });
 
             _.extend(this.events, {
@@ -87,21 +92,6 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.getRouter().dispatch(scope, 'view', options);
                 },
 
-                'click tr': function (e) {
-                    if (e.target.tagName === 'TD') {
-                        let $target = $(e.currentTarget);
-                        let id = $target.data('id');
-                        let checkbox = this.$el.find($(e.currentTarget).find('.record-checkbox')).get(0);
-                        if (checkbox) {
-                            if (!checkbox.checked) {
-                                this.checkRecord(id);
-                            } else {
-                                this.uncheckRecord(id);
-                            }
-                        }
-                    }
-                },
-
                 'click .select-all': function (e) {
                     let checkbox = this.$el.find('.full-table').find('.select-all');
                     let checkboxFixed = this.$el.find('.fixed-header-table').find('.select-all');
@@ -117,19 +107,71 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.selectAllHandler(e.currentTarget.checked);
                     this.checkedAll = e.currentTarget.checked;
                 },
+
+                'click tr': function (e) {
+                    if (e.target.tagName === 'TD') {
+                        const row = $(e.currentTarget);
+                        const id = row.data('id');
+                        const $target = row.find('.record-checkbox');
+
+                        if ($target) {
+                            if (!$target.prop('checked')) {
+                                this.checkRecord(id);
+                                this.checkIntervalRecords(e, $target);
+                            } else {
+                                this.uncheckRecord(id);
+                            }
+                        }
+                    }
+                },
+
+                'click .record-checkbox': function (e) {
+                    const $target = $(e.currentTarget);
+                    const id = $target.data('id');
+
+                    if ($target.prop('checked')) {
+                        this.checkRecord(id, $target);
+                        this.checkIntervalRecords(e, $target);
+                    } else {
+                        this.uncheckRecord(id, $target);
+                    }
+                },
             });
         },
 
+        checkIntervalRecords(e, $target) {
+            const checked = this.$el.find('.record-checkbox:checked');
+            const allCheckboxes = this.$el.find('.record-checkbox');
+            if (e.shiftKey && checked.length > 1) {
+                const elementIndexInArray = allCheckboxes.index($target);
+                const firstCheckedElementIndexInArray = allCheckboxes.index(checked.eq(0));
+                const lastCheckedElementIndexInArray = allCheckboxes.index(checked.eq(checked.length - 1));
+
+                //set cycle indexes for checking interval records
+                let startIndex = elementIndexInArray;
+                let endIndex = lastCheckedElementIndexInArray;
+                if (elementIndexInArray !== firstCheckedElementIndexInArray) {
+                    startIndex = firstCheckedElementIndexInArray;
+                    endIndex = elementIndexInArray;
+                }
+
+                for (let i = startIndex; i <= endIndex; i++) {
+                    let checkbox = allCheckboxes.eq(i);
+                    this.checkRecord(checkbox.data('id'), checkbox);
+                }
+            }
+        },
+
         setupDraggableParams() {
-            this.dragableListRows = this.options.dragableListRows  || this.dragableListRows;
-            this.listRowsOrderSaveUrl = this.options.listRowsOrderSaveUrl  || this.listRowsOrderSaveUrl;
+            this.dragableListRows = this.dragableListRows || this.options.dragableListRows;
+            this.listRowsOrderSaveUrl = this.listRowsOrderSaveUrl || this.options.listRowsOrderSaveUrl;
 
             const urlParts = (this.collection.url || '').split('/');
             const mainScope = urlParts[0];
             this.relationName = urlParts[2];
             if (mainScope && this.relationName) {
                 const dragDropDefs = this.getMetadata().get(['clientDefs', mainScope, 'relationshipPanels', this.relationName, 'dragDrop']);
-                if (dragDropDefs) {
+                if (dragDropDefs && (this.dragableListRows || typeof this.dragableListRows === 'undefined')) {
                     this.dragableListRows = dragDropDefs.isActive;
                     this.dragableSortField = dragDropDefs.sortField;
                     if (this.dragableSortField) {
@@ -146,11 +188,13 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         setupMassActionItems() {
             Dep.prototype.setupMassActionItems.call(this);
 
-            let foreignEntities = this.getForeignEntities();
-            if (foreignEntities.length) {
-                this.massActionList = Espo.Utils.clone(this.massActionList);
-                this.massActionList.push('addRelation');
-                this.massActionList.push('removeRelation');
+            if (!this.getMetadata().get(['scopes', this.scope, 'relationDisabled'])) {
+                let foreignEntities = this.getForeignEntities();
+                if (foreignEntities.length) {
+                    this.massActionList = Espo.Utils.clone(this.massActionList);
+                    this.massActionList.push('addRelation');
+                    this.massActionList.push('removeRelation');
+                }
             }
         },
 
@@ -168,17 +212,14 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     if (defs.foreign && defs.entity && this.getAcl().check(defs.entity, 'edit')) {
                         let foreignType = this.getMetadata().get(['entityDefs', defs.entity, 'links', defs.foreign, 'type']);
                         if (this.checkRelationshipType(defs.type, foreignType)
-                            && this.getMetadata().get(['scopes', defs.entity, 'entity'])
+                            && (this.getMetadata().get(['scopes', defs.entity, 'entity']) || defs.addRelationCustomDefs)
                             && !this.getMetadata().get(['scopes', defs.entity, 'disableMassRelation'])
                             && !defs.disableMassRelation) {
-                            let data = {
+                            foreignEntities.push({
                                 link: link,
                                 entity: defs.entity,
-                            };
-                            if (defs.customDefs) {
-                                data.customDefs = defs.customDefs;
-                            }
-                            foreignEntities.push(data);
+                                addRelationCustomDefs: defs.addRelationCustomDefs
+                            });
                         }
                     }
                 });
@@ -213,9 +254,10 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 let view = this.getMetadata().get(['clientDefs', this.scope, 'massRelationView']) || this.massRelationView;
                 this.createView('dialog', view, {
                     model: model,
+                    mainCollection: this.collection,
                     multiple: true,
                     createButton: false,
-                    scope: (foreignEntities[0].customDefs || {}).entity || foreignEntities[0].entity,
+                    scope: (foreignEntities[0].addRelationCustomDefs || {}).entity || foreignEntities[0].entity,
                     type: type,
                     checkedList: this.checkedList
                 }, view => {
@@ -321,9 +363,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
             const ids = this.getIdsFromDom();
             const currIndex = ids.indexOf(id);
             if (currIndex > 0) {
-                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 1;
+                value = this.collection.get(ids[currIndex - 1]).get(this.dragableSortField) + 10;
             } else {
-                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 1;
+                value = this.collection.get(ids[currIndex + 1]).get(this.dragableSortField) - 10;
             }
             return value;
         },

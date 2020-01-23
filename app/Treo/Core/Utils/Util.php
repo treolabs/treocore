@@ -47,21 +47,39 @@ use FilesystemIterator;
 class Util extends Base
 {
     /**
+     * @param string $dir
+     *
+     * @return array
+     */
+    public static function scanDir(string $dir): array
+    {
+        // prepare result
+        $result = [];
+
+        if (file_exists($dir) && is_dir($dir)) {
+            foreach (scandir($dir) as $item) {
+                if (!in_array($item, ['.', '..'])) {
+                    $result[] = $item;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Remove dir recursively
      *
      * @param string $dir
      */
-    public static function removedir(string $dir)
+    public static function removeDir(string $dir)
     {
         if (file_exists($dir) && is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($dir . "/" . $object)) {
-                        self::removedir($dir . "/" . $object);
-                    } else {
-                        unlink($dir . "/" . $object);
-                    }
+            foreach (self::scanDir($dir) as $object) {
+                if (is_dir($dir . "/" . $object)) {
+                    self::removeDir($dir . "/" . $object);
+                } else {
+                    unlink($dir . "/" . $object);
                 }
             }
             rmdir($dir);
@@ -76,7 +94,7 @@ class Util extends Base
      *
      * @return mixed
      */
-    public static function copydir(string $src, string $dest)
+    public static function copyDir(string $src, string $dest)
     {
         if (!is_dir($src)) {
             return false;
@@ -94,7 +112,7 @@ class Util extends Base
                 copy($f->getRealPath(), "$dest/" . $f->getFilename());
             } else {
                 if (!$f->isDot() && $f->isDir()) {
-                    self::copydir($f->getRealPath(), "$dest/$f");
+                    self::copyDir($f->getRealPath(), "$dest/$f");
                 }
             }
         }
@@ -104,6 +122,7 @@ class Util extends Base
      * Get count folders and files in folder
      *
      * @param $folder
+     *
      * @return int
      */
     public static function countItems($folder)

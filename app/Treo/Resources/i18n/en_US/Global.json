@@ -171,7 +171,8 @@
     "UnitSymbol": "Unit Symbol",
     "Core": "Core",
     "Mark all read": "Mark all as read",
-    "Ownership Information": "Ownership Information"
+    "Ownership Information": "Ownership Information",
+    "New": "New"
   },
   "descriptions": {
     "Core": "TreoCore is a software ecosystem, designed for rapid development of web-based responsive business applications."
@@ -188,7 +189,8 @@
     "URL is invalid": "URL is invalid",
     "Such URL is already exists": "Such URL is already exists",
     "Site URL is empty": "Site URL is empty",
-    "Code is invalid": "Code is invalid. Code should be unique. Only letters, numbers and char \"_\" expected."
+    "Code is invalid": "Code is invalid. Code should be unique. Only letters, numbers and char \"_\" expected.",
+    "notDashletService": "Service %s must implement DashletInterface"
   },
   "messages": {
     "successAndReload": "Changes saved. This page will be reloaded after {value} seconds",

@@ -73,11 +73,18 @@ class AclManager
 
             $className = '\\Espo\\Custom\\Acl\\' . $normalizedName;
             if (!class_exists($className)) {
-                $moduleName = $this->metadata->getScopeModuleName($scope);
+                $moduleName = $this->getMetadata()->getScopeModuleName($scope);
                 if ($moduleName) {
-                    $className = '\\Espo\\Modules\\' . $moduleName . '\\Acl\\' . $normalizedName;
-                } else {
+                    $className = '\\' . $moduleName . '\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Treo\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
                     $className = '\\Espo\\Acl\\' . $normalizedName;
+                }
+                if (!class_exists($className)) {
+                    $className = '\\Treo\\Core\\Acl\\Base';
                 }
                 if (!class_exists($className)) {
                     $className = '\\Espo\\Core\\Acl\\Base';

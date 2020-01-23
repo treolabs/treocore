@@ -52,7 +52,7 @@ Espo.define('treo-core:views/fields/array', 'class-replace!treo-core:views/field
                 }
             }
 
-            value = value.toString();
+            value = (value || '').toString();
 
             let valueSanitized = this.getHelper().stripTags(value);
             let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
