@@ -5,7 +5,11 @@ RewriteCond %{REQUEST_FILENAME} /client/
 RewriteRule ^ /client/ [R=404]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [QSA,L]
+RewriteCond %{REQUEST_FILENAME} /apidocs/
+RewriteRule ^ apidocs/index.html [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?treoq=$1 [L,QSA]
 
 <FilesMatch "(notReadCount\.json|popupNotifications\.json)$">
   Allow from all

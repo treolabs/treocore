@@ -132,12 +132,27 @@ class Application
      */
     public function run()
     {
-        // prepare url
-        $url = $this->getUrl();
+        if (!empty($query = $this->getQuery())) {
+            /** @var bool $show404 */
+            $show404 = true;
 
-        // for api
-        if (count(explode('api/v1', $url)) == 2) {
-            $this->runApi($url);
+            // for api
+            if (preg_match('/^api\/v1\/(.*)$/', $query)) {
+                $show404 = false;
+                $this->runApi($query);
+            }
+
+            // for portal
+            $portalId = array_search($this->getConfig()->get('siteUrl', '') . '/' . $query, self::getPortalUrlFileData());
+            if (!empty($portalId)) {
+                $show404 = false;
+                $this->clientPortalId = $portalId;
+            }
+
+            if ($show404) {
+                header('HTTP/1.0 404 Not Found');
+                exit();
+            }
         }
 
         // for client
@@ -198,9 +213,9 @@ class Application
         $baseRoute = '/api/v1';
 
         // for portal api
-        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
+        if (preg_match('/^api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
             // parse uri
-            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $url));
+            $matches = explode('/', str_replace('api/v1/portal-access/', '', $url));
 
             // init portal container
             $this->initPortalContainer($matches[0]);
@@ -237,12 +252,12 @@ class Application
             'year'            => date('Y')
         ];
 
-        if (!empty($portalId = $this->getPortalIdForClient())) {
+        if (!empty($this->clientPortalId)) {
             // init portal container
-            $this->initPortalContainer($portalId);
+            $this->initPortalContainer($this->clientPortalId);
 
             // prepare client vars
-            $vars['portalId'] = $portalId;
+            $vars['portalId'] = $this->clientPortalId;
 
             // load client
             $this->display('client/html/portal.html', $vars);
@@ -289,8 +304,10 @@ class Application
         $slim = $this->getSlim();
         $container = $this->getContainer();
 
-        $slim->any('.*', function () {
-        });
+        $slim->any(
+            '.*', function () {
+        }
+        );
 
         // create entryPointManager
         $entryPointManager = new EntryPointManager($container);
@@ -302,9 +319,11 @@ class Application
             $apiAuth = new ApiAuth($auth, $authRequired, true);
             $slim->add($apiAuth);
 
-            $slim->hook('slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
+            $slim->hook(
+                'slim.before.dispatch', function () use ($entryPoint, $entryPointManager, $container, $data) {
                 $entryPointManager->run($entryPoint, $data);
-            });
+            }
+            );
 
             $slim->run();
         } catch (\Exception $e) {
@@ -421,7 +440,8 @@ class Application
         $apiAuth = new ApiAuth($auth);
 
         $this->getSlim()->add($apiAuth);
-        $this->getSlim()->hook('slim.before.dispatch', function () use ($slim, $container) {
+        $this->getSlim()->hook(
+            'slim.before.dispatch', function () use ($slim, $container) {
             $route = $slim->router()->getCurrentRoute();
             $conditions = $route->getConditions();
 
@@ -467,9 +487,11 @@ class Application
             } catch (\Exception $e) {
                 $container->get('output')->processError($e->getMessage(), $e->getCode(), false, $e);
             }
-        });
+        }
+        );
 
-        $this->getSlim()->hook('slim.after.router', function () use (&$slim) {
+        $this->getSlim()->hook(
+            'slim.after.router', function () use (&$slim) {
             $slim->contentType('application/json');
 
             $res = $slim->response();
@@ -477,7 +499,8 @@ class Application
             $res->header('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
             $res->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
             $res->header('Pragma', 'no-cache');
-        });
+        }
+        );
     }
 
     /**
@@ -498,9 +521,11 @@ class Application
                 continue;
             }
 
-            $currentRoute = $this->getSlim()->$method($baseRoute . $route['route'], function () use ($route) {
+            $currentRoute = $this->getSlim()->$method(
+                $baseRoute . $route['route'], function () use ($route) {
                 return $route['params'];
-            });
+            }
+            );
 
             if (isset($route['conditions'])) {
                 $currentRoute->conditions($route['conditions']);
@@ -526,29 +551,6 @@ class Application
     protected function getMetadata(): Metadata
     {
         return $this->getContainer()->get('metadata');
-    }
-
-    /**
-     * @return string
-     */
-    private function getPortalIdForClient(): string
-    {
-        if (is_null($this->clientPortalId)) {
-            // prepare result
-            $this->clientPortalId = '';
-
-            // prepare protocol
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
-
-            // prepare url
-            $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-            if (in_array($url, self::getPortalUrlFileData())) {
-                $this->clientPortalId = array_search($url, self::getPortalUrlFileData());
-            }
-        }
-
-        return $this->clientPortalId;
     }
 
     /**
@@ -587,16 +589,28 @@ class Application
     /**
      * @return string
      */
-    private function getUrl(): string
+    private function getQuery(): string
     {
-        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
-            $url = $_SERVER['SCRIPT_URL'];
-        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
-            $url = $_SERVER['REDIRECT_URL'];
-        } else {
-            $url = '';
+        if (empty($_GET['treoq'])) {
+            return '';
         }
 
-        return $url;
+        /** @var string $query */
+        $query = $_GET['treoq'];
+
+        // unset query from GET
+        unset($_GET['treoq']);
+
+        // prepare redirect query string
+        if (!empty($_SERVER['REDIRECT_QUERY_STRING'])) {
+            $_SERVER['REDIRECT_QUERY_STRING'] = str_replace("treoq=$query&", '', $_SERVER['REDIRECT_QUERY_STRING']);
+        }
+
+        // prepare query string
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $_SERVER['QUERY_STRING'] = str_replace("treoq=$query&", '', $_SERVER['QUERY_STRING']);
+        }
+
+        return $query;
     }
 }
