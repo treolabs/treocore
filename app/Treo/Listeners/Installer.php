@@ -108,13 +108,16 @@ class Installer extends AbstractListener
         $this
             ->getEntityManager()
             ->nativeQuery(
-                "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('998', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+                "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('ComposerAutoUpdate', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
             );
-
         $this
             ->getEntityManager()
             ->nativeQuery(
                 "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('TreoCleanup','Unused data cleanup. Deleting old data and unused db tables, db columns, etc.','TreoCleanup','Active','0 0 1 * *')"
             );
+
+        $this->getPDO()->exec(
+            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('RestApiDocs','Generate REST API docs','RestApiDocs','Active','0 0 * * *')"
+        );
     }
 }
