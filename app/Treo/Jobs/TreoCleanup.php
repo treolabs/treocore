@@ -38,6 +38,7 @@ namespace Treo\Jobs;
 
 use Espo\Core\Jobs\Base;
 use Treo\Core\Container;
+use Treo\Core\EventManager\Event;
 
 /**
  * Class TreoCleanup
@@ -83,6 +84,9 @@ class TreoCleanup extends Base
         $this->cleanupDeleted();
         $this->cleanupAttachments();
         $this->cleanupDbSchema();
+
+        // dispatch an event
+        $this->getContainer()->get('eventManager')->dispatch('TreoCleanupJob', 'run', new Event());
 
         return true;
     }

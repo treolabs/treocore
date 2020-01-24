@@ -50,7 +50,7 @@ class V3Dot25Dot15 extends Base
      */
     public function up(): void
     {
-        echo ' Update Cleanup jobs... ';
+        echo ' Update scheduled jobs... ';
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='Cleanup'");
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='TreoCleanup'");
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='RestApiDocs'");
