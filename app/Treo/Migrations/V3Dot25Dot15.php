@@ -55,7 +55,10 @@ class V3Dot25Dot15 extends Base
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='TreoCleanup'");
         $this->getPDO()->exec("DELETE FROM job WHERE name='Cleanup'");
         $this->getPDO()->exec("DELETE FROM job WHERE name='TreoCleanup'");
-        $this->getPDO()->exec("INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('TreoCleanup','Unused data cleanup. Deleting old data and unused db tables, db columns, etc.','TreoCleanup','Active','0 0 1 * *')");
+        $this->getPDO()->exec("DELETE FROM job WHERE scheduled_job_id='TreoCleanup'");
+        $this->getPDO()->exec(
+            "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('TreoCleanup','Unused data cleanup. Deleting old data and unused db tables, db columns, etc.','TreoCleanup','Active','0 0 1 * *')"
+        );
         echo ' Done!' . PHP_EOL;
     }
 
