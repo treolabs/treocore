@@ -1,15 +1,12 @@
 {
   "jobs": {
-    "TreoCleanup": {
-      "isSystem": true,
-      "scheduling": "0 0 1 * *"
-    },
     "RestApiDocs": {
       "isSystem": true,
       "scheduling": "0 0 * * *"
     }
   },
   "jobSchedulingMap": {
+    "TreoCleanup": "0 0 1 * *",
     "ComposerAutoUpdate": "0 0 * * SUN"
   }
 }

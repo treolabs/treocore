@@ -105,13 +105,16 @@ class Installer extends AbstractListener
      */
     protected function createScheduledJobs(): void
     {
-        // ComposerAutoUpdate job
         $this
             ->getEntityManager()
-            ->getPDO()
-            ->exec(
-                "INSERT INTO scheduled_job (id, name, job, status, scheduling) 
-                 VALUES ('998', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+            ->nativeQuery(
+                "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('998', 'Auto-updating of modules', 'ComposerAutoUpdate', 'Active', '0 0 * * SUN')"
+            );
+
+        $this
+            ->getEntityManager()
+            ->nativeQuery(
+                "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('TreoCleanup','Unused data cleanup. Deleting old data and unused db tables, db columns, etc.','TreoCleanup','Active','0 0 1 * *')"
             );
     }
 }

@@ -82,6 +82,7 @@ class TreoCleanup extends Base
         $this->cleanupNotifications();
         $this->cleanupDeleted();
         $this->cleanupAttachments();
+        $this->cleanupDbSchema();
 
         return true;
     }
@@ -164,6 +165,22 @@ class TreoCleanup extends Base
      */
     protected function cleanupAttachments(): void
     {
+    }
+
+    /**
+     * Cleanup DB schema
+     */
+    protected function cleanupDbSchema(): void
+    {
+        try {
+            $queries = $this->getContainer()->get('schema')->getDiffQueries();
+        } catch (\Throwable $e) {
+            $queries = [];
+        }
+
+        foreach ($queries as $query) {
+            $this->exec($query);
+        }
     }
 
     /**

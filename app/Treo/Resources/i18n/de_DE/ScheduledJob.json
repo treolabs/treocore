@@ -13,6 +13,7 @@
       "CheckNewVersion": "Check for New Version",
       "ProcessMassEmail": "Massen E-Mails senden",
       "ControlKnowledgeBaseArticleStatus": "Wissensbasis Artikel Status kontrollieren",
+      "TreoCleanup": "Nicht verwendete Daten bereinigen. Löschen alter Daten und nicht verwendeter Datenbanktabellen, Datenbankspalten usw.",
       "ComposerAutoUpdate": "Automatische Aktualisierung von Modulen"
     }
   }

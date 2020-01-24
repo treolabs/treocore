@@ -39,20 +39,23 @@ namespace Treo\Migrations;
 use Treo\Core\Migration\Base;
 
 /**
- * Migration class for version 3.25.13
+ * Migration class for version 3.25.15
  *
  * @author r.ratsun@treolabs.com
  */
-class V3Dot25Dot13 extends Base
+class V3Dot25Dot15 extends Base
 {
     /**
      * @inheritdoc
      */
     public function up(): void
     {
-        echo ' Remove Cleanup jobs... ';
+        echo ' Update Cleanup jobs... ';
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='Cleanup'");
+        $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='TreoCleanup'");
         $this->getPDO()->exec("DELETE FROM job WHERE name='Cleanup'");
+        $this->getPDO()->exec("DELETE FROM job WHERE name='TreoCleanup'");
+        $this->getPDO()->exec("INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('TreoCleanup','Unused data cleanup. Deleting old data and unused db tables, db columns, etc.','TreoCleanup','Active','0 0 1 * *')");
         echo ' Done!' . PHP_EOL;
     }
 
