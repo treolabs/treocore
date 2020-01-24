@@ -34,34 +34,31 @@
 
 declare(strict_types=1);
 
-namespace Treo\Core\Utils;
+namespace Treo\Migrations;
 
-use Espo\Core\Utils\Config as Base;
+use Treo\Core\Migration\Base;
 
 /**
- * Class of Config
+ * Migration class for version 3.25.14
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class Config extends Base
+class V3Dot25Dot14 extends Base
 {
-    /**
-     * @inheritDoc
-     */
-    public function get($name, $default = null)
-    {
-        if ($name == 'isUpdating') {
-            return file_exists(COMPOSER_LOG);
-        }
-
-        return parent::get($name, $default);
-    }
-
     /**
      * @inheritdoc
      */
-    public function getDefaults()
+    public function up(): void
     {
-        return array_merge(parent::getDefaults(), include CORE_PATH . '/Treo/Configs/defaultConfig.php');
+        if (file_exists('vendor/treolabs/treocore/copy/index.php')) {
+            copy('vendor/treolabs/treocore/copy/index.php', 'index.php');
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function down(): void
+    {
     }
 }

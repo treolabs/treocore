@@ -390,7 +390,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                 $.ajax({
                     type: 'GET',
                     dataType: 'json',
-                    url: 'Composer/realTimeLogs',
+                    url: `../../?composerLogs=1`,
                     cache: false,
                     success: response => {
                         if (response.status) {
