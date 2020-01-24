@@ -1,19 +1,7 @@
 {
-  "jobs": {
-    "Cleanup": {
-      "isSystem": true,
-      "scheduling": "0 0 * * *"
-    },
-    "TreoCleanup": {
-      "isSystem": true,
-      "scheduling": "0 0 1 * *"
-    },
-    "RestApiDocs": {
-      "isSystem": true,
-      "scheduling": "0 0 * * *"
-    }
-  },
   "jobSchedulingMap": {
+    "TreoCleanup": "0 0 1 * *",
+    "RestApiDocs": "0 0 * * *",
     "ComposerAutoUpdate": "0 0 * * SUN"
   }
 }

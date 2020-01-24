@@ -4,7 +4,6 @@
   },
   "options": {
     "job": {
-      "Cleanup": "Aufräumen",
       "CheckInboundEmails": "Gruppen E-Mail Konten überprüfen",
       "CheckEmailAccounts": "Persönliche E-Mail Konten prüfen",
       "SendEmailReminders": "E-Mail Erinnerungen senden",
@@ -13,6 +12,8 @@
       "CheckNewVersion": "Check for New Version",
       "ProcessMassEmail": "Massen E-Mails senden",
       "ControlKnowledgeBaseArticleStatus": "Wissensbasis Artikel Status kontrollieren",
+      "TreoCleanup": "Nicht verwendete Daten bereinigen. Löschen alter Daten und nicht verwendeter Datenbanktabellen, Datenbankspalten usw.",
+      "RestApiDocs": "Generieren Sie REST-API-Dokumente",
       "ComposerAutoUpdate": "Automatische Aktualisierung von Modulen"
     }
   }
