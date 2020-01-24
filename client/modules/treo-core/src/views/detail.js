@@ -87,7 +87,10 @@ Espo.define('treo-core:views/detail', 'class-replace!treo-core:views/detail',
                 boolfilterData = panelView[boolFilterDataCallback](boolFilterList);
             }
 
-            let viewName = this.getMetadata().get('clientDefs.' + scope + '.modalViews.select') || 'views/modals/select-records';
+            let viewName =
+                ((panelView || {}).defs || {}).modalSelectRecordView ||
+                this.getMetadata().get(['clientDefs', scope, 'modalViews', 'select']) ||
+                'views/modals/select-records';
 
             this.notify('Loading...');
             this.createView('dialog', viewName, {
