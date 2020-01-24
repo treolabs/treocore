@@ -51,8 +51,13 @@ class V3Dot23Dot29 extends Base
     public function up(): void
     {
         // copy files
-        copy('vendor/treolabs/treocore/copy/bin/cron.sh', 'bin/cron.sh');
-        copy('vendor/treolabs/treocore/copy/bin/treo-composer.sh', 'bin/treo-composer.sh');
+        if (file_exists('vendor/treolabs/treocore/copy/bin/cron.sh')) {
+            copy('vendor/treolabs/treocore/copy/bin/cron.sh', 'bin/cron.sh');
+        }
+
+        if (file_exists('vendor/treolabs/treocore/copy/bin/treo-composer.sh')) {
+            copy('vendor/treolabs/treocore/copy/bin/treo-composer.sh', 'bin/treo-composer.sh');
+        }
 
         // kill processes
         file_put_contents('data/process-kill.txt', '1');
