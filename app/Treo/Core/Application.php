@@ -132,12 +132,27 @@ class Application
      */
     public function run()
     {
-        // prepare url
-        $url = $this->getUrl();
+        if (!empty($query = $this->getQuery())) {
+            /** @var bool $show404 */
+            $show404 = true;
 
-        // for api
-        if (count(explode('api/v1', $url)) == 2) {
-            $this->runApi($url);
+            // for api
+            if (preg_match('/^api\/v1\/(.*)$/', $query)) {
+                $show404 = false;
+                $this->runApi($query);
+            }
+
+            // for portal
+            $portalId = array_search($this->getConfig()->get('siteUrl', '') . '/' . $query, self::getPortalUrlFileData());
+            if (!empty($portalId)) {
+                $show404 = false;
+                $this->clientPortalId = $portalId;
+            }
+
+            if ($show404) {
+                header('HTTP/1.0 404 Not Found');
+                exit();
+            }
         }
 
         // for client
@@ -198,9 +213,9 @@ class Application
         $baseRoute = '/api/v1';
 
         // for portal api
-        if (preg_match('/^\/api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
+        if (preg_match('/^api\/v1\/portal-access\/(.*)\/.*$/', $url)) {
             // parse uri
-            $matches = explode('/', str_replace('/api/v1/portal-access/', '', $url));
+            $matches = explode('/', str_replace('api/v1/portal-access/', '', $url));
 
             // init portal container
             $this->initPortalContainer($matches[0]);
@@ -237,12 +252,12 @@ class Application
             'year'            => date('Y')
         ];
 
-        if (!empty($portalId = $this->getPortalIdForClient())) {
+        if (!empty($this->clientPortalId)) {
             // init portal container
-            $this->initPortalContainer($portalId);
+            $this->initPortalContainer($this->clientPortalId);
 
             // prepare client vars
-            $vars['portalId'] = $portalId;
+            $vars['portalId'] = $this->clientPortalId;
 
             // load client
             $this->display('client/html/portal.html', $vars);
@@ -529,29 +544,6 @@ class Application
     }
 
     /**
-     * @return string
-     */
-    private function getPortalIdForClient(): string
-    {
-        if (is_null($this->clientPortalId)) {
-            // prepare result
-            $this->clientPortalId = '';
-
-            // prepare protocol
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
-
-            // prepare url
-            $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-            if (in_array($url, self::getPortalUrlFileData())) {
-                $this->clientPortalId = array_search($url, self::getPortalUrlFileData());
-            }
-        }
-
-        return $this->clientPortalId;
-    }
-
-    /**
      * @param string $portalId
      *
      * @throws \Exception
@@ -587,16 +579,28 @@ class Application
     /**
      * @return string
      */
-    private function getUrl(): string
+    private function getQuery(): string
     {
-        if (array_key_exists('SCRIPT_URL', $_SERVER)) {
-            $url = $_SERVER['SCRIPT_URL'];
-        } elseif (array_key_exists('REDIRECT_URL', $_SERVER)) {
-            $url = $_SERVER['REDIRECT_URL'];
-        } else {
-            $url = '';
+        if (empty($_GET['treoq'])) {
+            return '';
         }
 
-        return $url;
+        /** @var string $query */
+        $query = $_GET['treoq'];
+
+        // unset query from GET
+        unset($_GET['treoq']);
+
+        // prepare redirect query string
+        if (!empty($_SERVER['REDIRECT_QUERY_STRING'])) {
+            $_SERVER['REDIRECT_QUERY_STRING'] = str_replace("treoq=$query&", '', $_SERVER['REDIRECT_QUERY_STRING']);
+        }
+
+        // prepare query string
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $_SERVER['QUERY_STRING'] = str_replace("treoq=$query&", '', $_SERVER['QUERY_STRING']);
+        }
+
+        return $query;
     }
 }

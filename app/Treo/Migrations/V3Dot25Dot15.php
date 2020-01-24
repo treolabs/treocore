@@ -41,7 +41,7 @@ use Treo\Core\Migration\Base;
 /**
  * Migration class for version 3.25.15
  *
- * @author r.ratsun@treolabs.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
 class V3Dot25Dot15 extends Base
 {
@@ -50,7 +50,7 @@ class V3Dot25Dot15 extends Base
      */
     public function up(): void
     {
-        echo ' Update scheduled jobs... ';
+        echo ' Update scheduled jobs ... ';
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='Cleanup'");
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='TreoCleanup'");
         $this->getPDO()->exec("DELETE FROM scheduled_job WHERE job='RestApiDocs'");
@@ -64,6 +64,12 @@ class V3Dot25Dot15 extends Base
             "INSERT INTO scheduled_job (id, name, job, status, scheduling) VALUES ('RestApiDocs','Generate REST API docs','RestApiDocs','Active','0 0 * * *')"
         );
         echo ' Done!' . PHP_EOL;
+
+        if (file_exists('.htaccess')) {
+            echo ' Update .htaccess file ... ';
+            file_put_contents('.htaccess', str_replace('RewriteRule ^ index.php [QSA,L]', 'RewriteRule ^(.*)$ index.php?treoq=$1 [L,QSA]', file_get_contents('.htaccess')));
+            echo ' Done!' . PHP_EOL;
+        }
     }
 
     /**
@@ -71,5 +77,10 @@ class V3Dot25Dot15 extends Base
      */
     public function down(): void
     {
+        if (file_exists('.htaccess')) {
+            echo ' Update .htaccess file ... ';
+            file_put_contents('.htaccess', str_replace('RewriteRule ^(.*)$ index.php?treoq=$1 [L,QSA]', 'RewriteRule ^ index.php [QSA,L]', file_get_contents('.htaccess')));
+            echo ' Done!' . PHP_EOL;
+        }
     }
 }
