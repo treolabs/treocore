@@ -390,7 +390,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                 $.ajax({
                     type: 'GET',
                     dataType: 'json',
-                    url: 'Composer/realTimeLogs',
+                    url: `../../?composerLogs=1`,
                     cache: false,
                     success: response => {
                         if (response.status) {
@@ -403,10 +403,7 @@ Espo.define('treo-core:views/composer/list', 'views/list',
                     },
                     error: xhr => {
                         window.clearInterval(this.logCheckInterval);
-                        this.notify(this.translate('updateFailed', 'labels', 'Composer'), 'danger');
-                        this.trigger('composerUpdate:failed');
-                        this.notify('Error occurred', 'error');
-                        this.reRender();
+                        location.reload();
                     }
                 });
             };

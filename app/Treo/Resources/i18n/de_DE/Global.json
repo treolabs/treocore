@@ -175,7 +175,8 @@
   },
   "themes": {
     "TreoDarkTheme": "Treo Dark Theme",
-    "TreoClassicTheme": "Treo Classic Theme"
+    "TreoClassicTheme": "Treo Classic Theme",
+    "TreoLightTheme": "Treo Light Theme"
   },
   "scopeNames": {
     "Stream": "Stream"

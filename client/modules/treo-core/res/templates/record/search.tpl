@@ -45,11 +45,11 @@
             {{#unless textFilterDisabled}}<input type="text" class="form-control text-filter" name="textFilter" value="{{textFilter}}" tabindex="1">{{/unless}}
             <div class="input-group-btn">
                 <button type="button" class="btn btn-primary search btn-icon btn-icon-x-wide" data-action="search">
-                    <span class="fa fa-search"></span>
+                    <span class="fas fa-search"></span>
                     <span>{{translate 'Search'}}</span>
                 </button>
                 <button type="button" class="btn btn-default reset" data-action="reset">
-                    <span class="fa fa-redo-alt"></span>&nbsp;{{translate 'Reset'}}
+                    <span class="fas fa-redo"></span>{{translate 'Reset'}}
                 </button>
             </div>
         </div>

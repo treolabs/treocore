@@ -329,31 +329,6 @@ class Composer extends Base
     }
 
     /**
-     * @ApiDescription(description="Get real time composer logs")
-     * @ApiMethod(type="GET")
-     * @ApiRoute(name="/ModuleManager/realTimeLogs")
-     * @ApiReturn(sample="{
-     *     'status': 'int',
-     *     'logs': 'string'
-     * }")
-     *
-     * @return array
-     * @throws Exceptions\Forbidden
-     * @throws Exceptions\BadRequest
-     */
-    public function actionRealTimeLogs($params, $data, Request $request): array
-    {
-        if (!$request->isGet()) {
-            throw new Exceptions\BadRequest();
-        }
-
-        /** @var string $log */
-        $log = ComposerService::COMPOSER_LOG;
-
-        return (!file_exists($log)) ? ['status' => false] : ['status' => true, 'logs' => file_get_contents($log)];
-    }
-
-    /**
      * @return ComposerService
      */
     protected function getComposerService(): ComposerService

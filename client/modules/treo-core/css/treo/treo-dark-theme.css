@@ -14506,7 +14506,7 @@ body > #header .navbar-brand span.home-icon {
     #header a.minimizer {
         color: #dfdfdf;
         text-decoration: none;
-        margin-top: 5px;
+        margin-top: 4px;
         display: inline-block;
         margin-left: 4px
     }
@@ -14534,9 +14534,9 @@ body > #header .navbar-brand span.home-icon {
     body.minimized #header a.navbar-brand {
         position: fixed;
         top: 0;
-        height: 35px;
+        height: 48px;
         width: 38px;
-        padding-top: 8px
+        padding-top: 13px
     }
 
     body.minimized #header a.navbar-brand span.home-icon {
@@ -14608,6 +14608,66 @@ body > #header .navbar-brand span.home-icon {
         position: relative;
         left: -1px;
         visibility: visible
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more.keep-open > a:after {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 50%;
+        background: #fff;
+        position: absolute;
+        left: 4px;
+        top: 19px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more > a:before {
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        background: #fff;
+        position: absolute;
+        left: 2px;
+        top: 14px;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a {
+        position: relative;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before, body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        content: '';
+        display: block;
+        background: #fff;
+        position: absolute;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:before {
+        width: 1px;
+        height: 100%;
+        left: 4px;
+        top: 0;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li a:after {
+        width: 5px;
+        height: 1px;
+        left: 4px;
+        top: 17px;
+    }
+
+    body.minimized #header > #navbar .navbar-inverse .navbar-nav .more .dropdown-menu > li:last-child a:before {
+        width: 1px;
+        height: 50%;
+        left: 4px;
+        top: 0;
     }
 
     #header .navbar {
@@ -18969,8 +19029,17 @@ ul.dropdown-menu > li.checkbox {
     margin-left: -2px;
 }
 
-.search-row .text-filter + .input-group-btn .search > span {
-    margin: 0 2px
+.search-row .text-filter + .input-group-btn .search {
+    width: auto;
+    padding: 6px 10px;
+}
+.search-row .text-filter + .input-group-btn .search .fas {
+    font-size: 14px;
+    margin-right: 2px;
+}
+.search-row .text-filter + .input-group-btn .reset .fas {
+    font-size: 13px;
+    margin-right: 5px;
 }
 
 .search-row .text-filter + .input-group-btn .search::after:first-letter {
@@ -19071,10 +19140,6 @@ ul.dropdown-menu > li.checkbox {
 
 #login input:focus {
     border-color: #424242;
-}
-
-#header .navbar[data-orientation="vertical"] ul.tabs > .open:not(.more-group-name) > a, {
-    background: red !important
 }
 
 #header .navbar[data-orientation="vertical"] ul.tabs li.more.highlighted > a {
@@ -19237,7 +19302,7 @@ ul.dropdown-menu > li.checkbox {
     position: absolute;
     left: 5px;
     top: 0;
-    color: #fff;
+    color: #333333;
 }
 
 .completeness .progress-value.none {
@@ -19489,7 +19554,7 @@ button.category:focus {
         background: #424242;
         border-right: 1px solid #424242;
         border-bottom: 1px solid #545454;
-        height: 47px
+        height: 48px
     }
 
     #header a.navbar-brand {
@@ -19567,7 +19632,7 @@ button.category:focus {
     }
 
     body.minimized #header .navbar-header {
-        height: 35px;
+        height: 48px;
     }
 
     #header a.navbar-brand {
@@ -19727,6 +19792,8 @@ button.category:focus {
         border-left: 1px solid #dcdcdc;
     }
 
+}
+@media screen and (min-width: 1200px) {
     #main .detail .catalog-tree-panel.catalog-tree-panel-hidden + .overview {
         width: calc(75% - 25px);
     }
@@ -19830,7 +19897,6 @@ button.category:focus {
 
     #header .navbar img.logo {
         max-width: 60%;
-        margin: 12px 0 0 0;
     }
 
     #header .navbar-collapse,
@@ -20013,6 +20079,8 @@ button.category:focus {
     }
 
     .navbar-brand {
+        display: inline-flex;
+        align-items: center;
         width: 160px;
     }
 
@@ -20094,6 +20162,15 @@ button.category:focus {
         width: calc(100% - 30px);
         box-shadow: none;
         margin: 0 15px;
+    }
+}
+
+@media screen and (max-width: 399px) {
+    .navbar-brand {
+        max-width: 100px;
+    }
+    #header .navbar img.logo {
+        max-width: 100%;
     }
 }
 
@@ -20852,15 +20929,14 @@ select.input-sm {
 }
 
 select {
-    -webkit-appearance: button;
-    -moz-appearance: button;
-    appearance: button;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background-image: url("../../img/arrow-down.png") !important;
     background-position: center right 5px;
     background-repeat: no-repeat;
     background-size: 12px;
     padding-right: 20px !important;
-	-webkit-appearance: none;
 }
 
 @media screen and (max-width: 768px)  {

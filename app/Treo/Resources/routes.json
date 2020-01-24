@@ -64,17 +64,6 @@
     }
   },
   {
-    "route": "/Composer/realTimeLogs",
-    "method": "get",
-    "params": {
-      "controller": "Composer",
-      "action": "realTimeLogs"
-    },
-    "conditions": {
-      "auth": false
-    }
-  },
-  {
     "route": "/Composer/runUpdate",
     "method": "post",
     "params": {

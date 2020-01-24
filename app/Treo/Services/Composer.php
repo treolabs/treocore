@@ -50,7 +50,6 @@ use Treo\Core\ModuleManager\Manager as TreoModuleManager;
 class Composer extends AbstractService
 {
     const CHECK_UP_FILE = 'data/composer-check-up.log';
-    const COMPOSER_LOG = 'data/treo-composer.log';
 
     /**
      * @var string
@@ -170,7 +169,7 @@ class Composer extends AbstractService
      */
     public function runUpdate(): bool
     {
-        file_put_contents(self::COMPOSER_LOG, $this->getUser()->get('id'));
+        file_put_contents(COMPOSER_LOG, $this->getUser()->get('id'));
 
         return true;
     }
