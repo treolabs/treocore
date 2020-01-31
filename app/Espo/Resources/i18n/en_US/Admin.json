@@ -180,7 +180,7 @@
     },
     "descriptions": {
         "settings": "General system settings",
-        "scheduledJob": "Jobs exectued by cron",
+        "scheduledJob": "Jobs executed by cron",
         "clearCache": "Backend cache clearing",
         "users": "User management",
         "teams": "Team management",

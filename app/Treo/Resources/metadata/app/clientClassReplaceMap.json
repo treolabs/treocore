@@ -220,5 +220,8 @@
   ],
   "views/admin/link-manager/index": [
     "treo-core"
+  ],
+  "views/fields/enum": [
+    "treo-core"
   ]
 }
