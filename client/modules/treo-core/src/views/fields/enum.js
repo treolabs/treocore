@@ -49,10 +49,10 @@ Espo.define('treo-core:views/fields/enum', 'class-replace!treo-core:views/fields
                 if (Espo.Utils.isObject(this.translatedOptions)) {
                     this.translatedOptions[''] = this.translate('noDefaultValue', 'fields');
                 }
-            }
 
-            if (this.model.isNew()) {
-                this.model.set(this.name, '');
+                if (this.model.isNew()) {
+                    this.model.set(this.name, '');
+                }
             }
         }
     })
