@@ -47,7 +47,7 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
                 <div class="list-group-item link-with-role form-inline" data-value="${valueInternal}">
                     <div class="pull-left" style="width: 92%; display: inline-block;">
                         <input name="translatedValue" data-value="${valueInternal}" class="role form-control input-sm pull-right" value="${translatedValue}">
-                        <div>${translatedValue}</div>
+                        <div>${valueSanitized}</div>
                     </div>
                     <div style="width: 8%; display: inline-block;">
                         <a href="javascript:" class="pull-right" data-value="${valueInternal}" data-action="removeValue"><span class="fas fa-times"></a>

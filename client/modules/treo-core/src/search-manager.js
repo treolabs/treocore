@@ -136,6 +136,7 @@ Espo.define('treo-core:search-manager', 'class-replace!treo-core:search-manager'
                      return {
                          type: type,
                          attribute: attribute,
+                         isAttribute: (defs.fieldParams || {}).isAttribute,
                          value: defs.value,
                          dateTime: true,
                          timeZone: this.dateTime.timeZone || 'UTC'

@@ -18413,7 +18413,7 @@ body {
  * Treo Light Theme
  */
 body {
-  --theme-name: TreoLightTheme
+  --theme-name:TreoLightTheme;
 ;
 }
 
