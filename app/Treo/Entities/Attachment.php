@@ -47,6 +47,7 @@ class Attachment extends Base
         if (!$sourceId) {
             $sourceId = $this->id;
         }
+
         return $sourceId;
     }
 
@@ -55,6 +56,6 @@ class Attachment extends Base
      */
     public function _getStorage()
     {
-        return "UploadDir";
+        return $this->valuesContainer['storage'] ? $this->valuesContainer['storage'] : "UploadDir";
     }
 }
