@@ -148,7 +148,8 @@
     "shippingAddressCountry": "Land (Lieferadresse)",
     "shippingAddressState": "Bundesland/Kanton (Versand)",
     "shippingAddressPostalCode": "PLZ (Lieferadresse)",
-    "shippingAddressMap": "Karte (Lieferadresse)"
+    "shippingAddressMap": "Karte (Lieferadresse)",
+    "noDefaultValue": "- Keinen Defaultwert -"
   },
   "labels": {
     "status": "Status",
