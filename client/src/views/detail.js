@@ -284,6 +284,8 @@ Espo.define('views/detail', 'views/main', function (Dep) {
             if (typeof data.boolFilterList == 'string') {
                 dataBoolFilterList = data.boolFilterList.split(',');
             }
+
+            dataBoolFilterList = dataBoolFilterList || [];
             $.each(dataBoolFilterList, function (key, name) {
                 dataBoolFilterList[key] = name.replace('{{id}}', self.model.id);
             });
