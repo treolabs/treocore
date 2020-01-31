@@ -21031,3 +21031,8 @@ select {
 #header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header a.navbar-brand.nav-link.logo img {
     margin: 13px auto !important;
 }
+
+.field .link-container .list-group-item .lang-option {
+    margin: 6px 5px 6px 0;
+    color: #8e8e8e;
+}
