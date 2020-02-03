@@ -34,25 +34,28 @@
 Espo.define('treo-core:views/fields/enum', 'class-replace!treo-core:views/fields/enum',
     Dep => Dep.extend({
 
-        prohibitedScopes: ['Settings'],
+        prohibitedScopes: ['Settings', 'EntityManager'],
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            const { defs } = this.options;
             const scopeIsAllowed = !this.prohibitedScopes.includes(this.model.name);
-            const isArray = defs && Array.isArray((defs.params || {}).options);
+            const isArray = Array.isArray((this.params || {}).options);
 
-            if (isArray && scopeIsAllowed && !defs.params.options.includes('')) {
-                defs.params.options.unshift('');
+            if (isArray && scopeIsAllowed && !this.params.options.includes('') && this.params.options.length > 1) {
+                this.params.options.unshift('');
 
                 if (Espo.Utils.isObject(this.translatedOptions)) {
-                    this.translatedOptions[''] = this.translate('noDefaultValue', 'fields');
+                    this.translatedOptions[''] = '';
                 }
+            }
+        },
 
-                if (this.model.isNew()) {
-                    this.model.set(this.name, '');
-                }
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.model.isNew()) {
+                this.model.set({[this.name]: ''}, { silent: true });
             }
         }
     })
