@@ -154,8 +154,7 @@
     "shippingAddressCountry": "Country (Shipping)",
     "shippingAddressState": "State (Shipping)",
     "shippingAddressPostalCode": "Postal Code (Shipping)",
-    "shippingAddressMap": "Map (Shipping)",
-    "noDefaultValue": "- No default value -"
+    "shippingAddressMap": "Map (Shipping)"
   },
   "labels": {
     "status": "Status",
