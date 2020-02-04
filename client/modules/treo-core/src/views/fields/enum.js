@@ -54,7 +54,7 @@ Espo.define('treo-core:views/fields/enum', 'class-replace!treo-core:views/fields
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            if (this.model.isNew()) {
+            if (this.model.isNew() && this.mode === 'edit') {
                 this.model.set({[this.name]: ''}, { silent: true });
             }
         }
