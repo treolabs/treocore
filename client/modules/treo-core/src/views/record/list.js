@@ -323,7 +323,9 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                 if (itemId) {
                     const sortFieldValue = this.getSortFieldValue(itemId);
                     url = `${this.scope}/${itemId}`;
+                    const parent = this.getParentView();
                     data = {
+                        _id: parent ? parent.model ? parent.model.id : null : null,
                         [this.dragableSortField]: sortFieldValue
                     };
                 }
