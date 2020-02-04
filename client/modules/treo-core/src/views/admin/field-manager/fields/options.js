@@ -54,7 +54,7 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
 
         getTranslationContainer(value, valueInternal, translatedValue, valueSanitized) {
             return `
-                <div class="pull-left" style="width: 92%; display: inline-block;">
+                <div class="pull-left" style="width: 92%; display: inline-block;" data-name="${this.name}">
                     <input name="translatedValue" data-value="${valueInternal}" class="role form-control input-sm pull-right" value="${translatedValue}">
                     <div class="main-option">${valueSanitized}</div>
                 </div>`;
@@ -63,21 +63,28 @@ Espo.define('treo-core:views/admin/field-manager/fields/options', ['class-replac
         fetch() {
             let data = Arr.prototype.fetch.call(this);
 
+            data.translatedOptions = {};
+
             if (!data[this.name].length) {
                 data[this.name] = false;
-                data.translatedOptions = {};
                 return data;
             }
 
-            data.translatedOptions = {};
             (data[this.name] || []).forEach(value => {
-                let valueSanitized = this.getHelper().stripTags(value);
-                let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
-                let translatedValue = this.$el.find('input[name="translatedValue"][data-value="'+valueInternal+'"]').val() || value;
-                data.translatedOptions[value] = translatedValue.toString();
+                data.translatedOptions[value] = this.getTranslatedOption(value);
             });
 
             return data;
+        },
+
+        getTranslatedOption(value, pathName) {
+            pathName = pathName && typeof pathName === 'string' ? pathName : this.name;
+
+            let valueSanitized = this.getHelper().stripTags(value);
+            let valueInternal = valueSanitized.replace(/"/g, '-quote-').replace(/\\/g, '-backslash-');
+            let translatedValue = this.$el.find(`[data-name="${pathName}"] input[name="translatedValue"][data-value="${valueInternal}"]`).val() || value;
+
+            return translatedValue.toString();
         },
 
         fetchFromDom() {

@@ -19229,6 +19229,19 @@ ul.dropdown-menu > li.checkbox {
     padding: 6px 12px 6px 6px;
 }
 
+.page-header .header-buttons .filter-cell .field .selected-element:after {
+    content: '';
+    width: 0;
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    margin-top: -3px;
+    border-width: 6px 4px;
+    border-style: solid;
+    pointer-events: none;
+    border-color: #8e8e8e transparent transparent transparent;
+}
+
 .page-header .header-buttons .filter-cell .field .selected-element span {
     display: inline-block;
     height: 100%;
@@ -21032,7 +21045,14 @@ select {
     margin: 13px auto !important;
 }
 
+.field .link-container .list-group-item .main-option {
+    max-width: 170px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .field .link-container .list-group-item .lang-option {
-    margin: 6px 5px 6px 0;
+    margin: 6px 6px 6px 0;
     color: #8e8e8e;
 }
