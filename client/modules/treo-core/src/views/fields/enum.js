@@ -56,7 +56,7 @@ Espo.define('treo-core:views/fields/enum', 'class-replace!treo-core:views/fields
                     }
 
                     if (this.model.isNew() && this.mode === 'edit') {
-                        this.model.set({[this.name]: ''}, {silent: true});
+                        this.model.set({[this.name]: ''});
                     }
                 }
             }
