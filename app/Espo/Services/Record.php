@@ -2576,22 +2576,4 @@ class Record extends \Espo\Core\Services\Base
         // dispatch target listener
         return $this->getInjection('eventManager')->dispatch($event->getArgument('target'), $action, $event);
     }
-
-    /**
-     * @param string $action
-     * @param Event  $event
-     *
-     * @return Event
-     */
-    protected function dispatchEvent(string $action, Event $event): Event
-    {
-        // set target
-        $event->setArgument('target', $this->entityType . 'Service');
-
-        // dispatch common listener
-        $this->getInjection('eventManager')->dispatch('Service', $action, $event);
-
-        // dispatch target listener
-        return $this->getInjection('eventManager')->dispatch($event->getArgument('target'), $action, $event);
-    }
 }
