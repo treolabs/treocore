@@ -529,7 +529,9 @@ class PostUpdate
                 }
 
                 // copy
-                copy($src, $dest);
+                if (file_exists($src)) {
+                    copy($src, $dest);
+                }
             }
         }
     }
