@@ -28,5 +28,5 @@ By default, data export is enabled for all TreoCore users. However, export permi
 
 > To get the data export ability back, please, contact your administrator.
 
-
+To have more advanced export options (e.g. export product attribute values, product images/assets, channels, etc.), get the **"Export Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/export-feeds).
 

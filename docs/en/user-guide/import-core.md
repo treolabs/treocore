@@ -71,3 +71,5 @@ Having checked that all data is imported properly, click the `Remove Import Log`
 Once the imported data is no longer needed, click the `Remove Import` button and confirm your decision in the following message that appears:
 
 ![Import revert](../../_assets/import/import-revert.jpg)
+
+To have more advanced import options (e.g. import product attribute values, product images/assets, product categories, etc.), get the **"Import Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/import-feeds).
