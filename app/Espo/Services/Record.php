@@ -2306,10 +2306,26 @@ class Record extends \Espo\Core\Services\Base
                 // prepare method name
                 $methodName = 'duplicate' . ucfirst($link);
 
-                // call customm method
-                if (method_exists($this, $methodName)) {
+                /** @var Record $handler */
+                $handler = $this
+                    ->getInjection('eventManager')
+                    ->dispatch(
+                        $entity->getEntityType() . 'Service', 'beforeDuplicateLink',
+                        new Event(
+                            [
+                                'handler'           => clone $this,
+                                'entity'            => $entity,
+                                'duplicatingEntity' => $duplicatingEntity,
+                                'link'              => $link
+                            ]
+                        )
+                    )
+                    ->getArgument('handler');
+
+                // call custom method
+                if (method_exists($handler, $methodName)) {
                     try {
-                        $this->{$methodName}($entity, $duplicatingEntity);
+                        $handler->{$methodName}($entity, $duplicatingEntity);
                     } catch (\Throwable $e) {
                         $GLOBALS['log']->error($e->getMessage());
                     }
