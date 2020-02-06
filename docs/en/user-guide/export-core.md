@@ -2,6 +2,8 @@
 
 The data exporting feature comes with the TreoCore system out of the box and is available on any entity [list view](./views-and-panels-core.md#list-view) page. It allows you to export the desired data fields in the XLSX (Excel) or CSV format.
 
+> To have more advanced export options (e.g. export product attribute values, product images/assets, channels, etc.), get the **"Export Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/export-feeds).
+
 ## Setup
 
 Open any entity list view page, select the desired record(s) and click the `Export` option in the mass actions menu:
@@ -28,5 +30,5 @@ By default, data export is enabled for all TreoCore users. However, export permi
 
 > To get the data export ability back, please, contact your administrator.
 
-To have more advanced export options (e.g. export product attribute values, product images/assets, channels, etc.), get the **"Export Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/export-feeds).
+
 
