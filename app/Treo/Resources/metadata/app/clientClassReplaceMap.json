@@ -223,5 +223,8 @@
   ],
   "views/fields/enum": [
     "treo-core"
+  ],
+  "views/admin/layouts/grid": [
+    "treo-core"
   ]
 }
