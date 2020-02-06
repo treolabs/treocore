@@ -4,6 +4,8 @@ Data import is a separate TreoCore system [entity](./what-is-treocore.md#concept
 
 `Import` can be added to the [navigation menu](./user-interface-core.md#navigation-menu) on the user preferences page via activating the `Custom tab list` option and adding the corresponding tab.
 
+> To have more advanced import options (e.g. import product attribute values, product images/assets, product categories, etc.), get the **"Import Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/import-feeds).
+
 ## Setup
 
 To configure an import operation, click `Import` in the navigation menu – the setup page `Step 1` will open:
@@ -72,4 +74,3 @@ Once the imported data is no longer needed, click the `Remove Import` button and
 
 ![Import revert](../../_assets/import/import-revert.jpg)
 
-To have more advanced import options (e.g. import product attribute values, product images/assets, product categories, etc.), get the **"Import Feeds" module**. The details are available in the [TreoPIM store](https://treopim.com/store/import-feeds).
