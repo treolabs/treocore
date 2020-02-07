@@ -36,6 +36,7 @@ declare(strict_types=1);
 namespace Treo\Core;
 
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Interfaces\Injectable;
 use Treo\Core\Interfaces\ServiceInterface;
 
 /**
@@ -106,7 +107,7 @@ class ServiceFactory
                 throw new Error("Service '$name' doesn't support");
             }
 
-            if ($service instanceof \Espo\Core\Interfaces\Injectable) {
+            if ($service instanceof Injectable) {
                 foreach ($service->getDependencyList() as $name) {
                     $service->inject($name, $this->container->get($name));
                 }
