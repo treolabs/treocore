@@ -35,7 +35,7 @@
                 min-height: 720px;
                 padding: 0;
             }
-            #general-container .main-template .msg-box {
+            #general-container #main-template .msg-box {
                 position: absolute;
                 width: 100%;
                 height: auto;
@@ -87,7 +87,9 @@
                     </div>
                 </header>
                 <div class="panel-body body" style="padding: 0">
-                    <div id="main-template"></div>
+                    <div id="main-template">
+                        <div class="msg-box alert hidden"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -98,7 +100,6 @@
             </p>
         </footer>
         <script type="text/template" id="language-license">
-            <div class="msg-box alert hidden"></div>
             <div class="stepTitle text-center"><%= translate.labels.licenseAgreement %></div>
             <div class="modal-body clearfix">
                 <div class="col-md-12 clearfix" style="padding: 0;">
@@ -134,7 +135,6 @@
             </div>
         </script>
         <script type="text/template" id="db-connect">
-            <div class="msg-box alert hidden"></div>
             <div class="stepTitle text-center"><%= translate.labels.databaseConfiguration %></div>
             <div class="col-md-12 col-lg-6 modal-body" style="margin: 10px 0">
                 <div class="form-group">
@@ -167,7 +167,6 @@
             </div>
         </script>
         <script type="text/template" id="required-settings">
-            <div class="msg-box alert hidden"></div>
             <div class="stepTitle text-center"><%= translate.labels.requiredSettings %></div>
             <div class="col-sm-12 modal-body" style="margin: 10px 0">
             <table class="table table-stripped">
@@ -205,7 +204,6 @@
             </div>
         </script>
         <script type="text/template" id="admin-creation">
-            <div class="msg-box alert hidden"></div>
             <div class="stepTitle text-center"><%= translate.labels.administratorSetup %></div>
             <div class="col-sm-6 modal-body" style="margin: 10px 0">
                 <div class="form-group">

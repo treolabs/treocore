@@ -45,10 +45,20 @@ $(function () {
         },
 
         render() {
-            this.getTranslations().done(function (translations) {
-                this.model.set({translate: translations});
-                let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel, parentEl: this.$el});
-            }.bind(this));
+            new Promise((resolve, reject) => {
+                this.getTranslations().done(translations => {
+                    if (translations instanceof Object) {
+                        this.model.set({translate: translations});
+
+                        let languageAndLicenseStep = new LanguageAndLicenseStep({model: generalModel, parentEl: this.$el});
+                    } else {
+                        reject(new Error('Unsuccessful attempt to download translations'))
+                    }
+                }).error(errorObj => reject(new Error(`${errorObj.statusText} (${errorObj.status})`)))
+            }).catch(function (error) {
+                this.showBox('alert-danger', error);
+                throw error;
+            }.bind(this))
         },
 
         getTranslations() {
@@ -71,6 +81,8 @@ $(function () {
         },
 
         showValidationMessage: function (message, selector) {
+            let isDestroyed = false;
+
             selector = '#' + selector;
 
             let $el = this.$el.find(selector);
@@ -85,8 +97,11 @@ $(function () {
             $el.parent().addClass('has-error');
 
             $el.one('mousedown click', function () {
+                if (isDestroyed) return;
+
                 $el.popover('destroy');
                 $el.parent().removeClass('has-error');
+                isDestroyed = true;
             });
 
             this.once('render destroy', function () {
