@@ -21031,3 +21031,20 @@ select {
 #header #navbar .navbar.navbar-inverse.logo-centr-outer .logo-centr-inner .navbar-header a.navbar-brand.nav-link.logo img {
     margin: 13px auto !important;
 }
+
+.list-group-item.ui-sortable-helper {
+    background-color: white;
+}
+
+#layout ul.cells li.cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 20px;
+}
+
+#layout ul.cells li.cell a.remove-field {
+    position: absolute;
+    right: 7px;
+    top: 6px;
+}
