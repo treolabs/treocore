@@ -31,23 +31,16 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word
  * and "TreoCore" word.
  */
+
 declare(strict_types=1);
 
-namespace Treo\Core\Loaders;
+namespace Treo\Core\Interfaces;
 
 /**
- * ServiceFactory loader
+ * Interface Service
  *
  * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ServiceFactory extends Base
+interface ServiceInterface
 {
-
-    /**
-     * @inheritDoc
-     */
-    public function load()
-    {
-        return new \Treo\Core\ServiceFactory($this->getContainer());
-    }
 }
