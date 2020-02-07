@@ -21048,3 +21048,8 @@ select {
     right: 7px;
     top: 6px;
 }
+
+.modal-dialog .modal-content .modal-body .input-group input.text-filter {
+    margin-left: 0;
+    padding: 6px 12px 6px 12px;
+}
