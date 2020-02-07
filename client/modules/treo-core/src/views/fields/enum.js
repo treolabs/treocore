@@ -55,7 +55,7 @@ Espo.define('treo-core:views/fields/enum', 'class-replace!treo-core:views/fields
                         this.translatedOptions[''] = '';
                     }
 
-                    if (this.model.isNew() && this.mode === 'edit') {
+                    if (this.model.isNew() && this.mode === 'edit' && !this.model.get('_duplicatingEntityId')) {
                         this.model.set({[this.name]: ''});
                     }
                 }
