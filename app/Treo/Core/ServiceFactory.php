@@ -101,6 +101,11 @@ class ServiceFactory
 
             // create service
             $service = new $className();
+
+            if (!$service instanceof ServiceInterface) {
+                throw new Error("Service '$name' doesn't support");
+            }
+
             if ($service instanceof \Espo\Core\Interfaces\Injectable) {
                 foreach ($service->getDependencyList() as $name) {
                     $service->inject($name, $this->container->get($name));
@@ -137,7 +142,7 @@ class ServiceFactory
         }
 
         if (!class_exists($this->classNames[$name])) {
-            throw new Error("Service '{$this->classNames[$name]}' was not found");
+            throw new Error("Service '$name' was not found");
         }
 
         return $this->classNames[$name];
