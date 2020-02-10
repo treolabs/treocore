@@ -35,139 +35,117 @@ declare(strict_types=1);
 
 namespace Treo\Core;
 
-use Treo\Core\Utils\Util;
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Interfaces\Injectable;
+use Treo\Core\Interfaces\ServiceInterface;
 
 /**
  * ServiceFactory class
  *
- * @author r.ratsun@zinitsolutions.com
+ * @author r.ratsun <r.ratsun@treolabs.com>
  */
-class ServiceFactory extends \Espo\Core\ServiceFactory
+class ServiceFactory
 {
+    /**
+     * @var Container
+     */
+    private $container;
+
     /**
      * @var array
      */
-    protected $services = [];
+    private $services = [];
 
     /**
-     * @inheritdoc
+     * @var array
      */
-    public function __construct(...$args)
-    {
-        // call parent
-        parent::__construct(...$args);
+    private $classNames;
 
-        // load all services
-        $this->load();
+    /**
+     * ServiceFactory constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+        $this->classNames = $this->container->get('metadata')->get(['app', 'services'], []);
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
+     *
+     * @return bool
      */
-    public function checkExists($name)
+    public function checkExists(string $name): bool
     {
-        return !empty($this->services[Util::normilizeClassName($name)]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function create($name)
-    {
-        // prepare name
-        $name = Util::normilizeClassName($name);
-
-        if (!isset($this->services[$name])) {
-            throw new Error("Service '{$name}' was not found.");
+        try {
+            $className = $this->getClassName($name);
+        } catch (Error $e) {
+            $className = null;
         }
 
-        return $this->createByClassName($this->services[$name]);
+        return !empty($className);
     }
 
     /**
-     * Create by classname
+     * @param string $name
      *
-     * @param $className
-     *
-     * @return mixed
+     * @return ServiceInterface
+     * @throws Error
      */
-    protected function createByClassName($className)
+    public function create(string $name): ServiceInterface
     {
-        if (class_exists($className)) {
+        if (!isset($this->services[$name])) {
+            /** @var string $className */
+            $className = $this->getClassName($name);
+
             // create service
             $service = new $className();
 
-            // for espo services
-            if ($service instanceof \Espo\Core\Interfaces\Injectable) {
+            if (!$service instanceof ServiceInterface) {
+                throw new Error("Service '$name' doesn't support");
+            }
+
+            if ($service instanceof Injectable) {
                 foreach ($service->getDependencyList() as $name) {
-                    $service->inject($name, $this->getContainer()->get($name));
+                    $service->inject($name, $this->container->get($name));
                 }
             }
-
-            // for treo services
             if ($service instanceof \Treo\Services\AbstractService) {
-                $service->setContainer($this->getContainer());
+                $service->setContainer($this->container);
             }
 
-            return $service;
+            $this->services[$name] = $service;
         }
 
-        throw new Error("Class '$className' does not exist.");
+        return $this->services[$name];
     }
 
     /**
-     * Load all services
-     */
-    protected function load(): void
-    {
-        // load Espo
-        if (!empty($data = $this->getDirServices(CORE_PATH . '/Espo/Services'))) {
-            foreach ($data as $name) {
-                $this->services[$name] = "\\Espo\\Services\\$name";
-            }
-        }
-
-        // load Treo
-        if (!empty($data = $this->getDirServices(CORE_PATH . '/Treo/Services'))) {
-            foreach ($data as $name) {
-                $this->services[$name] = "\\Treo\\Services\\$name";
-            }
-        }
-
-        // load Modules
-        foreach ($this->getContainer()->get('moduleManager')->getModules() as $id => $module) {
-            foreach ($module->loadServices() as $name => $className) {
-                $this->services[$name] = $className;
-            }
-        }
-
-        // load Custom
-        if (!empty($data = $this->getDirServices('custom/Espo/Custom/Services'))) {
-            foreach ($data as $name) {
-                $this->services[$name] = "\\Espo\\Custom\\Services\\$name";
-            }
-        }
-    }
-
-    /**
-     * Get services from DIR
+     * @param string $name
      *
-     * @return array
+     * @return string
+     * @throws Error
      */
-    protected function getDirServices(string $path): array
+    protected function getClassName(string $name): string
     {
-        // prepare result
-        $result = [];
+        if (!isset($this->classNames[$name])) {
+            /** @var string $module */
+            $module = $this->container->get('metadata')->get(['scopes', $name, 'module'], 'Espo');
 
-        if (is_dir($path)) {
-            foreach (scandir($path) as $item) {
-                if (preg_match_all('/^(.*)\.php$/', $item, $matches)) {
-                    $result[] = $matches[1][0];
-                }
+            // prepare module name for Treo services
+            if ($module == 'TreoCore') {
+                $module = 'Treo';
             }
+
+            $this->classNames[$name] = "\\$module\\Services\\$name";
         }
 
-        return $result;
+        if (!class_exists($this->classNames[$name])) {
+            throw new Error("Service '$name' was not found");
+        }
+
+        return $this->classNames[$name];
     }
 }

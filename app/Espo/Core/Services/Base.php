@@ -30,8 +30,9 @@
 namespace Espo\Core\Services;
 
 use \Espo\Core\Interfaces\Injectable;
+use Treo\Core\Interfaces\ServiceInterface;
 
-abstract class Base implements Injectable
+abstract class Base implements Injectable, ServiceInterface
 {
     protected $dependencies = array(
         'config',

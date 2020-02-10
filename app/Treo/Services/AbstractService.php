@@ -38,13 +38,14 @@ use Espo\Entities\User;
 use Espo\Core\Utils\Config;
 use Espo\Orm\EntityManager;
 use Treo\Core\EventManager\Event;
+use Treo\Core\Interfaces\ServiceInterface;
 
 /**
  * AbstractService class
  *
  * @author r.ratsun@zinitsolutions.com
  */
-abstract class AbstractService
+abstract class AbstractService implements ServiceInterface
 {
     use \Treo\Traits\ContainerTrait;
 
