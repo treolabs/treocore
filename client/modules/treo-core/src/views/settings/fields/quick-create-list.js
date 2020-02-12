@@ -31,25 +31,19 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/queue-manager/fields/name', 'views/fields/varchar',
-    Dep => Dep.extend({
+Espo.define('treo-core:views/settings/fields/quick-create-list', ['class-replace!treo-core:views/settings/fields/quick-create-list', 'views/fields/array'],
+    (Dep, Array) => Dep.extend({
+        setup: function () {
+            this.params.options = Object.keys(this.getMetadata().get('scopes')).filter(function (scope) {
+                if (this.getMetadata().get('scopes.' + scope + '.disabled')) return
+                if (this.getMetadata().get('scopes.' + scope + '.quickCreateListDisabled')) return
 
-        listTemplate: 'treo-core:queue-manager/fields/name/list',
+                return this.getMetadata().get('scopes.' + scope + '.entity') && this.getMetadata().get('scopes.' + scope + '.object');
+            }, this).sort(function (v1, v2) {
+                return this.translate(v1, 'scopeNamesPlural').localeCompare(this.translate(v2, 'scopeNamesPlural'));
+            }.bind(this));
 
-        listLinkTemplate: 'treo-core:queue-manager/fields/name/list-link',
-
-        detailTemplate: 'treo-core:queue-manager/fields/name/detail',
-
-        data() {
-            return _.extend({
-                mutedText: ['Success', 'Failed'].includes(this.model.get('status'))
-            }, Dep.prototype.data.call(this));
-        },
-
-        afterRender() {
-
+            Array.prototype.setup.call(this);
         }
-
     })
 );
-

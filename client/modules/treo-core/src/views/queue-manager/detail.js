@@ -31,25 +31,23 @@
  * and "TreoCore" word.
  */
 
-Espo.define('treo-core:views/queue-manager/fields/name', 'views/fields/varchar',
-    Dep => Dep.extend({
+Espo.define('treo-core:views/queue-manager/detail', 'views/detail', function (Dep) {
 
-        listTemplate: 'treo-core:queue-manager/fields/name/list',
+    return Dep.extend({
 
-        listLinkTemplate: 'treo-core:queue-manager/fields/name/list-link',
+        getHeader() {
+            const name = this.model.get('name') || this.model.id;
+            const rootUrl = this.options.rootUrl || this.options.params.rootUrl || '#' + this.scope;
+            const headerIconHtml = this.getHeaderIconHtml();
 
-        detailTemplate: 'treo-core:queue-manager/fields/name/detail',
-
-        data() {
-            return _.extend({
-                mutedText: ['Success', 'Failed'].includes(this.model.get('status'))
-            }, Dep.prototype.data.call(this));
+            return this.buildHeaderHtml([
+                headerIconHtml +
+                `<a href="${rootUrl}" class="action" data-action="navigateToRoot">` +
+                    this.getLanguage().translate(this.scope, 'scopeNamesPlural') +
+                `</a>`,
+                name
+            ]);
         },
-
-        afterRender() {
-
-        }
-
-    })
-);
+    });
+});
 

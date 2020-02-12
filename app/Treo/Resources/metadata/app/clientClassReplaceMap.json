@@ -226,5 +226,8 @@
   ],
   "views/admin/layouts/grid": [
     "treo-core"
+  ],
+  "views/settings/fields/quick-create-list": [
+    "treo-core"
   ]
 }

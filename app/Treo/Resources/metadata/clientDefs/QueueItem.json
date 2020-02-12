@@ -5,6 +5,9 @@
   "boolFilterList": [
     "onlyMy"
   ],
+  "views": {
+    "detail": "treo-core:views/queue-manager/detail"
+  },
   "recordViews": {
     "detail": "treo-core:views/queue-manager/record/detail"
   },
