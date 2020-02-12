@@ -2,5 +2,6 @@
   "entity": true,
   "type": "Base",
   "module": "TreoCore",
-  "object": true
+  "object": true,
+  "quickCreateListDisabled": true
 }

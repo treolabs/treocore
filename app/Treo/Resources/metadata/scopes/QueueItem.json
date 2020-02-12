@@ -14,5 +14,6 @@
   "object": true,
   "hasAssignedUser": true,
   "hasTeam": true,
-  "hasOwner": true
+  "hasOwner": true,
+  "quickCreateListDisabled": true
 }
