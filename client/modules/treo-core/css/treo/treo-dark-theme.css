@@ -21049,6 +21049,14 @@ select {
     top: 6px;
 }
 
+.limited-text-lines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
 .modal-dialog .modal-content .modal-body .input-group input.text-filter {
     margin-left: 0;
     padding: 6px 12px 6px 12px;
