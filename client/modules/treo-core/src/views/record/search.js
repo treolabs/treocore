@@ -112,9 +112,20 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
         }),
 
         data() {
+            const data = Dep.prototype.data.call(this);
+
+            data.boolFilterListLength = 0;
+            data.boolFilterListComplex = data.boolFilterList.map(item => {
+                let includes = this.hiddenBoolFilterList.includes(item);
+                if (!includes) {
+                    data.boolFilterListLength++;
+                }
+                return {name: item, hidden: includes};
+            });
+
             return _.extend({
                 isModalDialog: this.viewMode !== 'list'
-            }, Dep.prototype.data.call(this));
+            }, data);
         },
 
         setup: function () {
