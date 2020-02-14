@@ -112,22 +112,9 @@ Espo.define('treo-core:views/record/search', 'class-replace!treo-core:views/reco
         }),
 
         data() {
-            let data = Dep.prototype.data.call(this);
-            const prevObject = this.$el.prevObject;
-
-            if (prevObject && (prevObject.selector || '').includes('modal')) {
-                data.isModalDialog = true;
-            }
-
-            data.boolFilterListLength = 0;
-            data.boolFilterListComplex = data.boolFilterList.map(item => {
-                let includes = this.hiddenBoolFilterList.includes(item);
-                if (!includes) {
-                    data.boolFilterListLength++;
-                }
-                return {name: item, hidden: includes};
-            });
-            return data;
+            return _.extend({
+                isModalDialog: this.viewMode !== 'list'
+            }, Dep.prototype.data.call(this));
         },
 
         setup: function () {
