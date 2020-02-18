@@ -279,6 +279,8 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
+            this.initAdditionalScroll();
+
             if (this.enabledFixedHeader) {
                 this.fixedTableHead()
             }
@@ -291,6 +293,42 @@ Espo.define('treo-core:views/record/list', 'class-replace!treo-core:views/record
                     this.initDraggableList();
                 });
             }
+        },
+
+        initAdditionalScroll() {
+            //preparing table width
+            const table = this.$el.find('.full-table');
+            table.css('table-layout', 'auto');
+            const tableWidth = table.outerWidth();
+            table.css({width: tableWidth, tableLayout: ''});
+
+            //additional scroll on top
+            const tempScroll = $(`
+                <div class="temp-scroll">
+                    <div class="temp-scroll-content" style="width:${tableWidth}px;"></div>
+                </div>`);
+            const list = this.$el.find('.list');
+            list.before(tempScroll);
+
+            //duplex scroll events
+            let scrolling = false;
+            list.scroll(() => {
+                if (scrolling) {
+                    scrolling = false;
+                    return true;
+                }
+                scrolling = true;
+                tempScroll.scrollLeft(list.scrollLeft());
+                this.$el.find('.fixed-header-table').css('left', table.offset().left);
+            });
+            tempScroll.scroll(() => {
+                if (scrolling) {
+                    scrolling = false;
+                    return true;
+                }
+                scrolling = true;
+                list.scrollLeft(tempScroll.scrollLeft());
+            });
         },
 
         initDraggableList() {
