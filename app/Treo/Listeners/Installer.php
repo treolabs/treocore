@@ -67,6 +67,9 @@ class Installer extends AbstractListener
             include_once $file;
             unlink($file);
         }
+
+        // fill treo store table
+        (new V3Dot25Dot20($this->getEntityManager()->getPDO(), $this->getConfig()))->up();
     }
 
     /**
@@ -80,9 +83,6 @@ class Installer extends AbstractListener
         // set to config
         $this->getConfig()->set('treoId', $treoId);
         $this->getConfig()->save();
-
-        // fill treo store table
-        (new V3Dot25Dot20($this->getEntityManager()->getPDO(), $this->getConfig()))->up();
     }
 
     /**
