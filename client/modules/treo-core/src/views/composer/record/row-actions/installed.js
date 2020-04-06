@@ -49,8 +49,7 @@ Espo.define('treo-core:views/composer/record/row-actions/installed', 'views/reco
             let list = [];
             if (!this.disableActions && this.model.get('isComposer')) {
                 if (!this.model.get('status')) {
-                    let versions = this.model.get('versions');
-                    if (versions && versions.length) {
+                    if (!this.model.get('isSystem')) {
                         list.push({
                             action: 'installModule',
                             label: 'updateModule',

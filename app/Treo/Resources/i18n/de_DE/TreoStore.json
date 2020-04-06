@@ -1,14 +1,6 @@
 {
   "fields": {
-    "status": "Status",
-    "versions": "Versionen",
     "tags": "Stichworte"
-  },
-  "options": {
-    "status": {
-      "buyable": "buyable",
-      "available": "verfügbar"
-    }
   },
   "labels": {
     "installModule": "Das Modul installieren"
