@@ -80,15 +80,6 @@ class Installer extends AbstractListener
         // set to config
         $this->getConfig()->set('treoId', $treoId);
         $this->getConfig()->save();
-
-        $data = json_decode(file_get_contents(Composer::$composer), true);
-        $data['repositories'][] = [
-            'type' => 'composer',
-            'url'  => 'https://packagist.treopim.com/packages.json?id=' . $treoId
-        ];
-
-        // create repositories file
-        file_put_contents(Composer::$composer, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /**
