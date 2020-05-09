@@ -18,3 +18,7 @@ RewriteRule ^(.*)$ index.php?treoq=$1 [L,QSA]
 <FilesMatch "(composer\.json)$">
   Deny from all
 </FilesMatch>
+
+<IfModule pagespeed_module>
+    ModPagespeed off
+</IfModule>
