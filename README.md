@@ -135,3 +135,7 @@ TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
 - TreoCore is developed and supported by [TreoLabs GmbH](https://treolabs.com/).
 - Feel free to join [our Community](https://community.treolabs.com/).
 - To contact us, please visit [our Website](https://treolabs.com/).
+
+
+---
+Please note, the content of this description is NOT licenced under GPLv3 and is property of TreoLabs GmbH.
