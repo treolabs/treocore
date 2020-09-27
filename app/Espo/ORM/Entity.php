@@ -206,7 +206,10 @@ abstract class Entity implements IEntity
                             $value = intval($value);
                             break;
                         case self::FLOAT:
-                            $value = floatval($value);
+                            $value = number_format((float)$value, 3);
+                            while (in_array($value[strlen($value) - 1], ['0', '.'])) {
+                                $value = mb_substr($value, 0, -1);
+                            }
                             break;
                         case self::JSON_ARRAY:
                             $value = is_string($value) ? json_decode($value) : $value;
