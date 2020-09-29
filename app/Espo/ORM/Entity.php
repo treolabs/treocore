@@ -209,6 +209,9 @@ abstract class Entity implements IEntity
                             $value = number_format((float)$value, 3, $dec_point = '.', $thousands_sep = '');
                             while (in_array($value[strlen($value) - 1], ['0', '.'])) {
                                 $value = mb_substr($value, 0, -1);
+                            }                            
+                            if (empty($value)) {
+                                $value = 0;
                             }
                             break;
                         case self::JSON_ARRAY:
