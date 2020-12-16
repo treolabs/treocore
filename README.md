@@ -148,6 +148,6 @@ Please note, the content of this description is NOT licenced under GPLv3 and is 
 ***
 ***
 
-## TREOCORE IS DISCONTINUED. PLEASE USE (ATROCORE)[https://github.com/atrocore/atrocore]!
+## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
 
 
