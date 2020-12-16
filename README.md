@@ -1,3 +1,8 @@
+## TREOCORE IS DISCONTINUED. PLEASE USE (ATROCORE)[https://github.com/atrocore/atrocore]!
+
+***
+***
+
 ## What Is TreoCore?
 
 TreoCore is an open-source software ecosystem developed by TreoLabs GmbH and distributed under GPLv3 License for free. TreoCore is designed for rapid development of web-based responsive business applications of any kind (ERP, PIM, CRM, DMS, MDM, DAM, etc.). It is an excellent tool for cost-effective and timely application development that comes with the powerful out-of-the-box functionality.
@@ -139,3 +144,10 @@ TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
 
 ---
 Please note, the content of this description is NOT licenced under GPLv3 and is property of TreoLabs GmbH.
+
+***
+***
+
+## TREOCORE IS DISCONTINUED. PLEASE USE (ATROCORE)[https://github.com/atrocore/atrocore]!
+
+
