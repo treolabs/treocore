@@ -1,4 +1,4 @@
-## TREOCORE IS DISCONTINUED. PLEASE USE (ATROCORE)[https://github.com/atrocore/atrocore]!
+## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
 
 ***
 ***
