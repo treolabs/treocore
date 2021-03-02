@@ -1,7 +1,9 @@
-## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
 
-***
-***
+/*************************************************************************************/
+## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
+/*************************************************************************************/
+
+
 
 ## What Is TreoCore?
 
@@ -69,6 +71,10 @@ Here is a TreoCore package description in detail:
 * Easy to maintain and support
 * Many out-of-the-box features
 * Best for Rapid Application Development
+
+/*************************************************************************************/
+## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
+/*************************************************************************************/
 
 ### What Technologies Is It Based On?
 
@@ -138,9 +144,8 @@ TreoCore is published under the GNU GPLv3 [license](LICENSE.txt).
 
 Please note, the content of this description is NOT licenced under GPLv3 and is property of TreoLabs GmbH.
 
-***
-***
-
+/*************************************************************************************/
 ## TREOCORE IS DISCONTINUED. PLEASE USE [ATROCORE](https://github.com/atrocore/atrocore)!
+/*************************************************************************************/
 
 
